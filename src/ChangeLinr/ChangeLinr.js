@@ -28,7 +28,6 @@ function ChangeLinr(settings) {
   // Applies the series of transforms to the raw string
   // If a key is provided, it then caches the output
   this.process = function(raw, key, attributes) {
-var temps = [];
     var result, i;
     
     // If this keyed input was already processed, get that
@@ -37,7 +36,6 @@ var temps = [];
     // Otherwise apply and cache each transform in order
     else {
       result = raw;
-temps.push(result);
       for(i = 0; i < pipe_len; ++i) {
         cache_full[pipeline[i]][key]
          = result
