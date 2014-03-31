@@ -107,7 +107,7 @@ function InputWritr(settings) {
     }
   }
   
-  function reset(settings) {
+  var reset = this.reset = function reset(settings) {
     get_timestamp = (
       performance.now
       || performance.webkitNow
@@ -140,5 +140,4 @@ function InputWritr(settings) {
   }
   
   reset(settings);
-  log("Triggers are", triggers);
 }

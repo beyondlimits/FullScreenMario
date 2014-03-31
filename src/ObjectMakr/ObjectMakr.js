@@ -121,7 +121,7 @@ function ObjectMakr(settings) {
   
   /* Resetting
   */
-  function reset(settings) {
+  var reset = this.reset = function reset(settings) {
     on_make = settings.on_make;
     parent_name = settings.parent_name;
     

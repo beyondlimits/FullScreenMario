@@ -285,7 +285,7 @@ function AudioPlayr(settings) {
   
   /* Reset
   */
-  function reset(settings) {
+  var reset = this.reset = function reset(settings) {
     library           = settings.library           || {};
     filetypes         = settings.filetypes         || ["mp3", "ogg"];
     muted             = settings.muted             || false;

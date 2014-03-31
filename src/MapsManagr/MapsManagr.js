@@ -600,7 +600,7 @@ function MapsManagr(settings) {
     }
   }
   
-  function reset(settings) {
+  var reset = this.reset = function reset(settings) {
     // An external prething_maker must be provided
     if(!settings.prething_maker) {
       console.error("No ObjectMakr for prethings is being provided.", settingS);

@@ -355,7 +355,7 @@ function TimeHandlr(settings) {
   /* Reset
   */
   
-  function reset(settings) {
+  var reset = this.reset = function reset(settings) {
     time               = settings.time               || 0;
     events             = settings.events             || {};
     // Attribute names

@@ -1839,7 +1839,7 @@ function gameRestart() {
   body.innerHTML = body.style.paddingTop = body.style.fontSize = "";
   body.appendChild(canvas);
   gameon = true;
-  map.random ? setMapRandom() : setMap("World11");
+  map_settings.random ? setMapRandom() : setMap("World11");
   TimeHandler.addEvent(function() { body.style.visibility = ""; });
   StatsHolder.set("lives", 3);
 }

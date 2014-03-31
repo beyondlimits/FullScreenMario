@@ -112,7 +112,8 @@ function updateSize(me) {
     canvas.width = me.spritewidthpixels;
     canvas.height = me.spriteheightpixels;
     // me.context = canvas.getContext("2d");
-    refillThingCanvas(me);
+    // refillThingCanvas(me);
+    setThingSprite(me);
   }
 }
 function reduceHeight(me, dy, see) {

@@ -197,7 +197,7 @@ function TonedJS(give_window) {
     arrayShuffle: function(arr, start, end) {
       start = start || 0;
       end = end || arr.length;
-      for(var i = start, temp, sloc; i <= end; ++i) {
+      for(var i = start, temp, sloc; i < end; ++i) {
         sloc = randInt(i+1);
         temp = arr[i];
         arr[i] = arr[sloc];

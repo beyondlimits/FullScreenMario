@@ -205,7 +205,7 @@ function QuadsKeepr(settings) {
   
   /* Resetting
   */
-  function reset(settings) {
+  var reset = this.reset = function reset(settings) {
     quadrants       = [];
     columns         = [];
     

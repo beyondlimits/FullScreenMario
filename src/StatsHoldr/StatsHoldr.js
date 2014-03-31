@@ -178,7 +178,7 @@ function StatsHoldr(settings) {
   }
   
   
-  function reset(settings) {
+  var reset = this.reset = function reset(settings) {
     localStorage = window.localStorage || settings.localStorage || {};
     prefix       = settings.prefix     || "";
     separator    = settings.separator  || "";
