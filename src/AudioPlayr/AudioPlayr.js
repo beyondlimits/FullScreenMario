@@ -11,10 +11,9 @@ function playCurrentThemeHurry(name_raw) {
 */
 function AudioPlayr(settings) {
   "use strict";
-  
-  /* Member variables
-  */
+  if(!this || this === window) return new AudioPlayr(settings);
   var version = "1.0",
+      self = this,
   
       // A list of filenames to be turned into <audio> objects
       library,
@@ -45,13 +44,41 @@ function AudioPlayr(settings) {
       
       // Default settings used when creating a new sound
       soundSettings;
-      
+  
+  var reset = self.reset = function reset(settings) {
+    library           = settings.library           || {};
+    filetypes         = settings.filetypes         || ["mp3", "ogg"];
+    muted             = settings.muted             || false;
+    directory         = settings.directory         || "";
+    localStorageMuted = settings.localStorageMuted || "";
+    getVolumeLocal    = settings.getVolumeLocal    || 1;
+    getThemeDefault   = settings.getThemeDefault   || "Theme";
+    
+    // Each sound starts with some certain settings
+    var soundSetsRef  = settings.soundSettings     || {}
+    soundSettings     = settings.soundSettings     || {
+      preload: soundSetsRef.preload   || "auto",
+      used:    0,
+      volume:  0
+    };
+    
+    // Sounds should always start blank
+    sounds = {};
+    
+    // If specified, use localStorageMuted to record muted's value
+    if(localStorageMuted)
+      muted = localStorage[localStorageMuted];
+    
+    // Preload everything!
+    libraryLoad();
+  }
+  
   /* Public play functions
   */
   
   // Public: play
   // Plays a file from the library of files
-  var play = this.play = function(name_raw) {
+  var play = self.play = function(name_raw) {
     // First check if this is already in sounds
     var sound = sounds[name_raw];
     
@@ -88,7 +115,7 @@ function AudioPlayr(settings) {
   
   // Public: playLocal
   // Changes the volume of a sound based on distance from the reference object
-  this.playLocal = function(name_raw, location) {
+  self.playLocal = function(name_raw, location) {
     // Start off with a typical sound
     var sound = play(name_raw),
         volume_real;
@@ -116,7 +143,7 @@ function AudioPlayr(settings) {
   // Public: playTheme
   // Plays a theme as sounds.theme via play()
   // If no theme is provided, who the hell knows
-  this.playTheme = function(name_raw, resume, loop) {
+  self.playTheme = function(name_raw, resume, loop) {
     // Set loop default to true
     loop = typeof loop !== 'undefined' ? loop : true;
     
@@ -148,7 +175,7 @@ function AudioPlayr(settings) {
     
     // If it's used (no repeat), add the event listener to resume theme
     if(sound.used == 1)
-      sound.addEventListener("ended", this.playTheme);
+      sound.addEventListener("ended", self.playTheme);
     
     return sound;
   }
@@ -159,14 +186,14 @@ function AudioPlayr(settings) {
   
   // Public: addEventListener
   // Adds an event listener to a sound, if it exists
-  this.addEventListener = function(name_raw, event, func) {
+  self.addEventListener = function(name_raw, event, func) {
     var sound = sounds[name_raw];
     if(sound) sound.addEventListenever(event, func);
   }
   
   // Public: addEventImmediate
   // Calls a function when a sound calls a trigger, or immediately if it's not playing
-  this.addEventImmediate = function(name_raw, event, func) {
+  self.addEventImmediate = function(name_raw, event, func) {
     var sound = sounds[name_raw];
     if(sound && !sound.paused)
       sound.addEventListener(event, func);
@@ -175,7 +202,7 @@ function AudioPlayr(settings) {
   
   // Public: toggleMute
   // Swaps whether mute is enabled, saving to localStorage if needed
-  this.toggleMute = function() {
+  self.toggleMute = function() {
     // Swap all sounds' volume on muted
     muted = !muted;
     for(var i in sounds)
@@ -186,21 +213,21 @@ function AudioPlayr(settings) {
   }
   
   // Public: simple pause and resume functions
-  this.pause = function() { for(var i in sounds) if(sounds[i]) soundPause(sounds[i]); }
-  this.resume = function() { for(var i in sounds) if(sounds[i]) soundPlay(sounds[i]); }
-  this.pauseTheme = function() { if(theme) theme.pause(); }
-  this.resumeTheme = function() { if(theme) theme.play(); }
-  this.clear = function() {
-    this.pause();
+  self.pause = function() { for(var i in sounds) if(sounds[i]) soundPause(sounds[i]); }
+  self.resume = function() { for(var i in sounds) if(sounds[i]) soundPlay(sounds[i]); }
+  self.pauseTheme = function() { if(theme) theme.pause(); }
+  self.resumeTheme = function() { if(theme) theme.play(); }
+  self.clear = function() {
+    self.pause();
     sounds = {};
-    this.theme = undefined;
+    self.theme = undefined;
   }
   
   
   /* Public gets
   */
-  this.getLibrary = function() { return library; }
-  this.getSounds = function() { return sounds; }
+  self.getLibrary = function() { return library; }
+  self.getSounds = function() { return sounds; }
   
   /* Private utilities
   */
@@ -283,35 +310,6 @@ function AudioPlayr(settings) {
     return elem;  
   }
   
-  /* Reset
-  */
-  var reset = this.reset = function reset(settings) {
-    library           = settings.library           || {};
-    filetypes         = settings.filetypes         || ["mp3", "ogg"];
-    muted             = settings.muted             || false;
-    directory         = settings.directory         || "";
-    localStorageMuted = settings.localStorageMuted || "";
-    getVolumeLocal    = settings.getVolumeLocal    || 1;
-    getThemeDefault   = settings.getThemeDefault   || "Theme";
-    
-    // Each sound starts with some certain settings
-    var soundSetsRef  = settings.soundSettings     || {}
-    soundSettings     = settings.soundSettings     || {
-      preload: soundSetsRef.preload   || "auto",
-      used:    0,
-      volume:  0
-    };
-    
-    // Sounds should always start blank
-    sounds = {};
-    
-    // If specified, use localStorageMuted to record muted's value
-    if(localStorageMuted)
-      muted = localStorage[localStorageMuted];
-    
-    // Preload everything!
-    libraryLoad();
-  }
-  
   reset(settings || {});
+  return self;
 }

@@ -3,10 +3,9 @@
 
 function QuadsKeepr(settings) {
   "use strict";
-  
-  /* Member Variables
-  */
+  if(!this || this === window) return new QuadsKeepr(settings);
   var version = "1.0",
+      self = this,
       
       // Quadrants, listed as a raw array
       quadrants,
@@ -52,6 +51,50 @@ function QuadsKeepr(settings) {
       // Callbacks for...
       onUpdate,  // when Quadrants are updated
       onCollide; // when two Things touch (not used... yet!)
+  
+  var reset = this.reset = function reset(settings) {
+    quadrants       = [];
+    columns         = [];
+    
+    // These allow for variations in what's given
+    num_quads       = settings.num_quads;//       || 4;
+    num_rows        = settings.num_rows;//        || 2;
+    num_cols        = settings.num_cols;//        || 2;
+    // (if num_quads is given)
+    if(num_quads) {
+      if(num_rows) num_cols = num_quads / num_rows;
+      if(num_cols) num_rows = num_quads / num_cols;
+    }
+    // (if num_quads is not given)
+    else {
+      if(!num_rows) num_rows = 2;
+      if(!num_cols) num_cols = 2;
+      num_quads = num_rows * num_cols;
+    }
+    
+    screen_width    = settings.screen_width    || 640;
+    screen_height   = settings.screen_height   || 480;
+    
+    quad_width      = screen_width / (num_cols - 3);
+    quad_height     = screen_height / (num_rows - 2);
+    
+    tolerance       = settings.tolerance       || 0;
+    delx            = settings.delx            || quad_width * -2;
+    out_difference  = quad_width;
+    
+    thing_left      = settings.thing_left      || "left";
+    thing_right     = settings.thing_right     || "right";
+    thing_top       = settings.thing_top       || "top";
+    thing_bottom    = settings.thing_bottom    || "bottom";
+    thing_num_quads = settings.thing_num_quads || "numquads";
+    thing_max_quads = settings.thing_max_quads || "maxquads";
+    thing_quadrants = settings.thing_quadrants || "quadrants";
+    
+    onUpdate        = settings.onUpdate;
+    onCollide       = settings.onCollide;
+    
+    resetQuadrants();
+  }
   
   /* Public gets
   */
@@ -202,52 +245,6 @@ function QuadsKeepr(settings) {
         && thing[thing_bottom] + tolerance >= quadrant.top && thing[thing_top] - tolerance <= quadrant.bottom;
   }
   
-  
-  /* Resetting
-  */
-  var reset = this.reset = function reset(settings) {
-    quadrants       = [];
-    columns         = [];
-    
-    // These allow for variations in what's given
-    num_quads       = settings.num_quads;//       || 4;
-    num_rows        = settings.num_rows;//        || 2;
-    num_cols        = settings.num_cols;//        || 2;
-    // (if num_quads is given)
-    if(num_quads) {
-      if(num_rows) num_cols = num_quads / num_rows;
-      if(num_cols) num_rows = num_quads / num_cols;
-    }
-    // (if num_quads is not given)
-    else {
-      if(!num_rows) num_rows = 2;
-      if(!num_cols) num_cols = 2;
-      num_quads = num_rows * num_cols;
-    }
-    
-    screen_width    = settings.screen_width    || 640;
-    screen_height   = settings.screen_height   || 480;
-    
-    quad_width      = screen_width / (num_cols - 3);
-    quad_height     = screen_height / (num_rows - 2);
-    
-    tolerance       = settings.tolerance       || 0;
-    delx            = settings.delx            || quad_width * -2;
-    out_difference  = quad_width;
-    
-    thing_left      = settings.thing_left      || "left";
-    thing_right     = settings.thing_right     || "right";
-    thing_top       = settings.thing_top       || "top";
-    thing_bottom    = settings.thing_bottom    || "bottom";
-    thing_num_quads = settings.thing_num_quads || "numquads";
-    thing_max_quads = settings.thing_max_quads || "maxquads";
-    thing_quadrants = settings.thing_quadrants || "quadrants";
-    
-    onUpdate        = settings.onUpdate;
-    onCollide       = settings.onCollide;
-    
-    resetQuadrants();
-  }
-  
   reset(settings || {});
+  return self;
 }

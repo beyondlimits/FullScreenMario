@@ -3,10 +3,9 @@
 */
 function ObjectMakr(settings) {
   "use strict";
-  
-  /* Member Variables
-  */
+  if(!this || this === window) return new ObjectMakr(settings);
   var version = "1.0",
+      self = this,
       
       // The default settings, applied to all objects
       defaults,
@@ -32,7 +31,52 @@ function ObjectMakr(settings) {
       // If allowed, what to call the parent type from an object
       // Be aware this is read/write, and the end-user can mess things up!
       parent_name;
+    
+  var reset = this.reset = function reset(settings) {
+    on_make = settings.on_make;
+    parent_name = settings.parent_name;
+    
+    // Create the default attributes every produced Object will have
+    defaults = {};
+    proliferate(defaults, settings.defaults || {});
+    
+    // Create the initial attributes for everything
+    type_defaults = {};
+    proliferate(type_defaults, settings.type_defaults || {});
+    // (also performing the index mapping if requested)
+    if(settings.index_map)
+      mapIndices(type_defaults, settings.index_map, !settings.keep_mapped_keys);
+    
+    // Set up the default type attributes
+    // (By default, 'defaults' is the parent of everything)
+    inheritance = { defaults: {} };
+    types = {};
+    proliferate(inheritance.defaults, settings.inheritance || {});
+    // Recursively proliferate the type inheritences
+    resetInheritance(defaults, inheritance, "defaults");
+  }
+  
+  // For each type and all its children, submissively copy the type's attributes
+  function resetInheritance(source, structure, name, parent) {
+    var type_name, type;
+    for(type_name in structure) {
+      // Make sure the new type exists
+      if(!type_defaults[type_name])
+        type_defaults[type_name] = {};
       
+      // Submissively copy over all of them
+      proliferate(type_defaults[type_name], source, true);
+      types[type_name] = type_defaults[type_name];
+      
+      // If specified, keep a reference to the parent
+      if(parent_name)
+        type_defaults[type_name][parent_name] = parent;
+      
+      // Recurse on the child type
+      resetInheritance(type_defaults[type_name], structure[type_name], type_name, source);
+    }
+  }
+  
   // make("type"[, {settings})
   // Outputs a thing of the given type, optionally with user-given settings
   this.make = function(type, settings) {
@@ -119,50 +163,6 @@ function ObjectMakr(settings) {
     }
   }
   
-  /* Resetting
-  */
-  var reset = this.reset = function reset(settings) {
-    on_make = settings.on_make;
-    parent_name = settings.parent_name;
-    
-    // Create the default attributes every produced Object will have
-    defaults = {};
-    proliferate(defaults, settings.defaults || {});
-    
-    // Create the initial attributes for everything
-    type_defaults = {};
-    proliferate(type_defaults, settings.type_defaults || {});
-    // (also performing the index mapping if requested)
-    if(settings.index_map)
-      mapIndices(type_defaults, settings.index_map, !settings.keep_mapped_keys);
-    
-    // Set up the default type attributes
-    // (By default, 'defaults' is the parent of everything)
-    inheritance = { defaults: {} };
-    types = {};
-    proliferate(inheritance.defaults, settings.inheritance || {});
-    // Recursively proliferate the type inheritences
-    resetInheritance(defaults, inheritance, "defaults");
-  }
-  // For each type and all its children, submissively copy the type's attributes
-  function resetInheritance(source, structure, name, parent) {
-    var type_name, type;
-    for(type_name in structure) {
-      // Make sure the new type exists
-      if(!type_defaults[type_name])
-        type_defaults[type_name] = {};
-      
-      // Submissively copy over all of them
-      proliferate(type_defaults[type_name], source, true);
-      types[type_name] = type_defaults[type_name];
-      
-      // If specified, keep a reference to the parent
-      if(parent_name)
-        type_defaults[type_name][parent_name] = parent;
-      
-      // Recurse on the child type
-      resetInheritance(type_defaults[type_name], structure[type_name], type_name, source);
-    }
-  }
   reset(settings || {});
+  return self;
 }

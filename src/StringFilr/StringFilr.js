@@ -5,9 +5,7 @@
 
 function StringFilr(settings) {
   "use strict";
-  
-  /* Member variables
-  */
+  if(!this || this === window) return new StringFilr(settings);
   var version = "1.0",
       self = this,
       
@@ -32,6 +30,23 @@ function StringFilr(settings) {
       // Whether this always gives an array for results, instead of strings
       // That array is [parent, index] (which is more efficient)
       give_parent;
+  
+  var reset = this.reset = function reset(settings) {
+    library      = settings.library;
+    cache        = {};
+    normal       = settings.normal || "normal";
+    normalize    = settings.normalize;
+    warn_no_norm = settings.warn_no_norm;
+    give_parent  = settings.give_parent;
+    
+    if(warn_no_norm) {
+      if(!normal) console.warn("warn_no_normal is given as true, but no normal class was given.");
+      else {
+        num_no_norm = 0;
+        checkNumNoNorm(library, "");
+      }
+    }
+  }
   
   // Typical retrieval function
   // Takes in a className and returns the deepest matching part in the library
@@ -121,22 +136,6 @@ function StringFilr(settings) {
     return typeof(results[2]) == "object" ? results_final(results[2]) : results; 
   }
   
-  var reset = this.reset = function reset(settings) {
-    library      = settings.library;
-    cache        = {};
-    normal       = settings.normal || "normal";
-    normalize    = settings.normalize;
-    warn_no_norm = settings.warn_no_norm;
-    give_parent  = settings.give_parent;
-    
-    if(warn_no_norm) {
-      if(!normal) console.warn("warn_no_normal is given as true, but no normal class was given.");
-      else {
-        num_no_norm = 0;
-        checkNumNoNorm(library, "");
-      }
-    }
-  }
-  
   reset(settings);
+  return self;
 }

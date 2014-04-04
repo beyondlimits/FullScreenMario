@@ -19,8 +19,7 @@ In short:
 */
 function MapsManagr(settings) {
   "use strict";
-  
-  // Member variables
+  if(!this || this === window) return new MapsManagr(settings);
   var version = "1.0",
       self = this,
       
@@ -89,7 +88,61 @@ function MapsManagr(settings) {
       folder,
       // What filetype to preload maps from (normally ".json")
       filetype;
-      
+  
+  var reset = this.reset = function reset(settings) {
+    // An external prething_maker must be provided
+    if(!settings.prething_maker) {
+      console.error("No ObjectMakr for prethings is being provided.", settingS);
+      return;
+    }
+    prething_maker  = settings.prething_maker;
+    
+    recipient          = settings.recipient          || window;
+    recipient_receives = settings.recipient_receives || []
+    groupings          = settings.groupings          || [];
+    defaults           = settings.defaults           || {};
+    patterns           = settings.patterns           || {};
+    entry_functions    = settings.entry_functions    || {};
+    macros_defaults    = settings.macros_defaults    || {};
+    on_entry           = settings.on_entry           || {};
+    folder             = settings.folder             || "Maps";
+    filetype           = settings.filetype           || ".json";
+    maps = {};
+    
+    // Every grouping must have at least a {} in defaults
+    var grouping, i;
+    for(i = groupings.length - 1; i >= 0; --i) {
+      grouping = groupings[i];
+      if(!defaults[grouping])
+        defaults[grouping] = {};
+    }
+    
+    // For a useful spawnMap, an on_spawn function must be provided
+    on_spawn = settings.on_spawn || function() {
+      console.warn("No spawnMap callback provided.", arguments);
+    }
+    
+    // There are a few good default macro functions, which may be overriden
+    macros = proliferate({
+      "exampleMacro": exampleMacro,
+      "Fill": macroFillPreThings,
+      "Pattern": makePrePattern,
+    }, settings.macros || {});
+    
+    // Set up the object maker to produce
+    object_maker = new ObjectMakr({
+      inheritance: {
+        Map: {},
+        Area: {},
+        Location: {}
+      },
+      type_defaults: defaults
+    });
+  
+    // Preload any necessary maps
+    if(settings.preload)
+      preload([], settings.preload);
+  }
   
   /* Major constructors
   */
@@ -600,59 +653,6 @@ function MapsManagr(settings) {
     }
   }
   
-  var reset = this.reset = function reset(settings) {
-    // An external prething_maker must be provided
-    if(!settings.prething_maker) {
-      console.error("No ObjectMakr for prethings is being provided.", settingS);
-      return;
-    }
-    prething_maker  = settings.prething_maker;
-    
-    recipient          = settings.recipient          || window;
-    recipient_receives = settings.recipient_receives || []
-    groupings          = settings.groupings          || [];
-    defaults           = settings.defaults           || {};
-    patterns           = settings.patterns           || {};
-    entry_functions    = settings.entry_functions    || {};
-    macros_defaults    = settings.macros_defaults    || {};
-    on_entry           = settings.on_entry           || {};
-    folder             = settings.folder             || "Maps";
-    filetype           = settings.filetype           || ".json";
-    maps = {};
-    
-    // Every grouping must have at least a {} in defaults
-    var grouping, i;
-    for(i = groupings.length - 1; i >= 0; --i) {
-      grouping = groupings[i];
-      if(!defaults[grouping])
-        defaults[grouping] = {};
-    }
-    
-    // For a useful spawnMap, an on_spawn function must be provided
-    on_spawn = settings.on_spawn || function() {
-      console.warn("No spawnMap callback provided.", arguments);
-    }
-    
-    // There are a few good default macro functions, which may be overriden
-    macros = proliferate({
-      "exampleMacro": exampleMacro,
-      "Fill": macroFillPreThings,
-      "Pattern": makePrePattern,
-    }, settings.macros || {});
-    
-    // Set up the object maker to produce
-    object_maker = new ObjectMakr({
-      inheritance: {
-        Map: {},
-        Area: {},
-        Location: {}
-      },
-      type_defaults: defaults
-    });
-  
-    // Preload any necessary maps
-    if(settings.preload)
-      preload([], settings.preload);
-  }
   reset(settings || {});
+  return self;
 }

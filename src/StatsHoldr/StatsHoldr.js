@@ -7,9 +7,9 @@ Each key may also have other properties, such as localStorage and a display elem
 */
 function StatsHoldr(settings) {
   "use strict";
-  
-  // Member variables
+  if(!this || this === window) return new StatsHoldr(settings);
   var version = "1.0",
+      self = this,
       
       // The names of the objects being stored, as "name"=>{settings}
       values,
@@ -28,6 +28,22 @@ function StatsHoldr(settings) {
       
       // A bit of text between an element's label and value
       separator;
+  
+  var reset = this.reset = function reset(settings) {
+    localStorage = window.localStorage || settings.localStorage || {};
+    prefix       = settings.prefix     || "";
+    separator    = settings.separator  || "";
+    containers   = settings.containers || [ ["div", { "className": prefix + "_container" }] ]
+    
+    defaults = {};
+    if(settings.defaults)
+      proliferate(defaults, settings.defaults);
+    
+    values = {};
+    if(settings.values)
+      for(var key in settings.values)
+        values[key] = new Value(key, settings.values[key]);
+  }
   
   function Value(key, settings) {
     this.key = key;
@@ -177,21 +193,6 @@ function StatsHoldr(settings) {
     return values[key];
   }
   
-  
-  var reset = this.reset = function reset(settings) {
-    localStorage = window.localStorage || settings.localStorage || {};
-    prefix       = settings.prefix     || "";
-    separator    = settings.separator  || "";
-    containers   = settings.containers || [ ["div", { "className": prefix + "_container" }] ]
-    
-    defaults = {};
-    if(settings.defaults)
-      proliferate(defaults, settings.defaults);
-    
-    values = {};
-    if(settings.values)
-      for(var key in settings.values)
-        values[key] = new Value(key, settings.values[key]);
-  }
   reset(settings);
+  return self;
 }

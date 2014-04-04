@@ -507,10 +507,6 @@ function thingProcess(type, settings, defaults) {
   var canvas = this.canvas = getCanvas(spritewidthpixels, spriteheightpixels),
       context = this.context = canvas.getContext("2d"),
       imageData = this.imageData = context.getImageData(0, 0, spritewidthpixels, spriteheightpixels);
-  context.imageSmoothingEnabled = false;
-  context.webkitImageSmoothingEnabled = false;
-  context.mozImageSmoothingEnabled = false;
-  context.msImageSmoothingEnabled = false;
   
   // Process attributes, such as Koopa.smart
   if(this.attributes) thingProcessAttributes(this, this.attributes, settings);
@@ -560,7 +556,7 @@ function addThing(me, left, top) {
   // Hidden items (like 1-1's block) should't have horizontal overlap checking
   if(me.hidden) me.skipoverlaps = true;
   
-  setThingSprite(me);
+  PixelDrawer.setThingSprite(me);
   window["last_" + (me.title || me.group || "unknown")] = me;
   return me;
 }

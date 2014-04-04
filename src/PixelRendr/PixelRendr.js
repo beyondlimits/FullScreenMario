@@ -51,9 +51,7 @@
 
 function PixelRendr(settings) {
   "use strict";
-  if(this === window) return new PixelRendr(settings);
-  
-  // Member variables
+  if(!this || this === window) return new PixelRendr(settings);
   var version = 1.0,
       self = this,
       
@@ -94,6 +92,63 @@ function PixelRendr(settings) {
       // E.x. {"07" => "14"} maps all sevens to fourteens
       filters;
   
+  var reset = self.reset = function reset(settings) {
+    if(!settings.palette) {
+      console.error("No palette given to PixelRendr.");
+      return;
+    }
+    
+    palette_def   = settings.palette;
+    digitsize_def = getDigitSize(palette_def);
+    digitsplit    = new RegExp('.{1,' + digitsize_def + '}', 'g');
+    filters       = settings.filters       || {};
+    scale         = settings.scale         || 2,
+    flip_vert     = settings.flip_vert     || "flip-vert";
+    flip_horiz    = settings.flip_horiz    || "flipped";
+    sprite_width  = settings.sprite_width  || "sprite_width";
+    sprite_height = settings.sprite_height || "sprite_height";
+    
+    // The first ChangeLinr does the raw processing, transforming strings to sprites
+    ProcessorBase = new ChangeLinr({
+      transforms: {
+        "spriteUnravel":        spriteUnravel,
+        "spriteApplyFilter":    spriteApplyFilter,
+        "spriteExpand":         spriteExpand,
+        "spriteGetArray":       spriteGetArray
+      },
+      pipeline: [
+        "spriteUnravel",
+        "spriteApplyFilter",
+        "spriteExpand",
+        "spriteGetArray"
+      ]
+    });
+    
+    // The second ChangeLinr does row repeating and flipping
+    ProcessorDims = new ChangeLinr({
+      transforms: {
+        "spriteRepeatRows": spriteRepeatRows,
+        "spriteFlipDimensions": spriteFlipDimensions
+      },
+      pipeline: [
+        "spriteRepeatRows",
+        "spriteFlipDimensions"
+      ]
+    });
+    
+    // The library starts off with raw sprites, but is parsed by the ProcessorBase
+    library = { 
+      raws: settings.library || {},
+      posts: []
+    };
+    library.sprites = libraryParse(library.raws, ''),
+    
+    // Post commands are evaluated after the first processing run makes everything
+    libraryPosts();
+    
+    // The BaseFiler provides a 'view' on the library of sprites, to make them searchable
+    BaseFiler = new StringFilr({library: library.sprites});
+  }
   
   /* External functions
   */
@@ -552,7 +607,7 @@ function PixelRendr(settings) {
     // if(length == null) length = source.length - readloc;
     // destination.set(source.subarray(readloc || 0, length), writeloc || 0);
   // }
-  function memcpyU8(source, destination, readloc, writeloc, writelength) {
+  var memcpyU8 = self.memcpyU8 = function(source, destination, readloc, writeloc, writelength) {
     if(!source || !destination || readloc < 0 || writeloc < 0 || writelength <= 0) return;
     if(readloc >= source.length || writeloc >= destination.length) {
       // console.log("Alert: memcpyU8 requested out of bounds!");
@@ -572,78 +627,6 @@ function PixelRendr(settings) {
       destination[lwriteloc++] = source[lreadloc++];
   }
   
-  var reset = self.reset = function reset(settings) {
-    if(!settings.palette) {
-      console.error("No palette given to PixelRendr.");
-      return;
-    }
-    
-    palette_def   = settings.palette;
-    digitsize_def = getDigitSize(palette_def);
-    digitsplit    = new RegExp('.{1,' + digitsize_def + '}', 'g');
-    filters       = settings.filters       || {};
-    scale         = settings.scale         || 2,
-    flip_vert     = settings.flip_vert     || "flip-vert";
-    flip_horiz    = settings.flip_horiz    || "flipped";
-    sprite_width  = settings.sprite_width  || "sprite_width";
-    sprite_height = settings.sprite_height || "sprite_height";
-    
-    // The first ChangeLinr does the raw processing, transforming strings to sprites
-    ProcessorBase = new ChangeLinr({
-      transforms: {
-        "spriteUnravel":        spriteUnravel,
-        "spriteApplyFilter":    spriteApplyFilter,
-        "spriteExpand":         spriteExpand,
-        "spriteGetArray":       spriteGetArray
-      },
-      pipeline: [
-        "spriteUnravel",
-        "spriteApplyFilter",
-        "spriteExpand",
-        "spriteGetArray"
-      ]
-    });
-    
-    // The second ChangeLinr does row repeating and flipping
-    ProcessorDims = new ChangeLinr({
-      transforms: {
-        "spriteRepeatRows": spriteRepeatRows,
-        "spriteFlipDimensions": spriteFlipDimensions
-      },
-      pipeline: [
-        "spriteRepeatRows",
-        "spriteFlipDimensions"
-      ]
-    });
-    
-    // The library starts off with raw sprites, but is parsed by the ProcessorBase
-    library = { 
-      raws: settings.library || {},
-      posts: []
-    };
-    library.sprites = libraryParse(library.raws, ''),
-    
-    // Post commands are evaluated after the first processing run makes everything
-    libraryPosts();
-    
-    // The BaseFiler provides a 'view' on the library of sprites, to make them searchable
-    BaseFiler = new StringFilr({library: library.sprites});
-  }
   reset(settings || {});
-}
-
-function CompareArrays(a, b) {
-  var good = true;
-  for(var i = 0; i < a.length; ++i)
-    if(a[i] !== b[i])
-      good = false, log(i + ": ", a[i], b[i]);
-  log(good ? "Good!" : "No good...");
-}
-
-function SumArray(a) {
-  if(!a) return 0;
-  var sum = 0;
-  for(var i = a.length - 1; i >= 0; --i)
-    sum += a[i];
-  return sum;
+  return self;
 }

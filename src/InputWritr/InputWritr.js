@@ -9,8 +9,7 @@
 
 function InputWritr(settings) {
   "use strict";
-  
-  // Member variables
+  if(!this || this === window) return new InputWritr(settings);
   var version = "1.0",
       self = this,
       
@@ -29,6 +28,38 @@ function InputWritr(settings) {
       get_timestamp,
       // 
       starting_time;
+  
+  var reset = this.reset = function reset(settings) {
+    get_timestamp = (
+      performance.now
+      || performance.webkitNow
+      || performance.mozNow
+      || performance.msNow
+      || performance.oNow
+      || function() { return new Date().getTime(); }
+    ).bind(performance);
+    
+    histories  = [];
+    triggers   = settings.triggers || {};
+    recipients = settings.recipients || {};
+    
+    // Each alias must be stored in each trigger, so pipes can refer to them natively
+    var aliases = settings.aliases || {},
+        alias_name, alias_group, alias_individual,
+        trigger_name, trigger_group;
+    // alias_name = ("left", "right", "up", ...)
+    for(alias_name in aliases) {
+      // alias_group = ([37, 65], ...)
+      alias_group = aliases[alias_name];
+      for(trigger_name in triggers) {
+        // trigger_group = ({ "left": function, "right": function }, ...)
+        trigger_group = triggers[trigger_name];
+        for(alias_individual in alias_group) {
+          trigger_group[alias_group[alias_individual]] = trigger_group[alias_name];
+        }
+      }
+    }
+  }
   
   this.restart = function() {
     if(history) histories.push(history);
@@ -107,37 +138,6 @@ function InputWritr(settings) {
     }
   }
   
-  var reset = this.reset = function reset(settings) {
-    get_timestamp = (
-      performance.now
-      || performance.webkitNow
-      || performance.mozNow
-      || performance.msNow
-      || performance.oNow
-      || function() { return new Date().getTime(); }
-    ).bind(performance);
-    
-    histories  = [];
-    triggers   = settings.triggers || {};
-    recipients = settings.recipients || {};
-    
-    // Each alias must be stored in each trigger, so pipes can refer to them natively
-    var aliases = settings.aliases || {},
-        alias_name, alias_group, alias_individual,
-        trigger_name, trigger_group;
-    // alias_name = ("left", "right", "up", ...)
-    for(alias_name in aliases) {
-      // alias_group = ([37, 65], ...)
-      alias_group = aliases[alias_name];
-      for(trigger_name in triggers) {
-        // trigger_group = ({ "left": function, "right": function }, ...)
-        trigger_group = triggers[trigger_name];
-        for(alias_individual in alias_group) {
-          trigger_group[alias_group[alias_individual]] = trigger_group[alias_name];
-        }
-      }
-    }
-  }
-  
   reset(settings);
+  return self;
 }

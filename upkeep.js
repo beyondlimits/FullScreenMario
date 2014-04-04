@@ -31,7 +31,7 @@ function upkeep() {
     TimeHandler.handleEvents();
     // handleEvents();
     
-    refillCanvas();
+    PixelDrawer.refillGlobalCanvas();
     
   }
 }

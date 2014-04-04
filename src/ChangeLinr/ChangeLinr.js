@@ -6,8 +6,7 @@
 */
 function ChangeLinr(settings) {
   "use strict";
-  
-  // Member variables
+  if(!this || this === window) return new ChangeLinr(settings);
   var version = 1.0,
       self = this,
       
@@ -24,6 +23,38 @@ function ChangeLinr(settings) {
       
       // Whether global functions are allowed in the pipeline (normally true)
       globals_ok;
+  
+  var reset = this.reset = function reset(settings) {
+    transforms = settings.transforms || {};
+    pipeline   = settings.pipeline   || [];
+    pipe_len   = pipeline.length;
+    globals_ok = settings.globals_ok;
+    cache      = {};
+    cache_full = {};
+    
+    // Ensure the pipeline is formatted correctly
+    for(var i = 0; i < pipe_len; ++i) {
+      // Don't allow null/false transforms
+      if(!pipeline[i]) {
+        console.error("Pipe[" + i + "] evaluates to false.");
+        continue;
+      }
+      // Make sure each part of the pipeline exists
+      if(!transforms.hasOwnProperty(pipeline[i])) {
+        if(globals_ok && window.hasOwnProperty(pipeline[i]))
+          transforms[pipeline[i]] = window[pipeline[i]];
+        if(!transforms.hasOwnProperty(pipeline[i])) {
+          console.error("Pipe[" + i + "] (" + pipeline[i] + ") not found in transforms.");
+          continue;
+        }
+      }
+      // Also make sure each part of the pipeline is a function
+      if(!(transforms[pipeline[i]] instanceof Function))
+        console.error("Pipe[" + i + "] (" + pipeline[i] + ") is not a valid function from transforms.");
+      
+      cache_full[i] = cache_full[pipeline[i]] = {};
+    }
+  }
   
   // Applies the series of transforms to the raw string
   // If a key is provided, it then caches the output
@@ -60,36 +91,6 @@ function ChangeLinr(settings) {
   this.getCache = function() { return cache; }
   this.getCacheFull = function() { return cache_full; }
   
-  var reset = this.reset = function reset(settings) {
-    transforms = settings.transforms || {};
-    pipeline   = settings.pipeline   || [];
-    pipe_len   = pipeline.length;
-    globals_ok = settings.globals_ok;
-    cache      = {};
-    cache_full = {};
-    
-    // Ensure the pipeline is formatted correctly
-    for(var i = 0; i < pipe_len; ++i) {
-      // Don't allow null/false transforms
-      if(!pipeline[i]) {
-        console.error("Pipe[" + i + "] evaluates to false.");
-        continue;
-      }
-      // Make sure each part of the pipeline exists
-      if(!transforms.hasOwnProperty(pipeline[i])) {
-        if(globals_ok && window.hasOwnProperty(pipeline[i]))
-          transforms[pipeline[i]] = window[pipeline[i]];
-        if(!transforms.hasOwnProperty(pipeline[i])) {
-          console.error("Pipe[" + i + "] (" + pipeline[i] + ") not found in transforms.");
-          continue;
-        }
-      }
-      // Also make sure each part of the pipeline is a function
-      if(!(transforms[pipeline[i]] instanceof Function))
-        console.error("Pipe[" + i + "] (" + pipeline[i] + ") is not a valid function from transforms.");
-      
-      cache_full[i] = cache_full[pipeline[i]] = {};
-    }
-  }
   reset(settings || {});
+  return self;
 }

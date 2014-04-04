@@ -68,8 +68,7 @@ function resetStatsHolder() {
 function toggleLuigi(nochange) {
   if(!nochange) StatsHolder.toggle("luigi");
   // (StatsHolder.get("luigi") ? addClass : removeClass)(player, "Luigi");
-  player.title = StatsHolder.get("luigi") ? "Luigi" : "Player";
-  setThingSprite(player);
+  setTitle(player, StatsHolder.get("luigi") ? "Luigi" : "Player");
 }
 
 // Starts the interval of updating data time

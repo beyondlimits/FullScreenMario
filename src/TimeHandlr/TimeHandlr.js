@@ -9,10 +9,9 @@
 
 function TimeHandlr(settings) {
   "use strict";
-  
-  /* Member Variables
-  */
+  if(!this || this === window) return new TimeHandlr(settings);
   var version = "1.0",
+      self = this,
       
       // The current (most recently reached) game time
       time,
@@ -33,6 +32,22 @@ function TimeHandlr(settings) {
       // Function handlers
       addClass,
       removeClass;
+  
+  var reset = this.reset = function reset(settings) {
+    time               = settings.time               || 0;
+    events             = settings.events             || {};
+    // Attribute names
+    cycles             = settings.cycles             || "cycles";
+    className          = settings.className          || "className";
+    onSpriteCycleStart = settings.onSpriteCycleStart || "onSpriteCycleStart";
+    doSpriteCycleStart = settings.doSpriteCycleStart || "doSpriteCycleStart";
+    cycleCheckValidity = settings.cycleCheckValidity;
+    // Timing numbers
+    timingDefault      = settings.timingDefault      || 7;
+    // Function handlers
+    addClass           = settings.addClass           || window.addClass       || classAdd;
+    removeClass        = settings.removeClass        || window.removeClass    || classRemove;
+  }
   
   /* Simple gets
   */
@@ -352,24 +367,6 @@ function TimeHandlr(settings) {
   // Quick reference for math
   var ceil = Math.ceil;
   
-  /* Reset
-  */
-  
-  var reset = this.reset = function reset(settings) {
-    time               = settings.time               || 0;
-    events             = settings.events             || {};
-    // Attribute names
-    cycles             = settings.cycles             || "cycles";
-    className          = settings.className          || "className";
-    onSpriteCycleStart = settings.onSpriteCycleStart || "onSpriteCycleStart";
-    doSpriteCycleStart = settings.doSpriteCycleStart || "doSpriteCycleStart";
-    cycleCheckValidity = settings.cycleCheckValidity;
-    // Timing numbers
-    timingDefault      = settings.timingDefault      || 7;
-    // Function handlers
-    addClass           = settings.addClass           || window.addClass       || classAdd;
-    removeClass        = settings.removeClass        || window.removeClass    || classRemove;
-  }
-  
   reset(settings || {});
+  return self;
 }

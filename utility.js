@@ -26,8 +26,13 @@ function getCanvas(width, height, stylemult) {
     });
   }
   
-  // For speed
-  canv.getContext("2d").webkitImageSmoothingEnabled = false
+  // For speed's sake, disable all image smoothing
+  proliferate(canv.getContext("2d"), {
+    "imageSmoothingEnabled":  false;
+    "webkitImageSmoothingEnabled": false;
+    "mozImageSmoothingEnabled": false;
+    "msImageSmoothingEnabled":  false;
+  }
   
   return canv;
 }
@@ -113,7 +118,7 @@ function updateSize(me) {
     canvas.height = me.spriteheightpixels;
     // me.context = canvas.getContext("2d");
     // refillThingCanvas(me);
-    setThingSprite(me);
+    PixelDrawer.setThingSprite(me);
   }
 }
 function reduceHeight(me, dy, see) {
@@ -699,10 +704,11 @@ function shiftScaleStringVert(me, string, yvel) {
   updateSize(string);
 }
 
-function setClass(me, strin) { me.className = strin; setThingSprite(me); }
+function setTitle(me, strin) { me.title = strin; PixelDrawer.setThingSprite(me); }
+function setClass(me, strin) { me.className = strin; PixelDrawer.setThingSprite(me); }
 function setClassInitial(me, strin) { me.className = strin; }
-function addClass(me, strin) { me.className += " " + strin; setThingSprite(me); }
-function removeClass(me, strout) { me.className = me.className.replace(new RegExp(" " + strout,"gm"),''); setThingSprite(me); }
+function addClass(me, strin) { me.className += " " + strin; PixelDrawer.setThingSprite(me); }
+function removeClass(me, strout) { me.className = me.className.replace(new RegExp(" " + strout,"gm"),''); PixelDrawer.setThingSprite(me); }
 function switchClass(me, strout, strin) { removeClass(me, strout); addClass(me, strin); }
 function removeClasses(me) {
   var strings, arr, i, j;
