@@ -28,11 +28,12 @@ function getCanvas(width, height, stylemult) {
   
   // For speed's sake, disable all image smoothing
   proliferate(canv.getContext("2d"), {
-    "imageSmoothingEnabled":  false;
-    "webkitImageSmoothingEnabled": false;
-    "mozImageSmoothingEnabled": false;
-    "msImageSmoothingEnabled":  false;
-  }
+    "imageSmoothingEnabled":  false,
+    "webkitImageSmoothingEnabled": false,
+    "mozImageSmoothingEnabled": false,
+    "msImageSmoothingEnabled": false,
+    "oImageSmoothingEnabled": false
+  });
   
   return canv;
 }
@@ -708,7 +709,10 @@ function setTitle(me, strin) { me.title = strin; PixelDrawer.setThingSprite(me);
 function setClass(me, strin) { me.className = strin; PixelDrawer.setThingSprite(me); }
 function setClassInitial(me, strin) { me.className = strin; }
 function addClass(me, strin) { me.className += " " + strin; PixelDrawer.setThingSprite(me); }
-function removeClass(me, strout) { me.className = me.className.replace(new RegExp(" " + strout,"gm"),''); PixelDrawer.setThingSprite(me); }
+function removeClass(me, strout) { 
+    me.className = me.className.replace(new RegExp(" " + strout,"gm"),''); 
+    PixelDrawer.setThingSprite(me);
+}
 function switchClass(me, strout, strin) { removeClass(me, strout); addClass(me, strin); }
 function removeClasses(me) {
   var strings, arr, i, j;

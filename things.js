@@ -14,213 +14,222 @@
 */
 
 function resetThings() {
-  // The default things will need to be manipulated
   window.ObjectMaker = new ObjectMakr({
-    on_make: "onMake",
-    store_type: "title",
-    index_map: {
-      0: "width",
-      1: "height"
-    },
-    defaults: {
-      // Sizing
-      width:  8,
-      height: 8,
-      tolx:   0,
-      toly:   unitsized8,
-      // Velocity
-      xvel:  0,
-      yvel:  0,
-      speed: 0,
-      // Placement
-      alive:    true,
-      placed:   false,
-      grouping: "solid",
-      // Quadrants
-      maxquads:  4,
-      quadrants: new Array(4),
-      outerok:   false,
-      overlaps:  [],
-      // Sprites
-      sprite:      "",
-      sprite_type: "neither",
-      // Triggered functions
-      animate:  emergeUp,
-      onMake:   thingProcess,
-      death:    killNormal,
-      collide:  false,
-      movement: false
-    },
-    inheritance: {
-      character: {
-        Player: {},
-        enemy: {
-          Goomba: {},
-          Koopa: {},
-          Pirhana: {},
-          HammerBro: {
-            Bowser: {}
+      "on_make": "onMake",
+      "store_type": "title",
+      "index_map": ["width", "height"],
+      "inheritance": {
+          "Thing": {
+              "character": {
+                  "Player": {},
+                  "enemy": {
+                      "Goomba": {},
+                      "Koopa": {},
+                      "Pirhana": {},
+                      "HammerBro": {
+                          "Bowser": {}
+                      }
+                  },
+                  "item": {
+                      "Mushroom": {
+                          "Mushroom1Up": {},
+                          "MushroomDeathly": {}
+                      },
+                      "FireFlower": {},
+                      "Fireball": {
+                          "CastleFireball": {}
+                      },
+                      "Star": {},
+                      "Shell": {},
+                      "Vine": {}
+                  },
+                  "BrickShard": {},
+                  "Coin": {},
+                  "Firework": {},
+              },
+              "solid": {
+                  "Block": {},
+                  "BridgeBase": {},
+                  "Brick": {},
+                  "DeadGoomba": {},
+                  "Pipe": {},
+                  "PipeHorizontal": {},
+                  "PipeVertical": {},
+                  "Platform": {},
+                  "PlatformGenerator": {},
+                  "Stone": {},
+                  "Floor": {},
+                  "TreeTop": {},
+                  "ShroomTop": {},
+                  "CastleAxe": {},
+                  "CastleBlock": {},
+                  "CastleBridge": {},
+                  "Coral": {},
+                  "detector": {
+                      "DetectCollision": {},
+                      "DetectSpawn": {}
+                  },
+              },
+              "scenery": {
+                  "Axe": {},
+                  "Blank": {},
+                  "BrickHalf": {},
+                  "BrickPlain": {},
+                  "Bush1": {},
+                  "Bush2": {},
+                  "Bush3": {},
+                  "Castle": {},
+                  "CastleDoor": {},
+                  "CastleChain": {},
+                  "CastleRailing": {},
+                  "CastleRailingFilled": {},
+                  "CastleTop": {},
+                  "CastleWall": {},
+                  "Cloud1": {},
+                  "Cloud2": {},
+                  "Cloud3": {},
+                  "Fence": {},
+                  "Flag": {},
+                  "FlagPole": {},
+                  "FlagTop": {},
+                  "HillSmall": {},
+                  "HillLarge": {},
+                  "PirhanaScenery": {},
+                  "PlantSmall": {},
+                  "PlantLarge": {},
+                  "Railing": {},
+                  "ShroomTrunk": {},
+                  "String": {},
+                  "TreeTrunk": {},
+                  "Water": {},
+                  "WaterFill": {}
+              }
           }
-        },
-        item: {
-          Mushroom: {
-            Mushroom1Up: {},
-            MushroomDeathly: {}
+      },
+      "properties": {
+          "Thing": {
+              // Sizing
+              width:  8,
+              height: 8,
+              tolx:   0,
+              toly:   unitsized8,
+              // Velocity
+              xvel:  0,
+              yvel:  0,
+              speed: 0,
+              // Placement
+              alive:    true,
+              placed:   false,
+              grouping: "solid",
+              // Quadrants
+              maxquads:  4,
+              quadrants: new Array(4),
+              outerok:   false,
+              overlaps:  [],
+              // Sprites
+              sprite:      "",
+              sprite_type: "neither",
+              // Triggered functions
+              animate:  emergeUp,
+              onMake:   thingProcess,
+              death:    killNormal,
+              collide:  false,
+              movement: false
           },
-          FireFlower: {},
-          Fireball: {
-            CastleFireball: {}
+          character: {
+              grouping: "character",
+              libtype: "characters",
+              character: true,
+              moveleft: true,
+              movement: moveSimple
           },
-          Star: {},
-          Shell: {},
-          Vine: {}
-        },
-        BrickShard: {},
-        Coin: {},
-        Firework: {},
-      },
-      solid: {
-        Block: {},
-        BridgeBase: {},
-        Brick: {},
-        DeadGoomba: {},
-        Pipe: {},
-        PipeHorizontal: {},
-        PipeVertical: {},
-        Platform: {},
-        PlatformGenerator: {},
-        Stone: {},
-        Floor: {},
-        TreeTop: {},
-        ShroomTop: {},
-        CastleAxe: {},
-        CastleBlock: {},
-        CastleBridge: {},
-        Coral: {},
-        detector: {
-          DetectCollision: {},
-          DetectSpawn: {}
-        },
-      },
-      scenery: {
-        Axe: {},
-        Blank: {},
-        BrickHalf: {},
-        BrickPlain: {},
-        Bush1: {},
-        Bush2: {},
-        Bush3: {},
-        Castle: {},
-        CastleDoor: {},
-        CastleChain: {},
-        CastleRailing: {},
-        CastleRailingFilled: {},
-        CastleTop: {},
-        CastleWall: {},
-        Cloud1: {},
-        Cloud2: {},
-        Cloud3: {},
-        Fence: {},
-        Flag: {},
-        FlagPole: {},
-        FlagTop: {},
-        HillSmall: {},
-        HillLarge: {},
-        PirhanaScenery: {},
-        PlantSmall: {},
-        PlantLarge: {},
-        Railing: {},
-        ShroomTrunk: {},
-        String: {},
-        TreeTrunk: {},
-        Water: {},
-        WaterFill: {}
-      }
-    },
-    type_defaults: {
-      character: { 
-        grouping: "character",
-        libtype: "characters",
-        character: true,
-        moveleft: true,
-        movement: moveSimple
-      },
-        Player: {
-          player: 1,
-          power: 1,
-          canjump: 1,
-          nofiredeath: 1,
-          nofire: 1,
-          nokillend: 1,
-          numballs: 0,
-          moveleft: 0,
-          skidding: 0,
-          star: 0,
-          dying: 0,
-          nofall: 0,
-          maxvel: 0,
-          paddling: 0,
-          jumpers: 0,
-          landing: 0,
-          tolx: unitsizet2,
-          toly: 0,
-          walkspeed: unitsized2,
-          maxspeed: unitsize * 1.35, // Really only used for timed animations
-          maxspeedsave: unitsize * 1.35,
-          scrollspeed: unitsize * 1.75,
-          running: '', // Evaluates to false for cycle checker
-          fire: playerFires,
-          movement: movePlayer,
-          death: killPlayer,
-          type: "character",
-          name: "player normal small still"
-        },
-        enemy: {
-          type: "enemy",
-          speed: unitsize * .21,
-          collide: collideEnemy,
-          death: killFlip
-        },
+          Player: {
+              player: 1,
+              power: 1,
+              canjump: 1,
+              nofiredeath: 1,
+              nofire: 1,
+              nokillend: 1,
+              numballs: 0,
+              moveleft: 0,
+              skidding: 0,
+              star: 0,
+              dying: 0,
+              nofall: 0,
+              maxvel: 0,
+              paddling: 0,
+              jumpers: 0,
+              landing: 0,
+              tolx: unitsizet2,
+              toly: 0,
+              walkspeed: unitsized2,
+              maxspeed: unitsize * 1.35, // Really only used for timed animations
+              maxspeedsave: unitsize * 1.35,
+              scrollspeed: unitsize * 1.75,
+              running: '', // Evaluates to false for cycle checker
+              fire: playerFires,
+              movement: movePlayer,
+              death: killPlayer,
+              type: "character",
+              name: "player normal small still"
+          },
+          enemy: {
+              type: "enemy",
+              speed: unitsize * .21,
+              collide: collideEnemy,
+              death: killFlip
+          },
           Goomba: {
-            toly: unitsize,
-            death: killGoomba,
-            spriteCycleSynched: [[unflipHoriz, flipHoriz]]
+              toly: unitsize,
+              death: killGoomba,
+              spriteCycleSynched: [
+                  [unflipHoriz, flipHoriz]
+              ]
           },
           Koopa: {
-            height: 12,
-            toly: unitsizet2,
-            death: function(me, big) { console.warn("killKoopa should become killSpawn and rely on .spawntype"); return killKoopa(me, big); },
-            spriteCycle: [["one", "two"]],
-            attributes: {
-              "smart": { movement: moveSmart },
-              "jumping": {
-                movement: moveJumping,
-                jumpheight: unitsize * 1.17,
-                gravity: gravity / 2.8
+              height: 12,
+              toly: unitsizet2,
+              death: function (me, big) {
+                  console.warn("killKoopa should become killSpawn and rely on .spawntype");
+                  return killKoopa(me, big);
               },
-              "floating": { 
-                movement: moveFloating,
-                nofall: true,
-                yvel: unitsized4,
-                maxvel: unitsized4
+              spriteCycle: [
+                  ["one", "two"]
+              ],
+              attributes: {
+                  "smart": {
+                      movement: moveSmart
+                  },
+                  "jumping": {
+                      movement: moveJumping,
+                      jumpheight: unitsize * 1.17,
+                      gravity: gravity / 2.8
+                  },
+                  "floating": {
+                      movement: moveFloating,
+                      nofall: true,
+                      yvel: unitsized4,
+                      maxvel: unitsized4
+                  }
               }
-            }
           },
           Pirhana: {
-            height: 12,
-            counter: 0,
-            countermax: 12 * unitsize, // height * unitsize
-            dir: unitsized8,
-            toly: unitsizet8,
-            nofall: true,
-            deadly: true,
-            nocollidesolid: true,
-            death: killPirhana,
-            movement: false,
-            spriteCycleSynched: [["one", "two"]]
-            // movement: movePirhanaInit
+              height: 12,
+              counter: 0,
+              countermax: 12 * unitsize, // height * unitsize
+              dir: unitsized8,
+              toly: unitsizet8,
+              nofall: true,
+              deadly: true,
+              nocollidesolid: true,
+              death: killPirhana,
+              movement: false,
+              spriteCycleSynched: [
+                  ["one", "two"]
+              ]
+              // movement: movePirhanaInit
           },
-            Bowser: {
+          Bowser: {
               width: 16,
               height: 16,
               speed: unitsize * .28,
@@ -229,298 +238,320 @@ function resetThings() {
               // killonend: freezeBowser,
               // death: killBowser,
               // onadding: addBowser,
-              spriteCycle: [["one", "two"]]
-            },
-        item: {
-          group: "item",
-          collide: collideFriendly,
-          jump: itemJump,
-          nofire: true
-        },
-          Mushroom: {
-            action: playerShroom,
-            speed: .42 * unitsize
+              spriteCycle: [
+                  ["one", "two"]
+              ]
           },
-            Mushroom1Up: {
+          item: {
+              group: "item",
+              collide: collideFriendly,
+              jump: itemJump,
+              nofire: true
+          },
+          Mushroom: {
+              action: playerShroom,
+              speed: .42 * unitsize
+          },
+          Mushroom1Up: {
               action: gainLife
-            },
-            MushroomDeathly: {
+          },
+          MushroomDeathly: {
               action: killPlayer
-            },
+          },
           FireFlower: {
-            action: playerShroom,
-            spriteCycle: [["one", "two", "three", "four"]]
+              action: playerShroom,
+              spriteCycle: [
+                  ["one", "two", "three", "four"]
+              ]
           },
           Fireball: {
-            width: 4,
-            height: 4,
-            nofire: true,
-            nostar: true,
-            collide_primary: true,
-            animate: emergeFire,
-            collide: fireEnemy,
-            death: fireExplodes,
-            spriteCycleSynched: [["one", "two", "three", "four"], "spinning", 4]
+              width: 4,
+              height: 4,
+              nofire: true,
+              nostar: true,
+              collide_primary: true,
+              animate: emergeFire,
+              collide: fireEnemy,
+              death: fireExplodes,
+              spriteCycleSynched: [
+                  ["one", "two", "three", "four"], "spinning", 4
+              ]
           },
-            CastleFireball: {
+          CastleFireball: {
               deadly: true,
               nocollidesolid: true,
               nocollidechar: true,
               nofall: true,
               collide: collideEnemy
-            },
+          },
           Firework: {
-            nocollide: true,
-            nofall: true,
-            animate: fireworkAnimate
+              nocollide: true,
+              nofall: true,
+              animate: fireworkAnimate
           },
           Star: {
-            name: "star item", // Item class so player's star isn't confused with this
-            width: 7,
-            speed: unitsize * .56,
-            action: playerStar,
-            movement: moveJumping,
-            jumpheight: unitsize * 1.17,
-            gravity: gravity / 2.8,
-            spriteCycle: [["one", "two", "three", "four"], 0, 7]
+              name: "star item", // Item class so player's star isn't confused with this
+              width: 7,
+              speed: unitsize * .56,
+              action: playerStar,
+              movement: moveJumping,
+              jumpheight: unitsize * 1.17,
+              gravity: gravity / 2.8,
+              spriteCycle: [
+                  ["one", "two", "three", "four"], 0, 7
+              ]
           },
           Shell: {
-            height: 7,
-            speed: unitsizet2,
-            collide_primary: true,
-            nofire: false,
-            moveleft: 0,
-            xvel: 0,
-            move: 0,
-            hitcount: 0,
-            peeking: 0,
-            counting: 0,
-            landing: 0,
-            enemyhitcount: 0,
-            movement: moveShell,
-            collide: hitShell,
-            death: killFlip,
-            spawntype: "Koopa",
-            attributes: { smart: {} }
+              height: 7,
+              speed: unitsizet2,
+              collide_primary: true,
+              nofire: false,
+              moveleft: 0,
+              xvel: 0,
+              move: 0,
+              hitcount: 0,
+              peeking: 0,
+              counting: 0,
+              landing: 0,
+              enemyhitcount: 0,
+              movement: moveShell,
+              collide: hitShell,
+              death: killFlip,
+              spawntype: "Koopa",
+              attributes: {
+                  smart: {}
+              }
           },
           Vine: {
-            width: 7,
-            movement: false,
-            nofall: true,
-            repeat: true
-          },
-        BrickShard: {
-          width: 4,
-          height: 4,
-          nocollide: true,
-          skipoverlaps: true,
-          movement: false,
-          spriteCycle: [[unflipHoriz, flipHoriz]]
-        },
-        Coin: {
-          width: 5,
-          height: 7,
-          nofall: true,
-          nocollidechar: true,
-          // nocollidesolid: true, // (disabled for brick bumps)
-          animate: coinEmerge,
-          collide: hitCoin,
-          spriteCycleSynched: [["one", "two", "three", "two", "one"]]
-        },
-      solid: {
-        grouping: "solid",
-        type: "solid",
-        libtype: "solids",
-        spritewidth: 8,
-        spriteheight: 8,
-        repeat: true,
-        solid: true,
-        nocollidesolid: true,
-        collide: characterTouchedSolid
-      },
-        Brick: {
-          bottomBump: brickBump
-        },
-        Block: {
-          unused: true,
-          contents: "Coin",
-          bottomBump: blockBump,
-          spriteCycleSynched: [["one", "two", "three", "two", "one"]]
-        },
-        BridgeBase: {
-          height: 4,
-          spritewidth: 4,
-        },
-        DeadGoomba: {
-          height: 4,
-          nocollide: true
-        },
-        Pipe: {
-          width: 16,
-          spritewidth: 16,
-          actionTop: intoPipeVertical
-        },
-        PipeHorizontal: {
-          height: 16,
-          spriteheight: 16,
-          width: 19.5,
-          spritewidth: 19.5,
-          actionLeft: intoPipeHorizontal,
-          attributes: {
-            width: 8,
-            spritewidth: 8
-          }
-        },
-        PipeVertical: {
-          width: 16,
-          spritewidth: 16
-        },
-        Platform: {
-          height: 4,
-          spritewidth: 4,
-          repeat: true,
-          killonend: true,
-          // maxvel: unitsized4 * 1.5,
-          attributes: {
-            "floating": {
-              // movement: moveFloating,
-              // yvel: unitsized4 * 1.5
-            },
-            "sliding": {
-              // movement: moveSliding,
-              // xvel: unitsized4 * 1.5
-            },
-            "transport": {
+              width: 7,
               movement: false,
-              collide: collideTransport
-            },
-            "falling": {
-              collide: function() { console.log("Nope!"); }
-            }
-          }
-        },
-        PlatformGenerator: {
-          interval: 35,
-          nocollide: true,
-          hidden: true,
-          movement: PlatformGeneratorInit
-        },
-        CastleBlock: {
-          direction: -1, // Kept here because attributes override user-given settings!
-          attributes: {
-            "fireballs": {
-              onadding: makeCastleBlock,
-              balls: [],
-              dt: .07,
-              angle: .25,
-              interval: 7
-            }
-          }
-        },
-        CastleBridge: {
-          spritewidth: 4
-        },
-        detector: {
-          hidden: true
-        },
+              nofall: true,
+              repeat: true
+          },
+          BrickShard: {
+              width: 4,
+              height: 4,
+              nocollide: true,
+              skipoverlaps: true,
+              movement: false,
+              spriteCycle: [
+                  [unflipHoriz, flipHoriz]
+              ]
+          },
+          Coin: {
+              width: 5,
+              height: 7,
+              nofall: true,
+              nocollidechar: true,
+              // nocollidesolid: true, // (disabled for brick bumps)
+              animate: coinEmerge,
+              collide: hitCoin,
+              spriteCycleSynched: [
+                  ["one", "two", "three", "two", "one"]
+              ]
+          },
+          solid: {
+              grouping: "solid",
+              type: "solid",
+              libtype: "solids",
+              spritewidth: 8,
+              spriteheight: 8,
+              repeat: true,
+              solid: true,
+              nocollidesolid: true,
+              collide: characterTouchedSolid
+          },
+          Brick: {
+              bottomBump: brickBump
+          },
+          Block: {
+              unused: true,
+              contents: "Coin",
+              bottomBump: blockBump,
+              spriteCycleSynched: [
+                  ["one", "two", "three", "two", "one"]
+              ]
+          },
+          BridgeBase: {
+              height: 4,
+              spritewidth: 4,
+          },
+          DeadGoomba: {
+              height: 4,
+              nocollide: true
+          },
+          Pipe: {
+              width: 16,
+              spritewidth: 16,
+              actionTop: intoPipeVertical
+          },
+          PipeHorizontal: {
+              height: 16,
+              spriteheight: 16,
+              width: 19.5,
+              spritewidth: 19.5,
+              actionLeft: intoPipeHorizontal,
+              attributes: {
+                  width: 8,
+                  spritewidth: 8
+              }
+          },
+          PipeVertical: {
+              width: 16,
+              spritewidth: 16
+          },
+          Platform: {
+              height: 4,
+              spritewidth: 4,
+              repeat: true,
+              killonend: true,
+              // maxvel: unitsized4 * 1.5,
+              attributes: {
+                  "floating": {
+                      // movement: moveFloating,
+                      // yvel: unitsized4 * 1.5
+                  },
+                  "sliding": {
+                      // movement: moveSliding,
+                      // xvel: unitsized4 * 1.5
+                  },
+                  "transport": {
+                      movement: false,
+                      collide: collideTransport
+                  },
+                  "falling": {
+                      collide: function () {
+                          console.log("Nope!");
+                      }
+                  }
+              }
+          },
+          PlatformGenerator: {
+              interval: 35,
+              nocollide: true,
+              hidden: true,
+              movement: PlatformGeneratorInit
+          },
+          CastleBlock: {
+              direction: -1, // Kept here because attributes override user-given settings!
+              attributes: {
+                  "fireballs": {
+                      onadding: makeCastleBlock,
+                      balls: [],
+                      dt: .07,
+                      angle: .25,
+                      interval: 7
+                  }
+              }
+          },
+          CastleBridge: {
+              spritewidth: 4
+          },
+          detector: {
+              hidden: true
+          },
           DetectCollision: {
-            collide: onDetectorCollision
+              collide: onDetectorCollision
           },
           DetectSpawn: {
-            movement: onDetectorSpawn
+              movement: onDetectorSpawn
           },
-      scenery: {
-        grouping: "scenery",
-        libtype: "scenery",
-        repeat: true
-      },
-        Axe: {
-          nocollide: true,
-          spriteCycle: [["one", "two", "three", "two"]]
-        },
-        // Blank: [0, 0],
-        BrickHalf: [8, 4],
-        BrickPlain: [8, 8],
-        Bush1: [16, 8],
-        Bush2: [24, 8],
-        Bush3: [32, 8],
-        Castle: [75, 88],
-        CastleChain: [7.5, 7.5],
-        CastleDoor: [8, 20],
-        CastleRailing: [8, 4],
-        CastleRailingFilled: [8, 4],
-        CastleTop: [12, 12],
-        CastleWall: [8, 48],
-        Cloud1: [16, 12],
-        Cloud2: [24, 12],
-        Cloud3: [32, 12],
-        Flag: [8, 8],
-        FlagPole: [1, 72],
-        FlagTop: [4, 4],
-        Fence: [8, 8],
-        HillSmall: [24, 9.5],
-        HillLarge: [40, 17.5],
-        PirhanaScenery: [8, 12],
-        PlantSmall: [7, 15],
-        PlantLarge: [8, 23],
-        Railing: [4, 4],
-        ShroomTrunk: [8, 8],
-        String: [1, 1],
-        TreeTrunk: [4, 4],
-        Water: { 
-            0: 4,
-            1: 5,
-            spriteCycle: [["one", "two", "three", "four"]]
+          scenery: {
+              grouping: "scenery",
+              libtype: "scenery",
+              repeat: true
           },
-        WaterFill: [4, 5]
-    }
+          Axe: {
+              nocollide: true,
+              spriteCycle: [
+                  ["one", "two", "three", "two"]
+              ]
+          },
+          // Blank: [0, 0],
+          BrickHalf: [8, 4],
+          BrickPlain: [8, 8],
+          Bush1: [16, 8],
+          Bush2: [24, 8],
+          Bush3: [32, 8],
+          Castle: [75, 88],
+          CastleChain: [7.5, 7.5],
+          CastleDoor: [8, 20],
+          CastleRailing: [8, 4],
+          CastleRailingFilled: [8, 4],
+          CastleTop: [12, 12],
+          CastleWall: [8, 48],
+          Cloud1: [16, 12],
+          Cloud2: [24, 12],
+          Cloud3: [32, 12],
+          Flag: [8, 8],
+          FlagPole: [1, 72],
+          FlagTop: [4, 4],
+          Fence: [8, 8],
+          HillSmall: [24, 9.5],
+          HillLarge: [40, 17.5],
+          PirhanaScenery: [8, 12],
+          PlantSmall: [7, 15],
+          PlantLarge: [8, 23],
+          Railing: [4, 4],
+          ShroomTrunk: [8, 8],
+          String: [1, 1],
+          TreeTrunk: [4, 4],
+          Water: {
+              0: 4,
+              1: 5,
+              spriteCycle: [
+                  ["one", "two", "three", "four"]
+              ]
+          },
+          WaterFill: [4, 5]
+      }
   });
 }
 
 // Takes in a newly produced Thing and sets it up for gameplay
-function thingProcess(type, settings, defaults) {
-  this.title = type;
+function thingProcess(thing, type, settings, defaults) {
+  thing.title = type;
   
   // If a width/height is provided but no spritewidth/height, use the original sprite*
-  if(this.width && !this.spritewidth)
-    this.spritewidth = defaults.spritewidth || defaults.width;
-  if(this.height && !this.spriteheight)
-    this.spriteheight = defaults.spriteheight || defaults.height;
+  if(thing.width && !thing.spritewidth)
+    thing.spritewidth = defaults.spritewidth || defaults.width;
+  if(thing.height && !thing.spriteheight)
+    thing.spriteheight = defaults.spriteheight || defaults.height;
   
   // Maximum quadrants (for QuadsKeeper)
   var maxquads = 4, num;
-  if((num = floor(this.width * unitsize / QuadsKeeper.getQuadWidth())) > 0)
+  if((num = floor(thing.width * unitsize / QuadsKeeper.getQuadWidth())) > 0)
     maxquads += ((num + 1) * maxquads / 2);
-  if((num = floor(this.height * unitsize / QuadsKeeper.getQuadHeight())) > 0)
+  if((num = floor(thing.height * unitsize / QuadsKeeper.getQuadHeight())) > 0)
     maxquads += ((num + 1) * maxquads / 2);
-  this.maxquads = maxquads;
-  this.quadrants = new Array(this.maxquads);
+  thing.maxquads = maxquads;
+  thing.quadrants = new Array(thing.maxquads);
   
   // Basic sprite information
-  var spritewidth = this.spritewidth = this.spritewidth || this.width,
-      spriteheight = this.spriteheight = this.spriteheight || this.height,
+  var spritewidth = thing.spritewidth = thing.spritewidth || thing.width,
+      spriteheight = thing.spriteheight = thing.spriteheight || thing.height,
       // Sprite sizing
-      spritewidthpixels = this.spritewidthpixels = spritewidth * unitsize,
-      spriteheightpixels = this.spriteheightpixels = spriteheight * unitsize;
+      spritewidthpixels = thing.spritewidthpixels = spritewidth * unitsize,
+      spriteheightpixels = thing.spriteheightpixels = spriteheight * unitsize;
   
   // Canvas, context, imageData
-  var canvas = this.canvas = getCanvas(spritewidthpixels, spriteheightpixels),
-      context = this.context = canvas.getContext("2d"),
-      imageData = this.imageData = context.getImageData(0, 0, spritewidthpixels, spriteheightpixels);
+  var canvas = thing.canvas = getCanvas(spritewidthpixels, spriteheightpixels),
+      context = thing.context = canvas.getContext("2d"),
+      imageData = thing.imageData = context.getImageData(0, 0, spritewidthpixels, spriteheightpixels);
   
   // Process attributes, such as Koopa.smart
-  if(this.attributes) thingProcessAttributes(this, this.attributes, settings);
+  if(thing.attributes) thingProcessAttributes(thing, thing.attributes, settings);
   
   // Important custom functions
-  if(this.onThingMake) this.onThingMake(this, settings);
+  if(thing.onThingMake) thing.onThingMake(thing, settings);
   
   // Initial class / sprite setting
-  setClassInitial(this, this.name || type);
+  setClassInitial(thing, thing.name || thing.title);
   
   // Sprite cycles
   var cycle;
-  if(cycle = this.spriteCycle) TimeHandler.addSpriteCycle(this, cycle[0], cycle[1] || null, cycle[2] || null);
-  if(cycle = this.spriteCycleSynched) TimeHandler.addSpriteCycleSynched(this, cycle[0], cycle[1] || null, cycle[2] || null);
+  if(cycle = thing.spriteCycle) TimeHandler.addSpriteCycle(thing, cycle[0], cycle[1] || null, cycle[2] || null);
+  if(cycle = thing.spriteCycleSynched) TimeHandler.addSpriteCycleSynched(thing, cycle[0], cycle[1] || null, cycle[2] || null);
 }
 // Processes optional attributes for Things
 function thingProcessAttributes(thing, attributes) {

@@ -130,7 +130,7 @@ function MapsManagr(settings) {
     }, settings.macros || {});
     
     // Set up the object maker to produce
-    object_maker = new ObjectMakr({
+    object_maker = new ObjectMakrOld({
       inheritance: {
         Map: {},
         Area: {},
@@ -353,7 +353,7 @@ function MapsManagr(settings) {
   // A typical PreThing to be made
   function analyzePreThingRegular(reference, prethings, area, map) {
     // (making sure the PreThing actually exists)
-    if(!prething_maker.hasType(reference.thing)) {
+    if(!prething_maker.hasFunction(reference.thing)) {
       console.warn("Map " + map_name + " references an unlisted Thing.", reference);
       return;
     }
@@ -458,7 +458,7 @@ function MapsManagr(settings) {
     
     var pattern = patterns[reference.pattern],
         length = pattern.length,
-        defaults = ObjectMaker.getTypeDefaults(),
+        defaults = ObjectMaker.getProperties(),
         repeats = reference.repeat || 1,
         xpos = reference.x || 0,
         ypos = reference.y || 0,

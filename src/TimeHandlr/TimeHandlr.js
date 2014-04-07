@@ -29,6 +29,9 @@ function TimeHandlr(settings) {
       // Default time separations
       timingDefault,
       
+      // Whether a copy of settings should be made in setSpriteCycle
+      allow_cycle_copies,
+      
       // Function handlers
       addClass,
       removeClass;
@@ -36,17 +39,21 @@ function TimeHandlr(settings) {
   var reset = this.reset = function reset(settings) {
     time               = settings.time               || 0;
     events             = settings.events             || {};
+    
     // Attribute names
     cycles             = settings.cycles             || "cycles";
     className          = settings.className          || "className";
     onSpriteCycleStart = settings.onSpriteCycleStart || "onSpriteCycleStart";
     doSpriteCycleStart = settings.doSpriteCycleStart || "doSpriteCycleStart";
-    cycleCheckValidity = settings.cycleCheckValidity;
-    // Timing numbers
-    timingDefault      = settings.timingDefault      || 7;
+    cycleCheckValidity = settings.cycleCheckValidity || false;
+    
+    // Smaller settings
+    timingDefault      = settings.timingDefault     || 7;
+    allow_cycle_copies = settings.allow_cycle_copes || true;
+    
     // Function handlers
-    addClass           = settings.addClass           || window.addClass       || classAdd;
-    removeClass        = settings.removeClass        || window.removeClass    || classRemove;
+    addClass    = settings.addClass    || window.addClass    || classAdd;
+    removeClass = settings.removeClass || window.removeClass || classRemove;
   }
   
   /* Simple gets
@@ -134,7 +141,7 @@ function TimeHandlr(settings) {
   // (this goes by basic modular arithmetic)
   var addEventIntervalSynched = this.addEventIntervalSynched = function(func, time_exec, num_repeats, me, settings) {
     var calctime = time_exec * settings.length,
-        entry = ceil(time / calctime) * calctime,
+        entry = Math.ceil(time / calctime) * calctime,
         scope = this,
         addfunc = function(scope, args, me) {
           me.startcount = time;
@@ -204,7 +211,7 @@ function TimeHandlr(settings) {
   };
   
   /* Sprite Cycles (advanced)
-   * Functions to cycle a given objects [className] attribute through an array of names
+   * Functions to cycle an object's [className] attribute through an array
    * Sample usage:
    * addSpriteCycle(
    *   me,
@@ -212,7 +219,7 @@ function TimeHandlr(settings) {
    *   "running",
    *   7
    * );
-   * Note: These require handlers from the user, such as those given by FullScreenMario
+   * Note: These need handlers from the user, such as given by FullScreenMario
   */
   
   // Public: addSpriteCycle
@@ -252,12 +259,18 @@ function TimeHandlr(settings) {
     var cycle = me[cycles][name] = setSpriteCycle(me, settings, timing, true);
     
     // Immediately run the first class cycle, then return
-    cycleClass(me, settings);
+    cycleClass(me, me[cycles][name]);
     return cycle;
   };
   
   // Initializes a sprite cycle for an object
   function setSpriteCycle(me, settings, timing, synched) {
+    // If required, make a copy of settings so if multiple objects are made with
+    // the same settings, object, they don't override each other's settings.loc
+    if(allow_cycle_copies) {
+        settings = makeSettingsCopy(settings);
+    }
+    
     // Start off before the beginning of the cycle
     settings.loc = settings.oldclass = -1;
     
@@ -284,11 +297,11 @@ function TimeHandlr(settings) {
       removeClass(me, settings.oldclass);
     
     // Move to the next location in settings, as a circular list
-    settings.loc = ++settings.loc % settings.length;
+    settings.loc = (++settings.loc) % settings.length;
     
     // Current is the sprite, bool, or function currently being added and/or run
     var current = settings[settings.loc];
-    // If it isn't false or non-existant, (run if needed and) get it as the next name
+    // If it isn't falsy, (run if needed and) set it as the next name
     if(current) {
       var name = current instanceof Function ? current(me, settings) : current;
       
@@ -359,13 +372,22 @@ function TimeHandlr(settings) {
   // Simple expressions to add/remove classes
   function classAdd(me, strin) {
     me.className += " " + strin;
+    PixelDrawer.setThingSprite(me);
   }
   function classRemove(me, strout) {
-    me.className = me.className.replace(new RegExp(" " + strout, "gm"), "");
+    me.className = me.className.replace(new RegExp(" " + strout, "gm"), '');
+    PixelDrawer.setThingSprite(me);
   }
-
-  // Quick reference for math
-  var ceil = Math.ceil;
+  
+  // Creates a copy of an object / array for use in settings
+  function makeSettingsCopy(settings) {
+    var output = new settings.constructor(),
+        i;
+    for(i in settings) {
+      output[i] = settings[i];
+    }
+    return output;
+  }
   
   reset(settings || {});
   return self;
