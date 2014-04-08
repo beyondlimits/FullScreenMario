@@ -10,7 +10,7 @@ function upkeep() {
   for(var i = window.speed; i > 0; --i) {
     
     // Adjust for differences in performance
-    adjustFPS();
+    FPSAnalyzer.measure();
     
     // Quadrants upkeep
     QuadsKeeper.determineAllQuadrants(solids);
@@ -34,17 +34,6 @@ function upkeep() {
     PixelDrawer.refillGlobalCanvas();
     
   }
-}
-
-function adjustFPS() {
-  window.time_now = now();
-  var time_diff = time_now - time_prev,
-      fps_actual = roundDigit(1000 / time_diff, .001);
-  
-  window.fps = roundDigit((.7 * fps) + (.3 * fps_actual), .01);
-  window.realtime = fps_target / fps;
-  
-  window.time_prev = time_now;
 }
 
 function pause(big) {

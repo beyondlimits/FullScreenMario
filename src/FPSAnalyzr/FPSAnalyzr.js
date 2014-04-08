@@ -146,7 +146,6 @@ function FPSAnalyzr(settings) {
             max = Math.min(num_to_keep, num_recorded),
             i;
         for(i = max - 1; i >= 0; --i) {
-            console.log("Adding", measurements[i], "to", total);
             total += measurements[i];
         }
         return total / max;

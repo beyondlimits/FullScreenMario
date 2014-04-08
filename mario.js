@@ -67,7 +67,8 @@ function ensureLocalStorage() {
     ls_ok = false;
   }
   if(!ls_ok) {
-    var nope = document.body.innerText = "It seems your browser does not allow localStorage!";
+    var nope = document.body.innerText = 
+            "It seems your browser does not allow localStorage!";
     throw nope;
   }
 }
@@ -83,6 +84,8 @@ function resetMeasurements() {
   window.ceilmax  = 104; // The floor is 104 spaces (13 blocks) below the top of the screen (yloc = -16)
   window.castlev  = -48;
   window.paused   = true;
+  
+  window.FPSAnalyzer = new FPSAnalyzr();
   
   resetGameScreen();
   if(!window.parentwindow) window.parentwindow = false;
