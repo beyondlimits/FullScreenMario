@@ -39,10 +39,7 @@ function getCanvas(width, height, stylemult) {
 }
 
 function step(num) {
-  unpause();
-  upkeep();
-  pause();
-  if(num > 0) step(num - 1);
+  GamesRunner.step(num);
 }
 
 function fastforward(num) {

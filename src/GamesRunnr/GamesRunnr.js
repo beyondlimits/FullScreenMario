@@ -79,6 +79,22 @@ function GamesRunnr(settings) {
     };
     
     /**
+     * Calls upkeep a <num or 1> number of times, immediately
+     * 
+     * @param {Number} num   An optional number of times to upkeep
+     * @return {this}
+     */
+    self.step = function(num) {
+        unpause();
+        self.upkeep();
+        pause();
+        if(num > 0) {
+            self.step(num - 1);
+        }
+        return self;
+    }
+    
+    /**
      * Stops execution of self.upkeep, and cancels the next call.
      * If an on_pause has been defined, it's called after.
      * 
