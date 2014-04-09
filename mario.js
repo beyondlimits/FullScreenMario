@@ -45,10 +45,12 @@ function FullScreenMario() {
   resetInputWriter();
   resetTriggers();
   resetSounds();
+  resetUpkeep();
 
   // With that all set, set the map to World11.
   StatsHolder.set("lives", 3);
   setMap([1,1]);
+  GamesRunner.upkeep();
   
   log("It took " + (Date.now() - time_start) + " milliseconds to start.");
 }

@@ -1,54 +1,36 @@
 /* Upkeep.js */
 // Contains functions associated with the upkeep
 
+function resetUpkeep() {
+  window.GamesRunner = new GamesRunnr({
+    "upkeep_schedule": setTimeout,
+    "upkeep_cancel": clearTimeout,
+    "interval": 1000 / 60,
+    "FPSAnalyzer": FPSAnalyzer,
+    "games": [
+      function() { QuadsKeeper.determineAllQuadrants(solids); },
+      maintainSolids,
+      maintainCharacters,
+      maintainPlayer,
+      function() { texts.length && maintainTexts; },
+      TimeHandler.handleEvents,
+      PixelDrawer.refillGlobalCanvas
+    ],
+    "on_pause": AudioPlayer.pause,
+    "on_unpause": AudioPlayer.unpause
+  });
+}
+
 function upkeep() {
-  if(window.paused) return;
-  // window.nextupk = requestAnimationFrame(upkeep);
-  window.nextupk = setTimeout(upkeep, timer);
-  
-  // See utility.js::fastforward
-  for(var i = window.speed; i > 0; --i) {
-    
-    // Adjust for differences in performance
-    FPSAnalyzer.measure();
-    
-    // Quadrants upkeep
-    QuadsKeeper.determineAllQuadrants(solids);
-    
-    // Solids upkeep
-    maintainSolids();
-    
-    // Character upkeep
-    maintainCharacters();
-    
-    // Player specific
-    maintainPlayer();
-    
-    // Texts upkeep, if there are any
-    if(texts.length) maintainTexts();
-    
-    // Events upkeep
-    TimeHandler.handleEvents();
-    // handleEvents();
-    
-    PixelDrawer.refillGlobalCanvas();
-    
-  }
+  GamesRunner.upkeep();
 }
 
 function pause(big) {
-  if(paused && !window.nextupk) return;
-  cancelAnimationFrame(nextupk);
-  AudioPlayer.pause();
-  paused = true;
-  if(big) AudioPlayer.play("Pause");
+  GamesRunner.pause();
 }
 
 function unpause() {
-  if(!paused) return;
-  window.nextupk = requestAnimationFrame(upkeep);
-  paused = false;
-  AudioPlayer.resume();
+  GamesRunner.unpause();
 }
 
 
