@@ -1019,7 +1019,7 @@ function podobooJump(me) {
   me.hidden = false;
   
   // Sadly, this appears to be occasionally necessary
-  setThingSprite(me);
+  PixelDrawer.setThingSprite(me);
 }
 function movePodobooUp(me) {
   shiftVert(me, me.speed, true);
@@ -1459,7 +1459,7 @@ function playerGetsSmall(me) {
     player.nocollidechar = true;
     removeClass(player, "paddling");
     if(player.running || player.xvel) addClass(player, "running");
-    TimeHandler.addEvent(setThingSprite, 1, player);
+    TimeHandler.addEvent(PixelDrawer.setThingSprite, 1, player);
   }, 42, player);
   // Step four (t+70);
   TimeHandler.addEvent(function(player) {
@@ -2124,7 +2124,7 @@ function RestingStoneUnused(me) {
   // Make the stone wait until it's no longer being rested upon
   me.movement = RestingStoneUsed;
   removeClass(me, "hidden");
-  setThingSprite(player);
+  PixelDrawer.setThingSpritesetThingSprite(player);
 }
 function RestingStoneUsed(me) { 
   if(!player.resting) return killNormal(me);
