@@ -97,6 +97,15 @@ function FPSAnalyzr(settings) {
     */
     
     /**
+     * Get function for num_recorded
+     * 
+     * @return {Number}
+     */
+    self.getNumRecorded = function() {
+        return num_recorded;
+    }
+    
+    /**
      * Get function for a copy of the measurements listing (if the number of
      * measurements is less than the max, that size is used)
      * 
