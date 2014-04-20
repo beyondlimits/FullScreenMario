@@ -21,12 +21,12 @@ function GroupHoldr(settings) {
      * @constructor
      */
     var reset = self.reset = function(settings) {
-        // The groups and types arguments must be provided
-        if(!settings.hasOwnProperty("groups")) {
-            throw new Error("No groups array provided to GroupHoldr");
+        // The group_names and group_types arguments must be provided
+        if(!settings.hasOwnProperty("group_names")) {
+            throw new Error("No group_names array provided to GroupHoldr");
         }
-        if(!settings.hasOwnProperty("types")) {
-            throw new Error("No types object provided to GroupHoldr");
+        if(!settings.hasOwnProperty("group_types")) {
+            throw new Error("No group_types object provided to GroupHoldr");
         }
         
         // The functions containers start blank, but are filled in setGroupNames 
@@ -36,7 +36,7 @@ function GroupHoldr(settings) {
             "add": {},
             "del": {}
         };
-        setGroupNames(settings.groups, settings.types);
+        setGroupNames(settings.group_names, settings.group_types);
     };
     
     /** 
@@ -71,11 +71,22 @@ function GroupHoldr(settings) {
         group_types = {}
         group_type_names = {};
         
-        // Get the Function and String types of the groups
-        group_names.forEach(function(name) {
-            group_types[name] = getTypeFunction(types[name]);
-            group_type_names[name] = getTypeName(types[name]);
-        });
+        // If group_types is an object, set custom group types for everything
+        if(typeof(types) == "object") {
+            group_names.forEach(function(name) {
+                group_types[name] = getTypeFunction(types[name]);
+                group_type_names[name] = getTypeName(types[name]);
+            });
+        }
+        // Otherwise assume everything uses the same one, such as from a string
+        else {
+            var type_func = getTypeFunction(types),
+                type_name = getTypeName(types);
+            group_names.forEach(function(name) {
+                group_types[name] = type_func;
+                group_type_names[name] = type_name;
+            });
+        }
         
         // Create the containers, and set the modifying functions
         setGroups();
@@ -88,8 +99,8 @@ function GroupHoldr(settings) {
     function clearFunctions() {
         group_names.forEach(function(name) {
             // Delete member variable functions
-            delete self["set" + name];
-            delete self["get" + name];
+            delete self["set" + name + "Group"];
+            delete self["get" + name + "Group"];
             delete self["add" + name];
             delete self["del" + name];
             
@@ -143,7 +154,7 @@ function GroupHoldr(settings) {
          * @param {<container>} value   A new <container> for the group
          * @return {self}   The containing GroupHoldr
          */
-        functions.set[name] = self["set" + name] = function(value) {
+        functions.set[name] = self["set" + name + "Group"] = function(value) {
             if(value.constructor != group_types[name]) {
                 throw new Error(name + " must be of type "
                         + group_type_names[name]);
@@ -169,7 +180,7 @@ function GroupHoldr(settings) {
          *                       group. If not given, the group is returned
          * @return {self}   The containing GroupHoldr
          */
-        functions.get[name] = self["get" + name] = function(key) {
+        functions.get[name] = self["get" + name + "Group"] = function(key) {
             var group = groups[name];
             if(arguments.length < 1) {
                 return group;
@@ -264,6 +275,14 @@ function GroupHoldr(settings) {
     
     self.getFunctions = function() {
         return functions;
+    }
+    
+    self.getGroups = function() {
+        return groups;
+    }
+    
+    self.getGroupNames = function() {
+        return group_names;
     }
     
     

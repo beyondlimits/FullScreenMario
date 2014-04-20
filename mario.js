@@ -85,7 +85,6 @@ function resetMeasurements() {
   window.ceillev  = 88; // The floor is 88 spaces (11 blocks) below the yloc = 0 level
   window.ceilmax  = 104; // The floor is 104 spaces (13 blocks) below the top of the screen (yloc = -16)
   window.castlev  = -48;
-  window.paused   = true;
   
   window.FPSAnalyzer = new FPSAnalyzr();
   
@@ -234,7 +233,7 @@ function resetGameState(nocount) {
   clearAllTimeouts();
   window.nokeys = window.spawning = window.spawnon =
     window.notime = window.editing = window.qcount = window.lastscroll = 0;
-  window.paused = window.gameon = window.speed = 1;
+  window.gameon = window.speed = 1;
   // Shifting location shouldn't wipe the gamecount (for key histories)
   if(!nocount) window.gamecount = 0;
   // And quadrants

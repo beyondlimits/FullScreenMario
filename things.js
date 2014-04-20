@@ -14,7 +14,18 @@
 */
 
 function resetThings() {
-  window.ObjectMaker = new ObjectMakr({
+    window.ThingHitter = new ThingHittr({
+        "group_names": ["Solid", "Character", "Scenery", "Text"],
+        "group_types": "Array",
+        "hit_checks": {
+            "Character": {
+                "Solid": function() {},
+                "Character": function() {}
+            }
+        }
+    });
+  
+    window.ObjectMaker = new ObjectMakr({
       "on_make": "onMake",
       "store_type": "title",
       "index_map": ["width", "height"],
@@ -139,6 +150,7 @@ function resetThings() {
           character: {
               grouping: "character",
               libtype: "characters",
+              grouptype: "Character",
               character: true,
               moveleft: true,
               movement: moveSimple
@@ -354,6 +366,7 @@ function resetThings() {
               grouping: "solid",
               type: "solid",
               libtype: "solids",
+              grouptype: "Solid",
               spritewidth: 8,
               spriteheight: 8,
               repeat: true,
@@ -459,6 +472,7 @@ function resetThings() {
           scenery: {
               grouping: "scenery",
               libtype: "scenery",
+              grouptype: "Scenery",
               repeat: true
           },
           Axe: {
@@ -505,7 +519,7 @@ function resetThings() {
           },
           WaterFill: [4, 5]
       }
-  });
+    });
 }
 
 // Takes in a newly produced Thing and sets it up for gameplay
