@@ -288,8 +288,8 @@ function determineThingCollisions(me) {
     if(me.undermid.bottomBump)
       me.undermid.bottomBump(me.undermid, me);
   }
-  else if(me.under && me.under.bottomBump) me.under.bottomBump(me.under, me);
-  
+  else if(me.under && me.under.bottomBump) 
+    me.under.bottomBump(me.under, me);
 }
 
 // give solid a tag for overlap
