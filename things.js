@@ -19,8 +19,19 @@ function resetThings() {
         "group_types": "Array",
         "hit_checks": {
             "Character": {
-                "Solid": function() {},
-                "Character": function() {}
+                "Solid": characterTouchesSolid,
+                "Character": characterTouchesCharacter
+            }
+        },
+        "hit_functions": {
+            "Character": {
+                "Solid": characterHitsSolid,
+                "Character": characterHitsCharacter
+            }
+        },
+        "global_checks": {
+            "can_collide": function(thing) {
+                return thing.alive && !thing.scenery && !thing.nocollide;
             }
         }
     });

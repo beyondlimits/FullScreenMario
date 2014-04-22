@@ -43,7 +43,7 @@ function step(num) {
 }
 
 function fastforward(num) {
-  window.speed = max(0, parseInt(num || 0)) + 1;
+  GamesRunner.setSpeed(num);
 }
 
 function toggleFastFWD(num) {
@@ -288,7 +288,7 @@ function determineThingCollisions(me) {
     if(me.undermid.bottomBump)
       me.undermid.bottomBump(me.undermid, me);
   }
-  else if(me.under && me.under.bottomBump) 
+  else if(me.under && me.under.bottomBump)
     me.under.bottomBump(me.under, me);
 }
 
@@ -334,6 +334,60 @@ function characterOverlapsSolid(me, solid) {
   return me.top <= solid.top && me.bottom > solid.bottom;
 }
 
+
+/* Object Collision Detection (new)
+*/
+
+/**
+ * Generic base function to check if one thing is touching another
+ * This will be called by the more specific thing touching functions
+ * 
+ * @param {Thing} thing
+ * @param {Thing} other
+ * @return {Boolean}
+ * @remarks Only the horizontal checks use unitsize
+ */
+function thingTouchesThing(thing, other) {
+    return thing.right - unitsize > other.left
+            && thing.left + unitsize < other.right
+            && thing.bottom >= other.top
+            && thing.top <= other.bottom
+}
+
+/**
+ *
+ */
+function characterTouchesSolid(thing, other) {
+   
+    return thingTouchesThing(thing, other);
+}
+
+/**
+ *
+ */
+function characterTouchesCharacter(thing, other) {
+    
+    return thingTouchesThing(thing, other);
+}
+
+/**
+ *
+ */
+function characterHitsSolid(thing, other) {
+    console.log("Character", thing.title, "hits character", other.title);
+}
+
+/**
+ *
+ */
+function characterHitsCharacter(thing, other) {
+    console.log("Character", thing.title, "hits solid", other.title);
+}
+
+/* Object Collision Detection (old)
+*/
+
+// Generic objectsTouch
 // Purposefully only looks at toly; horizontal uses 1 unitsize
 function objectsTouch(one, two) {
   if(one.right - unitsize > two.left && one.left + unitsize < two.right)
