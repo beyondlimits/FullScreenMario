@@ -61,7 +61,9 @@ function maintainCharacters(update) {
     updatePosition(character);
     QuadsKeeper.determineThingQuadrants(character);
     character.under = character.undermid = false;
-    determineThingCollisions(character);
+    // determineThingCollisions(character);
+    ThingHitter.getGroupHolder().setCharacterGroup(characters);
+    ThingHitter.checkHitsOfOne(character);
     
     // Resting tests
     if(character.resting) {

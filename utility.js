@@ -243,54 +243,6 @@ function increaseHeightTop(me, dy, spriter) {
 /*
  * Collisions
  */
-function determineThingCollisions(me) {
-  if(me.nocollide) return;
-  else if(!me.resting || me.resting.yvel == 0) me.resting = false;
-  
-  // Cur is each quadrant this object is in, and other is each other object in them.
-  var cur, others, other, contents,
-      i, j, leni, lenj;
-  
-  // Unless directed not to, make sure this doesn't overlap anything
-  // Overlaps are actually added a few lines down, under collisions for solids
-  if(!me.skipoverlaps) checkOverlap(me);
-  
-  // For each quadrant the thing is in:
-  for(i = 0, leni = me.numquads; i < leni; ++i) {
-    cur = me.quadrants[i];
-    others = cur.things;
-    // For each other thing in that quadrant:
-    for(j = 0, lenj = cur.numthings; j < lenj; ++j) {
-      other = others[j];
-      
-      if(me == other) break; // breaking prevents double collisions
-      if(!other.alive || other.scenery || other.nocollide) continue; // not removed in upkeep
-      
-      // The .hidden check is required. Try the beginning of 2-1 without it.
-      // visual_scenery is also necessary because of Pirhanas (nothing else uses that)
-      if(objectsTouch(me, other) && (me.player || (!other.hidden || !(other.visual_scenery && other.visual_scenery.hidden)) || solidOnCharacter(other, me))) {
-        // Collisions for characters are simple
-        if(other.character)
-          // if(charactersTouch(me, other))
-            objectsCollided(me, other);
-        
-        // Collisions for solids, slightly less so (overlaps)
-        else if(!me.nocollidesolid) {
-          objectsCollided(me, other);
-          if(!me.skipoverlaps && !other.skipoverlaps && characterOverlapsSolid(me, other))
-            me.overlaps.push(other);
-        }
-      }
-    }
-  }
-  
-  if(me.undermid) {
-    if(me.undermid.bottomBump)
-      me.undermid.bottomBump(me.undermid, me);
-  }
-  else if(me.under && me.under.bottomBump)
-    me.under.bottomBump(me.under, me);
-}
 
 // give solid a tag for overlap
 // remove tag when overlaps = []
@@ -330,13 +282,20 @@ function checkOverlap(me) {
     }
   }
 }
-function characterOverlapsSolid(me, solid) {
-  return me.top <= solid.top && me.bottom > solid.bottom;
-}
 
 
 /* Object Collision Detection (new)
 */
+
+/**
+ * Generic checker for can_collide, used for both Solids and Characters
+ * 
+ * @param {Thing} thing
+ * @return {Boolean}
+ */
+function thingCanCollide(thing) {
+    return thing.alive && !thing.nocollide;
+}
 
 /**
  * Generic base function to check if one thing is touching another
@@ -348,17 +307,22 @@ function characterOverlapsSolid(me, solid) {
  * @remarks Only the horizontal checks use unitsize
  */
 function thingTouchesThing(thing, other) {
-    return thing.right - unitsize > other.left
+    return !thing.nocollide && !other.nocollide
+            && thing.right - unitsize > other.left
             && thing.left + unitsize < other.right
             && thing.bottom >= other.top
-            && thing.top <= other.bottom
+            && thing.top <= other.bottom;
 }
 
 /**
  *
  */
 function characterTouchesSolid(thing, other) {
-   
+    // Hidden solids can only be touched by the player bottom-bumping them
+    if(other.hidden) {
+        return thing.player && solidOnCharacter(other, thing);
+    }
+    
     return thingTouchesThing(thing, other);
 }
 
@@ -371,60 +335,64 @@ function characterTouchesCharacter(thing, other) {
 }
 
 /**
- *
+ * // thing = character
+ * // other = solid
  */
 function characterHitsSolid(thing, other) {
-    console.log("Character", thing.title, "hits character", other.title);
+    // "Up" solids are special (they kill things that aren't their .up)
+    if(other.up && thing !== other.up) {
+        return characterTouchesUp(thing, other);
+    }
+    
+    // Normally, call the generic ~TouchedSolid function
+    (other.collide || characterTouchedSolid)(thing, other);
+    
+    // If the solid overlaps this thing, add it to the overlaps array
+    if(!thing.skipoverlaps && !other.skipoverlaps 
+            && characterOverlapsSolid(thing, other)) {
+        thing.overlaps.push(other);
+    }
+    
+    // If a character is bumping into the bottom, call that
+    if(thing.undermid) {
+        if(thing.undermid.bottomBump) {
+            thing.undermid.bottomBump(thing.undermid, thing);
+        }
+    }
+    else if(thing.under && thing.under.bottomBump) {
+        thing.under.bottomBump(thing.under, thing);
+    }
 }
 
 /**
- *
+ * 
  */
 function characterHitsCharacter(thing, other) {
-    console.log("Character", thing.title, "hits solid", other.title);
+    // console.log("Character", thing.title, "hits solid", other.title);
+    // The player calls the other's collide function, such as playerStar
+    if(thing.player) {
+        if(other.collide) {
+            return other.collide(thing, other);
+        }
+    }
+    // Otherwise just use thing's collide function
+    else if(thing.collide) {
+        thing.collide(other, thing);
+    }
 }
+
+/**
+ * 
+ */
+function characterOverlapsSolid(thing, other) {
+  return thing.top <= other.top && thing.bottom > other.bottom;
+}
+
 
 /* Object Collision Detection (old)
 */
 
-// Generic objectsTouch
-// Purposefully only looks at toly; horizontal uses 1 unitsize
-function objectsTouch(one, two) {
-  if(one.right - unitsize > two.left && one.left + unitsize < two.right)
-    if(one.bottom >= two.top && one.top <= two.bottom)
-      return true;
-  return false;
-}
-// Used to double-check objectsTouch
-function charactersTouch(one, two) {
-  if(one.bottom <= two.top + unitsizet2 || one.top + unitsizet2 >= two.bottom) return false;
-  return true;
-}
 // No tolerance! Just unitsize.
-function objectInQuadrant(one, quad) {
-  if(one.right + unitsize >= quad.left && one.left - unitsize <= quad.right)
-    if(one.bottom + unitsize >= quad.top && one.top - unitsize <= quad.bottom)
-      return true;
-  return false;
-}
-
-function objectsCollided(one, two) {
-  // Assume that if there's a solid, it's two. (solids don't collide with each other)
-  if(one.solid) {
-    if(!two.solid) return objectsCollided(two, one);
-  }
-  
-  // Up solids are special
-  if(two.up && one != two.up) return characterTouchesUp(one, two);
-  
-  // Otherwise, regular collisions
-  if(two.solid || one.player) {
-    if(two.collide)
-      two.collide(one, two);
-  }
-  else if(one.collide)
-    one.collide(two, one);
-}
 
 // Sees whether one's midpoint is to the left of two's
 function objectToLeft(one, two) {
@@ -471,7 +439,7 @@ function characterOnResting(me, solid) {
 }
 
 function characterTouchedSolid(me, solid) {
-  if(solid.up == me) return;
+  if(solid.up === me) return;
   
   // Me on top of the solid
   if(characterOnSolid(me, solid)) {
@@ -838,7 +806,6 @@ function blockBumpMovement(me) {
       clearInterval(move);
       me.up = false;
     }
-    determineThingCollisions(me); // for coins
   }, timer);
 }
 

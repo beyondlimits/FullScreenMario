@@ -25,9 +25,15 @@ function ThingHittr(settings) {
         // E.x. ["character"] = { "solid": function(a,b) {...} }
         hit_functions,
         
+        // Container for functions to check and react to objects having overlaps
+        overlap_functions,
+        
         // Global check functions, such as can_collide
         global_checks;
     
+    /**
+     * 
+     */
     self.reset = function(settings) {
         // Get the main containers from settings, or make new ones if necessary
         GroupHolder = settings.GroupHolder || new GroupHoldr(settings);
@@ -40,34 +46,43 @@ function ThingHittr(settings) {
         hit_checks = settings.hit_checks;
         hit_check_keys = Object.keys(hit_checks);
         
-        // Collision functions should be givein in the settings
-        hit_functions = settings.hit_functions;
+        // Collision functions should be given in the settings
         if(!settings.hit_functions) {
             throw new Error("No hit_functions given to ThingHittr");
         }
+        hit_functions = settings.hit_functions;
         
-        // The only required global check is can_collide, so far
+        // Overlap functions may be given in the settings
+        overlap_functions = settings.overlap_functions || {};
+        
+        // Global checks should be given in the settings
         if(!settings.global_checks) {
             throw new Error("No global_checks given to ThingHittr");
         }
         global_checks = settings.global_checks;
-        if(!global_checks.can_collide) {
-            throw new Error("No can_collide given in ThingHittr.global_checks");
-        }
     };
     
     
     /* Simple gets
     */
     
+    /**
+     * 
+     */
     self.getGroupHolder = function() {
         return GroupHolder;
     }
     
+    /**
+     * 
+     */
     self.getQuadsKeeper = function() {
         return QuadsKeeper;
     }
     
+    /**
+     * 
+     */
     self.getHitChecks = function(a, b) {
         switch(arguments.length) {
             case 0:
@@ -83,18 +98,32 @@ function ThingHittr(settings) {
     /* Runtime
     */
     
+    /**
+     * 
+     */
     self.checkHits = function() {
         hit_check_keys.forEach(self.checkHitsOfGroup);
     };
     
+    /**
+     * 
+     */
     self.checkHitsOfGroup = function(type) {
         GroupHolder["get" + type + "Group"]().forEach(self.checkHitsOfOne);
         
     }
     
+    /**
+     * 
+     */
     self.checkHitsOfOne = function(thing, id) {
         var others, other,
             i, j;
+         
+        // Don't do anything if the thing shouldn't be checking
+        if(!global_checks[thing.grouptype].can_collide(thing)) {
+            return;
+        }
         
         // For each quadrant this is in, find each other thing in that quadrant
         for(i = 0; i < thing.numquads; ++i) {
@@ -109,19 +138,22 @@ function ThingHittr(settings) {
                 
                 // Check whether a collision should be happening
                 tryCollision(hit_checks[thing.grouptype][other.grouptype]
-                        , thing, other);
+                        , thing, other, id);
             }
         }
     }
     
-    function tryCollision(hit_check, thing, other) {
+    /**
+     * 
+     */
+    function tryCollision(hit_check, thing, other, id) {
         // If there's no hit_checks[~][~], hit_check will be falsy, so skip it
         if(!hit_check) {
             return;
         }
         
         // Also do nothing if these two shouldn't be colliding
-        if(!global_checks.can_collide(other)) {
+        if(!global_checks[other.grouptype].can_collide(other)) {
             return;
         }
         
@@ -130,9 +162,6 @@ function ThingHittr(settings) {
             hit_functions[thing.grouptype][other.grouptype](thing, other);
         }
     }
-    
-    // upkeepjs::maintainCharacters -> utility.js::determineThingCollisions
-    
     
     self.reset(settings || {});
 }

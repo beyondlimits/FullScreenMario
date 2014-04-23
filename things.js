@@ -30,8 +30,12 @@ function resetThings() {
             }
         },
         "global_checks": {
-            "can_collide": function(thing) {
-                return thing.alive && !thing.scenery && !thing.nocollide;
+            "Character": {
+                "can_collide": thingCanCollide,
+                "after_collide": checkOverlap
+            },
+            "Solid": {
+                "can_collide": thingCanCollide
             }
         }
     });
@@ -383,7 +387,8 @@ function resetThings() {
               repeat: true,
               solid: true,
               nocollidesolid: true,
-              collide: characterTouchedSolid
+              collide: characterTouchedSolid,
+              skipoverlaps: true
           },
           Brick: {
               bottomBump: brickBump
@@ -472,7 +477,7 @@ function resetThings() {
               spritewidth: 4
           },
           detector: {
-              hidden: true
+              // hidden: true
           },
           DetectCollision: {
               collide: onDetectorCollision
@@ -1677,7 +1682,7 @@ function movePlayerVine(me) {
   var attached = me.attached;
   if(me.bottom < attached.top) return unattachPlayer(me);
   if(me.keys.run == me.attachoff) {
-    while(objectsTouch(me, attached))
+    while(thingTouchesThing(me, attached))
       shiftHoriz(me, me.keys.run, true);
     return unattachPlayer(me);
   }
@@ -1903,38 +1908,7 @@ function gameRestart() {
  * Solids
  */
 
-function Floor(me, length, height) {
-  // log(arguments);
-  me.width = (length || 1) * 8;
-  me.height = (height * 8) || unitsizet32;
-  me.spritewidth = 8;
-  me.spriteheight = 8;
-  me.repeat = true;
-  setSolid(me, "floor");
-}
 
-// To do: stop using clouds, and use Stone instead
-function Clouds(me, length) {
-  me.width = length * 8;
-  me.height = 8;
-  setSolid(me, "clouds");
-}
-
-function Brick(me, content) {
-  me.width = me.height = 8;
-  me.used = false;
-  me.bottomBump = brickBump;
-  if(!content) me.contents = false;
-  else {
-    if(content instanceof Array) {
-      me.contents = content;
-      while(me.contents.length < 3) me.contents.push(false);
-    } else me.contents = [content, false, false];
-  }
-  me.death = killNormal;
-  setSolid(me, "brick unused");
-  me.tolx = 1;
-}
 function brickBump(me, character) {
   if(me.up || !character.player) return;
   AudioPlayer.play("Bump");
@@ -2094,7 +2068,7 @@ function springPlayerInit(spring, player) {
 }
 function movePlayerSpringDown(me) {
   // If you've moved off the spring, get outta here
-  if(!objectsTouch(me, me.spring)) {
+  if(!thingTouchesThing(me, me.spring)) {
     me.movement = movePlayer;
     me.spring.movement = moveSpringUp;
     me.spring = false;
@@ -2117,7 +2091,7 @@ function movePlayerSpringDown(me) {
   updateSize(me.spring);
 }
 function movePlayerSpringUp(me) {
-  if(!me.spring || !objectsTouch(me, me.spring)) {
+  if(!me.spring || !thingTouchesThing(me, me.spring)) {
     me.spring = false;
     me.movement = movePlayer;
   }
@@ -2302,6 +2276,7 @@ function detachPlayer(me) {
 }
 
 function FlagCollisionTop(me, detector) {
+  console.log("Found", me);
   AudioPlayer.pause();
   AudioPlayer.play("Flagpole");
   
@@ -2608,6 +2583,7 @@ function collideLocationShifter(me, shifter) {
 }
 // Functions used for ObjectMakr-style detectors
 function onDetectorCollision(character, me) {
+    console.log("ha");
   if(!character.player) {
     if(me.activate_fail) me.activate_fail(character);
     return;
