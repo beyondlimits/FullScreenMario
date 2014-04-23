@@ -385,11 +385,12 @@ function getAreaFillStyle(setting) {
 }
 
 function endLevel() {
-  if(currentmap[1]++ == 4) {
-    ++currentmap[0];
-    currentmap[1] = 1;
-  }
-  setMap(currentmap);
+    var currentmap = MapsManager.getMapName();
+    if(currentmap[1]++ == 4) {
+        ++currentmap[0];
+        currentmap[1] = 1;
+    }
+    setMap(currentmap);
 }
 
 
@@ -458,7 +459,7 @@ function makeEndCastleOutside(reference) {
   // Output starts off with the general flag & collision detection
   output = [
     // Initial collision detector
-    { thing: "DetectCollision",  x: x + 8, y: y + 108, height: 108, activate: FlagCollisionTop, activate_fail: killNormal },
+    { thing: "DetectCollision", x: x + 8, y: y + 108, height: 108, activate: FlagCollisionTop, activate_fail: killNormal },
     // Flag (scenery)
     { thing: "Flag", x: x + .5, y: y + 79.5, "id": "endflag" },
     { thing: "FlagTop", x: x + 6.5, y: y + 84 },
