@@ -5,37 +5,12 @@
  
 // Expensive - use only on clearing
 function clearAllTimeouts() {
-  var id = setTimeout(function() {});
-  while(id--) clearTimeout(id);
+  return FSM.functions.utilities.clearAllTimeouts();
 }
 
 // Width and height are given as number of pixels (to scale; unitsize) 
-function getCanvas(width, height, stylemult) {
-  var canv = createElement("canvas", {
-    width: width,
-    height: height
-  });
-  
-  // If necessary, make this thing's visual style
-  if(stylemult) {
-    // stylemult is 1 by default, but may be something else (typically unitsize)
-    stylemult = stylemult || unitsize;
-    proliferate(canv.style, {
-      width: (width * stylemult) + "px",
-      height: (height * stylemult) + "px"
-    });
-  }
-  
-  // For speed's sake, disable all image smoothing
-  proliferate(canv.getContext("2d"), {
-    "imageSmoothingEnabled":  false,
-    "webkitImageSmoothingEnabled": false,
-    "mozImageSmoothingEnabled": false,
-    "msImageSmoothingEnabled": false,
-    "oImageSmoothingEnabled": false
-  });
-  
-  return canv;
+function getCanvas(width, height, multiplier) {
+    return FSM.functions.html.getCanvas(width, height, multiplier);
 }
 
 function step(num) {
@@ -132,265 +107,102 @@ function shiftBoth(me, dx, dy) {
   if(!me.noshifty) shiftVert(me, dy);
 }
 function shiftHoriz(me, dx) {
-  me.left += dx;
-  me.right += dx;
+    FSM.functions.physics.shiftHoriz(me, dx);
 }
 function shiftVert(me, dy) {
-  me.top += dy;
-  me.bottom += dy;
+    FSM.functions.physics.shiftVert(me, dy);
 }
 function setLeft(me, left) {
-  me.left = left;
-  me.right = me.left + me.width * unitsize;
+    FSM.functions.physics.setLeft(me, left);
 }
 function setRight(me, right) {
-  me.right = right;
-  me.left = me.right - me.width * unitsize;
+    FSM.functions.physics.setRight(me, right);
 }
 function setTop(me, top) {
-  me.top = top;
-  me.bottom = me.top + me.height * unitsize;
+    FSM.functions.physics.setTop(me, top);
 }
 function setBottom(me, bottom) {
-  me.bottom = bottom;
-  me.top = me.bottom - me.height * unitsize;
+    FSM.functions.physics.setBottom(me, bottom);
 }
 function setWidth(me, width, spriter, updater) {
-  me.width = width;
-  me.unitwidth = width * unitsize;
-  if(spriter) {
-    me.spritewidth = width;
-    me.spritewidthpixels = width * unitsize;
-  }
-  if(updater) {
-    updateSize(me);
-    setThingSprite(me);
-  }
+    FSM.functions.physics.setWidth(me, width, spriter, updater);
 }
 function setHeight(me, height, spriter, updater) {
-  me.height = height;
-  me.unitheight = height * unitsize;
-  if(spriter) {
-    me.spriteheight = height;
-    me.spriteheightpixels = height * unitsize;
-  }
-  if(updater) {
-    updateSize(me);
-    setThingSprite(me);
-  }
+    FSM.functions.physics.setWidth(me, height, spriter, updater);
 }
 function setSize(me, width, height, spriter, updater) {
-  if(width) setWidth(me, width, spriter);
-  if(height) setHeight(me, height, spriter);
-  if(updater) {
-    updateSize(me);
-    setThingSprite(me);
-  }
+    FSM.functions.physics.setSize(me, width, height, spriter, updater);
 }
-function setMidX(me, left) {
-  setLeft(me, left + me.width * unitsized2);
+function setMidX(me, x) {
+    FSM.functions.physics.setMidX(me, x);
 }
-function setMidY(me, top) {
-  setTop(me, top + me.height * unitsized2);
+function setMidY(me, y) {
+    FSM.functions.physics.setMidY(me, y);
 }
 function getMidX(me) {
-  return me.left + me.width * unitsized2;
+    return FSM.functions.physics.getMidX(me);
 }
 function getMidY(me) {
-  return me.top + me.height * unitsized2;
+    return FSM.functions.physics.getMidY(me);
 }
 function setMidXObj(me, object) {
-  setLeft(me, (object.left + object.width * unitsized2) - (me.width * unitsized2));
+    FSM.functions.physics.setMidXObj(me, object);
 }
-function setMidXObj(me, object) {
-  setLeft(me, (object.left + object.width * unitsized2) - (me.width * unitsized2));
+function setMidYObj(me, object) {
+    FSM.functions.physics.setMidYObj(me, object);
 }
 function slideToXLoc(me, xloc, maxspeed) {
-  maxspeed = maxspeed || Infinity;
-  var midx = getMidX(me);
-  if(midx < xloc) {
-    // Me is the left
-    shiftHoriz(me, min(maxspeed, (xloc - midx)));
-  } else {
-    // Me is the right
-    shiftHoriz(me, max(-maxspeed, (xloc - midx)));
-  }
+    FSM.functions.physics.slideToX(me, xloc, maxspeed); 
 }
 function updateLeft(me, dx) {
-  me.left += dx;
-  me.right = me.left + me.width * unitsize;
+    FSM.functions.physics.updateLeft(me, dx);
 }
 function updateRight(me, dx) {
-  me.right += dx;
-  me.left = me.right - me.width * unitsize;
+    FSM.functions.physics.updateRight(me, dx);
 }
 function updateTop(me, dy) {
-  me.top += dy;
-  me.bottom = me.top + me.height * unitsize;
+    FSM.functions.physics.updateTop(me, dy);
 }
 function updateBottom(me, dy) {
-  me.bottom += dy;
-  me.top = me.bottom - me.height * unitsize;
+    FSM.functions.physics.updateBottom(me, dy);
 }
 // Increases the height, keeping the bottom the same
 // dy comes in as factored for unitsize... e.g. increaseHeightTop(me, unitsized4)
-function increaseHeightTop(me, dy, spriter) {
-  me.top -= dy;
-  me.height += dy / unitsize;
-  me.unitheight = me.height * unitsize;
+function increaseHeightTop(me, dy) {
+    FSM.functions.physics.increaseHeight(me, dy);
 }
 
 /*
  * Collisions
  */
 
-// give solid a tag for overlap
-// remove tag when overlaps = []
-function checkOverlap(me) {
-  if(me.overlapdir) {
-    if((me.overlapdir < 0 && me.right <= me.ocheck.left + unitsizet2)
-        || me.left >= me.ocheck.right - unitsizet2) {
-      me.overlapdir = 0;
-      me.overlaps = [];
-    }
-    else shiftHoriz(me, me.overlapdir, true);
-  }
-  else if(me.overlaps.length > 0) {
-    // mid = me.omid is the midpoint of what is being overlapped
-    var overlaps = me.overlaps,
-        right = {right: -Infinity},
-        left = {left: Infinity}, 
-        mid = 0, over,
-        i;
-    me.overlapfix = true;
-    
-    for(i in overlaps) {
-      over = overlaps[i];
-      mid += getMidX(over);
-      if(over.right > right.right) right = over;
-      if(over.left < left.left) left = over;
-    }
-    mid /= overlaps.length;
-    if(getMidX(me) >= mid - unitsized16) {
-      // To the right of the middle: travel until past right
-      me.overlapdir = unitsize;
-      me.ocheck = right;
-    } else {
-      // To the left of the middle: travel until past left
-      me.overlapdir = -unitsize;
-      me.ocheck = left;
-    }
-  }
-}
-
-
 /* Object Collision Detection (new)
 */
 
-/**
- * Generic checker for can_collide, used for both Solids and Characters
- * 
- * @param {Thing} thing
- * @return {Boolean}
- */
 function thingCanCollide(thing) {
     return thing.alive && !thing.nocollide;
 }
 
-/**
- * Generic base function to check if one thing is touching another
- * This will be called by the more specific thing touching functions
- * 
- * @param {Thing} thing
- * @param {Thing} other
- * @return {Boolean}
- * @remarks Only the horizontal checks use unitsize
- */
 function thingTouchesThing(thing, other) {
-    return !thing.nocollide && !other.nocollide
-            && thing.right - unitsize > other.left
-            && thing.left + unitsize < other.right
-            && thing.bottom >= other.top
-            && thing.top <= other.bottom;
+    return FSM.functions.collisions.thingTouchesThing(thing, other);
 }
 
-/**
- *
- */
 function characterTouchesSolid(thing, other) {
-    // Hidden solids can only be touched by the player bottom-bumping them
-    if(other.hidden) {
-        return thing.player && solidOnCharacter(other, thing);
-    }
-    
-    return thingTouchesThing(thing, other);
+    return FSM.functions.collisions.characterTouchesSolid(thing, other);
 }
 
-/**
- *
- */
 function characterTouchesCharacter(thing, other) {
-    
-    return thingTouchesThing(thing, other);
+    return FSM.functions.collisions.characterTouchesCharacter(thing, other);
 }
 
-/**
- * // thing = character
- * // other = solid
- */
 function characterHitsSolid(thing, other) {
-    // "Up" solids are special (they kill things that aren't their .up)
-    if(other.up && thing !== other.up) {
-        return characterTouchesUp(thing, other);
-    }
-    
-    // Normally, call the generic ~TouchedSolid function
-    (other.collide || characterTouchedSolid)(thing, other);
-    
-    // If the solid overlaps this thing, add it to the overlaps array
-    if(!thing.skipoverlaps && !other.skipoverlaps 
-            && characterOverlapsSolid(thing, other)) {
-        thing.overlaps.push(other);
-    }
-    
-    // If a character is bumping into the bottom, call that
-    if(thing.undermid) {
-        if(thing.undermid.bottomBump) {
-            thing.undermid.bottomBump(thing.undermid, thing);
-        }
-    }
-    else if(thing.under && thing.under.bottomBump) {
-        thing.under.bottomBump(thing.under, thing);
-    }
+    return FSM.functions.collisions.characterHitsSolid(thing, other);
 }
 
-/**
- * 
- */
 function characterHitsCharacter(thing, other) {
-    // console.log("Character", thing.title, "hits solid", other.title);
-    // The player calls the other's collide function, such as playerStar
-    if(thing.player) {
-        if(other.collide) {
-            return other.collide(thing, other);
-        }
-    }
-    // Otherwise just use thing's collide function
-    else if(thing.collide) {
-        thing.collide(other, thing);
-    }
+    return FSM.functions.collisions.characterHitsCharacter(thing, other);
 }
 
-/**
- * 
- */
-function characterOverlapsSolid(thing, other) {
-  return thing.top <= other.top && thing.bottom > other.bottom;
-}
-
-
-/* Object Collision Detection (old)
-*/
 
 // No tolerance! Just unitsize.
 

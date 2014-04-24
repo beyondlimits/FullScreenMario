@@ -32,7 +32,6 @@ function resetThings() {
         "global_checks": {
             "Character": {
                 "can_collide": thingCanCollide,
-                "after_collide": checkOverlap
             },
             "Solid": {
                 "can_collide": thingCanCollide
@@ -151,7 +150,6 @@ function resetThings() {
               maxquads:  4,
               quadrants: new Array(4),
               outerok:   false,
-              overlaps:  [],
               // Sprites
               sprite:      "",
               sprite_type: "neither",
@@ -359,7 +357,6 @@ function resetThings() {
               width: 4,
               height: 4,
               nocollide: true,
-              skipoverlaps: true,
               movement: false,
               spriteCycle: [
                   [unflipHoriz, flipHoriz]
@@ -388,7 +385,6 @@ function resetThings() {
               solid: true,
               nocollidesolid: true,
               collide: characterTouchedSolid,
-              skipoverlaps: true
           },
           Brick: {
               bottomBump: brickBump
@@ -613,9 +609,6 @@ function addThing(me, left, top) {
   
   // It may need to react to this, such as sprite cycles and CastleBlock.makeCastleBlock
   if(me.onadding) me.onadding(me);
-  
-  // Hidden items (like 1-1's block) should't have horizontal overlap checking
-  if(me.hidden) me.skipoverlaps = true;
   
   PixelDrawer.setThingSprite(me);
   window["last_" + (me.title || me.group || "unknown")] = me;
@@ -1540,6 +1533,8 @@ function movePlayer(me) {
     if(me.power != 1) {
       me.crouching = true;
       addClass(me, "crouching");
+      // setHeight(player, 11);
+      setHeight(player, 11, false, true);
       me.height = 11;
       me.tolyold = me.toly;
       me.toly = unitsizet4;
@@ -1719,7 +1714,7 @@ function unattachPlayer(me) {
   me.movement = movePlayer;//me.movementsave;
   removeClasses(me, "climbing", "animated");
   TimeHandler.clearClassCycle(me, "climbing");
-  me.yvel = me.skipoverlaps = me.attachoff = me.nofall = me.climbing = me.attached = me.attached.attached = false;
+  me.yvel = me.attachoff = me.nofall = me.climbing = me.attached = me.attached.attached = false;
   me.xvel = me.keys.run;
 }
 
@@ -1983,7 +1978,7 @@ function blockBump(me, character) {
     return;
   }
   me.used = 1;
-  me.hidden = me.hidden = me.skipoverlaps = false;
+  me.hidden = me.hidden = false;
   me.up = character;
   blockBumpMovement(me);
   removeClass(me, "hidden");
@@ -2031,7 +2026,7 @@ function touchVine(me, vine) {
   vine.attached = me;
   
   me.attached = vine;
-  me.nofall = me.skipoverlaps = true;
+  me.nofall = true;
   me.xvel = me.yvel = me.resting = me.jumping = me.jumpcount = me.running = 0;
   me.attachleft = !objectToLeft(me, vine);
   me.attachoff = me.attachleft * 2 - 1;
@@ -2171,7 +2166,7 @@ function castleBlockEvent(me) {
 // Set to solids because they spawn with their CastleBlocks
 function CastleFireBall(me, distance) {
   me.width = me.height = 4;
-  me.deadly = me.nofire = me.nocollidechar = me.nocollidesolid = me.nofall = me.nostar = me.outerok = me.skipoverlaps = true;
+  me.deadly = me.nofire = me.nocollidechar = me.nocollidesolid = me.nofall = me.nostar = me.outerok = true;
   me.movement = false;
   me.collide = collideEnemy;
   setCharacter(me, "fireball castle");
