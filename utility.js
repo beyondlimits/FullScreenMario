@@ -5,12 +5,12 @@
  
 // Expensive - use only on clearing
 function clearAllTimeouts() {
-  return FSM.functions.utilities.clearAllTimeouts();
+  return FSM.utility.clearAllTimeouts();
 }
 
 // Width and height are given as number of pixels (to scale; unitsize) 
 function getCanvas(width, height, multiplier) {
-    return FSM.functions.html.getCanvas(width, height, multiplier);
+    return FSM.html.getCanvas(width, height, multiplier);
 }
 
 function step(num) {
@@ -19,17 +19,6 @@ function step(num) {
 
 function fastforward(num) {
   GamesRunner.setSpeed(num);
-}
-
-function toggleFastFWD(num) {
-  if(!window.fastforwarding) {
-    fastforward(2);
-    window.fastforwarding = true;
-  }
-  else {
-    fastforward(0);
-    window.fastforwarding = false;
-  }
 }
 
 function specifyTimer(timerin) {
@@ -41,44 +30,12 @@ function specifyTimer(timerin) {
   };
 }
 
-function changeUnitsize(num) {
-  if(!num) return;
-  resetUnitsize(num);
-  
-  function setter(arr) {
-    for(i in arr) {
-      updateSize(arr[i]);
-      updatePosition(arr[i]);
-    }
-  }
-  
-  setter(solids);
-  setter(characters);
-}
-
-// num = 1 by default
-// 1 = floor(0->2) = 50% chance
-// 2 = floor(0->3) = 67% chance
-// 3 = floor(0->4) = 75% chance
-function randTrue(num) {
-  return floor(getSeed() * ((num || 1) + 1));
-  // return floor(random() * ((num || 1) + 1));
-}
-function randSign(num) {
-  return randTrue(num) * 2 - 1;
-}
-function randBoolJS(num) {
-  return floor(random() * 2);
-}
 
 /*
  * Basic object positioning helper functions
  */
 function updatePosition(me) {
-  // if(!me.nomove) shiftHoriz(me, me.xvel * realtime);
-  // if(!me.nofall) shiftVert(me, me.yvel * realtime);
-  if(!me.nomove) shiftHoriz(me, me.xvel);
-  if(!me.nofall) shiftVert(me, me.yvel);
+    FSM.physics.updatePosition(me);
 }
 function updateSize(me) {
   me.unitwidth = me.width * unitsize;
@@ -103,73 +60,70 @@ function reduceHeight(me, dy, see) {
   }
 }
 function shiftBoth(me, dx, dy) {
-  if(!me.noshiftx) shiftHoriz(me, dx);
-  if(!me.noshifty) shiftVert(me, dy);
+    FSM.physics.shiftBoth(me, dx, dy);
 }
 function shiftHoriz(me, dx) {
-    FSM.functions.physics.shiftHoriz(me, dx);
+    FSM.physics.shiftHoriz(me, dx);
 }
 function shiftVert(me, dy) {
-    FSM.functions.physics.shiftVert(me, dy);
+    FSM.physics.shiftVert(me, dy);
 }
 function setLeft(me, left) {
-    FSM.functions.physics.setLeft(me, left);
+    FSM.physics.setLeft(me, left);
 }
 function setRight(me, right) {
-    FSM.functions.physics.setRight(me, right);
+    FSM.physics.setRight(me, right);
 }
 function setTop(me, top) {
-    FSM.functions.physics.setTop(me, top);
+    FSM.physics.setTop(me, top);
 }
 function setBottom(me, bottom) {
-    FSM.functions.physics.setBottom(me, bottom);
+    FSM.physics.setBottom(me, bottom);
 }
 function setWidth(me, width, spriter, updater) {
-    FSM.functions.physics.setWidth(me, width, spriter, updater);
+    FSM.physics.setWidth(me, width, spriter, updater);
 }
 function setHeight(me, height, spriter, updater) {
-    FSM.functions.physics.setWidth(me, height, spriter, updater);
+    FSM.physics.setWidth(me, height, spriter, updater);
 }
 function setSize(me, width, height, spriter, updater) {
-    FSM.functions.physics.setSize(me, width, height, spriter, updater);
+    FSM.physics.setSize(me, width, height, spriter, updater);
 }
 function setMidX(me, x) {
-    FSM.functions.physics.setMidX(me, x);
+    FSM.physics.setMidX(me, x);
 }
 function setMidY(me, y) {
-    FSM.functions.physics.setMidY(me, y);
+    FSM.physics.setMidY(me, y);
 }
 function getMidX(me) {
-    return FSM.functions.physics.getMidX(me);
+    return FSM.physics.getMidX(me);
 }
 function getMidY(me) {
-    return FSM.functions.physics.getMidY(me);
+    return FSM.physics.getMidY(me);
 }
 function setMidXObj(me, object) {
-    FSM.functions.physics.setMidXObj(me, object);
+    FSM.physics.setMidXObj(me, object);
 }
 function setMidYObj(me, object) {
-    FSM.functions.physics.setMidYObj(me, object);
+    FSM.physics.setMidYObj(me, object);
 }
 function slideToXLoc(me, xloc, maxspeed) {
-    FSM.functions.physics.slideToX(me, xloc, maxspeed); 
+    FSM.physics.slideToX(me, xloc, maxspeed); 
 }
 function updateLeft(me, dx) {
-    FSM.functions.physics.updateLeft(me, dx);
+    FSM.physics.updateLeft(me, dx);
 }
 function updateRight(me, dx) {
-    FSM.functions.physics.updateRight(me, dx);
+    FSM.physics.updateRight(me, dx);
 }
 function updateTop(me, dy) {
-    FSM.functions.physics.updateTop(me, dy);
+    FSM.physics.updateTop(me, dy);
 }
 function updateBottom(me, dy) {
-    FSM.functions.physics.updateBottom(me, dy);
+    FSM.physics.updateBottom(me, dy);
 }
-// Increases the height, keeping the bottom the same
-// dy comes in as factored for unitsize... e.g. increaseHeightTop(me, unitsized4)
 function increaseHeightTop(me, dy) {
-    FSM.functions.physics.increaseHeight(me, dy);
+    FSM.physics.increaseHeight(me, dy);
 }
 
 /*
@@ -180,27 +134,27 @@ function increaseHeightTop(me, dy) {
 */
 
 function thingCanCollide(thing) {
-    return thing.alive && !thing.nocollide;
+    return FSM.collisions.thingCanCollide(thing);
 }
 
 function thingTouchesThing(thing, other) {
-    return FSM.functions.collisions.thingTouchesThing(thing, other);
+    return FSM.collisions.thingTouchesThing(thing, other);
 }
 
 function characterTouchesSolid(thing, other) {
-    return FSM.functions.collisions.characterTouchesSolid(thing, other);
+    return FSM.collisions.characterTouchesSolid(thing, other);
 }
 
 function characterTouchesCharacter(thing, other) {
-    return FSM.functions.collisions.characterTouchesCharacter(thing, other);
+    return FSM.collisions.characterTouchesCharacter(thing, other);
 }
 
 function characterHitsSolid(thing, other) {
-    return FSM.functions.collisions.characterHitsSolid(thing, other);
+    return FSM.collisions.characterHitsSolid(thing, other);
 }
 
 function characterHitsCharacter(thing, other) {
-    return FSM.functions.collisions.characterHitsCharacter(thing, other);
+    return FSM.collisions.characterHitsCharacter(thing, other);
 }
 
 
@@ -208,46 +162,25 @@ function characterHitsCharacter(thing, other) {
 
 // Sees whether one's midpoint is to the left of two's
 function objectToLeft(one, two) {
-  return (one.left + one.right) / 2 < (two.left + two.right) / 2;
+    return FSM.physics.objectToLeft(one, two);
 }
-/*
-  TO DO: Revamp these
-*/
+
 function objectOnTop(one, two) {
-  if(one.type == "solid" && two.yvel > 0) return false;
-  if(one.yvel < two.yvel && two.type != "solid") return false;
-  if(one.player && one.bottom < two.bottom && two.type == "enemy") return true;
-  return(  (one.left + unitsize < two.right && one.right - unitsize > two.left) && 
-  (one.bottom - two.yvel <= two.top + two.toly || one.bottom <= two.top + two.toly + abs(one.yvel - two.yvel)));
+    return FSM.collisions.thingOnTop(one, two);
 }
 // Like objectOnTop, but more specifically used for characterOnSolid and characterOnResting
 function objectOnSolid(one, two) {
-  return(
-    ( one.left + unitsize < two.right &&
-      one.right - unitsize > two.left )
-    && 
-    ( one.bottom - one.yvel <= two.top + two.toly || 
-      one.bottom <= two.top + two.toly + abs(one.yvel - two.yvel) )
-  );
+    return FSM.collisions.thingOnSolid(one, two);
 }
 function solidOnCharacter(solid, me) {
-  if(me.yvel >= 0) return false;
-  me.midx = getMidX(me);
-  return me.midx > solid.left && me.midx < solid.right && 
-  (solid.bottom - solid.yvel <= me.top + me.toly - me.yvel);
+    return FSM.collisions.solidOnCharacter(solid, me);
 }
-// This would make the smart koopas stay on the edges more intelligently
 // Can't use objectOnTop for this, else Player will walk on walls.
 function characterOnSolid(me, solid) {
-  return (me.resting == solid || (objectOnSolid(me, solid) && me.yvel >= 0 &&
-    me.left + me.xvel + unitsize != solid.right && me.right - me.xvel - unitsize != solid.left));
-    // me.left - me.xvel + unitsize != solid.right && me.right + me.xvel - unitsize != solid.left));
-    // me.left - me.xvel + unitsize != solid.right && me.right - me.xvel - unitsize != solid.left));
+    return FSM.collisions.characterOnSolid(me, solid);
 }
 function characterOnResting(me, solid) {
-  return objectOnSolid(me, solid) &&
-    // me.left - me.xvel + unitsize != solid.right && me.right - me.xvel - unitsize != solid.left;
-    me.left + me.xvel + unitsize != solid.right && me.right - me.xvel - unitsize != solid.left;
+    return FSM.collisions.characterOnResting(me, solid);
 }
 
 function characterTouchedSolid(me, solid) {
@@ -392,90 +325,56 @@ function scoreEnemyFin(enemy, amount) {
  */
 
 function moveSimple(me) {
-  if(me.direction != me.moveleft) {
-    if(me.moveleft) {
-      me.xvel = -me.speed;
-      if(!me.noflip) unflipHoriz(me);
-    } else {
-      if(!me.noflip) flipHoriz(me);
-      me.xvel = me.speed; 
-    }
-    me.direction = me.moveleft;
-  }
+    FSM.movement.moveSimple(me);
 }
 
 function moveSmart(me) {
-  moveSimple(me);
-  
-  // If this is resting, it's the same as moveSimple
-  if(!me.resting) return;
-  
-  if(me.moveleft) {
-    if(me.left + unitsize > me.resting.left) return;
-    else shiftHoriz(me, unitsize, true);
-  }
-  else {
-    if(me.right - unitsize < me.resting.right) return;
-    else shiftHoriz(me, -unitsize, true);
-  }
-  me.moveleft = !me.moveleft;
-  
-  // if(me.yvel == 0 && (!me.resting || (offResting(me)))) {
-    // if(me.moveleft) shiftHoriz(me, unitsize, true);
-    // else shiftHoriz(me, -unitsize, true);
-    // me.moveleft = !me.moveleft;
-  // }
-}
-function offResting(me) {
-  if(me.moveleft) return me.right - unitsize < me.resting.left;
-  else return me.left + unitsize > me.resting.right;
+    FSM.movement.moveSmart(me);
 }
 
 function moveJumping(me) {
-  moveSimple(me);
-  if(me.resting) {
-    me.yvel = -abs(me.jumpheight);
-    me.resting = false;
-  }
+    FSM.movement.moveJumping(me);
 }
 
 // Floating: the vertical version
 // Example usage on World 1-3
 // [moveFloating, 30, 72] slides up and down between 30 and 72
 function moveFloating(me) {
-  setPlatformEndpoints(me);
-  me.begin = map_settings.floor * unitsize - me.begin;
-  me.end = map_settings.floor * unitsize - me.end;
-  (me.movement = moveFloatingReal)(me);
+    FSM.movement.moveFloating(me);
 }
 function moveFloatingReal(me) {
-  if(me.top < me.end)
-    me.yvel = min(me.yvel + unitsized32, me.maxvel);
-  else if(me.bottom > me.begin)
-    me.yvel = max(me.yvel - unitsized32, -me.maxvel);
-  movePlatformNorm(me);
+    FSM.movement.moveFloatingReal(me);
 }
 // Sliding: the horizontal version
 // Example usage on World 3-3
 // [moveSliding, 228, 260] slides back and forth between 228 and 260
 function moveSliding(me) {
-  setPlatformEndpoints(me);
-  (me.movement = moveSlidingReal)(me);
+    FSM.movement.moveSliding(me);
 }
 function moveSlidingReal(me) {
-  if(gamescreen.left + me.left < me.begin)
-    me.xvel = min(me.xvel + unitsized32, me.maxvel);
-  else if(gamescreen.left + me.right > me.end)
-    me.xvel = max(me.xvel - unitsized32, -me.maxvel);
-  movePlatformNorm(me);
+    FSM.movement.moveSlidingReal(me);
 }
 // Makes sure begin < end by swapping if not so
 function setPlatformEndpoints(me) {
-  if(me.begin > me.end) {
-    var temp = me.begin;
-    me.begin = me.end;
-    me.end = temp;
+    FSM.movement.setPlatformEndpoints(me);
+}
+
+function movePlatformSpawn(me) {
+  // This is like movePlatformNorm, but also checks for whether it's out of bounds
+  // Assumes it's been made with a PlatformGenerator as the parent
+  // To do: make the PlatformGenerator check one at a time, not each of them.
+  if(me.bottom < me.parent.top) {
+    setBottom(me, me.parent.bottom);
+    detachPlayer(me);
   }
+  else if(me.top > me.parent.bottom) {
+    setTop(me, me.parent.top);
+    detachPlayer(me);
+  }
+  else movePlatformNorm(me);
+}
+function movePlatformNorm(me) {
+    FSM.movement.movePlatform(me);
 }
 
 function collideTransport(me, solid) {
@@ -600,23 +499,16 @@ function killFlip(me, extra) {
   TimeHandler.addEvent(function(me) { killNormal(me); }, 70 + (extra || 0));
 }
 
-// To do: phase this out in favor of an addEvent-based one
-function generalMovement(me, dx, dy, cleartime) {
-  var move = setInterval(function() {
-    shiftVert(me, dy);
-    shiftHoriz(me, dx);
-  }, timer);
-  setTimeout(function() { clearInterval(move); }, cleartime);
-}
 function blockBumpMovement(me) {
-  var dir = -3, dd = .5;
+  var dir = -3,
+      dd = .5;
   // To do: addEventInterval?
   var move = setInterval(function() {
     shiftVert(me, dir);
     dir += dd;
     if(dir == 3.5) {
-      clearInterval(move);
       me.up = false;
+      clearTimeout(move);
     }
   }, timer);
 }
@@ -628,28 +520,28 @@ function emergeUp(me, solid) {
   switchContainers(me, characters, scenery);
   // Start moving up
   var move = setInterval(function() {
-        shiftVert(me, -unitsized8);
-        // Stop once the bottom is high enough
-        if(me.bottom <= solid.top) {
-          clearInterval(move);
-          switchContainers(me, scenery, characters);
-          me.nocollide = me.nomove = me.moveleft = me.nofall = me.emerging = false;
-          // If it has a function to call after being completely out (vines), do it
-          if(me.emergeOut) me.emergeOut(me, solid);
-          // If there's movement, don't do it at first
-          if(me.movement) {
-            me.movementsave = me.movement;
-            me.movement = moveSimple;
-            // Wait until it's off the solid
-            me.moving = TimeHandler.addEventInterval(function(me, solid) {
-              if(me.resting != solid) {
-                TimeHandler.addEvent(function(me) { me.movement = me.movementsave; }, 1, me);
-                return true;
-              }
-            }, 1, Infinity, me, solid);
+    shiftVert(me, -unitsized8);
+    // Stop once the bottom is high enough
+    if(me.bottom <= solid.top) {
+      clearInterval(move);
+      switchContainers(me, scenery, characters);
+      me.nocollide = me.nomove = me.moveleft = me.nofall = me.emerging = false;
+      // If it has a function to call after being completely out (vines), do it
+      if(me.emergeOut) me.emergeOut(me, solid);
+      // If there's movement, don't do it at first
+      if(me.movement) {
+        me.movementsave = me.movement;
+        me.movement = moveSimple;
+        // Wait until it's off the solid
+        me.moving = TimeHandler.addEventInterval(function(me, solid) {
+          if(me.resting != solid) {
+            TimeHandler.addEvent(function(me) { me.movement = me.movementsave; }, 1, me);
+            return true;
           }
-        }
-      }, timer);
+        }, 1, Infinity, me, solid);
+      }
+    }
+  }, timer);
 }
 
 function flicker(me, cleartime, interval) {

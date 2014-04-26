@@ -1,11 +1,7 @@
-/* InputWritr.js
+/**
+ * InputWritr.js
  * A middleman that manages input events and their associated triggers
- 
- 
- 
 */
-
-
 
 function InputWritr(settings) {
   "use strict";
@@ -103,6 +99,13 @@ function InputWritr(settings) {
   // To do: don't use player.keys...
   function call(event, keycode) {
     var recipient = player.keys;
+    
+    // If the event doesn't exist, ignore it and display a stack trace
+    if(!event) {
+        console.warn("Blank event given, ignoring it.");
+        return;
+    }
+    
     switch(event.constructor) {
       case Function:
         event(recipient);
@@ -122,6 +125,7 @@ function InputWritr(settings) {
     
     var functions = triggers[trigger],
         use_label = arguments.length >= 2;
+    // console.log("Returning", trigger, code_label, functions);
     return function(alias) {
       // Typical usage means alias will be an event from a key/mouse input
       if(prevent_defaults && alias.preventDefault instanceof Function)

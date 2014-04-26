@@ -7,21 +7,8 @@
     <link href="mario.css" rel="stylesheet">
     <link href="Fonts/stylesheet.css" rel="stylesheet">
     
-    <!-- New in-game settings object -->
-    <script src="src/settings.js"></script>
-
-    <script src="data.js"></script>
-    <script src="gamepad.js"></script>
-    <script src="maps.js"></script>
-    <script src="mario.js"></script>
-    <script src="sprites.js"></script>
-    <script src="things.js"></script>
-    <script src="toned.js"></script>
-    <script src="triggers.js"></script>
-    <script src="upkeep.js"></script>
-    <script src="utility.js"></script>
-    
     <!-- Refactored libraries/frameworks under /src -->
+    <script src="src/EightBittr.js"></script>
     <script src="src/AudioPlayr/AudioPlayr.js"></script>
     <script src="src/ChangeLinr/ChangeLinr.js"></script>
     <script src="src/FPSAnalyzr/FPSAnalyzr.js"></script>
@@ -37,8 +24,22 @@
     <script src="src/ThingHittr/ThingHittr.js"></script>
     <script src="src/TimeHandlr/TimeHandlr.js"></script>
     <script src="src/QuadsKeepr/QuadsKeepr.js"></script>
+    
+    <!-- New in-game settings object -->
+    <script src="FullScreenMario.js"></script>
+
+    <script src="data.js"></script>
+    <script src="gamepad.js"></script>
+    <script src="maps.js"></script>
+    <script src="mario.js"></script>
+    <script src="sprites.js"></script>
+    <script src="things.js"></script>
+    <script src="toned.js"></script>
+    <script src="triggers.js"></script>
+    <script src="upkeep.js"></script>
+    <script src="utility.js"></script>
 
 </head>
-<body onload="FullScreenMario()">
+<body onload="startFSM()">
 </body>
 </html>

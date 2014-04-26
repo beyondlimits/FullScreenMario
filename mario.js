@@ -1,7 +1,7 @@
 /* mario.js */
 // Starts everything.
 
-function FullScreenMario() {
+function startFSM() {
   var time_start = Date.now();
   
   // Thanks, Obama...
@@ -221,7 +221,10 @@ function resetQuadrants() {
     screen_width: window.innerWidth,
     screen_height: window.innerHeight,
     tolerance: unitsized2,
-    onUpdate: function() { MapsManager.spawnMap((gamescreen.right + QuadsKeeper.getOutDifference() ) / unitsize); },
+    onUpdate: function() {
+        var diff_right = gamescreen.right + QuadsKeeper.getOutDifference();
+        MapsManager.spawnMap(diff_right / unitsize);
+    },
     onCollide: false
   });
 }
@@ -281,11 +284,4 @@ function scrollPlayer(x, y, see) {
   setLeft(player, saveleft, see);
   setTop(player, savetop + y * unitsize, see);
   QuadsKeeper.updateQuadrants();
-}
-
-// Calls log if window.verbosity has the type enabled
-function mlog(type) {
-  if(verbosity[type]) {
-    log.apply(console, arguments);
-  }
 }

@@ -74,7 +74,8 @@ function resetMapsManager() {
     },
     preload: {
       1: {
-        2: "World12"
+        2: "World12",
+        3: "World13"
       }
     }
   });

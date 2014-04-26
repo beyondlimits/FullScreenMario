@@ -741,7 +741,7 @@ function hitShell(one, two) {
   // Assume anything else to be an enemy
   // If the shell is moving, kill the enemy
   if(two.xvel) {
-    if(one.type.split(" ")[0] == "koopa") {
+    if(one.title.split(' ')[0] == "Koopa") {
       // If the enemy is a koopa, make it a shell
       // To do: automate this for things with shells (koopas, beetles)
       var spawn = ObjectMaker.make("Shell", { smart: one.smart });
@@ -1744,18 +1744,22 @@ function playerFires() {
   ++player.numballs;
   addClass(player, "firing");
   var ball = ObjectMaker.make("Fireball", {
-    moveleft: player.moveleft,
-    speed: unitsize * 1.75,
-    gravity: map_settings.gravity * 1.56,
-    jumpheight: unitsize * 1.56,
-    yvel: unitsize,
-    movement: moveJumping
-  });
-  addThing(ball, player.right + unitsized4, player.top + unitsizet8);
-  if(player.moveleft) setRight(ball, player.left - unitsized4, true);
+        moveleft: player.moveleft,
+        speed: unitsize * 1.75,
+        gravity: map_settings.gravity * 1.56,
+        jumpheight: unitsize * 1.56,
+        yvel: unitsize,
+        movement: moveJumping
+      }),
+      xloc = player.moveleft 
+            ? (player.left - unitsized4)
+            : (player.right + unitsized4);
+  addThing(ball, xloc, player.top + unitsizet8);
   ball.animate(ball);
   ball.ondelete = fireDeleted;
-  TimeHandler.addEvent(function(player) { removeClass(player, "firing"); }, 7, player);
+  TimeHandler.addEvent(function(player) {
+    removeClass(player, "firing");
+  }, 7, player);
 }
 function emergeFire(me) {
   AudioPlayer.play("Fireball");
@@ -1886,12 +1890,11 @@ function gameOver() {
 }
 
 function gameRestart() {
-  seedlast = .007;
   body.style.visibility = "hidden";
   body.innerHTML = body.style.paddingTop = body.style.fontSize = "";
   body.appendChild(canvas);
   gameon = true;
-  map_settings.random ? setMapRandom() : setMap("World11");
+  setMap([1,1]);
   TimeHandler.addEvent(function() { body.style.visibility = ""; });
   StatsHolder.set("lives", 3);
 }
@@ -2242,29 +2245,7 @@ function PlatformGeneratorInit(me) {
   }
   me.movement = false;
 }
-function movePlatformSpawn(me) {
-  // This is like movePlatformNorm, but also checks for whether it's out of bounds
-  // Assumes it's been made with a PlatformGenerator as the parent
-  // To do: make the PlatformGenerator check one at a time, not each of them.
-  if(me.bottom < me.parent.top) {
-    setBottom(me, me.parent.bottom);
-    detachPlayer(me);
-  }
-  else if(me.top > me.parent.bottom) {
-    setTop(me, me.parent.top);
-    detachPlayer(me);
-  }
-  else movePlatformNorm(me);
-}
-function movePlatformNorm(me) {
-  shiftHoriz(me, me.xvel);
-  shiftVert(me, me.yvel);
-  if(me == player.resting && me.alive) {
-    setBottom(player, me.top);
-    shiftHoriz(player, me.xvel);
-    if(player.right > innerWidth) setRight(player, innerWidth);
-  }
-}
+
 function detachPlayer(me) {
   if(player.resting != me) return;
   player.resting = false;
