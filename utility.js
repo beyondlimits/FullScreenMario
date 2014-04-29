@@ -5,12 +5,12 @@
  
 // Expensive - use only on clearing
 function clearAllTimeouts() {
-  return FSM.utility.clearAllTimeouts();
+  return FSM.get("clearAllTimeouts")();
 }
 
 // Width and height are given as number of pixels (to scale; unitsize) 
 function getCanvas(width, height, multiplier) {
-    return FSM.html.getCanvas(width, height, multiplier);
+    return FSM.get("getCanvas")(width, height, multiplier);
 }
 
 function step(num) {
@@ -35,7 +35,7 @@ function specifyTimer(timerin) {
  * Basic object positioning helper functions
  */
 function updatePosition(me) {
-    FSM.physics.updatePosition(me);
+    FSM.get("updatePosition")(me);
 }
 function updateSize(me) {
   me.unitwidth = me.width * unitsize;
@@ -60,70 +60,70 @@ function reduceHeight(me, dy, see) {
   }
 }
 function shiftBoth(me, dx, dy) {
-    FSM.physics.shiftBoth(me, dx, dy);
+    FSM.get("shiftBoth")(me, dx, dy);
 }
 function shiftHoriz(me, dx) {
-    FSM.physics.shiftHoriz(me, dx);
+    FSM.get("shiftHoriz")(me, dx);
 }
 function shiftVert(me, dy) {
-    FSM.physics.shiftVert(me, dy);
+    FSM.get("shiftVert")(me, dy);
 }
 function setLeft(me, left) {
-    FSM.physics.setLeft(me, left);
+    FSM.get("setLeft")(me, left);
 }
 function setRight(me, right) {
-    FSM.physics.setRight(me, right);
+    FSM.get("setRight")(me, right);
 }
 function setTop(me, top) {
-    FSM.physics.setTop(me, top);
+    FSM.get("setTop")(me, top);
 }
 function setBottom(me, bottom) {
-    FSM.physics.setBottom(me, bottom);
+    FSM.get("setBottom")(me, bottom);
 }
 function setWidth(me, width, spriter, updater) {
-    FSM.physics.setWidth(me, width, spriter, updater);
+    FSM.get("setWidth")(me, width, spriter, updater);
 }
 function setHeight(me, height, spriter, updater) {
-    FSM.physics.setWidth(me, height, spriter, updater);
+    FSM.get("setWidth")(me, height, spriter, updater);
 }
 function setSize(me, width, height, spriter, updater) {
-    FSM.physics.setSize(me, width, height, spriter, updater);
+    FSM.get("setSize")(me, width, height, spriter, updater);
 }
 function setMidX(me, x) {
-    FSM.physics.setMidX(me, x);
+    FSM.get("setMidX")(me, x);
 }
 function setMidY(me, y) {
-    FSM.physics.setMidY(me, y);
+    FSM.get("setMidY")(me, y);
 }
 function getMidX(me) {
-    return FSM.physics.getMidX(me);
+    return FSM.get("getMidX")(me);
 }
 function getMidY(me) {
-    return FSM.physics.getMidY(me);
+    return FSM.get("getMidY")(me);
 }
 function setMidXObj(me, object) {
-    FSM.physics.setMidXObj(me, object);
+    FSM.get("setMidXObj")(me, object);
 }
 function setMidYObj(me, object) {
-    FSM.physics.setMidYObj(me, object);
+    FSM.get("setMidYObj")(me, object);
 }
 function slideToXLoc(me, xloc, maxspeed) {
-    FSM.physics.slideToX(me, xloc, maxspeed); 
+    FSM.get("slideToX")(me, xloc, maxspeed); 
 }
 function updateLeft(me, dx) {
-    FSM.physics.updateLeft(me, dx);
+    FSM.get("updateLeft")(me, dx);
 }
 function updateRight(me, dx) {
-    FSM.physics.updateRight(me, dx);
+    FSM.get("updateRight")(me, dx);
 }
 function updateTop(me, dy) {
-    FSM.physics.updateTop(me, dy);
+    FSM.get("updateTop")(me, dy);
 }
 function updateBottom(me, dy) {
-    FSM.physics.updateBottom(me, dy);
+    FSM.get("updateBottom")(me, dy);
 }
 function increaseHeightTop(me, dy) {
-    FSM.physics.increaseHeight(me, dy);
+    FSM.get("increaseHeight")(me, dy);
 }
 
 /*
@@ -134,27 +134,27 @@ function increaseHeightTop(me, dy) {
 */
 
 function thingCanCollide(thing) {
-    return FSM.collisions.thingCanCollide(thing);
+    return FSM.get("thingCanCollide")(thing);
 }
 
 function thingTouchesThing(thing, other) {
-    return FSM.collisions.thingTouchesThing(thing, other);
+    return FSM.get("thingTouchesThing")(thing, other);
 }
 
 function characterTouchesSolid(thing, other) {
-    return FSM.collisions.characterTouchesSolid(thing, other);
+    return FSM.get("characterTouchesSolid")(thing, other);
 }
 
 function characterTouchesCharacter(thing, other) {
-    return FSM.collisions.characterTouchesCharacter(thing, other);
+    return FSM.get("characterTouchesCharacter")(thing, other);
 }
 
 function characterHitsSolid(thing, other) {
-    return FSM.collisions.characterHitsSolid(thing, other);
+    return FSM.get("characterHitsSolid")(thing, other);
 }
 
 function characterHitsCharacter(thing, other) {
-    return FSM.collisions.characterHitsCharacter(thing, other);
+    return FSM.get("characterHitsCharacter")(thing, other);
 }
 
 
@@ -162,25 +162,25 @@ function characterHitsCharacter(thing, other) {
 
 // Sees whether one's midpoint is to the left of two's
 function objectToLeft(one, two) {
-    return FSM.physics.objectToLeft(one, two);
+    return FSM.get("objectToLeft")(one, two);
 }
 
 function objectOnTop(one, two) {
-    return FSM.collisions.thingOnTop(one, two);
+    return FSM.get("thingOnTop")(one, two);
 }
 // Like objectOnTop, but more specifically used for characterOnSolid and characterOnResting
 function objectOnSolid(one, two) {
-    return FSM.collisions.thingOnSolid(one, two);
+    return FSM.get("thingOnSolid")(one, two);
 }
 function solidOnCharacter(solid, me) {
-    return FSM.collisions.solidOnCharacter(solid, me);
+    return FSM.get("solidOnCharacter")(solid, me);
 }
 // Can't use objectOnTop for this, else Player will walk on walls.
 function characterOnSolid(me, solid) {
-    return FSM.collisions.characterOnSolid(me, solid);
+    return FSM.get("characterOnSolid")(me, solid);
 }
 function characterOnResting(me, solid) {
-    return FSM.collisions.characterOnResting(me, solid);
+    return FSM.get("characterOnResting")(me, solid);
 }
 
 function characterTouchedSolid(me, solid) {
@@ -325,38 +325,38 @@ function scoreEnemyFin(enemy, amount) {
  */
 
 function moveSimple(me) {
-    FSM.movement.moveSimple(me);
+    FSM.get("moveSimple")(me);
 }
 
 function moveSmart(me) {
-    FSM.movement.moveSmart(me);
+    FSM.get("moveSmart")(me);
 }
 
 function moveJumping(me) {
-    FSM.movement.moveJumping(me);
+    FSM.get("moveJumping")(me);
 }
 
 // Floating: the vertical version
 // Example usage on World 1-3
 // [moveFloating, 30, 72] slides up and down between 30 and 72
 function moveFloating(me) {
-    FSM.movement.moveFloating(me);
+    FSM.get("moveFloating")(me);
 }
 function moveFloatingReal(me) {
-    FSM.movement.moveFloatingReal(me);
+    FSM.get("moveFloatingReal")(me);
 }
 // Sliding: the horizontal version
 // Example usage on World 3-3
 // [moveSliding, 228, 260] slides back and forth between 228 and 260
 function moveSliding(me) {
-    FSM.movement.moveSliding(me);
+    FSM.get("moveSliding")(me);
 }
 function moveSlidingReal(me) {
-    FSM.movement.moveSlidingReal(me);
+    FSM.get("moveSlidingReal")(me);
 }
 // Makes sure begin < end by swapping if not so
 function setPlatformEndpoints(me) {
-    FSM.movement.setPlatformEndpoints(me);
+    FSM.get("setPlatformEndpoints")(me);
 }
 
 function movePlatformSpawn(me) {
@@ -374,7 +374,7 @@ function movePlatformSpawn(me) {
   else movePlatformNorm(me);
 }
 function movePlatformNorm(me) {
-    FSM.movement.movePlatform(me);
+    FSM.get("movePlatform")(me);
 }
 
 function collideTransport(me, solid) {
@@ -389,17 +389,7 @@ function collideTransport(me, solid) {
 // To do: make me.collide and stages w/functions
 // To do: split this into .partner and whatnot
 function moveFalling(me) {
-  if(me != player.resting) return me.yvel = 0;
-  
-  // Since Player is on me, fall
-  shiftVert(me, me.yvel += unitsized8);
-  setBottom(player, me.top);
-  
-  // After a velocity threshold, always fall
-  if(me.yvel >= unitsize * 2.8) {
-    me.freefall = true;
-    me.movement = moveFreeFalling;
-  }
+    FSM.get("moveFalling")(me);
 }
 function moveFallingScale(me) {
   // If Player is resting on me, fall
@@ -424,9 +414,7 @@ function moveFallingScale(me) {
   }
 }
 function moveFreeFalling(me) {
-  shiftVert(me, me.yvel += unitsized16);
-  if(me.yvel > unitsizet2)
-    me.movement = function(me) { shiftVert(me, me.yvel); }
+    FSM.get("moveFreeFalling")(me);
 }
 function shiftScaleStringVert(me, string, yvel) {
   shiftVert(me, yvel);

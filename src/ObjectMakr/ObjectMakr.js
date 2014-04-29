@@ -286,9 +286,10 @@ function ObjectMakr(settings) {
 */
 function ObjectMakrOld(settings) {
   "use strict";
-  if(!this || this === window) return new ObjectMakrOld(settings);
-  var version = "1.0",
-      self = this,
+  if(!this || this === window) {
+    return new ObjectMakrOld(settings);
+  }
+  var self = this,
       
       // The default settings, applied to all objects
       defaults,

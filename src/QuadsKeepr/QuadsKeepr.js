@@ -3,9 +3,10 @@
 
 function QuadsKeepr(settings) {
   "use strict";
-  if(!this || this === window) return new QuadsKeepr(settings);
-  var version = "1.0",
-      self = this,
+  if(!this || this === window) {
+    return new QuadsKeepr(settings);
+  }
+  var self = this,
       
       // Quadrants, listed as a raw array
       quadrants,
@@ -96,6 +97,7 @@ function QuadsKeepr(settings) {
     resetQuadrants();
   }
   
+  
   /* Public gets
   */
   this.getQuadrants = function() { return quadrants; }
@@ -106,6 +108,7 @@ function QuadsKeepr(settings) {
   this.getQuadHeight = function() { return quad_height; }
   this.getDelX = function() { return delx; }
   this.getOutDifference = function() { return out_difference; }
+  
   
   /* Quadrant creation & initialization
   */

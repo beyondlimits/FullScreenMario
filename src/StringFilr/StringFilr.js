@@ -5,9 +5,10 @@
 
 function StringFilr(settings) {
   "use strict";
-  if(!this || this === window) return new StringFilr(settings);
-  var version = "1.0",
-      self = this,
+  if(!this || this === window) {
+    return new StringFilr(settings);
+  }
+  var self = this,
       
       // A library of sprite strings
       library,

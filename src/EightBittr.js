@@ -8,12 +8,52 @@ window.EightBittr = (function(settings) {
     
     /**
      * 
+     * 
+     * @constructor
      */
     function EightBittr(settings) {
         settings = settings || {};
-        self.unitsize = settings.unitsize || 1;
-        self.scale = settings.scale || 1;
+        
+        this.unitsize = settings.unitsize || 1;
+        this.scale = settings.scale || 1;
     }
+    
+    /**
+     * EightBittr.get is provided as a shortcut function to make binding member
+     * functions, particularily those using "this.unitsize" (where this needs to
+     * be an EightBitter, not an external calling object). At the very simplest,
+     * this.get(func) acts as a shortcut to this.bind(this, func).
+     * In addition, if the name is given as "a.b", EightBitter.followPath will
+     * be used on "a.b".split() (so EightBitter.prototype[a][b] is returned).
+     * 
+     * @param {Mixed} name   Either the function itself, or a string of the path
+     *                       to the function (after ".prototype.").
+     * @return {Function}   A function, bound to set "this" to the calling
+     *                      EightBitter
+     */
+    
+    // In order to bind settings such as unitsize and scale correctly, 
+    // this shortcut to bind 
+    EightBittr.prototype.get = function(name) {
+        var func;
+        
+        // If name is a string, turn it into a function path, and follow it
+        if(name instanceof String || typeof(name) == "string") {
+            func = followPathHard(this, name.split('.'), 0);
+        }
+        // If it's already a path (array), follow it
+        else if(name instanceof Array) {
+            func = followPathHard(this, name, 0);
+        }
+        // Otherwise func is just name
+        else {
+            func = name;
+        }
+        
+        // Bind the function to this
+        return func.bind(this);
+    };
+    
     
     /* Collision functions
     */
@@ -24,6 +64,7 @@ window.EightBittr = (function(settings) {
     function thingCanCollide(thing) {
         return thing.alive && !thing.nocollide;
     }
+    
     
     /* HTML functions
     */
@@ -40,7 +81,7 @@ window.EightBittr = (function(settings) {
         // If necessary, increase the visual style by the multiplier
         if (multiplier) {
             // The multiplier 1 by default, but may be different (e.g. unitsize)
-            multiplier = multiplier || self.unitsize;
+            multiplier = multiplier || this.unitsize;
             canvas.style.width = (width * multiplier) + "px";
             canvas.style.height = (height * multiplier) + "px";
         }
@@ -80,7 +121,7 @@ window.EightBittr = (function(settings) {
      */
     function setTop(thing, top) {
         thing.top = top;
-        thing.bottom = thing.top + thing.height * self.unitsize;
+        thing.bottom = thing.top + thing.height * this.unitsize;
     }
     
     /**
@@ -88,7 +129,7 @@ window.EightBittr = (function(settings) {
      */
     function setRight(thing, right) {
         thing.right = right;
-        thing.left = thing.left - thing.width * self.unitsize;
+        thing.left = thing.left - thing.width * this.unitsize;
     }
     
     /**
@@ -96,7 +137,7 @@ window.EightBittr = (function(settings) {
      */
     function setBottom(thing, bottom) {
         thing.bottom = bottom;
-        thing.top = thing.bottom - thing.height * self.unitsize;
+        thing.top = thing.bottom - thing.height * this.unitsize;
     }
     
     /**
@@ -104,56 +145,56 @@ window.EightBittr = (function(settings) {
      */
     function setLeft(thing, left) {
         thing.left = left;
-        thing.right = thing.left + thing.width * self.unitsize;
+        thing.right = thing.left + thing.width * this.unitsize;
     }
     
     /**
      * 
      */
     function setMidX(thing, x) {
-        setLeft(thing, x + thing.left * self.unitsize /2);
+        this.setLeft(thing, x + thing.left * this.unitsize /2);
     }
     
     /**
      * 
      */
     function setMidY(thing, y) {
-        setTop(thing, y + thing.height * self.unitsize / 2);
+        this.setTop(thing, y + thing.height * this.unitsize / 2);
     }
     
     /**
      * 
      */
     function getMidX(thing) {
-        return thing.left + thing.width * self.unitsize / 2;
+        return thing.left + thing.width * this.unitsize / 2;
     }
     
     /**
      * 
      */
     function getMidY(thing) {
-        return thing.top + thing.height * self.unitsize / 2;
+        return thing.top + thing.height * this.unitsize / 2;
     }
     
     /**
      * 
      */
     function setMidXObj(thing, other) {
-        setLeft(thing, getMidX(other) - (thing.width * self.unitsize / 2));
+        this.setLeft(thing, this.getMidX(other) - (thing.width * this.unitsize / 2));
     }
     
     /**
      * 
      */
     function objectToLeft(thing, other) {
-        return getMidX(thing) < getMidX(other);
+        return this.getMidX(thing) < this.getMidX(other);
     }
     
     /**
      * 
      */
     function setMidYObj(thing, other) {
-        setTop(thing, getMidY(other) - (thing.height * self.unitsize / 2));
+        this.setTop(thing, this.getMidY(other) - (thing.height * this.unitsize / 2));
     }
     
     /**
@@ -164,7 +205,7 @@ window.EightBittr = (function(settings) {
         thing.top += dy | 0;
         
         // Make the thing's bottom dependent on the top
-        thing.bottom = thing.top + thing.height * self.unitsize;
+        thing.bottom = thing.top + thing.height * this.unitsize;
     }
     
     /**
@@ -175,7 +216,7 @@ window.EightBittr = (function(settings) {
         thing.right += dx | 0;
         
         // Make the thing's left dependent on the right
-        thing.left = thing.right - thing.width * self.unitsize;
+        thing.left = thing.right - thing.width * this.unitsize;
     }
     
     /**
@@ -186,7 +227,7 @@ window.EightBittr = (function(settings) {
         thing.bottom += dy | 0;
         
         // Make the thing's top dependent on the top
-        thing.top = thing.bottom - thing.height * self.unitsize;
+        thing.top = thing.bottom - thing.height * this.unitsize;
     }
     
     /**
@@ -197,7 +238,7 @@ window.EightBittr = (function(settings) {
         thing.left += dx | 0;
         
         // Make the thing's right dependent on the left
-        thing.right = thing.left + thing.width * self.unitsize;
+        thing.right = thing.left + thing.width * this.unitsize;
     }
     
     /**
@@ -245,7 +286,7 @@ window.EightBittr = (function(settings) {
     /**
      * Removes all setTimeout calls with clearTimeout
      * @alias clearAllTimeouts
-     * @remarks This is very expensive - use only on hard clearing
+     * @remarks _this is very expensive - use only on hard clearing
      */
     function clearAllTimeouts() {
         var id = setTimeout(function() {});
@@ -287,9 +328,9 @@ window.EightBittr = (function(settings) {
     
     /**
      * Identical to proliferate, but instead of checking whether the recipient
-     * has properties, it just checks if they're truthy
+     * hasOwnProperty on properties, it just checks if they're truthy
      * 
-     * @remarks This may not be good with JSLint, but it works for prototypal
+     * @remarks this may not be good with JSLint, but it works for prototypal
      *          inheritance, since hasOwnProperty only is for the current class
      */
     function proliferateHard(recipient, donor, no_override) {
@@ -319,43 +360,58 @@ window.EightBittr = (function(settings) {
         return recipient;
     }
     
+    /**
+     * Identical to followPath, but instead of checking whether the recipient
+     * hasOwnProperty on properties, it just checks if they're truthy
+     * 
+     * @remarks this may not be good with JSLint, but it works for prototypal
+     *          inheritance, since hasOwnProperty only is for the current class
+     */
+    function followPathHard(obj, path, num) {
+        for(var num = num || 0, len = path.length; num < len; ++num) {
+            if(!obj[path[num]]) {
+                return undefined;
+            }
+            else {
+                obj = obj[path[num]];
+            }
+        }
+        return obj;
+    }
+    
     /* Prototype function holders
     */
     
-    EightBittr.prototype = {
-        "collisions": {
-            "thingCanCollide": thingCanCollide
-        },
-        "html": {
-            "getCanvas": getCanvas
-        },
-        "physics": {
-            "shiftVert": shiftVert,
-            "shiftHoriz": shiftHoriz,
-            "setTop": setTop,
-            "setRight": setRight,
-            "setBottom": setBottom,
-            "setLeft": setLeft,
-            "setMidY": setMidY,
-            "setMidX": setMidX,
-            "getMidY": getMidY,
-            "getMidX": getMidX,
-            "setMidYObj": setMidYObj,
-            "setMidXObj": setMidXObj,
-            "objectToLeft": objectToLeft,
-            "updateTop": updateTop,
-            "updateRight": updateRight,
-            "updateBottom": updateBottom,
-            "updateLeft": updateLeft,
-            "slideToY": slideToY,
-            "slideToX": slideToX
-        },
-        "utility": {
-            "clearAllTimeouts": clearAllTimeouts,
-            "proliferate": proliferate,
-            "proliferateHard": proliferateHard
-        }
-    };
+    proliferateHard(EightBittr.prototype, {
+        // Collisions
+        "thingCanCollide": thingCanCollide,
+        // HTML
+        "getCanvas": getCanvas,
+        // Physics
+        "shiftVert": shiftVert,
+        "shiftHoriz": shiftHoriz,
+        "setTop": setTop,
+        "setRight": setRight,
+        "setBottom": setBottom,
+        "setLeft": setLeft,
+        "setMidY": setMidY,
+        "setMidX": setMidX,
+        "getMidY": getMidY,
+        "getMidX": getMidX,
+        "setMidYObj": setMidYObj,
+        "setMidXObj": setMidXObj,
+        "objectToLeft": objectToLeft,
+        "updateTop": updateTop,
+        "updateRight": updateRight,
+        "updateBottom": updateBottom,
+        "updateLeft": updateLeft,
+        "slideToY": slideToY,
+        "slideToX": slideToX,
+        // Utilities
+        "clearAllTimeouts": clearAllTimeouts,
+        "proliferate": proliferate,
+        "proliferateHard": proliferateHard
+    });
     
     return EightBittr;
 })();

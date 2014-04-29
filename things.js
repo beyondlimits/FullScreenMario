@@ -428,6 +428,9 @@ function resetThings() {
           Platform: {
               height: 4,
               spritewidth: 4,
+              fall_threshold_start: unitsize * 2.8,
+              fall_threshold_end: unitsize * 2,
+              acceleration: unitsize / 16,
               repeat: true,
               killonend: true,
               // maxvel: unitsized4 * 1.5,
@@ -446,7 +449,7 @@ function resetThings() {
                   },
                   "falling": {
                       collide: function () {
-                          console.log("Nope!");
+                          console.log("Nope! movement should be moveFalling");
                       }
                   }
               }

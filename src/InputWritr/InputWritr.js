@@ -5,9 +5,10 @@
 
 function InputWritr(settings) {
   "use strict";
-  if(!this || this === window) return new InputWritr(settings);
-  var version = "1.0",
-      self = this,
+  if(!this || this === window) {
+    return new InputWritr(settings);
+  }
+  var self = this,
       
       // 
       triggers,

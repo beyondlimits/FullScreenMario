@@ -9,9 +9,10 @@
 
 function TimeHandlr(settings) {
   "use strict";
-  if(!this || this === window) return new TimeHandlr(settings);
-  var version = "1.0",
-      self = this,
+  if(!this || this === window) {
+    return new TimeHandlr(settings);
+  }
+  var self = this,
       
       // The current (most recently reached) game time
       time,

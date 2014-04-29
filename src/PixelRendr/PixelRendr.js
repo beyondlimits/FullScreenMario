@@ -51,9 +51,10 @@
 
 function PixelRendr(settings) {
   "use strict";
-  if(!this || this === window) return new PixelRendr(settings);
-  var version = 1.0,
-      self = this,
+  if(!this || this === window) {
+    return new PixelRendr(settings);
+  }
+  var self = this,
       
       // Library for storing sprite strings, along with a StringFilr interface
       library,

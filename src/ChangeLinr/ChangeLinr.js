@@ -6,9 +6,10 @@
 */
 function ChangeLinr(settings) {
   "use strict";
-  if(!this || this === window) return new ChangeLinr(settings);
-  var version = 1.0,
-      self = this,
+  if(!this || this === window) {
+    return new ChangeLinr(settings);
+  }
+  var self = this,
       
       // Associative array of functions ("name"=>function)
       transforms,
@@ -58,7 +59,7 @@ function ChangeLinr(settings) {
   
   // Applies the series of transforms to the raw string
   // If a key is provided, it then caches the output
-  this.process = function(raw, key, attributes) {
+  self.process = function(raw, key, attributes) {
     var result, i;
     
     // If this keyed input was already processed, get that
@@ -79,7 +80,7 @@ function ChangeLinr(settings) {
   }
   
   // Similar to this.process, but returns everything from cache
-  this.processFull = function(raw, key, attributes) {
+  self.processFull = function(raw, key, attributes) {
     var output = {},
         i;
     this.process(raw, key, attributes);
@@ -88,9 +89,8 @@ function ChangeLinr(settings) {
     return output;
   }
   
-  this.getCache = function() { return cache; }
-  this.getCacheFull = function() { return cache_full; }
+  self.getCache = function() { return cache; }
+  self.getCacheFull = function() { return cache_full; }
   
-  reset(settings || {});
-  return self;
+  self.reset(settings || {});
 }

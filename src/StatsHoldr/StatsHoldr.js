@@ -7,9 +7,10 @@ Each key may also have other properties, such as localStorage and a display elem
 */
 function StatsHoldr(settings) {
   "use strict";
-  if(!this || this === window) return new StatsHoldr(settings);
-  var version = "1.0",
-      self = this,
+  if(!this || this === window) {
+    return new StatsHoldr(settings);
+  }
+  var self = this,
       
       // The names of the objects being stored, as "name"=>{settings}
       values,

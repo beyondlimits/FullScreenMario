@@ -11,9 +11,10 @@ function playCurrentThemeHurry(name_raw) {
 */
 function AudioPlayr(settings) {
   "use strict";
-  if(!this || this === window) return new AudioPlayr(settings);
-  var version = "1.0",
-      self = this,
+  if(!this || this === window) {
+    return new AudioPlayr(settings);
+  }
+  var self = this,
   
       // A list of filenames to be turned into <audio> objects
       library,

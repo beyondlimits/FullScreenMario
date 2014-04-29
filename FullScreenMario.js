@@ -1,23 +1,17 @@
 var FullScreenMario = (function() {
     "use strict";
     
-    // Use an EightBittr as the class parent, with FullScreenMario's constants
-    var unitsize = 4,
-        scale = 2,
-        
-        EightBitter = new EightBittr({
-            "unitsize": unitsize,
-            "scale": scale
-        }),
+    // Use an EightBittr as the class parent, with EightBittr's constructor
+    var EightBitter = new EightBittr(),
         
         // Used for combining arrays from the prototype to this
-        proliferateHard = EightBitter.utility.proliferateHard;
+        proliferateHard = EightBitter.proliferateHard;
         
-    
+    console.warn("Still using global player object...");    
     /**
      * 
      */
-    function FullScreenMario() {}
+    function FullScreenMario() {        // Call the parent EightBittr constructor to set the base settings        // (these are really just settings and unitsize)        EightBittr.call(this, {            "unitsize": 4,            "scale": 2        });    }
     FullScreenMario.prototype = EightBitter;
     
     /* Collision functions
@@ -42,10 +36,9 @@
      * @return {Boolean}
      * @remarks Only the horizontal checks use unitsize
      */
-    function thingTouchesThing(thing, other) {
-        return !thing.nocollide && !other.nocollide
-                && thing.right - unitsize > other.left
-                && thing.left + unitsize < other.right
+    function thingTouchesThing(thing, other) {        return !thing.nocollide && !other.nocollide
+                && thing.right - this.unitsize > other.left
+                && thing.left + this.unitsize < other.right
                 && thing.bottom >= other.top
                 && thing.top <= other.bottom;
     }
@@ -75,12 +68,12 @@
         }
         
         // If thing is too far to the right, it can't be touching other
-        if(thing.left + unitsize >= other.right) {
+        if(thing.left + this.unitsize >= other.right) {
             return false;
         }
         
         // If thing is too far to the left, it can't be touching other
-        if(thing.right - unitsize <= other.left) {
+        if(thing.right - this.unitsize <= other.left) {
             return false;
         }
         
@@ -110,12 +103,12 @@
      */
     function thingOnSolid(thing, other) {
         // If thing is too far to the right, they're not touching
-        if(thing.left + unitsize > other.right) {
+        if(thing.left + this.unitsize > other.right) {
             return false;
         }
         
         // If thing is too far to the left, they're not touching
-        if(thing.right - unitsize < other.left) {
+        if(thing.right - this.unitsize < other.left) {
             return false;
         }
         
@@ -147,17 +140,17 @@
         }                // If the character is jumping upwards, it's not on a solid        // (removing this check would cause Mario to have "sticky" behavior when        // jumping at the corners of solids)        if(character.yvel < 0) {            return false;        }
         
         // The character and solid must be touching appropriately
-        if(!thingOnSolid(character, solid)) {
+        if(!this.thingOnSolid(character, solid)) {
             return false;
         }
         
         // Corner case: when character is exactly falling off the right (false)
-        if(character.left + character.xvel + unitsize == solid.right) {
+        if(character.left + character.xvel + this.unitsize == solid.right) {
             return false;
         }
         
         // Corner case: when character is exactly falling off the left (false)
-        if(character.right - character.xvel - unitsize == solid.left) {
+        if(character.right - character.xvel - this.unitsize == solid.left) {
             return false;
         }
         
@@ -169,17 +162,17 @@
      * 
      */
     function characterOnResting(character, solid) {
-        if(!thingOnSolid(character, solid)) {
+        if(!this.thingOnSolid(character, solid)) {
             return false;
         }
         
         // Corner case: when character is exactly falling off the right (false)
-        if(character.left + character.xvel + unitsize == solid.right) {
+        if(character.left + character.xvel + this.unitsize == solid.right) {
             return false;
         }
         
         // Corner case: when character is exactly falling off the left (false)
-        if(character.right - character.xvel - unitsize == solid.left) {
+        if(character.right - character.xvel - this.unitsize == solid.left) {
             return false;
         }
         
@@ -192,12 +185,11 @@
      * @param {Thing} thing
      * @param {Thing} other
      */
-    function characterTouchesSolid(character, solid) {
-        // Hidden solids can only be touched by the player bottom-bumping them
-        if(solid.hidden) {            if(!character.player || !solidOnCharacter(solid, character)) {                return;            }
+    function characterTouchesSolid(character, solid) {        // Hidden solids can only be touched by the player bottom-bumping them
+        if(solid.hidden) {            if(!character.player || !this.solidOnCharacter(solid, character)) {                return;            }
         }
         
-        return thingTouchesThing(character, solid);
+        return this.thingTouchesThing(character, solid);
     }
 
     /**
@@ -207,7 +199,7 @@
      */
     function characterTouchesCharacter(thing, other) {
         
-        return thingTouchesThing(thing, other);
+        return this.thingTouchesThing(thing, other);
     }
 
     /**
@@ -270,7 +262,7 @@
         
         // Horizontally, all that's required is for the character's midpoint to
         // be within the solid's left and right
-        character.midx = EightBittr.prototype.physics.getMidX(character);
+        character.midx = this.getMidX(character);
         if(character.midx <= solid.left || character.midx >= solid.right) {
             return false;
         }
@@ -293,23 +285,22 @@
      */
     function shiftBoth(thing, dx, dy) {
         if(!thing.noshiftx) {
-            shiftHoriz(thing, dx);
+            this.shiftHoriz(thing, dx);
         }
         if(!thing.noshifty) {
-            shiftVert(thing, dy);
+            this.shiftVert(thing, dy);
         }
     }
 
     /**
      * 
      */
-    function setWidth(thing, width, update_sprite, update_size) {
-        thing.width = width;
-        thing.unitwidth = width * unitsize;
+    function setWidth(thing, width, update_sprite, update_size) {        thing.width = width;
+        thing.unitwidth = width * this.unitsize;
         
         if(update_sprite) {
             thing.spritewidth = width;
-            thing.spritewidthpixels = width * unitsize;
+            thing.spritewidthpixels = width * this.unitsize;
         }
         
         if(update_size) {
@@ -324,15 +315,15 @@
      */
     function setHeight(thing, height, update_sprite, update_size) {
         thing.height = height;
-        thing.unitheight = height * unitsize;
+        thing.unitheight = height * this.unitsize;
         
         if(update_sprite) {
             thing.spriteheight = height;
-            thing.spriteheightpixels = height * unitsize;
+            thing.spriteheightpixels = height * this.unitsize;
         }
         
         if(update_size) {
-            updateSize(thing);
+            this.updateSize(thing);
             setThingSprite(thing);
         }
     }
@@ -341,8 +332,8 @@
      * 
      */
     function setSize(thing, width, height, update_sprite, update_size) {
-        setWidth(thing, width, update_sprite, update_size);
-        setHeight(thing, height, update_sprite, update_size);
+        this.setWidth(thing, width, update_sprite, update_size);
+        this.setHeight(thing, height, update_sprite, update_size);
     }
     
     /**
@@ -350,11 +341,11 @@
      */
     function updatePosition(thing, hard) {
         if(!thing.nomove || hard) {
-            EightBittr.prototype.physics.shiftHoriz(thing, thing.xvel);
+            this.shiftHoriz(thing, thing.xvel);
         }
         
         if(!thing.nofall || hard) {
-            EightBittr.prototype.physics.shiftVert(thing, thing.yvel);
+            this.shiftVert(thing, thing.yvel);
         }
     }
     
@@ -363,8 +354,8 @@
      */
     function increaseHeight(thing, dy) {
         thing.top -= dy;
-        thing.height += dy / unitsize;
-        thing.unitheight = thing.height * unitsize;
+        thing.height += dy / this.unitsize;
+        thing.unitheight = thing.height * this.unitsize;
         console.log("Increasing height of", thing.title, "in a likely bad way");
     }
     
@@ -421,13 +412,13 @@
         
         // Check for being over the edge in the direction of movement
         if(thing.moveleft) {
-            if(thing.left + unitsize <= thing.resting.left) {
-                shiftHoriz(thing, unitsize);
+            if(thing.left + this.unitsize <= thing.resting.left) {
+                shiftHoriz(thing, this.unitsize);
                 thing.moveleft = false;
             }
         } else {
-            if(thing.right - unitsize >= thing.resting.right) {
-                shiftHoriz(thing, -unitsize);
+            if(thing.right - this.unitsize >= thing.resting.right) {
+                shiftHoriz(thing, -this.unitsize);
                 thing.moveleft = true;
             }
         }
@@ -465,8 +456,8 @@
         
         // Make thing.begin and thing.end relative to map_settings.floor
         console.warn("moveFloating should avoid using map_settings");
-        thing.begin = map_settings.floor * unitsize - thing.begin;
-        thing.end = map_settings.floor * unitsize - thing.end;
+        thing.begin = map_settings.floor * this.unitsize - thing.begin;
+        thing.end = map_settings.floor * this.unitsize - thing.end;
         
         // Use moveFloatingReal as the actual movement function from now on
         (thing.movement = moveFloatingReal)(thing);
@@ -483,11 +474,11 @@
     function moveFloatingReal(thing) {
         // If above the endpoint:
         if(thing.top <= thing.end) {
-            thing.yvel = Math.min(thing.yvel + unitsize / 32, thing.maxvel);
+            thing.yvel = Math.min(thing.yvel + this.unitsize / 32, thing.maxvel);
         }
         // If below the endpoint:
         else if(thing.bottom >= thing.begin) {
-            thing.yvel = Math.max(thing.yvel - unitsize / 32, -thing.maxvel);
+            thing.yvel = Math.max(thing.yvel - this.unitsize / 32, -thing.maxvel);
         }
         
         // Deal with velocities and whether the player is resting on this
@@ -522,11 +513,11 @@
     function moveSlidingReal(thing) {
         // If to the left of the endpoint:
         if(gamescreen.left + thing.left <= thing.begin) {
-            thing.xvel = Math.min(thing.xvel + unitsize / 32, thing.maxvel);
+            thing.xvel = Math.min(thing.xvel + this.unitsize / 32, thing.maxvel);
         }
         // If to the right of the endpoint:
         else if(gamescreen.left + thing.right > thing.end) {
-            thing.xvel = Math.max(thing.xvel - unitsize / 32, -thing.maxvel);
+            thing.xvel = Math.max(thing.xvel - this.unitsize / 32, -thing.maxvel);
         }
         
         // Deal with velocities and whether the player is resting on this
@@ -571,44 +562,41 @@
                 setLeft(player, 0);
             }
         }
-    }
+    }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if(thing !== player.resting) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        shiftVert(thing, thing.yvel += this.unitsize / 8);        EightBittr.prototype.physics.setBottom(player, thing.top);                // After a velocity threshold, start always falling        if(thing.yvel >= thing.fall_threshold_start || this.unitsize * 2.8) {            thing.freefall = true;            thing.movement = moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || this.unitsize / 16;        shiftVert(thing, thing.yvel);                // After a velocity threshold, stop accelerating        if(thing.yvel >= thing.fall_threshold_end || this.unitsize * 2) {            thing.movement = movePlatform;        }    }
     
     
     /* Prototype function holders
     */
     
     proliferateHard(FullScreenMario.prototype, {
-        "collisions": {
-            "thingCanCollide": thingCanCollide,
-            "thingTouchesThing": thingTouchesThing,
-            "thingOnTop": thingOnTop,
-            "thingOnSolid": thingOnSolid,
-            "characterTouchesSolid": characterTouchesSolid,
-            "characterTouchesCharacter": characterTouchesCharacter,
-            "characterHitsSolid": characterHitsSolid,
-            "characterHitsCharacter": characterHitsCharacter,
-            "characterOnSolid": characterOnSolid,
-            "characterOnResting": characterOnResting,
-            "solidOnCharacter": solidOnCharacter
-        },
-        "movement": {
-            "moveSimple": moveSimple,
-            "moveSmart": moveSmart,
-            "moveJumping": moveJumping,
-            "moveFloating": moveFloating,
-            "moveFloatingReal": moveFloatingReal,
-            "moveSliding": moveSliding,
-            "moveSlidingReal": moveSlidingReal,
-            "movePlatform": movePlatform
-        },
-        "physics": {
-            "shiftBoth": shiftBoth,
-            "setWidth": setWidth,
-            "setHeight": setHeight,
-            "setSize": setSize,
-            "updatePosition": updatePosition,
-            "increaseHeight": increaseHeight
-        }
+        // Collisions
+        "thingCanCollide": thingCanCollide,
+        "thingTouchesThing": thingTouchesThing,
+        "thingOnTop": thingOnTop,
+        "thingOnSolid": thingOnSolid,
+        "characterTouchesSolid": characterTouchesSolid,
+        "characterTouchesCharacter": characterTouchesCharacter,
+        "characterHitsSolid": characterHitsSolid,
+        "characterHitsCharacter": characterHitsCharacter,
+        "characterOnSolid": characterOnSolid,
+        "characterOnResting": characterOnResting,
+        "solidOnCharacter": solidOnCharacter,
+        // Movement
+        "moveSimple": moveSimple,
+        "moveSmart": moveSmart,
+        "moveJumping": moveJumping,
+        "moveFloating": moveFloating,
+        "moveFloatingReal": moveFloatingReal,
+        "moveSliding": moveSliding,
+        "moveSlidingReal": moveSlidingReal,
+        "movePlatform": movePlatform,        "moveFalling": moveFalling,        "moveFreeFalling": moveFreeFalling,
+        // Physics
+        "shiftBoth": shiftBoth,
+        "setWidth": setWidth,
+        "setHeight": setHeight,
+        "setSize": setSize,
+        "updatePosition": updatePosition,
+        "increaseHeight": increaseHeight
     });
     
     return FullScreenMario;

@@ -9,9 +9,10 @@
 
 function PixelDrawr(settings) {
     "use strict";
-    if(this === window) return new PixelDrawr(settings);
-    var version = 1.0,
-        self = this,
+    if(this === window) {
+        return new PixelDrawr(settings);
+    }
+    var self = this,
         
         // The PixelRender object itself
         PixelRender;

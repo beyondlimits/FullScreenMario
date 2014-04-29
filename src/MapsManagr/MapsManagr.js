@@ -19,9 +19,10 @@ In short:
 */
 function MapsManagr(settings) {
   "use strict";
-  if(!this || this === window) return new MapsManagr(settings);
-  var version = "1.0",
-      self = this,
+  if(!this || this === window) {
+    return new MapsManagr(settings);
+  }
+  var self = this,
       
       // Object factory (ObjectMakr) used for maps, areas, and locations
       object_maker,
