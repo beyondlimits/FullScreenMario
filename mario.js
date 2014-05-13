@@ -37,9 +37,9 @@ function startFSM() {
 
   // Resetting everything may take a while
   resetMeasurements();
-  resetLibrary();
   resetEvents();
   resetCanvas();
+  resetLibrary();
   resetThings();
   resetScenery();
   resetMapsManager();
@@ -146,20 +146,11 @@ function resetGameScreenPosition(me) {
 // Events are done with TimeHandlr.js
 // This helps make timing obey pauses, and makes class cycles much easier
 function resetEvents() {
-  window.TimeHandler = new TimeHandlr({
-    onSpriteCycleStart: "onadding",
-    doSpriteCycleStart: "placed",
-    cycleCheckValidity: "alive",
-    timingDefault: 9
-  });
+    window.TimeHandler = FSM.TimeHandler;
 }
 
 // Sounds are done with AudioPlayr.js
 function resetSounds() {
-  window.sounds = {};
-  window.theme = false;
-  window.muted = (localStorage && localStorage.muted == "true");
-  
   window.AudioPlayer = new AudioPlayr({
     directory: "Sounds",
     getVolumeLocal: function() { return .49; },
