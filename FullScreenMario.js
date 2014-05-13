@@ -13,7 +13,8 @@ window.FullScreenMario = (function() {
      */
     function FullScreenMario() {            // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {            "unitsize": 4,            "scale": 2,            "requirements": {                "global": {                    "AudioPlayr": "src/AudioPlayr.js",                    "ChangeLinr": "src/ChangeLinr.js",                    "FPSAnalyzr": "src/FPSAnalyzr.js",                    "GamesRunnr": "src/GamesRunnr.js",                    "GroupHoldr": "src/GroupHoldr.js",                    "InputWritr": "src/InputWritr.js",                    "MapsManagr": "src/MapsManagr.js",                    "ObjectMakr": "src/ObjectMakr.js",                    "PixelDrawr": "src/PixelDrawr.js",                    "PixelRendr": "src/PixelRendr.js",                    "QuadsKeepr": "src/QuadsKeepr.js",                    "StatsHoldr": "src/StatsHoldr.js",                    "StringFilr": "src/StringFilr.js",                    "ThingHittr": "src/ThingHittr.js",                    "TimeHandlr": "src/TimeHandlr.js"                },                "self": {                    "sprites": "settings/sprites.js",                    "events": "settings/events.js"                }            },            "resets": [                resetPixelRender,                resetPixelDrawer,                resetTimeHandler,
                 resetAudioPlayer,
-                resetQuadsKeeper
+                resetQuadsKeeper,
+                resetGamesRunner,
             ],
             "constants": [
                 "unitsize",
@@ -55,6 +56,15 @@ window.FullScreenMario = (function() {
     function resetQuadsKeeper(self) {
         self.QuadsKeeper = new QuadsKeepr(self.quadrants);
     }
+    
+    /**
+     *  Sets self.GamesRunner and self.FPSAnalyzr
+     * 
+     */
+    function resetGamesRunner(self) {
+        self.GamesRunner = new GamesRunnr(self.runner);
+    }
+    
     
     /* Collision functions
     */

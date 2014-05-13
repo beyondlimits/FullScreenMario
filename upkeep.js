@@ -1,54 +1,11 @@
 /* Upkeep.js */
 // Contains functions associated with the upkeep
 
-(function() {
-	FullScreenMario.prototype.resetUpkeep = function() {
-		this.GamesRunner = new GamesRunnr({
-			"upkeep_schedule": setTimeout,
-			"upkeep_cancel": clearTimeout,
-			"interval": 1000 / 60,
-			"FPSAnalyzer": this.FPSAnalyzer,
-			"games": [
-				function() { 
-					this.QuadsKeeper.determineAllQuadrants(solids);
-				},
-				this.get("maintainSolids"),
-				this.get("maintainCharacters"),
-				this.get("maintainPlayer"),
-				function() {
-					texts.length && maintainTexts;
-				},
-				this.TimeHandler.handleEvents,
-				this.PixelDrawer.refillGlobalCanvas
-			],
-			"on_pause": AudioPlayer.pause,
-			"on_unpause": AudioPlayer.unpause
-		});
-	};
-})();
-
-
 /* Old stuff
 */
 
 function resetUpkeep() {
-  window.GamesRunner = new GamesRunnr({
-    "upkeep_schedule": setTimeout,
-    "upkeep_cancel": clearTimeout,
-    "interval": 1000 / 60,
-    "FPSAnalyzer": FPSAnalyzer,
-    "games": [
-      function() { QuadsKeeper.determineAllQuadrants(solids); },
-      maintainSolids,
-      maintainCharacters,
-      maintainPlayer,
-      function() { texts.length && maintainTexts; },
-      TimeHandler.handleEvents,
-      PixelDrawer.refillGlobalCanvas
-    ],
-    "on_pause": AudioPlayer.pause,
-    "on_unpause": AudioPlayer.unpause
-  });
+  window.GamesRunner = FSM.GamesRunner;
 }
 
 function upkeep() {
