@@ -2,9 +2,9 @@
 // Starts everything.
 
 function startFSM() {
-    window.FSM = new FullScreenMario();
+    var time_start = Date.now();
   
-  var time_start = Date.now();
+    window.FSM = new FullScreenMario();
   
   // Thanks, Obama...
   ensureLocalStorage();
@@ -151,75 +151,13 @@ function resetEvents() {
 
 // Sounds are done with AudioPlayr.js
 function resetSounds() {
-  window.AudioPlayer = new AudioPlayr({
-    directory: "Sounds",
-    getVolumeLocal: function() { return .49; },
-    getThemeDefault: function() { return setting.split(' ')[0]; }, 
-    localStorageMuted: "muted",
-    library: {
-      Sounds: [
-        "Bowser Falls",
-        "Bowser Fires",
-        "Break Block",
-        "Bump",
-        "Coin",
-        "Ending",
-        "Fireball",
-        "Firework",
-        "Flagpole",
-        "Gain Life",
-        "Game Over 2",
-        "Game Over",
-        "Hurry",
-        "Into the Tunnel",
-        "Jump Small",
-        "Jump Super",
-        "Kick",
-        "Level Complete",
-        "Player Dies",
-        "Pause",
-        "Pipe",
-        "Power Down",
-        "Powerup Appears",
-        "Powerup",
-        "Stage Clear",
-        "Vine Emerging",
-        "World Clear",
-        "You Dead"
-      ],
-      Themes: [
-        "Castle",
-        "Overworld",
-        "Underwater",
-        "Underworld",
-        "Star",
-        "Sky",
-        "Hurry Castle",
-        "Hurry Overworld",
-        "Hurry Underwater",
-        "Hurry Underworld",
-        "Hurry Star",
-        "Hurry Sky"
-      ]
-    }
-  });
+    window.AudioPlayer = FSM.AudioPlayer;
 }
 
 // Quadrants are done with QuadsKeepr.js
 // This starts off with 7 cols and 6 rows (each has 1 on each side for padding)
 function resetQuadrants() {
-  window.QuadsKeeper = new QuadsKeepr({
-    num_rows: 5,
-    num_cols: 6,
-    screen_width: window.innerWidth,
-    screen_height: window.innerHeight,
-    tolerance: unitsized2,
-    onUpdate: function() {
-        var diff_right = gamescreen.right + QuadsKeeper.getOutDifference();
-        MapsManager.spawnMap(diff_right / unitsize);
-    },
-    onCollide: false
-  });
+    window.QuadsKeeper = FSM.QuadsKeeper;
 }
 
 // Variables regarding the state of the game

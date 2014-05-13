@@ -38,6 +38,7 @@ function TimeHandlr(settings) {
       removeClass;
   
   var reset = this.reset = function reset(settings) {
+    console.log("Doing with", settings);
     time               = settings.time               || 0;
     events             = settings.events             || {};
     
@@ -391,5 +392,4 @@ function TimeHandlr(settings) {
   }
   
   reset(settings || {});
-  return self;
 }

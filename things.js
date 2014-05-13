@@ -2562,7 +2562,6 @@ function collideLocationShifter(me, shifter) {
 }
 // Functions used for ObjectMakr-style detectors
 function onDetectorCollision(character, me) {
-    console.log("ha");
   if(!character.player) {
     if(me.activate_fail) me.activate_fail(character);
     return;
