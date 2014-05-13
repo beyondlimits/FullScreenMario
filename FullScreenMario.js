@@ -1,4 +1,4 @@
-var FullScreenMario = (function() {
+window.FullScreenMario = (function() {
     "use strict";
     
     // Use an EightBittr as the class parent, with EightBittr's constructor
@@ -11,8 +11,8 @@
     /**
      * 
      */
-    function FullScreenMario() {        // Call the parent EightBittr constructor to set the base settings        // (these are really just settings and unitsize)        EightBittr.call(this, {            "unitsize": 4,            "scale": 2        });    }
-    FullScreenMario.prototype = EightBitter;
+    function FullScreenMario() {        // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {            "unitsize": 4,            "scale": 2,            "requirements": {                "global": {                    "AudioPlayr": "src/AudioPlayr.js",                    "ChangeLinr": "src/ChangeLinr.js",                    "FPSAnalyzr": "src/FPSAnalyzr.js",                    "GamesRunnr": "src/GamesRunnr.js",                    "GroupHoldr": "src/GroupHoldr.js",                    "InputWritr": "src/InputWritr.js",                    "MapsManagr": "src/MapsManagr.js",                    "ObjectMakr": "src/ObjectMakr.js",                    "PixelDrawr": "src/PixelDrawr.js",                    "PixelRendr": "src/PixelRendr.js",                    "QuadsKeepr": "src/QuadsKeepr.js",                    "StatsHoldr": "src/StatsHoldr.js",                    "StringFilr": "src/StringFilr.js",                    "ThingHittr": "src/ThingHittr.js",                    "TimeHandlr": "src/TimeHandlr.js"                },                "self": {                    "sprites": "sprites.js",                }            },            "resets": [                resetSprites            ]        });    }
+    FullScreenMario.prototype = EightBitter;            /* Reset functions, in order    */        /**     * Sets self.PixelRender and self.PixelDrawer.     *      * @param {FullScreenMario} self     * @remarks Requirement(s): sprites.js (prototype.sprites)     */    function resetSprites(self) {        // PixelRender settings are stored in FullScreenMario.prototype.sprites,        // though they also need the scale measurement added        self.PixelRender = new PixelRendr(proliferateHard(self.sprites, {            "scale": self.scale        }));                self.PixelDrawer = new PixelDrawr({            "PixelRender": self.PixelRender        });    }    
     
     /* Collision functions
     */
@@ -601,5 +601,3 @@
     
     return FullScreenMario;
 })();
-
-var FSM = new FullScreenMario();

@@ -16,6 +16,70 @@ window.EightBittr = (function(settings) {
         
         this.unitsize = settings.unitsize || 1;
         this.scale = settings.scale || 1;
+        
+        if(settings.requirements) {
+            if(settings.requirements.global) {
+                checkRequirements(window, settings.requirements.global, "global");
+            }
+            if(settings.requirements.self) {
+                checkRequirements(this, settings.requirements.self, "self");
+            }
+        }
+        
+        if(settings.resets) {
+            doResets(this, settings.resets);
+        }
+    }
+    
+    /**
+     * Given an associate array of requirement names to the files that should
+     * include them, this makes sure each of those requirements is a property of
+     * the given object. 
+     * 
+     * @param {Object} self    Generally either the window (for global checks,
+     *                         such as utility classes) or an EightBitter       
+     * @param {Object} requirements   An associative array of properties to 
+     *                                check for under self
+     * @param {String} name   The name referring to self, printed out in an
+     *                        Error if needed.
+     * @remarks This has no return type, as it throws an error with information
+     *          on missing requirements instead.
+     */
+    function checkRequirements(self, requirements, name) {
+        var fails = [],
+            requirement;
+        
+        // For each requirement in the given object, if it isn't visible as a
+        // member of self (evaluates to falsy), complain
+        for(requirement in requirements) {
+            if(requirements.hasOwnProperty(requirement) && !self[requirement]) {
+                fails.push(requirement);
+            }
+        }
+        
+        // If there was at least one failure added to the fails array, throw
+        // an error with each fail split by endlines
+        if(fails.length) {
+            throw new Error("Missing " + fails.length + " requirement(s) "
+                + "in " + name + ".\n"
+                + fails.map(function(requirement, i) {
+                    return i + '. ' + requirement + ": is the '"
+                            + requirements[requirement] + "' file included?";
+                }).join('\n'));
+        }
+    }
+    
+    /**
+     * 
+     * 
+     * 
+     */
+    function doResets(self, resets) {
+        var i;
+        
+        for(i = 0; i < resets.length; ++i) {
+            resets[i](self)
+        }
     }
     
     /**

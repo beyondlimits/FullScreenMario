@@ -2,6 +2,8 @@
 // Starts everything.
 
 function startFSM() {
+    window.FSM = new FullScreenMario();
+  
   var time_start = Date.now();
   
   // Thanks, Obama...

@@ -590,7 +590,7 @@ function PixelRendr(settings) {
   
   // Converts ('7',3,1) to '117'
   function makeDigit(num, size) {
-    return stringOf('0', max(0, size - String(num).length)) + num;
+    return stringOf('0', Math.max(0, size - String(num).length)) + num;
   }
   
   // Equivalent of String.replace for Arrays
@@ -600,6 +600,15 @@ function PixelRendr(settings) {
         arr[i] = ins;
     return arr;
   }
+  
+  // Follows a path inside an object recursively
+  // Path is ["path", "to", "target"], where num is how far along the path it is
+  // Num must be given at start, for performance reasons
+  function followPath(obj, path, num) {
+      if(path.hasOwnProperty(num) && obj.hasOwnProperty(path[num]))
+        return followPath(obj[path[num]], path, num + 1);
+      return obj;
+   }
   
   // http://www.html5rocks.com/en/tutorials/webgl/typed_arrays/
   // http://www.javascripture.com/Uint8ClampedArray
