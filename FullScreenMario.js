@@ -14,14 +14,30 @@ window.FullScreenMario = (function() {
     function FullScreenMario() {            // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {            "unitsize": 4,            "scale": 2,            "requirements": {                "global": {                    "AudioPlayr": "src/AudioPlayr.js",                    "ChangeLinr": "src/ChangeLinr.js",                    "FPSAnalyzr": "src/FPSAnalyzr.js",                    "GamesRunnr": "src/GamesRunnr.js",                    "GroupHoldr": "src/GroupHoldr.js",                    "InputWritr": "src/InputWritr.js",                    "MapsManagr": "src/MapsManagr.js",                    "ObjectMakr": "src/ObjectMakr.js",                    "PixelDrawr": "src/PixelDrawr.js",                    "PixelRendr": "src/PixelRendr.js",                    "QuadsKeepr": "src/QuadsKeepr.js",                    "StatsHoldr": "src/StatsHoldr.js",                    "StringFilr": "src/StringFilr.js",                    "ThingHittr": "src/ThingHittr.js",                    "TimeHandlr": "src/TimeHandlr.js"                },                "self": {                    "sprites": "settings/sprites.js",                    "events": "settings/events.js"                }            },            "resets": [                resetPixelRender,                resetPixelDrawer,                resetTimeHandler,
                 resetAudioPlayer,
                 resetQuadsKeeper
+            ],
+            "constants": [
+                "unitsize",
+                "scale",
+                "jumplev1",
+                "jumplev2",
+                "ceillev",
+                "ceilmax",
+                "castlev"
             ]        });    }
     FullScreenMario.prototype = EightBitter;
     
-    // For the sake of reset functions, store unitsize and scale as members
-    // of the actuall function FullScreenMario itself
+    // For the sake of reset functions, store constants as members of the actual
+    // FullScreenMario function itself
     FullScreenMario.unitsize = 4;
-    FullScreenMario.scale = 2;            /* Reset functions, in order    */        /**     * Sets self.PixelRender     *      * @param {FullScreenMario} self     * @remarks Requirement(s): sprites.js (settings/sprites.js)     *                          PixelRendr (src/PixelRendr.js)     */    function resetPixelRender(self) {        // PixelRender settings are stored in FullScreenMario.prototype.sprites,        // though they also need the scale measurement added        self.PixelRender = new PixelRendr(proliferateHard(self.sprites, {            "scale": self.scale        }));    }        /**     * Sets self.PixelDrawer     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelDrawr (src/PixelDrawr.js)     */    function resetPixelDrawer(self) {        self.PixelDrawer = new PixelDrawr({            "PixelRender": self.PixelRender        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): events.js (settings/events.js)     *                          TimeHandlr (src/TimeHandlr.js)     */    function resetTimeHandler(self) {
-        console.log("Making new", TimeHandlr);        self.TimeHandler = new TimeHandlr(self.events);    }
+    FullScreenMario.scale = 2;
+    FullScreenMario.jumplev1 = 32;
+    FullScreenMario.jumplev2 = 64;
+    // The floor is 88 spaces (11 blocks) below the yloc = 0 level
+    FullScreenMario.ceillev = 88; 
+    // The floor is 104 spaces (13 blocks) below the top of the screen (yloc = -16)
+    FullScreenMario.ceilmax = 104; 
+    FullScreenMario.castlev = -48;            /* Reset functions, in order    */        /**     * Sets self.PixelRender     *      * @param {FullScreenMario} self     * @remarks Requirement(s): sprites.js (settings/sprites.js)     *                          PixelRendr (src/PixelRendr.js)     */    function resetPixelRender(self) {        // PixelRender settings are stored in FullScreenMario.prototype.sprites,        // though they also need the scale measurement added        self.PixelRender = new PixelRendr(proliferateHard(self.sprites, {            "scale": self.scale        }));    }        /**     * Sets self.PixelDrawer     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelDrawr (src/PixelDrawr.js)     */    function resetPixelDrawer(self) {        self.PixelDrawer = new PixelDrawr({            "PixelRender": self.PixelRender        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): events.js (settings/events.js)     *                          TimeHandlr (src/TimeHandlr.js)     */    function resetTimeHandler(self) {
+        self.TimeHandler = new TimeHandlr(self.events);    }
     
     /**
      * Sets self.AudioPlayer
