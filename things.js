@@ -114,7 +114,7 @@ function resetThings() {
               width:  8,
               height: 8,
               tolx:   0,
-              toly:   unitsized8,
+              toly:   FullScreenMario.unitsize / 8,
               // Velocity
               xvel:  0,
               yvel:  0,
@@ -143,7 +143,7 @@ function resetThings() {
               grouptype: "Character",
               character: true,
               moveleft: true,
-              movement: moveSimple
+              movement: FullScreenMario.prototype.moveSimple
           },
           Player: {
               player: 1,
@@ -162,12 +162,12 @@ function resetThings() {
               paddling: 0,
               jumpers: 0,
               landing: 0,
-              tolx: unitsizet2,
+              tolx: FullScreenMario.unitsize * 2,
               toly: 0,
-              walkspeed: unitsized2,
-              maxspeed: unitsize * 1.35, // Really only used for timed animations
-              maxspeedsave: unitsize * 1.35,
-              scrollspeed: unitsize * 1.75,
+              walkspeed: FullScreenMario.unitsize / 2,
+              maxspeed: FullScreenMario.unitsize * 1.35, // Really only used for timed animations
+              maxspeedsave: FullScreenMario.unitsize * 1.35,
+              scrollspeed: FullScreenMario.unitsize * 1.75,
               running: '', // Evaluates to false for cycle checker
               fire: playerFires,
               movement: movePlayer,
@@ -177,12 +177,12 @@ function resetThings() {
           },
           enemy: {
               type: "enemy",
-              speed: unitsize * .21,
+              speed: FullScreenMario.unitsize * .21,
               collide: collideEnemy,
               death: killFlip
           },
           Goomba: {
-              toly: unitsize,
+              toly: FullScreenMario.unitsize,
               death: killGoomba,
               spriteCycleSynched: [
                   [unflipHoriz, flipHoriz]
@@ -190,7 +190,7 @@ function resetThings() {
           },
           Koopa: {
               height: 12,
-              toly: unitsizet2,
+              toly: FullScreenMario.unitsize * 2,
               death: function (me, big) {
                   console.warn("killKoopa should become killSpawn and rely on .spawntype");
                   return killKoopa(me, big);
@@ -204,23 +204,23 @@ function resetThings() {
                   },
                   "jumping": {
                       movement: moveJumping,
-                      jumpheight: unitsize * 1.17,
+                      jumpheight: FullScreenMario.unitsize * 1.17,
                       gravity: gravity / 2.8
                   },
                   "floating": {
                       movement: moveFloating,
                       nofall: true,
-                      yvel: unitsized4,
-                      maxvel: unitsized4
+                      yvel: FullScreenMario.unitsize / 4,
+                      maxvel: FullScreenMario.unitsize / 4
                   }
               }
           },
           Pirhana: {
               height: 12,
               counter: 0,
-              countermax: 12 * unitsize, // height * unitsize
-              dir: unitsized8,
-              toly: unitsizet8,
+              countermax: 12 * FullScreenMario.unitsize, // height * FullScreenMario.unitsize
+              dir: FullScreenMario.unitsize / 8,
+              toly: FullScreenMario.unitsize * 8,
               nofall: true,
               deadly: true,
               nocollidesolid: true,
@@ -234,7 +234,7 @@ function resetThings() {
           Bowser: {
               width: 16,
               height: 16,
-              speed: unitsize * .28,
+              speed: FullScreenMario.unitsize * .28,
               gravity: gravity / 2.8,
               spawntype: "Goomba",
               // killonend: freezeBowser,
@@ -252,7 +252,7 @@ function resetThings() {
           },
           Mushroom: {
               action: playerShroom,
-              speed: .42 * unitsize
+              speed: .42 * FullScreenMario.unitsize
           },
           Mushroom1Up: {
               action: gainLife
@@ -294,10 +294,10 @@ function resetThings() {
           Star: {
               name: "star item", // Item class so player's star isn't confused with this
               width: 7,
-              speed: unitsize * .56,
+              speed: FullScreenMario.unitsize * .56,
               action: playerStar,
               movement: moveJumping,
-              jumpheight: unitsize * 1.17,
+              jumpheight: FullScreenMario.unitsize * 1.17,
               gravity: gravity / 2.8,
               spriteCycle: [
                   ["one", "two", "three", "four"], 0, 7
@@ -305,7 +305,7 @@ function resetThings() {
           },
           Shell: {
               height: 7,
-              speed: unitsizet2,
+              speed: FullScreenMario.unitsize * 2,
               collide_primary: true,
               nofire: false,
               moveleft: 0,
@@ -405,20 +405,20 @@ function resetThings() {
           Platform: {
               height: 4,
               spritewidth: 4,
-              fall_threshold_start: unitsize * 2.8,
-              fall_threshold_end: unitsize * 2,
-              acceleration: unitsize / 16,
+              fall_threshold_start: FullScreenMario.unitsize * 2.8,
+              fall_threshold_end: FullScreenMario.unitsize * 2,
+              acceleration: FullScreenMario.unitsize / 16,
               repeat: true,
               killonend: true,
-              // maxvel: unitsized4 * 1.5,
+              // maxvel: FullScreenMario.unitsize / 4 * 1.5,
               attributes: {
                   "floating": {
                       // movement: moveFloating,
-                      // yvel: unitsized4 * 1.5
+                      // yvel: FullScreenMario.unitsize / 4 * 1.5
                   },
                   "sliding": {
                       // movement: moveSliding,
-                      // xvel: unitsized4 * 1.5
+                      // xvel: FullScreenMario.unitsize / 4 * 1.5
                   },
                   "transport": {
                       movement: false,
@@ -526,9 +526,9 @@ function thingProcess(thing, type, settings, defaults) {
   
   // Maximum quadrants (for QuadsKeeper)
   var maxquads = 4, num;
-  if((num = floor(thing.width * unitsize / QuadsKeeper.getQuadWidth())) > 0)
+  if((num = floor(thing.width * FullScreenMario.unitsize / QuadsKeeper.getQuadWidth())) > 0)
     maxquads += ((num + 1) * maxquads / 2);
-  if((num = floor(thing.height * unitsize / QuadsKeeper.getQuadHeight())) > 0)
+  if((num = floor(thing.height * FullScreenMario.unitsize / QuadsKeeper.getQuadHeight())) > 0)
     maxquads += ((num + 1) * maxquads / 2);
   thing.maxquads = maxquads;
   thing.quadrants = new Array(thing.maxquads);
@@ -537,8 +537,8 @@ function thingProcess(thing, type, settings, defaults) {
   var spritewidth = thing.spritewidth = thing.spritewidth || thing.width,
       spriteheight = thing.spriteheight = thing.spriteheight || thing.height,
       // Sprite sizing
-      spritewidthpixels = thing.spritewidthpixels = spritewidth * unitsize,
-      spriteheightpixels = thing.spriteheightpixels = spriteheight * unitsize;
+      spritewidthpixels = thing.spritewidthpixels = spritewidth * FullScreenMario.unitsize,
+      spriteheightpixels = thing.spriteheightpixels = spriteheight * FullScreenMario.unitsize;
   
   // Canvas, context, imageData
   var canvas = thing.canvas = getCanvas(spritewidthpixels, spriteheightpixels),
@@ -650,14 +650,14 @@ function checkTexts() {
  */
 
 function itemJump(me) {
-  me.yvel -= unitsize * 1.4;
-  me.top -= unitsize;
-  me.bottom -= unitsize;
+  me.yvel -= FullScreenMario.unitsize * 1.4;
+  me.top -= FullScreenMario.unitsize;
+  me.bottom -= FullScreenMario.unitsize;
   updatePosition(me);
 }
 
 function fireEnemy(enemy, me) {
-  if(!me.alive || me.emerging || enemy.height <= unitsize) return;
+  if(!me.alive || me.emerging || enemy.height <= FullScreenMario.unitsize) return;
   if(enemy.nofire) {
     if(enemy.nofire > 1) return me.death(me);
     return;
@@ -697,11 +697,11 @@ function moveShell(me) {
   if(++me.counting == 350) { 
     addClass(me, "peeking");
     me.peeking = true;
-    me.height += unitsized8;
+    me.height += FullScreenMario.unitsize / 8;
     updateSize(me);
   } else if(me.counting == 490) {
     var spawn = ObjectMaker.make(me.spawntype, { smart: me.smart } );
-    addThing(spawn, me.left, me.bottom - spawn.height * unitsize);
+    addThing(spawn, me.left, me.bottom - spawn.height * FullScreenMario.unitsize);
     killNormal(me);
   }
 }
@@ -725,7 +725,7 @@ function hitShell(one, two) {
       // If the enemy is a koopa, make it a shell
       // To do: automate this for things with shells (koopas, beetles)
       var spawn = ObjectMaker.make("Shell", { smart: one.smart });
-      addThing(spawn, one.left, one.bottom - spawn.height * unitsize);
+      addThing(spawn, one.left, one.bottom - spawn.height * FullScreenMario.unitsize);
       killFlip(spawn);
       killNormal(one);
     } // Otherwise just kill it normally
@@ -755,7 +755,7 @@ function hitShellSolid(one, two) {
 // Hitting the player
 function hitShellPlayer(one, two) {
   var shelltoleft = objectToLeft(two, one),
-      playerjump = one.yvel > 0 && one.bottom <= two.top + unitsizet2;
+      playerjump = one.yvel > 0 && one.bottom <= two.top + FullScreenMario.unitsize * 2;
   
   // Star Player is pretty easy
   if(one.star) {
@@ -791,7 +791,7 @@ function hitShellPlayer(one, two) {
     if(two.peeking) {
       two.peeking = false;
       removeClass(two, "peeking");
-      two.height -= unitsized8;
+      two.height -= FullScreenMario.unitsize / 8;
       updateSize(two);
     }
     
@@ -819,7 +819,7 @@ function hitShellPlayer(one, two) {
         jumpEnemy(one, two);
         one.yvel *= 2;
         scorePlayerShell(one, two);
-        setBottom(one, two.top - unitsize, true);
+        setBottom(one, two.top -FullScreenMario.unitsize, true);
       }
       // The shell isn't moving
       else {
@@ -871,8 +871,8 @@ function collideFriendly(one, two) {
  * Enemies
  */
 function jumpEnemy(me, enemy) {
-  if(me.keys.up) me.yvel = unitsize * -1.4;
-  else me.yvel = unitsize * -.7;
+  if(me.keys.up) me.yvel = FullScreenMario.unitsize * -1.4;
+  else me.yvel = FullScreenMario.unitsize * -.7;
   me.xvel *= .91;
   AudioPlayer.play("Kick");
   if(enemy.group != "item" || enemy.type == "shell")
@@ -885,7 +885,7 @@ function killGoomba(me, big) {
   if(!me.alive) return;
   if(!big) {
     var squash = ObjectMaker.make("DeadGoomba");
-    addThing(squash, me.left, me.bottom - squash.height * unitsize);
+    addThing(squash, me.left, me.bottom - squash.height * FullScreenMario.unitsize);
     TimeHandler.addEvent(killNormal, 21, squash);
     killNormal(me);
   }
@@ -901,7 +901,7 @@ function killKoopa(me, big) {
   // Puts it on stack, so it executes immediately after upkeep
   TimeHandler.addEvent(
     function(spawn, me) { 
-      addThing(spawn, me.left, me.bottom - spawn.height * unitsize);
+      addThing(spawn, me.left, me.bottom - spawn.height * FullScreenMario.unitsize);
       spawn.moveleft = me.moveleft;
     }, 0, spawn, me 
   );
@@ -918,7 +918,7 @@ function movePirhanaInit(me) {
   TimeHandler.addSpriteCycle(scenery, ["one", "two"]);
   me.movement = movePirhanaNew;
   // Pirhanas start out minimal
-  movePirhanaNew(me, me.height * unitsize);
+  movePirhanaNew(me, me.height * FullScreenMario.unitsize);
 }
 // Moving a pirhana moves both it and its scenery
 function movePirhanaNew(me, amount) {
@@ -937,7 +937,7 @@ function movePirhanaNew(me, amount) {
 function movePirhanaRestart(me) {
   var marmid = getMidX(player);
   // If Player's too close and counter == 0, don't do anything
-  if(me.counter >= me.countermax && marmid > me.left - unitsizet8 && marmid < me.right + unitsizet8) {
+  if(me.counter >= me.countermax && marmid > me.left -FullScreenMario.unitsize * 8 && marmid < me.right + FullScreenMario.unitsize * 8) {
     setTimeout(movePirhanaRestart, 7, me);
     return;
   }
@@ -967,7 +967,7 @@ function collideEnemy(one, two) {
   // Items
   if(one.group == "item") {
     if(one.collide_primary) return one.collide(two, one);
-    // if(two.height < unitsized16 || two.width < unitsized16) return;
+    // if(two.height < FullScreenMario.unitsize / 16 || two.width < FullScreenMario.unitsize / 16) return;
     return;
   }
   
@@ -985,7 +985,7 @@ function collideEnemy(one, two) {
     if(one.star) scoreEnemyStar(two);
     else {
       scoreEnemyStomp(two);
-      /*TimeHandler.addEvent(function(one, two) { */setBottom(one, min(one.bottom, two.top + unitsize));/* }, 0, one, two);*/
+      /*TimeHandler.addEvent(function(one, two) { */setBottom(one, min(one.bottom, two.top + FullScreenMario.unitsize));/* }, 0, one, two);*/
     }
     // Make Player have the hopping thing
     addClass(one, "hopping");
@@ -1055,7 +1055,7 @@ function moveHammerBro(me) {
   me.nocollidesolid = me.yvel < 0 || me.falling;
 }
 function throwHammer(me, count) {
-  if(!characterIsAlive(me) || me.nothrow || me.right < -unitsizet32) return;
+  if(!characterIsAlive(me) || me.nothrow || me.right < -unitsize * 32) return;
   if(count != 3) {
     switchClass(me, "thrown", "throwing");
   }
@@ -1064,7 +1064,7 @@ function throwHammer(me, count) {
       if(!characterIsAlive(me)) return;
       // Throw the hammer...
       switchClass(me, "throwing", "thrown");
-      addThing(ObjectMaker.make("Hammer"), me.left - unitsizet2, me.top - unitsizet2);
+      addThing(ObjectMaker.make("Hammer"), me.left -FullScreenMario.unitsize * 2, me.top -FullScreenMario.unitsize * 2);
     }
     // ...and go again
     if(count > 0) TimeHandler.addEvent(throwHammer, 7, me, --count);
@@ -1078,20 +1078,20 @@ function jumpHammerBro(me) {
   if(!characterIsAlive(me)) return true; // finish
   if(!me.resting) return; // just skip
   // If it's ok, jump down
-  if(map_settings.floor - (me.bottom / unitsize) >= jumplev1 - 2 && me.resting.name != "floor" && Math.floor(Math.random() * 2)) {
-    me.yvel = unitsize * -.7;
+  if(map_settings.floor - (me.bottom / FullScreenMario.unitsize) >= jumplev1 - 2 && me.resting.name != "floor" && Math.floor(Math.random() * 2)) {
+    me.yvel = FullScreenMario.unitsize * -.7;
     me.falling = true;
     TimeHandler.addEvent(function(me) { me.falling = false; }, 42, me);
   }
   // Otherwise, jump up
-  else me.yvel = unitsize * -2.1;
+  else me.yvel = FullScreenMario.unitsize * -2.1;
   me.resting = false;
 }
 
 function moveCannonInit(me) {
   TimeHandler.addEventInterval(
     function(me) {
-      if(player.right > me.left - unitsizet8 && player.left < me.right + unitsizet8)
+      if(player.right > me.left -FullScreenMario.unitsize * 8 && player.left < me.right + FullScreenMario.unitsize * 8)
         return; // don't fire if Player is too close
       var spawn = ObjectMaker.make("BulletBill");
       if(objectToLeft(player, me)) {
@@ -1117,7 +1117,7 @@ function moveBlooper(me) {
     default: ++me.counter; break;
   }
 
-  if(me.top < unitsizet16 + 10) {
+  if(me.top < FullScreenMario.unitsize * 16 + 10) {
     squeezeBlooper(me);
   }
 
@@ -1126,13 +1126,13 @@ function moveBlooper(me) {
   shiftVert(me, me.yvel, true);
   
   if(!me.squeeze) {
-    if(player.left > me.right + unitsizet8) {
+    if(player.left > me.right + FullScreenMario.unitsize * 8) {
       // Go to the right
-      me.xvel = min(me.speed, me.xvel + unitsized32);
+      me.xvel = min(me.speed, me.xvel + FullScreenMario.unitsize / 32);
     }
-    else if(player.right < me.left - unitsizet8) {
+    else if(player.right < me.left - FullScreenMario.unitsize * 8) {
       // Go to the left
-      me.xvel = max(me.speedinv, me.xvel - unitsized32);
+      me.xvel = max(me.speedinv, me.xvel - FullScreenMario.unitsize / 32);
     }
   }
 }
@@ -1142,7 +1142,7 @@ function squeezeBlooper(me) {
   me.squeeze = 2;
   me.xvel /= 1.17;
   setHeight(me, 10, true, true);
-  // (104 (map_settings.floor) - 12 (blooper.height) - 2) * unitsize
+  // (104 (map_settings.floor) - 12 (blooper.height) - 2) * FullScreenMario.unitsize
   if(me.top > player.bottom || me.bottom > 360) unsqueezeBlooper(me);
 }
 function unsqueezeBlooper(me) {
@@ -1155,11 +1155,11 @@ function unsqueezeBlooper(me) {
 
 function setCheepVelocities(me) {
   if(me.red) {
-    me.xvel = -unitsized4;
-    me.yvel = unitsize / -24;
+    me.xvel = -unitsize / 4;
+    me.yvel = FullScreenMario.unitsize / -24;
   } else {
-    me.xvel = unitsize / -6;
-    me.yvel = -unitsized32;
+    me.xvel = FullScreenMario.unitsize / -6;
+    me.yvel = -unitsize / 32;
   }
 }
 function moveCheepInit(me) {
@@ -1172,16 +1172,16 @@ function moveCheep(me) {
   shiftVert(me, me.yvel);
 }
 function moveCheepJumping(me) {
-  shiftVert(me, me.yvel += unitsize / 14);
+  shiftVert(me, me.yvel += FullScreenMario.unitsize / 14);
 }
 function startCheepSpawn() {
   return map_settings.zone_cheeps = TimeHandler.addEventInterval(
     function() {
       if(!map_settings.zone_cheeps) return true;
       var spawn = ObjectMaker.make("CheepCheep", { smart: true, flying: true});
-      addThing(spawn, Math.random() * player.left * player.maxspeed / unitsized2, gamescreen.height * unitsize);
+      addThing(spawn, Math.random() * player.left * player.maxspeed / FullScreenMario.unitsize / 2, gamescreen.height * FullScreenMario.unitsize);
       spawn.xvel = Math.random() * player.maxspeed;
-      spawn.yvel = unitsize * -2.33;
+      spawn.yvel = FullScreenMario.unitsize * -2.33;
       flipHoriz(spawn);
       spawn.movement = function(me) {
         if(me.top < ceilmax) me.movement = moveCheepJumping; 
@@ -1212,13 +1212,13 @@ function moveLakituInit2(me) {
   shiftHoriz(me, -unitsize);
 }
 // Then, once it's close enough, is always relative to player.
-// This fluctuates between +/-32 (* unitsize)
+// This fluctuates between +/-32 (* FullScreenMario.unitsize)
 function moveLakitu(me) {
   // If player is moving quickly to the right, move in front of him and stay there
-  if(player.xvel > unitsized8 && player.left > gamescreen.width * unitsized2) {
-    if(me.left < player.right + unitsizet16) {
+  if(player.xvel > FullScreenMario.unitsize / 8 && player.left > gamescreen.width * FullScreenMario.unitsize / 2) {
+    if(me.left < player.right + FullScreenMario.unitsize * 16) {
       // To the 'left' of player
-      slideToXLoc(me, player.right + unitsizet32 + player.xvel, player.maxspeed * 1.4);
+      slideToXLoc(me, player.right + FullScreenMario.unitsize * 32 + player.xvel, player.maxspeed * 1.4);
       me.counter = 0;
     }
   }
@@ -1237,7 +1237,7 @@ function throwSpiny(me) {
     if(me.dead) return false;
     var spawn = ObjectMaker.make("SpinyEgg");
     addThing(spawn, me.left, me.top);
-    spawn.yvel = unitsize * -2.1;
+    spawn.yvel = FullScreenMario.unitsize * -2.1;
     switchClass(me, "hiding", "out");
   }, 21, me);
 }
@@ -1265,7 +1265,7 @@ function killBeetle(me, big) {
   // Puts it on stack, so it executes immediately after upkeep
   TimeHandler.addEvent(
     function(spawn, me) {
-      addThing(spawn, me.left, me.bottom - spawn.height * unitsize);
+      addThing(spawn, me.left, me.bottom - spawn.height * FullScreenMario.unitsize);
       spawn.moveleft = me.moveleft;
     },
     0, spawn, me );
@@ -1344,7 +1344,7 @@ function placePlayer(xloc, yloc) {
     TimeHandler.addSpriteCycle(player, ["swim1", "swim2"], "swimming", 5);
   }
 
-  var adder = addThing(player, xloc || unitsizet16, yloc || (map_settings.floor - player.height) * unitsize);
+  var adder = addThing(player, xloc ||FullScreenMario.unitsize * 16, yloc || (map_settings.floor - player.height) * FullScreenMario.unitsize);
   if(StatsHolder.get("power") >= 2) {
     playerGetsBig(player, true);
     if(StatsHolder.get("power") == 3)
@@ -1454,7 +1454,7 @@ function playerGetsSmall(me) {
   TimeHandler.addEvent(function(player) {
     removeClass(player, "large");
     setPlayerSizeSmall(player);
-    setBottom(player, bottom - unitsize);
+    setBottom(player, bottom -FullScreenMario.unitsize);
   }, 21, player);
   // Step three (t+42)
   TimeHandler.addEvent(function(player) {
@@ -1483,7 +1483,7 @@ function setPlayerSizeLarge(me) {
   updateSize(me);
 }
 
-// To do: add in unitsize measurement?
+// To do: add inFullScreenMario.unitsize measurement?
 function movePlayer(me) {
   // Not jumping
   if(!me.keys.up) me.keys.jump = 0;
@@ -1503,7 +1503,7 @@ function movePlayer(me) {
       me.jumping = true;
     }
     if(!map_settings.underwater) {
-      var dy = unitsize / (pow(++me.keys.jumplev, map_settings.jumpmod - .0014 * me.xvel));
+      var dy = FullScreenMario.unitsize / (pow(++me.keys.jumplev, map_settings.jumpmod - .0014 * me.xvel));
       me.yvel = max(me.yvel - dy, map_settings.maxyvelinv);
     }
   }
@@ -1517,7 +1517,7 @@ function movePlayer(me) {
       setHeight(player, 11, false, true);
       me.height = 11;
       me.tolyold = me.toly;
-      me.toly = unitsizet4;
+      me.toly = FullScreenMario.unitsize * 4;
       updateBottom(me, 0);
       updateSize(me);
     }
@@ -1644,7 +1644,7 @@ function playerPaddles(me) {
     TimeHandler.addSpriteCycle(me, ["paddle1", "paddle2", "paddle3", "paddle3", "paddle2", "paddle1", function() { return me.paddling = false; }], "paddling_cycle", 5);
   }
   me.paddling = me.swimming = true;
-  me.yvel = unitsize * -.84;
+  me.yvel = FullScreenMario.unitsize * -.84;
 }
 
 function playerBubbles() {
@@ -1665,13 +1665,13 @@ function movePlayerVine(me) {
   // If Player is moving up, simply move up
   if(me.keys.up) {
     me.animatednow = true;
-    shiftVert(me, unitsized4 * -1, true);
+    shiftVert(me,FullScreenMario.unitsize / 4 * -1, true);
   }
   // If player is moving down, move down and check for unattachment
   else if(me.keys.crouch) {
     me.animatednow = true;
-    shiftVert(me, unitsized2, true);
-    if(me.bottom > attached.bottom - unitsizet4) return unattachPlayer(me);
+    shiftVert(me,FullScreenMario.unitsize / 2, true);
+    if(me.bottom > attached.bottom -FullScreenMario.unitsize * 4) return unattachPlayer(me);
   }
   else me.animatednow = false;
   
@@ -1725,16 +1725,16 @@ function playerFires() {
   addClass(player, "firing");
   var ball = ObjectMaker.make("Fireball", {
         moveleft: player.moveleft,
-        speed: unitsize * 1.75,
+        speed: FullScreenMario.unitsize * 1.75,
         gravity: map_settings.gravity * 1.56,
-        jumpheight: unitsize * 1.56,
-        yvel: unitsize,
+        jumpheight: FullScreenMario.unitsize * 1.56,
+        yvel: FullScreenMario.unitsize,
         movement: moveJumping
       }),
       xloc = player.moveleft 
-            ? (player.left - unitsized4)
-            : (player.right + unitsized4);
-  addThing(ball, xloc, player.top + unitsizet8);
+            ? (player.left -FullScreenMario.unitsize / 4)
+            : (player.right + FullScreenMario.unitsize / 4);
+  addThing(ball, xloc, player.top + FullScreenMario.unitsize * 8);
   ball.animate(ball);
   ball.ondelete = fireDeleted;
   TimeHandler.addEvent(function(player) {
@@ -1797,7 +1797,7 @@ function killPlayer(me, big) {
         me.nocollide = true;
         me.movement = me.resting = false;
         me.gravity = gravity / 2.1;
-        me.yvel = unitsize * -1.4;
+        me.yvel = FullScreenMario.unitsize * -1.4;
       }, 7, me);
     }
   }
@@ -1833,7 +1833,7 @@ function killPlayer(me, big) {
 function playerDropsIn() {
   // Clear and place Player
   clearOldPlayer();
-  placePlayer(unitsizet16, unitsizet8 * -1 + (map.underwater * unitsize * 24));
+  placePlayer(unitsize * 16,FullScreenMario.unitsize * 8 * -1 + (map.underwater * FullScreenMario.unitsize * 24));
   flicker(player);
   
   // Give a Resting Stone for him to land, unless it's underwater...
@@ -1936,10 +1936,10 @@ function placeShards(me) {
   for(var i = 0, shard; i < 4; ++i) {
     shard = ObjectMaker.make("BrickShard");
     addThing(shard,
-                me.left + (i < 2) * me.width * unitsize - unitsizet2,
-                me.top + (i % 2) * me.height * unitsize - unitsizet2);
-    shard.xvel = shard.speed = unitsized2 - unitsize * (i > 1);
-    shard.yvel = unitsize * -1.4 + i % 2;
+                me.left + (i < 2) * me.width * FullScreenMario.unitsize -FullScreenMario.unitsize * 2,
+                me.top + (i % 2) * me.height * FullScreenMario.unitsize -FullScreenMario.unitsize * 2);
+    shard.xvel = shard.speed = FullScreenMario.unitsize / 2 -FullScreenMario.unitsize * (i > 1);
+    shard.yvel = FullScreenMario.unitsize * -1.4 + i % 2;
     TimeHandler.addEvent(killNormal, 350, shard);
   }
 }
@@ -2000,12 +2000,12 @@ function vineEnable(me) {
 }
 
 function vineMovement(me) {
-  increaseHeightTop(me, unitsized4);
-  if(me.attached) shiftVert(me.attached, -unitsized4, true);
+  increaseHeightTop(me,FullScreenMario.unitsize / 4);
+  if(me.attached) shiftVert(me.attached, -unitsize / 4, true);
 }
 
 function touchVine(me, vine) {
-  if(!me.player || me.attached || me.climbing || me.bottom > vine.bottom + unitsizet2) return;
+  if(!me.player || me.attached || me.climbing || me.bottom > vine.bottom + FullScreenMario.unitsize * 2) return;
   vine.attached = me;
   
   me.attached = vine;
@@ -2028,8 +2028,8 @@ function touchVine(me, vine) {
   
   // Make sure you're looking at the vine, and from the right distance
   lookTowardThing(me, vine);
-  if(!me.attachleft) setRight(me, vine.left + unitsizet4);
-  else setLeft(me, vine.right - unitsizet4);
+  if(!me.attachleft) setRight(me, vine.left + FullScreenMario.unitsize * 4);
+  else setLeft(me, vine.right -FullScreenMario.unitsize * 4);
   
 }
 
@@ -2039,7 +2039,7 @@ function collideSpring(me, spring) {
   return characterTouchedSolid(me, spring);
 }
 function springPlayerInit(spring, player) {
-  spring.tension = spring.tensionsave = max(player.yvel * .77, unitsize);
+  spring.tension = spring.tensionsave = max(player.yvel * .77,FullScreenMario.unitsize);
   player.movement = movePlayerSpringDown;
   player.spring = spring;
   player.xvel /= 2.8;
@@ -2053,13 +2053,13 @@ function movePlayerSpringDown(me) {
     return;
   }
   // If the spring is contracted, go back up
-  if(me.spring.height < unitsize * 2.5 || me.spring.tension < unitsized32) {
+  if(me.spring.height < FullScreenMario.unitsize * 2.5 || me.spring.tension < FullScreenMario.unitsize / 32) {
     me.movement = movePlayerSpringUp;
     me.spring.movement = moveSpringUp;
     return;
   }
   // Make sure it's hard to slide off
-  if(me.left < me.spring.left + unitsizet2 || me.right > me.spring.right - unitsizet2)
+  if(me.left < me.spring.left + FullScreenMario.unitsize * 2 || me.right > me.spring.right -FullScreenMario.unitsize * 2)
     me.xvel /= 1.4;
   
   reduceSpringHeight(me.spring, me.spring.tension);
@@ -2082,10 +2082,10 @@ function moveSpringUp(spring) {
   
   if(spring.height > spring.heightnorm) {
     if(spring == player.spring) {
-      player.yvel = max(-unitsizet2, spring.tensionsave * -.98);
+      player.yvel = max(-unitsize * 2, spring.tensionsave * -.98);
       player.resting = player.spring = false;
     }
-    reduceSpringHeight(spring, (spring.height - spring.heightnorm) * unitsize);
+    reduceSpringHeight(spring, (spring.height - spring.heightnorm) * FullScreenMario.unitsize);
     spring.tension = spring.tensionsave = spring.movement = false;
   }
 }
@@ -2111,8 +2111,8 @@ function makeCastleBlock(me, settings) {
   // The block will need to manage the balls later
   var length = me.fireballs,
       balls = me.balls = new Array(length),
-      midx = getMidX(me) - unitsizet2, // Fireballs are 4x4, so (unitsize * 4) / 2
-      midy = getMidY(me) - unitsizet2;
+      midx = getMidX(me) -FullScreenMario.unitsize * 2, // Fireballs are 4x4, so (unitsize * 4) / 2
+      midy = getMidY(me) -FullScreenMario.unitsize * 2;
   
   // These start at the center and will have their positions set by castleBlockEvent
   for(i = 0; i < length; ++i)
@@ -2133,17 +2133,17 @@ function castleBlockEvent(me) {
   // Each ball is an increasing distance from center, at the same angle
   // (the first is skipped because it stays at the center);
   for(i = 1, len = balls.length; i < len; ++i) {
-    setMidX(balls[i], left + (i * unitsizet4 * Math.cos(angle * Math.PI)));
-    setMidY(balls[i], top + (i * unitsizet4 * Math.sin(angle * Math.PI)));
+    setMidX(balls[i], left + (i * FullScreenMario.unitsize * 4 * Math.cos(angle * Math.PI)));
+    setMidY(balls[i], top + (i * FullScreenMario.unitsize * 4 * Math.sin(angle * Math.PI)));
   }
-  // me.midx = me.left;// + me.width * unitsize / 2;
-  // me.midy = me.top;// + me.height * unitsize / 2;
+  // me.midx = me.left;// + me.width * FullScreenMario.unitsize / 2;
+  // me.midy = me.top;// + me.height * FullScreenMario.unitsize / 2;
   // me.counter = 0;
   // me.angle += me.dt
   // // Skip i=0 because it doesn't move
   // for(var i = 1; i < me.balls.length; ++i) {
-    // setMidX(me.balls[i], me.midx + (i) * unitsizet4 * Math.cos(me.angle * Math.PI), true);
-    // setMidY(me.balls[i], me.midy + (i) * unitsizet4 * Math.sin(me.angle * Math.PI), true);
+    // setMidX(me.balls[i], me.midx + (i) * FullScreenMario.unitsize * 4 * Math.cos(me.angle * Math.PI), true);
+    // setMidY(me.balls[i], me.midy + (i) * FullScreenMario.unitsize * 4 * Math.sin(me.angle * Math.PI), true);
   // }
 }
 // Set to solids because they spawn with their CastleBlocks
@@ -2161,8 +2161,8 @@ function CastleAxeFalls(me, collider) {
   var axe = collider.axe;
   // Don't do this if Player would fall without the bridge
   if(!me.player || 
-    me.right < axe.left + unitsize ||
-    me.bottom > axe.bottom - unitsize) return;
+    me.right < axe.left + FullScreenMario.unitsize ||
+    me.bottom > axe.bottom -FullScreenMario.unitsize) return;
   // Immediately kill the axe and collider
   killNormal(axe);
   killNormal(collider);
@@ -2179,7 +2179,7 @@ function CastleAxeFalls(me, collider) {
 function CastleAxeKillsBridge(bridge, axe) {
   // Decrease the size of the bridge
   bridge.width -= 2;
-  bridge.right -= unitsizet2;
+  bridge.right -= FullScreenMario.unitsize * 2;
   // If it's still here, go again
   if(bridge.width > 0) TimeHandler.addEvent(CastleAxeKillsBridge, 1, bridge, axe);
   // Otherwise call the next step
@@ -2218,8 +2218,8 @@ function PlatformGeneratorInit(me) {
   for(var i = 0, inc = me.interval, height = me.height; i < height; i += inc) {
     me.platlast = ObjectMaker.make("Platform", { movement: movePlatformSpawn });
     me.platlast.yvel *= me.dir;
-    if(me.dir == 1) addThing(me.platlast, me.left, me.top + i * unitsize);
-    else addThing(me.platlast, me.left, me.bottom - i * unitsize);
+    if(me.dir == 1) addThing(me.platlast, me.left, me.top + i * FullScreenMario.unitsize);
+    else addThing(me.platlast, me.left, me.bottom - i * FullScreenMario.unitsize);
     me.platlast.parent = me;
     i += me.interval;
   }
@@ -2253,12 +2253,12 @@ function FlagCollisionTop(me, detector) {
   
   // Start moving the player down, as well as the end flag
   var endflag = MapsManager.getArea().getThingByID("endflag"),
-      bottom_cap = (map_settings.floor - 9) * unitsize;
+      bottom_cap = (map_settings.floor - 9) * FullScreenMario.unitsize;
   me.movement = function(me) { 
     if(me.bottom < bottom_cap)
-      shiftVert(me, unitsize);
+      shiftVert(me,FullScreenMario.unitsize);
     if(endflag.bottom < bottom_cap)
-      shiftVert(endflag, unitsize);
+      shiftVert(endflag,FullScreenMario.unitsize);
     
     // If both are at the bottom, clear climbing and allow walking
     if(me.bottom >= bottom_cap && endflag.bottom >= bottom_cap) {
@@ -2296,7 +2296,7 @@ function scorePlayerFlag(diff, stone) {
 function FlagOff(me, solid) {
   // Flip the player to the other side of the solid
   flipHoriz(me);
-  shiftHoriz(me, (me.width + 1) * unitsize);
+  shiftHoriz(me, (me.width + 1) * FullScreenMario.unitsize);
   
   // Prepare the player to walk to the right
   me.keys.run = 1;
@@ -2339,8 +2339,8 @@ function endLevelFireworks(me, numfire, detector) {
   var nextnum, nextfunc,
       i = 0;
   if(numfire) {
-    // var castlemid = detector.castle.left + detector.castle.width * unitsized2;
-    var castlemid = detector.left + 32 * unitsized2;
+    // var castlemid = detector.castle.left + detector.castle.width * FullScreenMario.unitsize / 2;
+    var castlemid = detector.left + 32 * FullScreenMario.unitsize / 2;
     while(i < numfire)
       explodeFirework(++i, castlemid); // Pre-increment since explodeFirework expects numbers starting at 1
     nextnum = timer * (i + 2) * 42;
@@ -2357,7 +2357,7 @@ function explodeFirework(num, castlemid) {
   setTimeout(function() {
     log("Not placing fireball.");
     // var fire = ObjectMaker.make("Firework");
-    // addThing(fire, castlemid + fire.locs[0] - unitsize * 6, unitsizet16 + fire.locs[1]);
+    // addThing(fire, castlemid + fire.locs[0] -FullScreenMario.unitsize * 6,FullScreenMario.unitsize * 16 + fire.locs[1]);
     // fire.animate();
   }, timer * num * 42);
 }
@@ -2368,11 +2368,11 @@ function Firework(me, num) {
   if(num)
     switch(num) {
       // These probably aren't the exact same as original... :(
-      case 1: me.locs = [unitsizet16, unitsizet16]; break;
-      case 2: me.locs = [-unitsizet16, unitsizet16]; break;
-      case 3: me.locs = [unitsizet16 * 2, unitsizet16 * 2]; break;
-      case 4: me.locs = [unitsizet16 * -2, unitsizet16 * 2]; break;
-      case 5: me.locs = [0,unitsizet16 * 1.5]; break;
+      case 1: me.locs = [unitsize * 16,FullScreenMario.unitsize * 16]; break;
+      case 2: me.locs = [-unitsize * 16,FullScreenMario.unitsize * 16]; break;
+      case 3: me.locs = [unitsize * 16 * 2,FullScreenMario.unitsize * 16 * 2]; break;
+      case 4: me.locs = [unitsize * 16 * -2,FullScreenMario.unitsize * 16 * 2]; break;
+      case 5: me.locs = [0,unitsize * 16 * 1.5]; break;
       default: me.locs = [0,0]; break;
     }
   // Otherwise, it's just a normal explosion
@@ -2390,7 +2390,7 @@ function Firework(me, num) {
 
 function setWarpWorldInit(me) {
   // Just reduces the size 
-  shiftHoriz(me, me.width * unitsized2);
+  shiftHoriz(me, me.width * FullScreenMario.unitsize / 2);
   me.width /= 2;
   updateSize(me); 
   me.movement = false;
