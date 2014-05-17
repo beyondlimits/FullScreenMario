@@ -30,6 +30,6 @@ FullScreenMario.prototype.runner = {
         AudioPlayer.pause();
     },
     "on_unpause": function () {
-        AudioPlayer.unpause();
+        AudioPlayer.resume();
     }
 }

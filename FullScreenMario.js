@@ -11,10 +11,12 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
-    function FullScreenMario() {            // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {            "unitsize": 4,            "scale": 2,            "requirements": {                "global": {                    "AudioPlayr": "src/AudioPlayr.js",                    "ChangeLinr": "src/ChangeLinr.js",                    "FPSAnalyzr": "src/FPSAnalyzr.js",                    "GamesRunnr": "src/GamesRunnr.js",                    "GroupHoldr": "src/GroupHoldr.js",                    "InputWritr": "src/InputWritr.js",                    "MapsManagr": "src/MapsManagr.js",                    "ObjectMakr": "src/ObjectMakr.js",                    "PixelDrawr": "src/PixelDrawr.js",                    "PixelRendr": "src/PixelRendr.js",                    "QuadsKeepr": "src/QuadsKeepr.js",                    "StatsHoldr": "src/StatsHoldr.js",                    "StringFilr": "src/StringFilr.js",                    "ThingHittr": "src/ThingHittr.js",                    "TimeHandlr": "src/TimeHandlr.js"                },                "self": {                    "sprites": "settings/sprites.js",                    "events": "settings/events.js"                }            },            "resets": [                resetPixelRender,                resetPixelDrawer,                resetTimeHandler,
+    function FullScreenMario() {            // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {            "unitsize": 4,            "scale": 2,            "requirements": {                "global": {                    "AudioPlayr": "src/AudioPlayr.js",                    "ChangeLinr": "src/ChangeLinr.js",                    "FPSAnalyzr": "src/FPSAnalyzr.js",                    "GamesRunnr": "src/GamesRunnr.js",                    "GroupHoldr": "src/GroupHoldr.js",                    "InputWritr": "src/InputWritr.js",                    "MapsManagr": "src/MapsManagr.js",                    "ObjectMakr": "src/ObjectMakr.js",                    "PixelDrawr": "src/PixelDrawr.js",                    "PixelRendr": "src/PixelRendr.js",                    "QuadsKeepr": "src/QuadsKeepr.js",                    "StatsHoldr": "src/StatsHoldr.js",                    "StringFilr": "src/StringFilr.js",                    "ThingHittr": "src/ThingHittr.js",                    "TimeHandlr": "src/TimeHandlr.js"                },                "self": {                    "sprites": "settings/sprites.js",                    "events": "settings/events.js",
+                    "statistics": "settings/statistics.js"                }            },            "resets": [                resetPixelRender,                resetPixelDrawer,                resetTimeHandler,
                 resetAudioPlayer,
                 resetQuadsKeeper,
                 resetGamesRunner,
+                resetStatsHolder
             ],
             "constants": [
                 "unitsize",
@@ -37,32 +39,47 @@ window.FullScreenMario = (function() {
     FullScreenMario.ceillev = 88; 
     // The floor is 104 spaces (13 blocks) below the top of the screen (yloc = -16)
     FullScreenMario.ceilmax = 104; 
-    FullScreenMario.castlev = -48;            /* Reset functions, in order    */        /**     * Sets self.PixelRender     *      * @param {FullScreenMario} self     * @remarks Requirement(s): sprites.js (settings/sprites.js)     *                          PixelRendr (src/PixelRendr.js)     */    function resetPixelRender(self) {        // PixelRender settings are stored in FullScreenMario.prototype.sprites,        // though they also need the scale measurement added        self.PixelRender = new PixelRendr(proliferateHard(self.sprites, {            "scale": self.scale        }));    }        /**     * Sets self.PixelDrawer     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelDrawr (src/PixelDrawr.js)     */    function resetPixelDrawer(self) {        self.PixelDrawer = new PixelDrawr({            "PixelRender": self.PixelRender        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): events.js (settings/events.js)     *                          TimeHandlr (src/TimeHandlr.js)     */    function resetTimeHandler(self) {
+    FullScreenMario.castlev = -48;            /* Reset functions, in order    */        /**     * Sets self.PixelRender     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelRendr (src/PixelRendr.js)
+     *                          sprites.js (settings/sprites.js)     */    function resetPixelRender(self) {        // PixelRender settings are stored in FullScreenMario.prototype.sprites,        // though they also need the scale measurement added        self.PixelRender = new PixelRendr(proliferateHard(self.sprites, {            "scale": self.scale        }));    }        /**     * Sets self.PixelDrawer     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelDrawr (src/PixelDrawr.js)     */    function resetPixelDrawer(self) {        self.PixelDrawer = new PixelDrawr({            "PixelRender": self.PixelRender        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr.js)
+     *                          events.js (settings/events.js)     */    function resetTimeHandler(self) {
         self.TimeHandler = new TimeHandlr(self.events);    }
     
     /**
      * Sets self.AudioPlayer
      * 
      * @param {FullScreenMario} self
-     * @remarks Requirement(s): audio.js (settings/audio.js)     */
+     * @remarks Requirement(s): AudioPlayr (src/AudioPlayr.js)
+     *                          audio.js (settings/audio.js)
+     */
     function resetAudioPlayer(self) {
         self.AudioPlayer = new AudioPlayr(self.audio);
     }
     
     /**
      * Sets self.QuadsKeeper
-     * 
+     * @remarks Requirement(s): QuadsKeepr (src/QuadsKeepr.js)
+     *                          quadrants.js (settings/quadrants.js)
      */
     function resetQuadsKeeper(self) {
         self.QuadsKeeper = new QuadsKeepr(self.quadrants);
     }
     
     /**
-     *  Sets self.GamesRunner and self.FPSAnalyzr
-     * 
+     * Sets self.GamesRunner
+     * @remarks Requirement(s): GamesRunnr (src/GamesRunnr.js)
+     *                          runner.js (settings/runner.js)
      */
     function resetGamesRunner(self) {
         self.GamesRunner = new GamesRunnr(self.runner);
+    }
+    
+    /**
+     * Sets self.StatsHolder
+     * @remarks Requirement(s): StatsHoldr (src/StatsHoldr.js)
+     *                          statistics.js (settings/statistics.js)
+     */
+    function resetStatsHolder(self) {
+        self.StatsHolder = new StatsHoldr(self.statistics);
     }
     
     

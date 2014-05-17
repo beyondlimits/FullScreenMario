@@ -30,7 +30,7 @@ function StatsHoldr(settings) {
       // A bit of text between an element's label and value
       separator;
   
-  var reset = this.reset = function reset(settings) {
+  self.reset = function reset(settings) {
     localStorage = window.localStorage || settings.localStorage || {};
     prefix       = settings.prefix     || "";
     separator    = settings.separator  || "";
@@ -38,7 +38,7 @@ function StatsHoldr(settings) {
     
     defaults = {};
     if(settings.defaults)
-      proliferate(defaults, settings.defaults);
+      EightBittr.prototype.proliferate(defaults, settings.defaults);
     
     values = {};
     if(settings.values)
@@ -48,14 +48,14 @@ function StatsHoldr(settings) {
   
   function Value(key, settings) {
     this.key = key;
-    proliferate(this, defaults);
-    proliferate(this, settings);
+    EightBittr.prototype.proliferate(this, defaults);
+    EightBittr.prototype.proliferate(this, settings);
  
     if(!this.hasOwnProperty("value"))
       this.value = this.value_default;
     
     if(this.has_element) {
-      this.element = createElement(this.element || "div", {
+      this.element = EightBittr.prototype.createElement(this.element || "div", {
         className: prefix + "_value " + key,
         innerHTML: this.key + separator + this.value
       });
@@ -98,7 +98,7 @@ function StatsHoldr(settings) {
   /* Updating values
   */
   
-  this.set = function(key, value) {
+  self.set = function(key, value) {
     if(!checkExistence(key)) return;
     
     // Giving a value sets it, otherwise the current one is used
@@ -107,20 +107,20 @@ function StatsHoldr(settings) {
     
     values[key].update();
   }
-  this.increase = function(key, value) {
+  self.increase = function(key, value) {
     if(!checkExistence(key)) return;
     if(arguments.length == 1) value = 1;
     values[key].value += value;
     values[key].update();
   }
-  this.decrease = function(key, value) {
+  self.decrease = function(key, value) {
     if(!checkExistence(key)) return;
     if(arguments.length == 1) value = 1;
     values[key].value -= value;
     values[key].update();
   }
   // Toggling requires the type to be a bool, since true -> "true" -> NaN
-  this.toggle = function(key) {
+  self.toggle = function(key) {
     if(!checkExistence(key)) return;
     values[key].value = values[key].value ? 0 : 1;
     values[key].update();
@@ -167,12 +167,12 @@ function StatsHoldr(settings) {
   /* HTML
   */
   
-  this.makeContainer = function() {
-    var output = createElement.apply(this, containers[0]),
+  self.makeContainer = function() {
+    var output = EightBittr.prototype.createElement.apply(this, containers[0]),
         current = output,
         child;
     for(var i = 1, len = containers.length; i < len; ++i) {
-      child = createElement.apply(this, containers[i]);
+      child = EightBittr.prototype.createElement.apply(this, containers[i]);
       current.appendChild(child);
       current = child;
     }
@@ -186,14 +186,13 @@ function StatsHoldr(settings) {
   /* Retrieval
   */
   
-  this.get = function(key) {
+  self.get = function(key) {
     if(!checkExistence(key)) return;
     return values[key].value;
   }
-  this.getObject = function(key) {
+  self.getObject = function(key) {
     return values[key];
   }
   
-  reset(settings);
-  return self;
+  self.reset(settings || {});
 }

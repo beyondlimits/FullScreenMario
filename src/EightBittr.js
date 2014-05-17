@@ -391,6 +391,21 @@ window.EightBittr = (function(settings) {
     }
     
     /**
+     * 
+     */
+    function createElement(type) {
+        var element = document.createElement(type || "div"),
+            i;// = arguments.length;
+        
+        // For each provided object, add those settings to the element
+        for(i = arguments.length - 1; i >= 0; --i) {
+            proliferate(element, arguments[i]);
+        }
+        
+        return element;
+    }
+    
+    /**
      * Identical to proliferate, but instead of checking whether the recipient
      * hasOwnProperty on properties, it just checks if they're truthy
      * 
@@ -474,7 +489,8 @@ window.EightBittr = (function(settings) {
         // Utilities
         "clearAllTimeouts": clearAllTimeouts,
         "proliferate": proliferate,
-        "proliferateHard": proliferateHard
+        "proliferateHard": proliferateHard,
+        "createElement": createElement
     });
     
     return EightBittr;

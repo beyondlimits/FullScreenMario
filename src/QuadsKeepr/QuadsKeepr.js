@@ -53,7 +53,7 @@ function QuadsKeepr(settings) {
       onUpdate,  // when Quadrants are updated
       onCollide; // when two Things touch (not used... yet!)
   
-  var reset = this.reset = function reset(settings) {
+  self.reset = function reset(settings) {
     quadrants       = [];
     columns         = [];
     
@@ -244,10 +244,11 @@ function QuadsKeepr(settings) {
   
   // Checks if a Thing is in a Quadrant
   function thingInQuadrant(thing, quadrant) {
-    return thing[thing_right] + tolerance >= quadrant.left && thing[thing_left] - tolerance <= quadrant.right
-        && thing[thing_bottom] + tolerance >= quadrant.top && thing[thing_top] - tolerance <= quadrant.bottom;
+    return thing[thing_right] + tolerance >= quadrant.left 
+        && thing[thing_left] - tolerance <= quadrant.right
+        && thing[thing_bottom] + tolerance >= quadrant.top 
+        && thing[thing_top] - tolerance <= quadrant.bottom;
   }
   
-  reset(settings || {});
-  return self;
+  self.reset(settings || {});
 }
