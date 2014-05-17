@@ -29,7 +29,10 @@ function ThingHittr(settings) {
         overlap_functions,
         
         // Global check functions, such as can_collide
-        global_checks;
+        global_checks,
+        
+        // Optional scope variable to bind important functions to
+        scope;
     
     /**
      * 
@@ -60,6 +63,15 @@ function ThingHittr(settings) {
             throw new Error("No global_checks given to ThingHittr");
         }
         global_checks = settings.global_checks;
+        
+        // If a scope is provided, make external hit checks and functions use it
+        // as their "this" variable (very good for EightBittr objects)
+        if(settings.scope) {
+            setScopeAll(hit_checks, settings.scope);
+            setScopeAll(hit_functions, settings.scope);
+            setScopeAll(overlap_functions, settings.scope);
+            setScopeAll(global_checks, settings.scope);
+        }
     };
     
     
@@ -160,6 +172,25 @@ function ThingHittr(settings) {
         // If they do hit, great! Do the corresponding hit_function
         if(hit_check(thing, other)) {
             hit_functions[thing.grouptype][other.grouptype](thing, other);
+        }
+    }
+    
+    /**
+     * 
+     */
+    function setScopeAll(functions, scope) {
+        var i;
+        for(i in functions) {
+            if(functions.hasOwnProperty(i)) {
+                switch(typeof(functions[i])) {
+                    case "function":
+                        functions[i] = functions[i].bind(scope);
+                        break;
+                    case "object":
+                        setScopeAll(functions[i], scope);
+                        break;
+                }
+            }
         }
     }
     

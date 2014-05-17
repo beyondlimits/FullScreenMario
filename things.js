@@ -14,30 +14,7 @@
 */
 
 function resetThings() {
-    window.ThingHitter = new ThingHittr({
-        "group_names": ["Solid", "Character", "Scenery", "Text"],
-        "group_types": "Array",
-        "hit_checks": {
-            "Character": {
-                "Solid": characterTouchesSolid,
-                "Character": characterTouchesCharacter
-            }
-        },
-        "hit_functions": {
-            "Character": {
-                "Solid": characterHitsSolid,
-                "Character": characterHitsCharacter
-            }
-        },
-        "global_checks": {
-            "Character": {
-                "can_collide": thingCanCollide,
-            },
-            "Solid": {
-                "can_collide": thingCanCollide
-            }
-        }
-    });
+    window.ThingHitter = FSM.ThingHitter;
   
     window.ObjectMaker = new ObjectMakr({
       "on_make": "onMake",

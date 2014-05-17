@@ -5,18 +5,25 @@ window.FullScreenMario = (function() {
     var EightBitter = new EightBittr(),
         
         // Used for combining arrays from the prototype to this
+        proliferate = EightBitter.proliferate,
         proliferateHard = EightBitter.proliferateHard;
         
     console.warn("Still using global player object...");    
     /**
      * 
      */
-    function FullScreenMario() {            // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {            "unitsize": 4,            "scale": 2,            "requirements": {                "global": {                    "AudioPlayr": "src/AudioPlayr.js",                    "ChangeLinr": "src/ChangeLinr.js",                    "FPSAnalyzr": "src/FPSAnalyzr.js",                    "GamesRunnr": "src/GamesRunnr.js",                    "GroupHoldr": "src/GroupHoldr.js",                    "InputWritr": "src/InputWritr.js",                    "MapsManagr": "src/MapsManagr.js",                    "ObjectMakr": "src/ObjectMakr.js",                    "PixelDrawr": "src/PixelDrawr.js",                    "PixelRendr": "src/PixelRendr.js",                    "QuadsKeepr": "src/QuadsKeepr.js",                    "StatsHoldr": "src/StatsHoldr.js",                    "StringFilr": "src/StringFilr.js",                    "ThingHittr": "src/ThingHittr.js",                    "TimeHandlr": "src/TimeHandlr.js"                },                "self": {                    "sprites": "settings/sprites.js",                    "events": "settings/events.js",
-                    "statistics": "settings/statistics.js"                }            },            "resets": [                resetPixelRender,                resetPixelDrawer,                resetTimeHandler,
+    function FullScreenMario() {            // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {            "unitsize": 4,            "scale": 2,            "requirements": {                "global": {                    "AudioPlayr": "src/AudioPlayr.js",                    "ChangeLinr": "src/ChangeLinr.js",                    "FPSAnalyzr": "src/FPSAnalyzr.js",                    "GamesRunnr": "src/GamesRunnr.js",                    "GroupHoldr": "src/GroupHoldr.js",                    "InputWritr": "src/InputWritr.js",                    "MapsManagr": "src/MapsManagr.js",                    "ObjectMakr": "src/ObjectMakr.js",                    "PixelDrawr": "src/PixelDrawr.js",                    "PixelRendr": "src/PixelRendr.js",                    "QuadsKeepr": "src/QuadsKeepr.js",                    "StatsHoldr": "src/StatsHoldr.js",                    "StringFilr": "src/StringFilr.js",                    "ThingHittr": "src/ThingHittr.js",                    "TimeHandlr": "src/TimeHandlr.js"                },                "self": {
+                    "audio": "settings/audio.js",
+                    "collisions": "settings/collisions.js",                    "events": "settings/events.js",                    "quadrants": "settings/quadrants.js",
+                    "runner": "settings/runner.js",
+                    "sprites": "settings/sprites.js",
+                    "statistics": "settings/statistics.js"                }            },            "resets": [
+                resetPixelRender,                resetPixelDrawer,                resetTimeHandler,
                 resetAudioPlayer,
                 resetQuadsKeeper,
                 resetGamesRunner,
-                resetStatsHolder
+                resetStatsHolder,
+                resetThingHitter
             ],
             "constants": [
                 "unitsize",
@@ -40,7 +47,9 @@ window.FullScreenMario = (function() {
     // The floor is 104 spaces (13 blocks) below the top of the screen (yloc = -16)
     FullScreenMario.ceilmax = 104; 
     FullScreenMario.castlev = -48;            /* Reset functions, in order    */        /**     * Sets self.PixelRender     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelRendr (src/PixelRendr.js)
-     *                          sprites.js (settings/sprites.js)     */    function resetPixelRender(self) {        // PixelRender settings are stored in FullScreenMario.prototype.sprites,        // though they also need the scale measurement added        self.PixelRender = new PixelRendr(proliferateHard(self.sprites, {            "scale": self.scale        }));    }        /**     * Sets self.PixelDrawer     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelDrawr (src/PixelDrawr.js)     */    function resetPixelDrawer(self) {        self.PixelDrawer = new PixelDrawr({            "PixelRender": self.PixelRender        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr.js)
+     *                          sprites.js (settings/sprites.js)     */    function resetPixelRender(self) {        // PixelRender settings are stored in FullScreenMario.prototype.sprites,        // though they also need the scale measurement added        self.PixelRender = new PixelRendr(proliferateHard({
+            "scale": self.scale
+        }, self.sprites));    }        /**     * Sets self.PixelDrawer     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelDrawr (src/PixelDrawr.js)     */    function resetPixelDrawer(self) {        self.PixelDrawer = new PixelDrawr({            "PixelRender": self.PixelRender        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr.js)
      *                          events.js (settings/events.js)     */    function resetTimeHandler(self) {
         self.TimeHandler = new TimeHandlr(self.events);    }
     
@@ -80,6 +89,17 @@ window.FullScreenMario = (function() {
      */
     function resetStatsHolder(self) {
         self.StatsHolder = new StatsHoldr(self.statistics);
+    }
+    
+    /**
+     * Sets self.ThingHitter
+     * @remarks Requirement(s): ThingHittr (src/ThingHittr.js)
+     *                          collisions.js (settings/collisions.js)
+     */
+    function resetThingHitter(self) {
+        self.ThingHitter = new ThingHittr(proliferate({
+            "scope": self
+        }, self.collisions));
     }
     
     
@@ -633,6 +653,26 @@ window.FullScreenMario = (function() {
         }
     }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if(thing !== player.resting) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        shiftVert(thing, thing.yvel += this.unitsize / 8);        EightBittr.prototype.physics.setBottom(player, thing.top);                // After a velocity threshold, start always falling        if(thing.yvel >= thing.fall_threshold_start || this.unitsize * 2.8) {            thing.freefall = true;            thing.movement = moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || this.unitsize / 16;        shiftVert(thing, thing.yvel);                // After a velocity threshold, stop accelerating        if(thing.yvel >= thing.fall_threshold_end || this.unitsize * 2) {            thing.movement = movePlatform;        }    }
     
+    
+    /* Macro functions for analyzePreThing
+    */
+    
+    /**
+     * 
+     */
+    function makeFloor(reference) {
+        var x = reference.x || 0,
+            y = reference.y || 0,
+            floor = EightBittr.prototype.proliferate({
+                "thing": "Floor",
+                "x": x,
+                "y": y,
+                "width": reference.width || 8,
+                height: DtB(y) + 24 // extra 24 so no scrolling when falling
+            }, reference, true);
+        floor.macro = undefined;
+        return floor;
+    }
     
     /* Prototype function holders
     */

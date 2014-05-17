@@ -37,8 +37,7 @@ function TimeHandlr(settings) {
       addClass,
       removeClass;
   
-  var reset = this.reset = function reset(settings) {
-    console.log("Doing with", settings);
+  self.reset = function reset(settings) {
     time               = settings.time               || 0;
     events             = settings.events             || {};
     
@@ -60,8 +59,8 @@ function TimeHandlr(settings) {
   
   /* Simple gets
   */
-  this.getTime   = function() { return time; };
-  this.getEvents = function() { return events; };
+  self.getTime   = function() { return time; };
+  self.getEvents = function() { return events; };
   
   /* Event Adding (simple)
    * Sample usage:
@@ -75,7 +74,7 @@ function TimeHandlr(settings) {
   // Public: addEvent
   // Equivalent to setTimeout
   // Adds a function to execute at a particular time, with arguments
-  var addEvent = this.addEvent = function(func, time_exec) {
+  var addEvent = self.addEvent = function(func, time_exec) {
     // Make sure func is actually a function
     if(!(func instanceof Function)) {
       console.warn("Attempting to add an event that isn't a function.");
@@ -107,7 +106,7 @@ function TimeHandlr(settings) {
   // Similar to addEvent, but it will be repeated a specified number of times
   // Time delay until execution is the same as the time between subsequent executions
   // Functions that return true will stop execution
-  var addEventInterval = this.addEventInterval = function(func, time_exec, num_repeats) {
+  var addEventInterval = self.addEventInterval = function(func, time_exec, num_repeats) {
     // Make sure func is actually a function
     if(!(func instanceof Function)) {
       console.warn("Attempting to add an event that isn't a function.");
@@ -141,7 +140,7 @@ function TimeHandlr(settings) {
   // Public: addEventIntervalSynched
   // Delays the typical addEventInterval until it's synched with time
   // (this goes by basic modular arithmetic)
-  var addEventIntervalSynched = this.addEventIntervalSynched = function(func, time_exec, num_repeats, me, settings) {
+  var addEventIntervalSynched = self.addEventIntervalSynched = function(func, time_exec, num_repeats, me, settings) {
     var calctime = time_exec * settings.length,
         entry = Math.ceil(time / calctime) * calctime,
         scope = this,
@@ -179,7 +178,7 @@ function TimeHandlr(settings) {
   
   // Public: clearEvent
   // Makes an event not happen again
-  var clearEvent = this.clearEvent = function(event) {
+  var clearEvent = self.clearEvent = function(event) {
     if(!event) return;
     // Telling it not to repeat anymore is enough
     event.repeat = 0;
@@ -187,12 +186,12 @@ function TimeHandlr(settings) {
   
   // Public: clearAllEvents
   // Completely cancels all events
-  var clearAllEvents = this.clearAllEvents = function() {
+  var clearAllEvents = self.clearAllEvents = function() {
     events = {};
   };
   
   // Given an object, clear its class cycle under a given name
-  var clearClassCycle = this.clearClassCycle = function(me, name) {
+  var clearClassCycle = self.clearClassCycle = function(me, name) {
     if(!me[cycles] || !me[cycles][name]) return;
     var cycle = me[cycles][name];
     cycle[0] = false;
@@ -201,7 +200,7 @@ function TimeHandlr(settings) {
   };
   
   // Given an object, clear all its class cycles
-  var clearAllCycles = this.clearAllCycles = function(me) {
+  var clearAllCycles = self.clearAllCycles = function(me) {
     var cycles = me[cycles],
         name, cycle;
     for(name in cycles) {
@@ -226,7 +225,7 @@ function TimeHandlr(settings) {
   
   // Public: addSpriteCycle
   // Sets a sprite cycle (settings) for an object under name
-  var addSpriteCycle = this.addSpriteCycle = function(me, settings, name, timing) {
+  var addSpriteCycle = self.addSpriteCycle = function(me, settings, name, timing) {
     // Make sure the object has a holder for cycles...
     if(!me[cycles]) me[cycles] = {};
     // ...and nothing previously existing for that name
@@ -250,7 +249,7 @@ function TimeHandlr(settings) {
   // Public: addSpriteCycleSynched
   // Delays the typical addSpriteCycle until it's synched with time
   // (Note: very similar to addSpriteCycle, and could probably be combined)
-  var addSpriteCycleSynched = this.addSpriteCycleSynched = function(me, settings, name, timing) {
+  var addSpriteCycleSynched = self.addSpriteCycleSynched = function(me, settings, name, timing) {
     // Make sure the object has a holder for cycles...
     if(!me[cycles]) me[cycles] = {};
     // ...and nothing previously existing for that name
@@ -325,7 +324,7 @@ function TimeHandlr(settings) {
   
   // Public: handleEvents
   // Increments time and runs all events at the new events[time]
-  this.handleEvents = function() {
+  self.handleEvents = function() {
     ++time;
     var events_current = events[time];
     if(!events_current) return; // If there isn't anything to run, don't even bother
@@ -391,5 +390,5 @@ function TimeHandlr(settings) {
     return output;
   }
   
-  reset(settings || {});
+  self.reset(settings || {});
 }

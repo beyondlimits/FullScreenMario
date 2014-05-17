@@ -95,8 +95,8 @@ function PixelRendr(settings) {
   
   var reset = self.reset = function reset(settings) {
     if(!settings.palette) {
-      console.error("No palette given to PixelRendr.");
-      return;
+      debugger;
+      throw new Error("No palette given to PixelRendr.");
     }
     
     palette_def   = settings.palette;
