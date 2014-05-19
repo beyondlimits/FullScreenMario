@@ -48,6 +48,12 @@ function startFSM() {
   resetTriggers();
   resetSounds();
   resetUpkeep();
+  
+  // These should be placed somewhere else eventually
+  window.characters = FSM.ThingHitter.getGroupHolder().getCharacterGroup();
+  window.solids = FSM.ThingHitter.getGroupHolder().getSolidGroup();
+  window.scenery = FSM.ThingHitter.getGroupHolder().getSceneryGroup();
+  window.text = FSM.ThingHitter.getGroupHolder().getTextGroup();
 
   // With that all set, set the map to World11.
   StatsHolder.set("lives", 3);
