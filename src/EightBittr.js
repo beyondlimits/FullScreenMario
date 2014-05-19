@@ -114,6 +114,11 @@ window.EightBittr = (function(settings) {
             func = name;
         }
         
+        // Don't allow func to be undefined or some non-function object
+        if(typeof(func) !== "function") {
+            throw new Error(name + " is not defined in this EightBitter", self);
+        }
+        
         // Bind the function to this
         return func.bind(this);
     };

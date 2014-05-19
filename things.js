@@ -110,6 +110,8 @@ function resetThings() {
       },
       "properties": {
           "Thing": {
+              // This will be delegated to FullScreenMario.js
+              EightBitter: FSM,
               // Sizing
               width:  8,
               height: 8,
@@ -200,15 +202,15 @@ function resetThings() {
               ],
               attributes: {
                   "smart": {
-                      movement: moveSmart
+                      movement: FullScreenMario.prototype.moveSmart
                   },
                   "jumping": {
-                      movement: moveJumping,
+                      movement: FullScreenMario.prototype.moveJumping,
                       jumpheight: FullScreenMario.unitsize * 1.17,
                       gravity: gravity / 2.8
                   },
                   "floating": {
-                      movement: moveFloating,
+                      movement: FullScreenMario.prototype.moveFloating,
                       nofall: true,
                       yvel: FullScreenMario.unitsize / 4,
                       maxvel: FullScreenMario.unitsize / 4
@@ -218,7 +220,7 @@ function resetThings() {
           Pirhana: {
               height: 12,
               counter: 0,
-              countermax: 12 * FullScreenMario.unitsize, // height * FullScreenMario.unitsize
+              countermax: 12 * FullScreenMario.unitsize,
               dir: FullScreenMario.unitsize / 8,
               toly: FullScreenMario.unitsize * 8,
               nofall: true,
@@ -296,7 +298,7 @@ function resetThings() {
               width: 7,
               speed: FullScreenMario.unitsize * .56,
               action: playerStar,
-              movement: moveJumping,
+              movement: FullScreenMario.prototype.moveJumping,
               jumpheight: FullScreenMario.unitsize * 1.17,
               gravity: gravity / 2.8,
               spriteCycle: [
@@ -1430,6 +1432,7 @@ function playerGetsBig(me, noanim) {
     // The last event in stages clears it, resets Player's movements, and stops
     stages.push(function(me, settings) {
       me.shrooming = settings.length = 0;
+      // switchClass(me, "shrooming shrooming3 small", "large");
       addClass(me, "large");
       removeClasses(me, "shrooming shrooming3");
       thingRetrieveVelocity(player);

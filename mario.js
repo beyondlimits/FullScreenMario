@@ -88,8 +88,6 @@ function resetMeasurements() {
   window.ceilmax  = 104; // The floor is 104 spaces (13 blocks) below the top of the screen (yloc = -16)
   window.castlev  = -48;
   
-  window.FPSAnalyzer = new FPSAnalyzr();
-  
   resetGameScreen();
   if(!window.parentwindow) window.parentwindow = false;
 }
@@ -110,8 +108,6 @@ function resetTimer(num) {
   window.timer = window.timernorm = num;
   window.timert2 = num * 2;
   window.timerd2 = num / 2;
-  window.fps = window.fps_target = roundDigit(1000 / num, .001);
-  window.time_prev = Date.now();
 }
 
 function resetGameScreen() {

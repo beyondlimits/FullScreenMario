@@ -14,7 +14,8 @@ window.FullScreenMario = (function() {
      */
     function FullScreenMario() {            // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {            "unitsize": 4,            "scale": 2,            "requirements": {                "global": {                    "AudioPlayr": "src/AudioPlayr.js",                    "ChangeLinr": "src/ChangeLinr.js",                    "FPSAnalyzr": "src/FPSAnalyzr.js",                    "GamesRunnr": "src/GamesRunnr.js",                    "GroupHoldr": "src/GroupHoldr.js",                    "InputWritr": "src/InputWritr.js",                    "MapsManagr": "src/MapsManagr.js",                    "ObjectMakr": "src/ObjectMakr.js",                    "PixelDrawr": "src/PixelDrawr.js",                    "PixelRendr": "src/PixelRendr.js",                    "QuadsKeepr": "src/QuadsKeepr.js",                    "StatsHoldr": "src/StatsHoldr.js",                    "StringFilr": "src/StringFilr.js",                    "ThingHittr": "src/ThingHittr.js",                    "TimeHandlr": "src/TimeHandlr.js"                },                "self": {
                     "audio": "settings/audio.js",
-                    "collisions": "settings/collisions.js",                    "events": "settings/events.js",                    "quadrants": "settings/quadrants.js",
+                    "collisions": "settings/collisions.js",                    "events": "settings/events.js",
+                    "quadrants": "settings/quadrants.js",
                     "runner": "settings/runner.js",
                     "sprites": "settings/sprites.js",
                     "statistics": "settings/statistics.js"                }            },            "resets": [
@@ -100,6 +101,25 @@ window.FullScreenMario = (function() {
         self.ThingHitter = new ThingHittr(proliferate({
             "scope": self
         }, self.collisions));
+    }
+    
+    /**
+     * Sets self.ObjectMaker
+     * 
+     * Because many Thing functions require access to other FSM modules, each is
+     * given a reference to this container FSM via properties.Thing.EightBitter. 
+     * 
+     * @remarks Requirement(s): ObjectMakr (src/ObjectMakr.js)
+     *                          things.js (settings/things.js)
+     */
+    function resetObjectMaker(self) {
+        self.ObjectMaker = new ObjectMakr(proliferate({
+            "properties": {
+                "Thing": {
+                    "EightBitter": self
+                }
+            }
+        }, self.things));
     }
     
     
@@ -324,7 +344,6 @@ window.FullScreenMario = (function() {
      * @param {Thing} other
      */
     function characterHitsCharacter(thing, other) {
-        // console.log("Character", thing.title, "hits solid", other.title);
         // The player calls the other's collide function, such as playerStar
         if(thing.player) {
             if(other.collide) {
@@ -393,9 +412,9 @@ window.FullScreenMario = (function() {
         }
         
         if(update_size) {
-            updateSize(thing);
+            this.updateSize(thing);
             // PixelDrawer.setThingSprite(thing);
-            console.log("Should update thing canvas", thing.title);
+            console.log("Should update thing canvas on setWidth", thing.title);
         }
     }
     
@@ -413,7 +432,8 @@ window.FullScreenMario = (function() {
         
         if(update_size) {
             this.updateSize(thing);
-            setThingSprite(thing);
+            // setThingSprite(thing);
+            console.log("Should update thing canvas on setHeight", thing.title);
         }
     }
     
@@ -441,11 +461,38 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function updateSize(thing) {
+        thing.unitwidth = thing.width * this.unitsize;
+        thing.unitheight = thing.height * this.unitsize;
+        thing.spritewidthpixels = thing.spritewidth * this.unitsize;
+        thing.spriteheightpixels = thing.spriteheight * this.unitsize;
+        
+        if(thing.canvas !== undefined) {
+            thing.canvas.width = thing.spritewidthpixels;
+            thing.canvas.height = thing.spriteheightpixels;
+            this.PixelDrawer.setThingSprite(thing);
+        }
+    }
+    
+    /**
+     * 
+     */
+    function reduceHeight(thing, dy, see) {
+        thing.top += dy;
+        thing.height -= dy / this.unitsize;
+        
+        if(see) {
+            this.updateSize(thing);
+        }
+    }
+    
+    /**
+     * 
+     */
     function increaseHeight(thing, dy) {
         thing.top -= dy;
         thing.height += dy / this.unitsize;
         thing.unitheight = thing.height * this.unitsize;
-        console.log("Increasing height of", thing.title, "in a likely bad way");
     }
     
     
@@ -654,29 +701,214 @@ window.FullScreenMario = (function() {
     }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if(thing !== player.resting) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        shiftVert(thing, thing.yvel += this.unitsize / 8);        EightBittr.prototype.physics.setBottom(player, thing.top);                // After a velocity threshold, start always falling        if(thing.yvel >= thing.fall_threshold_start || this.unitsize * 2.8) {            thing.freefall = true;            thing.movement = moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || this.unitsize / 16;        shiftVert(thing, thing.yvel);                // After a velocity threshold, stop accelerating        if(thing.yvel >= thing.fall_threshold_end || this.unitsize * 2) {            thing.movement = movePlatform;        }    }
     
     
-    /* Macro functions for analyzePreThing
+    /* Appearance utilities
     */
     
     /**
      * 
      */
-    function makeFloor(reference) {
-        var x = reference.x || 0,
-            y = reference.y || 0,
-            floor = EightBittr.prototype.proliferate({
-                "thing": "Floor",
-                "x": x,
-                "y": y,
-                "width": reference.width || 8,
-                height: DtB(y) + 24 // extra 24 so no scrolling when falling
-            }, reference, true);
-        floor.macro = undefined;
-        return floor;
+    function setTitle(thing, string) {
+        thing.title = string;
+        thing.EightBitter.PixelDrawer.setThingSprite(thing);
     }
     
-    /* Prototype function holders
+    /**
+     * 
+     */
+    function setClass(thing, string) {
+        thing.className = string;
+        thing.EightBitter.PixelDrawer.setThingSprite(thing);
+    }
+    
+    /**
+     * 
+     */
+    function setClassInitial(thing, string) {
+        thing.className = string;
+    }
+    
+    /**
+     * 
+     */
+    function addClass(thing, string) {
+        thing.className += " " + string;
+        thing.EightBitter.PixelDrawer.setThingSprite(thing);
+    }
+    
+    /**
+     * 
+     */
+    function addClasses(thing) {
+        var strings, arr, i, j;
+        for(i = 1; i < arguments.length; i += 1) {
+            arr = arguments[i];
+            
+            if(!(arr instanceof Array)) {
+                arr = arr.split(' ');
+            }
+            
+            for(j = arr.length - 1; j >= 0; j -= 1) {
+                addClass(thing, arr[j]);
+            }
+        }
+    }
+    
+    /**
+     * 
+     */
+    function removeClass(thing, string) {
+        if(!string) {
+            return;
+        }
+        if(string.indexOf(' ') !== -1) {
+            removeClasses(thing, string);
+        }
+        thing.className = thing.className.replace(new RegExp(" " + string, "gm"), "");
+        thing.EightBitter.PixelDrawer.setThingSprite(thing);
+    }
+    
+    /**
+     * 
+     */
+    function removeClasses(thing) {
+        // var strings, arr, i, j;
+        // for(i = 1; i < arguments.length; i += 1) {
+            // arr = arguments[i];
+            
+            // if(!(arr instanceof Array)) {
+                // arr = arr.split(' ');
+            // }
+            
+            // for(j = arr.length - 1; j >= 0; j -= 1) {
+                // removeClass(thing, arr[j]);
+            // }
+        // }
+        
+      var strings, arr, i, j;
+      for(i = 1; i < arguments.length; ++i) {
+        arr = arguments[i];
+        if(!(arr instanceof Array)) arr = arr.split(" ");
+        for(j = arr.length - 1; j >= 0; --j)
+          removeClass(thing, arr[j]);
+      }
+    }
+    
+    /**
+     * 
+     */
+    function switchClass(thing, string_out, string_in) {
+        removeClass(thing, string_out);
+        addClass(thing, string_in);
+    }
+    
+    /**
+     * 
+     */
+    function flipHoriz(thing) {
+        addClass(thing, "flipped");
+    }
+    
+    /**
+     * 
+     */
+    function flipVert(thing) {
+        addClass(thing, "flip-vert");
+    }
+    
+    /**
+     * 
+     */
+    function unflipHoriz(thing) {
+        removeClass(thing, "flipped");
+    }
+    
+    /**
+     * 
+     */
+    function unflipVert(thing) {
+        removeClass(thing, "flip-vert");
+    }
+    
+    
+    /* Death functions
     */
     
+    /**
+     * 
+     */
+    function killNormal(thing) {
+        if(!thing) {
+            return;
+        }
+        
+        thing.hidden = thing.dead = true;
+        thing.alive = thing.resting = thing.movement = false;
+        
+        if(thing.EightBitter) {
+            thing.EightBitter.TimeHandler.clearAllCycles(thing);
+        }
+    }
+    
+    /**
+     * 
+     */
+    function killFlip(thing, extra) {
+        this.flipVert(thing);
+        
+        if(!extra) {
+            extra = 0;
+        }
+        
+        if(thing.bottomBump) {
+            thing.bottomBump = undefined;
+        }
+        
+        thing.nocollide = thing.dead = true;
+        thing.resting = thing.movement = thing.speed = thing.xvel = thing.nofall = false;
+        thing.yvel -= unitsize;
+        thing.EightBitter.TimeHandler.addEvent(killNormal, 70 + extra, thing);
+    }
+    
+    /**
+     * Wipes the sccreen of any characters or solids that should be gone during
+     * an important cutscene, such as hitting an end-of-level flag.
+     * For characters, they're deleted if .nokillonend isn't truthy. If they
+     * have a .killonend function, that's called on them.
+     * Solids are only deleted if their .killonend is true.
+     * 
+     * @todo   Rename .killonend to be more accurate
+     * @remarks If thing.killonend is a function, it is called on the thing.
+     */
+    function killNPCs() {
+        var holder = this.ThingHitter.getGroupHolder(),
+            group, thing, i;
+        
+        // Characters: they must opt out of being killed with .nokillonend, and
+        // may opt into having a function called instead (such as Lakitus).
+        group = holder.getCharacterGroup();
+        for(i = group.length - 1; i >= 0; --i) {
+            thing = group[i];
+            
+            if(!thing.nokillend) {
+                this.deleteThing(thing, group, i);
+            } else if(thing.killonend) {
+                thing.killonend(thing);
+            }
+        }
+        
+        // Solids: they may opt into being deleted
+        group = holder.getSolidGroup();
+        for(i = group.length - 1; i >= 0; --i) {
+            thing = group[i];
+            
+            if(thing.killonend) {
+                this.deleteThing(thing, group, i);
+            }
+        }
+    }
+    
+    
+    // Add all registered functions from above to the FullScreenMario prototype
     proliferateHard(FullScreenMario.prototype, {
         // Collisions
         "thingCanCollide": thingCanCollide,
@@ -705,7 +937,25 @@ window.FullScreenMario = (function() {
         "setHeight": setHeight,
         "setSize": setSize,
         "updatePosition": updatePosition,
-        "increaseHeight": increaseHeight
+        "updateSize": updateSize,
+        "reduceHeight": reduceHeight,
+        "increaseHeight": increaseHeight,
+        // Appearance utilities
+        "setTitle": setTitle,
+        "setClass": setClass,
+        "setClassInitial": setClassInitial,
+        "addClass": addClass,
+        "addClasses": addClasses,
+        "removeClass": removeClass,
+        "removeClasses": removeClasses,
+        "switchClass": switchClass,
+        "flipHoriz": flipHoriz,
+        "flipVert": flipVert,
+        "unflipHoriz": unflipHoriz,
+        "unflipVert": unflipVert,
+        // Death functions
+        "killNormal": killNormal,
+        "killFlip": killFlip
     });
     
     return FullScreenMario;

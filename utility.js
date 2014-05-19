@@ -38,26 +38,10 @@ function updatePosition(me) {
     FSM.get("updatePosition")(me);
 }
 function updateSize(me) {
-  me.unitwidth = me.width * unitsize;
-  me.unitheight = me.height * unitsize;
-  me.spritewidthpixels = me.spritewidth * unitsize;
-  me.spriteheightpixels = me.spriteheight * unitsize;
-  var canvas;
-  if(canvas = me.canvas) {
-    canvas.width = me.spritewidthpixels;
-    canvas.height = me.spriteheightpixels;
-    // me.context = canvas.getContext("2d");
-    // refillThingCanvas(me);
-    PixelDrawer.setThingSprite(me);
-  }
+    FSM.get("updateSize")(me);
 }
 function reduceHeight(me, dy, see) {
-  me.top += dy;
-  me.height -= dy / unitsize;
-  
-  if(see) {
-    updateSize(me);
-  }
+    FSM.get("reduceHeight")(me, dy, see);
 }
 function shiftBoth(me, dx, dy) {
     FSM.get("shiftBoth")(me, dx, dy);
@@ -423,37 +407,50 @@ function shiftScaleStringVert(me, string, yvel) {
   updateSize(string);
 }
 
-function setTitle(me, strin) { me.title = strin; PixelDrawer.setThingSprite(me); }
-function setClass(me, strin) { me.className = strin; PixelDrawer.setThingSprite(me); }
-function setClassInitial(me, strin) { me.className = strin; }
-function addClass(me, strin) { me.className += " " + strin; PixelDrawer.setThingSprite(me); }
-function removeClass(me, strout) { 
-    me.className = me.className.replace(new RegExp(" " + strout,"gm"),''); 
-    PixelDrawer.setThingSprite(me);
+function setTitle(me, strin) { 
+    FSM.get("setTitle")(me, strin);
 }
-function switchClass(me, strout, strin) { removeClass(me, strout); addClass(me, strin); }
+
+function setClass(me, strin) { 
+    FSM.get("setClass")(me, strin);
+}
+function setClassInitial(me, strin) { 
+    FSM.get("setClassInitial")(me, strin);
+}
+function addClass(me, strin) { 
+    FSM.get("addClass")(me, strin);
+}
+function removeClass(me, strout) {  
+    FSM.get("removeClass")(me, strout);
+}
+function switchClass(me, strout, strin) { 
+    FSM.get("switchClass")(me, strout, strin);
+}
 function removeClasses(me) {
-  var strings, arr, i, j;
-  for(i = 1; i < arguments.length; ++i) {
-    arr = arguments[i];
-    if(!(arr instanceof Array)) arr = arr.split(" ");
-    for(j = arr.length - 1; j >= 0; --j)
-      removeClass(me, arr[j]);
-  }
+    FSM.get("removeClasses").apply(this, arguments);
 }
 function addClasses(me, strings) {
-  var arr = strings instanceof Array ? strings : strings.split(" ");
-  for(var i = arr.length - 1; i >= 0; --i)
-    addClass(me, arr[i]);
+    FSM.get("addClasses").apply(this, arguments);
 }
+
+
 // Used in Editor
 function addElementClass(element, strin) { element.className += " " + strin; }
 function removeElementClass(element, strin) { element.className = element.className.replace(new RegExp(" " + strin,"gm"),''); }
 
-function flipHoriz(me) { addClass(me, "flipped"); }
-function flipVert(me) { addClass(me, "flip-vert"); }
-function unflipHoriz(me) { removeClass(me, "flipped"); }
-function unflipVert(me) { removeClass(me, "flip-vert"); }
+
+function flipHoriz(me) {
+    FSM.get("flipHoriz")(me);
+}
+function flipVert(me) { 
+    FSM.get("flipVert")(me);
+}
+function unflipHoriz(me) {
+    FSM.get("unflipHoriz")(me);
+}
+function unflipVert(me) {
+    FSM.get("unflipVert")(me);
+}
 
 /*
  * Deaths & removing
@@ -473,18 +470,10 @@ function containerForefront(me, container) {
   container.unshift(me);
 }
 function killNormal(me) {
-  if(!me) return;
-  me.hidden = me.dead = true;
-  me.alive = me.resting = me.movement = false;
-  TimeHandler.clearAllCycles(me);
+  FSM.get("killNormal")(me);
 }
 function killFlip(me, extra) {
-  flipVert(me);
-  me.bottomBump = function() {};
-  me.nocollide = me.dead = true;
-  me.resting = me.movement = me.speed = me.xvel = me.nofall = false;
-  me.yvel = -unitsize;
-  TimeHandler.addEvent(function(me) { killNormal(me); }, 70 + (extra || 0));
+  FSM.get("killFlip")(me, extra);
 }
 
 function blockBumpMovement(me) {
