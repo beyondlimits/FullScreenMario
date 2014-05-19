@@ -8,19 +8,31 @@ function GroupHoldr(settings) {
     }
     var self = this,
         
+        // Associative array of strings to groups, where groups are each some
+        // sort of array (either typical or associative).
         groups,
         
+        // Associative array containing "add", "del", "get", and "set" keys to
+        // those appropriate functions (e.x. functions.add.MyGroup is the same
+        // as self.addMyGroup).
         functions,
         
+        // Array of string names, each of which is tied to a group.
         group_names,
         
+        // Associative array keying each group to the function it uses: Array
+        // for regular arrays, and Object for associative arrays.
         group_types,
+        
+        // Associative array keying each group to the string name of the
+        // function it uses: "Array" for regular arrays, and "Object" for
+        // associative arrays.
         group_type_names;
     
     /**
      * @constructor
      */
-    var reset = self.reset = function(settings) {
+    self.reset = function(settings) {
         // The group_names and group_types arguments must be provided
         if(!settings.hasOwnProperty("group_names")) {
             throw new Error("No group_names array provided to GroupHoldr");
@@ -247,7 +259,7 @@ function GroupHoldr(settings) {
              * @param {<type>} key   The item key to be deleted from the group
              * @return {self}   The containing GroupHoldr
              */
-            self["del" + name] = function(key) {
+            functions.del[name] = self["del" + name] = function(key) {
                 delete group[key];
                 return self;
             };
@@ -262,12 +274,58 @@ function GroupHoldr(settings) {
              * @param {<type>} key   The item key to be deleted from the group
              * @return {self}   The containing GroupHoldr
              */
-            self["del" + name] = function(key) {
+            functions.del[name] = self["del" + name] = function(key) {
                 group = group.splice(group.indexOf(key), 1);
                 return self;
             };
         }
     }
+    
+    
+    /* Group/ordering manipulators
+    */
+    
+    /**
+     * Deletes a given object from a group by calling Array.splice on
+     * the result of Array.indexOf
+     * 
+     * @param {String} group_name   The string name of the group to delete an
+     *                              object from.
+     * @param {Number} object   The object to be deleted from the group.
+     */
+    self.deleteObject = function(group_name, object) {
+        groups[group_name].splice(groups[group_name].indexOf(object), 1);
+    };
+    
+    /**
+     * Deletes a given index from a group by calling Array.splice. 
+     * 
+     * @param {String} group_name   The string name of the group to delete an
+     *                              object from.
+     * @param {Number} index   The index to be deleted from the group.
+     * @param {Number} [max]   How many elements to delete after that index (if
+     *                         falsy, just the first 1).
+     */
+    self.deleteIndex = function(group_name, index, max) {
+        groups[group_name].splice(index, max || 1);
+    };
+    
+    /**
+     * Switches an object from group_old to group_new by removing it from the
+     * old group and adding it to the new. If the new group uses an associative
+     * array, a key should be passed in (which defaults to undefined).
+     * 
+     * @param {Mixed} object   The object to be moved from one group to another.
+     * @param {String} group_old   The string name of the object's old group.
+     * @param {String} group_new   The string name of the object's new group.
+     * @param {String} [key_new]   A key for the object to be placed in the new
+     *                             group, required only if the group contains an
+     *                             associative array.
+     */
+    self.switchObjectGroup = function(object, group_old, group_new, key_new) {
+        self.deleteObject(group_old, object);
+        functions.add[group_new](object, key_new);
+    };
     
     
     /* Simple gets
@@ -329,5 +387,5 @@ function GroupHoldr(settings) {
         return str[0].toUpperCase() + str.slice(1);
     }
     
-    reset(settings || {});
+    self.reset(settings || {});
 }
