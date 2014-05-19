@@ -116,7 +116,7 @@ function GroupHoldr(settings) {
             delete self["add" + name];
             delete self["del" + name];
             
-            // Delete functions under .functions by making each typeit a new {}
+            // Delete functions under .functions by making each type a new {}
             functions.set = {};
             functions.get = {};
             functions.add = {};
@@ -325,6 +325,61 @@ function GroupHoldr(settings) {
     self.switchObjectGroup = function(object, group_old, group_new, key_new) {
         self.deleteObject(group_old, object);
         functions.add[group_new](object, key_new);
+    };
+    
+    // apply takes a single given array and sets it as the arguments
+    
+    /**
+     * Calls a function for each group, with that group as the first argument.
+     * Extra arguments may be passed in an array after scope and func, as in
+     * Function.apply's standard.
+     * 
+     * @param {Mixed} [scope]   An optional scope to call this from (if falsy, 
+     *                          defaults to self).
+     * @param {Function} func   A function to apply to each group.
+     * @param {Array} [args]   An optional array of arguments to pass to the 
+     *                         function after each group.
+     */
+    self.applyAll = function(scope, func, args) {
+        var i;
+        
+        if(!args) {
+            args = [ undefined ];
+        } else {
+            args.unshift(undefined);
+        }
+       
+        if(!scope) {
+            scope = self;
+        }
+        
+        for(i = group_names.length - 1; i >= 0; i -= 1) {
+            args[0] = groups[group_names[i]];
+            func.apply(scope, args);
+        }
+    };
+    
+    /**
+     * Calls a function for each group, with that group as the first argument.
+     * Extra arguments may be passed after scope and func natively, as in 
+     * Function.call's standard.
+     * 
+     * @param {Mixed} [scope]   An optional scope to call this from (if falsy, 
+     *                          defaults to self).
+     * @param {Function} func   A function to apply to each group.
+     */
+    self.callAll = function(scope, func) {
+        var args = Array.prototype.slice.call(arguments, 1),
+            group, i, i;
+        
+        if(!scope) {
+            scope = self;
+        }
+        
+        for(i = group_names.length - 1; i >= 0; i -= 1) {
+            args[0] = groups[group_names[i]];
+            func.apply(scope, args);
+        }
     };
     
     
