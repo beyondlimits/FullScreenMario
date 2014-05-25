@@ -32,7 +32,7 @@ function ObjectMakr(settings) {
         properties = settings.properties || {};
         index_map = settings.index_map;
         on_make = settings.on_make;
-
+        
         // An inheritance map is required; a properties map is not
         if (!inheritance) {
             console.warn("No inheritance given to ObjectMakr.");

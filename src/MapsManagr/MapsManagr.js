@@ -83,14 +83,9 @@ function MapsManagr(settings) {
       keep_raws,
       
       // An associative array of maps, as {"name"=>map} or {"name"=>{"name"=>map}}
-      maps,
-      
-      // What folder to preload maps from (normally "Maps")
-      folder,
-      // What filetype to preload maps from (normally ".json")
-      filetype;
+      maps;
   
-  var reset = this.reset = function reset(settings) {
+  self.reset = function reset(settings) {
     // An external prething_maker must be provided
     if(!settings.prething_maker) {
       console.error("No ObjectMakr for prethings is being provided.", setting);
@@ -106,9 +101,7 @@ function MapsManagr(settings) {
     entry_functions    = settings.entry_functions    || {};
     macros_defaults    = settings.macros_defaults    || {};
     on_entry           = settings.on_entry           || {};
-    folder             = settings.folder             || "Maps";
-    filetype           = settings.filetype           || ".json";
-    maps = {};
+    maps               = settings.maps               || {};
     
     // Every grouping must have at least a {} in defaults
     var grouping, i;
@@ -139,17 +132,13 @@ function MapsManagr(settings) {
       },
       type_defaults: defaults
     });
-  
-    // Preload any necessary maps
-    if(settings.preload)
-      preload([], settings.preload);
   }
   
   /* Major constructors
   */
   
   // Makes and stores a map in this.maps
-  this.mapStore = function(name, settings) {
+  self.mapStore = function(name, settings) {
     // Make the map normally
     var map = this.mapMake(settings);
     
@@ -172,7 +161,7 @@ function MapsManagr(settings) {
   }
   
   // Maps
-  this.mapMake = function(settings) { return new Map(settings); }
+  self.mapMake = function(settings) { return new Map(settings); }
   function Map(settings) {
     object_maker.proliferateDefaults(this, "Map", settings);
     // Make sure everything is valid
@@ -286,7 +275,12 @@ function MapsManagr(settings) {
       currents[reference] = 0;
       prethings[reference] = [];
       // The recipient should know this too.. and this should be genericized
-      recipient[reference] = recipient[reference + 's'] = [];
+      if(!recipient[reference] && !recipient[reference + 's']) {
+        recipient[reference] = recipient[reference + 's'] = [];
+      } else {
+        // recipient[reference].length = 0;
+        // recipient[reference + 's'].length = 0;
+      }
     }
     
     // For each creation entry, analyze it appropriately
@@ -483,7 +477,7 @@ function MapsManagr(settings) {
   */
   
   // Public function to get and reset a map
-  this.setMap = function(name, location) {
+  self.setMap = function(name, location) {
     // Get the map, stopping if it doesn't exist
     var map = this.getMap(name);
     if(!map) {
@@ -494,11 +488,11 @@ function MapsManagr(settings) {
     map_name = name;
     
     // Most of the work is done by shifting to a location (by default, first in the map)
-    return this.setLocation(location || 0);
+    return self.setLocation(location || 0);
   }
   
   // Goes to a particular location
-  this.setLocation = function(location) {
+  self.setLocation = function(location) {
     if(typeof(location) == "number")
       location = map_current.location = map_current.locations[location];
     area_current = map_current.area = location.area;
@@ -533,7 +527,7 @@ function MapsManagr(settings) {
   }
   
   // Map function to ...
-  this.spawnMap = function(xloc_new) {
+  self.spawnMap = function(xloc_new) {
     // Make sure an xloc_new is given
     if(arguments.length == 0 || !(typeof(xloc_new) == "number")) {
       console.warn("An xloc_new must be provided as a number. You gave ", xloc_new);
@@ -582,16 +576,16 @@ function MapsManagr(settings) {
   }
   
   // Sets a new recipient
-  this.setRecipient = function(recipient_new) {
+  self.setRecipient = function(recipient_new) {
     recipient = recipient_new;
   }
   
   /* Simple gets
   */
-  this.getXloc = function() { return xloc; }
-  this.getMapName = function() { return map_name; }
-  this.getMaps = function() { return maps; }
-  this.getMap = function(name) {
+  self.getXloc = function() { return xloc; }
+  self.getMapName = function() { return map_name; }
+  self.getMaps = function() { return maps; }
+  self.getMap = function(name) {
     // If no input is provided, simply return the current map
     if(arguments.length == 0) return map_current;
     
@@ -607,53 +601,12 @@ function MapsManagr(settings) {
     
     return map;
   }
-  this.getArea = function(name) {
+  self.getArea = function(name) {
     return arguments.length == 0 ? this.getMap().area : this.getMap().areas[name];
   }
-  this.getLocation = function(name) {
+  self.getLocation = function(name) {
     return arguments.length == 0 ? this.getMap().location : this.getMap().locations[name];
   }
   
-  /* Resetting
-  */
-
-  // Maps are given as a tree, with tree paths (names) leading to strings (file paths)
-  function preload(path, settings) {
-    for(var name in settings) {
-      path.push(name);
-      if(typeof(settings[name]) == "string")
-        try {
-          loadFile(path.slice(), settings[name]);
-        }
-        catch(err) {
-          console.log(err);
-        }
-      else preload(path, settings[name]);
-      path.pop(name);
-    }
-  }
-  // Starts an AJAX request to load the contents of the file as a JSON map
-  function loadFile(path, filename) {
-    filename = folder + "/" + filename;
-    if(filename.indexOf(filetype) == -1) filename += filetype;
-    var ajax = new XMLHttpRequest();
-    ajax.open("GET", filename);
-    ajax.send();
-    ajax.onreadystatechange = function() {
-      if(ajax.readyState != 4) return;
-      // Map file found, load it up!
-      if(ajax.status == 200) {
-        try {
-          self.mapStore(path, JSON.parse(ajax.responseText));
-        }
-        catch(err) {
-          console.warn("There was an error parsing", filename, "- check the JSON data for typos.", ajax);
-        }
-      }
-      else console.warn("No map file found under " + filename);
-    }
-  }
-  
-  reset(settings || {});
-  return self;
+  self.reset(settings || {});
 }

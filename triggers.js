@@ -65,9 +65,9 @@ function lulz(options, timer) {
   timer = timer || 7;
   TimeHandler.addEventInterval(function() {
     if(characters.length > 210) return;
-    var lul = ObjectMaker.make(options[randInt(options.length)], randBoolJS(), randBoolJS());
+    var lul = ObjectMaker.make(options[randInt(options.length)], randInt(2), randInt(2));
     lul.yvel = random() * -unitsizet4;
-    lul.xvel = lul.speed = random() * unitsizet2 * randSign();
+    lul.xvel = lul.speed = random() * unitsizet2 * (randInt(2) * 2 - 1);
     addThing(lul, (32 * random() + 128) * unitsize, (88 * random()) * unitsize);
   }, timer, Infinity);
 }

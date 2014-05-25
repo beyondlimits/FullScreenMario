@@ -760,6 +760,6 @@ FullScreenMario.prototype.sprites = {
                 }]
               }
             }
-          }
+        }
     }
 };

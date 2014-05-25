@@ -15,8 +15,10 @@ window.FullScreenMario = (function() {
     function FullScreenMario() {            // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {            "unitsize": 4,            "scale": 2,            "requirements": {                "global": {                    "AudioPlayr": "src/AudioPlayr.js",                    "ChangeLinr": "src/ChangeLinr.js",                    "FPSAnalyzr": "src/FPSAnalyzr.js",                    "GamesRunnr": "src/GamesRunnr.js",                    "GroupHoldr": "src/GroupHoldr.js",                    "InputWritr": "src/InputWritr.js",                    "MapsManagr": "src/MapsManagr.js",                    "ObjectMakr": "src/ObjectMakr.js",                    "PixelDrawr": "src/PixelDrawr.js",                    "PixelRendr": "src/PixelRendr.js",                    "QuadsKeepr": "src/QuadsKeepr.js",                    "StatsHoldr": "src/StatsHoldr.js",                    "StringFilr": "src/StringFilr.js",                    "ThingHittr": "src/ThingHittr.js",                    "TimeHandlr": "src/TimeHandlr.js"                },                "self": {
                     "audio": "settings/audio.js",
                     "collisions": "settings/collisions.js",                    "events": "settings/events.js",
-                    "quadrants": "settings/quadrants.js",
+                    "input": "settings/input.js",
+                    "maps": "settings/maps.js",                    "quadrants": "settings/quadrants.js",
                     "runner": "settings/runner.js",
+                    "screen": "settings/screen.js",
                     "sprites": "settings/sprites.js",
                     "statistics": "settings/statistics.js"                }            },            "resets": [
                 resetPixelRender,                resetPixelDrawer,                resetTimeHandler,
@@ -24,7 +26,8 @@ window.FullScreenMario = (function() {
                 resetQuadsKeeper,
                 resetGamesRunner,
                 resetStatsHolder,
-                resetThingHitter
+                resetThingHitter,
+                resetMapScreener
             ],
             "constants": [
                 "unitsize",
@@ -47,7 +50,9 @@ window.FullScreenMario = (function() {
     FullScreenMario.ceillev = 88; 
     // The floor is 104 spaces (13 blocks) below the top of the screen (yloc = -16)
     FullScreenMario.ceilmax = 104; 
-    FullScreenMario.castlev = -48;            /* Reset functions, in order    */        /**     * Sets self.PixelRender     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelRendr (src/PixelRendr.js)
+    FullScreenMario.castlev = -48;
+    // When a player is 48 spaces below the bottom, kill it
+    FullScreenMario.bottom_death_difference = 48;            /* Reset functions, in order    */        /**     * Sets self.PixelRender     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelRendr (src/PixelRendr.js)
      *                          sprites.js (settings/sprites.js)     */    function resetPixelRender(self) {        // PixelRender settings are stored in FullScreenMario.prototype.sprites,        // though they also need the scale measurement added        self.PixelRender = new PixelRendr(proliferateHard({
             "scale": self.scale
         }, self.sprites));    }        /**     * Sets self.PixelDrawer     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelDrawr (src/PixelDrawr.js)     */    function resetPixelDrawer(self) {        self.PixelDrawer = new PixelDrawr({            "PixelRender": self.PixelRender        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr.js)
@@ -120,6 +125,39 @@ window.FullScreenMario = (function() {
                 }
             }
         }, self.things));
+    }
+    
+    /**
+     * 
+     * 
+     * @remarks Requirement(s): MapScreenr (src/MapScreenr.js)
+     *                          screen.js (settings/screen.js)
+     */
+    function resetMapScreener(self) {
+        self.MapScreener = new MapScreenr(proliferate({
+            "unitsize": FullScreenMario.unitsize,
+            "width": window.innerWidth,
+            "height": window.innerHeight
+        }, self.screen));
+    }
+    
+    
+    /* Global manipulations
+    */
+    
+    /**
+     * 
+     */
+    function scrollWindow(dx, dy) {
+        dx = dx || 0;
+        dy = dy || 0;
+        
+        this.MapScreener.shift(-dx, -dy);
+        this.shiftAll(-dx, -dy);
+        
+        // update quadrants
+        this.shiftThings(this.QuadsKeeper.getQuadrants(), -dx, -dy);
+        this.QuadsKeeper.updateQuadrants(-dx);
     }
     
     
@@ -398,6 +436,22 @@ window.FullScreenMario = (function() {
         if(!thing.noshifty) {
             this.shiftVert(thing, dy);
         }
+    }
+    
+    /**
+     * 
+     */
+    function shiftThings(things, dx, dy) {
+        for(var i = things.length - 1; i >= 0; i -= 1) {
+            this.shiftBoth(things[i], dx, dy);
+        }
+    }
+    
+    /**
+     * 
+     */
+    function shiftAll(dx, dy) {
+        this.ThingHitter.getGroupHolder().callAll(this, shiftThings, dx, dy);
     }
 
     /**
@@ -910,6 +964,8 @@ window.FullScreenMario = (function() {
     
     // Add all registered functions from above to the FullScreenMario prototype
     proliferateHard(FullScreenMario.prototype, {
+        // Global manipulations
+        "scrollWindow": scrollWindow,
         // Collisions
         "thingCanCollide": thingCanCollide,
         "thingTouchesThing": thingTouchesThing,
@@ -933,6 +989,8 @@ window.FullScreenMario = (function() {
         "movePlatform": movePlatform,        "moveFalling": moveFalling,        "moveFreeFalling": moveFreeFalling,
         // Physics
         "shiftBoth": shiftBoth,
+        "shiftThings": shiftThings,
+        "shiftAll": shiftAll,
         "setWidth": setWidth,
         "setHeight": setHeight,
         "setSize": setSize,

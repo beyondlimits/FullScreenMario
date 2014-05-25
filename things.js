@@ -585,7 +585,9 @@ function addThing(me, left, top) {
   
   // Place the Thing in the game and in its correct grouping array
   placeThing(me, left, top);
-  if(!window[me.libtype]) window[me.libtype] = [];
+  if(!window[me.libtype]) {
+    window[me.libtype] = [];
+  }
   window[me.libtype].push(me);
   me.placed = true;
   

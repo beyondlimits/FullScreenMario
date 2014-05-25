@@ -308,9 +308,9 @@ function scoreEnemyFin(enemy, amount) {
  * General actions
  */
 
-function moveSimple(me) {
-    FSM.get("moveSimple")(me);
-}
+// function moveSimple(me) {
+    // FSM.get("moveSimple")(me);
+// }
 
 function moveSmart(me) {
     FSM.get("moveSmart")(me);
@@ -491,34 +491,43 @@ function blockBumpMovement(me) {
 }
 
 function emergeUp(me, solid) {
-  AudioPlayer.play("Powerup Appears");
-  flipHoriz(me);
-  me.nomove = me.nocollide = me.alive = me.nofall = me.emerging = true;
-  switchContainers(me, characters, scenery);
-  // Start moving up
-  var move = setInterval(function() {
-    shiftVert(me, -unitsized8);
-    // Stop once the bottom is high enough
-    if(me.bottom <= solid.top) {
-      clearInterval(move);
-      switchContainers(me, scenery, characters);
-      me.nocollide = me.nomove = me.moveleft = me.nofall = me.emerging = false;
-      // If it has a function to call after being completely out (vines), do it
-      if(me.emergeOut) me.emergeOut(me, solid);
-      // If there's movement, don't do it at first
-      if(me.movement) {
-        me.movementsave = me.movement;
-        me.movement = moveSimple;
-        // Wait until it's off the solid
-        me.moving = TimeHandler.addEventInterval(function(me, solid) {
-          if(me.resting != solid) {
-            TimeHandler.addEvent(function(me) { me.movement = me.movementsave; }, 1, me);
+    me.EightBitter.AudioPlayer.play("Powerup Appears");
+    flipHoriz(me);
+    me.nomove = me.nocollide = me.alive = me.nofall = me.emerging = true;
+    switchContainers(me, characters, scenery);
+    
+    // Start moving up 
+    me.EightBitter.TimeHandler.addEventInterval(function(me) {
+        shiftVert(me, -unitsized8);
+        
+        // Stop once the bottom is high enough
+        if(me.bottom <= solid.top) {
+            setBottom(me, solid.top);
+            switchContainers(me, scenery, characters);
+            me.nocollide = me.nomove = me.moveleft = me.nofall = me.emerging = false;
+            
+            // If it has a function to call after being out (like vines), do it
+            if(me.emergeOut) {
+                me.emergeOut(me, solid);
+            }
+            
+            // If there's movement, don't do it at first (just do moveSimple 
+            // until off the solid)
+            if(me.movement) {
+                me.movementsave = me.movement;
+                me.movement = FullScreenMario.prototype.moveSimple;
+                me.moving = me.EightBitter.TimeHandler.addEventInterval(function(me, solid) {
+                    if(me.resting != solid) {
+                        me.EightBitter.TimeHandler.addEvent(function(me) {
+                            me.movement = me.movementsave;
+                        }, 1, me);
+                        return true;
+                    }
+                }, 1, Infinity, me, solid);
+            }
             return true;
-          }
-        }, 1, Infinity, me, solid);
-      }
-    }
-  }, timer);
+        }
+    }, 1, Infinity, me);
 }
 
 function flicker(me, cleartime, interval) {

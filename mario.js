@@ -182,30 +182,11 @@ function resetGameState(nocount) {
 
 function scrollWindow(x, y) {
   x = x || 0; y = y || 0;
-  var xinv = -x, yinv = -y;
   
   gamescreen.left += x; gamescreen.right += x;
   gamescreen.top += y; gamescreen.bottom += y;
   
-  shiftAll(characters, xinv, yinv);
-  shiftAll(solids, xinv, yinv);
-  shiftAll(scenery, xinv, yinv);
-  shiftAll(QuadsKeeper.getQuadrants(), xinv, yinv);
-  shiftElements(texts, xinv, yinv);
-  QuadsKeeper.updateQuadrants(xinv);
-  
-  if(window.playediting) scrollEditor(x, y);
-}
-function shiftAll(stuff, x, y) {
-  for(var i = stuff.length - 1; i >= 0; --i)
-      shiftBoth(stuff[i], x, y);
-}
-function shiftElements(stuff, x, y) {
-  for(var i = stuff.length - 1, elem; i >= 0; --i) {
-    elem = stuff[i];
-    elementShiftLeft(elem, x);
-    elementShiftTop(elem, y);
-  }
+  FSM.scrollWindow(x, y);
 }
 
 // Similar to scrollWindow, but saves the player's x-loc
