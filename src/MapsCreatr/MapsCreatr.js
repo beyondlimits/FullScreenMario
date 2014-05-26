@@ -20,12 +20,16 @@ function MapsCreatr(settings) {
     self.reset = function reset(settings) {
         // Maps and Things are created using an ObjectMaker factory
         if(!settings.ObjectMaker) {
-            throw new Error("No ObjectMakr provided to MapsManger.");
+            throw new Error("No ObjectMaker provided to MapsManger.");
         }
         ObjectMaker = settings.ObjectMaker;
         
         maps = {};
     };
+    
+    
+    /* Simple gets
+    */
     
     /**
      * Simple getter for the maps container.
@@ -34,6 +38,21 @@ function MapsCreatr(settings) {
      */
     self.getMaps = function getMaps() {
         return maps;
+    };
+    
+    /**
+     * Simple getter for a map under the maps container
+     * 
+     * @param {Mixed} name   A key to find the map under. This will typically be
+     *                       a String.
+     * @return {Map}
+     */
+    self.getMap = function getMap(name) {
+        var map = maps[name];
+        if(!map) {
+            throw new Error("No map found under: " + name);
+        }
+        return map;
     };
     
     /**
