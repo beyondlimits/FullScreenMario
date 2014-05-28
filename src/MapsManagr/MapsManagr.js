@@ -62,7 +62,7 @@ function MapsManagr(settings) {
       // Container for prething groupings to be manipulated
       prethings,
       
-      // Current indeces of each prething groupings
+      // Current indices of each prething groupings
       currents,
       
       // Locations used for creating prethings, then spawning them
@@ -508,7 +508,6 @@ function MapsManagr(settings) {
     currents = area_current.currents;
     
     // This should be genericized
-    resetGameScreenPosition();
     clearTexts();
     recipient.fillStyle = getAreaFillStyle(area_current.setting);
     TimeHandler.addEvent(AudioPlayer.playTheme, 2);

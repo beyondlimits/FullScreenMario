@@ -39,11 +39,45 @@ function MapsHandlr(settings) {
             throw new Error("No MapsCreator provided to MapsHandlr.");
         }
         MapsCreator = settings.MapsCreator;
+        
+        // Map/Area attributes will need to be stored in a MapScreenr object
+        if(!settings.MapScreener) {
+            throw new Error("No MapScreener provided to MapsHandlr.");
+        }
+        MapScreener = settings.MapScreener;
+        
+        screen_attributes  = settings.screen_attributes || [];
     };
     
     
     /* Simple gets
     */
+    
+    /**
+     * Simple getter for the MapScreenr object where attributes are copied.
+     * 
+     * @return {MapScreenr}
+     */
+    self.getMapScreener = function getMapScreener() {
+        return MapScreener;
+    };
+    
+    /**
+     * Simple getter for the Array of attribute names copied to the MapScreener.
+     */
+    self.getScreenAttributes = function getScreenAttributes() {
+        return screen_attributes;
+    };
+    
+    /**
+     * Simple getter for the key by which the current map is located in 
+     * the MapCreatr. This is typically a String.
+     *
+     * @return {Mixed}
+     */
+    self.getMapName = function getMapName() {
+        return map_name;
+    }
     
     /** 
      * Gets the map listed under the given name. If no name is provided, the
@@ -53,22 +87,12 @@ function MapsHandlr(settings) {
      *                         typically be a String.
      * @return {Map}
      */
-    self.getMap = function(name) {
+    self.getMap = function getMap(name) {
         if(arguments.length) {
             return MapsCreator.getMap(name);
         } else {
             return current_map;
         }
-    }
-    
-    /**
-     * Returns the key by which the current map is located in the MapCreatr. 
-     * This is typically a String.
-     *
-     * @return {Mixed}
-     */
-    self.getMapName = function() {
-        return map_name;
     }
     
     
@@ -109,7 +133,7 @@ function MapsHandlr(settings) {
         var location, attribute, len, i;
 
         // Query the location from the current map and ensure it exists
-        location = current_map.locations[location_number],
+        location = current_map.locations[location_number];
         if(!location) {
             throw new Error("Unknown location given: " + location_number);
         }
@@ -123,7 +147,24 @@ function MapsHandlr(settings) {
             attribute = screen_attributes[i];
             MapScreener[attribute] = area_current[attribute];
         }
+        
+        // Reset the area's prethings object, 
+        setPrethings(location);
     }
+    
+    /**
+     * 
+     */
+    function setPrethings(location) {
+        
+    }
+    
+    /**
+     * 
+     */
+    self.spawnMap = function spawnMap(xloc_new) {
+        
+    };
     
     
     self.reset(settings || {});

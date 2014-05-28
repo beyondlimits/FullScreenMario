@@ -16,11 +16,14 @@
 function resetThings() {
     window.ThingHitter = FSM.ThingHitter;
   
-    window.ObjectMaker = new ObjectMakr({
-      "on_make": "onMake",
-      "store_type": "title",
-      "index_map": ["width", "height"],
-      "inheritance": {
+    window.ObjectMaker = FSM.ObjectMaker = new ObjectMakr({
+        "on_make": "onMake",
+        "store_type": "title",
+        "index_map": ["width", "height"],
+        "inheritance": {
+          "Map": {},
+          "Area": {},
+          "Location": {},
           "Thing": {
               "character": {
                   "Player": {},
@@ -109,35 +112,44 @@ function resetThings() {
           }
       },
       "properties": {
-          "Thing": {
-              // This will be delegated to FullScreenMario.js
-              EightBitter: FSM,
-              // Sizing
-              width:  8,
-              height: 8,
-              tolx:   0,
-              toly:   FullScreenMario.unitsize / 8,
-              // Velocity
-              xvel:  0,
-              yvel:  0,
-              speed: 0,
-              // Placement
-              alive:    true,
-              placed:   false,
-              grouping: "solid",
-              // Quadrants
-              maxquads:  4,
-              quadrants: new Array(4),
-              outerok:   false,
-              // Sprites
-              sprite:      "",
-              sprite_type: "neither",
-              // Triggered functions
-              animate:  emergeUp,
-              onMake:   thingProcess,
-              death:    killNormal,
-              collide:  false,
-              movement: false
+        "Map": {
+        
+        },
+        "Area": {
+            
+        },
+        "Location": {
+            
+        },
+        "Thing": {
+            // This will be delegated to FullScreenMario.js
+            EightBitter: FSM,
+            // Sizing
+            width:  8,
+            height: 8,
+            tolx:   0,
+            toly:   FullScreenMario.unitsize / 8,
+            // Velocity
+            xvel:  0,
+            yvel:  0,
+            speed: 0,
+            // Placement
+            alive:    true,
+            placed:   false,
+            grouping: "solid",
+            // Quadrants
+            maxquads:  4,
+            quadrants: new Array(4),
+            outerok:   false,
+            // Sprites
+            sprite:      "",
+            sprite_type: "neither",
+            // Triggered functions
+            animate:  emergeUp,
+            onMake:   thingProcess,
+            death:    killNormal,
+            collide:  false,
+            movement: false
           },
           character: {
               grouping: "character",
@@ -1030,7 +1042,7 @@ function podobooJump(me) {
 }
 function movePodobooUp(me) {
   shiftVert(me, me.speed, true);
-  if(me.top - gamescreen.top > me.heightfall) return;
+  if(me.top - FSM.MapScreener.top > me.heightfall) return;
   me.nofall = false;
   me.movement = movePodobooSwitch;
 }
@@ -1183,7 +1195,9 @@ function startCheepSpawn() {
     function() {
       if(!map_settings.zone_cheeps) return true;
       var spawn = ObjectMaker.make("CheepCheep", { smart: true, flying: true});
-      addThing(spawn, Math.random() * player.left * player.maxspeed / FullScreenMario.unitsize / 2, gamescreen.height * FullScreenMario.unitsize);
+      addThing(spawn, 
+        Math.random() * player.left * player.maxspeed / FullScreenMario.unitsize / 2,
+        FSM.MapScreener.height * FullScreenMario.unitsize);
       spawn.xvel = Math.random() * player.maxspeed;
       spawn.yvel = FullScreenMario.unitsize * -2.33;
       flipHoriz(spawn);
@@ -1219,7 +1233,7 @@ function moveLakituInit2(me) {
 // This fluctuates between +/-32 (* FullScreenMario.unitsize)
 function moveLakitu(me) {
   // If player is moving quickly to the right, move in front of him and stay there
-  if(player.xvel > FullScreenMario.unitsize / 8 && player.left > gamescreen.width * FullScreenMario.unitsize / 2) {
+  if(player.xvel > FullScreenMario.unitsize / 8 && player.left > FSM.MapScreener.width * FullScreenMario.unitsize / 2) {
     if(me.left < player.right + FullScreenMario.unitsize * 16) {
       // To the 'left' of player
       slideToXLoc(me, player.right + FullScreenMario.unitsize * 32 + player.xvel, player.maxspeed * 1.4);

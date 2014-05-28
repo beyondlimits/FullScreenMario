@@ -21,7 +21,7 @@ function resetMapsManager() {
     ],
     on_spawn: function(prething, xloc) {
       var thing = prething.thing;
-      addThing(thing, prething.xloc * unitsize - gamescreen.left, (map_settings.refy - prething.yloc) * unitsize);
+      addThing(thing, prething.xloc * unitsize - FSM.MapScreener.left, (map_settings.refy - prething.yloc) * unitsize);
     },
     entry_functions: {
       true: entryPlain,
@@ -32,7 +32,9 @@ function resetMapsManager() {
       "WalkToPipe": walkToPipe
     },
     entry_default: "plain",
-    on_entry: function() { MapsManager.spawnMap((gamescreen.right + QuadsKeeper.getOutDifference() ) / unitsize); },
+    on_entry: function() { 
+        MapsManager.spawnMap((FSM.MapScreener.right + QuadsKeeper.getOutDifference() ) / unitsize); 
+    },
     macros: {
       "Floor": makeFloor,
       "Pipe": makePipe,
@@ -75,7 +77,7 @@ function resetMapsManager() {
     // maps: FullScreenMario.prototype.maps
   });
   
-  MapsManager.mapStore([1,1], FullScreenMario.prototype.maps["1"]["1"]);
+  MapsManager.mapStore([1,1], FullScreenMario.prototype.maps.maps["1"]["1"]);
 }
 
 
@@ -91,7 +93,6 @@ function setMap(name) {
   TimeHandler.clearAllEvents();
   TimeHandler.addEventInterval(updateDataTime, 25, Infinity);
   resetGameState();
-  resetGameScreenPosition();
   resetQuadrants();
   
   // Globally accessible settings
@@ -243,7 +244,7 @@ function goToTransport(transport) {
 // Distance from the yloc to botmax
 //// Assumes yloc is in the form given by mapfuncs - distance from floor
 function DtB(yloc, divider) {
-  return (yloc + botmax) / (divider || 1);
+  return (yloc + FSM.MapScreener.bottom_max) / (divider || 1);
 }
 function clearTexts() {
   if(window.texts)
@@ -304,8 +305,12 @@ function makePipe(reference) {
       output = [pipe];
   
   delete pipe.macro;
-  if(height == "Infinity") pipe.height = gamescreen.height;
-  else pipe.y += height;
+  if(height == "Infinity") {
+    pipe.height = FSM.MapScreener.height;
+  }
+  else {
+    pipe.y += height;
+  }
   
   if(reference.pirhana) {
     output.push({

@@ -34,7 +34,7 @@ function maintainSolids(update) {
 }
 
 function maintainCharacters(update) {
-  var delx = gamescreen.right + QuadsKeeper.getOutDifference(),
+  var delx = FSM.MapScreener.right + QuadsKeeper.getOutDifference(),
       character, i;
   for(i = 0; i < characters.length; ++i) {
     character = characters[i];
@@ -64,12 +64,9 @@ function maintainCharacters(update) {
     
     // Movement or deletion
     // To do: rethink this...
-    //// Good for performance if gamescreen.bottom - gamescreen.top is saved in screen and updated on shift
-    // To do: is map.shifting needed?
     if(character.alive) {
       if(!character.player && 
           (character.numquads == 0 || character.left > delx) && !character.outerok) {
-          // (character.top > gamescreen.bottom - gamescreen.top || character.left < + quads.width * -1)) {
         deleteThing(character, characters, i);
       }
       else {
@@ -102,7 +99,7 @@ function maintainPlayer(update) {
       }
     }
     // Player has fallen too far
-    if(!player.piping && !player.dying && player.top > gamescreen.deathheight) {
+    if(!player.piping && !player.dying && player.top > FSM.MapScreener.deathheight) {
       // If the map has an exit loc (cloud world), transport there
       if(map_settings.exitloc) {
         // Random maps will pretend he died
@@ -114,16 +111,16 @@ function maintainPlayer(update) {
         // Otherwise just shift to the location
         return shiftToLocation(map.exitloc);
       }
-      // Otherwise, since Player is below the gamescreen, kill him dead
+      // Otherwise, since Player is below the screen, kill him dead
       killPlayer(player, 2);
     }
   }
   
   // Player is moving to the right
   if(player.xvel > 0) {
-    if(player.right > gamescreen.middlex) {
-      // If Player is to the right of the gamescreen's middle, move the gamescreen
-      if(player.right > gamescreen.right - gamescreen.left)
+    if(player.right > FSM.MapScreener.middlex) {
+      // If Player is to the right of the screen's middle, move the screen
+      if(player.right > FSM.MapScreener.right - FSM.MapScreener.left)
         player.xvel = min(0, player.xvel);
     }
   }
@@ -138,7 +135,7 @@ function maintainPlayer(update) {
   
   // Scrolloffset is how far over the middle player's right is
   // It's multiplied by 0 or 1 for map.canscroll
-  window.scrolloffset = (map_settings.canscroll/* || (map.random && !map.noscroll)*/) * (player.right - gamescreen.middlex);
+  window.scrolloffset = (map_settings.canscroll) * (player.right - FSM.MapScreener.middlex);
   if(scrolloffset > 0) {
     scrollWindow(lastscroll = round(min(player.scrollspeed, scrolloffset)));
   }

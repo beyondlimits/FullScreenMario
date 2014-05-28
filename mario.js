@@ -94,8 +94,9 @@ function resetMeasurements() {
   window.ceilmax  = 104; // The floor is 104 spaces (13 blocks) below the top of the screen (yloc = -16)
   window.castlev  = -48;
   
-  resetGameScreen();
-  if(!window.parentwindow) window.parentwindow = false;
+  if(!window.parentwindow) {
+    window.parentwindow = false;
+  }
 }
 
 // Unitsize is kept as a measure of how much to expand (typically 4)
@@ -114,35 +115,6 @@ function resetTimer(num) {
   window.timer = window.timernorm = num;
   window.timert2 = num * 2;
   window.timerd2 = num / 2;
-}
-
-function resetGameScreen() {
-  window.gamescreen = new getGameScreen();
-}
-function getGameScreen() {
-  resetGameScreenPosition(this);
-  // Middlex is static and only used for scrolling to the right
-  this.middlex = (this.left + this.right) / 2;
-  // this.middlex = (this.left + this.right) / 3;
-  
-  // This is the bottom of the screen - water, pipes, etc. go until here
-  window.botmax = this.height - ceilmax;
-  if(botmax < unitsize) {
-    body.innerHTML = "<div><br>Your screen isn't high enough. Make it taller, then refresh.</div>";
-  }
-  
-  // The distance at which Things die from falling
-  this.deathheight = this.bottom + 48;
-}
-function resetGameScreenPosition(me) {
-  me = me || window.gamescreen;
-  me.left = me.top = 0;
-  me.bottom = innerHeight;
-  me.right = innerWidth;
-  me.height = innerHeight / unitsize;
-  me.width = innerWidth / unitsize;
-  me.unitheight = innerHeight;
-  me.unitwidth = innerWidth;
 }
 
 // Events are done with TimeHandlr.js
@@ -181,11 +153,6 @@ function resetGameState(nocount) {
 }
 
 function scrollWindow(x, y) {
-  x = x || 0; y = y || 0;
-  
-  gamescreen.left += x; gamescreen.right += x;
-  gamescreen.top += y; gamescreen.bottom += y;
-  
   FSM.scrollWindow(x, y);
 }
 

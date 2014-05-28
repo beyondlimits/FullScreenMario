@@ -5,7 +5,7 @@ FullScreenMario.prototype.quadrants = {
     "screen_height": window.innerHeight,
     "tolerance": FullScreenMario.unitsize / 2,
     "onUpdate": function onUpdate() {
-        var diff_right = gamescreen.right + QuadsKeeper.getOutDifference();
+        var diff_right = FSM.MapScreener.right + QuadsKeeper.getOutDifference();
         MapsManager.spawnMap(diff_right / FullScreenMario.unitsize);
     },
     "onCollide": false
