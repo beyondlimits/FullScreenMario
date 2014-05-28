@@ -27,7 +27,9 @@ window.FullScreenMario = (function() {
                 resetGamesRunner,
                 resetStatsHolder,
                 resetThingHitter,
-                resetMapScreener
+                resetMapScreener,
+                resetMapsCreator,
+                resetMapsHandler
             ],
             "constants": [
                 "unitsize",
@@ -141,6 +143,25 @@ window.FullScreenMario = (function() {
         }, self.screen));
     }
     
+    /**
+     * 
+     */
+    function resetMapsCreator(self) {
+        self.MapsCreator = new MapsCreatr({
+            "ObjectMaker": true//self.ObjectMaker
+        });
+    }
+    
+    /**
+     * 
+     */
+    function resetMapsHandler(self) {
+        self.MapsHandler = new MapsHandlr({
+            "MapsCreator": self.MapsCreator,
+            "MapScreener": self.MapScreener
+        });
+    }
+    
     
     /* Global manipulations
     */
@@ -152,7 +173,7 @@ window.FullScreenMario = (function() {
         dx = dx || 0;
         dy = dy || 0;
         
-        this.MapScreener.shift(-dx, -dy);
+        this.MapScreener.shift(dx, dy);
         this.shiftAll(-dx, -dy);
         
         // update quadrants
@@ -694,19 +715,17 @@ window.FullScreenMario = (function() {
      * Actual movement function for Things that float sideways (horizontally).
      * If the Thing has reached thing.begin or thing.end, it gradually switches
      * thing.xvel
-     * This uses gamescreen - in the future, it should just be relative
-     * to the starting yloc of the Thing
      * 
      * @param {Thing} thing
      * @remarks thing.maxvel is used as the maximum absolute speed horizontally
      */
     function moveSlidingReal(thing) {
         // If to the left of the endpoint:
-        if(gamescreen.left + thing.left <= thing.begin) {
+        if(FSM.MapScreener.left + thing.left <= thing.begin) {
             thing.xvel = Math.min(thing.xvel + this.unitsize / 32, thing.maxvel);
         }
         // If to the right of the endpoint:
-        else if(gamescreen.left + thing.right > thing.end) {
+        else if(FSM.MapScreener.left + thing.right > thing.end) {
             thing.xvel = Math.max(thing.xvel - this.unitsize / 32, -thing.maxvel);
         }
         
@@ -731,8 +750,6 @@ window.FullScreenMario = (function() {
     /**
      * Moves a platform by its velocities, and checks for whether the player
      * is resting on it (if so, the player must be moved accordingly)
-     * This uses gamescreen, innerWidth, and player - in the future, it should 
-     * get it them in some official manner? (or relegate that check to upkeep)
      * 
      * @param {Thing} thing
      */
@@ -746,8 +763,8 @@ window.FullScreenMario = (function() {
             shiftHoriz(player, thing.xvel);
             
             // If the player is too far to the right or left, stop that overlap
-            if(player.right > innerWidth) {
-                setRight(player, innerWidth);
+            if(player.right > this.MapScreener.innerWidth) {
+                setRight(player, this.MapScreener.innerWidth);
             } else if(player.left < 0) {
                 setLeft(player, 0);
             }
@@ -962,6 +979,129 @@ window.FullScreenMario = (function() {
     }
     
     
+    /* Map macros
+    */
+    
+    /**
+     * Sample macro with no functionality, except to console.log a listing of 
+     * the arguments provided to each macro function.
+     * For all real macros, arguments are listed as the keys given as members of
+     * the reference object.
+     * They also ignore the "x" and "y" arguments, which 
+     * are the x-location and y-location of the output (and both default to 0),
+     * and the "macro" argument, which is listed as their alias.
+     * 
+     * @alias Example
+     * @param {Object} reference   A listing of the settings for this macro,
+     *                             from an Area's .creation Array. This should 
+     *                             be treated as static!
+     * @param {Object[]} prethings   The Area's actual .creation Array, which
+     *                               consists of a bunch of reference Objects.
+     * @param {Area} area   The area currently being generated.
+     * @param {Map} map   The map containing the area currently being generated.
+     */
+    function macroExample(reference, prethings, area, map) {
+        console.log("This is a macro that may be called by a map creation.");
+        console.log("The arguments are:\n");
+        console.log("Reference (the listing from area.creation):  ", reference);
+        console.log("Prethings (the area's listing of prethings): ", prethings);
+        console.log("Area      (the currently generated area):    ", area);
+        console.log("Map       (the map containing the area):     ", map);
+    }
+    
+    /**
+     * Macro to place a single type of Thing multiple times, drawing from a
+     * bottom/left corner to a top/right corner.
+     * 
+     * @alias Fill
+     * @param {String} thing   The name of the Thing to fill (e.g. "Brick").
+     * @param {Number} xnum   How many times to repeat the Thing horizontally
+     *                        to the right (defaults to 1)
+     * @param {Number} ynum   How many times to repeat the Thing vertically
+     *                        upwards (defaults to 1)
+     * @param {Number} xwidth   How many units are between the left edges of 
+     *                          placed Things horizontally (defaults to 0)
+     * @param {Number} yheight   How many units are between the top edges of
+     *                           placed Things vertically (defaults to 0)
+     * @example   { "macro": "Fill", "thing": "Brick",
+     *              "x": 644, "y": 64, "xnum": 5, "xwidth": 8 }
+     */
+    function macroFillPreThings(reference) {
+        var xnum = reference.xnum || 1,
+            ynum = reference.ynum || 1,
+            xwidth = reference.xwidth || 0,
+            yheight = reference.yheight || 0,
+            x = reference.x || 0,
+            yref = reference.y || 0,
+            ynum = reference.ynum || 1,
+            outputs = new Array(xnum * ynum),
+            output,
+            o = 0, y, i, j;
+        
+        for(i = 0; i < xnum; ++i) {
+            y = yref;
+            for(j = 0; j < ynum; ++j) {
+                output = {
+                    "x": x,
+                    "y": y,
+                    "macro": undefined
+                };
+                outputs[o] = proliferate(output, reference, true);
+                o += 1;
+                y += yheight;
+            }
+            x += xwidth;
+        }
+        return outputs;
+    }
+    
+    /**
+     * Macro to continuously place a listing of Things multiple times, from left
+     * to right. This is commonly used for repeating background scenery.
+     * 
+     * @alias Pattern
+     * @param {String} pattern   The name of the pattern to print, from the
+     *                           listing in this.patterns.
+     * @param {Number} repeat   How many times to repeat the overall pattern.
+     * @remarks   "this" should be bound to the parent EightBitter (as the
+     *            defaults variable must be getting properties from it). If not,
+     *            the bound "this" should contain .patterns and .ObjectMaker.
+     */
+    function macroFillPrePattern(reference) {
+        // Make sure the pattern exists before doing anything
+        if(!this.patterns[reference.pattern]) {
+            console.warn("An unknown pattern is referenced: " + reference);
+            return;
+        }
+        var pattern = this.patterns[reference.pattern],
+            length = pattern.length,
+            defaults = this.ObjectMaker.getProperties(),
+            repeats = reference.repeat || 1,
+            xpos = reference.x || 0,
+            ypos = reference.y || 0,
+            outputs = new Array(length * repeats),
+            o = 0,
+            output, prething, i, j;
+        
+        // For each time the pattern should be repeated:
+        for(i = 0; i < repeats; i += 1) {
+            // For each Thing listing in the pattern:
+            for(j = 0; j < length; j += 1) {
+                prething = pattern[j];
+                output = {
+                    "thing": prething[0],
+                    "x": xpos + prething[1],
+                    "y": ypos + prething[2]
+                };
+                output.y += defaults[prething[0]].height;
+            }
+            xpos += pattern.width;
+        }
+        
+        return outputs;
+    }
+      
+    
     // Add all registered functions from above to the FullScreenMario prototype
     proliferateHard(FullScreenMario.prototype, {
         // Global manipulations
@@ -1013,7 +1153,14 @@ window.FullScreenMario = (function() {
         "unflipVert": unflipVert,
         // Death functions
         "killNormal": killNormal,
-        "killFlip": killFlip
+        "killFlip": killFlip,
+        "killNPCs": killNPCs,
+        // Map macros
+        "macros": {
+            "Example": macroExample,
+            "Fill": macroFillPreThings,
+            "Pattern": macroFillPrePattern
+        }
     });
     
     return FullScreenMario;
