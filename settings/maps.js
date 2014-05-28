@@ -1,22 +1,36 @@
-// General settings for creating Maps, Areas, and Locations
 FullScreenMario.prototype.maps = {
-    "properties": {
-        "Map": {
-            "current_location": -1
+    "screen_attributes": [
+        "gravity",
+        "fillStyle",
+        "refy",
+        "setting",
+        "underwater",
+        "time"
+    ],
+    "ObjectMaker": {
+        "inheritance": {
+            "Map": {},
+            "Area": {},
+            "Location": {}
         },
-        "Area": {
-            "floor": 140,
-            "refy": 140,
-            "time": 400,
-            "underwater": false,
-            "gravity": Math.round(12 * FullScreenMario.unitsize) / 100
+        "properties": {
+            "Map": {
+                "current_location": -1
+            },
+            "Area": {
+                "floor": 140,
+                "refy": 140,
+                "time": 400,
+                "underwater": false,
+                "gravity": Math.round(12 * FullScreenMario.unitsize) / 100
+            },
+            "Location": {
+                "x": 0,
+                "y": 0,
+                "area": 0,
+                "entry": "normal"
+            }
         },
-        "Location": {
-            "x": 0,
-            "y": 0,
-            "area": 0,
-            "entry": "normal"
-        }
     },
     "patterns": {
         "BackRegular": [
@@ -117,41 +131,11 @@ FullScreenMario.prototype.maps = {
             ["Blank", 384]
         ]
     },
-    // These are filled out later in this file
+    // These are filled out later
     "maps": undefined
 };
 
   
-  // Private: makePrePattern({...})
-  // Macro to place a pre-defined sequence of objects any number of times
-  function makePrePattern(reference) {
-    // Make sure the pattern exists
-    if(!patterns.hasOwnProperty(reference.pattern)) {
-      console.warn("Map " + map_name + "references a pattern of unknown type.", reference);
-      return;
-    }
-    
-    var pattern = patterns[reference.pattern],
-        length = pattern.length,
-        defaults = ObjectMaker.getProperties(),
-        repeats = reference.repeat || 1,
-        xpos = reference.x || 0,
-        ypos = reference.y || 0,
-        outputs = new Array(length * repeats),
-        o = 0,
-        output, prething, i, j;
-    for(i = 0; i < repeats; ++i) {
-      for(j = 0; j < length; ++j) {
-        prething = pattern[j];
-        output = { thing: prething[0], x: xpos + prething[1], y: ypos + prething[2] };
-        output.y += defaults[prething[0]].height;
-        outputs[o] = output;
-        ++o;
-      }
-      xpos += pattern.width;
-    }
-    return outputs;
-  }
     
     /**
      * 

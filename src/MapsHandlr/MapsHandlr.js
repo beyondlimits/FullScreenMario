@@ -54,6 +54,15 @@ function MapsHandlr(settings) {
     */
     
     /**
+     * Simple getter for the MapsCreatr object that makes the actual maps.
+     * 
+     * @return {MapsCreatr}
+     */
+    self.getMapsCreator = function getMapsCreator() {
+        return MapsCreator;
+    };
+    
+    /**
      * Simple getter for the MapScreenr object where attributes are copied.
      * 
      * @return {MapScreenr}
@@ -77,7 +86,7 @@ function MapsHandlr(settings) {
      */
     self.getMapName = function getMapName() {
         return map_name;
-    }
+    };
     
     /** 
      * Gets the map listed under the given name. If no name is provided, the
@@ -93,7 +102,16 @@ function MapsHandlr(settings) {
         } else {
             return current_map;
         }
-    }
+    };
+    
+    /**
+     * Simple getter pipe to the internal MapsCreator.getMaps() function.
+     * 
+     * @return {Object}   An associative array of maps, keyed by their names.
+     */
+    self.getMaps = function getMaps() {
+        return MapsCreator.getMaps();
+    };
     
     
     /* Map / location setting
@@ -133,7 +151,7 @@ function MapsHandlr(settings) {
         var location, attribute, len, i;
 
         // Query the location from the current map and ensure it exists
-        location = current_map.locations[location_number];
+        location = map_current.locations[location_number];
         if(!location) {
             throw new Error("Unknown location given: " + location_number);
         }
@@ -148,16 +166,10 @@ function MapsHandlr(settings) {
             MapScreener[attribute] = area_current[attribute];
         }
         
-        // Reset the area's prethings object, 
-        setPrethings(location);
-    }
-    
-    /**
-     * 
-     */
-    function setPrethings(location) {
-        
-    }
+        // Reset the area's prethings object, enabling it to be used as a fresh
+        // start for the new Area/Location placements
+        MapsCreator.setPreThings(location);
+    };
     
     /**
      * 

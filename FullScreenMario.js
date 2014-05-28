@@ -27,6 +27,7 @@ window.FullScreenMario = (function() {
                 resetGamesRunner,
                 resetStatsHolder,
                 resetThingHitter,
+                resetObjectMaker,
                 resetMapScreener,
                 resetMapsCreator,
                 resetMapsHandler
@@ -120,13 +121,13 @@ window.FullScreenMario = (function() {
      *                          things.js (settings/things.js)
      */
     function resetObjectMaker(self) {
-        self.ObjectMaker = new ObjectMakr(proliferate({
-            "properties": {
-                "Thing": {
-                    "EightBitter": self
-                }
-            }
-        }, self.things));
+        // self.ObjectMaker = new ObjectMakr(proliferate({
+            // "properties": {
+                // "Thing": {
+                    // "EightBitter": self
+                // }
+            // }
+        // }, self.things));
     }
     
     /**
@@ -148,7 +149,8 @@ window.FullScreenMario = (function() {
      */
     function resetMapsCreator(self) {
         self.MapsCreator = new MapsCreatr({
-            "ObjectMaker": true//self.ObjectMaker
+            "ObjectMaker": new ObjectMakr(self.maps.ObjectMaker),
+            "group_names": ["Character", "Scenery", "Solid", "Text"]
         });
     }
     
@@ -158,7 +160,8 @@ window.FullScreenMario = (function() {
     function resetMapsHandler(self) {
         self.MapsHandler = new MapsHandlr({
             "MapsCreator": self.MapsCreator,
-            "MapScreener": self.MapScreener
+            "MapScreener": self.MapScreener,
+            "screen_attributes": self.maps.screen_attributes
         });
     }
     
