@@ -109,6 +109,7 @@ window.FullScreenMario = (function() {
         self.ThingHitter = new ThingHittr(proliferate({
             "scope": self
         }, self.collisions));
+        self.GroupHolder = self.ThingHitter.getGroupHolder();
     }
     
     /**
@@ -150,7 +151,8 @@ window.FullScreenMario = (function() {
     function resetMapsCreator(self) {
         self.MapsCreator = new MapsCreatr({
             "ObjectMaker": new ObjectMakr(self.maps.ObjectMaker),
-            "group_names": ["Character", "Scenery", "Solid", "Text"]
+            "group_types": ["Character", "Scenery", "Solid", "Text"],
+            "macros": self.macros
         });
     }
     
@@ -168,6 +170,32 @@ window.FullScreenMario = (function() {
     
     /* Global manipulations
     */
+    
+    /**
+     * 
+     * 
+     * 
+     */
+    function addThing(thing, left, top) {
+        if(typeof(thing) === "string" || thing instanceof String) {
+            thing = this.ObjectMaker.make(thing);
+        }
+        
+        this.setLeft(thing, left);
+        this.setTop(thing, top);
+        this.updateSize(thing);
+        
+        this.GroupHolder.getFunctions().add[thing.grouptype](thing);
+        thing.placed = true;
+        
+        if(thing.onadding) {
+            thing.onadding(thing);
+        }
+        
+        PixelDrawer.setThingSprite(thing);
+        
+        return thing;
+    }
     
     /**
      * 
@@ -475,7 +503,7 @@ window.FullScreenMario = (function() {
      * 
      */
     function shiftAll(dx, dy) {
-        this.ThingHitter.getGroupHolder().callAll(this, shiftThings, dx, dy);
+        this.GroupHolder.callAll(this, shiftThings, dx, dy);
     }
 
     /**
@@ -571,6 +599,23 @@ window.FullScreenMario = (function() {
         thing.top -= dy;
         thing.height += dy / this.unitsize;
         thing.unitheight = thing.height * this.unitsize;
+    }
+    
+    
+    /* Collision reactions
+    */
+    
+    /**
+     * Basic function for Mario causing an item to jump slightly into the air, 
+     * such as from hitting a solid below it. 
+     * 
+     * @param {Thing} thing
+     * @remarks This simply moves the thing up slightly and decreases its
+     *          y-velocity, without considering x-direction.
+     */
+    function itemJump(thing) {
+        thing.yvel -= FullScreenMario.unitsize * 1.4;
+        this.shiftVert(thing, -FullScreenMario.unitsize);
     }
     
     
@@ -758,7 +803,7 @@ window.FullScreenMario = (function() {
      */
     function movePlatform(thing) {
         shiftHoriz(thing, thing.xvel);
-        shiftVert(thing, thing.yvel);
+        this.shiftVert(thing, thing.yvel);
         
         // If the player is resting on this and this is alive, move the player
         if(thing === player.resting && player.alive) {
@@ -772,7 +817,7 @@ window.FullScreenMario = (function() {
                 setLeft(player, 0);
             }
         }
-    }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if(thing !== player.resting) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        shiftVert(thing, thing.yvel += this.unitsize / 8);        EightBittr.prototype.physics.setBottom(player, thing.top);                // After a velocity threshold, start always falling        if(thing.yvel >= thing.fall_threshold_start || this.unitsize * 2.8) {            thing.freefall = true;            thing.movement = moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || this.unitsize / 16;        shiftVert(thing, thing.yvel);                // After a velocity threshold, stop accelerating        if(thing.yvel >= thing.fall_threshold_end || this.unitsize * 2) {            thing.movement = movePlatform;        }    }
+    }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if(thing !== player.resting) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        this.shiftVert(thing, thing.yvel += this.unitsize / 8);        EightBittr.prototype.physics.setBottom(player, thing.top);                // After a velocity threshold, start always falling        if(thing.yvel >= thing.fall_threshold_start || this.unitsize * 2.8) {            thing.freefall = true;            thing.movement = moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || this.unitsize / 16;        this.shiftVert(thing, thing.yvel);                // After a velocity threshold, stop accelerating        if(thing.yvel >= thing.fall_threshold_end || this.unitsize * 2) {            thing.movement = movePlatform;        }    }
     
     
     /* Appearance utilities
@@ -943,8 +988,25 @@ window.FullScreenMario = (function() {
         thing.EightBitter.TimeHandler.addEvent(killNormal, 70 + extra, thing);
     }
     
+    // /**
+     // * 
+     // */
+    // function killSpawn(thing) {
+        // if(!thing.spawntype) {
+            // console.warn("Thing " + thing.title + " has no .spawntype.");
+            // killNormal(thing);
+            // return;
+        // }
+        // var spawn = thing.EightBitter.ObjectMaker.make(thing.spawntype);
+        // !!!! addThing is global
+        // addThing(spawn, thing.left, thing.bottom - spawn.height * unitsize);
+        // !!!! addThing is global 
+        // thing.EightBitter.setMidXObj(spawn, thing);
+    // }
+     
+    
     /**
-     * Wipes the sccreen of any characters or solids that should be gone during
+     * Wipes the screen of any characters or solids that should be gone during
      * an important cutscene, such as hitting an end-of-level flag.
      * For characters, they're deleted if .nokillonend isn't truthy. If they
      * have a .killonend function, that's called on them.
@@ -1066,19 +1128,17 @@ window.FullScreenMario = (function() {
      * @param {String} pattern   The name of the pattern to print, from the
      *                           listing in this.patterns.
      * @param {Number} repeat   How many times to repeat the overall pattern.
-     * @remarks   "this" should be bound to the parent EightBitter (as the
-     *            defaults variable must be getting properties from it). If not,
-     *            the bound "this" should contain .patterns and .ObjectMaker.
      */
     function macroFillPrePattern(reference) {
         // Make sure the pattern exists before doing anything
-        if(!this.patterns[reference.pattern]) {
+        if(!FullScreenMario.prototype.maps.patterns[reference.pattern]) {
             console.warn("An unknown pattern is referenced: " + reference);
             return;
         }
-        var pattern = this.patterns[reference.pattern],
+        var pattern = FullScreenMario.prototype.maps.patterns[reference.pattern],
             length = pattern.length,
-            defaults = this.ObjectMaker.getProperties(),
+            // Problem: see where defaults[...].height is referenced below
+            defaults = FullScreenMario.prototype.things.properties,
             repeats = reference.repeat || 1,
             xpos = reference.x || 0,
             ypos = reference.y || 0,
@@ -1096,6 +1156,8 @@ window.FullScreenMario = (function() {
                     "x": xpos + prething[1],
                     "y": ypos + prething[2]
                 };
+                // Problem: the .height will need to be calculated from up
+                // the prototypal inheritance tree
                 output.y += defaults[prething[0]].height;
             }
             xpos += pattern.width;
@@ -1108,6 +1170,7 @@ window.FullScreenMario = (function() {
     // Add all registered functions from above to the FullScreenMario prototype
     proliferateHard(FullScreenMario.prototype, {
         // Global manipulations
+        "addThing": addThing,
         "scrollWindow": scrollWindow,
         // Collisions
         "thingCanCollide": thingCanCollide,
@@ -1121,6 +1184,8 @@ window.FullScreenMario = (function() {
         "characterOnSolid": characterOnSolid,
         "characterOnResting": characterOnResting,
         "solidOnCharacter": solidOnCharacter,
+        // Collision reactions
+        "itemJump": itemJump,
         // Movement
         "moveSimple": moveSimple,
         "moveSmart": moveSmart,

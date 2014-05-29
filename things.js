@@ -21,9 +21,6 @@ function resetThings() {
         "store_type": "title",
         "index_map": ["width", "height"],
         "inheritance": {
-          "Map": {},
-          "Area": {},
-          "Location": {},
           "Thing": {
               "character": {
                   "Player": {},
@@ -592,23 +589,7 @@ function thingProcessAttributes(thing, attributes) {
 
 // The primary function for placing a thing on the map
 function addThing(me, left, top) {
-  // If me is a string (e.g. 'addThing("Goomba", ...)), make a new thing with that
-  if(typeof(me) == "string") me = ObjectMaker.make(me);
-  
-  // Place the Thing in the game and in its correct grouping array
-  placeThing(me, left, top);
-  if(!window[me.libtype]) {
-    window[me.libtype] = [];
-  }
-  window[me.libtype].push(me);
-  me.placed = true;
-  
-  // It may need to react to this, such as sprite cycles and CastleBlock.makeCastleBlock
-  if(me.onadding) me.onadding(me);
-  
-  PixelDrawer.setThingSprite(me);
-  window["last_" + (me.title || me.group || "unknown")] = me;
-  return me;
+  return FSM.get("addThing")(me, left, top);
 }
 // Called by addThing for simple placement
 function placeThing(me, left, top) {
@@ -666,10 +647,7 @@ function checkTexts() {
  */
 
 function itemJump(me) {
-  me.yvel -= FullScreenMario.unitsize * 1.4;
-  me.top -= FullScreenMario.unitsize;
-  me.bottom -= FullScreenMario.unitsize;
-  updatePosition(me);
+  FSM.get("itemJump")(me);
 }
 
 function fireEnemy(enemy, me) {
@@ -1362,7 +1340,7 @@ function placePlayer(xloc, yloc) {
     TimeHandler.addSpriteCycle(player, ["swim1", "swim2"], "swimming", 5);
   }
 
-  var adder = addThing(player, xloc ||FullScreenMario.unitsize * 16, yloc || (map_settings.floor - player.height) * FullScreenMario.unitsize);
+  var adder = addThing(player, xloc || FullScreenMario.unitsize * 16, yloc || (map_settings.floor - player.height) * FullScreenMario.unitsize);
   if(StatsHolder.get("power") >= 2) {
     playerGetsBig(player, true);
     if(StatsHolder.get("power") == 3)
