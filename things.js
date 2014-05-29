@@ -193,6 +193,7 @@ function resetThings() {
               death: killFlip
           },
           Goomba: {
+              spawntype: "DeadGoomba",
               toly: FullScreenMario.unitsize,
               death: killGoomba,
               spriteCycleSynched: [
@@ -391,7 +392,10 @@ function resetThings() {
           },
           DeadGoomba: {
               height: 4,
-              nocollide: true
+              nocollide: true,
+              onThingMake: function(thing) {
+                thing.EightBitter.TimeHandler.addEvent(FullScreenMario.prototype.killNormal, 21, thing);
+              }
           },
           Pipe: {
               width: 16,
@@ -876,14 +880,15 @@ function jumpEnemy(me, enemy) {
 }
 // Big: true if it should skip squash (fire, shell, etc)
 function killGoomba(me, big) {
-  if(!me.alive) return;
-  if(!big) {
-    var squash = ObjectMaker.make("DeadGoomba");
-    addThing(squash, me.left, me.bottom - squash.height * FullScreenMario.unitsize);
-    TimeHandler.addEvent(killNormal, 21, squash);
-    killNormal(me);
-  }
-  else killFlip(me);
+  // if(!me.alive) return;
+  // if(!big) {
+    // var squash = ObjectMaker.make("DeadGoomba");
+    // addThing(squash, me.left, me.bottom - squash.height * FullScreenMario.unitsize);
+    // TimeHandler.addEvent(killNormal, 21, squash);
+    // killNormal(me);
+  // }
+  // else killFlip(me);
+    FSM.get("killGoomba")(me, big);
 }
 
 // Big: true if it should skip shell (fire, shell, etc)

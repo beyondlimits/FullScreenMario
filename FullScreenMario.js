@@ -988,22 +988,38 @@ window.FullScreenMario = (function() {
         thing.EightBitter.TimeHandler.addEvent(killNormal, 70 + extra, thing);
     }
     
-    // /**
-     // * 
-     // */
-    // function killSpawn(thing) {
-        // if(!thing.spawntype) {
-            // console.warn("Thing " + thing.title + " has no .spawntype.");
-            // killNormal(thing);
-            // return;
-        // }
-        // var spawn = thing.EightBitter.ObjectMaker.make(thing.spawntype);
-        // !!!! addThing is global
-        // addThing(spawn, thing.left, thing.bottom - spawn.height * unitsize);
-        // !!!! addThing is global 
-        // thing.EightBitter.setMidXObj(spawn, thing);
-    // }
-     
+    /**
+     * 
+     */
+    function killSpawn(thing, big) {
+        if(big) {
+            killNormal(thing);
+            return;
+        }
+        
+        if(thing.spawntype) {
+            var spawn = thing.EightBitter.ObjectMaker.make(thing.spawntype);
+            thing.EightBitter.addThing(spawn);
+            thing.EightBitter.setBottom(spawn, thing.bottom);
+            thing.EightBitter.setMidXObj(spawn, thing);
+        } else {
+            console.warn("Thing " + thing.title + " has no .spawntype.");
+        }
+        
+        killNormal(thing);
+    }
+    
+    /**
+     * 
+     */
+    function killGoomba(thing, big) {
+        if(big) {
+            killFlip(thing);
+            return;
+        }
+        
+        killSpawn(thing);
+    }
     
     /**
      * Wipes the screen of any characters or solids that should be gone during
@@ -1222,6 +1238,8 @@ window.FullScreenMario = (function() {
         // Death functions
         "killNormal": killNormal,
         "killFlip": killFlip,
+        "killSpawn": killSpawn,
+        "killGoomba": killGoomba,
         "killNPCs": killNPCs,
         // Map macros
         "macros": {
