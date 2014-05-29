@@ -388,15 +388,19 @@ function GroupHoldr(settings) {
     
     self.getFunctions = function() {
         return functions;
-    }
+    };
     
     self.getGroups = function() {
         return groups;
-    }
+    };
+    
+    self.getGroup = function(name) {
+        return groups[name];
+    };
     
     self.getGroupNames = function() {
         return group_names;
-    }
+    };
     
     
     /* Utilities

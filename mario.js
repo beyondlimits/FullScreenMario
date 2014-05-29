@@ -50,10 +50,10 @@ function startFSM() {
   resetUpkeep();
   
   // These should be placed somewhere else eventually
-  window.characters = FSM.ThingHitter.getGroupHolder().getCharacterGroup();
-  window.solids = FSM.ThingHitter.getGroupHolder().getSolidGroup();
-  window.scenery = FSM.ThingHitter.getGroupHolder().getSceneryGroup();
-  window.text = FSM.ThingHitter.getGroupHolder().getTextGroup();
+  window.characters = FSM.GroupHolder.getCharacterGroup();
+  window.solids = FSM.GroupHolder.getSolidGroup();
+  window.scenery = FSM.GroupHolder.getSceneryGroup();
+  window.text = FSM.GroupHolder.getTextGroup();
 
   // With that all set, set the map to World11.
   StatsHolder.set("lives", 3);

@@ -168,7 +168,9 @@ function MapsHandlr(settings) {
         
         // Reset the area's prethings object, enabling it to be used as a fresh
         // start for the new Area/Location placements
-        MapsCreator.setPreThings(location);
+        var prethings = MapsCreator.getPreThings(location);
+        
+        console.log("Got", prethings);
     };
     
     /**

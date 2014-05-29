@@ -221,7 +221,7 @@ window.EightBittr = (function(settings) {
      * 
      */
     function setMidX(thing, x) {
-        this.setLeft(thing, x + thing.left * this.unitsize /2);
+        this.setLeft(thing, x + thing.left * this.unitsize / 2);
     }
     
     /**

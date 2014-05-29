@@ -14,9 +14,25 @@ function MapsCreatr(settings) {
         // Associative array storing Map objects created by self.createMap
         maps,
         
-        // An Array of Strings that represent all the possible group types
-        // processed Prethings may be placed in
-        group_names;
+        // Associative array storing macro functions, keyed by shortcut String
+        macros,
+        
+        // Associative array storing default macro settings for all macros
+        macro_defaults,
+        
+        // An Array of Strings that represents all the possible group types
+        // processed PreThings may be placed in
+        group_types,
+        
+        // Scratch xloc and yloc to be used for location offsets with PreThings
+        xloc,
+        yloc,
+        
+        // What key to check for group type under a Thing
+        key_group_type,
+        
+        // What key to check for if a PreThing's Thing is a Location's entrance
+        key_exit;
     
     /**
      * 
@@ -28,7 +44,17 @@ function MapsCreatr(settings) {
         }
         ObjectMaker = settings.ObjectMaker;
         
-        group_names = settings.group_names || [];
+        // At least one group type name should be defined for PreThing output
+        if(!settings.group_types) {
+            throw new Error("No group type names provided to MapsManager.");
+        }
+        group_types = settings.group_types;
+        
+        key_group_type = settings.key_group_type || "grouptype";
+        key_exit = settings.key_exit || "exit";
+        
+        macros = settings.macros || {};
+        macro_defaults = settings.macro_defaults || {};
         
         maps = {};
     };
@@ -170,15 +196,26 @@ function MapsCreatr(settings) {
      * parent Area and .map reference to its parent Map, this returns an 
      * associative array of Prethings arrays.
      * 
+     * Each reference (which is a JSON object taken from an Area's .creation 
+     * Array) is an instruction to this script to switch to a location, push 
+     * some number of PreThings to the prethings object via a predefined macro,
+     * or push a single PreThing to the prethings object.
+     * 
+     * Once those PreThing objects are obtained, they are filtered for validity
+     * (e.g. location setter commands are irrelevent after a single use), and 
+     * sorted on .xloc and .yloc.
+     * 
      * @param {Location} location 
      * @return {Object}   An associative array of Prething arrays. The keys will
-     *                    be the unique group types of 
+     *                    be the unique group types of all the allowed Thing
+     *                    groups, which will be stored in the parent
+     *                    EightBittr's GroupHoldr.
      */
     self.getPreThings = function getPreThings(location) {
         var area = location.area,
             map = area.map,
             creation = area.creation,
-            prethings = fromKeys(group_names),
+            prethings = fromKeys(group_types),
             i, len;
         
         xloc = 0;
@@ -188,61 +225,165 @@ function MapsCreatr(settings) {
             analyzePreSwitch(creation[i], prethings, area, map);
         }
         
-        sortPreThingsObject(prethings);
+        processPreThingsArray(prethings);
         
         return prethings;
     };
     
     /**
+     * PreThing switcher: Given a JSON representation of a PreThing, this 
+     * determines what to do with it. It may be a location setter (to switch the
+     * x- and y- location offset), a macro (to repeat some number of actions),
+     * or a raw PreThing.
+     * Any modifications done in a called function will be to push some number
+     * of PreThings to their respective group in the output prethings Object.
      * 
+     * @param {Object} reference   A JSON mapping of some number of PreThings. 
+     * @param {Object} prethings   An associative array of PreThing Arrays, 
+     *                             keyed by the allowed group types.
+     * @param {Area} area   The Area object to be populated by these PreThings.
+     * @param {Map} map   The Map object containing the Area object.
      */
     function analyzePreSwitch(reference, prethings, area, map) {
+        // Case: location setter
         if(reference.hasOwnProperty("location")) {
-            return analyzePreLocation(reference, map);
+            analyzePreLocation(reference, prethings, area, map);
         }
-        
-        if(reference.hasOwnProperty("macro")) {
-            return analyzePreMacro(reference, prethings, area, map);
+        // Case: macro
+        else if(reference.hasOwnProperty("macro")) {
+            analyzePreMacro(reference, prethings, area, map);
         }
-        
-        return analyzePreThing(reference, prethings, area, map);
+        // Case: default (a regular PreThing)
+        else {
+            analyzePreThing(reference, prethings, area, map);
+        }
     }
     
     /**
+     * PreThing case: Location instruction. This modifies the currently used
+     * xloc and yloc variables to match that location's.
      * 
+     * @param {Object} reference   A JSON mapping of some number of PreThings. 
+     * @param {Object} prethings   An associative array of PreThing Arrays, 
+     *                             keyed by the allowed group types.
+     * @param {Area} area   The Area object to be populated by these PreThings.
+     * @param {Map} map   The Map object containing the Area object.
      */
-    function analyzePreLocation(reference, map) {
+    function analyzePreLocation(reference, prethings, area, map) {
+        var location = reference.location;
         
+        if(map.locations.hasOwnProperty(location)) {
+            console.warn("A non-existent location is referenced. It will be "
+                    + "ignored: " + location, reference, prethings, area, map);
+            return;
+        }
+        
+        xloc = map.locations[location].x;
+        yloc = map.locations[location].y;
     }
     
     /**
+     * PreThing case: Macro instruction. This calls the macro on the same input,
+     * captures the output, and recursively repeats the analyzePreSwitch driver
+     * function on the output(s). 
      * 
+     * @param {Object} reference   A JSON mapping of some number of PreThings. 
+     * @param {Object} prethings   An associative array of PreThing Arrays, 
+     *                             keyed by the allowed group types.
+     * @param {Area} area   The Area object to be populated by these PreThings.
+     * @param {Map} map   The Map object containing the Area object.
      */
     function analyzePreMacro(reference, prethings, area, map) {
+        var macro = macros[reference.macro],
+            outputs, len, i;
         
+        if(!macro) {
+            console.warn("A non-existent macro is referenced. It will be "
+                    + "ignored: " + macro, reference, prethings, area, map);
+            return;
+        }
+        
+        // Avoid modifying the original macro by creating a new object in its
+        // place, while submissively proliferating any default macro settings
+        outputs = macro(reference, prethings, area, map);
+        proliferate(outputs, macro_defaults, true);
+        
+        // If there is any output, recurse on all components of it, Array or not
+        if(outputs) {
+            if(output instanceof Array) {
+                for(i = 0, len = output.length; i < len; i += 1) {
+                    analyzePreSwitch(output[i], prethings, area, map);
+                }
+            } else {
+                analyzePreSwitch(output, prethings, area, map);
+            }
+        }
     }
     
     /**
+     * Macro case: PreThing instruction. This creates a PreThing from the
+     * given reference and adds it to its respective group in prethings (based
+     * on the PreThing's [key_group_type] variable).
      * 
+     * @param {Object} reference   A JSON mapping of some number of PreThings. 
+     * @param {Object} prethings   An associative array of PreThing Arrays, 
+     *                             keyed by the allowed group types.
+     * @param {Area} area   The Area object to be populated by these PreThings.
+     * @param {Map} map   The Map object containing the Area object.
      */
     function analyzePreThing(reference, prethings, area, map) {
+        var thing = reference.thing,
+            prething;
         
-    }
-    
-    /**
-     * 
-     */
-    function sortPreThingsObject(prethings) {
-        var i;
-        for(i in prethings) {
-            sortPreThingsArray(prethings[i]);
+        if(!ObjectMaker.hasFunction(thing)) {
+            console.warn("A non-existent Thing type is referenced. It will be "
+                    + "ignored: " + thing, reference, prethings, area, map);
+            return; 
+        }
+        
+        prething = new PreThing(ObjectMaker.make(thing, reference), reference);
+        
+        if(!prething[key_group_type]) {
+            console.warn("A Thing does not contain a " + [key_group_type] + ". "
+                    + "It will be ignored: " + 
+                    prething, reference, prethings, area, map);
+            return;
+        }
+        
+        if(!group_types.indexOf(prething[key_group_type])) {
+            console.warn("A Thing contains an unknown " + key_group_type
+                    + ". It will be ignored: " + prething[key_group_type],
+                    prething, reference, prethings, area, map);
+            return;
+        }
+        
+        prethings[prething[key_group_type]].push(prething);
+        
+        // If a Thing has a .exit attribute, that indicates the location should
+        // be at the same xloc as that Thing (such as a Pipe)
+        if(thing[key_exit]) {
+            map.locations[thing[key_exit]].xloc = prething.xloc;
+            map.locations[thing[key_exit]].entrance = prething.thing;
         }
     }
     
     /**
      * 
      */
-    function sortPreThingsArray(prethings) {
+    function PreThing(thing, reference) {
+        this.thing = thing;
+        this.title = thing.title;
+        this.reference = reference;
+        this.xloc = reference.x || reference.xloc || 0;
+        this.yloc = reference.y || reference.yloc || 0;
+    }
+    
+    /**
+     * Filters and sorts...
+     * 
+     * 
+     */
+    function processPreThingsArray(prethings) {
         
     }
     
