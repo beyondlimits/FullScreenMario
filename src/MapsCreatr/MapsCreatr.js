@@ -398,8 +398,8 @@ function MapsCreatr(settings) {
      * 
      * @param {String[]} arr
      * @return {Object}
-     * @remarks   This is the opposite of Object.keys, which takes in an Object
-     *            and returns an Array of Strings.
+     * @remarks This is the opposite of Object.keys, which takes in an Object
+     *          and returns an Array of Strings.
      */
     function fromKeys(arr) {
         var output = {},

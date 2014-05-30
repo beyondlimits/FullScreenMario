@@ -5,8 +5,8 @@
 function resetTriggers() {
   // Gamepad.js support for joysticks and controllers
   window.gamepad = new Gamepad();
-  gamepad.bind(Gamepad.Event.BUTTON_DOWN, InputWriter.pipe("onkeydown", "keyCode"));
-  gamepad.bind(Gamepad.Event.BUTTON_UP, InputWriter.pipe("onkeyup", "keyCode"));
+  gamepad.bind(Gamepad.Event.BUTTON_DOWN, InputWriter.makePipe("onkeydown", "keyCode"));
+  gamepad.bind(Gamepad.Event.BUTTON_UP, InputWriter.makePipe("onkeyup", "keyCode"));
   gamepad.bind(Gamepad.Event.AXIS_CHANGED, function(event) {
     var value = event.value,
         value_abs = abs(value);
@@ -49,10 +49,10 @@ function resetTriggers() {
 
   // Set the key events on the body
   proliferate(body, {
-    "onkeydown": InputWriter.pipe("onkeydown", "keyCode"),
-    "onkeyup": InputWriter.pipe("onkeyup", "keyCode"),
-    "onmousedown": InputWriter.pipe("onmousedown", "which"),
-    "oncontextmenu": InputWriter.pipe("oncontextmenu", null, true)
+    "onkeydown": InputWriter.makePipe("onkeydown", "keyCode"),
+    "onkeyup": InputWriter.makePipe("onkeyup", "keyCode"),
+    "onmousedown": InputWriter.makePipe("onmousedown", "which"),
+    "oncontextmenu": InputWriter.makePipe("oncontextmenu", null, true)
   });
   
   // Set UI triggers
@@ -259,5 +259,7 @@ function resetInputWriter() {
       "oncontextmenu": {}
     }
   });
+  
+  FSM.InputWriter = InputWriter;
 }
 

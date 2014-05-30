@@ -1329,6 +1329,7 @@ function placePlayer(xloc, yloc) {
     keys: new Keys(),
     power: StatsHolder.get("power")
   });
+  FSM.InputWriter.setEventInformation(player.keys);
   toggleLuigi(true);
   setPlayerSizeSmall(player);
   
@@ -2009,7 +2010,9 @@ function touchVine(me, vine) {
   me.attachoff = me.attachleft * 2 - 1;
   me.movementsave = me.movement;
   me.movement = movePlayerVine;
+  
   me.keys = new Keys();
+  FSM.InputWriter.setEventInformation(me.keys);
   
   // Reset classes to be in vine mode
   TimeHandler.clearClassCycle(me, "running");

@@ -61,7 +61,7 @@ function FPSAnalyzr(settings) {
     self.measure = function measureFirst(time) {
         time_current = time || get_timestamp();
         self.measure = measure;
-    }
+    };
     
     /**
      * Standard public measurement function.
@@ -90,7 +90,7 @@ function FPSAnalyzr(settings) {
         ticker = (++ticker) % num_to_keep;
         measurements[ticker] = fps;
         ++num_recorded;
-    }
+    };
     
     
     /* Gets
@@ -103,7 +103,7 @@ function FPSAnalyzr(settings) {
      */
     self.getNumRecorded = function() {
         return num_recorded;
-    }
+    };
     
     /**
      * Get function for a copy of the measurements listing (if the number of

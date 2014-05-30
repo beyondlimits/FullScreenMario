@@ -113,7 +113,7 @@ function setMap(name) {
   MapsManager.setMap(name);
   StatsHolder.set("world", name.join('-'));
   startDataTime();
-  InputWriter.restart();
+  InputWriter.restartHistory();
   unpause();
 }
 
@@ -223,6 +223,7 @@ function startWalking(me) {
 
 function locMovePreparations(me) {
   me.keys = new Keys();
+  FSM.InputWriter.setEventInformation(me.keys);
   me.nocollide = 1;
   removeCrouch();
   removeClass(me, "running");
