@@ -15,7 +15,7 @@ window.FullScreenMario = (function() {
     function FullScreenMario() {            // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {            "unitsize": 4,            "scale": 2,            "requirements": {                "global": {                    "AudioPlayr": "src/AudioPlayr.js",                    "ChangeLinr": "src/ChangeLinr.js",                    "FPSAnalyzr": "src/FPSAnalyzr.js",                    "GamesRunnr": "src/GamesRunnr.js",                    "GroupHoldr": "src/GroupHoldr.js",                    "InputWritr": "src/InputWritr.js",                    "MapsManagr": "src/MapsManagr.js",                    "ObjectMakr": "src/ObjectMakr.js",                    "PixelDrawr": "src/PixelDrawr.js",                    "PixelRendr": "src/PixelRendr.js",                    "QuadsKeepr": "src/QuadsKeepr.js",                    "StatsHoldr": "src/StatsHoldr.js",                    "StringFilr": "src/StringFilr.js",                    "ThingHittr": "src/ThingHittr.js",                    "TimeHandlr": "src/TimeHandlr.js"                },                "self": {
                     "audio": "settings/audio.js",
                     "collisions": "settings/collisions.js",                    "events": "settings/events.js",
-                    "input": "settings/input.js",
+                    // "input": "settings/input.js",
                     "maps": "settings/maps.js",                    "quadrants": "settings/quadrants.js",
                     "runner": "settings/runner.js",
                     "screen": "settings/screen.js",
@@ -30,7 +30,8 @@ window.FullScreenMario = (function() {
                 resetObjectMaker,
                 resetMapScreener,
                 resetMapsCreator,
-                resetMapsHandler
+                resetMapsHandler,
+                resetInputWriter,
             ],
             "constants": [
                 "unitsize",
@@ -132,7 +133,7 @@ window.FullScreenMario = (function() {
     }
     
     /**
-     * 
+     * Sets self.MapScreener
      * 
      * @remarks Requirement(s): MapScreenr (src/MapScreenr.js)
      *                          screen.js (settings/screen.js)
@@ -146,7 +147,10 @@ window.FullScreenMario = (function() {
     }
     
     /**
+     * Sets self.MapCreator
      * 
+     * @remarks Requirement(s): MapCreatr (src/MapCreatr.js)
+     *                          maps.js (settings/maps.js)
      */
     function resetMapsCreator(self) {
         self.MapsCreator = new MapsCreatr({
@@ -157,7 +161,10 @@ window.FullScreenMario = (function() {
     }
     
     /**
+     * Sets self.MapsHandler
      * 
+     * @remarks Requirement(s): MapsHandlr (src/MapsHandlr.js)
+     *                          maps.js (settings/maps.js)
      */
     function resetMapsHandler(self) {
         self.MapsHandler = new MapsHandlr({
@@ -165,6 +172,17 @@ window.FullScreenMario = (function() {
             "MapScreener": self.MapScreener,
             "screen_attributes": self.maps.screen_attributes
         });
+    }
+    
+    /**
+     * Sets self.InputWriter
+     * 
+     * @remarks Requirement(s): InputWritr (src/InputWritr.js)
+     *                          input.js (settings/input.js)
+     */
+     // also fpsanalyzr from gamesrunnr
+    function resetInputWriter(self) {
+        self.InputWriter = new InputWritr(self.input);
     }
     
     

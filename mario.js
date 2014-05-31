@@ -44,7 +44,6 @@ function startFSM() {
   resetScenery();
   resetMapsManager();
   resetStatsHolder();
-  resetInputWriter();
   resetTriggers();
   resetSounds();
   resetUpkeep();
@@ -140,7 +139,7 @@ function resetGameState(nocount) {
   // HTML is reset here
   clearAllTimeouts();
   window.nokeys = window.spawning = window.spawnon =
-    window.notime = window.editing = window.qcount = window.lastscroll = 0;
+    window.notime = window.qcount = window.lastscroll = 0;
   window.gameon = window.speed = 1;
   // Shifting location shouldn't wipe the gamecount (for key histories)
   if(!nocount) window.gamecount = 0;

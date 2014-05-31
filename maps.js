@@ -223,7 +223,7 @@ function startWalking(me) {
 
 function locMovePreparations(me) {
   me.keys = new Keys();
-  FSM.InputWriter.setEventInformation(me.keys);
+  FSM.InputWriter.setEventInformation(me);
   me.nocollide = 1;
   removeCrouch();
   removeClass(me, "running");

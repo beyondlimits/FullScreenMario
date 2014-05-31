@@ -14,6 +14,9 @@ function InputWritr(settings) {
 
         // The arguments to be passed to calls activated by triggers
         recipients,
+        
+        //
+        aliases,
 
         // An Array of every action that has happened, with a timestamp
         history,
@@ -284,5 +287,5 @@ function InputWritr(settings) {
         }
     }
 
-    self.reset(settings);
+    self.reset(settings || {});
 }
