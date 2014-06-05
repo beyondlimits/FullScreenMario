@@ -370,16 +370,6 @@ function TimeHandlr(settings) {
     return Array.prototype.slice.call(args);
   }
 
-  // Simple expressions to add/remove classes
-  function classAdd(me, strin) {
-    me.className += " " + strin;
-    PixelDrawer.setThingSprite(me);
-  }
-  function classRemove(me, strout) {
-    me.className = me.className.replace(new RegExp(" " + strout, "gm"), '');
-    PixelDrawer.setThingSprite(me);
-  }
-  
   // Creates a copy of an object / array for use in settings
   function makeSettingsCopy(settings) {
     var output = new settings.constructor(),

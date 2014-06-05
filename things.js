@@ -1253,7 +1253,7 @@ function createSpiny(me) {
 function killBeetle(me, big) {
   if(!me.alive) return;
   var spawn;
-  if(big && big != 2) spawn = ObjectMaker.make("Koopa", { smart: me.smart });
+  if(big && big != 2) spawn = ObjectMaker.make("Beetle", { smart: me.smart });
   else spawn = ObjectMaker.make("BeetleShell", { smart: me.smart });
   // Puts it on stack, so it executes immediately after upkeep
   TimeHandler.addEvent(
@@ -1457,7 +1457,7 @@ function playerGetsSmall(me) {
     player.nocollidechar = true;
     removeClass(player, "paddling");
     if(player.running || player.xvel) addClass(player, "running");
-    TimeHandler.addEvent(PixelDrawer.setThingSprite, 1, player);
+    TimeHandler.addEvent(FSM.PixelDrawer.setThingSprite, 1, player);
   }, 42, player);
   // Step four (t+70);
   TimeHandler.addEvent(function(player) {

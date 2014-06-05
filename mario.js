@@ -39,7 +39,6 @@ function startFSM() {
   resetMeasurements();
   resetEvents();
   resetCanvas();
-  resetLibrary();
   resetThings();
   resetScenery();
   resetMapsManager();

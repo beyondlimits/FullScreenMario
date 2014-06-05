@@ -39,9 +39,14 @@ function GamesRunnr(settings) {
         speed_real,
         
         // An FPSAnalyzr object that measures on each upkeep
-        FPSAnalyzer;
+        FPSAnalyzer,
+        
+        // An object to set as the scope for games (if not self)
+        scope;
     
-    var reset = this.reset = function(settings) {
+    self.reset = function(settings) {
+        var i;
+        
         games           = settings.games           || [];
         on_pause        = settings.on_pause;
         on_unpause      = settings.on_unpause;
@@ -50,8 +55,13 @@ function GamesRunnr(settings) {
         interval        = settings.interval        || 1000 / 60;
         speed           = settings.speed           || 1;
         FPSAnalyzer     = settings.FPSAnalyzer     || new FPSAnalyzr();
+        scope           = settings.scope           || self;
         
         paused = false;
+        
+        for(i = 0; i < games.length; i += 1) {
+            games[i] = games[i].bind(scope);
+        }
         
         setSpeedReal();
     };
@@ -264,5 +274,5 @@ function GamesRunnr(settings) {
         game();
     }
     
-    reset(settings || {});
+    self.reset(settings || {});
 }

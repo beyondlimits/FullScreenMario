@@ -61,7 +61,10 @@ window.FullScreenMario = (function() {
             "scale": self.scale
         }, self.sprites));    }        /**     * Sets self.PixelDrawer     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelDrawr (src/PixelDrawr.js)     */    function resetPixelDrawer(self) {        self.PixelDrawer = new PixelDrawr({            "PixelRender": self.PixelRender        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr.js)
      *                          events.js (settings/events.js)     */    function resetTimeHandler(self) {
-        self.TimeHandler = new TimeHandlr(self.events);    }
+        self.TimeHandler = new TimeHandlr(proliferate({
+            "classAdd": self.addClass,
+            "classRemove": self.removeClass
+        }, self.events));    }
     
     /**
      * Sets self.AudioPlayer
@@ -89,7 +92,9 @@ window.FullScreenMario = (function() {
      *                          runner.js (settings/runner.js)
      */
     function resetGamesRunner(self) {
-        self.GamesRunner = new GamesRunnr(self.runner);
+        self.GamesRunner = new GamesRunnr(proliferate({
+            "scope": self,
+        }, self.runner));
     }
     
     /**
@@ -199,8 +204,10 @@ window.FullScreenMario = (function() {
             thing = this.ObjectMaker.make(thing);
         }
         
-        this.setLeft(thing, left);
-        this.setTop(thing, top);
+        if(arguments.length > 1) {
+            this.setLeft(thing, left);
+            this.setTop(thing, top);
+        }
         this.updateSize(thing);
         
         this.GroupHolder.getFunctions().add[thing.grouptype](thing);
@@ -210,7 +217,7 @@ window.FullScreenMario = (function() {
             thing.onadding(thing);
         }
         
-        PixelDrawer.setThingSprite(thing);
+        this.PixelDrawer.setThingSprite(thing);
         
         return thing;
     }
@@ -838,6 +845,32 @@ window.FullScreenMario = (function() {
     }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if(thing !== player.resting) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        this.shiftVert(thing, thing.yvel += this.unitsize / 8);        EightBittr.prototype.physics.setBottom(player, thing.top);                // After a velocity threshold, start always falling        if(thing.yvel >= thing.fall_threshold_start || this.unitsize * 2.8) {            thing.freefall = true;            thing.movement = moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || this.unitsize / 16;        this.shiftVert(thing, thing.yvel);                // After a velocity threshold, stop accelerating        if(thing.yvel >= thing.fall_threshold_end || this.unitsize * 2) {            thing.movement = movePlatform;        }    }
     
     
+    /* Collisions
+    */
+    
+    /** to do: scoring..
+     * 
+     */
+    function collideFireball(thing, fireball) {
+        alert("scoreEnemyFire is no good!");
+        // if(!thing.alive || thing.height <= FullScreenMario.unitsize) {
+            // return;
+        // }
+        
+        // if(!thing.nofire) {
+            // if(thing.solid) {
+                // thing.EightBitter.AudioPlayer.playLocal("Bump", thing.right);
+            // } else {
+                // thing.EightBitter.AudioPlayer.playLocal("Kick", thing.right);
+                // thing.death(thing, 2);
+                // // scoreEnemyFire(thing);
+            // }
+        // }
+        
+        // fireball.death(fireball);
+    }
+    
+    
     /* Appearance utilities
     */
     
@@ -990,7 +1023,7 @@ window.FullScreenMario = (function() {
      * 
      */
     function killFlip(thing, extra) {
-        this.flipVert(thing);
+        thing.EightBitter.flipVert(thing);
         
         if(!extra) {
             extra = 0;
@@ -1074,6 +1107,101 @@ window.FullScreenMario = (function() {
             if(thing.killonend) {
                 this.deleteThing(thing, group, i);
             }
+        }
+    }
+    
+    
+    /* Scoring
+    */
+    
+    /**
+     * Driver function to score some number of points for the player and show
+     * the gains via an animation.
+     * 
+     * @param {Number} value   How many points the player is receiving.
+     * @param {Boolean} continuation   Whether the game shouldn't increase the 
+     *                                 score amount in the StatsHoldr (this will
+     *                                 only be false on the first score() call).
+     * @remarks   For point gains that should not have a visual animation, 
+     *            directly call StatsHolder.increase("score", value).
+     * @remarks   The calling chain will be: 
+     *                score -> scoreOn -> scoreAnimateOn -> scoreAnimate          
+     */
+    function score(value, continuation) {
+        console.warn("Score still using global player");
+        scoreOn(value, player, true);
+        
+        if(!continuation) {
+            this.StatsHolder.increase("score", value);
+        }
+    }
+    
+    /**
+     * Scores a given number of points for the player, and shows the gains via
+     * an animation centered at the top of a thing.
+     * 
+     * @param {Number} value   How many points the player is receiving.
+     * @param {Thing} thing   An in-game Thing to place the visual score text
+     *                        on top of and centered.
+     * @param {Boolean} continuation   Whether the game shouldn't increase the 
+     *                                 score amount in the StatsHoldr (this will
+     *                                 only be false on the first score() call).
+     * @remarks   The calling chain will be: 
+     *                scoreOn -> scoreAnimateOn -> scoreAnimate     
+     */
+    function scoreOn(value, thing, continuation) {
+        var text = thing.EightBitter.ObjectMaker.make("score", {
+            "value": value
+        });
+        thing.EightBitter.addThing(text);
+        
+        thing.EightBitter.scoreAnimateOn(text, thing);
+        
+        if(!continuation) {
+            this.StatsHolder.increase("score", value);
+        }
+    }
+    
+    /**
+     * Centers a text associated with some points gain on the top of a Thing,
+     * and animates it updward, setting an event for it to die.
+     * 
+     * @param {Number} value   How many points the player is receiving.
+     * @param {Thing} thing   An in-game Thing to place the visual score text
+     *                        on top of and centered.
+     * @param {Boolean} continuation   Whether the game shouldn't increase the 
+     *                                 score amount in the StatsHoldr (this will
+     *                                 only be false on the first score() call).
+     * @remarks   The calling chain will be: 
+     *                scoreAnimateOn -> scoreAnimate     
+     */
+    function scoreAnimateOn(text, thing, continuation) {
+        thing.EightBitter.setMidXObj(text, thing);
+        thing.EightBitter.setBottom(text, thing.top);
+        thing.EightBitter.scoreAnimate(text);
+        
+        if(!continuation) {
+            this.StatsHolder.increase("score", value);
+        }
+    }
+    
+    /**
+     * Animates a text associated with some points gain upward, and sets an 
+     * event for it to die.
+     * 
+     * @param {Number} value   How many points the player is receiving.
+     * @param {Boolean} continuation   Whether the game shouldn't increase the 
+     *                                 score amount in the StatsHoldr (this will
+     *                                 only be false on the first score() call).
+     * @remarks   This is the last function in the score() calling chain:
+     *                scoreAnimate <- scoreAnimateOn <- scoreOn <- score
+     */
+    function scoreAnimate(text, continuation) {
+        text.yvel = -unitsize / 4;
+        text.EightBitter.addEvent(text.EightBitter.killNormal, 49, text);
+        
+        if(!continuation) {
+            this.StatsHolder.increase("score", value);
         }
     }
     
@@ -1229,6 +1357,8 @@ window.FullScreenMario = (function() {
         "moveSliding": moveSliding,
         "moveSlidingReal": moveSlidingReal,
         "movePlatform": movePlatform,        "moveFalling": moveFalling,        "moveFreeFalling": moveFreeFalling,
+        // Collisions
+        "collideFireball": collideFireball,
         // Physics
         "shiftBoth": shiftBoth,
         "shiftThings": shiftThings,
@@ -1259,6 +1389,8 @@ window.FullScreenMario = (function() {
         "killSpawn": killSpawn,
         "killGoomba": killGoomba,
         "killNPCs": killNPCs,
+        // Scoring
+        "score": score,
         // Map macros
         "macros": {
             "Example": macroExample,

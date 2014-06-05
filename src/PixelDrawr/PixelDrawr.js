@@ -17,8 +17,7 @@ function PixelDrawr(settings) {
         // The PixelRender object itself
         PixelRender;
     
-    var reset = self.reset = function(settings) {
-        settings    = settings             || {};
+    self.reset = function(settings) {
         PixelRender = settings.PixelRender;
     }
     
@@ -39,7 +38,7 @@ function PixelDrawr(settings) {
         }
         
         // PixelRender does most of the work in fetching the rendered sprite
-        thing.sprite = window.PixelRender.decode(self.makeClassKey(thing), thing);
+        thing.sprite = PixelRender.decode(self.makeClassKey(thing), thing);
         
         // To do: remove dependency on .num_sprites and sprite_type
         if(thing.sprite.multiple) {
@@ -249,6 +248,5 @@ function PixelDrawr(settings) {
       context.translate(-leftc, -topc);
     }
     
-    reset(settings || {});
-    return self;
+    self.reset(settings || {});
 }
