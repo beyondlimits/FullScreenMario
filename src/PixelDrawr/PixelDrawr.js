@@ -39,7 +39,7 @@ function PixelDrawr(settings) {
         }
         
         // PixelRender does most of the work in fetching the rendered sprite
-        thing.sprite = window.PixelRender.render(self.makeClassKey(thing), thing);
+        thing.sprite = window.PixelRender.decode(self.makeClassKey(thing), thing);
         
         // To do: remove dependency on .num_sprites and sprite_type
         if(thing.sprite.multiple) {
