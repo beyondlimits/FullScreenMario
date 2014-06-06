@@ -508,7 +508,11 @@ window.FullScreenMario = (function() {
      */
     function shiftBoth(thing, dx, dy) {
         if(!thing.noshiftx) {
-            this.shiftHoriz(thing, dx);
+            if(thing.parallax) {
+                this.shiftHoriz(thing, thing.parallax * dx);
+            } else {
+                this.shiftHoriz(thing, dx);
+            }
         }
         if(!thing.noshifty) {
             this.shiftVert(thing, dy);
