@@ -247,13 +247,6 @@ function goToTransport(transport) {
 function DtB(yloc, divider) {
   return (yloc + FSM.MapScreener.bottom_max) / (divider || 1);
 }
-function clearTexts() {
-  if(window.texts)
-    for(var i = texts.length - 1; i >= 0; --i)
-      if(texts[i])
-        removeChildSafe(texts[i], body);
-  window.texts = [];
-}
 // Given a setting, returns the background color
 function getAreaFillStyle(setting) {
   if(stringHas(setting, "Underworld") ||

@@ -141,3 +141,15 @@ function maintainPlayer(update) {
   }
   else lastscroll = 0;
 }
+
+// Deletion checking is done by an interval set in shiftToLocation
+// This simply does velocity
+function maintainTexts() {
+  var element, me, i;
+  for(i = texts.length - 1; i >= 0; --i) {
+    me = texts[i];
+    element = me.element || me;
+    if(me.xvel) elementShiftLeft(element, me.xvel);
+    if(me.yvel) elementShiftTop(element, me.yvel);
+  }
+}

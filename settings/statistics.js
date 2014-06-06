@@ -38,6 +38,7 @@ FullScreenMario.prototype.statistics = {
             "has_element": true,
             "minimum": 0,
             "on_minimum": function () {
+                console.log("statistics.js is calling global killPlayer");
                 killPlayer(player, true);
             }
         },

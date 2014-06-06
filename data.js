@@ -24,42 +24,14 @@ function updateDataTime() {
   StatsHolder.decrease("time", 1);
 }
 
-
-function score(me, amount, appears) {
-  // Don't do negative values
-  if(amount <= 0) return;
-  // If it's in the form 'score(X)', return 'score(player, x)'
-  if(arguments.length == 1) return score(player, me);
-  
-  // If it appears, add the element
-  if(appears) {
-    var text = addText(amount, me.left, me.top);
-    text.yvel = -unitsized4;
-    TimeHandler.addEvent(killScore, 49, text);
-  }
-  
-  // Check for life gaining (above 10000)
-  amount += StatsHolder.get("score");
-  while(amount > 10000) {
-    gainLife();
-    amount = amount % 10000;
-  }
-  
-  // Set the new score amount, which updates the element
-  StatsHolder.set("score", amount);
-}
-function killScore(text) {
-  if(body.contains(text))
-    body.removeChild(text);
-  killNormal(text);
-  deleteThing(text, texts, texts.indexOf(text));
-}
-
 // For hopping on / shelling enemies, the score given increases each time
 // Once it passes the threshold, gainLife happens instead
 function findScore(lev) {
-  if(lev < 10) return [100, 200, 400, 500, 800, 1000, 2000, 4000, 5000, 8000][lev];
-  gainLife();
+  if(lev < 10) {
+    return [100, 200, 400, 500, 800, 1000, 2000, 4000, 5000, 8000][lev];
+  } else {
+    gainLife();
+  }
 }
 
 function gainLife(num, nosound) {

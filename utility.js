@@ -252,13 +252,25 @@ function characterIsAlive(me) {
  */
 function scorePlayerShell(player, shell) {
   // Star Player gets 200
-  if(player.star) return score(shell, 200, true);
+  if(player.star) {
+    // return score(shell, 200, true);
+    FSM.scoreOn(200, shell);
+  }
   // Shells in the air cause 8000 points, oh lawdy
-  if(!shell.resting) return score(shell, 8000, true);
+  else if(!shell.resting) {
+    // return score(shell, 8000, true);
+    FSM.scoreOn(8000, shell);
+  }
   // Peeking shells are also more
-  if(shell.peeking) return score(shell, 1000, true);
+  else if(shell.peeking) {
+    // return score(shell, 1000, true);
+    FSM.scoreOn(1000, shell);
+  }
   // Regular points are just 100
-  return score(shell, 100, true);
+  // return score(shell, 100, true);
+  else {
+    FSM.scoreOn(100, shell);
+  }
 }
 function scoreEnemyStomp(enemy) {
   var amount = 100;
@@ -301,7 +313,8 @@ function scoreEnemyBelow(enemy) {
   scoreEnemyFin(enemy, amount);
 }
 function scoreEnemyFin(enemy, amount) {
-  score(enemy, amount, true);
+  // score(enemy, amount, true);
+  FSM.scoreOn(amount, enemy);
 }
 
 /*

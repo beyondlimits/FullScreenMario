@@ -17,9 +17,6 @@ FullScreenMario.prototype.runner = {
             maintainPlayer();
         },
         function () {
-            texts.length && maintainTexts;
-        },
-        function () {
             this.TimeHandler.handleEvents();
         },
         function () {

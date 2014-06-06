@@ -107,6 +107,19 @@ function resetThings() {
                   "TreeTrunk": {},
                   "Water": {},
                   "WaterFill": {}
+              },
+              "text": {
+                "Text100": {},
+                "Text200": {},
+                "Text400": {},
+                "Text500": {},
+                "Text800": {},
+                "Text1000": {},
+                "Text2000": {},
+                "Text4000": {},
+                "Text5000": {},
+                "Text8000": {},
+                "Text1Up": {}
               }
           }
       },
@@ -526,7 +539,23 @@ function resetThings() {
                   ["one", "two", "three", "four"]
               ]
           },
-          WaterFill: [4, 5]
+          WaterFill: [4, 5],
+          "text": {
+            "grouping": "Text",
+            "libtype": "Text",
+            "grouptype": "Text",
+          },
+          "Text100": [6, 4],
+          "Text200": [6, 4],
+          "Text400": [6, 4],
+          "Text500": [6, 4],
+          "Text800": [6, 4],
+          "Text1000": [8, 4],
+          "Text2000": [8, 4],
+          "Text4000": [8, 4],
+          "Text5000": [8, 4],
+          "Text8000": [8, 4],
+          "Text1Up": [8, 4],
       }
     });
 }
@@ -603,44 +632,6 @@ function placeThing(me, left, top) {
   setTop(me, top);
   updateSize(me);
   return me;
-}
-
-function addText(html, left, top) {
-  var element = createElement("div", {innerHTML: html, className: "text",
-    left: left,
-    top: top,
-    onclick: body.onclick || canvas.onclick, 
-    style: {
-      marginLeft: left + "px",
-      marginTop: top + "px"
-    }});
-  body.appendChild(element);
-  texts.push(element);
-  return element;
-}
-// Called by funcSpawner placed by pushPreText
-// Kills the text once it's too far away
-function spawnText(me, settings) {
-  var element = me.element = addText("", me.left, me.top);
-  if(typeof(settings) == "object") proliferate(element, settings);
-  else element.innerHTML = settings;
-  me.movement = false;
-}
-
-// Set at the end of shiftToLocation
-function checkTexts() {
-  var delx = QuadsKeeper.getDelX(),
-      element, me, i;
-  for(i = texts.length - 1; i >= 0; --i) {
-    me = texts[i]
-    element = texts[i].element || me;
-    me.right = me.left + element.clientWidth
-    if(me.right < delx) {
-      body.removeChild(element);
-      killNormal(me);
-      deleteThing(element, texts, i);
-    }
-  }
 }
 
 /*
@@ -732,7 +723,8 @@ function hitShell(one, two) {
     else killFlip(one);
     
     AudioPlayer.play("Kick");
-    score(one, findScore(two.enemyhitcount), true);
+    // score(one, findScore(two.enemyhitcount), true);
+    FSM.scoreOn(findScore(two.enemyhitcount), one);
     ++two.enemyhitcount;
   }
   // Otherwise the enemy just turns around
@@ -855,7 +847,8 @@ function hitShellShell(one, two) {
   }
   // otherwise two kills one
   else if(two.xvel != 0) {
-    score(one, 500);
+    // score(one, 500);
+    FSM.StatsHolder.increase("score", 500);
     one.death(one);
   }
 }
@@ -875,8 +868,11 @@ function jumpEnemy(me, enemy) {
   else me.yvel = FullScreenMario.unitsize * -.7;
   me.xvel *= .91;
   AudioPlayer.play("Kick");
-  if(enemy.group != "item" || enemy.type == "shell")
-    score(enemy, findScore(me.jumpcount++ + me.jumpers), true);
+  if(enemy.group != "item" || enemy.type == "shell") {
+    // score(enemy, findScore(me.jumpcount++ + me.jumpers), true);
+    ++me.jumpcount;
+    FSM.scoreOn(findScore(me.jumpcount + me.jumpers), enemy);
+  }
   ++me.jumpers;
   TimeHandler.addEvent(function(me) { --me.jumpers; }, 1, me);
 }
@@ -1276,7 +1272,8 @@ function coinBecomesSolid(me) {
 function hitCoin(me, coin) {
   if(!me.player) return;
   AudioPlayer.play("Coin");
-  score(me, 200, false);
+  // score(me, 200, false);
+  FSM.StatsHolder.increase("score", 200);
   gainCoin();
   killNormal(coin);
 }
@@ -1287,7 +1284,8 @@ function coinEmerge(me, solid) {
   AudioPlayer.play("Coin");
   removeClass(me, "still");
   switchContainers(me, characters, scenery);
-  score(me, 200, false);
+  // score(me, 200, false);
+  FSM.StatsHolder.increase("score", 200);
   gainCoin();
   me.nocollide = me.alive = me.nofall = me.emerging = true;
   
@@ -1400,7 +1398,8 @@ function playerShroom(me) {
   if(me.shrooming) return;
   AudioPlayer.play("Powerup");
   StatsHolder.increase("power");
-  score(me, 1000, true);
+  // score(me, 1000, true);
+  FSM.scoreOn(1000, me);
   if(me.power == 3) return;
   me.shrooming = true;
   (++me.power == 3 ? playerGetsFire : playerGetsBig)(me);
@@ -1924,7 +1923,8 @@ function makeUsedBlock(me) {
 }
 function brickBreak(me, character) {
   AudioPlayer.play("Break Block");
-  score(me, 50);
+  // score(me, 50);
+  FSM.StatsHolder.increase("score", 50);
   me.up = character;
   TimeHandler.addEvent(placeShards, 1, me);
   killNormal(me);
@@ -2289,7 +2289,8 @@ function scorePlayerFlag(diff, stone) {
     // 62 to infinity and beyond
     else { amount = 5000; }
   }
-  score(player, amount, true);
+  // score(player, amount, true);
+  FSM.scoreOn(amount, player);
 }
 
 function FlagOff(me, solid) {
@@ -2384,7 +2385,8 @@ function Firework(me, num) {
     TimeHandler.addEvent(function(me) { killNormal(me); }, 21, me);
   }
   setCharacter(me, "firework");
-  score(me, 500);
+  // score(me, 500);
+  FSM.StatsHolder.increase("score", 500);
 }
 
 function setWarpWorldInit(me) {

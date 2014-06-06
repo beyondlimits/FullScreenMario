@@ -122,6 +122,7 @@ function PixelDrawr(settings) {
         for(i = scenery.length - 1; i >= 0; --i) self.drawThingOnCanvas(context, scenery[i]);
         for(i = solids.length - 1; i >= 0; --i) self.drawThingOnCanvas(context, solids[i]);
         for(i = characters.length - 1; i >= 0; --i) self.drawThingOnCanvas(context, characters[i]);
+        for(i = texts.length - 1; i >= 0; --i) self.drawThingOnCanvas(context, texts[i]);
         
         return self;
     }

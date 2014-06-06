@@ -1154,7 +1154,7 @@ window.FullScreenMario = (function() {
      *                scoreOn -> scoreAnimateOn -> scoreAnimate     
      */
     function scoreOn(value, thing, continuation) {
-        var text = thing.EightBitter.ObjectMaker.make("score", {
+        var text = thing.EightBitter.ObjectMaker.make("Text" + value, {
             "value": value
         });
         thing.EightBitter.addThing(text);
@@ -1179,14 +1179,10 @@ window.FullScreenMario = (function() {
      * @remarks   The calling chain will be: 
      *                scoreAnimateOn -> scoreAnimate     
      */
-    function scoreAnimateOn(text, thing, continuation) {
+    function scoreAnimateOn(text, thing) {
         thing.EightBitter.setMidXObj(text, thing);
         thing.EightBitter.setBottom(text, thing.top);
         thing.EightBitter.scoreAnimate(text);
-        
-        if(!continuation) {
-            this.StatsHolder.increase("score", value);
-        }
     }
     
     /**
@@ -1194,19 +1190,15 @@ window.FullScreenMario = (function() {
      * event for it to die.
      * 
      * @param {Number} value   How many points the player is receiving.
-     * @param {Boolean} continuation   Whether the game shouldn't increase the 
-     *                                 score amount in the StatsHoldr (this will
-     *                                 only be false on the first score() call).
+     * @param {Number} [timeout]   How many game ticks to wait before killing
+     *                             the text (defaults to 35).
      * @remarks   This is the last function in the score() calling chain:
      *                scoreAnimate <- scoreAnimateOn <- scoreOn <- score
      */
-    function scoreAnimate(text, continuation) {
-        text.yvel = -unitsize / 4;
-        text.EightBitter.addEvent(text.EightBitter.killNormal, 49, text);
-        
-        if(!continuation) {
-            this.StatsHolder.increase("score", value);
-        }
+    function scoreAnimate(text, timeout) {
+        timeout = timeout || 28;
+        text.EightBitter.TimeHandler.addEventInterval(text.EightBitter.shiftVert, 1, timeout, text, -unitsize / 4);
+        text.EightBitter.TimeHandler.addEvent(text.EightBitter.killNormal, timeout, text);
     }
     
     
@@ -1395,6 +1387,9 @@ window.FullScreenMario = (function() {
         "killNPCs": killNPCs,
         // Scoring
         "score": score,
+        "scoreOn": scoreOn,
+        "scoreAnimateOn": scoreAnimateOn,
+        "scoreAnimate": scoreAnimate,
         // Map macros
         "macros": {
             "Example": macroExample,

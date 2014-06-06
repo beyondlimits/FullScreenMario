@@ -51,7 +51,7 @@ function startFSM() {
   window.characters = FSM.GroupHolder.getCharacterGroup();
   window.solids = FSM.GroupHolder.getSolidGroup();
   window.scenery = FSM.GroupHolder.getSceneryGroup();
-  window.text = FSM.GroupHolder.getTextGroup();
+  window.texts = FSM.GroupHolder.getTextGroup();
 
   // With that all set, set the map to World11.
   StatsHolder.set("lives", 3);

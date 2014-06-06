@@ -37,8 +37,8 @@ function ChangeLinr(settings) {
         transforms = settings.transforms || {};
         pipeline = settings.pipeline || [];
         
-        do_make_cache = settings.do_make_cache || true;
-        do_use_cache = settings.do_use_cache || true;
+        do_make_cache = settings.hasOwnProperty("do_make_cache") ? settings.do_make_cache : true;
+        do_use_cache = settings.hasOwnProperty("do_use_cache") ? settings.do_use_cache : true;
         globals_ok = settings.globals_ok || false;
         
         pipe_len = pipeline.length;

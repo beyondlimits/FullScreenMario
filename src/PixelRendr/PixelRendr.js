@@ -214,7 +214,7 @@ function PixelRendr(settings) {
      */
     self.encodeURI = function (source, callback) {
         var image = document.createElement("img");
-        img.onload = self.encode.bind(self, image, callback);
+        image.onload = self.encode.bind(self, image, callback);
         image.src = source;
     }
     

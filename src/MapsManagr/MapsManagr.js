@@ -508,7 +508,6 @@ function MapsManagr(settings) {
     currents = area_current.currents;
     
     // This should be genericized
-    clearTexts();
     recipient.fillStyle = getAreaFillStyle(area_current.setting);
     TimeHandler.addEvent(AudioPlayer.playTheme, 2);
     
