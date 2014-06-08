@@ -58,7 +58,7 @@ function ModAttachr(settings) {
     
     /**
      * Adds a mod to the pool of mods, listing it under all the relevant events.
-     * The "onModAdd" event for that mod is triggered.
+     * The "onModEnable" event for that mod is triggered.
      * 
      * @param {Object} mod
      */
@@ -79,8 +79,8 @@ function ModAttachr(settings) {
         }
         
         mods[mod.name] = mod;
-        if(mod.events["onModAdd"]) {
-            self.fireModEvent("onModAdd", mod.name, Array.prototype.splice.call(arguments, 2));
+        if(mod.events["onModEnable"]) {
+            self.fireModEvent("onModEnable", mod.name, undefined, arguments);
         }
     };
     
@@ -102,10 +102,20 @@ function ModAttachr(settings) {
      * @param {String} name   The name of the mod to enable.
      */
     self.enableMod = function (name) {
-        if(!mods[name]) {
+        var mod = mods[name],
+            args;
+        
+        if(!mod) {
             throw new Error("No mod of name: '" + name + "'");
         }
-        mods[name].enabled = true;
+        
+        mod.enabled = true;
+        args = Array.prototype.slice.call(arguments);
+        args[0] = mod;
+        
+        if(mod.events["onModEnable"]) {
+            self.fireModEvent("onModEnable", mod.name, undefined, arguments);
+        }
     };
     
     /**
@@ -114,10 +124,20 @@ function ModAttachr(settings) {
      * @param {String} name   The name of the mod to disable.
      */
     self.disableMod = function (name) {
+        var mod = mods[name],
+            args;
+        
         if(!mods[name]) {
             throw new Error("No mod of name: '" + name + "'");
         }
+        
         mods[name].enabled = false;
+        args = Array.prototype.slice.call(arguments);
+        args[0] = mod;
+        
+        if(mod.events["onModDisable"]) {
+            self.fireModEvent("onModDisable", mod.name, undefined, arguments);
+        }
     };
     
     
@@ -134,8 +154,9 @@ function ModAttachr(settings) {
      */
     self.fireEvent = function (event, scope) {
         var fires = events[event],
-            args = Array.prototype.splice.call(arguments, 2),
+            args = Array.prototype.splice.call(arguments, 1),
             mod, i;
+        
         if(!fires) {
             // console.warn("Unknown event name triggered: '" + name + "'");
             return;
@@ -143,8 +164,9 @@ function ModAttachr(settings) {
         
         for(i = 0; i < fires.length; i += 1) {
             mod = fires[i];
+            args[0] = mod;
             if(mod.enabled) {
-                mod.events[event].call(scope, args);
+                mod.events[event].apply(scope, args);
             }
         }
     };
@@ -159,20 +181,21 @@ function ModAttachr(settings) {
      */
     self.fireModEvent = function (event, mod, scope) {
         var mod = mods[mod],
-            args = Array.prototype.slice.call(arguments, 3),
+            args = Array.prototype.slice.call(arguments, 2),
             fires;
         
         if(!mod) {
             throw new Error("Unknown mod requested: '" + mod + "'");
         }
         
+        args[0] = mod;
         fires = mod.events[event];
         
         if(!fires) {
             throw new Error("Mod does not contain event: '" + event + "'");
         }
         
-        fires.call(scope, args);
+        fires.apply(scope, args);
     }
     
     
