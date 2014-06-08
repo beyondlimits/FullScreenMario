@@ -55,6 +55,7 @@ function startFSM() {
 
   // With that all set, set the map to World11.
   StatsHolder.set("lives", 3);
+  FSM.ModAttacher.fireEvent("onReady");
   setMap([1,1]);
   GamesRunner.upkeep();
   

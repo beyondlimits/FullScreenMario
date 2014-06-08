@@ -604,6 +604,8 @@ function thingProcess(thing, type, settings, defaults) {
   var cycle;
   if(cycle = thing.spriteCycle) TimeHandler.addSpriteCycle(thing, cycle[0], cycle[1] || null, cycle[2] || null);
   if(cycle = thing.spriteCycleSynched) TimeHandler.addSpriteCycleSynched(thing, cycle[0], cycle[1] || null, cycle[2] || null);
+  
+  FSM.ModAttacher.fireEvent("onThingMake", FSM, thing, type, settings, defaults);
 }
 // Processes optional attributes for Things
 function thingProcessAttributes(thing, attributes) {

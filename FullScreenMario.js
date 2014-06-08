@@ -12,10 +12,12 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
-    function FullScreenMario() {            // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {            "unitsize": 4,            "scale": 2,            "requirements": {                "global": {                    "AudioPlayr": "src/AudioPlayr.js",                    "ChangeLinr": "src/ChangeLinr.js",                    "FPSAnalyzr": "src/FPSAnalyzr.js",                    "GamesRunnr": "src/GamesRunnr.js",                    "GroupHoldr": "src/GroupHoldr.js",                    "InputWritr": "src/InputWritr.js",                    "MapsManagr": "src/MapsManagr.js",                    "ObjectMakr": "src/ObjectMakr.js",                    "PixelDrawr": "src/PixelDrawr.js",                    "PixelRendr": "src/PixelRendr.js",                    "QuadsKeepr": "src/QuadsKeepr.js",                    "StatsHoldr": "src/StatsHoldr.js",                    "StringFilr": "src/StringFilr.js",                    "ThingHittr": "src/ThingHittr.js",                    "TimeHandlr": "src/TimeHandlr.js"                },                "self": {
+    function FullScreenMario() {            // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {            "unitsize": 4,            "scale": 2,            "requirements": {                "global": {                    "AudioPlayr": "src/AudioPlayr.js",                    "ChangeLinr": "src/ChangeLinr.js",                    "FPSAnalyzr": "src/FPSAnalyzr.js",                    "GamesRunnr": "src/GamesRunnr.js",                    "GroupHoldr": "src/GroupHoldr.js",                    "InputWritr": "src/InputWritr.js",                    "MapScreenr": "src/MapScreenr.js",
+                    "MapsHandlr": "src/MapsHandlr.js",
+                        "MapsManagr": "src/MapsManagr.js",
+                    "ModAttachr": "src/ModAttachr.js",                    "ObjectMakr": "src/ObjectMakr.js",                    "PixelDrawr": "src/PixelDrawr.js",                    "PixelRendr": "src/PixelRendr.js",                    "QuadsKeepr": "src/QuadsKeepr.js",                    "StatsHoldr": "src/StatsHoldr.js",                    "StringFilr": "src/StringFilr.js",                    "ThingHittr": "src/ThingHittr.js",                    "TimeHandlr": "src/TimeHandlr.js"                },                "self": {
                     "audio": "settings/audio.js",
                     "collisions": "settings/collisions.js",                    "events": "settings/events.js",
-                    // "input": "settings/input.js",
                     "maps": "settings/maps.js",                    "quadrants": "settings/quadrants.js",
                     "runner": "settings/runner.js",
                     "screen": "settings/screen.js",
@@ -32,6 +34,8 @@ window.FullScreenMario = (function() {
                 resetMapsCreator,
                 resetMapsHandler,
                 resetInputWriter,
+                resetModAttacher,
+                startModAttacher,
             ],
             "constants": [
                 "unitsize",
@@ -188,6 +192,20 @@ window.FullScreenMario = (function() {
      // also fpsanalyzr from gamesrunnr
     function resetInputWriter(self) {
         self.InputWriter = new InputWritr(self.input);
+    }
+    
+    /**
+     * 
+     */
+    function resetModAttacher(self) {
+        self.ModAttacher = new ModAttachr(self.mods);
+    }
+    
+    /** 
+     * 
+     */
+    function startModAttacher(self) {
+        self.ModAttacher.fireEvent("onReset", self, self);
     }
     
     
@@ -1197,7 +1215,7 @@ window.FullScreenMario = (function() {
      */
     function scoreAnimate(text, timeout) {
         timeout = timeout || 28;
-        text.EightBitter.TimeHandler.addEventInterval(text.EightBitter.shiftVert, 1, timeout, text, -unitsize / 4);
+        text.EightBitter.TimeHandler.addEventInterval(text.EightBitter.shiftVert, 1, timeout, text, -unitsize / 6);
         text.EightBitter.TimeHandler.addEvent(text.EightBitter.killNormal, timeout, text);
     }
     
