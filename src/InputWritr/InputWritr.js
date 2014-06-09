@@ -40,19 +40,26 @@ function InputWritr(settings) {
      */
     self.reset = function reset(settings) {
         get_timestamp = (
-            performance.now || performance.webkitNow || performance.mozNow || performance.msNow || performance.oNow || function () {
+            settings.get_timestamp
+            || performance.now 
+            || performance.webkitNow 
+            || performance.mozNow 
+            || performance.msNow 
+            || performance.oNow 
+            || function () {
                 return new Date().getTime();
             }
         ).bind(performance);
 
         histories = [];
+        aliases = {};
+        
         triggers = settings.triggers || {};
         recipients = settings.recipients || {};
         event_information = settings.event_information;
         recording = settings.hasOwnProperty("recording") ? settings.recording : true;
-
-        aliases = settings.aliases || {};
-        resetAliases();
+        
+        self.addAliases(settings.aliases || {});
     };
 
     /**
@@ -75,6 +82,15 @@ function InputWritr(settings) {
     /* Simple gets
      */
 
+    /** 
+     * Returns the Object storing aliases, as "name" => [values]
+     * 
+     * @return {Object} aliases
+     */
+    self.getAliases = function getAliases() {
+        return aliases;
+    };
+    
     /**
      * Get function for a single history, either the current or a past one.
      *
@@ -126,6 +142,74 @@ function InputWritr(settings) {
         event_information = event_info_new;
     };
 
+    
+    /* Additions
+    */
+    
+    /**
+     * Adds a list of values by which an event may be triggered.
+     * 
+     * @param {String} name   The name of the event that is being given 
+     *                         aliases, such as "left".
+     * @param {Array} values   An array of aliases by which the event will also
+     *                         be callable.
+     */
+    self.addAlias = function (name, values) {
+        var trigger_name, trigger_group, 
+            i;
+        
+        aliases[name] = values;
+        
+        // trigger_name = "onkeydown", "onkeyup", ...
+        for(trigger_name in triggers) {
+            if(triggers.hasOwnProperty(trigger_name)) {
+                // trigger_group = { "left": function, ... }, ...
+                trigger_group = triggers[trigger_name];
+                
+                if(trigger_group.hasOwnProperty(name)) {
+                    // values[i] = 37, 65, ...
+                    for(i = 0; i < values.length; i += 1) {
+                        trigger_group[values[i]] = trigger_group[name];
+                    }
+                }
+            }
+        }
+    };
+    
+    /**
+     * Adds a set of alises from an Object containing "name" => [values] pairs.
+     * 
+     * @param {Object} aliases_raw
+     */
+    self.addAliases = function (aliases_raw) {
+        var alias_name;
+        for (alias_name in aliases_raw) {
+            if (aliases_raw.hasOwnProperty(alias_name)) {
+                self.addAlias(alias_name, aliases_raw[alias_name]);
+            }
+        }
+    }
+    
+    /**
+     * 
+     * 
+     * 
+     */
+    self.addEvent = function (trigger, label, callback) {
+        if(!triggers.hasOwnProperty(trigger)) {
+            throw new Error("Unknown trigger requested: '" + trigger + "'");
+        }
+        
+        triggers[trigger][label] = callback;
+        
+        if(aliases.hasOwnProperty(label)) {
+            for(var i = 0; i < aliases[label].length; i += 1) {
+                triggers[trigger][label][aliases[i]] = callback;
+            }
+        }
+    };
+    
+    
     /**
      * Stores the current history in the histories Array. self.restartHistory is
      * typically called directly after.
@@ -163,39 +247,6 @@ function InputWritr(settings) {
             if (events.hasOwnProperty(time)) {
                 call = makeEventCall(events[time]);
                 timeouts[time] = setTimeout(Math.round(time - starting_time));
-            }
-        }
-    }
-
-    /**
-     * Utility used by self.reset to associate aliases with triggers. For each
-     * alias, and for each trigger allowing that aliases, a reference to that
-     * alias' function in trigger_group is made with that alias.
-     */
-    function resetAliases() {
-        // Each alias must be stored in each trigger, so pipes can refer to them natively
-        var alias_name, alias_group, alias_individual,
-            trigger_name, trigger_group;
-
-        // alias_name = ("left", "right", "up", ...)
-        for (alias_name in aliases) {
-            if (aliases.hasOwnProperty(alias_name)) {
-                // alias_group = ([37, 65, ...], ...)
-                alias_group = aliases[alias_name];
-
-                // trigger_name = "onkeydown", "onkeyup", ...
-                for (trigger_name in triggers) {
-                    if (triggers.hasOwnProperty(trigger_name)) {
-                        // trigger_group = ({ "left": function, ... }, ...)
-                        trigger_group = triggers[trigger_name];
-
-                        for (alias_individual in alias_group) {
-                            if (alias_group.hasOwnProperty(alias_individual)) {
-                                trigger_group[alias_group[alias_individual]] = trigger_group[alias_name];
-                            }
-                        }
-                    }
-                }
             }
         }
     }
