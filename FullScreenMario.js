@@ -650,6 +650,39 @@ window.FullScreenMario = (function() {
         thing.unitheight = thing.height * this.unitsize;
     }
     
+    /**
+     * 
+     */
+    function thingStoreVelocity(thing, keep_movement) {
+        thing.xvel_old = thing.xvel || 0;
+        thing.yvel_old = thing.yvel || 0;
+        
+        thing.nofall_old = thing.nofall || false;
+        thing.nocollide_old = thing.nocollide || false;
+        thing.movement_old = thing.movement || thing.movement_old;
+        
+        thing.nofall = thing.nocollide = true;
+        thing.xvel = thing.yvel = false;
+        
+        if(!keep_movement) {
+            thing.movement = false;
+        }
+    }
+    
+    /**
+     * 
+     */
+    function thingRetrieveVelocity(thing, no_velocity) {
+        if(!no_velocity) {
+            thing.xvel = thing.xvel_old || 0;
+            thing.yvel = thing.yvel_old || 0;
+        }
+        
+        thing.movement = thing.movement_old || thing.movement;
+        thing.nofall = thing.nofall_old || false;
+        thing.nocollide = thing.nocollide_old || false;
+    }
+    
     
     /* Collision reactions
     */
@@ -665,6 +698,140 @@ window.FullScreenMario = (function() {
     function itemJump(thing) {
         thing.yvel -= FullScreenMario.unitsize * 1.4;
         this.shiftVert(thing, -FullScreenMario.unitsize);
+    }
+    
+    /**
+     * 
+     */
+    function playerShroom(thing) {
+        if(thing.shrooming) {
+            return;
+        }
+        
+        thing.EightBitter.AudioPlayer.play("Powerup");
+        thing.EightBitter.StatsHolder.increase("power");
+        
+        thing.EightBitter.scoreOn(1000, player);
+        
+        if(thing.power < 3) {
+            thing.shrooming = true;
+            thing.power += 1;
+            
+            if(thing.power === 3) {
+                thing.EightBitter.playerGetsFire(player);
+            } else {
+                thing.EightBitter.playerGetsBig(player);
+            }
+        }
+    }
+    
+    /**
+     * 
+     */
+    function playerGetsBig(thing, no_animation) {
+        thing.keys.down = 0;
+        thing.EightBitter.setPlayerSizeLarge(thing);
+        thing.EightBitter.removeClasses(thing, "crouching small");
+        thing.EightBitter.updateBottom(thing, 0);
+        thing.EightBitter.updateSize(thing);
+        
+        if(no_animation) {
+            thing.EightBitter.addClass(thing, "large");
+        } else {
+            thing.EightBitter.playerGetsBigAnimation(thing);
+        }
+    }
+    
+    /**
+     * 
+     */
+    function playerGetsBigAnimation(thing) {
+        var stages = [
+                'shrooming1', 'shrooming2', 'shrooming1', 'shrooming2',
+                'shrooming3', 'shrooming2', 'shrooming3'
+            ],
+            i;
+        
+        thing.EightBitter.addClass(thing, "shrooming");
+        thing.EightBitter.thingStoreVelocity(thing);
+        
+        // The last stage in the events clears it, resets movement, and stops
+        stages.push(function (thing, stages) {
+            thing.shrooming = stages.length = 0;
+            
+            thing.EightBitter.addClass(thing, "large");
+            thing.EightBitter.removeClasses(thing, "shrooming shrooming3");
+            thing.EightBitter.thingRetrieveVelocity(thing);
+            
+            return true;
+        });
+        
+        thing.EightBitter.TimeHandler.addSpriteCycle(thing, stages, "shrooming", 6);
+    }
+    
+    /**
+     * 
+     */
+    function playerGetsSmall(thing) {
+        console.warn("playerGetsSmall uses some global and global-style stuff.");
+        console.warn("\tthingStoreVelocity, thingRetrieveVelocity, flicker");
+        
+        var bottom = thing.bottom;
+        thing.keys.down = 0;
+        thingStoreVelocity(thing);
+        
+        // Step one
+        thing.nocollidechar = true;
+        flicker(thing);
+        thing.EightBitter.removeClasses(thing, "running skidding jumping fiery");
+        thing.EightBitter.addClasses(thing, "paddling small");
+        
+        // Step two (t+21)
+        thing.EightBitter.TimeHandler.addEvent(function (thing) {
+            thing.EightBitter.removeClass(thing, "large");
+            thing.EightBitter.setPlayerSizeSmall(thing);
+            thing.EightBitter.setBottom(thing, bottom - FullScreenMario.unitsize);
+        }, 21, thing);
+        
+        // Step three (t+42)
+        thing.EightBitter.TimeHandler.addEvent(function (thing) {
+            thingRetrieveVelocity(thing, false);
+            thing.EightBitter.removeClass(thing, "paddling");
+            if(thing.running || thing.xvel) {
+                thing.EightBitter.addClass(thing, "running");
+            }
+            thing.EightBitter.PixelDrawer.setThingSprite(thing);
+        }, 42, thing);
+        
+        // Step four (t+70)
+        thing.EightBitter.TimeHandler.addEvent(function (thing) {
+            thing.nocollidechar = false;
+        }, 70, thing);
+    }
+    
+    /**
+     * 
+     */
+    function playerGetsFire(thing) {
+        thing.shrooming = false;
+        thing.EightBitter.removeClass(thing, "intofiery");
+        thing.EightBitter.addClass(thing, "fiery");
+    }
+    
+    /**
+     * 
+     */
+    function setPlayerSizeSmall(thing) {
+        thing.EightBitter.setSize(thing, 8, 8, true);
+        thing.EightBitter.updateSize(thing);
+    }
+    
+    /**
+     * 
+     */
+    function setPlayerSizeLarge(thing) {
+        thing.EightBitter.setSize(thing, 8, 16, true);
+        thing.EightBitter.updateSize(thing);
     }
     
     
@@ -1392,6 +1559,13 @@ window.FullScreenMario = (function() {
         "solidOnCharacter": solidOnCharacter,
         // Collision reactions
         "itemJump": itemJump,
+        "playerShroom": playerShroom,
+        "playerGetsBig": playerGetsBig,
+        "playerGetsBigAnimation": playerGetsBigAnimation,
+        "playerGetsSmall": playerGetsSmall,
+        "playerGetsFire": playerGetsFire,
+        "setPlayerSizeSmall": setPlayerSizeSmall,
+        "setPlayerSizeLarge": setPlayerSizeLarge,
         // Movement
         "moveSimple": moveSimple,
         "moveSmart": moveSmart,
@@ -1414,6 +1588,8 @@ window.FullScreenMario = (function() {
         "updateSize": updateSize,
         "reduceHeight": reduceHeight,
         "increaseHeight": increaseHeight,
+        "thingStoreVelocity": thingStoreVelocity,
+        "thingRetrieveVelocity": thingRetrieveVelocity,
         // Appearance utilities
         "setTitle": setTitle,
         "setClass": setClass,

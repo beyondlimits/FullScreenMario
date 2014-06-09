@@ -1242,24 +1242,6 @@ function createSpiny(me) {
   killNormal(me);
 }
 
-// Big: true if it should skip shell (fire, shell, etc)
-function killBeetle(me, big) {
-  if(!me.alive) return;
-  var spawn;
-  if(big && big != 2) spawn = ObjectMaker.make("Beetle", { smart: me.smart });
-  else spawn = ObjectMaker.make("BeetleShell", { smart: me.smart });
-  // Puts it on stack, so it executes immediately after upkeep
-  TimeHandler.addEvent(
-    function(spawn, me) {
-      addThing(spawn, me.left, me.bottom - spawn.height * FullScreenMario.unitsize);
-      spawn.moveleft = me.moveleft;
-    },
-    0, spawn, me );
-  killNormal(me);
-  if(big == 2) killFlip(spawn);
-  else return spawn;
-}
-
 function coinBecomesSolid(me) {
   switchContainers(me, characters, solids);
   me.movement = false;
@@ -1357,121 +1339,35 @@ function Keys() {
 
 // Stores .*vel under .*velold for shroom-style events
 function thingStoreVelocity(me, keepmove) {
-  me.xvelOld = me.xvel || 0;
-  me.yvelOld = me.yvel || 0;
-  me.nofallOld = me.nofall || false;
-  me.nocollideOld = me.nocollide || false;
-  me.movementOld = me.movement || me.movementOld;
-  
-  me.nofall = me.nocollide = true;
-  me.xvel = me.yvel = false;
-  if(!keepmove) me.movement = false;
+    FSM.get("thingStoreVelocity")(me, keepmove);
 }
 // Retrieves .*vel from .*velold
 function thingRetrieveVelocity(me, novel) {
-  if(!novel) {
-    me.xvel = me.xvelOld || 0;
-    me.yvel = me.yvelOld || 0;
-  }
-  me.movement = me.movementOld || me.movement;
-  me.nofall = me.nofallOld || false;
-  me.nocollide = me.nocollideOld || false;
+    FSM.get("thingRetrieveVelocity")(me, novel);
 }
 
 function removeCrouch() {
-  player.crouching = false;
-  player.toly = player.tolyold || 0;
-  if(player.power != 1) {
-    removeClass(player, "crouching");
-    player.height = 16;
-    updateBottom(player, 0);
-    updateSize(player);
-  }
+    FSM.get("removeCrouch")(player);
 }
 
 function playerShroom(me) {
-  if(me.shrooming) return;
-  AudioPlayer.play("Powerup");
-  StatsHolder.increase("power");
-  // score(me, 1000, true);
-  FSM.scoreOn(1000, me);
-  if(me.power == 3) return;
-  me.shrooming = true;
-  (++me.power == 3 ? playerGetsFire : playerGetsBig)(me);
+    FSM.get("playerShroom")(me);
 }
 // These three modifiers don't change power levels.
 function playerGetsBig(me, noanim) {
-  setPlayerSizeLarge(me);
-  me.keys.down = 0;
-  removeClasses(player, "crouching small");
-  updateBottom(me, 0);
-  updateSize(me);
-  if(!noanim) {
-    // pause();
-    // Player cycles through 'shrooming1', 'shrooming2', etc.
-    addClass(player, "shrooming");
-    var stages = [1,2,1,2,3,2,3];
-    for(var i = stages.length - 1; i >= 0; --i)
-      stages[i] = "shrooming" + stages[i];
-    
-    // Clear Player's movements
-    thingStoreVelocity(player);
-    
-    // The last event in stages clears it, resets Player's movements, and stops
-    stages.push(function(me, settings) {
-      me.shrooming = settings.length = 0;
-      // switchClass(me, "shrooming shrooming3 small", "large");
-      addClass(me, "large");
-      removeClasses(me, "shrooming shrooming3");
-      thingRetrieveVelocity(player);
-      return true;
-    });
-    
-    TimeHandler.addSpriteCycle(me, stages, "shrooming", 6);
-  }
-  else addClass(me, "large");
+    FSM.get("playerGetsBig")(me, noanim);
 }
 function playerGetsSmall(me) {
-  var bottom = player.bottom;
-  // pause();
-  me.keys.down = 0;
-  thingStoreVelocity(me);
-  addClass(me, "small");
-  flicker(me);
-  // Step one
-  removeClasses(player, "running skidding jumping fiery");
-  addClass(player, "paddling");
-  // Step two (t+21)
-  TimeHandler.addEvent(function(player) {
-    removeClass(player, "large");
-    setPlayerSizeSmall(player);
-    setBottom(player, bottom -FullScreenMario.unitsize);
-  }, 21, player);
-  // Step three (t+42)
-  TimeHandler.addEvent(function(player) {
-    thingRetrieveVelocity(player, false);
-    player.nocollidechar = true;
-    removeClass(player, "paddling");
-    if(player.running || player.xvel) addClass(player, "running");
-    TimeHandler.addEvent(FSM.PixelDrawer.setThingSprite, 1, player);
-  }, 42, player);
-  // Step four (t+70);
-  TimeHandler.addEvent(function(player) {
-    player.nocollidechar = false;
-  }, 70, player);
+    FSM.get("playerGetsSmall")(me);
 }
 function playerGetsFire(me) {
-  removeClass(me, "intofiery");
-  addClass(me, "fiery");
-  player.shrooming = false;
+    FSM.get("playerGetsFire")(me);
 }
 function setPlayerSizeSmall(me) {
-  setSize(me, 8, 8, true);
-  updateSize(me);
+    FSM.get("setPlayerSizeSmall")(me);
 }
 function setPlayerSizeLarge(me) {
-  setSize(me, 8, 16, true);
-  updateSize(me);
+    FSM.get("setPlayerSizeLarge")(me);
 }
 
 // To do: add inFullScreenMario.unitsize measurement?
