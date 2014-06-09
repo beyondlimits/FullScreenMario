@@ -225,19 +225,19 @@ window.FullScreenMario = (function() {
         }
         
         if(arguments.length > 1) {
-            this.setLeft(thing, left);
-            this.setTop(thing, top);
+            thing.EightBitter.setLeft(thing, left);
+            thing.EightBitter.setTop(thing, top);
         }
-        this.updateSize(thing);
+        thing.EightBitter.updateSize(thing);
         
-        this.GroupHolder.getFunctions().add[thing.grouptype](thing);
+        thing.EightBitter.GroupHolder.getFunctions().add[thing.grouptype](thing);
         thing.placed = true;
         
         if(thing.onadding) {
             thing.onadding(thing);
         }
         
-        this.PixelDrawer.setThingSprite(thing);
+        thing.EightBitter.PixelDrawer.setThingSprite(thing);
         
         return thing;
     }

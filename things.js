@@ -27,6 +27,7 @@ function resetThings() {
                   "enemy": {
                       "Goomba": {},
                       "Koopa": {},
+                      "Beetle": {},
                       "Pirhana": {},
                       "HammerBro": {
                           "Bowser": {}
@@ -42,7 +43,9 @@ function resetThings() {
                           "CastleFireball": {}
                       },
                       "Star": {},
-                      "Shell": {},
+                      "Shell": {
+                          "BeetleShell": {}
+                      },
                       "Vine": {}
                   },
                   "BrickShard": {},
@@ -239,6 +242,16 @@ function resetThings() {
                   }
               }
           },
+          Beetle: {
+              speed: unitsize * .21,
+              xvel: unitsize * .21,
+              nofire: 2,
+              death: FullScreenMario.prototype.killToShell,
+              shelltype: "BeetleShell",
+              spriteCycle: [
+                  ["one", "two"]
+              ],
+          },
           Pirhana: {
               height: 12,
               counter: 0,
@@ -347,6 +360,11 @@ function resetThings() {
               attributes: {
                   smart: {}
               }
+          },
+          BeetleShell: {
+            height: 8,
+            nofire: 2,
+            spawntype: "Beetle"
           },
           Vine: {
               width: 7,
