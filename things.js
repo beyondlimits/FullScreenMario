@@ -210,7 +210,7 @@ function resetThings() {
           Goomba: {
               spawntype: "DeadGoomba",
               toly: FullScreenMario.unitsize,
-              death: killGoomba,
+              death: FullScreenMario.prototype.killGoomba,
               spriteCycleSynched: [
                   [unflipHoriz, flipHoriz]
               ]
@@ -218,10 +218,7 @@ function resetThings() {
           Koopa: {
               height: 12,
               toly: FullScreenMario.unitsize * 2,
-              death: function (me, big) {
-                  console.warn("killKoopa should become killSpawn and rely on .spawntype");
-                  return killKoopa(me, big);
-              },
+              death: FullScreenMario.prototype.killToShell,
               spriteCycle: [
                   ["one", "two"]
               ],
@@ -877,28 +874,6 @@ function jumpEnemy(me, enemy) {
   }
   ++me.jumpers;
   TimeHandler.addEvent(function(me) { --me.jumpers; }, 1, me);
-}
-// Big: true if it should skip squash (fire, shell, etc)
-function killGoomba(me, big) {
-    FSM.get("killGoomba")(me, big);
-}
-
-// Big: true if it should skip shell (fire, shell, etc)
-function killKoopa(me, big) {
-  if(!me.alive) return;
-  var spawn;
-  if((big && big != 2) || me.winged) spawn = ObjectMaker.make("Koopa", {smart: me.smart});
-  else spawn = ObjectMaker.make("Shell", {smart: me.smart});
-  // Puts it on stack, so it executes immediately after upkeep
-  TimeHandler.addEvent(
-    function(spawn, me) { 
-      addThing(spawn, me.left, me.bottom - spawn.height * FullScreenMario.unitsize);
-      spawn.moveleft = me.moveleft;
-    }, 0, spawn, me 
-  );
-  killNormal(me);
-  if(big == 2) killFlip(spawn);
-  else return spawn;
 }
 
 // The visual representation of a pirhana is visual_scenery; the collider is a character

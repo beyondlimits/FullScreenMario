@@ -1073,7 +1073,9 @@ window.FullScreenMario = (function() {
         }
         
         if(thing.spawntype) {
-            var spawn = thing.EightBitter.ObjectMaker.make(thing.spawntype);
+            var spawn = thing.EightBitter.ObjectMaker.make(
+                thing.spawntype, thing.spawnsettings || {}
+            );
             thing.EightBitter.addThing(spawn);
             thing.EightBitter.setBottom(spawn, thing.bottom);
             thing.EightBitter.setMidXObj(spawn, thing);
@@ -1081,7 +1083,9 @@ window.FullScreenMario = (function() {
             console.warn("Thing " + thing.title + " has no .spawntype.");
         }
         
-        killNormal(thing);
+        thing.EightBitter.killNormal(thing);
+        
+        return spawn;
     }
     
     /**
@@ -1089,11 +1093,35 @@ window.FullScreenMario = (function() {
      */
     function killGoomba(thing, big) {
         if(big) {
-            killFlip(thing);
+            thing.EightBitter.killFlip(thing);
             return;
         }
         
-        killSpawn(thing);
+        thing.EightBitter.killSpawn(thing);
+    }
+    
+    /**
+     * 
+     */
+    function killToShell(thing, big) {
+        var spawn;
+        
+        thing.spawnsettings = {
+            "smart": thing.smart
+        };
+            
+        if(thing.winged || (big && big !== 2)) {
+            thing.spawntype = thing.title;
+        } else {
+            thing.spawntype = thing.shelltype || "Shell";
+        }
+        spawn = thing.EightBitter.killSpawn(thing);
+        
+        thing.EightBitter.killNormal(thing);
+        
+        if(big === 2) {
+            thing.EightBitter.killFlip(spawn);
+        }
     }
     
     /**
@@ -1404,6 +1432,7 @@ window.FullScreenMario = (function() {
         "killFlip": killFlip,
         "killSpawn": killSpawn,
         "killGoomba": killGoomba,
+        "killToShell": killToShell,
         "killNPCs": killNPCs,
         // Scoring
         "score": score,
