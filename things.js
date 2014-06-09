@@ -1326,7 +1326,7 @@ function coinEmergeMoveParent(me) {
  */
 function placePlayer(xloc, yloc) {
   clearOldPlayer();
-  window.player = ObjectMaker.make("Player", {
+  window.player = FSM.player = ObjectMaker.make("Player", {
     gravity: map_settings.gravity,
     keys: new Keys(),
     power: StatsHolder.get("power")
@@ -1743,12 +1743,12 @@ function emergeFire(me) {
   AudioPlayer.play("Fireball");
 }
 
-function playerStar(me) {
+function playerStar(me, timeout) {
   if(me.star) return;
   ++me.star;
   AudioPlayer.play("Powerup");
   AudioPlayer.playTheme("Star", true);
-  TimeHandler.addEvent(playerRemoveStar, 560, me);
+  TimeHandler.addEvent(playerRemoveStar, timeout || 560, me);
   switchClass(me, "normal", "star");
   TimeHandler.addSpriteCycle(me, ["star1", "star2", "star3", "star4"], "star", 5);
 }

@@ -14,7 +14,10 @@ function ModAttachr(settings) {
         
         // An Object of information on each mod, keyed by mod names
         // (e.g. { "MyMod": { "Name": "Mymod", "enabled": 1, ...} ...})
-        mods;
+        mods,
+        
+        // A default scope to apply mod events from (optional).
+        scope_default;
     
     /**
      * 
@@ -22,6 +25,7 @@ function ModAttachr(settings) {
     self.reset = function (settings) {
         mods = {};
         events = {};
+        scope_default = settings.scope_default;
         
         if(settings.mods) {
             self.addMods(settings.mods);
@@ -58,11 +62,13 @@ function ModAttachr(settings) {
     
     /**
      * Adds a mod to the pool of mods, listing it under all the relevant events.
-     * The "onModEnable" event for that mod is triggered.
+     * If the event is enabled, the "onModEnable" event for it is triggered.
      * 
-     * @param {Object} mod
+     * @param {Object} mod   A summary Object for a mod, containing at the very
+     *                       least a name and Object of events.
+     * @param {Object} [scope]   An optional scope for the mod's events.
      */
-    self.addMod = function (mod) {
+    self.addMod = function (mod, scope) {
         var mod_events = mod.events,
             event, i;
         
@@ -78,9 +84,11 @@ function ModAttachr(settings) {
             }
         }
         
+        mod.scope = scope || scope_default;
+        
         mods[mod.name] = mod;
-        if(mod.events["onModEnable"]) {
-            self.fireModEvent("onModEnable", mod.name, undefined, arguments);
+        if(mod.enabled && mod.events["onModEnable"]) {
+            self.fireModEvent("onModEnable", mod.name, arguments);
         }
     };
     
@@ -114,7 +122,25 @@ function ModAttachr(settings) {
         args[0] = mod;
         
         if(mod.events["onModEnable"]) {
-            self.fireModEvent("onModEnable", mod.name, undefined, arguments);
+            self.fireModEvent("onModEnable", mod.name, arguments);
+        }
+    };
+    
+    /**
+     * Enables any number of mods, given as any number of Strings or Arrays of
+     * Strings.
+     * 
+     * @param {String} [mods]
+     * @param {Array} [mods]
+     */
+    self.enableMods = function () {
+        var i;
+        for(i = 0; i < arguments.length; i += 1) {
+            if(arguments[i] instanceof Array) {
+                self.enableMods(arguments[i]);
+            } else {
+                self.enableMod(arguments[i]);
+            }
         }
     };
     
@@ -136,7 +162,25 @@ function ModAttachr(settings) {
         args[0] = mod;
         
         if(mod.events["onModDisable"]) {
-            self.fireModEvent("onModDisable", mod.name, undefined, arguments);
+            self.fireModEvent("onModDisable", mod.name, args);
+        }
+    };
+    
+    /**
+     * Disables any number of mods, given as any number of Strings or Arrays of
+     * Strings.
+     * 
+     * @param {String} [mods]
+     * @param {Array} [mods]
+     */
+    self.disableMods = function () {
+        var i;
+        for(i = 0; i < arguments.length; i += 1) {
+            if(arguments[i] instanceof Array) {
+                self.disableMods(arguments[i]);
+            } else {
+                self.disableMod(arguments[i]);
+            }
         }
     };
     
@@ -166,7 +210,7 @@ function ModAttachr(settings) {
             mod = fires[i];
             args[0] = mod;
             if(mod.enabled) {
-                mod.events[event].apply(scope, args);
+                mod.events[event].apply(mod.scope, args);
             }
         }
     };
@@ -177,9 +221,8 @@ function ModAttachr(settings) {
      * 
      * @param {String} event   The name of the event to fire.
      * @param {String} mod   The name of the mod to fire the event.
-     * @param {Mixed} [scope]   An optional scope to bind the event to.
      */
-    self.fireModEvent = function (event, mod, scope) {
+    self.fireModEvent = function (event, mod) {
         var mod = mods[mod],
             args = Array.prototype.slice.call(arguments, 2),
             fires;
@@ -195,7 +238,7 @@ function ModAttachr(settings) {
             throw new Error("Mod does not contain event: '" + event + "'");
         }
         
-        fires.apply(scope, args);
+        fires.apply(mod.scope, args);
     }
     
     

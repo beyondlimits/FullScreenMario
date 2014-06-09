@@ -14,12 +14,19 @@ function PixelDrawr(settings) {
     }
     var self = this,
         
-        // The PixelRender object itself
-        PixelRender;
+        // A PixelRender object used to obtain raw sprite data and canvases
+        PixelRender,
+        
+        canvas,
+        
+        context,
+        
+        innerWidth;
     
     self.reset = function(settings) {
         PixelRender = settings.PixelRender;
     }
+    
     
     /* Core rendering
     */

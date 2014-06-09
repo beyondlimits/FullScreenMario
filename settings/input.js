@@ -94,15 +94,15 @@
     FullScreenMario.prototype.input = {
         "aliases": {
             // Keyboard aliases
-            "left":   [37, 65,      "AXIS_LEFT", "DPAD_LEFT"],                    // a,     left
-            "right":  [39, 68,      "AXIS_RIGHT", "DPAD_RIGHT"],                  // d,     right
-            "up":     [38, 87, 32,  "FACE_1", "DPAD_UP", "LEFT_BOTTOM_SHOULDER"], // w,     up
-            "down":   [40, 83,      "AXIS_DOWN", "DPAD_DOWN"],                    // s,     down
-            "sprint": [16, 17,      "FACE_1"],                                    // shift, ctrl
-            "pause":  [80,          "START_FORWARD"],                             // p (pause)
-            "mute":   [77],                                                       // m (mute)
-            "q":      [81],                                                       // q (qcount)
-            "l":      [76],                                                       // l (luigi)
+            "left":   [37, 65],     // a,     left
+            "right":  [39, 68],     // d,     right
+            "up":     [38, 87, 32], // w,     up
+            "down":   [40, 83],     // s,     down
+            "sprint": [16, 17],     // shift, ctrl
+            "pause":  [80],         // p (pause)
+            "mute":   [77],         // m (mute)
+            "l":      [76],         // l (luigi)
+            // "q":      [81],         // q (qcount)
             // Mouse aliases
             "rightclick": [3]
         },

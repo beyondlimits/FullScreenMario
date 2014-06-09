@@ -198,14 +198,16 @@ window.FullScreenMario = (function() {
      * 
      */
     function resetModAttacher(self) {
-        self.ModAttacher = new ModAttachr(self.mods);
+        self.ModAttacher = new ModAttachr(proliferate({
+            "scope_default": self
+        }, self.mods));
     }
     
     /** 
      * 
      */
     function startModAttacher(self) {
-        self.ModAttacher.fireEvent("onReset", self, self);
+        self.ModAttacher.fireEvent("onReady", self, self);
     }
     
     

@@ -89,6 +89,7 @@ function setMap(name) {
   gamecount = 0;
   gamehistory = [];
   resetQuadrants();
+  
   // From shiftToLocation
   TimeHandler.clearAllEvents();
   TimeHandler.addEventInterval(updateDataTime, 25, Infinity);
@@ -115,6 +116,8 @@ function setMap(name) {
   startDataTime();
   InputWriter.restartHistory();
   unpause();
+  
+  FSM.ModAttacher.fireEvent("onLocationSet");
 }
 
 function entryPlain() {
