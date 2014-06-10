@@ -12,22 +12,30 @@ window.EightBittr = (function(settings) {
      * @constructor
      */
     function EightBittr(settings) {
+        var self = this,
+            constants, i;
         settings = settings || {};
         
-        this.unitsize = settings.unitsize || 1;
-        this.scale = settings.scale || 1;
+        // Constants, such as unitsize and scale, are always copied first
+        self.constructor = settings.constructor || EightBittr,
+        constants = settings.constants;
+        if(constants) {
+            for(i = 0; i < constants.length; i += 1) {
+                self[constants[i]] = self.constructor[constants[i]];
+            }
+        }
         
         if(settings.requirements) {
             if(settings.requirements.global) {
                 checkRequirements(window, settings.requirements.global, "global");
             }
             if(settings.requirements.self) {
-                checkRequirements(this, settings.requirements.self, "self");
+                checkRequirements(self, settings.requirements.self, "self");
             }
         }
         
         if(settings.resets) {
-            doResets(this, settings.resets);
+            doResets(self, settings.resets);
         }
     }
     

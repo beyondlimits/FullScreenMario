@@ -12,7 +12,8 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
-    function FullScreenMario() {            // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {            "unitsize": 4,            "scale": 2,            "requirements": {                "global": {                    "AudioPlayr": "src/AudioPlayr.js",                    "ChangeLinr": "src/ChangeLinr.js",                    "FPSAnalyzr": "src/FPSAnalyzr.js",                    "GamesRunnr": "src/GamesRunnr.js",                    "GroupHoldr": "src/GroupHoldr.js",                    "InputWritr": "src/InputWritr.js",                    "MapScreenr": "src/MapScreenr.js",
+    function FullScreenMario() {            // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {
+            "constructor": FullScreenMario,            "unitsize": 4,            "scale": 2,            "requirements": {                "global": {                    "AudioPlayr": "src/AudioPlayr.js",                    "ChangeLinr": "src/ChangeLinr.js",                    "FPSAnalyzr": "src/FPSAnalyzr.js",                    "GamesRunnr": "src/GamesRunnr.js",                    "GroupHoldr": "src/GroupHoldr.js",                    "InputWritr": "src/InputWritr.js",                    "MapScreenr": "src/MapScreenr.js",
                     "MapsHandlr": "src/MapsHandlr.js",
                         "MapsManagr": "src/MapsManagr.js",
                     "ModAttachr": "src/ModAttachr.js",                    "ObjectMakr": "src/ObjectMakr.js",                    "PixelDrawr": "src/PixelDrawr.js",                    "PixelRendr": "src/PixelRendr.js",                    "QuadsKeepr": "src/QuadsKeepr.js",                    "StatsHoldr": "src/StatsHoldr.js",                    "StringFilr": "src/StringFilr.js",                    "ThingHittr": "src/ThingHittr.js",                    "TimeHandlr": "src/TimeHandlr.js"                },                "self": {
@@ -44,7 +45,8 @@ window.FullScreenMario = (function() {
                 "jumplev2",
                 "ceillev",
                 "ceilmax",
-                "castlev"
+                "castlev",
+                "point_levels"
             ]        });    }
     FullScreenMario.prototype = EightBitter;
     
@@ -60,7 +62,11 @@ window.FullScreenMario = (function() {
     FullScreenMario.ceilmax = 104; 
     FullScreenMario.castlev = -48;
     // When a player is 48 spaces below the bottom, kill it
-    FullScreenMario.bottom_death_difference = 48;            /* Reset functions, in order    */        /**     * Sets self.PixelRender     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelRendr (src/PixelRendr.js)
+    FullScreenMario.bottom_death_difference = 48;
+    // Levels of points to award for hopping on / shelling enemies
+    FullScreenMario.point_levels = [
+        100, 200, 400, 500, 800, 1000, 2000, 4000, 5000, 8000
+    ];            /* Reset functions, in order    */        /**     * Sets self.PixelRender     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelRendr (src/PixelRendr.js)
      *                          sprites.js (settings/sprites.js)     */    function resetPixelRender(self) {        // PixelRender settings are stored in FullScreenMario.prototype.sprites,        // though they also need the scale measurement added        self.PixelRender = new PixelRendr(proliferateHard({
             "scale": self.scale
         }, self.sprites));    }        /**     * Sets self.PixelDrawer     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelDrawr (src/PixelDrawr.js)     */    function resetPixelDrawer(self) {        self.PixelDrawer = new PixelDrawr({            "PixelRender": self.PixelRender        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr.js)
@@ -688,6 +694,20 @@ window.FullScreenMario = (function() {
     */
     
     /**
+     * 
+     */
+    function gainLife(amount, nosound) {
+        console.log("Amount coming in as", amount);
+        amount = Number(amount) || 1;
+        
+        this.StatsHolder.increase("lives", amount);
+        
+        if(!nosound) {
+            this.AudioPlayer.play("Gain Life");
+        }
+    }
+    
+    /**
      * Basic function for Mario causing an item to jump slightly into the air, 
      * such as from hitting a solid below it. 
      * 
@@ -832,6 +852,182 @@ window.FullScreenMario = (function() {
     function setPlayerSizeLarge(thing) {
         thing.EightBitter.setSize(thing, 8, 16, true);
         thing.EightBitter.updateSize(thing);
+    }
+    
+    
+    /* Collision functions
+    */
+    
+    /** to do: scoring..
+     * 
+     */
+    function collideFireball(thing, fireball) {
+        alert("scoreEnemyFire is no good!");
+        // if(!thing.alive || thing.height <= FullScreenMario.unitsize) {
+            // return;
+        // }
+        
+        // if(!thing.nofire) {
+            // if(thing.solid) {
+                // thing.EightBitter.AudioPlayer.playLocal("Bump", thing.right);
+            // } else {
+                // thing.EightBitter.AudioPlayer.playLocal("Kick", thing.right);
+                // thing.death(thing, 2);
+                // // scoreEnemyFire(thing);
+            // }
+        // }
+        
+        // fireball.death(fireball);
+    }
+    
+    /**
+     * 
+     */
+    function collideShell(thing, other) {
+        // If only one is a shell, it should be other, not thing
+        if(thing.shell) {
+            if(other.shell) {
+                return thing.EightBitter.collideShellShell(thing, other);
+            }
+            return thing.EightBitter.collideShell(thing, other);
+        }
+        
+        // Hitting a solid (e.g. wall) 
+        if(thing.grouping === "solid") {
+            return thing.EightBitter.collideShellSolid(thing, other);
+        }
+        
+        // Hitting the player
+        if(thing.player) {
+            return thing.EightBitter.collideShellPlayer(thing, other);
+        }
+        
+        // Assume anything else to be an enemy, which only moving shells kill
+        if(other.xvel) {
+            if(thing.shellspawn) {
+                thing = thing.EightBitter.killSpawn(thing);
+            }
+            thing.EightBitter.killFlip(thing);
+            
+            thing.EightBitter.AudioPlayer.play("Kick");
+            thing.EightBitter.scoreOn(thing.EightBitter.findScore(other.enemyhitcount), thing);
+            other.enemyhitcount += 1;
+        } else {
+            thing.moveleft = thing.EightBitter.objectToLeft(thing, other);
+        }
+    }
+    
+    /**
+     * 
+     */
+    function collideShellSolid(thing, other) {
+        if(thing.EightBitter.objectToLeft(thing, other)) {
+            thing.EightBitter.AudioPlayer.playLocal("Bump", thing.left);
+            thing.EightBitter.setRight(other, thing.left);
+            other.xvel = -other.speed;
+            other.moveleft = true;
+        } else {
+            thing.EightBitter.AudioPlayer.playLocal("Bump", thing.right);
+            thing.EightBitter.AudioPlayer.setLeft(other, thing.right);
+            other.xvel = other.speed;
+            other.moveleft = false;
+        }
+    }
+    
+    /**
+     * 
+     */
+    function collideShellPlayer(thing, other) {
+        console.warn("collideShellPlayer uses some global-style functions.");
+        var shelltoleft = thing.EightBitter.objectToleft(other, one),
+            playerjump = thing.yvel > 0 && (
+                thing.bottom <= other.top + thing.EightBitter.unitsize * 2
+            );
+        
+        // Star players kill the shell no matter what
+        if(thing.star) {
+            scorePlayerShell(thing, other);
+            other.death(other, 2);
+            return;
+        }
+        
+        // If the shell is already being landed on by the player, see if it's
+        // still being pushed to the side, or has reversed direction (is deadly)
+        if(other.landing) {
+            // Equal shelltoleft measurements: it's still being pushed
+            if(other.shelltoleft === shelltoleft) {
+                // Tepmorarily increase the landing count of the shell; if it is 
+                // just being started, that counts as the score hit
+                other.landing += 1;
+                if(other.landing === 1) {
+                    scorePlayerShell(thing, other);
+                }
+                thing.EightBitter.TimeHandler.addEvent(function (other) {
+                    other.landing -= 1;
+                }, 2, other);
+            }
+            // Different shelltoleft measurements: it's deadly
+            else {
+                other.death(other);
+            }
+            return;
+        }
+        
+        // If the shell is being kicked by the player, either by hitting a still
+        // shell or jumping onto an already moving one
+        if(!other.xvel || playerjump) {
+            scorePlayerShell(thing, other);
+            
+            // Reset any signs of peeking from the shell
+            other.counting = 0;
+            if(other.peeking) {
+                other.peeking = false;
+                thing.EightBitter.removeClass(other, "peeking");
+                other.height -= thing.EightBitter.unitsize / 8;
+                thing.EightBItter.updateSize(other);
+            }
+            
+            // If the shell is standing still, make it move
+            if(!other.xvel) {
+                if(shelltoleft) {
+                    other.moveleft = true;
+                    other.xvel = -other.speed;
+                } else {
+                    other.moveleft = false;
+                    other.xvel = other.speed;
+                }
+                other.hitcount += 1;
+                thing.EightBitter.addEvent(function (other) {
+                    other.hitcount -= 1;
+                }, 2, other);
+            }
+            // Otherwise it was moving, but should now be still
+            else {
+                other.xvel = 0;
+            }
+            
+            // If the player is landing on the shell (with movements and xvels
+            // already set), the player should then jump up a bit
+            if(playerjump) {
+                thing.EightBitter.AudioPlayer.play("Kick");
+                
+                if(!other.xvel) {
+                    thing.yvel *= 2;
+                    scorePlayerShell(thing, other);
+                    thing.EightBitter.jumpEnemy(thing, other);
+                    thing.EightBitter.setBottom(thing, other.top - thing.EightBitter.unitsize, true);
+                } else {
+                    scorePlayerShell(thing, other);
+                }
+            }
+        }
+    }
+    
+    /**
+     * 
+     */
+    function collideShellShell(thing, other) {
+        
     }
     
     
@@ -1035,30 +1231,26 @@ window.FullScreenMario = (function() {
         }
     }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if(thing !== player.resting) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        this.shiftVert(thing, thing.yvel += this.unitsize / 8);        EightBittr.prototype.physics.setBottom(player, thing.top);                // After a velocity threshold, start always falling        if(thing.yvel >= thing.fall_threshold_start || this.unitsize * 2.8) {            thing.freefall = true;            thing.movement = moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || this.unitsize / 16;        this.shiftVert(thing, thing.yvel);                // After a velocity threshold, stop accelerating        if(thing.yvel >= thing.fall_threshold_end || this.unitsize * 2) {            thing.movement = movePlatform;        }    }
     
-    
-    /* Collisions
-    */
-    
-    /** to do: scoring..
+    /**
      * 
      */
-    function collideFireball(thing, fireball) {
-        alert("scoreEnemyFire is no good!");
-        // if(!thing.alive || thing.height <= FullScreenMario.unitsize) {
-            // return;
-        // }
+    function moveShell(thing) {
+        if(thing.xvel !== 0) {
+            return;
+        }
+        thing.counting += 1;
         
-        // if(!thing.nofire) {
-            // if(thing.solid) {
-                // thing.EightBitter.AudioPlayer.playLocal("Bump", thing.right);
-            // } else {
-                // thing.EightBitter.AudioPlayer.playLocal("Kick", thing.right);
-                // thing.death(thing, 2);
-                // // scoreEnemyFire(thing);
-            // }
-        // }
-        
-        // fireball.death(fireball);
+        if(thing.counting === 350) {
+            thing.peeking = true;
+            thing.height += thing.EightBitter.unitsize / 8;
+            thing.EightBitter.addClass(thing, "peeking");
+            thing.EightBitter.updateSize(thing);
+        } else if(thing.counting === 490) {
+            thing.spawnsettings = {
+                "smart": thing.smart
+            };
+            thing.EightBitter.killSpawn(thing);
+        }
     }
     
     
@@ -1334,6 +1526,17 @@ window.FullScreenMario = (function() {
     */
     
     /**
+     * 
+     */
+    function findScore(level) {
+        if(level < this.point_levels.length) {
+            return this.point_levels[level];
+        } else {
+            this.gainLife(1);
+        }
+    }
+    
+    /**
      * Driver function to score some number of points for the player and show
      * the gains via an animation.
      * 
@@ -1416,6 +1619,24 @@ window.FullScreenMario = (function() {
         text.EightBitter.TimeHandler.addEvent(text.EightBitter.killNormal, timeout, text);
     }
     
+    /**
+     * 
+     * 
+     * @remarks See http://themushroomkingdom.net/smb_breakdown.shtml
+     */
+    function scorePlayerFlag(player, difference) {
+        var amount;
+        
+        if(difference < 28) {
+            amount = difference < 8 ? 100 : 400;
+        } else if(difference < 40) {
+            amount = 800;
+        } else {
+            amount = difference < 62 ? 2000 : 5000;
+        }
+        
+        player.EightBitter.scoreOn(amount, player);
+    }
     
     /* Map macros
     */
@@ -1545,7 +1766,7 @@ window.FullScreenMario = (function() {
         // Global manipulations
         "addThing": addThing,
         "scrollWindow": scrollWindow,
-        // Collisions
+        // Collision detectors
         "thingCanCollide": thingCanCollide,
         "thingTouchesThing": thingTouchesThing,
         "thingOnTop": thingOnTop,
@@ -1558,6 +1779,7 @@ window.FullScreenMario = (function() {
         "characterOnResting": characterOnResting,
         "solidOnCharacter": solidOnCharacter,
         // Collision reactions
+        "gainLife": gainLife,
         "itemJump": itemJump,
         "playerShroom": playerShroom,
         "playerGetsBig": playerGetsBig,
@@ -1566,6 +1788,12 @@ window.FullScreenMario = (function() {
         "playerGetsFire": playerGetsFire,
         "setPlayerSizeSmall": setPlayerSizeSmall,
         "setPlayerSizeLarge": setPlayerSizeLarge,
+        // Collision functions
+        "collideFireball": collideFireball,
+        "collideShell": collideShell,
+        "collideShellSolid": collideShellSolid,
+        "collideShellPlayer": collideShellPlayer,
+        "collideShellShell": collideShellShell,
         // Movement
         "moveSimple": moveSimple,
         "moveSmart": moveSmart,
@@ -1575,8 +1803,7 @@ window.FullScreenMario = (function() {
         "moveSliding": moveSliding,
         "moveSlidingReal": moveSlidingReal,
         "movePlatform": movePlatform,        "moveFalling": moveFalling,        "moveFreeFalling": moveFreeFalling,
-        // Collisions
-        "collideFireball": collideFireball,
+        "moveShell": moveShell,
         // Physics
         "shiftBoth": shiftBoth,
         "shiftThings": shiftThings,
@@ -1611,10 +1838,12 @@ window.FullScreenMario = (function() {
         "killToShell": killToShell,
         "killNPCs": killNPCs,
         // Scoring
+        "findScore": findScore,
         "score": score,
         "scoreOn": scoreOn,
         "scoreAnimateOn": scoreAnimateOn,
         "scoreAnimate": scoreAnimate,
+        "scorePlayerFlag": scorePlayerFlag,
         // Map macros
         "macros": {
             "Example": macroExample,

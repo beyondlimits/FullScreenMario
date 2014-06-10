@@ -220,6 +220,7 @@ function resetThings() {
           },
           Koopa: {
               height: 12,
+              shellspawn: true,
               toly: FullScreenMario.unitsize * 2,
               death: FullScreenMario.prototype.killToShell,
               spriteCycle: [
@@ -246,6 +247,7 @@ function resetThings() {
               speed: unitsize * .21,
               xvel: unitsize * .21,
               nofire: 2,
+              shellspawn: true,
               death: FullScreenMario.prototype.killToShell,
               shelltype: "BeetleShell",
               spriteCycle: [
@@ -288,11 +290,13 @@ function resetThings() {
               nofire: true
           },
           Mushroom: {
-              action: playerShroom,
+              action: FullScreenMario.prototype.playerShroom,
               speed: .42 * FullScreenMario.unitsize
           },
           Mushroom1Up: {
-              action: gainLife
+              action: function (thing, other) { 
+                player.EightBitter.gainLife(1);
+              }
           },
           MushroomDeathly: {
               action: killPlayer
@@ -348,6 +352,7 @@ function resetThings() {
               moveleft: 0,
               xvel: 0,
               move: 0,
+              shell: true,
               hitcount: 0,
               peeking: 0,
               counting: 0,
@@ -643,21 +648,13 @@ function thingProcessAttributes(thing, attributes) {
 function addThing(me, left, top) {
   return FSM.get("addThing")(me, left, top);
 }
-// Called by addThing for simple placement
-function placeThing(me, left, top) {
-  setLeft(me, left);
-  setTop(me, top);
-  updateSize(me);
-  return me;
-}
 
-/*
- * Characters (except player, who has his own .js)
+
+/* Characters (except player, who has his own .js)
  */
  
 
-/*
- * Items
+/* Items
  */
 
 function itemJump(me) {
@@ -700,18 +697,7 @@ function fireworkAnimate(me) {
 }
 
 function moveShell(me) {
-  if(me.xvel != 0) return;
-  
-  if(++me.counting == 350) { 
-    addClass(me, "peeking");
-    me.peeking = true;
-    me.height += FullScreenMario.unitsize / 8;
-    updateSize(me);
-  } else if(me.counting == 490) {
-    var spawn = ObjectMaker.make(me.spawntype, { smart: me.smart } );
-    addThing(spawn, me.left, me.bottom - spawn.height * FullScreenMario.unitsize);
-    killNormal(me);
-  }
+    FSM.get("moveShell")(me);
 }
 function hitShell(one, two) {
   // Assuming two is shell
@@ -741,7 +727,7 @@ function hitShell(one, two) {
     
     AudioPlayer.play("Kick");
     // score(one, findScore(two.enemyhitcount), true);
-    FSM.scoreOn(findScore(two.enemyhitcount), one);
+    FSM.scoreOn(FSM.findScore(two.enemyhitcount), one);
     ++two.enemyhitcount;
   }
   // Otherwise the enemy just turns around
@@ -888,7 +874,7 @@ function jumpEnemy(me, enemy) {
   if(enemy.group != "item" || enemy.type == "shell") {
     // score(enemy, findScore(me.jumpcount++ + me.jumpers), true);
     ++me.jumpcount;
-    FSM.scoreOn(findScore(me.jumpcount + me.jumpers), enemy);
+    FSM.scoreOn(FSM.findScore(me.jumpcount + me.jumpers), enemy);
   }
   ++me.jumpers;
   TimeHandler.addEvent(function(me) { --me.jumpers; }, 1, me);
@@ -1769,8 +1755,7 @@ function gameRestart() {
 
 
 
-/*
- * Solids
+/* Solids
  */
 
 
@@ -2162,7 +2147,7 @@ function FlagCollisionTop(me, detector) {
 }
 // See http://themushroomkingdom.net/smb_breakdown.shtml near bottom
 // Stages: 8, 28, 40, 62
-function scorePlayerFlag(diff, stone) {
+function scorePlayerFlag(diff) {
   var amount;
   // log(diff);
   // Cases of...
@@ -2299,7 +2284,9 @@ function enableWarpWorldText(me, warp) {
   killNormal(warp);
 }
 
-/* Scenery */
+
+/* Scenery 
+*/
 
 // Scenery sizes are stored in window.scenery
 // After creation, they're processed

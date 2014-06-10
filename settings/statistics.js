@@ -5,7 +5,7 @@ FullScreenMario.prototype.statistics = {
             "id": "data_display",
             "className": "display",
             "style": {
-                "width": (screen.width + 14) + "px"
+                "width": (window.innerWidth + 14) + "px"
             }
         }],
         ["tr"]
@@ -28,8 +28,8 @@ FullScreenMario.prototype.statistics = {
             "has_element": true,
             "modularity": 100000,
             "on_modular": function () {
-                console.log("statistics.js is calling global gainLife");
-                gainLife();
+                console.log("statistics.js is calling global FSM");
+                FSM.gainLife();
             }
         },
         "time": {
@@ -51,8 +51,8 @@ FullScreenMario.prototype.statistics = {
             "has_element": true,
             "modularity": 100,
             "on_modular": function () {
-                console.log("statistics.js is calling global gainLife");
-                gainLife();
+                console.log("statistics.js is calling global FSM");
+                FSM.gainLife();
             }
         },
         "lives": {

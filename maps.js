@@ -92,7 +92,11 @@ function setMap(name) {
   
   // From shiftToLocation
   TimeHandler.clearAllEvents();
-  TimeHandler.addEventInterval(updateDataTime, 25, Infinity);
+  TimeHandler.addEventInterval(function () {
+    if(!notime) {
+      StatsHolder.decrease("time", 1);
+    }
+  }, 25, Infinity);
   resetGameState();
   resetQuadrants();
   
@@ -113,7 +117,8 @@ function setMap(name) {
   // MapsManager.setRecipient(map_settings);
   MapsManager.setMap(name);
   StatsHolder.set("world", name.join('-'));
-  startDataTime();
+  // 1 game second is about 25*16.667=416.675ms
+  StatsHolder.set("time", MapsManager.getArea().time);
   InputWriter.restartHistory();
   unpause();
   
