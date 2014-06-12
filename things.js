@@ -160,7 +160,7 @@ function resetThings() {
             sprite:      "",
             sprite_type: "neither",
             // Triggered functions
-            animate:  emergeUp,
+            animate:  FullScreenMario.prototype.animateEmerge,
             onMake:   thingProcess,
             death:    killNormal,
             collide:  false,
@@ -411,6 +411,7 @@ function resetThings() {
               collide: characterTouchedSolid,
           },
           Brick: {
+              breakable: true,
               bottomBump: brickBump
           },
           Block: {
@@ -662,7 +663,7 @@ function itemJump(me) {
 }
 
 function fireEnemy(enemy, me) {
-  if(!me.alive || me.emerging || enemy.height <= FullScreenMario.unitsize) return;
+  if(!me.alive || enemy.height <= FullScreenMario.unitsize) return;
   if(enemy.nofire) {
     if(enemy.nofire > 1) return me.death(me);
     return;
@@ -1024,7 +1025,7 @@ function coinEmerge(me, solid) {
   // score(me, 200, false);
   FSM.StatsHolder.increase("score", 200);
   StatsHolder.increase("coins", 1);
-  me.nocollide = me.alive = me.nofall = me.emerging = true;
+  me.nocollide = me.alive = me.nofall = true;
   
   if(me.blockparent) me.movement = coinEmergeMoveParent;
   else me.movement = coinEmergeMove;
@@ -1464,7 +1465,6 @@ function playerDropsIn() {
 }
 
 function gameOver() {
-  // Having a gamecount of -1 truly means it's all over
   gameon = false;
   pause();
   AudioPlayer.pauseTheme();
@@ -1477,8 +1477,6 @@ function gameOver() {
   
   body.className = "Night"; // to make it black
   body.innerHTML = innerHTML;
-  
-  window.gamecount = Infinity;
   
   setTimeout(gameRestart, 7000);
 }
@@ -1509,7 +1507,7 @@ function brickBump(me, character) {
     return TimeHandler.addEvent(brickBreak, 2, me, character); // wait until after collision testing to delete (for coins)
   
   // Move the brick
-  blockBumpMovement(me);
+  me.EightBitter.animateSolidBump(me);
   
   // If the brick has contents,
   if(me.contents) {
@@ -1577,7 +1575,7 @@ function blockBump(me, character) {
   me.used = 1;
   me.hidden = me.hidden = false;
   me.up = character;
-  blockBumpMovement(me);
+  me.EightBitter.animateSolidBump(me);
   removeClass(me, "hidden");
   switchClass(me, "unused", "used");
   checkContentsMushroom(me);

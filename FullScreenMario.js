@@ -1195,7 +1195,9 @@ window.FullScreenMario = (function() {
                     thing.EightBitter.removeClasses(thing, "running skidding jumping one two three");
                     thing.hopping = true;
                     
-                    thing.EightBitter.setPlayerSizeSmall(thing); 
+                    if(player.power === 1) {
+                        thing.EightBitter.setPlayerSizeSmall(thing); 
+                    }
                 }
             }
             // Player being landed on by an enemy
@@ -1210,6 +1212,38 @@ window.FullScreenMario = (function() {
         }
         
     }
+    
+    
+    /**
+     * 
+     * @remarks thing is solid, other is character
+     */
+    function collideSolidBottom(thing, other) {
+        if(other.solid && !thing.solid) {
+            return thing.EightBitter.collideSolidBottom(other, thing);
+        }
+        
+        if(thing.up || !other.player) {
+            return;
+        }
+        
+        thing.EightBitter.AudioPlayer.play("Bump");
+        
+        if(thing.used) {
+            return;
+        }
+        
+        thing.up = other;
+        if(other.power > 1 && thing.breakable && !thing.contents) {
+            thing.EightBitter.TimeHandler.addEvent(
+                thing.EightBitter.BrickBreak, 2, thing, other
+            );
+            return;
+        }
+        
+        // blockBumpMovement(thing);
+    }
+    
     
     /* Movement functions
     */
@@ -1431,6 +1465,74 @@ window.FullScreenMario = (function() {
             };
             thing.EightBitter.killSpawn(thing);
         }
+    }
+    
+    
+    // Animations
+    
+    /**
+     * 
+     */
+    function animateSolidBump(thing) {
+        var direction = -3;
+        
+        thing.EightBitter.TimeHandler.addEventInterval(function (thing) {
+            thing.EightBitter.shiftVert(thing, direction);
+            direction += .5;
+            if(direction === 3.5) {
+                thing.up = false;
+                return true;
+            }
+        }, 1, Infinity, thing);
+    }
+    
+    /**
+     * 
+     */
+    function animateEmerge(thing, other) {
+        console.log("Thing is", thing);
+        thing.nomove = thing.nocollide = thing.nofall = thing.alive = true;
+        
+        thing.EightBitter.flipHoriz(thing);
+        thing.EightBitter.AudioPlayer.play("Powerup Appears");
+        // thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Scenery", "Character");
+        switchContainers(thing, characters, scenery);
+        
+        thing.EightBitter.TimeHandler.addEventInterval(function () {
+            thing.EightBitter.shiftVert(thing, thing.EightBitter.unitsize / -8);
+            
+            // Only stop once the bottom has reached the solid's top
+            if(thing.bottom > other.top) {
+                return;
+            }
+            
+            thing.EightBitter.setBottom(thing, other.top);
+            // thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Character", "Scenery");
+            switchContainers(thing, scenery, characters);
+            thing.nomove = thing.nocollide = thing.nofall = thing.moveleft = false;
+            
+            if(thing.emergeOut) {
+                thing.emergeOut(thing, other);
+            }
+            
+            // Wait for movement until moveSimple moves this off the solid
+            if(thing.movement) {
+                console.log("hmm", thing, other);
+                thing.movementSave = thing.movement;
+                thing.movement = thing.EightBitter.moveSimple;
+                
+                thing.EightBitter.TimeHandler.addEventInterval(function () {
+                    if(thing.resting !== other) {
+                        thing.EightBitter.TimeHandler.addEvent(function () {
+                            thing.movement = thing.movementSave;
+                        }, 1);
+                        return true;
+                    }
+                }, 1, Infinity);
+            }
+            
+            return true;
+        }, 1, Infinity);
     }
     
     
@@ -1997,6 +2099,7 @@ window.FullScreenMario = (function() {
         "collideShellPlayer": collideShellPlayer,
         "collideShellShell": collideShellShell,
         "collideEnemy": collideEnemy,
+        "collideSolidBottom": collideSolidBottom,
         // Movement
         "moveSimple": moveSimple,
         "moveSmart": moveSmart,
@@ -2007,6 +2110,9 @@ window.FullScreenMario = (function() {
         "moveSlidingReal": moveSlidingReal,
         "movePlatform": movePlatform,        "moveFalling": moveFalling,        "moveFreeFalling": moveFreeFalling,
         "moveShell": moveShell,
+        // Animations
+        "animateSolidBump": animateSolidBump,
+        "animateEmerge": animateEmerge,
         // Physics
         "shiftBoth": shiftBoth,
         "shiftThings": shiftThings,
@@ -2047,7 +2153,7 @@ window.FullScreenMario = (function() {
         "scoreAnimateOn": scoreAnimateOn,
         "scoreAnimate": scoreAnimate,
         "scorePlayerFlag": scorePlayerFlag,
-        // Miscellaneous
+        // Miscellaneous 
         "characterIsAlive": characterIsAlive,
         // Map macros
         "macros": {

@@ -140,8 +140,6 @@ function resetGameState(nocount) {
   window.nokeys = window.spawning = window.spawnon =
     window.notime = window.qcount = window.lastscroll = 0;
   window.gameon = window.speed = 1;
-  // Shifting location shouldn't wipe the gamecount (for key histories)
-  if(!nocount) window.gamecount = 0;
   // And quadrants
   resetQuadrants();
   // Keep a history of pressed keys

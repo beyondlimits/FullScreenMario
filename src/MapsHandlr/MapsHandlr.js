@@ -159,7 +159,7 @@ function MapsHandlr(settings) {
         // Since the location is valid, mark it as current (with its area)
         location_current = location;
         area_current = location.area;
-
+        
         // Copy all the settings from that area into the MapScreenr container
         for(i = 0, len = screen_attributes.length; i < len; i += 1) {
             attribute = screen_attributes[i];

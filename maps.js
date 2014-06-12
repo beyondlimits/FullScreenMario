@@ -86,8 +86,6 @@ function resetMapsManager() {
 
 function setMap(name) {
   if(!name) name = MapsManager.getMapName();
-  gamecount = 0;
-  gamehistory = [];
   resetQuadrants();
   
   // From shiftToLocation
