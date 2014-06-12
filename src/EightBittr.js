@@ -70,10 +70,10 @@ window.EightBittr = (function(settings) {
         if(fails.length) {
             throw new Error("Missing " + fails.length + " requirement(s) "
                 + "in " + name + ".\n"
-                + fails.map(function(requirement, i) {
-                    return i + '. ' + requirement + ": is the '"
+                + fails.map(function (requirement, i) {
+                    return i + ". " + requirement + ": is the '"
                             + requirements[requirement] + "' file included?";
-                }).join('\n'));
+                }).join("\n"));
         }
     }
     

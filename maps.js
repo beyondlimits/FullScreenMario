@@ -233,7 +233,7 @@ function locMovePreparations(me) {
   me.keys = new Keys();
   FSM.InputWriter.setEventInformation(me);
   me.nocollide = 1;
-  removeCrouch();
+  FSM.removeCrouch();
   removeClass(me, "running");
   removeClass(me, "jumping");
   removeClass(me, "flipped");

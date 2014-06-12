@@ -302,7 +302,7 @@ function resetThings() {
               action: killPlayer
           },
           FireFlower: {
-              action: playerShroom,
+              action: FullScreenMario.prototype.playerShroom,
               spriteCycle: [
                   ["one", "two", "three", "four"]
               ]
@@ -358,9 +358,9 @@ function resetThings() {
               counting: 0,
               landing: 0,
               enemyhitcount: 0,
-              movement: moveShell,
-              collide: hitShell,
-              death: killFlip,
+              movement: FullScreenMario.prototype.moveShell,
+              collide: FullScreenMario.prototype.collideShell,
+              death: FullScreenMario.prototype.killFlip,
               spawntype: "Koopa",
               attributes: {
                   smart: {}
@@ -393,7 +393,7 @@ function resetThings() {
               nocollidechar: true,
               // nocollidesolid: true, // (disabled for brick bumps)
               animate: coinEmerge,
-              collide: hitCoin,
+              collide: FullScreenMario.prototype.hitCoin,
               spriteCycleSynched: [
                   ["one", "two", "three", "two", "one"]
               ]
@@ -696,188 +696,16 @@ function fireworkAnimate(me) {
   TimeHandler.addEvent(function(me) { killNormal(me); }, 21, me);
 }
 
-function moveShell(me) {
-    FSM.get("moveShell")(me);
-}
-function hitShell(one, two) {
-  // Assuming two is shell
-  if(one.title == "shell" && two.type != one.type) return hitShell(two, one);
-  
-  // Hitting a wall
-  if(one.grouping == "solid") return hitShellSolid(one, two);
-  
-  // Hitting the player
-  if(one.player) return hitShellPlayer(one, two);
-  
-  // Hitting another shell
-  if(one.title == "Shell") return hitShellShell(one, two);
-  
-  // Assume anything else to be an enemy
-  // If the shell is moving, kill the enemy
-  if(two.xvel) {
-    if(one.title.split(' ')[0] == "Koopa") {
-      // If the enemy is a koopa, make it a shell
-      // To do: automate this for things with shells (koopas, beetles)
-      var spawn = ObjectMaker.make("Shell", { smart: one.smart });
-      addThing(spawn, one.left, one.bottom - spawn.height * FullScreenMario.unitsize);
-      killFlip(spawn);
-      killNormal(one);
-    } // Otherwise just kill it normally
-    else killFlip(one);
-    
-    AudioPlayer.play("Kick");
-    // score(one, findScore(two.enemyhitcount), true);
-    FSM.scoreOn(FSM.findScore(two.enemyhitcount), one);
-    ++two.enemyhitcount;
-  }
-  // Otherwise the enemy just turns around
-  else one.moveleft = objectToLeft(one, two);
-}
-// Hitting a wall
-function hitShellSolid(one, two) {
-  if(two.right < one.right) {
-    AudioPlayer.playLocal("Bump", one.left);
-    setRight(two, one.left);
-    two.xvel = -two.speed;
-    two.moveleft = true;
-  } else {
-    AudioPlayer.playLocal("Bump", one.right);
-    setLeft(two, one.right);
-    two.xvel = two.speed;
-    two.moveleft = false;
-  }
-}
-// Hitting the player
-function hitShellPlayer(one, two) {
-  var shelltoleft = objectToLeft(two, one),
-      playerjump = one.yvel > 0 && one.bottom <= two.top + FullScreenMario.unitsize * 2;
-  
-  // Star Player is pretty easy
-  if(one.star) {
-    scorePlayerShell(one, two);
-    return two.death(two, 2);
-  }
-  
-  // If the shell is already being landed on by Player:
-  if(two.landing) {
-    // If the recorded landing direction hasn't changed:
-    if(two.shelltoleft == shelltoleft) {
-      // Increase the landing count, and don't do anything.
-      ++two.landing;
-      // If it's now a count of 1, score the shell
-      if(two.landing == 1) scorePlayerShell(one, two);
-      // Reduce that count very soon
-      TimeHandler.addEvent(function(two) { --two.landing; }, 2, two);
-    }
-    // Otherwise, the shell has reversed direction during land. Player should die.
-    else {
-      // This prevents accidentally scoring Player's hit
-      player.death(player);
-    }
-    return;
-  }
-  
-  // Player is kicking the shell (either hitting a still shell or jumping onto a shell)
-  if(two.xvel == 0 || playerjump) {
-    // Player has has hit the shell in a dominant matter. You go, Player!
-    two.counting = 0;
-    scorePlayerShell(one, two);
-    // The shell is peeking
-    if(two.peeking) {
-      two.peeking = false;
-      removeClass(two, "peeking");
-      two.height -= FullScreenMario.unitsize / 8;
-      updateSize(two);
-    }
-    
-    // If the shell's xvel is 0 (standing still)
-    if(two.xvel == 0) {
-      if(shelltoleft) {
-        two.moveleft = true;
-        two.xvel = -two.speed;
-      } else {
-        two.moveleft = false;
-        two.xvel = two.speed;
-      }
-      // Make sure to know not to kill Player too soon
-      ++two.hitcount;
-      TimeHandler.addEvent(function(two) { --two.hitcount; }, 2, two);
-    }
-    // Otherwise set the xvel to 0
-    else two.xvel = 0;
-    
-    // Player is landing on the shell (movements, xvels already set)
-    if(playerjump) {
-      AudioPlayer.play("Kick");
-      // The shell is moving
-      if(!two.xvel) {
-        jumpEnemy(one, two);
-        one.yvel *= 2;
-        scorePlayerShell(one, two);
-        setBottom(one, two.top -FullScreenMario.unitsize, true);
-      }
-      // The shell isn't moving
-      else {
-        // shelltoleft ? setRight(two, one.left) : setLeft(two, one.right);
-        scorePlayerShell(one, two);
-      }
-      ++two.landing;
-      two.shelltoleft = shelltoleft;
-      TimeHandler.addEvent(function(two) { --two.landing; }, 2, two);
-    }
-  }
-  else {
-    // Since the shell is moving and Player isn't, if the xvel is towards player, that's a death
-    if(!two.hitcount && ((shelltoleft && two.xvel < 0) || (!shelltoleft && two.xvel > 0)))
-      one.death(one);
-  }
-}
-// Hitting another shell
-function hitShellShell(one, two) {
-  // If one is moving...
-  if(one.xvel != 0) {
-    // and two is also moving, knock off each other
-    if(two.xvel != 0) {
-      var temp = one.xvel;
-      shiftHoriz(one, one.xvel = two.xvel);
-      shiftHoriz(two, two.xvel = temp);
-    }
-    // otherwise one kills two
-    else {
-      score(two, 500);
-      two.death(two);
-    }
-  }
-  // otherwise two kills one
-  else if(two.xvel != 0) {
-    // score(one, 500);
-    FSM.StatsHolder.increase("score", 500);
-    one.death(one);
-  }
-}
-
 // Assuming one is player, two is item
 function collideFriendly(one, two) {
-  if(!one.player) return;
-  if(two.action) two.action(one);
-  two.death(two);
+    return FSM.get("collideFriendly")(one, two);
 }
 
 /*
  * Enemies
  */
 function jumpEnemy(me, enemy) {
-  if(me.keys.up) me.yvel = FullScreenMario.unitsize * -1.4;
-  else me.yvel = FullScreenMario.unitsize * -.7;
-  me.xvel *= .91;
-  AudioPlayer.play("Kick");
-  if(enemy.group != "item" || enemy.type == "shell") {
-    // score(enemy, findScore(me.jumpcount++ + me.jumpers), true);
-    ++me.jumpcount;
-    FSM.scoreOn(FSM.findScore(me.jumpcount + me.jumpers), enemy);
-  }
-  ++me.jumpers;
-  TimeHandler.addEvent(function(me) { --me.jumpers; }, 1, me);
+    return FSM.get("jumpEnemy")(me, enemy);
 }
 
 // The visual representation of a pirhana is visual_scenery; the collider is a character
@@ -922,56 +750,12 @@ function killPirhana(me) {
 
 // Really just checks toly for pirhanas.
 function playerAboveEnemy(player, enemy) {
-  if(player.bottom < enemy.top + enemy.toly) return true;
-  return false;
+    return FSM.get("characterAboveEnemy")(player, enemy);
 }
 
 // Assuming one should generally be Player/thing, two is enemy
 function collideEnemy(one, two) {
-  // Check for life
-  if(!characterIsAlive(one) || !characterIsAlive(two)) return;
-  
-  // Check for nocollidechar
-  if((one.nocollidechar && !two.player) || (two.nocollidechar && !one.player)) return;
-  
-  // Items
-  if(one.group == "item") {
-    if(one.collide_primary) return one.collide(two, one);
-    // if(two.height < FullScreenMario.unitsize / 16 || two.width < FullScreenMario.unitsize / 16) return;
-    return;
-  }
-  
-  // Player on top of enemy
-  if(!map_settings.underwater && one.player && ((one.star && !two.nostar) || (!two.deadly && objectOnTop(one, two)))) {
-    // Enforces toly
-    if(playerAboveEnemy(one, two)) return;
-    // Player is on top of them (or star):
-    if(one.player && !one.star) TimeHandler.addEvent(function(one, two) { jumpEnemy(one, two); }, 0, one, two);
-    else two.nocollide = true;
-    // Kill the enemy
-    //// If killed returns a Thing, then it's a shell
-    //// Make sure Player isn't immediately hitting the shell
-    var killed = two.death(two, one.star * 2);
-    if(one.star) scoreEnemyStar(two);
-    else {
-      scoreEnemyStomp(two);
-      /*TimeHandler.addEvent(function(one, two) { */setBottom(one, min(one.bottom, two.top + FullScreenMario.unitsize));/* }, 0, one, two);*/
-    }
-    // Make Player have the hopping thing
-    addClass(one, "hopping");
-    removeClasses(one, "running skidding jumping one two three")
-    // addClass(one, "running three");
-    one.hopping = true;
-    if(player.power == 1)  setPlayerSizeSmall(one);
-  }
-  
-  // Player getting hit by an enemy
-  else if(one.player) {
-    if(!playerAboveEnemy(one, two)) one.death(one);
-  }
-  
-  // Two regular characters colliding
-  else two.moveleft = !(one.moveleft = objectToLeft(one, two));
+    return FSM.get("collideEnemy")(one, two);
 }  
 
 function movePodobooInit(me) {
@@ -1232,24 +1016,14 @@ function coinBecomesSolid(me) {
   switchContainers(me, characters, solids);
   me.movement = false;
 }
-function hitCoin(me, coin) {
-  if(!me.player) return;
-  AudioPlayer.play("Coin");
-  // score(me, 200, false);
-  FSM.StatsHolder.increase("score", 200);
-  gainCoin();
-  killNormal(coin);
-}
-function gainCoin() {
-  StatsHolder.increase("coins", 1);
-}
+
 function coinEmerge(me, solid) {
   AudioPlayer.play("Coin");
   removeClass(me, "still");
   switchContainers(me, characters, scenery);
   // score(me, 200, false);
   FSM.StatsHolder.increase("score", 200);
-  gainCoin();
+  StatsHolder.increase("coins", 1);
   me.nocollide = me.alive = me.nofall = me.emerging = true;
   
   if(me.blockparent) me.movement = coinEmergeMoveParent;
@@ -1294,7 +1068,7 @@ function placePlayer(xloc, yloc) {
   });
   FSM.InputWriter.setEventInformation(player);
   toggleLuigi(true);
-  setPlayerSizeSmall(player);
+  FSM.setPlayerSizeSmall(player);
   
   if(map_settings.underwater) {
     player.swimming = true;
@@ -1303,7 +1077,7 @@ function placePlayer(xloc, yloc) {
 
   var adder = addThing(player, xloc || FullScreenMario.unitsize * 16, yloc || (map_settings.floor - player.height) * FullScreenMario.unitsize);
   if(StatsHolder.get("power") >= 2) {
-    playerGetsBig(player, true);
+    FSM.playerGetsBig(player, true);
     if(StatsHolder.get("power") == 3)
       playerGetsFire(player, true);
   }
@@ -1321,39 +1095,6 @@ function Keys() {
   // Crouch: 0 for no, 1 for yes
   // Jump: 0 for no, jumplev = 1 through jumpmax for yes
   this.run = this.crouch = this.jump = this.jumplev = this.sprint = 0;
-}
-
-// Stores .*vel under .*velold for shroom-style events
-function thingStoreVelocity(me, keepmove) {
-    FSM.get("thingStoreVelocity")(me, keepmove);
-}
-// Retrieves .*vel from .*velold
-function thingRetrieveVelocity(me, novel) {
-    FSM.get("thingRetrieveVelocity")(me, novel);
-}
-
-function removeCrouch() {
-    FSM.get("removeCrouch")(player);
-}
-
-function playerShroom(me) {
-    FSM.get("playerShroom")(me);
-}
-// These three modifiers don't change power levels.
-function playerGetsBig(me, noanim) {
-    FSM.get("playerGetsBig")(me, noanim);
-}
-function playerGetsSmall(me) {
-    FSM.get("playerGetsSmall")(me);
-}
-function playerGetsFire(me) {
-    FSM.get("playerGetsFire")(me);
-}
-function setPlayerSizeSmall(me) {
-    FSM.get("setPlayerSizeSmall")(me);
-}
-function setPlayerSizeLarge(me) {
-    FSM.get("setPlayerSizeLarge")(me);
 }
 
 // To do: add inFullScreenMario.unitsize measurement?
@@ -1389,7 +1130,7 @@ function movePlayer(me) {
       // setHeight(player, 11);
       setHeight(player, 11, false, true);
       me.height = 11;
-      me.tolyold = me.toly;
+      me.toly_old = me.toly;
       me.toly = FullScreenMario.unitsize * 4;
       updateBottom(me, 0);
       updateSize(me);
@@ -1445,7 +1186,7 @@ function movePlayer(me) {
   if(Math.abs(me.xvel) < .14) {
     if(me.running) {
       me.running = false;
-      if(player.power == 1) setPlayerSizeSmall(me);
+      if(player.power == 1) FSM.setPlayerSizeSmall(me);
       removeClasses(me, "running skidding one two three");
       addClass(me, "still");
       TimeHandler.clearClassCycle(me, "running");
@@ -1456,7 +1197,7 @@ function movePlayer(me) {
     me.running = true;
     switchClass(me, "still", "running");
     playerStartRunningCycle(me);
-    if(me.power == 1) setPlayerSizeSmall(me);
+    if(me.power == 1) FSM.setPlayerSizeSmall(me);
   }
   if(me.xvel > 0) {
     me.xvel = min(me.xvel, me.maxspeed);
@@ -1486,7 +1227,7 @@ function movePlayer(me) {
     if(me.jumping) {
       me.jumping = false;
       removeClass(me, "jumping");
-      if(me.power == 1) setPlayerSizeSmall(me);
+      if(me.power == 1) FSM.setPlayerSizeSmall(me);
       addClass(me, abs(me.xvel) < .14 ? "still" : "running");
     }
     // Paddling
@@ -1650,7 +1391,7 @@ function killPlayer(me, big) {
     if(!big && me.power > 1) {
       AudioPlayer.play("Power Down");
       me.power = 1;
-      return playerGetsSmall(me);
+      return FSM.playerGetsSmall(me);
     }
     // Otherwise, if this isn't a big one, animate a death
     else if(big != 2) {
@@ -1661,12 +1402,12 @@ function killPlayer(me, big) {
       setClass(me, "character player dead");
       // Pause some things
       nokeys = notime = me.dying = true;
-      thingStoreVelocity(me);
+      FSM.thingStoreVelocity(me);
       // Make this the top of characters
       containerForefront(me, characters);
       // After a tiny bit, animate
       TimeHandler.addEvent(function(me) {
-        thingRetrieveVelocity(me, true);
+        FSM.thingRetrieveVelocity(me, true);
         me.nocollide = true;
         me.movement = me.resting = false;
         me.gravity = gravity / 2.1;
@@ -2043,7 +1784,7 @@ function CastleAxeFalls(me, collider) {
   killNormal(collider);
   // Pause Player & wipe the other characters
   notime = nokeys = true;
-  thingStoreVelocity(me);
+  FSM.thingStoreVelocity(me);
   killOtherCharacters();
   TimeHandler.addEvent(killNormal, 7, axe.chain);
   TimeHandler.addEvent(CastleAxeKillsBridge, 14, axe.bridge, axe);

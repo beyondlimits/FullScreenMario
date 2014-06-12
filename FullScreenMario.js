@@ -264,7 +264,7 @@ window.FullScreenMario = (function() {
     }
     
     
-    /* Collision functions
+    /* Collision detectors
     */
 
     /**
@@ -525,6 +525,13 @@ window.FullScreenMario = (function() {
         return true;
     }
     
+    /**
+     * 
+     */
+    function characterAboveEnemy(thing, other) {
+        return thing.bottom < other.top + other.toly;
+    }
+    
 
     /* Physics functions 
     */
@@ -697,7 +704,6 @@ window.FullScreenMario = (function() {
      * 
      */
     function gainLife(amount, nosound) {
-        console.log("Amount coming in as", amount);
         amount = Number(amount) || 1;
         
         this.StatsHolder.increase("lives", amount);
@@ -718,6 +724,33 @@ window.FullScreenMario = (function() {
     function itemJump(thing) {
         thing.yvel -= FullScreenMario.unitsize * 1.4;
         this.shiftVert(thing, -FullScreenMario.unitsize);
+    }
+    
+    /**
+     * 
+     */
+    function jumpEnemy(thing, other) {
+        if(thing.keys.up) {
+            thing.yvel = thing.EightBitter.unitsize * -1.4;
+        } else {
+            thing.yvel = thing.EightBitter.unitsize * -.7;
+        }
+        
+        thing.xvel *= .91;
+        thing.EightBitter.AudioPlayer.play("Kick");
+        
+        if(other.group !== "item" || other.shell) {
+            thing.jumpcount += 1;
+            thing.EightBitter.scoreOn(
+                thing.EightBitter.findScore(thing.jumpcount + thing.jumpers),
+                other
+            );
+        }
+        
+        thing.jumpers += 1;
+        thing.EightBitter.TimeHandler.addEvent(function (thing) {
+            thing.jumpers -= 1;
+        }, 1, thing);
     }
     
     /**
@@ -798,7 +831,7 @@ window.FullScreenMario = (function() {
         
         var bottom = thing.bottom;
         thing.keys.down = 0;
-        thingStoreVelocity(thing);
+        thing.EightBitter.thingStoreVelocity(thing);
         
         // Step one
         thing.nocollidechar = true;
@@ -815,7 +848,7 @@ window.FullScreenMario = (function() {
         
         // Step three (t+42)
         thing.EightBitter.TimeHandler.addEvent(function (thing) {
-            thingRetrieveVelocity(thing, false);
+            thing.EightBitter.thingRetrieveVelocity(thing, false);
             thing.EightBitter.removeClass(thing, "paddling");
             if(thing.running || thing.xvel) {
                 thing.EightBitter.addClass(thing, "running");
@@ -854,9 +887,50 @@ window.FullScreenMario = (function() {
         thing.EightBitter.updateSize(thing);
     }
     
+    /**
+     * 
+     */
+    function removeCrouch() {
+        console.warn("removeCrouch still uses global player");
+        player.crouching = false;
+        player.toly = player.toly_old || 0;
+        if(player.power !== 1) {
+            player.EightBitter.removeClass(player, "crouching");
+            player.heigt = 16;
+            player.EightBitter.updateBottom(player, 0);
+            player.EightBitter.updateSize(player);
+        }
+    }
+    
     
     /* Collision functions
     */
+    
+    /**
+     * 
+     */
+    function collideFriendly(thing, other) {
+        if(thing.player) {
+            if(other.action) {
+                other.action(thing, other);
+            }
+            other.death(other);
+        }
+    }
+    
+    /**
+     * 
+     */
+    function collideCoin(thing, other) {
+        if(!thing.player) {
+            return;
+        }
+        
+        thing.EightBitter.AudioPlayer.play("Coin");
+        thing.EightBitter.StatsHolder.increase("score", 200);
+        thing.EightBitter.StatsHolder.increase("coins", 1);
+        thing.EightBitter.killNormal(other);
+    }
     
     /** to do: scoring..
      * 
@@ -921,14 +995,14 @@ window.FullScreenMario = (function() {
      * 
      */
     function collideShellSolid(thing, other) {
-        if(thing.EightBitter.objectToLeft(thing, other)) {
+        if(other.right < thing.right) {
             thing.EightBitter.AudioPlayer.playLocal("Bump", thing.left);
             thing.EightBitter.setRight(other, thing.left);
             other.xvel = -other.speed;
             other.moveleft = true;
         } else {
             thing.EightBitter.AudioPlayer.playLocal("Bump", thing.right);
-            thing.EightBitter.AudioPlayer.setLeft(other, thing.right);
+            thing.EightBitter.setLeft(other, thing.right);
             other.xvel = other.speed;
             other.moveleft = false;
         }
@@ -939,7 +1013,7 @@ window.FullScreenMario = (function() {
      */
     function collideShellPlayer(thing, other) {
         console.warn("collideShellPlayer uses some global-style functions.");
-        var shelltoleft = thing.EightBitter.objectToleft(other, one),
+        var shelltoleft = thing.EightBitter.objectToLeft(other, thing),
             playerjump = thing.yvel > 0 && (
                 thing.bottom <= other.top + thing.EightBitter.unitsize * 2
             );
@@ -968,15 +1042,15 @@ window.FullScreenMario = (function() {
             }
             // Different shelltoleft measurements: it's deadly
             else {
-                other.death(other);
+                thing.death(thing);
             }
             return;
         }
         
         // If the shell is being kicked by the player, either by hitting a still
         // shell or jumping onto an already moving one
-        if(!other.xvel || playerjump) {
-            scorePlayerShell(thing, other);
+        if(other.xvel === 0 || playerjump) {
+            // scorePlayerShell(thing, other);
             
             // Reset any signs of peeking from the shell
             other.counting = 0;
@@ -984,11 +1058,11 @@ window.FullScreenMario = (function() {
                 other.peeking = false;
                 thing.EightBitter.removeClass(other, "peeking");
                 other.height -= thing.EightBitter.unitsize / 8;
-                thing.EightBItter.updateSize(other);
+                thing.EightBitter.updateSize(other);
             }
             
             // If the shell is standing still, make it move
-            if(!other.xvel) {
+            if(other.xvel === 0) {
                 if(shelltoleft) {
                     other.moveleft = true;
                     other.xvel = -other.speed;
@@ -997,7 +1071,7 @@ window.FullScreenMario = (function() {
                     other.xvel = other.speed;
                 }
                 other.hitcount += 1;
-                thing.EightBitter.addEvent(function (other) {
+                thing.EightBitter.TimeHandler.addEvent(function (other) {
                     other.hitcount -= 1;
                 }, 2, other);
             }
@@ -1012,13 +1086,29 @@ window.FullScreenMario = (function() {
                 thing.EightBitter.AudioPlayer.play("Kick");
                 
                 if(!other.xvel) {
-                    thing.yvel *= 2;
-                    scorePlayerShell(thing, other);
                     thing.EightBitter.jumpEnemy(thing, other);
+                    thing.yvel *= 2;
+                    // scorePlayerShell(thing, other);
                     thing.EightBitter.setBottom(thing, other.top - thing.EightBitter.unitsize, true);
                 } else {
-                    scorePlayerShell(thing, other);
+                    // scorePlayerShell(thing, other);
                 }
+                
+                other.landing += 1;
+                other.shelltoleft = shelltoleft;
+                thing.EightBitter.TimeHandler.addEvent(function (other) {
+                    other.landing -= 1;
+                }, 2, other);
+            }
+        } 
+        // Since the player is touching the shell normally, that's a death if
+        // the shell isn't moving away
+        else {
+            if(!other.hitcount && (
+                (shelltoleft && other.xvel > 0) 
+                || (!shelltoleft && other.xvel < 0)
+            )) {
+                thing.death(thing);
             }
         }
     }
@@ -1027,9 +1117,99 @@ window.FullScreenMario = (function() {
      * 
      */
     function collideShellShell(thing, other) {
-        
+        if(thing.xvel !== 0) {
+            if(other.xvel !== 0) {
+                var temp = thing.xvel;
+                thing.xvel = other.xvel;
+                other.xvel = temp;
+                
+                thing.EightBitter.shiftHoriz(thing, thing.xvel);
+                thing.EightBitter.shiftHoriz(other, other.xvel);
+            } else {
+                thing.EightBitter.StatsHolder.increase("score", 500);
+                other.death(other);
+            }
+        } else {
+            thing.EightBitter.StatsHolder.increase("score", 500);
+            thing.death(thing);
+        }
     }
     
+    /**
+     * 
+     */
+    function collideEnemy(thing, other) {
+        // If either is a player, make it thing (not other)
+        if(!thing.player && other.player) {
+            return thing.EightBitter.collideEnemy(thing, other);
+        }
+        
+        // Death: nothing happens
+        if(!thing.EightBitter.characterIsAlive(thing)
+            || !thing.EightBitter.characterIsAlive(other)) {
+            return;
+        }
+        
+        // Items
+        if(thing.group === "item") {
+            if(thing.collide_primary) {
+                return thing.collide(other, thing);
+            }
+            return;
+        }
+        
+        if(!window.collideEnemyWarned) {
+            window.collideEnemyWarned = true;
+            console.warn("collideEnemy uses map_settings, scoreEnemyStar, etc.");
+        }
+        // Player interacting with enemies
+        if(thing.player) {
+            // Player landing on top of an enemy
+            if(!map_settings.underwater 
+                && ((thing.star && !other.nostar)
+                    || (!other.deadly && objectOnTop(thing, other)))) {
+                
+                // Enforces toly (not touching means stop)
+                if(thing.EightBitter.characterAboveEnemy(thing, other)) {
+                    return;
+                }
+                
+                // A star player just kills the enemy, no matter what
+                if(thing.star) {
+                    other.nocollide = true;
+                    other.death(other, 2);
+                    scoreEnemyStar(other);
+                }
+                // A non-star player kills the enemy with spawn, and hops
+                else {
+                    thing.EightBitter.setBottom(thing, 
+                                Math.min(thing.bottom, 
+                                        other.top + thing.EightBitter.unitsize));
+                    thing.EightBitter.TimeHandler.addEvent(jumpEnemy, 0, thing, other);
+                    
+                    other.death(other, thing.star ? 2 : 0);
+                    other.death(other);
+                    scoreEnemyStomp(other);
+                    
+                    thing.EightBitter.addClass(thing, "hopping");
+                    thing.EightBitter.removeClasses(thing, "running skidding jumping one two three");
+                    thing.hopping = true;
+                    
+                    thing.EightBitter.setPlayerSizeSmall(thing); 
+                }
+            }
+            // Player being landed on by an enemy
+            else if(!thing.EightBitter.characterAboveEnemy(thing, other)) {
+                thing.death(thing);
+            }
+        }
+        // For non-players, it's just to characters colliding: they bounce
+        else {
+            thing.moveleft = thing.EightBitter.objectToLeft(thing, other);
+            other.moveleft = !thing.moveleft;
+        }
+        
+    }
     
     /* Movement functions
     */
@@ -1551,6 +1731,9 @@ window.FullScreenMario = (function() {
      */
     function score(value, continuation) {
         console.warn("Score still using global player");
+        if(!value) {
+            return;
+        }
         scoreOn(value, player, true);
         
         if(!continuation) {
@@ -1572,6 +1755,9 @@ window.FullScreenMario = (function() {
      *                scoreOn -> scoreAnimateOn -> scoreAnimate     
      */
     function scoreOn(value, thing, continuation) {
+        if(!value) {
+            return;
+        }
         var text = thing.EightBitter.ObjectMaker.make("Text" + value, {
             "value": value
         });
@@ -1636,6 +1822,17 @@ window.FullScreenMario = (function() {
         }
         
         player.EightBitter.scoreOn(amount, player);
+    }
+    
+    
+    /* Miscellaneous
+    */
+    
+    /**
+     * 
+     */
+    function characterIsAlive(thing) {
+        return thing && !thing.dead && thing.alive;
     }
     
     /* Map macros
@@ -1777,10 +1974,12 @@ window.FullScreenMario = (function() {
         "characterHitsCharacter": characterHitsCharacter,
         "characterOnSolid": characterOnSolid,
         "characterOnResting": characterOnResting,
+        "characterAboveEnemy": characterAboveEnemy,  
         "solidOnCharacter": solidOnCharacter,
         // Collision reactions
         "gainLife": gainLife,
         "itemJump": itemJump,
+        "jumpEnemy": jumpEnemy,
         "playerShroom": playerShroom,
         "playerGetsBig": playerGetsBig,
         "playerGetsBigAnimation": playerGetsBigAnimation,
@@ -1788,12 +1987,16 @@ window.FullScreenMario = (function() {
         "playerGetsFire": playerGetsFire,
         "setPlayerSizeSmall": setPlayerSizeSmall,
         "setPlayerSizeLarge": setPlayerSizeLarge,
+        "removeCrouch": removeCrouch,
         // Collision functions
+        "collideFriendly": collideFriendly,
+        "collideCoin": collideCoin,
         "collideFireball": collideFireball,
         "collideShell": collideShell,
         "collideShellSolid": collideShellSolid,
         "collideShellPlayer": collideShellPlayer,
         "collideShellShell": collideShellShell,
+        "collideEnemy": collideEnemy,
         // Movement
         "moveSimple": moveSimple,
         "moveSmart": moveSmart,
@@ -1844,6 +2047,8 @@ window.FullScreenMario = (function() {
         "scoreAnimateOn": scoreAnimateOn,
         "scoreAnimate": scoreAnimate,
         "scorePlayerFlag": scorePlayerFlag,
+        // Miscellaneous
+        "characterIsAlive": characterIsAlive,
         // Map macros
         "macros": {
             "Example": macroExample,
