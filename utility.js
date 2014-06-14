@@ -490,11 +490,7 @@ function killFlip(me, extra) {
 }
 
 function flicker(me, cleartime, interval) {
-  var cleartime = round(cleartime) || 49,
-      interval = round(interval) || 3;
-  me.flickering = true;
-  TimeHandler.addEventInterval(function(me) { me.hidden = !me.hidden; }, interval, cleartime, me);
-  TimeHandler.addEvent(function(me) { me.flickering = me.hidden = false; }, cleartime * interval + 1, me);
+    FSM.get("flicker")(me, cleartime, interval);
 }
 
 // Kills all characters other than the player

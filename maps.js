@@ -125,22 +125,15 @@ function setMap(name) {
 
 function entryPlain() {
   var me = placePlayer();
-  setLeft(me, unitsizet16);
-  setBottom(me, map_settings.floor * unitsize);
-  me.nocollide = false;
+    return FSM.get("mapEntrancePlain")(me);
 }
 function entryNormal() {
   var me = placePlayer();
-  setLeft(me, unitsizet16);
-  setTop(me, unitsizet16);
-  me.nocollide = false;
+    return FSM.get("mapEntranceNormal")(me);
 }
 function entryCastle() {
   var me = placePlayer();
-  setBottom(me, unitsize * 56);
-  setLeft(me, unitsizet2);
-  me.nocollide = me.piping = false;
-  me.placed = true;
+    return FSM.get("mapEntranceCastle")(me);
 }
 function entryCloud() {
   var me = placePlayer();

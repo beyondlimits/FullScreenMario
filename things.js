@@ -412,12 +412,12 @@ function resetThings() {
           },
           Brick: {
               breakable: true,
-              bottomBump: brickBump
+              bottomBump: FullScreenMario.prototype.collideBottomBrick
           },
           Block: {
               unused: true,
               contents: "Coin",
-              bottomBump: blockBump,
+              bottomBump: FullScreenMario.prototype.collideBottomBlock,
               spriteCycleSynched: [
                   ["one", "two", "three", "two", "one"]
               ]
@@ -1043,10 +1043,6 @@ function coinEmerge(me, solid) {
 function coinEmergeMovement(me, solid) {
   if(!me.alive) return true;
   shiftVert(me, me.yvel);
-  // if(solid && solid.alive && me.bottom > solid.bottom || me.top > solid.top) {
-    // killNormal(me);
-    // return true;
-  // }
 }
 
 function coinEmergeMove(me) {
@@ -1449,7 +1445,7 @@ function playerDropsIn() {
   // Clear and place Player
   clearOldPlayer();
   placePlayer(unitsize * 16,FullScreenMario.unitsize * 8 * -1 + (map.underwater * FullScreenMario.unitsize * 24));
-  flicker(player);
+  FSM.animateFlicker(player);
   
   // Give a Resting Stone for him to land, unless it's underwater...
   if(!map.underwater) {
@@ -1497,103 +1493,12 @@ function gameRestart() {
 /* Solids
  */
 
-
-function brickBump(me, character) {
-  if(me.up || !character.player) return;
-  AudioPlayer.play("Bump");
-  if(me.used) return;
-  me.up = character;
-  if(character.power > 1 && !me.contents)
-    return TimeHandler.addEvent(brickBreak, 2, me, character); // wait until after collision testing to delete (for coins)
-  
-  // Move the brick
-  me.EightBitter.animateSolidBump(me);
-  
-  // If the brick has contents,
-  if(me.contents) {
-    checkContentsMushroom(me);
-    TimeHandler.addEvent(
-      function(me) {
-        var contents = me.contents,
-            out = ObjectMaker.make(contents);
-        addThing(out, me.left, me.top);
-        setMidXObj(out, me, true);
-        out.blockparent = me;
-        out.animate(out, me);
-        // Do special preps for coins
-        if(me.contents == "Coin") {
-          if(me.lastcoin) makeUsedBlock(me);
-          TimeHandler.addEvent( function(me) { me.lastcoin = true; }, 245, me );
-        }
-        else makeUsedBlock(me);
-      }, 
-      7,
-      me
-    );
-  }
-}
-function makeUsedBlock(me) {
-  me.used = true;
-  switchClass(me, "unused", "used");
-}
-function brickBreak(me, character) {
-  AudioPlayer.play("Break Block");
-  // score(me, 50);
-  FSM.StatsHolder.increase("score", 50);
-  me.up = character;
-  TimeHandler.addEvent(placeShards, 1, me);
-  killNormal(me);
-}
-function placeShards(me) {
-  for(var i = 0, shard; i < 4; ++i) {
-    shard = ObjectMaker.make("BrickShard");
-    addThing(shard,
-                me.left + (i < 2) * me.width * FullScreenMario.unitsize -FullScreenMario.unitsize * 2,
-                me.top + (i % 2) * me.height * FullScreenMario.unitsize -FullScreenMario.unitsize * 2);
-    shard.xvel = shard.speed = FullScreenMario.unitsize / 2 -FullScreenMario.unitsize * (i > 1);
-    shard.yvel = FullScreenMario.unitsize * -1.4 + i % 2;
-    TimeHandler.addEvent(killNormal, 350, shard);
-  }
-}
-
-function attachEmerge(me, solid) {
-  me.animate = setInterval(function() {
-    setBottom(me, solid.top, true);
-    if(!solid.up) {
-      clearInterval(me.animate);
-      me.animate = false;
-    }
-  }, timer);
-}
-
 function blockBump(me, character) {
-  if(!character.player) return;
-  if(me.used) {
-    AudioPlayer.play("Bump");
-    return;
-  }
-  me.used = 1;
-  me.hidden = me.hidden = false;
-  me.up = character;
-  me.EightBitter.animateSolidBump(me);
-  removeClass(me, "hidden");
-  switchClass(me, "unused", "used");
-  checkContentsMushroom(me);
-  TimeHandler.addEvent(blockContentsEmerge, 7, me);
+    return FSM.get("collideBottomBlock")(me, character);
 }
 // out is a coin by default, but can also be other things - [1] and [2] are arguments
-function blockContentsEmerge(me) {
-  var out = ObjectMaker.make(me.contents);
-  addThing(out, me.left, me.top);
-  setMidXObj(out, me, true);
-  out.blockparent = me;
-  out.animate(out, me);
-}
-
-// Turn normal Mushrooms into FireFlowers if Player is large
-function checkContentsMushroom(me) {
-  if(player.power > 1 && me.contents == "Mushroom")
-    me.contents = "FireFlower";
+function blockContentsEmerge(me, character) {
+    return FSM.get("animateSolidContents")(me, character);
 }
 
 function vineEmerge(me, solid) {
