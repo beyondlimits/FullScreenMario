@@ -3,22 +3,22 @@ FullScreenMario.prototype.collisions = {
     "group_types": "Array",
     "hit_checks": {
         "Character": {
-            "Solid": FullScreenMario.prototype.characterTouchesSolid,
-            "Character": FullScreenMario.prototype.characterTouchesCharacter
+            "Solid": FullScreenMario.prototype.isCharacterTouchingSolid,
+            "Character": FullScreenMario.prototype.isThingTouchingThing
         }
     },
     "hit_functions": {
         "Character": {
-            "Solid": FullScreenMario.prototype.characterHitsSolid,
-            "Character": FullScreenMario.prototype.characterHitsCharacter
+            "Solid": FullScreenMario.prototype.hitCharacterSolid,
+            "Character": FullScreenMario.prototype.hitCharacterCharacter
         }
     },
     "global_checks": {
         "Character": {
-            "can_collide": FullScreenMario.prototype.thingCanCollide,
+            "can_collide": FullScreenMario.prototype.canThingCollide,
         },
         "Solid": {
-            "can_collide": FullScreenMario.prototype.thingCanCollide
+            "can_collide": FullScreenMario.prototype.canThingCollide
         }
     }
 };

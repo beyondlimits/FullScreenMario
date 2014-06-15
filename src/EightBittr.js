@@ -138,7 +138,7 @@ window.EightBittr = (function(settings) {
     /**
      * 
      */
-    function thingCanCollide(thing) {
+    function canThingCollide(thing) {
         return thing.alive && !thing.nocollide;
     }
     
@@ -476,7 +476,7 @@ window.EightBittr = (function(settings) {
     
     proliferateHard(EightBittr.prototype, {
         // Collisions
-        "thingCanCollide": thingCanCollide,
+        "canThingCollide": canThingCollide,
         // HTML
         "getCanvas": getCanvas,
         // Physics

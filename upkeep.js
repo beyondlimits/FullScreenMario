@@ -54,7 +54,7 @@ function maintainCharacters(update) {
     
     // Resting tests
     if(character.resting) {
-      if(!characterOnResting(character, character.resting)) {
+      if(!FSM.get("isCharacterOnResting")(character, character.resting)) {
         character.resting = false; // Necessary for moving platforms :(
       } else {
         /*character.jumping = */character.yvel = false;

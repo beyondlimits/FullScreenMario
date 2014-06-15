@@ -273,7 +273,7 @@ window.FullScreenMario = (function() {
      * @param {Thing} thing
      * @return {Boolean}
      */
-    function thingCanCollide(thing) {
+    function canThingCollide(thing) {
         return thing.alive && !thing.nocollide;
     }
 
@@ -286,7 +286,7 @@ window.FullScreenMario = (function() {
      * @return {Boolean}
      * @remarks Only the horizontal checks use unitsize
      */
-    function thingTouchesThing(thing, other) {        return !thing.nocollide && !other.nocollide
+    function isThingTouchingThing(thing, other) {        return !thing.nocollide && !other.nocollide
                 && thing.right - this.unitsize > other.left
                 && thing.left + this.unitsize < other.right
                 && thing.bottom >= other.top
@@ -297,9 +297,9 @@ window.FullScreenMario = (function() {
      * Is thing on top of other?
      * 
      * 
-     * @remarks This is a more specific form of thingTouchesThing
+     * @remarks This is a more specific form of isThingTouchingThing
      */
-    function thingOnTop(thing, other) {
+    function isThingOnThing(thing, other) {
         // If thing is a solid and other is falling, thing can't be above other
         if(thing.grouptype === "Solid" && other.yvel > 0) {
             return false;
@@ -348,10 +348,10 @@ window.FullScreenMario = (function() {
     /**
      * 
      * 
-     * @remarks Similar to thingOnTop, but more specifically used for
-     *          characterOnSolid and characterOnResting
+     * @remarks Similar to isThingOnThing, but more specifically used for
+     *          isCharacterOnSolid and isCharacterOnResting
      */
-    function thingOnSolid(thing, other) {
+    function isThingOnSolid(thing, other) {
         // If thing is too far to the right, they're not touching
         if(thing.left + this.unitsize > other.right) {
             return false;
@@ -383,14 +383,14 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
-    function characterOnSolid(character, solid) {
+    function isCharacterOnSolid(character, solid) {
         // If character is resting on solid, this is automatically true
         if(character.resting === solid) {
             return true;
         }                // If the character is jumping upwards, it's not on a solid        // (removing this check would cause Mario to have "sticky" behavior when        // jumping at the corners of solids)        if(character.yvel < 0) {            return false;        }
         
         // The character and solid must be touching appropriately
-        if(!this.thingOnSolid(character, solid)) {
+        if(!this.isThingOnSolid(character, solid)) {
             return false;
         }
         
@@ -411,8 +411,8 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
-    function characterOnResting(character, solid) {
-        if(!this.thingOnSolid(character, solid)) {
+    function isCharacterOnResting(character, solid) {
+        if(!this.isThingOnSolid(character, solid)) {
             return false;
         }
         
@@ -435,82 +435,27 @@ window.FullScreenMario = (function() {
      * @param {Thing} thing
      * @param {Thing} other
      */
-    function characterTouchesSolid(character, solid) {        // Hidden solids can only be touched by the player bottom-bumping them
-        if(solid.hidden) {            if(!character.player || !this.solidOnCharacter(solid, character)) {                return;            }
+    function isCharacterTouchingSolid(thing, other) {        // Hidden solids can only be touched by the player bottom-bumping them
+        if(other.hidden) {            if(!thing.player || !thing.EightBitter.isSolidOnCharacter(other, thing)) {                return;            }
         }
         
-        return this.thingTouchesThing(character, solid);
-    }
-
-    /**
-     * 
-     * @param {Thing} thing
-     * @param {Thing} other
-     */
-    function characterTouchesCharacter(thing, other) {
-        
-        return this.thingTouchesThing(thing, other);
-    }
-
-    /**
-     * // thing = character
-     * // other = solid
-     * 
-     * @param {Thing} thing
-     * @param {Thing} other
-     */
-    function characterHitsSolid(thing, other) {
-        // "Up" solids are special (they kill things that aren't their .up)
-        if(other.up && thing !== other.up) {
-            return characterTouchesUp(thing, other);
-        }
-        
-        // Normally, call the generic ~TouchedSolid function
-        (other.collide || characterTouchedSolid)(thing, other);
-        
-        // If a character is bumping into the bottom, call that
-        if(thing.undermid) {
-            if(thing.undermid.bottomBump) {
-                thing.undermid.bottomBump(thing.undermid, thing);
-            }
-        }
-        else if(thing.under && thing.under.bottomBump) {
-            thing.under.bottomBump(thing.under, thing);
-        }
-    }
-
-    /**
-     *  
-     * @param {Thing} thing
-     * @param {Thing} other
-     */
-    function characterHitsCharacter(thing, other) {
-        // The player calls the other's collide function, such as playerStar
-        if(thing.player) {
-            if(other.collide) {
-                return other.collide(thing, other);
-            }
-        }
-        // Otherwise just use thing's collide function
-        else if(thing.collide) {
-            thing.collide(other, thing);
-        }
+        return thing.EightBitter.isThingTouchingThing(thing, other);
     }
     
     /**
      * 
      */
-    function characterAboveEnemy(thing, other) {
+    function isCharacterAboveEnemy(thing, other) {
         return thing.bottom < other.top + other.toly;
     }
     
     /**
      * 
      * 
-     * @remarks Similar to thingOnTop, but more specifically used for
+     * @remarks Similar to isThingOnThing, but more specifically used for
      *          characterTouchedSolid
      * @remarks This sets the character's .midx property
-     */    function solidOnCharacter(solid, character) {        // This can never be true if character is falling
+     */    function isSolidOnCharacter(solid, character) {        // This can never be true if character is falling
         if(character.yvel >= 0) {
             return false;
         }
@@ -911,6 +856,50 @@ window.FullScreenMario = (function() {
     
     /* Collision functions
     */
+
+    /**
+     * // thing = character
+     * // other = solid
+     * 
+     * @param {Thing} thing
+     * @param {Thing} other
+     */
+    function hitCharacterSolid(thing, other) {
+        // "Up" solids are special (they kill things that aren't their .up)
+        if(other.up && thing !== other.up) {
+            return thing.EightBitter.collideCharacterSolidUp(thing, other);
+        }
+        
+        other.collide(thing, other);
+        
+        // If a character is bumping into the bottom, call that
+        if(thing.undermid) {
+            if(thing.undermid.bottomBump) {
+                thing.undermid.bottomBump(thing.undermid, thing);
+            }
+        }
+        else if(thing.under && thing.under.bottomBump) {
+            thing.under.bottomBump(thing.under, thing);
+        }
+    }
+
+    /**
+     *  
+     * @param {Thing} thing
+     * @param {Thing} other
+     */
+    function hitCharacterCharacter(thing, other) {
+        // The player calls the other's collide function, such as playerStar
+        if(thing.player) {
+            if(other.collide) {
+                return other.collide(thing, other);
+            }
+        }
+        // Otherwise just use thing's collide function
+        else if(thing.collide) {
+            thing.collide(other, thing);
+        }
+    }
     
     /**
      * 
@@ -933,14 +922,14 @@ window.FullScreenMario = (function() {
         }
         
         // Character on top of solid
-        if(thing.EightBitter.characterOnSolid(thing, other)) {
+        if(thing.EightBitter.isCharacterOnSolid(thing, other)) {
             if(other.hidden) {
                 return;
             }
             thing.resting = other;
         }
         // Solid on top of character
-        else if(thing.EightBitter.solidOnCharacter(other, thing)) {
+        else if(thing.EightBitter.isSolidOnCharacter(other, thing)) {
             var midx = thing.EightBitter.getMidX(thing);
             
             if(midx > other.left && midx < other.right) {
@@ -968,8 +957,9 @@ window.FullScreenMario = (function() {
         }
         
         // Character bumping into the side of the solid
-        if(!characterNotBumping(thing, other) && !objectOnTop(thing, other)
-                && !objectOnTop(other, thing) && !thing.under) {
+        if(!characterNotBumping(thing, other)
+                && !thing.EightBitter.isThingOnThing(thing, other)
+                && !thing.EightBitter.isThingOnThing(other, thing) && !thing.under) {
             
             // Character to the left of the solid
             if(thing.right <= other.right) {
@@ -1004,6 +994,25 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function collideCharacterSolidUp(thing, other) {
+        switch(thing.group) {
+            case "item":
+                thing.EightBitter.animateCharacterHop(thing);
+                thing.moveleft = thing.EightBitter.objectToLeft(thing, other);
+                break;
+            case "coin":
+                thing.animate(thing);
+                break;
+            default:
+                thing.death(thing, 2);
+                scoreEnemyBelow(me);
+                break;
+        }
+    }
+    
+    /**
+     * 
+     */
     function collideCoin(thing, other) {
         if(thing.player) {
             thing.EightBitter.AudioPlayer.play("Coin");
@@ -1019,7 +1028,7 @@ window.FullScreenMario = (function() {
      * @remarks thing is character, other is fireball
      */
     function collideFireball(thing, other) {
-        if(!thing.EightBitter.characterIsAlive(thing) 
+        if(!thing.EightBitter.isCharacterAlive(thing) 
                 || thing.height < thing.EightBitter.unitsize) {
             return;
         }
@@ -1232,8 +1241,8 @@ window.FullScreenMario = (function() {
         }
         
         // Death: nothing happens
-        if(!thing.EightBitter.characterIsAlive(thing)
-            || !thing.EightBitter.characterIsAlive(other)) {
+        if(!thing.EightBitter.isCharacterAlive(thing)
+            || !thing.EightBitter.isCharacterAlive(other)) {
             return;
         }
         
@@ -1254,10 +1263,10 @@ window.FullScreenMario = (function() {
             // Player landing on top of an enemy
             if(!map_settings.underwater 
                 && ((thing.star && !other.nostar)
-                    || (!other.deadly && objectOnTop(thing, other)))) {
+                    || (!other.deadly && isThingOnThing(thing, other)))) {
                 
                 // Enforces toly (not touching means stop)
-                if(thing.EightBitter.characterAboveEnemy(thing, other)) {
+                if(thing.EightBitter.isCharacterAboveEnemy(thing, other)) {
                     return;
                 }
                 
@@ -1288,7 +1297,7 @@ window.FullScreenMario = (function() {
                 }
             }
             // Player being landed on by an enemy
-            else if(!thing.EightBitter.characterAboveEnemy(thing, other)) {
+            else if(!thing.EightBitter.isCharacterAboveEnemy(thing, other)) {
                 thing.death(thing);
             }
         }
@@ -1680,7 +1689,6 @@ window.FullScreenMario = (function() {
      * 
      */
     function animateEmerge(thing, other) {
-        console.log("Thing is", thing);
         thing.nomove = thing.nocollide = thing.nofall = thing.alive = true;
         
         thing.EightBitter.flipHoriz(thing);
@@ -1745,7 +1753,7 @@ window.FullScreenMario = (function() {
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
             thing.EightBitter.moveCoinEmerge(thing, solid);
-            return !thing.EightBitter.characterIsAlive(thing);
+            return !thing.EightBitter.isCharacterAlive(thing);
         }, 1, Infinity);
         
         thing.EightBitter.TimeHandler.addEvent(function () {
@@ -1813,6 +1821,14 @@ window.FullScreenMario = (function() {
      */
     function animatePlayerFire(thing) {
         
+    }
+    
+    /**
+     * 
+     */
+    function animateCharacterHop(thing) {
+        thing.resting = false;
+        thing.yvel = thing.EightBitter.unitsize * -1.4;
     }
     
     
@@ -2255,26 +2271,15 @@ window.FullScreenMario = (function() {
         );
      }
      
-     /**
-      * 
-      */
-     function mapEntranceCastle(thing) {
-        thing.EightBitter.mapEntranceSpecific(
-            thing,
-            thing.EightBitter.unitsize * 2,
-            thing.EightBitter.unitsize * 56
-        );
-     }
-    
-    
-    /* Miscellaneous
-    */
-    
     /**
      * 
      */
-    function characterIsAlive(thing) {
-        return thing && !thing.dead && thing.alive;
+    function mapEntranceCastle(thing) {
+       thing.EightBitter.mapEntranceSpecific(
+           thing,
+           thing.EightBitter.unitsize * 2,
+           thing.EightBitter.unitsize * 56
+       );
     }
     
     
@@ -2407,18 +2412,15 @@ window.FullScreenMario = (function() {
         "addThing": addThing,
         "scrollWindow": scrollWindow,
         // Collision detectors
-        "thingCanCollide": thingCanCollide,
-        "thingTouchesThing": thingTouchesThing,
-        "thingOnTop": thingOnTop,
-        "thingOnSolid": thingOnSolid,
-        "characterTouchesSolid": characterTouchesSolid,
-        "characterTouchesCharacter": characterTouchesCharacter,
-        "characterHitsSolid": characterHitsSolid,
-        "characterHitsCharacter": characterHitsCharacter,
-        "characterOnSolid": characterOnSolid,
-        "characterOnResting": characterOnResting,
-        "characterAboveEnemy": characterAboveEnemy,  
-        "solidOnCharacter": solidOnCharacter,
+        "canThingCollide": canThingCollide,
+        "isThingTouchingThing": isThingTouchingThing,
+        "isThingOnThing": isThingOnThing,
+        "isThingOnSolid": isThingOnSolid,
+        "isCharacterTouchingSolid": isCharacterTouchingSolid,
+        "isCharacterOnSolid": isCharacterOnSolid,
+        "isCharacterOnResting": isCharacterOnResting,
+        "isCharacterAboveEnemy": isCharacterAboveEnemy,  
+        "isSolidOnCharacter": isSolidOnCharacter,
         "isCharacterAlive": isCharacterAlive,
         // Collision reactions
         "gainLife": gainLife,
@@ -2433,8 +2435,11 @@ window.FullScreenMario = (function() {
         "setPlayerSizeLarge": setPlayerSizeLarge,
         "removeCrouch": removeCrouch,
         // Collision functions
+        "hitCharacterSolid": hitCharacterSolid,
+        "hitCharacterCharacter": hitCharacterCharacter,
         "collideFriendly": collideFriendly,
         "collideCharacterSolid": collideCharacterSolid,
+        "collideCharacterSolidUp": collideCharacterSolidUp,
         "collideCoin": collideCoin,
         "collideFireball": collideFireball,
         "collideShell": collideShell,
@@ -2466,6 +2471,7 @@ window.FullScreenMario = (function() {
         "animateFireballExplodes": animateFireballExplodes,
         "animateFirework": animateFirework,
         "animatePlayerFire": animatePlayerFire,
+        "animateCharacterHop": animateCharacterHop,
         // Physics
         "shiftBoth": shiftBoth,
         "shiftThings": shiftThings,
@@ -2512,8 +2518,6 @@ window.FullScreenMario = (function() {
         "mapEntrancePlain": mapEntrancePlain,
         "mapEntranceNormal": mapEntranceNormal,
         "mapEntranceCastle": mapEntranceCastle,
-        // Miscellaneous 
-        "characterIsAlive": characterIsAlive,
         // Map macros
         "macros": {
             "Example": macroExample,

@@ -117,59 +117,55 @@ function increaseHeightTop(me, dy) {
 /* Object Collision Detection (new)
 */
 
-function thingCanCollide(thing) {
-    return FSM.get("thingCanCollide")(thing);
+function canThingCollide(thing) {
+    return FSM.get("canThingCollide")(thing);
 }
 
-function thingTouchesThing(thing, other) {
-    return FSM.get("thingTouchesThing")(thing, other);
+function isThingTouchingThing(thing, other) {
+    return FSM.get("isThingTouchingThing")(thing, other);
 }
 
-function characterTouchesSolid(thing, other) {
-    return FSM.get("characterTouchesSolid")(thing, other);
+function isCharacterTouchingSolid(thing, other) {
+    return FSM.get("isCharacterTouchingSolid")(thing, other);
 }
 
-function characterTouchesCharacter(thing, other) {
-    return FSM.get("characterTouchesCharacter")(thing, other);
+function hitCharacterSolid(thing, other) {
+    return FSM.get("hitCharacterSolid")(thing, other);
 }
 
-function characterHitsSolid(thing, other) {
-    return FSM.get("characterHitsSolid")(thing, other);
-}
-
-function characterHitsCharacter(thing, other) {
-    return FSM.get("characterHitsCharacter")(thing, other);
+function hitCharacterCharacter(thing, other) {
+    return FSM.get("hitCharacterCharacter")(thing, other);
 }
 
 
 // No tolerance! Just unitsize.
 
 // Sees whether one's midpoint is to the left of two's
-function objectToLeft(one, two) {
-    return FSM.get("objectToLeft")(one, two);
-}
+// function objectToLeft(one, two) {
+    // return FSM.get("objectToLeft")(one, two);
+// }
 
-function objectOnTop(one, two) {
-    return FSM.get("thingOnTop")(one, two);
-}
-// Like objectOnTop, but more specifically used for characterOnSolid and characterOnResting
-function objectOnSolid(one, two) {
-    return FSM.get("thingOnSolid")(one, two);
-}
-function solidOnCharacter(solid, me) {
-    return FSM.get("solidOnCharacter")(solid, me);
-}
-// Can't use objectOnTop for this, else Player will walk on walls.
-function characterOnSolid(me, solid) {
-    return FSM.get("characterOnSolid")(me, solid);
-}
-function characterOnResting(me, solid) {
-    return FSM.get("characterOnResting")(me, solid);
-}
+// function objectOnTop(one, two) {
+    // return FSM.get("isThingOnThing")(one, two);
+// }
+// // Like objectOnTop, but more specifically used for isCharacterOnSolid and isCharacterOnResting
+// function objectOnSolid(one, two) {
+    // return FSM.get("isThingOnSolid")(one, two);
+// }
+// function isSolidOnCharacter(solid, me) {
+    // return FSM.get("isSolidOnCharacter")(solid, me);
+// }
+// // Can't use objectOnTop for this, else Player will walk on walls.
+// function isCharacterOnSolid(me, solid) {
+    // return FSM.get("isCharacterOnSolid")(me, solid);
+// }
+// function isCharacterOnResting(me, solid) {
+    // return FSM.get("isCharacterOnResting")(me, solid);
+// }
 
-function characterTouchedSolid(me, solid) {
-    return FSM.get("collideCharacterSolid")(me, solid);
-}
+// function characterTouchedSolid(me, solid) {
+    // return FSM.get("collideCharacterSolid")(me, solid);
+// }
 // Really just for koopas
 function characterNotBumping(me, solid) {
   if(me.top + me.toly + abs(me.yvel) > solid.bottom) return true;
@@ -177,27 +173,14 @@ function characterNotBumping(me, solid) {
 }
 
 function characterTouchesUp(me, solid) {
-  switch(me.group) {
-    case "item": 
-      me.moveleft = getMidX(me) <= getMidX(solid) + unitsized2;
-      characterHops(me);
-    break;
-    case "coin":
-      me.animate(me);
-    break;
-    default:
-      me.death(me, 2);
-      scoreEnemyBelow(me);
-    break;
-  }
+    return FSM.get("collideCharacterSolidUp")(me, solid);
 }
 
 function characterHops(me) {
-  me.yvel = -1.4 * unitsize;
-  me.resting = false;
+    return FSM.get("animateCharacterHop")(me);
 }
 
-function characterIsAlive(me) {
+function isCharacterAlive(me) {
     return FSM.get("isCharacterAlive")(me);
 }
 

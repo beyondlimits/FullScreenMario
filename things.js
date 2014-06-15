@@ -410,7 +410,7 @@ function resetThings() {
               nocollidesolid: true,
               firedeath: 0,
               nofire: 2,
-              collide: characterTouchedSolid,
+              collide: FullScreenMario.prototype.collideCharacterSolid,
           },
           Brick: {
               breakable: true,
@@ -726,7 +726,7 @@ function killPirhana(me) {
 
 // Really just checks toly for pirhanas.
 function playerAboveEnemy(player, enemy) {
-    return FSM.get("characterAboveEnemy")(player, enemy);
+    return FSM.get("isCharacterAboveEnemy")(player, enemy);
 }
 
 // Assuming one should generally be Player/thing, two is enemy
@@ -735,7 +735,7 @@ function collideEnemy(one, two) {
 }  
 
 function movePodobooInit(me) {
-  if(!characterIsAlive(me)) return;
+  if(!isCharacterAlive(me)) return;
   // For the sake of the editor, flip this & make it hidden on the first movement
   // flipVert(me);
   me.hidden = true;
@@ -745,7 +745,7 @@ function movePodobooInit(me) {
   me.movement = false;
 }
 function podobooJump(me) {
-  if(!characterIsAlive(me)) return;
+  if(!isCharacterAlive(me)) return;
   unflipVert(me);
   me.yvel = me.speed + me.gravity;
   me.movement = movePodobooUp;
@@ -785,13 +785,13 @@ function moveHammerBro(me) {
   me.nocollidesolid = me.yvel < 0 || me.falling;
 }
 function throwHammer(me, count) {
-  if(!characterIsAlive(me) || me.nothrow || me.right < -unitsize * 32) return;
+  if(!isCharacterAlive(me) || me.nothrow || me.right < -unitsize * 32) return;
   if(count != 3) {
     switchClass(me, "thrown", "throwing");
   }
   TimeHandler.addEvent(function(me) {
     if(count != 3) {
-      if(!characterIsAlive(me)) return;
+      if(!isCharacterAlive(me)) return;
       // Throw the hammer...
       switchClass(me, "throwing", "thrown");
       addThing(ObjectMaker.make("Hammer"), me.left -FullScreenMario.unitsize * 2, me.top -FullScreenMario.unitsize * 2);
@@ -805,7 +805,7 @@ function throwHammer(me, count) {
   }, 14, me);
 }
 function jumpHammerBro(me) {
-  if(!characterIsAlive(me)) return true; // finish
+  if(!isCharacterAlive(me)) return true; // finish
   if(!me.resting) return; // just skip
   // If it's ok, jump down
   if(map_settings.floor - (me.bottom / FullScreenMario.unitsize) >= jumplev1 - 2 && me.resting.name != "floor" && Math.floor(Math.random() * 2)) {
@@ -963,7 +963,7 @@ function moveLakitu(me) {
   // log("moveLakitu after: " + (me.right - me.left) + "\n");
 }
 function throwSpiny(me) {
-  if(!characterIsAlive(me)) return false;
+  if(!isCharacterAlive(me)) return false;
   switchClass(me, "out", "hiding");
   TimeHandler.addEvent(function(me) {
     if(me.dead) return false;
@@ -1205,7 +1205,7 @@ function movePlayerVine(me) {
   var attached = me.attached;
   if(me.bottom < attached.top) return unattachPlayer(me);
   if(me.keys.run == me.attachoff) {
-    while(thingTouchesThing(me, attached))
+    while(isThingTouchingThing(me, attached))
       shiftHoriz(me, me.keys.run, true);
     return unattachPlayer(me);
   }
@@ -1490,7 +1490,7 @@ function touchVine(me, vine) {
 }
 
 function collideSpring(me, spring) {
-  if(me.yvel >= 0 && me.player && !spring.tension && characterOnSolid(me, spring))
+  if(me.yvel >= 0 && me.player && !spring.tension && isCharacterOnSolid(me, spring))
     return springPlayerInit(spring, me);
   return characterTouchedSolid(me, spring);
 }
@@ -1502,7 +1502,7 @@ function springPlayerInit(spring, player) {
 }
 function movePlayerSpringDown(me) {
   // If you've moved off the spring, get outta here
-  if(!thingTouchesThing(me, me.spring)) {
+  if(!isThingTouchingThing(me, me.spring)) {
     me.movement = movePlayer;
     me.spring.movement = moveSpringUp;
     me.spring = false;
@@ -1525,7 +1525,7 @@ function movePlayerSpringDown(me) {
   updateSize(me.spring);
 }
 function movePlayerSpringUp(me) {
-  if(!me.spring || !thingTouchesThing(me, me.spring)) {
+  if(!me.spring || !isThingTouchingThing(me, me.spring)) {
     me.spring = false;
     me.movement = movePlayer;
   }
@@ -1579,7 +1579,7 @@ function makeCastleBlock(me, settings) {
 }
 function castleBlockEvent(me) {
   // Stop if the block is dead (moved out of the game)
-  if(!characterIsAlive(me)) return true;
+  if(!isCharacterAlive(me)) return true;
   
   var left = me.left,
       top = me.top,
