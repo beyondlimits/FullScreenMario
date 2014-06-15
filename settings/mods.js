@@ -1,3 +1,7 @@
+/**
+ * Note: these use onModEnable. However, until thing settings are internalized
+ * to FSM, testing them out should use onLocationSet.
+ */
 FullScreenMario.prototype.mods = {
     "mods": [
         {
@@ -103,6 +107,21 @@ FullScreenMario.prototype.mods = {
                 },
                 "onLocationSet": function () {
                     playerStar(this.player, Infinity);
+                }
+            }
+        },
+        {
+            "name": "Super Fireballs",
+            "description": "Fireballs blow up solids, and Mario has unlimited.",
+            "enabled": false,
+            "events": {
+                "onModEnable": function (mod) {
+                    this.ObjectMaker.getFunction("solid").prototype.nofire = 0;
+                    this.ObjectMaker.getFunction("solid").prototype.firedeath = 1;
+                },
+                "onModDisable": function (mod) {
+                    this.ObjectMaker.getFunction("solid").prototype.nofire = 2;
+                    this.ObjectMaker.getFunction("solid").prototype.firedeath = 0;
                 }
             }
         }

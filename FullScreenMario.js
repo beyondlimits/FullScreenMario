@@ -922,36 +922,40 @@ window.FullScreenMario = (function() {
      * 
      */
     function collideCoin(thing, other) {
-        if(!thing.player) {
+        if(thing.player) {
+            thing.EightBitter.AudioPlayer.play("Coin");
+            thing.EightBitter.StatsHolder.increase("score", 200);
+            thing.EightBitter.StatsHolder.increase("coins", 1);
+            thing.EightBitter.killNormal(other);
+        }
+    }
+    
+    /**
+     * 
+     * 
+     * @remarks thing is character, other is fireball
+     */
+    function collideFireball(thing, other) {
+        if(!thing.EightBitter.characterIsAlive(thing) 
+                || thing.height < thing.EightBitter.unitsize) {
             return;
         }
         
-        thing.EightBitter.AudioPlayer.play("Coin");
-        thing.EightBitter.StatsHolder.increase("score", 200);
-        thing.EightBitter.StatsHolder.increase("coins", 1);
-        thing.EightBitter.killNormal(other);
-    }
-    
-    /** to do: scoring..
-     * 
-     */
-    function collideFireball(thing, fireball) {
-        alert("scoreEnemyFire is no good!");
-        // if(!thing.alive || thing.height <= FullScreenMario.unitsize) {
-            // return;
-        // }
+        if(thing.nofire) {
+            if(thing.nofire > 1) {
+                other.death(other);
+            }
+            return;
+        }
         
-        // if(!thing.nofire) {
-            // if(thing.solid) {
-                // thing.EightBitter.AudioPlayer.playLocal("Bump", thing.right);
-            // } else {
-                // thing.EightBitter.AudioPlayer.playLocal("Kick", thing.right);
-                // thing.death(thing, 2);
-                // // scoreEnemyFire(thing);
-            // }
-        // }
-        
-        // fireball.death(fireball);
+        if(!thing.firedeath) {
+            thing.EightBitter.AudioPlayer.playLocal("Bump", thing.EightBitter.getMidX(other));
+        } else {
+            thing.EightBitter.AudioPlayer.playLocal("Kick", thing.EightBitter.getMidX(other));
+            thing.death(thing, 2);
+            scoreEnemyFire(thing);
+        }
+        other.death(other);
     }
     
     /**
@@ -1512,6 +1516,16 @@ window.FullScreenMario = (function() {
         }
     }
     
+    /**
+     * 
+     */
+    function moveCoinEmerge(thing, parent) {
+        thing.EightBitter.shiftVert(thing, thing.yvel);
+        if(parent && thing.bottom >= thing.blockparent.bottom) {
+            thing.EightBitter.killNormal(thing);
+        }
+    }
+    
     
     // Animations
     
@@ -1575,7 +1589,7 @@ window.FullScreenMario = (function() {
             shard.xvel = shard.speed = unitsize / 2 - unitsize * (i > 1);
             shard.yvel = unitsize * -1.4 + i % 2;
             
-            thing.EightBitter.TimeHandler.addEvent(thing.EightBitter.killNormal, 35, shard);
+            thing.EightBitter.TimeHandler.addEvent(thing.EightBitter.killNormal, 70, shard);
         }
     }
     
@@ -1628,6 +1642,39 @@ window.FullScreenMario = (function() {
     }
     
     /**
+     *
+     */
+    function animateEmergeCoin(thing, solid) {
+        thing.nocollide = thing.alive = thing.nofall = true;
+        thing.yvel -= unitsize;
+        
+        thing.EightBitter.switchClass(thing, "still", "anim");
+        thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Character", "Scenery");
+        
+        thing.EightBitter.AudioPlayer.play("Coin");
+        thing.EightBitter.StatsHolder.increase("coins", 1);
+        thing.EightBitter.StatsHolder.increase("score", 200);
+        
+        thing.EightBitter.TimeHandler.clearClassCycle(thing, 0);
+        thing.EightBitter.TimeHandler.addSpriteCycle(thing, [
+            "anim1", "anim2", "anim3", "anim4", "anim3", "anim2"
+        ], 0, 5);
+        
+        thing.EightBitter.TimeHandler.addEventInterval(function () {
+            thing.EightBitter.moveCoinEmerge(thing, solid);
+            return !thing.EightBitter.characterIsAlive(thing);
+        }, 1, Infinity);
+        
+        thing.EightBitter.TimeHandler.addEvent(function () {
+            thing.EightBitter.killNormal(thing);
+        }, 49);
+        
+        thing.EightBitter.TimeHandler.addEvent(function () {
+            thing.yvel *= -1;
+        }, 25);
+    }
+    
+    /**
      * 
      */
     function animateFlicker(thing, cleartime, interval) {
@@ -1643,6 +1690,46 @@ window.FullScreenMario = (function() {
         TimeHandler.addEvent(function () {
             thing.flickering = thing.hidden = false;
         }, cleartime * interval + 1);
+    }
+    
+    /**
+     * 
+     */
+    function animateFireballExplodes(thing, level) {
+        thing.EightBitter.killNormal(thing);
+        if(level === 2) {
+            return;
+        }
+        
+        var output = thing.EightBitter.addThing("Firework");
+        thing.EightBitter.setMidXObj(output, thing);
+        thing.EightBitter.setMidYObj(output, thing);
+        output.animate(output);
+    }
+    
+    /**
+     * 
+     */
+    function animateFirework(thing) {
+        var name = thing.className + " n",
+            i;
+        
+        for(i = 0; i < 3; i += 1) {
+            thing.EightBitter.TimeHandler.addEvent(function (i) {
+                thing.EightBitter.setClass(thing, name + String(i + 1));
+            }, i * 7, i);
+        }
+        
+        thing.EightBitter.TimeHandler.addEvent(function () {
+            thing.EightBitter.killNormal(thing);
+        }, i * 7);
+    }
+    
+    /**
+     * 
+     */
+    function animatePlayerFire(thing) {
+        
     }
     
     
@@ -2270,7 +2357,6 @@ window.FullScreenMario = (function() {
         "collideShellPlayer": collideShellPlayer,
         "collideShellShell": collideShellShell,
         "collideEnemy": collideEnemy,
-        // "collideSolidBottom": collideSolidBottom,
         "collideBottomBrick": collideBottomBrick,
         "collideBottomBlock": collideBottomBlock,
         // Movement
@@ -2283,13 +2369,18 @@ window.FullScreenMario = (function() {
         "moveSlidingReal": moveSlidingReal,
         "movePlatform": movePlatform,        "moveFalling": moveFalling,        "moveFreeFalling": moveFreeFalling,
         "moveShell": moveShell,
+        "moveCoinEmerge": moveCoinEmerge,
         // Animations
         "animateSolidBump": animateSolidBump,
         "animateSolidContents": animateSolidContents,
         "animateBlockBecomesUsed": animateBlockBecomesUsed,
         "animateBrickShards": animateBrickShards,
         "animateEmerge": animateEmerge,
+        "animateEmergeCoin": animateEmergeCoin,
         "animateFlicker": animateFlicker,
+        "animateFireballExplodes": animateFireballExplodes,
+        "animateFirework": animateFirework,
+        "animatePlayerFire": animatePlayerFire,
         // Physics
         "shiftBoth": shiftBoth,
         "shiftThings": shiftThings,

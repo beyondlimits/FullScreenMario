@@ -192,6 +192,10 @@ function PixelRendr(settings) {
         }
         // Single (actual) sprites process for size (row) scaling, and flipping
         else {
+            if(!(sprite instanceof Uint8ClampedArray)) {
+                console.warn("No single raw sprite found.", key, sprite, attributes);
+                return;
+            }
             sprite = ProcessorDims.process(sprite, key, attributes);
         }
 

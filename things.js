@@ -154,7 +154,7 @@ function resetThings() {
             grouping: "solid",
             // Quadrants
             maxquads:  4,
-            quadrants: new Array(4),
+            quadrants: [,,,],
             outerok:   false,
             // Sprites
             sprite:      "",
@@ -162,7 +162,7 @@ function resetThings() {
             // Triggered functions
             animate:  FullScreenMario.prototype.animateEmerge,
             onMake:   thingProcess,
-            death:    killNormal,
+            death:    FullScreenMario.prototype.killNormal,
             collide:  false,
             movement: false
           },
@@ -172,6 +172,7 @@ function resetThings() {
               grouptype: "Character",
               character: true,
               moveleft: true,
+              firedeath: true,
               movement: FullScreenMario.prototype.moveSimple
           },
           Player: {
@@ -314,8 +315,8 @@ function resetThings() {
               nostar: true,
               collide_primary: true,
               animate: emergeFire,
-              collide: fireEnemy,
-              death: fireExplodes,
+              collide: FullScreenMario.prototype.collideFireball,
+              death: FullScreenMario.prototype.animateFireballExplodes,
               spriteCycleSynched: [
                   ["one", "two", "three", "four"], "spinning", 4
               ]
@@ -330,7 +331,7 @@ function resetThings() {
           Firework: {
               nocollide: true,
               nofall: true,
-              animate: fireworkAnimate
+              animate: FullScreenMario.prototype.fireworkAnimate
           },
           Star: {
               name: "star item", // Item class so player's star isn't confused with this
@@ -391,9 +392,8 @@ function resetThings() {
               height: 7,
               nofall: true,
               nocollidechar: true,
-              // nocollidesolid: true, // (disabled for brick bumps)
-              animate: coinEmerge,
-              collide: FullScreenMario.prototype.hitCoin,
+              animate: FullScreenMario.prototype.animateEmergeCoin,
+              collide: FullScreenMario.prototype.collideCoin,
               spriteCycleSynched: [
                   ["one", "two", "three", "two", "one"]
               ]
@@ -408,6 +408,8 @@ function resetThings() {
               repeat: true,
               solid: true,
               nocollidesolid: true,
+              firedeath: 0,
+              nofire: 2,
               collide: characterTouchedSolid,
           },
           Brick: {
@@ -488,6 +490,9 @@ function resetThings() {
               hidden: true,
               movement: PlatformGeneratorInit
           },
+          Floor: {
+              nofire: true // for the "Super Fireballs" mod
+          },
           CastleBlock: {
               direction: -1, // Kept here because attributes override user-given settings!
               attributes: {
@@ -504,7 +509,7 @@ function resetThings() {
               spritewidth: 4
           },
           detector: {
-              // hidden: true
+              hidden: true
           },
           DetectCollision: {
               collide: onDetectorCollision
@@ -662,40 +667,10 @@ function itemJump(me) {
   FSM.get("itemJump")(me);
 }
 
-function fireEnemy(enemy, me) {
-  if(!me.alive || enemy.height <= FullScreenMario.unitsize) return;
-  if(enemy.nofire) {
-    if(enemy.nofire > 1) return me.death(me);
-    return;
-  }
-
-  if(enemy.solid) {
-    AudioPlayer.playLocal("Bump", me.right);
-  }
-  else {
-    AudioPlayer.playLocal("Kick", me.right);
-    enemy.death(enemy, 2);
-    scoreEnemyFire(enemy);
-  }
-  me.death(me);
-}
 function fireDeleted() {
   --player.numballs;
 }
-function fireExplodes(me) {
-  var fire = ObjectMaker.make("Firework");
-  addThing(fire, me.left - fire.width / 2, me.top - fire.height / 2);
-  fire.animate(fire);
-  killNormal(me);
-}
 
-function fireworkAnimate(me) {
-  var name = me.className + " n";
-  TimeHandler.addEvent(function(me) { setClass(me, name + 1); }, 0, me);
-  TimeHandler.addEvent(function(me) { setClass(me, name + 2); }, 7, me);
-  TimeHandler.addEvent(function(me) { setClass(me, name + 3); }, 14, me);
-  TimeHandler.addEvent(function(me) { killNormal(me); }, 21, me);
-}
 
 // Assuming one is player, two is item
 function collideFriendly(one, two) {
@@ -1013,45 +988,7 @@ function createSpiny(me) {
   killNormal(me);
 }
 
-function coinBecomesSolid(me) {
-  switchContainers(me, characters, solids);
-  me.movement = false;
-}
 
-function coinEmerge(me, solid) {
-  AudioPlayer.play("Coin");
-  removeClass(me, "still");
-  switchContainers(me, characters, scenery);
-  // score(me, 200, false);
-  FSM.StatsHolder.increase("score", 200);
-  StatsHolder.increase("coins", 1);
-  me.nocollide = me.alive = me.nofall = true;
-  
-  if(me.blockparent) me.movement = coinEmergeMoveParent;
-  else me.movement = coinEmergeMove;
-  me.yvel = -unitsize;
-  TimeHandler.addEvent(function(me) { me.yvel *= -1; }, 25, me);
-  TimeHandler.addEvent(function(me) {
-    killNormal(me);
-    deleteThing(me, scenery, scenery.indexOf(me));
-  }, 49, me);
-  TimeHandler.addEventInterval(coinEmergeMovement, 1, Infinity, me, solid);
-  TimeHandler.clearClassCycle(me, 0);
-  addClass(me, "anim");
-  TimeHandler.addSpriteCycle(me, ["anim1", "anim2", "anim3", "anim4", "anim3", "anim2"], 0, 5);
-}
-function coinEmergeMovement(me, solid) {
-  if(!me.alive) return true;
-  shiftVert(me, me.yvel);
-}
-
-function coinEmergeMove(me) {
-  shiftVert(me, me.yvel, true);
-}
-function coinEmergeMoveParent(me) {
-  if(me.bottom >= me.blockparent.bottom) killNormal(me);
-  else shiftVert(me, me.yvel, true);
-}
 
 /*
  * Player
@@ -1076,7 +1013,7 @@ function placePlayer(xloc, yloc) {
   if(StatsHolder.get("power") >= 2) {
     FSM.playerGetsBig(player, true);
     if(StatsHolder.get("power") == 3)
-      playerGetsFire(player, true);
+      FSM.playerGetsFire(player, true);
   }
   return adder;
 }
