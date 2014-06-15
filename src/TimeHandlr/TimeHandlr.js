@@ -38,8 +38,8 @@ function TimeHandlr(settings) {
       removeClass;
   
   self.reset = function reset(settings) {
-    time               = settings.time               || 0;
-    events             = settings.events             || {};
+    time               = settings.time   || 0;
+    events             = settings.events || {};
     
     // Attribute names
     cycles             = settings.cycles             || "cycles";
@@ -49,12 +49,12 @@ function TimeHandlr(settings) {
     cycleCheckValidity = settings.cycleCheckValidity || false;
     
     // Smaller settings
-    timingDefault      = settings.timingDefault     || 7;
-    allow_cycle_copies = settings.allow_cycle_copes || true;
+    timingDefault      = settings.timingDefault      || 7;
+    allow_cycle_copies = settings.allow_cycle_copies || true;
     
     // Function handlers
-    addClass    = settings.addClass    || window.addClass    || classAdd;
-    removeClass = settings.removeClass || window.removeClass || classRemove;
+    addClass    = settings.classAdd    || addClass;
+    removeClass = settings.removeClass || removeClass;
   }
   
   /* Simple gets
@@ -295,7 +295,7 @@ function TimeHandlr(settings) {
     
     // Get rid of the previous class, from settings (-1 by default)
     if(settings.oldclass != -1 && settings.oldclass !== "")
-      removeClass(me, settings.oldclass);
+      FSM.removeClass(me, settings.oldclass);
     
     // Move to the next location in settings, as a circular list
     settings.loc = (++settings.loc) % settings.length;
@@ -378,6 +378,16 @@ function TimeHandlr(settings) {
       output[i] = settings[i];
     }
     return output;
+  }
+  
+  // Default addClass
+  function addClass(element, string) {
+    element.className += ' ' + string;
+  }
+  
+  // Default removeClass
+  function removeClass(element, string) {
+    element.className += string;
   }
   
   self.reset(settings || {});

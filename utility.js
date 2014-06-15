@@ -111,80 +111,6 @@ function increaseHeightTop(me, dy) {
 }
 
 /*
- * Collisions
- */
-
-/* Object Collision Detection (new)
-*/
-
-function canThingCollide(thing) {
-    return FSM.get("canThingCollide")(thing);
-}
-
-function isThingTouchingThing(thing, other) {
-    return FSM.get("isThingTouchingThing")(thing, other);
-}
-
-function isCharacterTouchingSolid(thing, other) {
-    return FSM.get("isCharacterTouchingSolid")(thing, other);
-}
-
-function hitCharacterSolid(thing, other) {
-    return FSM.get("hitCharacterSolid")(thing, other);
-}
-
-function hitCharacterCharacter(thing, other) {
-    return FSM.get("hitCharacterCharacter")(thing, other);
-}
-
-
-// No tolerance! Just unitsize.
-
-// Sees whether one's midpoint is to the left of two's
-// function objectToLeft(one, two) {
-    // return FSM.get("objectToLeft")(one, two);
-// }
-
-// function objectOnTop(one, two) {
-    // return FSM.get("isThingOnThing")(one, two);
-// }
-// // Like objectOnTop, but more specifically used for isCharacterOnSolid and isCharacterOnResting
-// function objectOnSolid(one, two) {
-    // return FSM.get("isThingOnSolid")(one, two);
-// }
-// function isSolidOnCharacter(solid, me) {
-    // return FSM.get("isSolidOnCharacter")(solid, me);
-// }
-// // Can't use objectOnTop for this, else Player will walk on walls.
-// function isCharacterOnSolid(me, solid) {
-    // return FSM.get("isCharacterOnSolid")(me, solid);
-// }
-// function isCharacterOnResting(me, solid) {
-    // return FSM.get("isCharacterOnResting")(me, solid);
-// }
-
-// function characterTouchedSolid(me, solid) {
-    // return FSM.get("collideCharacterSolid")(me, solid);
-// }
-// Really just for koopas
-function characterNotBumping(me, solid) {
-  if(me.top + me.toly + abs(me.yvel) > solid.bottom) return true;
-  return false;
-}
-
-function characterTouchesUp(me, solid) {
-    return FSM.get("collideCharacterSolidUp")(me, solid);
-}
-
-function characterHops(me) {
-    return FSM.get("animateCharacterHop")(me);
-}
-
-function isCharacterAlive(me) {
-    return FSM.get("isCharacterAlive")(me);
-}
-
-/*
  * Scoring on enemies
  */
 function scorePlayerShell(player, shell) {
@@ -351,56 +277,12 @@ function moveFreeFalling(me) {
     FSM.get("moveFreeFalling")(me);
 }
 function shiftScaleStringVert(me, string, yvel) {
-  shiftVert(me, yvel);
   string.bottom = me.top;
   string.height = (string.bottom - string.top) / unitsize;
-  updateSize(string);
+  FSM.updateSize(string);
+  FSM.shiftVert(me, yvel);
 }
 
-function setTitle(me, strin) { 
-    FSM.get("setTitle")(me, strin);
-}
-
-function setClass(me, strin) { 
-    FSM.get("setClass")(me, strin);
-}
-function setClassInitial(me, strin) { 
-    FSM.get("setClassInitial")(me, strin);
-}
-function addClass(me, strin) { 
-    FSM.get("addClass")(me, strin);
-}
-function removeClass(me, strout) {  
-    FSM.get("removeClass")(me, strout);
-}
-function switchClass(me, strout, strin) { 
-    FSM.get("switchClass")(me, strout, strin);
-}
-function removeClasses(me) {
-    FSM.get("removeClasses").apply(this, arguments);
-}
-function addClasses(me, strings) {
-    FSM.get("addClasses").apply(this, arguments);
-}
-
-
-// Used in Editor
-function addElementClass(element, strin) { element.className += " " + strin; }
-function removeElementClass(element, strin) { element.className = element.className.replace(new RegExp(" " + strin,"gm"),''); }
-
-
-function flipHoriz(me) {
-    FSM.get("flipHoriz")(me);
-}
-function flipVert(me) { 
-    FSM.get("flipVert")(me);
-}
-function unflipHoriz(me) {
-    FSM.get("unflipHoriz")(me);
-}
-function unflipVert(me) {
-    FSM.get("unflipVert")(me);
-}
 
 /*
  * Deaths & removing
@@ -418,16 +300,6 @@ function switchContainers(me, outer, inner) {
 function containerForefront(me, container) {
   container.splice(container.indexOf(me), 1);
   container.unshift(me);
-}
-function killNormal(me) {
-  FSM.get("killNormal")(me);
-}
-function killFlip(me, extra) {
-  FSM.get("killFlip")(me, extra);
-}
-
-function flicker(me, cleartime, interval) {
-    FSM.get("flicker")(me, cleartime, interval);
 }
 
 // Kills all characters other than the player
@@ -455,7 +327,7 @@ function lookTowardPlayer(me, big) {
     if(!me.lookleft || big) {
       me.lookleft = true;
       me.moveleft = false;
-      unflipHoriz(me);
+      me.EightBitter.unflipHoriz(me);
     }
   }
   // Player is to the right
@@ -463,7 +335,7 @@ function lookTowardPlayer(me, big) {
     if(me.lookleft || big) {
       me.lookleft = false;
       me.moveleft = true;
-      flipHoriz(me);
+      me.EightBitter.flipHoriz(me);
     }
   }
 }
@@ -472,12 +344,12 @@ function lookTowardThing(me, thing) {
   if(thing.right <= me.left) {
     me.lookleft = true;
     me.moveleft = false;
-    unflipHoriz(me);
+    me.EightBitter.unflipHoriz(me);
   }
   // It's to the right
   else if(thing.left >= me.right) {
     me.lookleft = false;
     me.moveleft = true;
-    flipHoriz(me);
+    me.EightBitter.flipHoriz(me);
   }
 }

@@ -10,5 +10,5 @@ function resetStatsHolder() {
 function toggleLuigi(nochange) {
   if(!nochange) StatsHolder.toggle("luigi");
   // (StatsHolder.get("luigi") ? addClass : removeClass)(player, "Luigi");
-  setTitle(player, StatsHolder.get("luigi") ? "Luigi" : "Player");
+  FSM.setTitle(player, StatsHolder.get("luigi") ? "Luigi" : "Player");
 }

@@ -198,7 +198,7 @@ window.EightBittr = (function(settings) {
      */
     function setTop(thing, top) {
         thing.top = top;
-        thing.bottom = thing.top + thing.height * this.unitsize;
+        thing.bottom = thing.top + thing.height * thing.EightBitter.unitsize;
     }
     
     /**
@@ -206,7 +206,7 @@ window.EightBittr = (function(settings) {
      */
     function setRight(thing, right) {
         thing.right = right;
-        thing.left = thing.left - thing.width * this.unitsize;
+        thing.left = thing.left - thing.width * thing.EightBitter.unitsize;
     }
     
     /**
@@ -214,7 +214,7 @@ window.EightBittr = (function(settings) {
      */
     function setBottom(thing, bottom) {
         thing.bottom = bottom;
-        thing.top = thing.bottom - thing.height * this.unitsize;
+        thing.top = thing.bottom - thing.height * thing.EightBitter.unitsize;
     }
     
     /**
@@ -222,56 +222,56 @@ window.EightBittr = (function(settings) {
      */
     function setLeft(thing, left) {
         thing.left = left;
-        thing.right = thing.left + thing.width * this.unitsize;
+        thing.right = thing.left + thing.width * thing.EightBitter.unitsize;
     }
     
     /**
      * 
      */
     function setMidX(thing, x) {
-        this.setLeft(thing, x + thing.left * this.unitsize / 2);
+        thing.EightBitter.setLeft(thing, x + thing.left * thing.EightBitter.unitsize / 2);
     }
     
     /**
      * 
      */
     function setMidY(thing, y) {
-        this.setTop(thing, y + thing.height * this.unitsize / 2);
+        thing.EightBitter.setTop(thing, y + thing.height * thing.EightBitter.unitsize / 2);
     }
     
     /**
      * 
      */
     function getMidX(thing) {
-        return thing.left + thing.width * this.unitsize / 2;
+        return thing.left + thing.width * thing.EightBitter.unitsize / 2;
     }
     
     /**
      * 
      */
     function getMidY(thing) {
-        return thing.top + thing.height * this.unitsize / 2;
+        return thing.top + thing.height * thing.EightBitter.unitsize / 2;
     }
     
     /**
      * 
      */
     function setMidXObj(thing, other) {
-        this.setLeft(thing, this.getMidX(other) - (thing.width * this.unitsize / 2));
+        thing.EightBitter.setLeft(thing, thing.EightBitter.getMidX(other) - (thing.width * thing.EightBitter.unitsize / 2));
     }
     
     /**
      * 
      */
     function objectToLeft(thing, other) {
-        return this.getMidX(thing) < this.getMidX(other);
+        return thing.EightBitter.getMidX(thing) < thing.EightBitter.getMidX(other);
     }
     
     /**
      * 
      */
     function setMidYObj(thing, other) {
-        this.setTop(thing, this.getMidY(other) - (thing.height * this.unitsize / 2));
+        thing.EightBitter.setTop(thing, thing.EightBitter.getMidY(other) - (thing.height * thing.EightBitter.unitsize / 2));
     }
     
     /**
@@ -282,7 +282,7 @@ window.EightBittr = (function(settings) {
         thing.top += dy | 0;
         
         // Make the thing's bottom dependent on the top
-        thing.bottom = thing.top + thing.height * this.unitsize;
+        thing.bottom = thing.top + thing.height * thing.EightBitter.unitsize;
     }
     
     /**
@@ -293,7 +293,7 @@ window.EightBittr = (function(settings) {
         thing.right += dx | 0;
         
         // Make the thing's left dependent on the right
-        thing.left = thing.right - thing.width * this.unitsize;
+        thing.left = thing.right - thing.width * thing.EightBitter.unitsize;
     }
     
     /**
@@ -304,7 +304,7 @@ window.EightBittr = (function(settings) {
         thing.bottom += dy | 0;
         
         // Make the thing's top dependent on the top
-        thing.top = thing.bottom - thing.height * this.unitsize;
+        thing.top = thing.bottom - thing.height * thing.EightBitter.unitsize;
     }
     
     /**
@@ -315,7 +315,7 @@ window.EightBittr = (function(settings) {
         thing.left += dx | 0;
         
         // Make the thing's right dependent on the left
-        thing.right = thing.left + thing.width * this.unitsize;
+        thing.right = thing.left + thing.width * thing.EightBitter.unitsize;
     }
     
     /**

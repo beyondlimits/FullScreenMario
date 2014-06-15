@@ -208,15 +208,15 @@ function resetThings() {
           enemy: {
               type: "enemy",
               speed: FullScreenMario.unitsize * .21,
-              collide: collideEnemy,
-              death: killFlip
+              collide: FullScreenMario.prototype.collideEnemy,
+              death: FullScreenMario.prototype.killFlip
           },
           Goomba: {
               spawntype: "DeadGoomba",
               toly: FullScreenMario.unitsize,
               death: FullScreenMario.prototype.killGoomba,
               spriteCycleSynched: [
-                  [unflipHoriz, flipHoriz]
+                  [FullScreenMario.prototype.unflipHoriz, FullScreenMario.prototype.flipHoriz]
               ]
           },
           Koopa: {
@@ -316,7 +316,7 @@ function resetThings() {
               collide_primary: true,
               animate: emergeFire,
               collide: FullScreenMario.prototype.collideFireball,
-              death: FullScreenMario.prototype.animateFireballExplodes,
+              death: FullScreenMario.prototype.animateFireballExplode,
               spriteCycleSynched: [
                   ["one", "two", "three", "four"], "spinning", 4
               ]
@@ -331,7 +331,7 @@ function resetThings() {
           Firework: {
               nocollide: true,
               nofall: true,
-              animate: FullScreenMario.prototype.fireworkAnimate
+              animate: FullScreenMario.prototype.animateFirework
           },
           Star: {
               name: "star item", // Item class so player's star isn't confused with this
@@ -384,7 +384,7 @@ function resetThings() {
               nocollide: true,
               movement: false,
               spriteCycle: [
-                  [unflipHoriz, flipHoriz]
+                  [FullScreenMario.prototype.unflipHoriz, FullScreenMario.prototype.flipHoriz]
               ]
           },
           Coin: {
@@ -624,7 +624,7 @@ function thingProcess(thing, type, settings, defaults) {
   if(thing.onThingMake) thing.onThingMake(thing, settings);
   
   // Initial class / sprite setting
-  setClassInitial(thing, thing.name || thing.title);
+  FSM.setClassInitial(thing, thing.name || thing.title);
   
   // Sprite cycles
   var cycle;
@@ -720,8 +720,8 @@ function movePirhanaRestart(me) {
 }
 function killPirhana(me) {
   if(!me && !(me = this)) return;
-  killNormal(me);
-  killNormal(me.visual_scenery);
+  FSM.killNormal(me);
+  FSM.killNormal(me.visual_scenery);
 }
 
 // Really just checks toly for pirhanas.
@@ -746,7 +746,7 @@ function movePodobooInit(me) {
 }
 function podobooJump(me) {
   if(!isCharacterAlive(me)) return;
-  unflipVert(me);
+  FSM.unflipVert(me);
   me.yvel = me.speed + me.gravity;
   me.movement = movePodobooUp;
   me.hidden = false;
@@ -762,7 +762,7 @@ function movePodobooUp(me) {
 }
 function movePodobooSwitch(me) {
   if(me.yvel <= 0) return;
-  flipVert(me);
+  FSM.flipVert(me);
   me.movement = movePodobooDown;
 }
 function movePodobooDown(me) {
@@ -787,25 +787,25 @@ function moveHammerBro(me) {
 function throwHammer(me, count) {
   if(!isCharacterAlive(me) || me.nothrow || me.right < -unitsize * 32) return;
   if(count != 3) {
-    switchClass(me, "thrown", "throwing");
+    FSM.switchClass(me, "thrown", "throwing");
   }
   TimeHandler.addEvent(function(me) {
     if(count != 3) {
       if(!isCharacterAlive(me)) return;
       // Throw the hammer...
-      switchClass(me, "throwing", "thrown");
-      addThing(ObjectMaker.make("Hammer"), me.left -FullScreenMario.unitsize * 2, me.top -FullScreenMario.unitsize * 2);
+      FSM.switchClass(me, "throwing", "thrown");
+      FSM.addThing("Hammer", me.left -FullScreenMario.unitsize * 2, me.top -FullScreenMario.unitsize * 2);
     }
     // ...and go again
     if(count > 0) TimeHandler.addEvent(throwHammer, 7, me, --count);
     else {
       TimeHandler.addEvent(throwHammer, 70, me, 7);
-      removeClass(me, "thrown");
+      FSM.removeClass(me, "thrown");
     }
   }, 14, me);
 }
 function jumpHammerBro(me) {
-  if(!isCharacterAlive(me)) return true; // finish
+  if(!FSM.isCharacterAlive(me)) return true; // finish
   if(!me.resting) return; // just skip
   // If it's ok, jump down
   if(map_settings.floor - (me.bottom / FullScreenMario.unitsize) >= jumplev1 - 2 && me.resting.name != "floor" && Math.floor(Math.random() * 2)) {
@@ -824,13 +824,13 @@ function moveCannonInit(me) {
       if(player.right > me.left -FullScreenMario.unitsize * 8 && player.left < me.right + FullScreenMario.unitsize * 8)
         return; // don't fire if Player is too close
       var spawn = ObjectMaker.make("BulletBill");
-      if(objectToLeft(player, me)) {
-        addThing(spawn, me.left, me.top);
+      if(FSM.objectToLeft(player, me)) {
+        FSM.addThing(spawn, me.left, me.top);
         spawn.direction = spawn.moveleft = true;
         spawn.xvel *= -1;
-        flipHoriz(spawn);
+        FSM.flipHoriz(spawn);
       }
-      else addThing(spawn, me.left + me.width, me.top);
+      else FSM.addThing(spawn, me.left + me.width, me.top);
       AudioPlayer.playLocal("Bump", me.right);
     }, 270, Infinity, me);
   me.movement = false;
@@ -853,7 +853,7 @@ function moveBlooper(me) {
 
   if(me.squeeze) me.yvel = max(me.yvel + .021, .7); // going down
   else me.yvel = min(me.yvel - .035, -.7); // going up
-  shiftVert(me, me.yvel, true);
+  FSM.shiftVert(me, me.yvel, true);
   
   if(!me.squeeze) {
     if(player.left > me.right + FullScreenMario.unitsize * 8) {
@@ -867,17 +867,21 @@ function moveBlooper(me) {
   }
 }
 function squeezeBlooper(me) {
-  if(me.squeeze != 2) addClass(me, "squeeze");
+  if(me.squeeze != 2) {
+    FSM.addClass(me, "squeeze");
+    me.squeeze = 2;
+  }
   // if(!me.squeeze) me.yvel = 0;
-  me.squeeze = 2;
   me.xvel /= 1.17;
-  setHeight(me, 10, true, true);
+  FSM.setHeight(me, 10, true, true);
   // (104 (map_settings.floor) - 12 (blooper.height) - 2) * FullScreenMario.unitsize
-  if(me.top > player.bottom || me.bottom > 360) unsqueezeBlooper(me);
+  if(me.top > player.bottom || me.bottom > 360) {
+    unsqueezeBlooper(me);
+  }
 }
 function unsqueezeBlooper(me) {
   me.squeeze = false;
-  removeClass(me, "squeeze");
+  FSM.removeClass(me, "squeeze");
   me.counter = 0;
   setHeight(me, 12, true, true);
   // me.yvel /= 3;
@@ -914,7 +918,7 @@ function startCheepSpawn() {
         FSM.MapScreener.height * FullScreenMario.unitsize);
       spawn.xvel = Math.random() * player.maxspeed;
       spawn.yvel = FullScreenMario.unitsize * -2.33;
-      flipHoriz(spawn);
+      FSM.flipHoriz(spawn);
       spawn.movement = function(me) {
         if(me.top < ceilmax) me.movement = moveCheepJumping; 
         else shiftVert(me, me.yvel);
@@ -925,7 +929,7 @@ function startCheepSpawn() {
 
 // The lakitu's position starts to the right of player ...
 function moveLakituInit(me) {
-  if(map_settings.has_lakitu && me.norepeat) return killNormal(me);
+  if(map_settings.has_lakitu && me.norepeat) return FSM.killNormal(me);
   TimeHandler.addEventInterval(function(me) {
     if(me.alive) throwSpiny(me);
     else return true;
@@ -964,18 +968,18 @@ function moveLakitu(me) {
 }
 function throwSpiny(me) {
   if(!isCharacterAlive(me)) return false;
-  switchClass(me, "out", "hiding");
+  FSM.switchClass(me, "out", "hiding");
   TimeHandler.addEvent(function(me) {
     if(me.dead) return false;
     var spawn = ObjectMaker.make("SpinyEgg");
     addThing(spawn, me.left, me.top);
     spawn.yvel = FullScreenMario.unitsize * -2.1;
-    switchClass(me, "hiding", "out");
+    FSM.switchClass(me, "hiding", "out");
   }, 21, me);
 }
 function killLakitu(me) {
   delete me.noscroll;
-  killFlip(me);
+  FSM.killFlip(me);
 }
 
 function moveSpinyEgg(me) {
@@ -985,7 +989,7 @@ function createSpiny(me) {
   var spawn = ObjectMaker.make("Spiny");
   addThing(spawn, me.left, me.top);
   spawn.moveleft = objectToLeft(player, spawn);
-  killNormal(me);
+  FSM.killNormal(me);
 }
 
 
@@ -1046,7 +1050,7 @@ function movePlayer(me) {
     // Jumping, not resting
     else {
       if(!me.jumping && !map_settings.underwater) {
-        switchClass(me, "running skidding", "jumping");
+        FSM.switchClass(me, "running skidding", "jumping");
       }
       me.jumping = true;
     }
@@ -1060,7 +1064,7 @@ function movePlayer(me) {
   if(me.keys.crouch && !me.crouching && me.resting) {
     if(me.power != 1) {
       me.crouching = true;
-      addClass(me, "crouching");
+      FSM.addClass(me, "crouching");
       // setHeight(player, 11);
       setHeight(player, 11, false, true);
       me.height = 11;
@@ -1089,13 +1093,13 @@ function movePlayer(me) {
     // If you're accelerating in the opposite direction from your current velocity, that's a skid
     if(/*sprinting && */signBool(me.keys.run) == me.moveleft) {
       if(!me.skidding) {
-        addClass(me, "skidding");
+        FSM.addClass(me, "skidding");
         me.skidding = true;
       }
     }
     // Otherwise make sure you're not skidding
     else if(me.skidding) {
-      removeClass(me, "skidding");
+      FSM.removeClass(me, "skidding");
       me.skidding = false;
     }
   }
@@ -1121,29 +1125,29 @@ function movePlayer(me) {
     if(me.running) {
       me.running = false;
       if(player.power == 1) FSM.setPlayerSizeSmall(me);
-      removeClasses(me, "running skidding one two three");
-      addClass(me, "still");
+      FSM.removeClasses(me, "running skidding one two three");
+      FSM.addClass(me, "still");
       TimeHandler.clearClassCycle(me, "running");
     }
   }
   // Not moving slowly
   else if(!me.running) {
     me.running = true;
-    switchClass(me, "still", "running");
+    FSM.switchClass(me, "still", "running");
     playerStartRunningCycle(me);
     if(me.power == 1) FSM.setPlayerSizeSmall(me);
   }
   if(me.xvel > 0) {
     me.xvel = min(me.xvel, me.maxspeed);
     if(me.moveleft && (me.resting || map_settings.underwater)) {
-      unflipHoriz(me);
+      FSM.unflipHoriz(me);
       me.moveleft = false;
     }
   }
   else if(me.xvel < 0) {
     me.xvel = max(me.xvel, me.maxspeed * -1);
     if(!me.moveleft && (me.resting || map_settings.underwater)) {
-      flipHoriz(me);
+      FSM.flipHoriz(me);
       me.moveleft = true;
     }
   }
@@ -1152,24 +1156,24 @@ function movePlayer(me) {
   if(me.resting) {
     // Hopping
     if(me.hopping) {
-      removeClass(me, "hopping");
-      if(me.xvel) addClass(me, "running");
+      FSM.removeClass(me, "hopping");
+      if(me.xvel) FSM.addClass(me, "running");
       me.hopping = false;
     }
     // Jumping
     me.keys.jumplev = me.yvel = me.jumpcount = 0;
     if(me.jumping) {
       me.jumping = false;
-      removeClass(me, "jumping");
+      FSM.removeClass(me, "jumping");
       if(me.power == 1) FSM.setPlayerSizeSmall(me);
-      addClass(me, abs(me.xvel) < .14 ? "still" : "running");
+      FSM.addClass(me, Math.abs(me.xvel) < .14 ? "still" : "running");
     }
     // Paddling
     if(me.paddling) {
       me.paddling = me.swimming = false;
-      removeClasses(me, "paddling swim1 swim2");
+      FSM.removeClasses(me, "paddling swim1 swim2");
       TimeHandler.clearClassCycle(me, "paddling");
-      addClass(me, "running");
+      FSM.addClass(me, "running");
     }
   }
 }
@@ -1186,8 +1190,8 @@ function setPlayerRunningCycler(event) {
 
 function playerPaddles(me) {
   if(!me.paddling) {
-    removeClasses(me, /*"running */"skidding paddle1 paddle2 paddle3 paddle4 paddle5");
-    addClass(me, "paddling");
+    FSM.removeClasses(me, /*"running */"skidding paddle1 paddle2 paddle3 paddle4 paddle5");
+    FSM.addClass(me, "paddling");
     TimeHandler.clearClassCycle(me, "paddling_cycle");
     TimeHandler.addSpriteCycle(me, ["paddle1", "paddle2", "paddle3", "paddle3", "paddle2", "paddle1", function() { return me.paddling = false; }], "paddling_cycle", 5);
   }
@@ -1224,9 +1228,9 @@ function movePlayerVine(me) {
   else me.animatednow = false;
   
   if(me.animatednow && !me.animated) {
-    addClass(me, "animated");
+    FSM.addClass(me, "animated");
   } else if(!me.animatednow && me.animated) {
-    removeClass(me, "animated");
+    FSM.removeClass(me, "animated");
   }
   
   me.animated = me.animatednow;
@@ -1240,27 +1244,27 @@ function movePlayerVine(me) {
 
 function unattachPlayer(me) {
   me.movement = movePlayer;//me.movementsave;
-  removeClasses(me, "climbing", "animated");
+  FSM.removeClasses(me, "climbing", "animated");
   TimeHandler.clearClassCycle(me, "climbing");
   me.yvel = me.attachoff = me.nofall = me.climbing = me.attached = me.attached.attached = false;
   me.xvel = me.keys.run;
 }
 
 function playerHopsOff(me, addrun) {
-  removeClasses(me, "climbing running");
-  addClass(me, "jumping");
+  FSM.removeClasses(me, "climbing running");
+  FSM.addClass(me, "jumping");
   
   me.nocollide = me.nofall = me.climbing = false;
   me.gravity = map_settings.gravity / 14;
   me.xvel = 1.4;
   me.yvel = -1.4;
   TimeHandler.addEvent(function(me) {
-    unflipHoriz(me);
+    FSM.unflipHoriz(me);
     me.gravity = map_settings.gravity;
     me.movement = movePlayer;
     me.attached = false;
     if(addrun) {
-      addClass(me, "running")
+      FSM.addClass(me, "running")
       playerStartRunningCycle(me);
     }
   }, 21, me);
@@ -1270,7 +1274,7 @@ function playerHopsOff(me, addrun) {
 function playerFires() {
   if(player.numballs >= 2) return;
   ++player.numballs;
-  addClass(player, "firing");
+  FSM.addClass(player, "firing");
   var ball = ObjectMaker.make("Fireball", {
         moveleft: player.moveleft,
         speed: FullScreenMario.unitsize * 1.75,
@@ -1286,7 +1290,7 @@ function playerFires() {
   ball.animate(ball);
   ball.ondelete = fireDeleted;
   TimeHandler.addEvent(function(player) {
-    removeClass(player, "firing");
+    FSM.removeClass(player, "firing");
   }, 7, player);
 }
 function emergeFire(me) {
@@ -1299,15 +1303,15 @@ function playerStar(me, timeout) {
   AudioPlayer.play("Powerup");
   AudioPlayer.playTheme("Star", true);
   TimeHandler.addEvent(playerRemoveStar, timeout || 560, me);
-  switchClass(me, "normal", "star");
+  FSM.switchClass(me, "normal", "star");
   TimeHandler.addSpriteCycle(me, ["star1", "star2", "star3", "star4"], "star", 5);
 }
 function playerRemoveStar(me) {
   if(!me.star) return;
   --me.star;
-  removeClasses(me, "star star1 star2 star3 star4");
+  FSM.removeClasses(me, "star star1 star2 star3 star4");
   TimeHandler.clearClassCycle(me, "star");
-  addClass(me, "normal");
+  FSM.addClass(me, "normal");
   AudioPlayer.playTheme();
 }
 
@@ -1331,9 +1335,9 @@ function killPlayer(me, big) {
     else if(big != 2) {
       // Make this look dead
       TimeHandler.clearAllCycles(me);
-      setSize(me, 7.5, 7, true);
-      updateSize(me);
-      setClass(me, "character player dead");
+      FSM.setSize(me, 7.5, 7, true);
+      FSM.updateSize(me);
+      FSM.setClass(me, "character player dead");
       // Pause some things
       nokeys = notime = me.dying = true;
       FSM.thingStoreVelocity(me);
@@ -1356,15 +1360,8 @@ function killPlayer(me, big) {
   me.nocollide = me.nomove = nokeys = 1;
   StatsHolder.decrease("lives");
   
-  // If it's in editor, (almost) immediately set map
-  if(window.editing) {
-    setTimeout(function() {
-      editorSubmitGameFuncPlay();
-      editor.playing = editor.playediting = true;
-    }, 35 * timer);
-  }
   // If the map is normal, or failing that a game over is reached, timeout a reset
-  else if(!map_settings.random || StatsHolder.get("lives") <= 0) {
+  if(!map_settings.random || StatsHolder.get("lives") <= 0) {
     TimeHandler.addEvent(StatsHolder.get("lives") ? setMap : gameOver, 280);
   }
   // Otherwise it's random; spawn him again
@@ -1475,10 +1472,10 @@ function touchVine(me, vine) {
   
   // Reset classes to be in vine mode
   TimeHandler.clearClassCycle(me, "running");
-  removeClass(me, "running skidding");
+  FSM.removeClass(me, "running skidding");
   unflipHoriz(me);
   if(me.attachleft) flipHoriz(me);
-  addClass(me, "climbing");
+  FSM.addClass(me, "climbing");
   // setSize(me, 7, 8, true);
   me.climbing = TimeHandler.addSpriteCycle(me, ["one", "two"], "climbing");
   
@@ -1553,14 +1550,14 @@ function RestingStoneUnused(me) {
   // Wait until Player isn't resting
   if(!player.resting) return;
   // If Player is resting on something else, this is unecessary
-  if(player.resting != me) return killNormal(me);
+  if(player.resting != me) return FSM.killNormal(me);
   // Make the stone wait until it's no longer being rested upon
   me.movement = RestingStoneUsed;
-  removeClass(me, "hidden");
+  FSM.removeClass(me, "hidden");
   PixelDrawer.setThingSpritesetThingSprite(player);
 }
 function RestingStoneUsed(me) { 
-  if(!player.resting) return killNormal(me);
+  if(!player.resting) return FSM.killNormal(me);
 }
 
 function makeCastleBlock(me, settings) {
@@ -1620,13 +1617,13 @@ function CastleAxeFalls(me, collider) {
     me.right < axe.left + FullScreenMario.unitsize ||
     me.bottom > axe.bottom -FullScreenMario.unitsize) return;
   // Immediately kill the axe and collider
-  killNormal(axe);
-  killNormal(collider);
+  FSM.killNormal(axe);
+  FSM.killNormal(collider);
   // Pause Player & wipe the other characters
   notime = nokeys = true;
   FSM.thingStoreVelocity(me);
   killOtherCharacters();
-  TimeHandler.addEvent(killNormal, 7, axe.chain);
+  TimeHandler.addEvent(FSM.killNormal, 7, axe.chain);
   TimeHandler.addEvent(CastleAxeKillsBridge, 14, axe.bridge, axe);
   AudioPlayer.pauseTheme();
   AudioPlayer.playTheme("World Clear", false, false);
@@ -1660,7 +1657,7 @@ function CastleAxeContinues(player) {
 }
 // CollideCastleNPC is actually called by the FuncCollider
 function collideCastleNPC(me, collider) {
-  killNormal(collider);
+  FSM.killNormal(collider);
   me.keys.run = 0;
   TimeHandler.addEvent(function(text) {
     var i;
@@ -1688,7 +1685,6 @@ function detachPlayer(me) {
 }
 
 function FlagCollisionTop(me, detector) {
-  console.log("Found", me);
   AudioPlayer.pause();
   AudioPlayer.play("Flagpole");
   
@@ -1703,8 +1699,8 @@ function FlagCollisionTop(me, detector) {
   
   // Visually, the player is now climbing, and invincible
   ++me.star;
-  removeClasses(me, "running jumping skidding");
-  addClass(me, "climbing animated");
+  FSM.removeClasses(me, "running jumping skidding");
+  FSM.addClass(me, "climbing animated");
   TimeHandler.addSpriteCycle(me, ["one", "two"], "climbing");
   
   // Start moving the player down, as well as the end flag
@@ -1752,8 +1748,8 @@ function scorePlayerFlag(diff) {
 
 function FlagOff(me, solid) {
   // Flip the player to the other side of the solid
-  flipHoriz(me);
-  shiftHoriz(me, (me.width + 1) * FullScreenMario.unitsize);
+  FSM.flipHoriz(me);
+  FSM.shiftHoriz(me, (me.width + 1) * FullScreenMario.unitsize);
   
   // Prepare the player to walk to the right
   me.keys.run = 1;
@@ -1772,7 +1768,7 @@ function endLevelPoints(me, detector) {
   
   // Stop the game, and get rid of player and the detectors
   notime = nokeys = true;
-  killNormal(me);
+  FSM.killNormal(me);
   
   // Determine the number of fireballs (1, 3, and 6 become not 0)
   var numfire = parseInt(getLast(String(StatsHolder.get("time"))));
@@ -1834,12 +1830,10 @@ function Firework(me, num) {
     }
   // Otherwise, it's just a normal explosion
   me.animate = function() {
-    var name = me.className + " n";
-    if(me.locs) AudioPlayer.play("Firework");
-    TimeHandler.addEvent(function(me) { setClass(me, name + 1); }, 0, me);
-    TimeHandler.addEvent(function(me) { setClass(me, name + 2); }, 7, me);
-    TimeHandler.addEvent(function(me) { setClass(me, name + 3); }, 14, me);
-    TimeHandler.addEvent(function(me) { killNormal(me); }, 21, me);
+    FSM.animateFirework(me);
+    if(me.locs) {
+        FSM.AudioPlayer.play("Firework");
+    }
   }
   setCharacter(me, "firework");
   // score(me, 500);
@@ -1862,7 +1856,7 @@ function enableWarpWorldText(me, warp) {
   }
   for(i in texts)
     texts[i].element.style.visibility = "";
-  killNormal(warp);
+  FSM.killNormal(warp);
 }
 
 
@@ -2004,9 +1998,9 @@ function onDetectorCollision(character, me) {
     return;
   }
   me.activate(character, me);
-  killNormal(me);
+  FSM.killNormal(me);
 }
 function onDetectorSpawn(me) {
   me.activate(me);
-  killNormal(me);
+  FSM.killNormal(me);
 }

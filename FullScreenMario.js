@@ -287,8 +287,8 @@ window.FullScreenMario = (function() {
      * @remarks Only the horizontal checks use unitsize
      */
     function isThingTouchingThing(thing, other) {        return !thing.nocollide && !other.nocollide
-                && thing.right - this.unitsize > other.left
-                && thing.left + this.unitsize < other.right
+                && thing.right - thing.EightBitter.unitsize > other.left
+                && thing.left + thing.EightBitter.unitsize < other.right
                 && thing.bottom >= other.top
                 && thing.top <= other.bottom;
     }
@@ -318,12 +318,12 @@ window.FullScreenMario = (function() {
         }
         
         // If thing is too far to the right, it can't be touching other
-        if(thing.left + this.unitsize >= other.right) {
+        if(thing.left + thing.EightBitter.unitsize >= other.right) {
             return false;
         }
         
         // If thing is too far to the left, it can't be touching other
-        if(thing.right - this.unitsize <= other.left) {
+        if(thing.right - thing.EightBitter.unitsize <= other.left) {
             return false;
         }
         
@@ -353,12 +353,12 @@ window.FullScreenMario = (function() {
      */
     function isThingOnSolid(thing, other) {
         // If thing is too far to the right, they're not touching
-        if(thing.left + this.unitsize > other.right) {
+        if(thing.left + thing.EightBitter.unitsize > other.right) {
             return false;
         }
         
         // If thing is too far to the left, they're not touching
-        if(thing.right - this.unitsize < other.left) {
+        if(thing.right - thing.EightBitter.unitsize < other.left) {
             return false;
         }
         
@@ -383,24 +383,24 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
-    function isCharacterOnSolid(character, solid) {
+    function isCharacterOnSolid(thing, other) {
         // If character is resting on solid, this is automatically true
-        if(character.resting === solid) {
+        if(thing.resting === other) {
             return true;
-        }                // If the character is jumping upwards, it's not on a solid        // (removing this check would cause Mario to have "sticky" behavior when        // jumping at the corners of solids)        if(character.yvel < 0) {            return false;        }
+        }                // If the character is jumping upwards, it's not on a solid        // (removing this check would cause Mario to have "sticky" behavior when        // jumping at the corners of solids)        if(thing.yvel < 0) {            return false;        }
         
         // The character and solid must be touching appropriately
-        if(!this.isThingOnSolid(character, solid)) {
+        if(!thing.EightBitter.isThingOnSolid(thing, other)) {
             return false;
         }
         
         // Corner case: when character is exactly falling off the right (false)
-        if(character.left + character.xvel + this.unitsize == solid.right) {
+        if(thing.left + thing.xvel + thing.EightBitter.unitsize === other.right) {
             return false;
         }
         
         // Corner case: when character is exactly falling off the left (false)
-        if(character.right - character.xvel - this.unitsize == solid.left) {
+        if(thing.right - thing.xvel - thing.EightBitter.unitsize === other.left) {
             return false;
         }
         
@@ -411,18 +411,18 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
-    function isCharacterOnResting(character, solid) {
-        if(!this.isThingOnSolid(character, solid)) {
+    function isCharacterOnResting(thing, other) {
+        if(!thing.EightBitter.isThingOnSolid(thing, other)) {
             return false;
         }
         
         // Corner case: when character is exactly falling off the right (false)
-        if(character.left + character.xvel + this.unitsize == solid.right) {
+        if(thing.left + thing.xvel + thing.EightBitter.unitsize == other.right) {
             return false;
         }
         
         // Corner case: when character is exactly falling off the left (false)
-        if(character.right - character.xvel - this.unitsize == solid.left) {
+        if(thing.right - thing.xvel - thing.EightBitter.unitsize == other.left) {
             return false;
         }
         
@@ -447,6 +447,13 @@ window.FullScreenMario = (function() {
      */
     function isCharacterAboveEnemy(thing, other) {
         return thing.bottom < other.top + other.toly;
+    }
+    
+    /**
+     * 
+     */
+    function isCharacterBumpingSolid(thing, other) {
+        return thing.top + thing.toly + Math.abs(thing.yvel) > other.bottom;
     }
     
     /**
@@ -516,6 +523,9 @@ window.FullScreenMario = (function() {
      * 
      */
     function shiftAll(dx, dy) {
+        if(!(this instanceof EightBittr)) {
+            debugger;
+        }
         this.GroupHolder.callAll(this, shiftThings, dx, dy);
     }
 
@@ -523,15 +533,15 @@ window.FullScreenMario = (function() {
      * 
      */
     function setWidth(thing, width, update_sprite, update_size) {        thing.width = width;
-        thing.unitwidth = width * this.unitsize;
+        thing.unitwidth = width * thing.EightBitter.unitsize;
         
         if(update_sprite) {
             thing.spritewidth = width;
-            thing.spritewidthpixels = width * this.unitsize;
+            thing.spritewidthpixels = width * thing.EightBitter.unitsize;
         }
         
         if(update_size) {
-            this.updateSize(thing);
+            thing.EightBitter.updateSize(thing);
             // PixelDrawer.setThingSprite(thing);
             console.log("Should update thing canvas on setWidth", thing.title);
         }
@@ -542,15 +552,15 @@ window.FullScreenMario = (function() {
      */
     function setHeight(thing, height, update_sprite, update_size) {
         thing.height = height;
-        thing.unitheight = height * this.unitsize;
+        thing.unitheight = height * thing.EightBitter.unitsize;
         
         if(update_sprite) {
             thing.spriteheight = height;
-            thing.spriteheightpixels = height * this.unitsize;
+            thing.spriteheightpixels = height * thing.EightBitter.unitsize;
         }
         
         if(update_size) {
-            this.updateSize(thing);
+            thing.EightBitter.updateSize(thing);
             // setThingSprite(thing);
             console.log("Should update thing canvas on setHeight", thing.title);
         }
@@ -560,8 +570,8 @@ window.FullScreenMario = (function() {
      * 
      */
     function setSize(thing, width, height, update_sprite, update_size) {
-        this.setWidth(thing, width, update_sprite, update_size);
-        this.setHeight(thing, height, update_sprite, update_size);
+        thing.EightBitter.setWidth(thing, width, update_sprite, update_size);
+        thing.EightBitter.setHeight(thing, height, update_sprite, update_size);
     }
     
     /**
@@ -569,11 +579,11 @@ window.FullScreenMario = (function() {
      */
     function updatePosition(thing, hard) {
         if(!thing.nomove || hard) {
-            this.shiftHoriz(thing, thing.xvel);
+            thing.EightBitter.shiftHoriz(thing, thing.xvel);
         }
         
         if(!thing.nofall || hard) {
-            this.shiftVert(thing, thing.yvel);
+            thing.EightBitter.shiftVert(thing, thing.yvel);
         }
     }
     
@@ -581,15 +591,15 @@ window.FullScreenMario = (function() {
      * 
      */
     function updateSize(thing) {
-        thing.unitwidth = thing.width * this.unitsize;
-        thing.unitheight = thing.height * this.unitsize;
-        thing.spritewidthpixels = thing.spritewidth * this.unitsize;
-        thing.spriteheightpixels = thing.spriteheight * this.unitsize;
+        thing.unitwidth = thing.width * thing.EightBitter.unitsize;
+        thing.unitheight = thing.height * thing.EightBitter.unitsize;
+        thing.spritewidthpixels = thing.spritewidth * thing.EightBitter.unitsize;
+        thing.spriteheightpixels = thing.spriteheight * thing.EightBitter.unitsize;
         
         if(thing.canvas !== undefined) {
             thing.canvas.width = thing.spritewidthpixels;
             thing.canvas.height = thing.spriteheightpixels;
-            this.PixelDrawer.setThingSprite(thing);
+            thing.EightBitter.PixelDrawer.setThingSprite(thing);
         }
     }
     
@@ -598,10 +608,10 @@ window.FullScreenMario = (function() {
      */
     function reduceHeight(thing, dy, see) {
         thing.top += dy;
-        thing.height -= dy / this.unitsize;
+        thing.height -= dy / thing.EightBitter.unitsize;
         
         if(see) {
-            this.updateSize(thing);
+            thing.EightBitter.updateSize(thing);
         }
     }
     
@@ -610,8 +620,8 @@ window.FullScreenMario = (function() {
      */
     function increaseHeight(thing, dy) {
         thing.top -= dy;
-        thing.height += dy / this.unitsize;
-        thing.unitheight = thing.height * this.unitsize;
+        thing.height += dy / thing.EightBitter.unitsize;
+        thing.unitheight = thing.height * thing.EightBitter.unitsize;
     }
     
     /**
@@ -957,7 +967,7 @@ window.FullScreenMario = (function() {
         }
         
         // Character bumping into the side of the solid
-        if(!characterNotBumping(thing, other)
+        if(!thing.EightBitter.isCharacterBumpingSolid(thing, other)
                 && !thing.EightBitter.isThingOnThing(thing, other)
                 && !thing.EightBitter.isThingOnThing(other, thing) && !thing.under) {
             
@@ -1005,7 +1015,7 @@ window.FullScreenMario = (function() {
                 break;
             default:
                 thing.death(thing, 2);
-                scoreEnemyBelow(me);
+                scoreEnemyBelow(thing);
                 break;
         }
     }
@@ -1382,7 +1392,7 @@ window.FullScreenMario = (function() {
         thing.EightBitter.animateSolidBump(thing);
         thing.EightBitter.removeClass(thing, "hidden");
         thing.EightBitter.switchClass(thing, "unused", "used");
-        thing.EightBitter.TimeHandler.addEvent(thing.EightBitter.animateSolidContents, 7, thing);
+        thing.EightBitter.TimeHandler.addEvent(thing.EightBitter.animateSolidContents, 7, thing, other);
     }
     
     
@@ -1408,14 +1418,14 @@ window.FullScreenMario = (function() {
             if(thing.moveleft) {
                 thing.xvel = -thing.speed;
                 if(!thing.noflip) {
-                    unflipHoriz(thing);
+                    thing.EightBitter.unflipHoriz(thing);
                 }
             }
             // thing.moveleft is falsy: it should now be looking to the left
             else {
                 thing.xvel = thing.speed;
                 if(!thing.noflip) {
-                    flipHoriz(thing);
+                    thing.EightBitter.flipHoriz(thing);
                 }
             }
             thing.direction = thing.moveleft;
@@ -1438,13 +1448,13 @@ window.FullScreenMario = (function() {
         
         // Check for being over the edge in the direction of movement
         if(thing.moveleft) {
-            if(thing.left + this.unitsize <= thing.resting.left) {
-                shiftHoriz(thing, this.unitsize);
+            if(thing.left + thing.EightBitter.unitsize <= thing.resting.left) {
+                thing.EightBitter.shiftHoriz(thing, thing.EightBitter.unitsize);
                 thing.moveleft = false;
             }
         } else {
-            if(thing.right - this.unitsize >= thing.resting.right) {
-                shiftHoriz(thing, -this.unitsize);
+            if(thing.right - thing.EightBitter.unitsize >= thing.resting.right) {
+                shiftHoriz(thing, -thing.EightBitter.unitsize);
                 thing.moveleft = true;
             }
         }
@@ -1482,8 +1492,8 @@ window.FullScreenMario = (function() {
         
         // Make thing.begin and thing.end relative to map_settings.floor
         console.warn("moveFloating should avoid using map_settings");
-        thing.begin = map_settings.floor * this.unitsize - thing.begin;
-        thing.end = map_settings.floor * this.unitsize - thing.end;
+        thing.begin = map_settings.floor * thing.EightBitter.unitsize - thing.begin;
+        thing.end = map_settings.floor * thing.EightBitter.unitsize - thing.end;
         
         // Use moveFloatingReal as the actual movement function from now on
         (thing.movement = moveFloatingReal)(thing);
@@ -1500,11 +1510,11 @@ window.FullScreenMario = (function() {
     function moveFloatingReal(thing) {
         // If above the endpoint:
         if(thing.top <= thing.end) {
-            thing.yvel = Math.min(thing.yvel + this.unitsize / 32, thing.maxvel);
+            thing.yvel = Math.min(thing.yvel + thing.EightBitter.unitsize / 32, thing.maxvel);
         }
         // If below the endpoint:
         else if(thing.bottom >= thing.begin) {
-            thing.yvel = Math.max(thing.yvel - this.unitsize / 32, -thing.maxvel);
+            thing.yvel = Math.max(thing.yvel - thing.EightBitter.unitsize / 32, -thing.maxvel);
         }
         
         // Deal with velocities and whether the player is resting on this
@@ -1537,11 +1547,11 @@ window.FullScreenMario = (function() {
     function moveSlidingReal(thing) {
         // If to the left of the endpoint:
         if(FSM.MapScreener.left + thing.left <= thing.begin) {
-            thing.xvel = Math.min(thing.xvel + this.unitsize / 32, thing.maxvel);
+            thing.xvel = Math.min(thing.xvel + thing.EightBitter.unitsize / 32, thing.maxvel);
         }
         // If to the right of the endpoint:
         else if(FSM.MapScreener.left + thing.right > thing.end) {
-            thing.xvel = Math.max(thing.xvel - this.unitsize / 32, -thing.maxvel);
+            thing.xvel = Math.max(thing.xvel - thing.EightBitter.unitsize / 32, -thing.maxvel);
         }
         
         // Deal with velocities and whether the player is resting on this
@@ -1584,7 +1594,7 @@ window.FullScreenMario = (function() {
                 setLeft(player, 0);
             }
         }
-    }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if(thing !== player.resting) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        this.shiftVert(thing, thing.yvel += this.unitsize / 8);        EightBittr.prototype.physics.setBottom(player, thing.top);                // After a velocity threshold, start always falling        if(thing.yvel >= thing.fall_threshold_start || this.unitsize * 2.8) {            thing.freefall = true;            thing.movement = moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || this.unitsize / 16;        this.shiftVert(thing, thing.yvel);                // After a velocity threshold, stop accelerating        if(thing.yvel >= thing.fall_threshold_end || this.unitsize * 2) {            thing.movement = movePlatform;        }    }
+    }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if(thing !== player.resting) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        thing.EightBitter.shiftVert(thing, thing.yvel += thing.EightBitter.unitsize / 8);        thing.EightBitter.setBottom(player, thing.top);                // After a velocity threshold, start always falling        if(thing.yvel >= thing.fall_threshold_start || thing.EightBitter.unitsize * 2.8) {            thing.freefall = true;            thing.movement = moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || thing.EightBitter.unitsize / 16;        thing.EightBitter.shiftVert(thing, thing.yvel);                // After a velocity threshold, stop accelerating        if(thing.yvel >= thing.fall_threshold_end || thing.EightBitter.unitsize * 2) {            thing.movement = movePlatform;        }    }
     
     /**
      * 
@@ -1651,7 +1661,7 @@ window.FullScreenMario = (function() {
     function animateSolidContents(thing, other) {
         var output;
 
-        if(other && other.player && other.power > 1 && thing.contents === "Coin") {
+        if(other && other.player && other.power > 1 && thing.contents === "Mushroom") {
             thing.contents = "FireFlower";
         }
         
@@ -1786,7 +1796,7 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
-    function animateFireballExplodes(thing, level) {
+    function animateFireballExplode(thing, level) {
         thing.EightBitter.killNormal(thing);
         if(level === 2) {
             return;
@@ -1879,7 +1889,7 @@ window.FullScreenMario = (function() {
             }
             
             for(j = arr.length - 1; j >= 0; j -= 1) {
-                addClass(thing, arr[j]);
+                thing.EightBitter.addClass(thing, arr[j]);
             }
         }
     }
@@ -1891,8 +1901,8 @@ window.FullScreenMario = (function() {
         if(!string) {
             return;
         }
-        if(string.indexOf(' ') !== -1) {
-            removeClasses(thing, string);
+        if(string.indexOf(" ") !== -1) {
+            thing.EightBitter.removeClasses(thing, string);
         }
         thing.className = thing.className.replace(new RegExp(" " + string, "gm"), "");
         thing.EightBitter.PixelDrawer.setThingSprite(thing);
@@ -1902,25 +1912,14 @@ window.FullScreenMario = (function() {
      * 
      */
     function removeClasses(thing) {
-        // var strings, arr, i, j;
-        // for(i = 1; i < arguments.length; i += 1) {
-            // arr = arguments[i];
-            
-            // if(!(arr instanceof Array)) {
-                // arr = arr.split(' ');
-            // }
-            
-            // for(j = arr.length - 1; j >= 0; j -= 1) {
-                // removeClass(thing, arr[j]);
-            // }
-        // }
-        
       var strings, arr, i, j;
       for(i = 1; i < arguments.length; ++i) {
         arr = arguments[i];
-        if(!(arr instanceof Array)) arr = arr.split(" ");
+        if(!(arr instanceof Array)) {
+            arr = arr.split(" ");
+        }
         for(j = arr.length - 1; j >= 0; --j)
-          removeClass(thing, arr[j]);
+          thing.EightBitter.removeClass(thing, arr[j]);
       }
     }
     
@@ -1928,36 +1927,36 @@ window.FullScreenMario = (function() {
      * 
      */
     function switchClass(thing, string_out, string_in) {
-        removeClass(thing, string_out);
-        addClass(thing, string_in);
+        thing.EightBitter.removeClass(thing, string_out);
+        thing.EightBitter.addClass(thing, string_in);
     }
     
     /**
      * 
      */
     function flipHoriz(thing) {
-        addClass(thing, "flipped");
+        thing.EightBitter.addClass(thing, "flipped");
     }
     
     /**
      * 
      */
     function flipVert(thing) {
-        addClass(thing, "flip-vert");
+        thing.EightBitter.addClass(thing, "flip-vert");
     }
     
     /**
      * 
      */
     function unflipHoriz(thing) {
-        removeClass(thing, "flipped");
+        thing.EightBitter.removeClass(thing, "flipped");
     }
     
     /**
      * 
      */
     function unflipVert(thing) {
-        removeClass(thing, "flip-vert");
+        thing.EightBitter.removeClass(thing, "flip-vert");
     }
     
     
@@ -1997,7 +1996,7 @@ window.FullScreenMario = (function() {
         thing.nocollide = thing.dead = true;
         thing.resting = thing.movement = thing.speed = thing.xvel = thing.nofall = false;
         thing.yvel -= unitsize;
-        thing.EightBitter.TimeHandler.addEvent(killNormal, 70 + extra, thing);
+        thing.EightBitter.TimeHandler.addEvent(thing.EightBitter.killNormal, 70 + extra, thing);
     }
     
     /**
@@ -2005,7 +2004,7 @@ window.FullScreenMario = (function() {
      */
     function killSpawn(thing, big) {
         if(big) {
-            killNormal(thing);
+            thing.EightBitter.killNormal(thing);
             return;
         }
         
@@ -2419,7 +2418,8 @@ window.FullScreenMario = (function() {
         "isCharacterTouchingSolid": isCharacterTouchingSolid,
         "isCharacterOnSolid": isCharacterOnSolid,
         "isCharacterOnResting": isCharacterOnResting,
-        "isCharacterAboveEnemy": isCharacterAboveEnemy,  
+        "isCharacterAboveEnemy": isCharacterAboveEnemy,
+        "isCharacterBumpingSolid": isCharacterBumpingSolid,
         "isSolidOnCharacter": isSolidOnCharacter,
         "isCharacterAlive": isCharacterAlive,
         // Collision reactions
@@ -2468,7 +2468,7 @@ window.FullScreenMario = (function() {
         "animateEmerge": animateEmerge,
         "animateEmergeCoin": animateEmergeCoin,
         "animateFlicker": animateFlicker,
-        "animateFireballExplodes": animateFireballExplodes,
+        "animateFireballExplode": animateFireballExplode,
         "animateFirework": animateFirework,
         "animatePlayerFire": animatePlayerFire,
         "animateCharacterHop": animateCharacterHop,

@@ -221,13 +221,13 @@ function startWalking(me) {
 }
 
 function locMovePreparations(me) {
-  me.keys = new Keys();
-  FSM.InputWriter.setEventInformation(me);
   me.nocollide = 1;
+  me.keys = new Keys();
   FSM.removeCrouch();
-  removeClass(me, "running");
-  removeClass(me, "jumping");
-  removeClass(me, "flipped");
+  FSM.removeClass(me, "running");
+  FSM.removeClass(me, "jumping");
+  FSM.removeClass(me, "flipped");
+  FSM.InputWriter.setEventInformation(me);
 }
 
 function goToTransport(transport) {
@@ -335,7 +335,7 @@ function makeEndCastleOutside(reference) {
   // Output starts off with the general flag & collision detection
   output = [
     // Initial collision detector
-    { thing: "DetectCollision", x: x + 8, y: y + 108, height: 108, activate: FlagCollisionTop, activate_fail: killNormal },
+    { thing: "DetectCollision", x: x + 8, y: y + 108, height: 108, activate: FlagCollisionTop, activate_fail: FSM.killNormal },
     // Flag (scenery)
     { thing: "Flag", x: x + .5, y: y + 79.5, "id": "endflag" },
     { thing: "FlagTop", x: x + 6.5, y: y + 84 },

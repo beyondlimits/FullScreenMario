@@ -124,6 +124,19 @@ FullScreenMario.prototype.mods = {
                     this.ObjectMaker.getFunction("solid").prototype.firedeath = 0;
                 }
             }
+        },
+        {
+            "name": "Invisible Player",
+            "description": "You can't see the player anymore.",
+            "enabled": false,
+            "events": {
+                "onModEnable": function (mod) {
+                    this.ObjectMaker.getFunction("Player").prototype.hidden = 1;
+                },
+                "onModDisable": function (mod) {
+                    this.ObjectMaker.getFunction("Player").prototype.hidden = 0;
+                }
+            }
         }
     ]
 }

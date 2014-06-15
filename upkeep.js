@@ -89,12 +89,12 @@ function maintainPlayer(update) {
       // Paddling? (from falling off a solid)
       if(map_settings.underwater) {
         if(!player.paddling) {
-          switchClass(player, "paddling", "paddling");
+          FSM.switchClass(player, "paddling", "paddling");
           player.padding = true;
         }
       }
       else {
-        addClass(player, "jumping");
+        FSM.addClass(player, "jumping");
         player.jumping = true;
       }
     }
