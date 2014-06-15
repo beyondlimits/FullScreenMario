@@ -499,12 +499,18 @@ window.FullScreenMario = (function() {
     
     /**
      * 
+     */
+    function characterAboveEnemy(thing, other) {
+        return thing.bottom < other.top + other.toly;
+    }
+    
+    /**
+     * 
      * 
      * @remarks Similar to thingOnTop, but more specifically used for
      *          characterTouchedSolid
      * @remarks This sets the character's .midx property
-     */    // function solidOnCharacter(thing, other) {
-    function solidOnCharacter(solid, character) {        // This can never be true if character is falling
+     */    function solidOnCharacter(solid, character) {        // This can never be true if character is falling
         if(character.yvel >= 0) {
             return false;
         }
@@ -528,8 +534,8 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
-    function characterAboveEnemy(thing, other) {
-        return thing.bottom < other.top + other.toly;
+    function isCharacterAlive(thing) {
+        return thing && thing.alive && !thing.dead;
     }
     
 
@@ -915,6 +921,83 @@ window.FullScreenMario = (function() {
                 other.action(thing, other);
             }
             other.death(other);
+        }
+    }
+    
+    /**
+     * 
+     */
+    function collideCharacterSolid(thing, other) {
+        if(other.up === thing) {
+            return;
+        }
+        
+        // Character on top of solid
+        if(thing.EightBitter.characterOnSolid(thing, other)) {
+            if(other.hidden) {
+                return;
+            }
+            thing.resting = other;
+        }
+        // Solid on top of character
+        else if(thing.EightBitter.solidOnCharacter(other, thing)) {
+            var midx = thing.EightBitter.getMidX(thing);
+            
+            if(midx > other.left && midx < other.right) {
+                thing.undermid = other;
+            } else if(other.hidden) {
+                return;
+            }
+            
+            if(!thing.under) {
+                thing.under = [other];
+            } else {
+                thing.under.push(other);
+            }
+            
+            if(thing.player) {
+                thing.keys.jump = 0;
+                thing.EightBitter.setTop(thing, other.bottom - thing.toly + other.yvel);
+            }
+            
+            thing.yvel = other.yvel;
+        }
+        
+        if(other.hidden) {
+            return;
+        }
+        
+        // Character bumping into the side of the solid
+        if(!characterNotBumping(thing, other) && !objectOnTop(thing, other)
+                && !objectOnTop(other, thing) && !thing.under) {
+            
+            // Character to the left of the solid
+            if(thing.right <= other.right) {
+                thing.xvel = Math.min(thing.xvel, 0);
+                thing.EightBitter.shiftHoriz(thing,
+                        Math.max(other.left + unitsize - thing.right,
+                        thing.EightBitter.unitsize / -2));
+            }
+            // Character to the right of the solid
+            else {
+                thing.xvel = Math.max(thing.xvel, 0);
+                thing.EightBitter.shiftHoriz(thing,
+                        Math.min(other.right - unitsize - thing.left,
+                        thing.EightBitter.unitsize / 2));
+            }
+            
+            // Non-players flip horizontally
+            if(!thing.player) {
+                thing.moveleft = !thing.moveleft;
+                // Some items require fancy versions (e.g. Shell)
+                if(thing.group === "item") {
+                    thing.collide(other, thing);
+                }
+            }
+            // Players trigger other actions (e.g. Pipe -> intoPipeHoriz)
+            else if(other.actionLeft) {
+                other.actionLeft(thing, other, other.transport);
+            }
         }
     }
     
@@ -2336,6 +2419,7 @@ window.FullScreenMario = (function() {
         "characterOnResting": characterOnResting,
         "characterAboveEnemy": characterAboveEnemy,  
         "solidOnCharacter": solidOnCharacter,
+        "isCharacterAlive": isCharacterAlive,
         // Collision reactions
         "gainLife": gainLife,
         "itemJump": itemJump,
@@ -2350,6 +2434,7 @@ window.FullScreenMario = (function() {
         "removeCrouch": removeCrouch,
         // Collision functions
         "collideFriendly": collideFriendly,
+        "collideCharacterSolid": collideCharacterSolid,
         "collideCoin": collideCoin,
         "collideFireball": collideFireball,
         "collideShell": collideShell,

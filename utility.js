@@ -168,53 +168,7 @@ function characterOnResting(me, solid) {
 }
 
 function characterTouchedSolid(me, solid) {
-  if(solid.up === me) return;
-  
-  // Me on top of the solid
-  if(characterOnSolid(me, solid)) {
-    if(solid.hidden) return;
-    me.resting = solid;
-    // Meh.
-    if(me.player && map_settings.underwater) removeClass(me, "paddling");
-  }
-  
-  // Solid on top of me
-  else if(solidOnCharacter(solid, me)) {
-    var mid = me.left + me.width * unitsize / 2;
-    if(mid > solid.left && mid < solid.right) me.undermid = solid;
-    else if(solid.hidden) return;
-    if(!me.under) me.under = [solid];
-    else me.under.push(solid);
-    // To do: make this not so obviously hardcoded
-    if(me.player) {
-      setTop(me, solid.bottom - me.toly + solid.yvel, true);
-    }
-    me.yvel = solid.yvel;
-    if(me.player) me.keys.jump = 0;
-  }
-  
-  if(solid.hidden) return;
-  
-  // Character bumping into the side
-  //// .midx is given by solidOnCharacter
-  if(!characterNotBumping(me, solid) && !objectOnTop(me, solid) && !objectOnTop(solid, me) && !me.under && me != solid.up) {
-    if(me.right <= solid.right) { // To left of solid
-      me.xvel = min(me.xvel, 0);
-      shiftHoriz(me, max(solid.left + unitsize - me.right, -unitsized2), true);
-    } else if(me.left >= solid.left) { // To right of solid
-      me.xvel = max(me.xvel, 0);
-      shiftHoriz(me, min(solid.right - unitsize - me.left, unitsized2), true);
-    }
-    
-    // Non-Players are instructed to flip
-    if(!me.player) {
-      me.moveleft = !me.moveleft;
-      if(me.group == "item") me.collide(solid, me);
-    }
-    // Player uses solid.actionLeft (e.g. Pipe -> intoPipeHoriz)
-    else if(solid.actionLeft)
-      solid.actionLeft(me, solid, solid.transport);
-  }
+    return FSM.get("collideCharacterSolid")(me, solid);
 }
 // Really just for koopas
 function characterNotBumping(me, solid) {
@@ -244,7 +198,7 @@ function characterHops(me) {
 }
 
 function characterIsAlive(me) {
-  return !(!me || me.dead || !me.alive);
+    return FSM.get("isCharacterAlive")(me);
 }
 
 /*
