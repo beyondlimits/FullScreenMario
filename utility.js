@@ -1,115 +1,6 @@
 /* Utility.js */
 // Contains all needed helper functions not in toned.js
 
-/* General stuff */
- 
-// Expensive - use only on clearing
-function clearAllTimeouts() {
-  return FSM.get("clearAllTimeouts")();
-}
-
-// Width and height are given as number of pixels (to scale; unitsize) 
-function getCanvas(width, height, multiplier) {
-    return FSM.get("getCanvas")(width, height, multiplier);
-}
-
-function step(num) {
-  GamesRunner.step(num);
-}
-
-function fastforward(num) {
-  GamesRunner.setSpeed(num);
-}
-
-function specifyTimer(timerin) {
-  // Only use if you're not worried about losing the benefits of requestAnimationFrame
-  // Also, this kills performance. Works best with smaller windows!
-  timer = timerin;
-  requestAnimationFrame = function(func) {
-    window.setTimeout(func, timer);
-  };
-}
-
-
-/*
- * Basic object positioning helper functions
- */
-function updatePosition(me) {
-    FSM.get("updatePosition")(me);
-}
-function updateSize(me) {
-    FSM.get("updateSize")(me);
-}
-function reduceHeight(me, dy, see) {
-    FSM.get("reduceHeight")(me, dy, see);
-}
-function shiftBoth(me, dx, dy) {
-    FSM.get("shiftBoth")(me, dx, dy);
-}
-function shiftHoriz(me, dx) {
-    FSM.get("shiftHoriz")(me, dx);
-}
-function shiftVert(me, dy) {
-    FSM.get("shiftVert")(me, dy);
-}
-function setLeft(me, left) {
-    FSM.get("setLeft")(me, left);
-}
-function setRight(me, right) {
-    FSM.get("setRight")(me, right);
-}
-function setTop(me, top) {
-    FSM.get("setTop")(me, top);
-}
-function setBottom(me, bottom) {
-    FSM.get("setBottom")(me, bottom);
-}
-function setWidth(me, width, spriter, updater) {
-    FSM.get("setWidth")(me, width, spriter, updater);
-}
-function setHeight(me, height, spriter, updater) {
-    FSM.get("setWidth")(me, height, spriter, updater);
-}
-function setSize(me, width, height, spriter, updater) {
-    FSM.get("setSize")(me, width, height, spriter, updater);
-}
-function setMidX(me, x) {
-    FSM.get("setMidX")(me, x);
-}
-function setMidY(me, y) {
-    FSM.get("setMidY")(me, y);
-}
-function getMidX(me) {
-    return FSM.get("getMidX")(me);
-}
-function getMidY(me) {
-    return FSM.get("getMidY")(me);
-}
-function setMidXObj(me, object) {
-    FSM.get("setMidXObj")(me, object);
-}
-function setMidYObj(me, object) {
-    FSM.get("setMidYObj")(me, object);
-}
-function slideToXLoc(me, xloc, maxspeed) {
-    FSM.get("slideToX")(me, xloc, maxspeed); 
-}
-function updateLeft(me, dx) {
-    FSM.get("updateLeft")(me, dx);
-}
-function updateRight(me, dx) {
-    FSM.get("updateRight")(me, dx);
-}
-function updateTop(me, dy) {
-    FSM.get("updateTop")(me, dy);
-}
-function updateBottom(me, dy) {
-    FSM.get("updateBottom")(me, dy);
-}
-function increaseHeightTop(me, dy) {
-    FSM.get("increaseHeight")(me, dy);
-}
-
 /*
  * Scoring on enemies
  */
@@ -184,73 +75,34 @@ function scoreEnemyFin(enemy, amount) {
  * General actions
  */
 
-// function moveSimple(me) {
-    // FSM.get("moveSimple")(me);
-// }
-
-function moveSmart(me) {
-    FSM.get("moveSmart")(me);
-}
-
-function moveJumping(me) {
-    FSM.get("moveJumping")(me);
-}
-
-// Floating: the vertical version
-// Example usage on World 1-3
-// [moveFloating, 30, 72] slides up and down between 30 and 72
-function moveFloating(me) {
-    FSM.get("moveFloating")(me);
-}
-function moveFloatingReal(me) {
-    FSM.get("moveFloatingReal")(me);
-}
-// Sliding: the horizontal version
-// Example usage on World 3-3
-// [moveSliding, 228, 260] slides back and forth between 228 and 260
-function moveSliding(me) {
-    FSM.get("moveSliding")(me);
-}
-function moveSlidingReal(me) {
-    FSM.get("moveSlidingReal")(me);
-}
-// Makes sure begin < end by swapping if not so
-function setPlatformEndpoints(me) {
-    FSM.get("setPlatformEndpoints")(me);
-}
 
 function movePlatformSpawn(me) {
   // This is like movePlatformNorm, but also checks for whether it's out of bounds
   // Assumes it's been made with a PlatformGenerator as the parent
   // To do: make the PlatformGenerator check one at a time, not each of them.
   if(me.bottom < me.parent.top) {
-    setBottom(me, me.parent.bottom);
+    FSM.setBottom(me, me.parent.bottom);
     detachPlayer(me);
   }
   else if(me.top > me.parent.bottom) {
-    setTop(me, me.parent.top);
+    FSM.setTop(me, me.parent.top);
     detachPlayer(me);
   }
-  else movePlatformNorm(me);
-}
-function movePlatformNorm(me) {
-    FSM.get("movePlatform")(me);
+  else FSM.movePlatformNorm(me);
 }
 
 function collideTransport(me, solid) {
-  characterTouchedSolid(me, solid);
+  FSM.collideCharacterSolid(me, solid);
   if(solid != me.resting) return;
   
-  solid.movement = movePlatformNorm;
-  solid.collide = characterTouchedSolid;
+  solid.movement = FSM.movePlatformNorm;
+  solid.collide = FSM.collideCharacterSolid;
   solid.xvel = unitsized2;
 }
 
 // To do: make me.collide and stages w/functions
 // To do: split this into .partner and whatnot
-function moveFalling(me) {
-    FSM.get("moveFalling")(me);
-}
+
 function moveFallingScale(me) {
   // If Player is resting on me, fall
   if(player.resting == me) {
@@ -268,13 +120,10 @@ function moveFallingScale(me) {
   }
   // If the platform falls off
   if(me.partner.tension <= 0) {
-    me.collide = me.partner.collide = characterTouchedSolid;
+    me.collide = me.partner.collide = FSM.collideCharacterSolid;
     // Keep falling at an increasing pace
-    me.movement = me.partner.movement = moveFreeFalling;
+    me.movement = me.partner.movement = FSM.moveFreeFalling;
   }
-}
-function moveFreeFalling(me) {
-    FSM.get("moveFreeFalling")(me);
 }
 function shiftScaleStringVert(me, string, yvel) {
   string.bottom = me.top;

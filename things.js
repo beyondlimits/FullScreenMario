@@ -613,7 +613,7 @@ function thingProcess(thing, type, settings, defaults) {
       spriteheightpixels = thing.spriteheightpixels = spriteheight * FullScreenMario.unitsize;
   
   // Canvas, context, imageData
-  var canvas = thing.canvas = getCanvas(spritewidthpixels, spriteheightpixels),
+  var canvas = thing.canvas = FullScreenMario.prototype.getCanvas(spritewidthpixels, spriteheightpixels),
       context = thing.context = canvas.getContext("2d"),
       imageData = thing.imageData = context.getImageData(0, 0, spritewidthpixels, spriteheightpixels);
   
@@ -698,8 +698,8 @@ function movePirhanaInit(me) {
 function movePirhanaNew(me, amount) {
   amount = amount || me.dir;
   me.counter += amount;
-  shiftVert(me, amount);
-  shiftVert(me.visual_scenery, amount);
+  FSM.shiftVert(me, amount);
+  FSM.shiftVert(me.visual_scenery, amount);
   
   // Height is 0
   if(me.counter <= 0 || me.counter >= me.countermax) {
@@ -709,7 +709,7 @@ function movePirhanaNew(me, amount) {
   }
 }
 function movePirhanaRestart(me) {
-  var marmid = getMidX(player);
+  var marmid = FSM.getMidX(player);
   // If Player's too close and counter == 0, don't do anything
   if(me.counter >= me.countermax && marmid > me.left -FullScreenMario.unitsize * 8 && marmid < me.right + FullScreenMario.unitsize * 8) {
     setTimeout(movePirhanaRestart, 7, me);
@@ -755,7 +755,7 @@ function podobooJump(me) {
   PixelDrawer.setThingSprite(me);
 }
 function movePodobooUp(me) {
-  shiftVert(me, me.speed, true);
+  FSM.shiftVert(me, me.speed, true);
   if(me.top - FSM.MapScreener.top > me.heightfall) return;
   me.nofall = false;
   me.movement = movePodobooSwitch;
@@ -767,7 +767,7 @@ function movePodobooSwitch(me) {
 }
 function movePodobooDown(me) {
   if(me.top < me.heightnorm) return;
-  setTop(me, me.heightnorm, true);
+  FSM.setTop(me, me.heightnorm, true);
   me.movement = false;
   me.nofall = me.hidden = true;
   me.heightfall = me.top - me.jumpheight;
@@ -883,7 +883,7 @@ function unsqueezeBlooper(me) {
   me.squeeze = false;
   FSM.removeClass(me, "squeeze");
   me.counter = 0;
-  setHeight(me, 12, true, true);
+  FSM.setHeight(me, 12, true, true);
   // me.yvel /= 3;
 }
 
@@ -903,10 +903,10 @@ function moveCheepInit(me) {
   me.movement = moveCheep;
 }
 function moveCheep(me) {
-  shiftVert(me, me.yvel);
+  FSM.shiftVert(me, me.yvel);
 }
 function moveCheepJumping(me) {
-  shiftVert(me, me.yvel += FullScreenMario.unitsize / 14);
+  FSM.shiftVert(me, me.yvel += FullScreenMario.unitsize / 14);
 }
 function startCheepSpawn() {
   return map_settings.zone_cheeps = TimeHandler.addEventInterval(
@@ -921,7 +921,7 @@ function startCheepSpawn() {
       FSM.flipHoriz(spawn);
       spawn.movement = function(me) {
         if(me.top < ceilmax) me.movement = moveCheepJumping; 
-        else shiftVert(me, me.yvel);
+        else FSM.shiftVert(me, me.yvel);
       };
     }, 21, Infinity
   );
@@ -945,7 +945,7 @@ function moveLakituInit2(me) {
     map.lakitu = me;
     return true;
   }
-  shiftHoriz(me, -unitsize);
+  FSM.shiftHoriz(me, -unitsize);
 }
 // Then, once it's close enough, is always relative to player.
 // This fluctuates between +/-32 (* FullScreenMario.unitsize)
@@ -954,7 +954,7 @@ function moveLakitu(me) {
   if(player.xvel > FullScreenMario.unitsize / 8 && player.left > FSM.MapScreener.width * FullScreenMario.unitsize / 2) {
     if(me.left < player.right + FullScreenMario.unitsize * 16) {
       // To the 'left' of player
-      slideToXLoc(me, player.right + FullScreenMario.unitsize * 32 + player.xvel, player.maxspeed * 1.4);
+      FSM.slideToXLoc(me, player.right + FullScreenMario.unitsize * 32 + player.xvel, player.maxspeed * 1.4);
       me.counter = 0;
     }
   }
@@ -962,7 +962,7 @@ function moveLakitu(me) {
   else {
     // me.xvel = 0;
     me.counter += .007;
-    slideToXLoc(me, player.left + player.xvel + Math.sin(Math.PI * me.counter) * 117, player.maxspeed * .7);
+    FSM.slideToXLoc(me, player.left + player.xvel + Math.sin(Math.PI * me.counter) * 117, player.maxspeed * .7);
   }
   // log("moveLakitu after: " + (me.right - me.left) + "\n");
 }
@@ -1065,13 +1065,12 @@ function movePlayer(me) {
     if(me.power != 1) {
       me.crouching = true;
       FSM.addClass(me, "crouching");
-      // setHeight(player, 11);
-      setHeight(player, 11, false, true);
+      FSM.setHeight(player, 11, false, true);
       me.height = 11;
       me.toly_old = me.toly;
       me.toly = FullScreenMario.unitsize * 4;
-      updateBottom(me, 0);
-      updateSize(me);
+      FSM.updateBottom(me, 0);
+      FSM.updateSize(me);
     }
     // Pipe movement
     if(me.resting.actionTop)
@@ -1209,20 +1208,21 @@ function movePlayerVine(me) {
   var attached = me.attached;
   if(me.bottom < attached.top) return unattachPlayer(me);
   if(me.keys.run == me.attachoff) {
-    while(isThingTouchingThing(me, attached))
-      shiftHoriz(me, me.keys.run, true);
+    while(FSM.isThingTouchingThing(me, attached)) {
+      FSM.shiftHoriz(me, me.keys.run, true);
+    }
     return unattachPlayer(me);
   }
   
   // If Player is moving up, simply move up
   if(me.keys.up) {
     me.animatednow = true;
-    shiftVert(me,FullScreenMario.unitsize / 4 * -1, true);
+    FSM.shiftVert(me,FullScreenMario.unitsize / 4 * -1, true);
   }
   // If player is moving down, move down and check for unattachment
   else if(me.keys.crouch) {
     me.animatednow = true;
-    shiftVert(me,FullScreenMario.unitsize / 2, true);
+    FSM.shiftVert(me,FullScreenMario.unitsize / 2, true);
     if(me.bottom > attached.bottom -FullScreenMario.unitsize * 4) return unattachPlayer(me);
   }
   else me.animatednow = false;
@@ -1281,7 +1281,7 @@ function playerFires() {
         gravity: map_settings.gravity * 1.56,
         jumpheight: FullScreenMario.unitsize * 1.56,
         yvel: FullScreenMario.unitsize,
-        movement: moveJumping
+        movement: FullScreenMario.prototype.moveJumping
       }),
       xloc = player.moveleft 
             ? (player.left -FullScreenMario.unitsize / 4)
@@ -1437,13 +1437,13 @@ function blockContentsEmerge(me, character) {
 
 function vineEmerge(me, solid) {
   AudioPlayer.play("Vine Emerging");
-  setHeight(me, 0);
+  FSM.setHeight(me, 0);
   me.movement = vineMovement;
   TimeHandler.addEvent(vineEnable, 14, me);
   TimeHandler.addEventInterval(vineStay, 1, 14, me, solid);
 }
 function vineStay(me, solid) {
-  setBottom(me, solid.top);
+  FSM.setBottom(me, solid.top);
 }
 function vineEnable(me) {
   me.nocollide = false;
@@ -1451,8 +1451,10 @@ function vineEnable(me) {
 }
 
 function vineMovement(me) {
-  increaseHeightTop(me,FullScreenMario.unitsize / 4);
-  if(me.attached) shiftVert(me.attached, -unitsize / 4, true);
+  FSM.increaseHeightTop(me, FullScreenMario.unitsize / 4);
+  if(me.attached) {
+    FSM.shiftVert(me.attached, -unitsize / 4, true);
+  }
 }
 
 function touchVine(me, vine) {
@@ -1481,15 +1483,18 @@ function touchVine(me, vine) {
   
   // Make sure you're looking at the vine, and from the right distance
   lookTowardThing(me, vine);
-  if(!me.attachleft) setRight(me, vine.left + FullScreenMario.unitsize * 4);
-  else setLeft(me, vine.right -FullScreenMario.unitsize * 4);
+  if(!me.attachleft) {
+    FSM.setRight(me, vine.left + FullScreenMario.unitsize * 4);
+  } else {
+    FSM.setLeft(me, vine.right -FullScreenMario.unitsize * 4);
+  }
   
 }
 
 function collideSpring(me, spring) {
   if(me.yvel >= 0 && me.player && !spring.tension && isCharacterOnSolid(me, spring))
     return springPlayerInit(spring, me);
-  return characterTouchedSolid(me, spring);
+  return FSM.FSM.collideCharacterSolid(me, spring);
 }
 function springPlayerInit(spring, player) {
   spring.tension = spring.tensionsave = max(player.yvel * .77,FullScreenMario.unitsize);
@@ -1516,10 +1521,10 @@ function movePlayerSpringDown(me) {
     me.xvel /= 1.4;
   
   reduceSpringHeight(me.spring, me.spring.tension);
-  setBottom(me, me.spring.top, true);
+  FSM.setBottom(me, me.spring.top, true);
   me.spring.tension /= 2;
   
-  updateSize(me.spring);
+  FSM.updateSize(me.spring);
 }
 function movePlayerSpringUp(me) {
   if(!me.spring || !isThingTouchingThing(me, me.spring)) {
@@ -1531,7 +1536,7 @@ function moveSpringUp(spring) {
   reduceSpringHeight(spring, -spring.tension);
   spring.tension *= 2;
   if(spring == player.spring) 
-    setBottom(player, spring.top, true);
+    FSM.setBottom(player, spring.top, true);
   
   if(spring.height > spring.heightnorm) {
     if(spring == player.spring) {
@@ -1543,7 +1548,7 @@ function moveSpringUp(spring) {
   }
 }
 function reduceSpringHeight(spring, dy) {
-  reduceHeight(spring, dy, true);
+  FSM.reduceHeight(spring, dy, true);
 }
 
 function RestingStoneUnused(me) {
@@ -1564,8 +1569,8 @@ function makeCastleBlock(me, settings) {
   // The block will need to manage the balls later
   var length = me.fireballs,
       balls = me.balls = new Array(length),
-      midx = getMidX(me) -FullScreenMario.unitsize * 2, // Fireballs are 4x4, so (unitsize * 4) / 2
-      midy = getMidY(me) -FullScreenMario.unitsize * 2;
+      midx = FSM.getMidX(me) -FullScreenMario.unitsize * 2, // Fireballs are 4x4, so (unitsize * 4) / 2
+      midy = FSM.getMidY(me) -FullScreenMario.unitsize * 2;
   
   // These start at the center and will have their positions set by castleBlockEvent
   for(i = 0; i < length; ++i)
@@ -1586,8 +1591,8 @@ function castleBlockEvent(me) {
   // Each ball is an increasing distance from center, at the same angle
   // (the first is skipped because it stays at the center);
   for(i = 1, len = balls.length; i < len; ++i) {
-    setMidX(balls[i], left + (i * FullScreenMario.unitsize * 4 * Math.cos(angle * Math.PI)));
-    setMidY(balls[i], top + (i * FullScreenMario.unitsize * 4 * Math.sin(angle * Math.PI)));
+    FSM.setMidX(balls[i], left + (i * FullScreenMario.unitsize * 4 * Math.cos(angle * Math.PI)));
+    FSM.setMidY(balls[i], top + (i * FullScreenMario.unitsize * 4 * Math.sin(angle * Math.PI)));
   }
   // me.midx = me.left;// + me.width * FullScreenMario.unitsize / 2;
   // me.midy = me.top;// + me.height * FullScreenMario.unitsize / 2;
@@ -1640,7 +1645,7 @@ function CastleAxeKillsBridge(bridge, axe) {
     bridge.width = 0;
     TimeHandler.addEvent(CastleAxeKillsBowser, 1, axe.bowser);
   }
-  setWidth(bridge, bridge.width);
+  FSM.setWidth(bridge, bridge.width);
 }
 // Step 3 of getting to that jerkface Toad
 function CastleAxeKillsBowser(bowser) {
@@ -1695,7 +1700,7 @@ function FlagCollisionTop(me, detector) {
   // The player also is frozen in this dropping state, on the pole
   me.xvel = me.yvel = 0;
   me.dropping = me.nofall = me.nocollidechar = 1;
-  setRight(me, detector.left);
+  FSM.setRight(me, detector.left);
   
   // Visually, the player is now climbing, and invincible
   ++me.star;
@@ -1708,9 +1713,9 @@ function FlagCollisionTop(me, detector) {
       bottom_cap = (map_settings.floor - 9) * FullScreenMario.unitsize;
   me.movement = function(me) { 
     if(me.bottom < bottom_cap)
-      shiftVert(me,FullScreenMario.unitsize);
+      FSM.shiftVert(me,FullScreenMario.unitsize);
     if(endflag.bottom < bottom_cap)
-      shiftVert(endflag,FullScreenMario.unitsize);
+      FSM.shiftVert(endflag,FullScreenMario.unitsize);
     
     // If both are at the bottom, clear climbing and allow walking
     if(me.bottom >= bottom_cap && endflag.bottom >= bottom_cap) {
@@ -1842,9 +1847,9 @@ function Firework(me, num) {
 
 function setWarpWorldInit(me) {
   // Just reduces the size 
-  shiftHoriz(me, me.width * FullScreenMario.unitsize / 2);
+  FSM.shiftHoriz(me, me.width * FullScreenMario.unitsize / 2);
   me.width /= 2;
-  updateSize(me); 
+  FSM.updateSize(me); 
   me.movement = false;
 }
 

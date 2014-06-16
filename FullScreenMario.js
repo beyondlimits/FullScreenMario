@@ -69,7 +69,8 @@ window.FullScreenMario = (function() {
     ];            /* Reset functions, in order    */        /**     * Sets self.PixelRender     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelRendr (src/PixelRendr.js)
      *                          sprites.js (settings/sprites.js)     */    function resetPixelRender(self) {        // PixelRender settings are stored in FullScreenMario.prototype.sprites,        // though they also need the scale measurement added        self.PixelRender = new PixelRendr(proliferateHard({
             "scale": self.scale
-        }, self.sprites));    }        /**     * Sets self.PixelDrawer     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelDrawr (src/PixelDrawr.js)     */    function resetPixelDrawer(self) {        self.PixelDrawer = new PixelDrawr({            "PixelRender": self.PixelRender        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr.js)
+        }, self.sprites));    }        /**     * Sets self.PixelDrawer     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelDrawr (src/PixelDrawr.js)     */    function resetPixelDrawer(self) {        self.PixelDrawer = new PixelDrawr({            "PixelRender": self.PixelRender,
+            "getCanvas": self.getCanvas        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr.js)
      *                          events.js (settings/events.js)     */    function resetTimeHandler(self) {
         self.TimeHandler = new TimeHandlr(proliferate({
             "classAdd": self.addClass,
@@ -261,6 +262,18 @@ window.FullScreenMario = (function() {
         // update quadrants
         this.shiftThings(this.QuadsKeeper.getQuadrants(), -dx, -dy);
         this.QuadsKeeper.updateQuadrants(-dx);
+    }
+    
+    /**
+     * 
+     */
+    function scrollPlayer(player, dx, dy) {
+        var saveleft = player.left,
+            savetop = player.top;
+        
+        this.scrollWindow(dx, dy);
+        FSM.setLeft(player, saveleft);
+        FSM.setTop(player, savetop);
     }
     
     
@@ -462,24 +475,27 @@ window.FullScreenMario = (function() {
      * @remarks Similar to isThingOnThing, but more specifically used for
      *          characterTouchedSolid
      * @remarks This sets the character's .midx property
-     */    function isSolidOnCharacter(solid, character) {        // This can never be true if character is falling
-        if(character.yvel >= 0) {
+     */    function isSolidOnCharacter(thing, other) {
+        // This can never be true if other is falling
+        if(other.yvel >= 0) {
             return false;
         }
         
-        // Horizontally, all that's required is for the character's midpoint to
-        // be within the solid's left and right
-        character.midx = this.getMidX(character);
-        if(character.midx <= solid.left || character.midx >= solid.right) {
+        // Horizontally, all that's required is for the other's midpoint to
+        // be within the thing's left and right
+        other.midx = thing.EightBitter.getMidX(other);
+        if(other.midx <= thing.left || other.midx >= thing.right) {
             return false;
         }
         
-        // If the solid's bottom is below the character's top, factoring
+        // If the thing's bottom is below the other's top, factoring
         // tolerance and velocity, that's false (this function assumes they're
         // already touching)
-        if(solid.bottom - solid.yvel                > character.top + character.toly - character.yvel) {
+        if(thing.bottom - thing.yvel > other.top + other.toly - other.yvel) {
             return false;
-        }                // The above checks never caught falsities, so this must be true
+        }
+        
+        // The above checks never caught falsities, so this must be true
         return true;
     }
     
@@ -496,6 +512,9 @@ window.FullScreenMario = (function() {
     
     /**
      * 
+     * 
+     * @remarks This must be kept using "this.", since it can be applied to
+     *          Quadrants during scrollWindow events.
      */
     function shiftBoth(thing, dx, dy) {
         if(!thing.noshiftx) {
@@ -523,9 +542,6 @@ window.FullScreenMario = (function() {
      * 
      */
     function shiftAll(dx, dy) {
-        if(!(this instanceof EightBittr)) {
-            debugger;
-        }
         this.GroupHolder.callAll(this, shiftThings, dx, dy);
     }
 
@@ -1454,7 +1470,7 @@ window.FullScreenMario = (function() {
             }
         } else {
             if(thing.right - thing.EightBitter.unitsize >= thing.resting.right) {
-                shiftHoriz(thing, -thing.EightBitter.unitsize);
+                thing.EightBitter.shiftHoriz(thing, -thing.EightBitter.unitsize);
                 thing.moveleft = true;
             }
         }
@@ -1468,7 +1484,7 @@ window.FullScreenMario = (function() {
      */
     function moveJumping(thing) {
         // Start off by calling moveSimple for normal movement
-        moveSimple(thing);
+        thing.EightBitter.moveSimple(thing);
         
         // If .resting, jump!
         if(thing.resting) {
@@ -1488,7 +1504,7 @@ window.FullScreenMario = (function() {
      */
     function moveFloating(thing) {
         // Make sure thing.begin <= thing.end
-        setPlatformEndpoints(thing);
+        thing.EightBitter.setPlatformEndpoints(thing);
         
         // Make thing.begin and thing.end relative to map_settings.floor
         console.warn("moveFloating should avoid using map_settings");
@@ -1496,7 +1512,7 @@ window.FullScreenMario = (function() {
         thing.end = map_settings.floor * thing.EightBitter.unitsize - thing.end;
         
         // Use moveFloatingReal as the actual movement function from now on
-        (thing.movement = moveFloatingReal)(thing);
+        (thing.movement = thing.EightBitter.moveFloatingReal)(thing);
     }
     
     /**
@@ -1530,10 +1546,10 @@ window.FullScreenMario = (function() {
      */
     function moveSliding(thing) {
         // Make sure thing.begin <= thing.end
-        setPlatformEndpoints(thing);
+        thing.EightBitter.setPlatformEndpoints(thing);
         
         // Use moveSlidingReal as the actual movement function from now on
-        (thing.movement = moveSlidingReal)(thing);
+        (thing.movement = thing.EightBitter.moveSlidingReal)(thing);
     }
     
     /**
@@ -1579,22 +1595,22 @@ window.FullScreenMario = (function() {
      * @param {Thing} thing
      */
     function movePlatform(thing) {
-        shiftHoriz(thing, thing.xvel);
-        this.shiftVert(thing, thing.yvel);
+        thing.EightBitter.shiftHoriz(thing, thing.xvel);
+        thing.EightBitter.shiftVert(thing, thing.yvel);
         
         // If the player is resting on this and this is alive, move the player
         if(thing === player.resting && player.alive) {
-            setBottom(player, thing.top);
-            shiftHoriz(player, thing.xvel);
+            thing.EightBitter.setBottom(player, thing.top);
+            thing.EightBitter.shiftHoriz(player, thing.xvel);
             
             // If the player is too far to the right or left, stop that overlap
-            if(player.right > this.MapScreener.innerWidth) {
-                setRight(player, this.MapScreener.innerWidth);
+            if(player.right > thing.EightBitter.MapScreener.innerWidth) {
+                thing.EightBitter.setRight(player, thing.EightBitter.MapScreener.innerWidth);
             } else if(player.left < 0) {
-                setLeft(player, 0);
+                thing.EightBitter.setLeft(player, 0);
             }
         }
-    }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if(thing !== player.resting) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        thing.EightBitter.shiftVert(thing, thing.yvel += thing.EightBitter.unitsize / 8);        thing.EightBitter.setBottom(player, thing.top);                // After a velocity threshold, start always falling        if(thing.yvel >= thing.fall_threshold_start || thing.EightBitter.unitsize * 2.8) {            thing.freefall = true;            thing.movement = moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || thing.EightBitter.unitsize / 16;        thing.EightBitter.shiftVert(thing, thing.yvel);                // After a velocity threshold, stop accelerating        if(thing.yvel >= thing.fall_threshold_end || thing.EightBitter.unitsize * 2) {            thing.movement = movePlatform;        }    }
+    }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if(thing !== player.resting) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        thing.EightBitter.shiftVert(thing, thing.yvel += thing.EightBitter.unitsize / 8);        thing.EightBitter.setBottom(player, thing.top);                // After a velocity threshold, start always falling        if(thing.yvel >= thing.fall_threshold_start || thing.EightBitter.unitsize * 2.8) {            thing.freefall = true;            thing.movement = thing.EightBitter.moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || thing.EightBitter.unitsize / 16;        thing.EightBitter.shiftVert(thing, thing.yvel);                // After a velocity threshold, stop accelerating        if(thing.yvel >= thing.fall_threshold_end || thing.EightBitter.unitsize * 2) {            thing.movement = movePlatform;        }    }
     
     /**
      * 
@@ -2410,6 +2426,7 @@ window.FullScreenMario = (function() {
         // Global manipulations
         "addThing": addThing,
         "scrollWindow": scrollWindow,
+        "scrollPlayer": scrollPlayer,
         // Collision detectors
         "canThingCollide": canThingCollide,
         "isThingTouchingThing": isThingTouchingThing,

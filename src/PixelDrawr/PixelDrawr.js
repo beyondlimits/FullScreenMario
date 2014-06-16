@@ -21,9 +21,13 @@ function PixelDrawr(settings) {
         
         context,
         
+        // Utility function to create a canvas (typically taken from EightBittr)
+        getCanvas,
+        
         innerWidth;
     
     self.reset = function(settings) {
+        getCanvas = settings.getCanvas;
         PixelRender = settings.PixelRender;
     }
     

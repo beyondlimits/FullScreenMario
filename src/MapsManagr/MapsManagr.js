@@ -512,10 +512,14 @@ function MapsManagr(settings) {
     TimeHandler.addEvent(AudioPlayer.playTheme, 2);
     
     // If there's a function for this, do it
-    if(on_entry) on_entry();
+    if(on_entry) {
+        on_entry();
+    }
     
     // This should be genericized
-    if(location.xloc) scrollPlayer(location.xloc * unitsize);
+    if(location.xloc) {
+        FSM.scrollPlayer(player, location.xloc * unitsize);
+    }
     
     // If the location wants to set some things, let it
     if(location.entry)

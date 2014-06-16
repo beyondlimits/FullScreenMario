@@ -45,7 +45,7 @@ function maintainCharacters(update) {
     } else character.yvel = 0;
     
     // Position updating and collision detection
-    updatePosition(character);
+    FSM.updatePosition(character);
     QuadsKeeper.determineThingQuadrants(character);
     character.under = character.undermid = false;
     // determineThingCollisions(character);
@@ -58,7 +58,7 @@ function maintainCharacters(update) {
         character.resting = false; // Necessary for moving platforms :(
       } else {
         /*character.jumping = */character.yvel = false;
-        setBottom(character, character.resting.top);
+        FSM.setBottom(character, character.resting.top);
       }
     }
     
@@ -137,7 +137,7 @@ function maintainPlayer(update) {
   // It's multiplied by 0 or 1 for map.canscroll
   window.scrolloffset = (map_settings.canscroll) * (player.right - FSM.MapScreener.middlex);
   if(scrolloffset > 0) {
-    scrollWindow(lastscroll = round(min(player.scrollspeed, scrolloffset)));
+    FSM.scrollWindow(lastscroll = round(min(player.scrollspeed, scrolloffset)));
   }
   else lastscroll = 0;
 }

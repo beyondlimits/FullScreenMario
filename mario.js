@@ -136,7 +136,7 @@ function resetQuadrants() {
 // This is called in setMap to reset everything
 function resetGameState(nocount) {
   // HTML is reset here
-  clearAllTimeouts();
+  FSM.clearAllTimeouts();
   window.nokeys = window.spawning = window.spawnon =
     window.notime = window.qcount = window.lastscroll = 0;
   window.gameon = window.speed = 1;
@@ -148,17 +148,4 @@ function resetGameState(nocount) {
   AudioPlayer.pause();
 }
 
-function scrollWindow(x, y) {
-  FSM.scrollWindow(x, y);
-}
-
 // Similar to scrollWindow, but saves the player's x-loc
-function scrollPlayer(x, y, see) {
-  var saveleft = player.left,
-      savetop = player.top;
-  y = y || 0;
-  scrollWindow(x,y);
-  setLeft(player, saveleft, see);
-  setTop(player, savetop + y * unitsize, see);
-  QuadsKeeper.updateQuadrants();
-}

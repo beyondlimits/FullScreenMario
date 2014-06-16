@@ -322,18 +322,18 @@ window.EightBittr = (function(settings) {
      * 
      */
     function slideToX(thing, x, maxspeed) {
-        var midx = getMidX(thing);
+        var midx = thing.EightBitter.getMidX(thing);
         
         // If no maxspeed is provided, assume Infinity (so it doesn't matter)
         maxspeed = maxspeed || Infinity;
         
         // 
         if(midx < x) {
-            shiftHoriz(thing, min(maxspeed, (x - midx)));
+            thing.EightBitter.shiftHoriz(thing, Math.min(maxspeed, (x - midx)));
         }
         // 
         else {
-            shiftHoriz(thing, max(-maxspeed, (x - midx)));
+            thing.EightBitter.shiftHoriz(thing, Math.max(-maxspeed, (x - midx)));
         }
     }
     
@@ -341,18 +341,18 @@ window.EightBittr = (function(settings) {
      * 
      */
     function slideToY(thing, y, maxspeed) {
-        var midy = getMidY(thing);
+        var midy = thing.EightBitter.getMidY(thing);
         
         // If no maxspeed is provided, assume Infinity (so it doesn't matter)
         maxspeed = maxspeed || Infinity;
         
         //
         if(midy < y) {
-            shiftVert(thing, min(maxspeed, (y - midy)));
+            thing.EightBitter.shiftVert(thing, min(maxspeed, (y - midy)));
         }
         //
         else {
-            shiftVert(thing, max(-maxspeed, (y - midy)));
+            thing.EightBitter.shiftVert(thing, max(-maxspeed, (y - midy)));
         }
     }
     

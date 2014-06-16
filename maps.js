@@ -165,7 +165,7 @@ function intoPipeHorizontal(me, pipe) {
   unpause();
   var entrance = pipe.entrance,
       move = setInterval(function() {
-      shiftHoriz(me, unitsized4);
+      FSM.shiftHoriz(me, unitsized4);
       if(me.left >= pipe.left) {
         clearInterval(move);
         setTimeout(function() { goToTransport(entrance); }, 700);
@@ -184,8 +184,8 @@ function exitPipeVertical(pipe) {
   switchContainers(player, characters, scenery);
   player.nofall = nokeys = notime = true;
   AudioPlayer.play("Pipe");
-  setTop(player, pipe.top);
-  setMidXObj(player, pipe, true);
+  FSM.setTop(player, pipe.top);
+  FSM.setMidXObj(player, pipe, true);
   var dy = unitsize / -4, move = setInterval(function() {
     shiftVert(player, dy, true);
     if(player.bottom <= pipe.top) {
