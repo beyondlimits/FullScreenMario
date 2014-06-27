@@ -21,7 +21,7 @@ function resetMapsManager() {
     ],
     on_spawn: function(prething, xloc) {
       var thing = prething.thing;
-      addThing(thing, prething.xloc * unitsize - FSM.MapScreener.left, (map_settings.refy - prething.yloc) * unitsize);
+      FSM.addThing(thing, prething.xloc * unitsize - FSM.MapScreener.left, (map_settings.refy - prething.yloc) * unitsize);
     },
     entry_functions: {
       true: entryPlain,

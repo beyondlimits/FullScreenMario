@@ -1030,8 +1030,8 @@ window.FullScreenMario = (function() {
                 thing.animate(thing);
                 break;
             default:
+                thing.EightBitter.scoreOn(thing.scoreBelow, thing);
                 thing.death(thing, 2);
-                scoreEnemyBelow(thing);
                 break;
         }
     }
@@ -1071,7 +1071,7 @@ window.FullScreenMario = (function() {
         } else {
             thing.EightBitter.AudioPlayer.playLocal("Kick", thing.EightBitter.getMidX(other));
             thing.death(thing, 2);
-            scoreEnemyFire(thing);
+            thing.EightBitter.scoreOn(thing.scoreFire, thing);
         }
         other.death(other);
     }
@@ -1100,10 +1100,10 @@ window.FullScreenMario = (function() {
         
         // Assume anything else to be an enemy, which only moving shells kill
         if(other.xvel) {
+            thing.EightBitter.killFlip(thing);
             if(thing.shellspawn) {
                 thing = thing.EightBitter.killSpawn(thing);
             }
-            thing.EightBitter.killFlip(thing);
             
             thing.EightBitter.AudioPlayer.play("Kick");
             thing.EightBitter.scoreOn(thing.EightBitter.findScore(other.enemyhitcount), thing);
@@ -1142,7 +1142,7 @@ window.FullScreenMario = (function() {
         
         // Star players kill the shell no matter what
         if(thing.star) {
-            scorePlayerShell(thing, other);
+            thing.EightBitter.scorePlayerShell(thing, other);
             other.death(other, 2);
             return;
         }
@@ -1156,7 +1156,7 @@ window.FullScreenMario = (function() {
                 // just being started, that counts as the score hit
                 other.landing += 1;
                 if(other.landing === 1) {
-                    scorePlayerShell(thing, other);
+                    thing.EightBitter.scorePlayerShell(thing, other);
                 }
                 thing.EightBitter.TimeHandler.addEvent(function (other) {
                     other.landing -= 1;
@@ -1172,7 +1172,7 @@ window.FullScreenMario = (function() {
         // If the shell is being kicked by the player, either by hitting a still
         // shell or jumping onto an already moving one
         if(other.xvel === 0 || playerjump) {
-            // scorePlayerShell(thing, other);
+            // thing.EightBitter.scorePlayerShell(thing, other);
             
             // Reset any signs of peeking from the shell
             other.counting = 0;
@@ -1210,10 +1210,10 @@ window.FullScreenMario = (function() {
                 if(!other.xvel) {
                     thing.EightBitter.jumpEnemy(thing, other);
                     thing.yvel *= 2;
-                    // scorePlayerShell(thing, other);
+                    // thing.EightBitter.scorePlayerShell(thing, other);
                     thing.EightBitter.setBottom(thing, other.top - thing.EightBitter.unitsize, true);
                 } else {
-                    // scorePlayerShell(thing, other);
+                    // thing.EightBitter.scorePlayerShell(thing, other);
                 }
                 
                 other.landing += 1;
@@ -1300,7 +1300,7 @@ window.FullScreenMario = (function() {
                 if(thing.star) {
                     other.nocollide = true;
                     other.death(other, 2);
-                    scoreEnemyStar(other);
+                    thing.EightBitter.scoreOn(other.scoreStar, other);
                 }
                 // A non-star player kills the enemy with spawn, and hops
                 else {
@@ -1309,9 +1309,8 @@ window.FullScreenMario = (function() {
                                         other.top + thing.EightBitter.unitsize));
                     thing.EightBitter.TimeHandler.addEvent(jumpEnemy, 0, thing, other);
                     
+                    // thing.EightBitter.scoreOn(other.scoreStomp, other);
                     other.death(other, thing.star ? 2 : 0);
-                    other.death(other);
-                    scoreEnemyStomp(other);
                     
                     thing.EightBitter.addClass(thing, "hopping");
                     thing.EightBitter.removeClasses(thing, "running skidding jumping one two three");
@@ -2237,6 +2236,35 @@ window.FullScreenMario = (function() {
      * 
      * 
      * @remarks See http://themushroomkingdom.net/smb_breakdown.shtml
+     * (Assume thing is the player and other is the shell)
+     */
+    function scorePlayerShell(thing, other) {
+        // Star player: 200 points
+        if(player.star) {
+            thing.EightBitter.scoreOn(200, other);
+            return;
+        }
+        
+        // Shells in the air: 8000 points (see guide, this may be wrong)
+        if(!other.resting) {
+            thing.EightBitter.scoreOn(8000, other);
+            return;
+        }
+        
+        // Peeking shells: 1000 points
+        if(other.peeking) {
+            thing.EightBitter.scoreOn(1000, other);
+            return;
+        }
+        
+        // All other cases: the shell's default
+        thing.EightBitter.scoreOn(100, other);
+    }
+    
+    /**
+     * 
+     * 
+     * @remarks See http://themushroomkingdom.net/smb_breakdown.shtml
      */
     function scorePlayerFlag(player, difference) {
         var amount;
@@ -2529,6 +2557,7 @@ window.FullScreenMario = (function() {
         "scoreOn": scoreOn,
         "scoreAnimateOn": scoreAnimateOn,
         "scoreAnimate": scoreAnimate,
+        "scorePlayerShell": scorePlayerShell,
         "scorePlayerFlag": scorePlayerFlag,
         // Map entrances
         "mapEntranceSpecific": mapEntranceSpecific,

@@ -14,26 +14,6 @@ function resetTriggers() {
     setMessageTriggers();
 }
 
-function lulz(options, timer) {
-    player.star = true;
-    options = options || ["Goomba"];
-    timer = timer || 7;
-    TimeHandler.addEventInterval(function () {
-        if (characters.length > 210) return;
-        var lul = ObjectMaker.make(options[randInt(options.length)], randInt(2), randInt(2));
-        lul.yvel = random() * -unitsizet4;
-        lul.xvel = lul.speed = random() * unitsizet2 * (randInt(2) * 2 - 1);
-        addThing(lul, (32 * random() + 128) * unitsize, (88 * random()) * unitsize);
-    }, timer, Infinity);
-}
-
-function superlulz() {
-    lulz(["Goomba", "Koopa", "HammerBro" /*, "Podoboo", "Beetle", "Lakitu", "Blooper"*/ ]);
-}
-
-function hyperlulz() {
-    lulz(["Bowser"], 21);
-}
 
 function maxlulz() {
     // Sigh....

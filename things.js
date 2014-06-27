@@ -136,7 +136,7 @@ function resetThings() {
         "Location": {
             
         },
-        "Thing": {
+        Thing: {
             // This will be delegated to FullScreenMario.js
             EightBitter: FSM,
             // Sizing
@@ -148,13 +148,17 @@ function resetThings() {
             xvel:  0,
             yvel:  0,
             speed: 0,
+            // Score amounts on death
+            scoreStomp: 100,
+            scoreFire: 200,
+            scoreStar: 200,
+            scoreBelow: 100,
             // Placement
             alive:    true,
             placed:   false,
             grouping: "solid",
             // Quadrants
             maxquads:  4,
-            quadrants: [,,,],
             outerok:   false,
             // Sprites
             sprite:      "",
@@ -212,6 +216,8 @@ function resetThings() {
               death: FullScreenMario.prototype.killFlip
           },
           Goomba: {
+              scoreFire: 100,
+              scoreStar: 100,
               spawntype: "DeadGoomba",
               toly: FullScreenMario.unitsize,
               death: FullScreenMario.prototype.killGoomba,
@@ -222,6 +228,8 @@ function resetThings() {
           Koopa: {
               height: 12,
               shellspawn: true,
+              spawntype: "Shell",
+              shelltype: "Shell",
               toly: FullScreenMario.unitsize * 2,
               death: FullScreenMario.prototype.killToShell,
               spriteCycle: [
@@ -234,22 +242,25 @@ function resetThings() {
                   "jumping": {
                       movement: FullScreenMario.prototype.moveJumping,
                       jumpheight: FullScreenMario.unitsize * 1.17,
-                      gravity: gravity / 2.8
+                      gravity: gravity / 2.8,
+                      scoreStomp: 400
                   },
                   "floating": {
                       movement: FullScreenMario.prototype.moveFloating,
                       nofall: true,
                       yvel: FullScreenMario.unitsize / 4,
-                      maxvel: FullScreenMario.unitsize / 4
+                      maxvel: FullScreenMario.unitsize / 4,
+                      scoreStomp: 400
                   }
               }
           },
           Beetle: {
-              speed: unitsize * .21,
-              xvel: unitsize * .21,
+              speed: FullScreenMario.unitsize * .21,
+              xvel: FullScreenMario.unitsize * .21,
               nofire: 2,
               shellspawn: true,
               death: FullScreenMario.prototype.killToShell,
+              spawntype: "BeetleShell",
               shelltype: "BeetleShell",
               spriteCycle: [
                   ["one", "two"]
@@ -286,8 +297,8 @@ function resetThings() {
           },
           item: {
               group: "item",
-              collide: collideFriendly,
-              jump: itemJump,
+              collide: FullScreenMario.prototype.collideFriendly,
+              jump: FullScreenMario.prototype.itemJump,
               nofire: true
           },
           Mushroom: {
@@ -296,11 +307,13 @@ function resetThings() {
           },
           Mushroom1Up: {
               action: function (thing, other) { 
-                player.EightBitter.gainLife(1);
+                if(thing.player) {
+                  thing.EightBitter.gainLife(1);
+                }
               }
           },
           MushroomDeathly: {
-              action: killPlayer
+              action: FullScreenMario.prototype.killPlayer
           },
           FireFlower: {
               action: FullScreenMario.prototype.playerShroom,
@@ -650,11 +663,6 @@ function thingProcessAttributes(thing, attributes) {
   }
 }
 
-// The primary function for placing a thing on the map
-function addThing(me, left, top) {
-  return FSM.get("addThing")(me, left, top);
-}
-
 
 /* Characters (except player, who has his own .js)
  */
@@ -688,7 +696,7 @@ function jumpEnemy(me, enemy) {
 function movePirhanaInit(me) {
   me.hidden = true;
   var scenery = me.visual_scenery = ObjectMaker.make("PirhanaScenery");
-  addThing(scenery, me.left, me.top);
+  FSM.addThing(scenery, me.left, me.top);
   TimeHandler.addSpriteCycle(scenery, ["one", "two"]);
   me.movement = movePirhanaNew;
   // Pirhanas start out minimal
@@ -913,7 +921,7 @@ function startCheepSpawn() {
     function() {
       if(!map_settings.zone_cheeps) return true;
       var spawn = ObjectMaker.make("CheepCheep", { smart: true, flying: true});
-      addThing(spawn, 
+      FSM.addThing(spawn, 
         Math.random() * player.left * player.maxspeed / FullScreenMario.unitsize / 2,
         FSM.MapScreener.height * FullScreenMario.unitsize);
       spawn.xvel = Math.random() * player.maxspeed;
@@ -972,7 +980,7 @@ function throwSpiny(me) {
   TimeHandler.addEvent(function(me) {
     if(me.dead) return false;
     var spawn = ObjectMaker.make("SpinyEgg");
-    addThing(spawn, me.left, me.top);
+    FSM.addThing(spawn, me.left, me.top);
     spawn.yvel = FullScreenMario.unitsize * -2.1;
     FSM.switchClass(me, "hiding", "out");
   }, 21, me);
@@ -987,7 +995,7 @@ function moveSpinyEgg(me) {
 }
 function createSpiny(me) {
   var spawn = ObjectMaker.make("Spiny");
-  addThing(spawn, me.left, me.top);
+  FSM.addThing(spawn, me.left, me.top);
   spawn.moveleft = objectToLeft(player, spawn);
   FSM.killNormal(me);
 }
@@ -1013,7 +1021,7 @@ function placePlayer(xloc, yloc) {
     TimeHandler.addSpriteCycle(player, ["swim1", "swim2"], "swimming", 5);
   }
 
-  var adder = addThing(player, xloc || FullScreenMario.unitsize * 16, yloc || (map_settings.floor - player.height) * FullScreenMario.unitsize);
+  var adder = FSM.addThing(player, xloc || FullScreenMario.unitsize * 16, yloc || (map_settings.floor - player.height) * FullScreenMario.unitsize);
   if(StatsHolder.get("power") >= 2) {
     FSM.playerGetsBig(player, true);
     if(StatsHolder.get("power") == 3)
@@ -1199,9 +1207,7 @@ function playerPaddles(me) {
 }
 
 function playerBubbles() {
-  var bubble = ObjectMaker.make("Bubble");
-  addThing(bubble, player.right, player.top);
-  // TimeHandler.addEvent(killNormal, 140, bubble);
+  FSM.addThing("Bubble", player.right, player.top);
 }
 
 function movePlayerVine(me) {
@@ -1286,7 +1292,7 @@ function playerFires() {
       xloc = player.moveleft 
             ? (player.left -FullScreenMario.unitsize / 4)
             : (player.right + FullScreenMario.unitsize / 4);
-  addThing(ball, xloc, player.top + FullScreenMario.unitsize * 8);
+  FSM.addThing(ball, xloc, player.top + FullScreenMario.unitsize * 8);
   ball.animate(ball);
   ball.ondelete = fireDeleted;
   TimeHandler.addEvent(function(player) {
@@ -1387,7 +1393,7 @@ function playerDropsIn() {
     
     TimeHandler.addEvent(function() {
       player.nocollide = false;
-      addThing("RestingStone", player.left, player.bottom + player.yvel);
+      FSM.addThing("RestingStone", player.left, player.bottom + player.yvel);
     }, map.respawndist || 17);
   }
   // ...in which case just fix his gravity
@@ -1574,7 +1580,7 @@ function makeCastleBlock(me, settings) {
   
   // These start at the center and will have their positions set by castleBlockEvent
   for(i = 0; i < length; ++i)
-    balls[i] = addThing("CastleFireball", midx, midy);
+    balls[i] = FSM.addThing("CastleFireball", midx, midy);
   
   // Start rotating the Fireballs on an interval
   TimeHandler.addEventInterval(castleBlockEvent, me.interval, Infinity, me);
@@ -1676,8 +1682,11 @@ function PlatformGeneratorInit(me) {
   for(var i = 0, inc = me.interval, height = me.height; i < height; i += inc) {
     me.platlast = ObjectMaker.make("Platform", { movement: movePlatformSpawn });
     me.platlast.yvel *= me.dir;
-    if(me.dir == 1) addThing(me.platlast, me.left, me.top + i * FullScreenMario.unitsize);
-    else addThing(me.platlast, me.left, me.bottom - i * FullScreenMario.unitsize);
+    if(me.dir == 1) {
+        FSM.addThing(me.platlast, me.left, me.top + i * FullScreenMario.unitsize);
+    } else {
+        FSM.addThing(me.platlast, me.left, me.bottom - i * FullScreenMario.unitsize);
+    }
     me.platlast.parent = me;
     i += me.interval;
   }
