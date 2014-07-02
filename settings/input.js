@@ -37,7 +37,7 @@
     
     function KeyDownSprint(player) {
         if(player.power == 3 && player.keys.sprint == 0 && !player.crouch) {
-            player.fire();
+            player.fire(player);
         }
         player.keys.sprint = 1;
     }

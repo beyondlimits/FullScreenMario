@@ -165,7 +165,7 @@ function resetThings() {
             sprite_type: "neither",
             // Triggered functions
             animate:  FullScreenMario.prototype.animateEmerge,
-            onMake:   thingProcess,
+            onMake:   FullScreenMario.prototype.thingProcess,
             death:    FullScreenMario.prototype.killNormal,
             collide:  false,
             movement: false
@@ -203,8 +203,8 @@ function resetThings() {
               maxspeedsave: FullScreenMario.unitsize * 1.35,
               scrollspeed: FullScreenMario.unitsize * 1.75,
               running: '', // Evaluates to false for cycle checker
-              fire: playerFires,
-              movement: movePlayer,
+              fire: FullScreenMario.prototype.animatePlayerFire,
+              movement: FullScreenMario.prototype.movePlayer,
               death: killPlayer,
               type: "character",
               name: "player normal small still"
@@ -497,12 +497,6 @@ function resetThings() {
                   }
               }
           },
-          PlatformGenerator: {
-              interval: 35,
-              nocollide: true,
-              hidden: true,
-              movement: PlatformGeneratorInit
-          },
           Floor: {
               nofire: true // for the "Super Fireballs" mod
           },
@@ -601,50 +595,7 @@ function resetThings() {
 
 // Takes in a newly produced Thing and sets it up for gameplay
 function thingProcess(thing, type, settings, defaults) {
-  thing.title = type;
-  
-  // If a width/height is provided but no spritewidth/height, use the original sprite*
-  if(thing.width && !thing.spritewidth)
-    thing.spritewidth = defaults.spritewidth || defaults.width;
-  if(thing.height && !thing.spriteheight)
-    thing.spriteheight = defaults.spriteheight || defaults.height;
-  
-  // Maximum quadrants (for QuadsKeeper)
-  var maxquads = 4, num;
-  if((num = floor(thing.width * FullScreenMario.unitsize / QuadsKeeper.getQuadWidth())) > 0)
-    maxquads += ((num + 1) * maxquads / 2);
-  if((num = floor(thing.height * FullScreenMario.unitsize / QuadsKeeper.getQuadHeight())) > 0)
-    maxquads += ((num + 1) * maxquads / 2);
-  thing.maxquads = maxquads;
-  thing.quadrants = new Array(thing.maxquads);
-  
-  // Basic sprite information
-  var spritewidth = thing.spritewidth = thing.spritewidth || thing.width,
-      spriteheight = thing.spriteheight = thing.spriteheight || thing.height,
-      // Sprite sizing
-      spritewidthpixels = thing.spritewidthpixels = spritewidth * FullScreenMario.unitsize,
-      spriteheightpixels = thing.spriteheightpixels = spriteheight * FullScreenMario.unitsize;
-  
-  // Canvas, context, imageData
-  var canvas = thing.canvas = FullScreenMario.prototype.getCanvas(spritewidthpixels, spriteheightpixels),
-      context = thing.context = canvas.getContext("2d"),
-      imageData = thing.imageData = context.getImageData(0, 0, spritewidthpixels, spriteheightpixels);
-  
-  // Process attributes, such as Koopa.smart
-  if(thing.attributes) thingProcessAttributes(thing, thing.attributes, settings);
-  
-  // Important custom functions
-  if(thing.onThingMake) thing.onThingMake(thing, settings);
-  
-  // Initial class / sprite setting
-  FSM.setClassInitial(thing, thing.name || thing.title);
-  
-  // Sprite cycles
-  var cycle;
-  if(cycle = thing.spriteCycle) TimeHandler.addSpriteCycle(thing, cycle[0], cycle[1] || null, cycle[2] || null);
-  if(cycle = thing.spriteCycleSynched) TimeHandler.addSpriteCycleSynched(thing, cycle[0], cycle[1] || null, cycle[2] || null);
-  
-  FSM.ModAttacher.fireEvent("onThingMake", FSM, thing, type, settings, defaults);
+    return FSM.thingProcess(thing, type, settings, defaults);
 }
 // Processes optional attributes for Things
 function thingProcessAttributes(thing, attributes) {
@@ -1043,148 +994,6 @@ function Keys() {
   this.run = this.crouch = this.jump = this.jumplev = this.sprint = 0;
 }
 
-// To do: add inFullScreenMario.unitsize measurement?
-function movePlayer(me) {
-  // Not jumping
-  if(!me.keys.up) me.keys.jump = 0;
-  
-  // Jumping
-  else if(me.keys.jump > 0 && (me.yvel <= 0 || map_settings.underwater) ) {
-    if(map_settings.underwater) playerPaddles(me);
-    if(me.resting) {
-      if(me.resting.xvel) me.xvel += me.resting.xvel;
-      me.resting = false;
-    }
-    // Jumping, not resting
-    else {
-      if(!me.jumping && !map_settings.underwater) {
-        FSM.switchClass(me, "running skidding", "jumping");
-      }
-      me.jumping = true;
-    }
-    if(!map_settings.underwater) {
-      var dy = FullScreenMario.unitsize / (pow(++me.keys.jumplev, map_settings.jumpmod - .0014 * me.xvel));
-      me.yvel = max(me.yvel - dy, map_settings.maxyvelinv);
-    }
-  }
-  
-  // Crouching
-  if(me.keys.crouch && !me.crouching && me.resting) {
-    if(me.power != 1) {
-      me.crouching = true;
-      FSM.addClass(me, "crouching");
-      FSM.setHeight(player, 11, false, true);
-      me.height = 11;
-      me.toly_old = me.toly;
-      me.toly = FullScreenMario.unitsize * 4;
-      FSM.updateBottom(me, 0);
-      FSM.updateSize(me);
-    }
-    // Pipe movement
-    if(me.resting.actionTop)
-      me.resting.actionTop(me, me.resting);
-  }
-  
-  // Running
-  var decel = 0 ; // (how much to decrease)
-  // If a button is pressed, hold/increase speed
-  if(me.keys.run != 0 && !me.crouching) {
-    var dir = me.keys.run,
-        // No sprinting underwater
-        sprinting = (me.keys.sprint && !map_settings.underwater) || 0,
-        adder = dir * (.098 * (sprinting + 1));
-    // Reduce the speed, both by subtracting and dividing a little
-    me.xvel += adder || 0;
-    me.xvel *= .98;
-    decel = .0007;
-    // If you're accelerating in the opposite direction from your current velocity, that's a skid
-    if(/*sprinting && */signBool(me.keys.run) == me.moveleft) {
-      if(!me.skidding) {
-        FSM.addClass(me, "skidding");
-        me.skidding = true;
-      }
-    }
-    // Otherwise make sure you're not skidding
-    else if(me.skidding) {
-      FSM.removeClass(me, "skidding");
-      me.skidding = false;
-    }
-  }
-  // Otherwise slow down a bit/*, with a little more if crouching*/
-  else {
-    me.xvel *= (.98/* - Boolean(me.crouching) * .07*/);
-    decel = .035;
-  }
-
-  if(me.xvel > decel) me.xvel-=decel;
-  else if(me.xvel < -decel) me.xvel+=decel;
-  else if(me.xvel!=0) {
-	me.xvel = 0;
-	if(!window.nokeys && me.keys.run == 0) {
-    if(me.keys.left_down) me.keys.run = -1;
-    else if(me.keys.right_down) me.keys.run = 1;
-  }  
-}
-  
-  // Movement mods
-  // Slowing down
-  if(Math.abs(me.xvel) < .14) {
-    if(me.running) {
-      me.running = false;
-      if(player.power == 1) FSM.setPlayerSizeSmall(me);
-      FSM.removeClasses(me, "running skidding one two three");
-      FSM.addClass(me, "still");
-      TimeHandler.clearClassCycle(me, "running");
-    }
-  }
-  // Not moving slowly
-  else if(!me.running) {
-    me.running = true;
-    FSM.switchClass(me, "still", "running");
-    playerStartRunningCycle(me);
-    if(me.power == 1) FSM.setPlayerSizeSmall(me);
-  }
-  if(me.xvel > 0) {
-    me.xvel = min(me.xvel, me.maxspeed);
-    if(me.moveleft && (me.resting || map_settings.underwater)) {
-      FSM.unflipHoriz(me);
-      me.moveleft = false;
-    }
-  }
-  else if(me.xvel < 0) {
-    me.xvel = max(me.xvel, me.maxspeed * -1);
-    if(!me.moveleft && (me.resting || map_settings.underwater)) {
-      FSM.flipHoriz(me);
-      me.moveleft = true;
-    }
-  }
-  
-  // Resting stops a bunch of other stuff
-  if(me.resting) {
-    // Hopping
-    if(me.hopping) {
-      FSM.removeClass(me, "hopping");
-      if(me.xvel) FSM.addClass(me, "running");
-      me.hopping = false;
-    }
-    // Jumping
-    me.keys.jumplev = me.yvel = me.jumpcount = 0;
-    if(me.jumping) {
-      me.jumping = false;
-      FSM.removeClass(me, "jumping");
-      if(me.power == 1) FSM.setPlayerSizeSmall(me);
-      FSM.addClass(me, Math.abs(me.xvel) < .14 ? "still" : "running");
-    }
-    // Paddling
-    if(me.paddling) {
-      me.paddling = me.swimming = false;
-      FSM.removeClasses(me, "paddling swim1 swim2");
-      TimeHandler.clearClassCycle(me, "paddling");
-      FSM.addClass(me, "running");
-    }
-  }
-}
-
 // Gives player visual running
 function playerStartRunningCycle(me) {
   // setPlayerRunningCycler sets the time between cycles
@@ -1195,19 +1004,13 @@ function setPlayerRunningCycler(event) {
   event.timeout = 5 + ceil(player.maxspeedsave - abs(player.xvel));
 }
 
+// animatePlayerPaddling because movePlayer calls playerPaddles
 function playerPaddles(me) {
-  if(!me.paddling) {
-    FSM.removeClasses(me, /*"running */"skidding paddle1 paddle2 paddle3 paddle4 paddle5");
-    FSM.addClass(me, "paddling");
-    TimeHandler.clearClassCycle(me, "paddling_cycle");
-    TimeHandler.addSpriteCycle(me, ["paddle1", "paddle2", "paddle3", "paddle3", "paddle2", "paddle1", function() { return me.paddling = false; }], "paddling_cycle", 5);
-  }
-  me.paddling = me.swimming = true;
-  me.yvel = FullScreenMario.unitsize * -.84;
+    return FSM.get("animatePlayerPaddling")(me);
 }
 
 function playerBubbles() {
-  FSM.addThing("Bubble", player.right, player.top);
+    return FSM.get("animatePlayerBubbling")(me);
 }
 
 function movePlayerVine(me) {
@@ -1249,7 +1052,7 @@ function movePlayerVine(me) {
 }
 
 function unattachPlayer(me) {
-  me.movement = movePlayer;//me.movementsave;
+  me.movement = FullScreenMario.prototype.movePlayer;
   FSM.removeClasses(me, "climbing", "animated");
   TimeHandler.clearClassCycle(me, "climbing");
   me.yvel = me.attachoff = me.nofall = me.climbing = me.attached = me.attached.attached = false;
@@ -1277,27 +1080,8 @@ function playerHopsOff(me, addrun) {
   
 }
 
-function playerFires() {
-  if(player.numballs >= 2) return;
-  ++player.numballs;
-  FSM.addClass(player, "firing");
-  var ball = ObjectMaker.make("Fireball", {
-        moveleft: player.moveleft,
-        speed: FullScreenMario.unitsize * 1.75,
-        gravity: map_settings.gravity * 1.56,
-        jumpheight: FullScreenMario.unitsize * 1.56,
-        yvel: FullScreenMario.unitsize,
-        movement: FullScreenMario.prototype.moveJumping
-      }),
-      xloc = player.moveleft 
-            ? (player.left -FullScreenMario.unitsize / 4)
-            : (player.right + FullScreenMario.unitsize / 4);
-  FSM.addThing(ball, xloc, player.top + FullScreenMario.unitsize * 8);
-  ball.animate(ball);
-  ball.ondelete = fireDeleted;
-  TimeHandler.addEvent(function(player) {
-    FSM.removeClass(player, "firing");
-  }, 7, player);
+function animatePlayerShroom() {
+    return FSM.get("animatePlayerFire")(player);
 }
 function emergeFire(me) {
   AudioPlayer.play("Fireball");
@@ -1497,80 +1281,6 @@ function touchVine(me, vine) {
   
 }
 
-function collideSpring(me, spring) {
-  if(me.yvel >= 0 && me.player && !spring.tension && isCharacterOnSolid(me, spring))
-    return springPlayerInit(spring, me);
-  return FSM.FSM.collideCharacterSolid(me, spring);
-}
-function springPlayerInit(spring, player) {
-  spring.tension = spring.tensionsave = max(player.yvel * .77,FullScreenMario.unitsize);
-  player.movement = movePlayerSpringDown;
-  player.spring = spring;
-  player.xvel /= 2.8;
-}
-function movePlayerSpringDown(me) {
-  // If you've moved off the spring, get outta here
-  if(!isThingTouchingThing(me, me.spring)) {
-    me.movement = movePlayer;
-    me.spring.movement = moveSpringUp;
-    me.spring = false;
-    return;
-  }
-  // If the spring is contracted, go back up
-  if(me.spring.height < FullScreenMario.unitsize * 2.5 || me.spring.tension < FullScreenMario.unitsize / 32) {
-    me.movement = movePlayerSpringUp;
-    me.spring.movement = moveSpringUp;
-    return;
-  }
-  // Make sure it's hard to slide off
-  if(me.left < me.spring.left + FullScreenMario.unitsize * 2 || me.right > me.spring.right -FullScreenMario.unitsize * 2)
-    me.xvel /= 1.4;
-  
-  reduceSpringHeight(me.spring, me.spring.tension);
-  FSM.setBottom(me, me.spring.top, true);
-  me.spring.tension /= 2;
-  
-  FSM.updateSize(me.spring);
-}
-function movePlayerSpringUp(me) {
-  if(!me.spring || !isThingTouchingThing(me, me.spring)) {
-    me.spring = false;
-    me.movement = movePlayer;
-  }
-}
-function moveSpringUp(spring) {
-  reduceSpringHeight(spring, -spring.tension);
-  spring.tension *= 2;
-  if(spring == player.spring) 
-    FSM.setBottom(player, spring.top, true);
-  
-  if(spring.height > spring.heightnorm) {
-    if(spring == player.spring) {
-      player.yvel = max(-unitsize * 2, spring.tensionsave * -.98);
-      player.resting = player.spring = false;
-    }
-    reduceSpringHeight(spring, (spring.height - spring.heightnorm) * FullScreenMario.unitsize);
-    spring.tension = spring.tensionsave = spring.movement = false;
-  }
-}
-function reduceSpringHeight(spring, dy) {
-  FSM.reduceHeight(spring, dy, true);
-}
-
-function RestingStoneUnused(me) {
-  // Wait until Player isn't resting
-  if(!player.resting) return;
-  // If Player is resting on something else, this is unecessary
-  if(player.resting != me) return FSM.killNormal(me);
-  // Make the stone wait until it's no longer being rested upon
-  me.movement = RestingStoneUsed;
-  FSM.removeClass(me, "hidden");
-  PixelDrawer.setThingSpritesetThingSprite(player);
-}
-function RestingStoneUsed(me) { 
-  if(!player.resting) return FSM.killNormal(me);
-}
-
 function makeCastleBlock(me, settings) {
   // The block will need to manage the balls later
   var length = me.fireballs,
@@ -1676,21 +1386,6 @@ function collideCastleNPC(me, collider) {
       TimeHandler.addEvent(proliferate, i * 70, text[i].element, {style: {visibility: "visible"}});
     TimeHandler.addEvent(endLevel, (i + 3) * 70);
   }, 21, collider.text);
-}
-
-function PlatformGeneratorInit(me) {
-  for(var i = 0, inc = me.interval, height = me.height; i < height; i += inc) {
-    me.platlast = ObjectMaker.make("Platform", { movement: movePlatformSpawn });
-    me.platlast.yvel *= me.dir;
-    if(me.dir == 1) {
-        FSM.addThing(me.platlast, me.left, me.top + i * FullScreenMario.unitsize);
-    } else {
-        FSM.addThing(me.platlast, me.left, me.bottom - i * FullScreenMario.unitsize);
-    }
-    me.platlast.parent = me;
-    i += me.interval;
-  }
-  me.movement = false;
 }
 
 function detachPlayer(me) {

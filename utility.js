@@ -1,20 +1,6 @@
 /* Utility.js */
 // Contains all needed helper functions not in toned.js
 
-function movePlatformSpawn(me) {
-  // This is like movePlatformNorm, but also checks for whether it's out of bounds
-  // Assumes it's been made with a PlatformGenerator as the parent
-  // To do: make the PlatformGenerator check one at a time, not each of them.
-  if(me.bottom < me.parent.top) {
-    FSM.setBottom(me, me.parent.bottom);
-    detachPlayer(me);
-  }
-  else if(me.top > me.parent.bottom) {
-    FSM.setTop(me, me.parent.top);
-    detachPlayer(me);
-  }
-  else FSM.movePlatformNorm(me);
-}
 
 function collideTransport(me, solid) {
   FSM.collideCharacterSolid(me, solid);
@@ -27,35 +13,6 @@ function collideTransport(me, solid) {
 
 // To do: make me.collide and stages w/functions
 // To do: split this into .partner and whatnot
-
-function moveFallingScale(me) {
-  // If Player is resting on me, fall
-  if(player.resting == me) {
-    shiftScaleStringVert(me, me.string, me.yvel += unitsized16);
-    shiftScaleStringVert(me.partner, me.partner.string, -me.yvel);
-    me.tension += me.yvel;
-    me.partner.tension -= me.yvel;
-  }
-  // Otherwise, if me or partner has a positive yvel, slow it down
-  else if(me.yvel > 0) {
-    shiftScaleStringVert(me, me.string, me.yvel -= unitsized32);
-    shiftScaleStringVert(me.partner, me.partner.string, -me.yvel);
-    me.tension -= me.yvel;
-    me.partner.tension += me.yvel;
-  }
-  // If the platform falls off
-  if(me.partner.tension <= 0) {
-    me.collide = me.partner.collide = FSM.collideCharacterSolid;
-    // Keep falling at an increasing pace
-    me.movement = me.partner.movement = FSM.moveFreeFalling;
-  }
-}
-function shiftScaleStringVert(me, string, yvel) {
-  string.bottom = me.top;
-  string.height = (string.bottom - string.top) / unitsize;
-  FSM.updateSize(string);
-  FSM.shiftVert(me, yvel);
-}
 
 
 /*

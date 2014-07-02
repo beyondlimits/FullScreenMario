@@ -252,6 +252,75 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function thingProcess(thing, type, settings, defaults) {
+        thing.title = type;
+        
+        // If a width/height is provided but no spritewidth/height,
+        // use the default spritewidth/height
+        if(thing.width && !thing.spritewidth) {
+            thing.spritewidth = defaults.spritewidth || defaults.width;
+        }
+        if(thing.height && thing.spriteheight) {
+            thing.spriteheight = defaults.spriteheight || defaults.height;
+        }
+        
+        // Each thing has at least 4 maximum quadrants (for the QuadsKeepr)
+        var maxquads = 4,
+            num;
+        num = Math.floor(thing.width 
+            * (FullScreenMario.unitsize / QuadsKeeper.getQuadWidth()));
+        if(num > 0) {
+            maxquads += ((num + 1) * maxquads / 2);
+        }
+        num = Math.floor(thing.height 
+            * (FullScreenMario.unitsize / QuadsKeeper.getQuadHeight()));
+        if(num > 0) {
+            maxquads += ((num + 1) * maxquads / 2);
+        }
+        thing.maxquads = maxquads;
+        thing.quadrants = new Array(maxquads);
+        
+        // Basic sprite information
+        var spritewidth = thing.spritewidth = thing.spritewidth || thing.width,
+            spriteheight = thing.spriteheight = thing.spriteheight || thing.height,
+            // Sprite sizing
+            spritewidthpixels = thing.spritewidthpixels = spritewidth * FullScreenMario.unitsize,
+            spriteheightpixels = thing.spriteheightpixels = spriteheight * FullScreenMario.unitsize;
+        
+        // Canvas, context, imageData
+        var canvas = thing.canvas = FullScreenMario.prototype.getCanvas(spritewidthpixels, spriteheightpixels),
+            context = thing.context = canvas.getContext("2d"),
+            imageData = thing.imageData = context.getImageData(0, 0, spritewidthpixels, spriteheightpixels);
+        
+        // Attributes, such as Koopa.smart
+        if(thing.attributes) {
+            thingProcessAttributes(thing, thing.attributes, settings);
+        }
+        
+        // Important custom functions
+        if(thing.onThingMake) {
+            thing.onThingMake(thing, settings);
+        }
+        
+        // Initial class / sprite setting
+        FSM.setClassInitial(thing, thing.name || thing.title);
+        
+        // Sprite cycles
+        var cycle;
+        if(cycle = thing.spriteCycle) {
+            thing.EightBitter.TimeHandler.addSpriteCycle(thing, cycle[0], cycle[1] || null, cycle[2] || null);
+        }
+        if(cycle = thing.spriteCycleSynched) {
+            thing.EightBitter.TimeHandler.addSpriteCycleSynched(thing, cycle[0], cycle[1] || null, cycle[2] || null);
+        }
+        
+        // Mods!
+        thing.EightBitter.ModAttacher.fireEvent("onThingMake", thing.EightBitter, thing, type, settings, defaults);
+    }
+    
+    /**
+     * 
+     */
     function scrollWindow(dx, dy) {
         dx = dx || 0;
         dy = dy || 0;
@@ -1643,6 +1712,178 @@ window.FullScreenMario = (function() {
         }
     }
     
+    /**
+     * 
+     * 
+     * This is one of the worst written functions in the engine. Kill me please.
+     */
+    function movePlayer(thing) {
+        var me = thing;
+        
+        // Not jumping
+        if(!thing.keys.up) {
+            thing.keys.jump = 0;
+        }
+        // Jumping
+        else if(thing.keys.jump > 0 && (thing.yvel <= 0 || map_settings.underwater)) {
+            if(map_settings.underwater) {
+                thing.EightBitter.animatePlayerPaddling(thing);
+            }
+            
+            if(thing.resting) {
+                if(thing.resting.xvel) {
+                    thing.xvel += thing.resting.xvel;
+                }
+                thing.resting = false;
+            }
+            // Jumping, not resting
+            else {
+                if(!thing.jumping && !map_settings.underwater) {
+                    FSM.switchClass(thing, "running skidding", "jumping");
+                }
+                thing.jumping = true;
+            }
+            if(!map_settings.underwater) {
+                thing.keys.jumplev += 1;
+                var dy = FullScreenMario.unitsize 
+                    / (Math.pow(thing.keys.jumplev, map_settings.jumpmod - .0014 * thing.xvel));
+                thing.yvel = Math.max(thing.yvel - dy, map_settings.maxyvelinv);
+            }
+        }
+      
+        // Crouching
+        if(thing.keys.crouch && !thing.crouching && thing.resting) {
+            if(thing.power != 1) {
+                thing.crouching = true;
+                thing.EightBitter.addClass(thing, "crouching");
+                thing.EightBitter.setHeight(thing, 11, false, true);
+                thing.height = 11;
+                thing.toly_old = thing.toly;
+                thing.toly = thing.EightBitter.unitsize * 4;
+                thing.EightBitter.updateBottom(thing, 0);
+                thing.EightBitter.updateSize(thing);
+            }
+            // Pipe movement
+            if(thing.resting.actionTop) {
+                thing.resting.actionTop(thing, thing.resting);
+            }
+        }
+      
+        // Running
+        var decel = 0 ; // (how much extra to decrease)
+        // If a button is pressed, hold/increase speed
+        if(thing.keys.run != 0 && !thing.crouching) {
+            var dir = thing.keys.run,
+                // No sprinting underwater
+                sprinting = (thing.keys.sprint && !map_settings.underwater) || 0,
+                adder = dir * (.098 * (sprinting + 1));
+            
+            // Reduce the speed, both by subtracting and dividing a little
+            thing.xvel += adder || 0;
+            thing.xvel *= .98;
+            decel = .0007;
+            
+            // If you're accelerating in the opposite direction from your current velocity, that's a skid
+            if((thing.keys.run > 0) == thing.moveleft) {
+                if(!thing.skidding) {
+                    thing.EightBitter.addClass(thing, "skidding");
+                    thing.skidding = true;
+                }
+            }
+            // Not accelerating: make sure you're not skidding
+            else if(thing.skidding) {
+                thing.EightBitter.removeClass(thing, "skidding");
+                thing.skidding = false;
+            }
+        }
+        // Otherwise slow down a bit
+        else {
+            thing.xvel *= .98;
+            decel = .035;
+        }
+
+        if(thing.xvel > decel) {
+            thing.xvel -= decel;
+        } else if(thing.xvel < -decel) {
+            thing.xvel += decel;
+        } else if(thing.xvel != 0) {
+            thing.xvel = 0;
+            if(!window.nokeys && thing.keys.run == 0) {
+                if(thing.keys.left_down) {
+                    thing.keys.run = -1;
+                } else if(thing.keys.right_down) {
+                    thing.keys.run = 1;
+                }
+            }  
+        }
+      
+        // Movement mods
+        // Slowing down
+        if(Math.abs(thing.xvel) < .14) {
+            if(thing.running) {
+                thing.running = false;
+                if(player.power == 1) {
+                    thing.EightBitter.setPlayerSizeSmall(thing);
+                }
+                thing.EightBitter.removeClasses(thing, "running skidding one two three");
+                thing.EightBitter.addClass(thing, "still");
+                thing.EightBitter.TimeHandler.clearClassCycle(thing, "running");
+            }
+        }
+        // Not moving slowly
+        else if(!thing.running) {
+            thing.running = true;
+            thing.EightBitter.switchClass(thing, "still", "running");
+            playerStartRunningCycle(thing);
+            if(thing.power == 1) {
+                thing.EightBitter.setPlayerSizeSmall(thing);
+            }
+        }
+        if(thing.xvel > 0) {
+            thing.xvel = Math.min(thing.xvel, thing.maxspeed);
+            if(thing.moveleft && (thing.resting || map_settings.underwater)) {
+                thing.EightBitter.unflipHoriz(thing);
+                thing.moveleft = false;
+            }
+        }
+        else if(thing.xvel < 0) {
+            thing.xvel = Math.max(thing.xvel, thing.maxspeed * -1);
+            if(!thing.moveleft && (thing.resting || map_settings.underwater)) {
+                thing.moveleft = true;
+                thing.EightBitter.flipHoriz(thing);
+            }
+        }
+      
+      // Resting stops a bunch of other stuff
+        if(thing.resting) {
+            // Hopping
+            if(thing.hopping) {
+                thing.hopping = false;
+                thing.EightBitter.removeClass(thing, "hopping");
+                if(thing.xvel) {
+                    thing.EightBitter.addClass(thing, "running");
+                }
+            }
+            // Jumping
+            thing.keys.jumplev = thing.yvel = thing.jumpcount = 0;
+            if(thing.jumping) {
+                thing.jumping = false;
+                thing.EightBitter.removeClass(thing, "jumping");
+                if(thing.power == 1) {
+                    thing.EightBitter.setPlayerSizeSmall(thing);
+                }
+                thing.EightBitter.addClass(thing, Math.abs(thing.xvel) < .14 ? "still" : "running");
+            }
+            // Paddling
+            if(thing.paddling) {
+                thing.paddling = thing.swimming = false;
+                thing.EightBitter.TimeHandler.clearClassCycle(thing, "paddling");
+                thing.EightBitter.removeClasses(thing, "paddling swim1 swim2");
+                thing.EightBitter.addClass(thing, "running");
+            }
+        }
+    }
+    
     
     // Animations
     
@@ -1845,7 +2086,59 @@ window.FullScreenMario = (function() {
      * 
      */
     function animatePlayerFire(thing) {
+        if(thing.numballs >= 2) {
+            return;
+        }
         
+        thing.numballs += 1;
+        thing.EightBitter.addClass(thing, "firing");
+        
+        var ball = thing.EightBitter.ObjectMaker.make("Fireball", {
+                "moveleft": thing.moveleft,
+                "speed": thing.EightBitter.unitsize * 1.75,
+                "jumpheight": thing.EightBitter.unitsize * 1.56,
+                // "gravity": thing.EightBitter.MapScreener.gravity * 1.56, // not there!
+                "gravity": map_settings.gravity * 1.56,
+                "yvel": thing.EightBitter.unitsize,
+                "movement": thing.EightBitter.moveJumping
+            }),
+            xloc = thing.moveleft
+                ? (thing.left - thing.EightBitter.unitsize / 4)
+                : (thing.right + thing.EightBitter.unitsize / 4);
+        
+        thing.EightBitter.addThing(ball, xloc, thing.top + thing.EightBitter.unitsize * 8);
+        ball.animate(ball);
+        ball.ondelete = fireDeleted;
+        
+        thing.EightBitter.TimeHandler.addEvent(function () {
+            thing.EightBitter.removeClass(thing, "firing");
+        }, 7);
+    }
+    
+    /**
+     * 
+     */
+    function animatePlayerPaddling(thing) {
+        if(!thing.paddling) {
+            thing.EightBitter.removeClass(thing, "skidding paddle1 paddle2 paddle3 paddle4 paddle5");
+            thing.EightBitter.addClass(thing, "paddling");
+            thing.EightBitter.clearClassCycle(thing, "paddling_cycle");
+            thing.EightBitter.addClassCycle(thing, 
+                ["paddle1", "paddle2", "paddle3", "paddle2", "paddle1",
+                function () {
+                    return thing.paddling = false;
+                },
+                "paddling_cycle", 3]);
+            thing.paddling = thing.swimming = true;
+            thing.yvel = thing.EightBitter.unitsize * -.84;
+        }
+    }
+    
+    /**
+     * 
+     */
+    function animatePlayerBubbling(thing) {
+        thing.EightBitter.addThing("Bubble", thing.right, thing.top);
     }
     
     /**
@@ -2453,6 +2746,7 @@ window.FullScreenMario = (function() {
     proliferateHard(FullScreenMario.prototype, {
         // Global manipulations
         "addThing": addThing,
+        "thingProcess": thingProcess,
         "scrollWindow": scrollWindow,
         "scrollPlayer": scrollPlayer,
         // Collision detectors
@@ -2505,6 +2799,7 @@ window.FullScreenMario = (function() {
         "movePlatform": movePlatform,        "moveFalling": moveFalling,        "moveFreeFalling": moveFreeFalling,
         "moveShell": moveShell,
         "moveCoinEmerge": moveCoinEmerge,
+        "movePlayer": movePlayer,
         // Animations
         "animateSolidBump": animateSolidBump,
         "animateSolidContents": animateSolidContents,
@@ -2516,6 +2811,8 @@ window.FullScreenMario = (function() {
         "animateFireballExplode": animateFireballExplode,
         "animateFirework": animateFirework,
         "animatePlayerFire": animatePlayerFire,
+        "animatePlayerPaddling": animatePlayerPaddling,
+        "animatePlayerBubbling": animatePlayerBubbling,
         "animateCharacterHop": animateCharacterHop,
         // Physics
         "shiftBoth": shiftBoth,
