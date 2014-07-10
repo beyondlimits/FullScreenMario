@@ -1,20 +1,16 @@
 /* Upkeep.js */
 // Contains functions associated with the upkeep
 
-function resetUpkeep() {
-  window.GamesRunner = FSM.GamesRunner;
-}
-
 function upkeep() {
-  GamesRunner.upkeep();
+  FSM.GamesRunner.upkeep();
 }
 
 function pause(big) {
-  GamesRunner.pause();
+  FSM.GamesRunner.pause();
 }
 
 function unpause() {
-  GamesRunner.unpause();
+  FSM.GamesRunner.unpause();
 }
 
 
@@ -46,8 +42,8 @@ function maintainCharacters(update) {
     FSM.QuadsKeeper.determineThingQuadrants(character);
     character.under = character.undermid = false;
     // determineThingCollisions(character);
-    ThingHitter.getGroupHolder().setCharacterGroup(characters);
-    ThingHitter.checkHitsOfOne(character);
+    FSM.ThingHitter.getGroupHolder().setCharacterGroup(characters);
+    FSM.ThingHitter.checkHitsOfOne(character);
     
     // Resting tests
     if(character.resting) {

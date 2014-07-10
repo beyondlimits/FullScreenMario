@@ -41,7 +41,6 @@ function startFSM() {
   resetThings();
   resetMapsManager();
   resetTriggers();
-  resetUpkeep();
   
   // These should be placed somewhere else eventually
   window.characters = FSM.GroupHolder.getCharacterGroup();
@@ -52,7 +51,7 @@ function startFSM() {
   // With that all set, set the map to World11.
   FSM.StatsHolder.set("lives", 3);
   setMap([1,1]);
-  GamesRunner.upkeep();
+  FSM.GamesRunner.upkeep();
   document.body.appendChild(FSM.StatsHolder.makeContainer());
   
   log("It took " + (Date.now() - time_start) + " milliseconds to start.");

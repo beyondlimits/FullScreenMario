@@ -175,7 +175,7 @@ function endLevelFireworks(me, numfire, detector) {
 function explodeFirework(num, castlemid) {
   setTimeout(function() {
     log("Not placing fireball.");
-    // var fire = ObjectMaker.make("Firework");
+    // var fire = FSM.ObjectMaker.make("Firework");
     // addThing(fire, castlemid + fire.locs[0] -FullScreenMario.unitsize * 6,FullScreenMario.unitsize * 16 + fire.locs[1]);
     // fire.animate();
   }, timer * num * 42);

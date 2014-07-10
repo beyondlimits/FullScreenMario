@@ -1,7 +1,3 @@
-/*
-ThingHitter.getGroupHolder().setCharacterGroup(characters);
-ThingHitter.checkHitsOfGroup("Character")
-*/
 function ThingHittr(settings) {
     "use strict";
     if(!this || this === window) {
