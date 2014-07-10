@@ -13,11 +13,6 @@
   * use collider/spawner for more stuff
 */
 
-function resetThings() {
-    window.ThingHitter = FSM.ThingHitter;
-    window.ObjectMaker = FSM.ObjectMaker;
-}
-
 /*
  * Player
  */

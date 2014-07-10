@@ -453,7 +453,7 @@ function MapsManagr(settings) {
     
     var pattern = patterns[reference.pattern],
         length = pattern.length,
-        defaults = ObjectMaker.getProperties(),
+        defaults = FSM.ObjectMaker.getProperties(),
         repeats = reference.repeat || 1,
         xpos = reference.x || 0,
         ypos = reference.y || 0,

@@ -3,7 +3,7 @@
 
 function resetMapsManager() {
   FSM.MapsManager = new MapsManagr({
-    prething_maker: ObjectMaker,
+    prething_maker: FSM.ObjectMaker,
     recipient: window.map_settings || window,
     recipient_receives: [
       "gravity",
