@@ -92,7 +92,7 @@ function setMap(name) {
   FSM.TimeHandler.clearAllEvents();
   FSM.TimeHandler.addEventInterval(function () {
     if(!notime) {
-      StatsHolder.decrease("time", 1);
+      FSM.StatsHolder.decrease("time", 1);
     }
   }, 25, Infinity);
   resetGameState();
@@ -114,10 +114,10 @@ function setMap(name) {
   
   // MapsManager.setRecipient(map_settings);
   MapsManager.setMap(name);
-  StatsHolder.set("world", name.join('-'));
+  FSM.StatsHolder.set("world", name.join('-'));
   // 1 game second is about 25*16.667=416.675ms
-  StatsHolder.set("time", MapsManager.getArea().time);
-  InputWriter.restartHistory();
+  FSM.StatsHolder.set("time", MapsManager.getArea().time);
+  FSM.InputWriter.restartHistory();
   unpause();
   
   FSM.ModAttacher.fireEvent("onLocationSet");

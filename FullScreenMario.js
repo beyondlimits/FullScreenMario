@@ -2725,7 +2725,7 @@ window.FullScreenMario = (function() {
         thing.EightBitter.AudioPlayer.pause();
         thing.EightBitter.StatsHolder.decrease("lives");
         
-        if(StatsHolder.get("lives") > 0) {
+        if(thing.EightBitter.StatsHolder.get("lives") > 0) {
             thing.EightBitter.TimeHandler.addEvent(setMap, 280);
         } else {
             thing.EightBitter.TimeHandler.addEvent(gameOver, 280);

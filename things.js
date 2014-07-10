@@ -135,7 +135,7 @@ function endLevelPoints(me, detector) {
   FSM.killNormal(me);
   
   // Determine the number of fireballs (1, 3, and 6 become not 0)
-  var numfire = parseInt(getLast(String(StatsHolder.get("time"))));
+  var numfire = parseInt(getLast(String(FSM.StatsHolder.get("time"))));
   if(!(numfire == 1 || numfire == 3 || numfire == 6)) numfire = 0;
   // Count down the points (x50)
   var points = setInterval(function() {
@@ -145,7 +145,7 @@ function endLevelPoints(me, detector) {
     // Each point(x50) plays the coin noise
     FSM.AudioPlayer.play("Coin");
     // Once it's done, move on to the fireworks.
-    if(StatsHolder.get("time") <= 0)  {
+    if(FSM.StatsHolder.get("time") <= 0)  {
       // pause();
       clearInterval(points);
       setTimeout(function() { endLevelFireworks(me, numfire, detector); }, timer * 49);
