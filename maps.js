@@ -33,7 +33,7 @@ function resetMapsManager() {
     },
     entry_default: "plain",
     on_entry: function() { 
-        MapsManager.spawnMap((FSM.MapScreener.right + QuadsKeeper.getOutDifference() ) / unitsize); 
+        MapsManager.spawnMap((FSM.MapScreener.right + FSM.QuadsKeeper.getOutDifference() ) / unitsize); 
     },
     macros: {
       "Floor": makeFloor,
@@ -89,8 +89,8 @@ function setMap(name) {
   resetQuadrants();
   
   // From shiftToLocation
-  TimeHandler.clearAllEvents();
-  TimeHandler.addEventInterval(function () {
+  FSM.TimeHandler.clearAllEvents();
+  FSM.TimeHandler.addEventInterval(function () {
     if(!notime) {
       StatsHolder.decrease("time", 1);
     }
@@ -173,8 +173,8 @@ function intoPipeHorizontal(me, pipe) {
     }, timer);
 }
 function pipePreparations(me) {
-  AudioPlayer.pauseTheme();
-  AudioPlayer.play("Pipe");
+  FSM.AudioPlayer.pauseTheme();
+  FSM.AudioPlayer.play("Pipe");
   me.nocollide = me.nofall = me.nocollide = nokeys = notime = true;
   me.movement = me.xvel = me.yvel = 0;
   
@@ -189,7 +189,7 @@ function pipePreparations(me) {
 function exitPipeVertical(pipe) {
   switchContainers(player, characters, scenery);
   player.nofall = nokeys = notime = true;
-  AudioPlayer.play("Pipe");
+  FSM.AudioPlayer.play("Pipe");
   FSM.setTop(player, pipe.top);
   FSM.setMidXObj(player, pipe, true);
   var dy = unitsize / -4, move = setInterval(function() {
@@ -208,10 +208,10 @@ function walkToPipe() {
   startWalking(player);
 
   var hasPipingStarted = false,
-      move = TimeHandler.addEventInterval(function() {
+      move = FSM.TimeHandler.addEventInterval(function() {
         if(player.piping) {
           // We have started piping
-          AudioPlayer.pauseTheme();
+          FSM.AudioPlayer.pauseTheme();
           // nokeys = player.keys.run = notime = false;
           clearInterval(move);
           player.maxspeed = player.maxspeedsave;

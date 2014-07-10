@@ -2198,11 +2198,11 @@ window.FullScreenMario = (function() {
         
         thing.flickering = true;
         
-        TimeHandler.addEventInterval(function () {
+        thing.EightBitter.TimeHandler.addEventInterval(function () {
             thing.hidden = !thing.hidden;
         }, interval, cleartime);
         
-        TimeHandler.addEvent(function () {
+        thing.EightBitter.TimeHandler.addEvent(function () {
             thing.flickering = thing.hidden = false;
         }, cleartime * interval + 1);
     }
@@ -2211,7 +2211,7 @@ window.FullScreenMario = (function() {
      * 
      */
     function animateFireballEmerge(thing) {
-        AudioPlayer.play("Fireball");
+        thing.EightBitter.AudioPlayer.play("Fireball");
     }
     
     /**

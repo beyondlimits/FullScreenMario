@@ -19,7 +19,7 @@ function maxlulz() {
     // Sigh....
     // window.palette = arrayShuffle(window.palette, 1);
     // clearAllSprites(true);
-    TimeHandler.addEventInterval(function (arr) {
+    FSM.TimeHandler.addEventInterval(function (arr) {
         setAreaSetting(arr[randInt(arr.length)]);
     }, 7, Infinity, ["Overworld", "Underworld", "Underwater", "Sky", "Castle"]);
 }

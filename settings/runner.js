@@ -24,9 +24,9 @@ FullScreenMario.prototype.runner = {
         }
     ],
     "on_pause": function () {
-        AudioPlayer.pause();
+        FSM.AudioPlayer.pause();
     },
     "on_unpause": function () {
-        AudioPlayer.resume();
+        FSM.AudioPlayer.resume();
     }
 }

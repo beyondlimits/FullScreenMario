@@ -86,7 +86,6 @@ function MapsManagr(settings) {
       maps;
   
   self.reset = function reset(settings) {
-        debugger;
     // An external prething_maker must be provided
     if(!settings.prething_maker) {
       console.error("No ObjectMakr for prethings is being provided.", setting);
@@ -448,7 +447,6 @@ function MapsManagr(settings) {
   function makePrePattern(reference) {
     // Make sure the pattern exists
     if(!patterns.hasOwnProperty(reference.pattern)) {
-        debugger;
       console.warn("Map " + map_name + " references a pattern of unknown type.", reference);
       return;
     }
@@ -511,7 +509,7 @@ function MapsManagr(settings) {
     
     // This should be genericized
     recipient.fillStyle = getAreaFillStyle(area_current.setting);
-    TimeHandler.addEvent(AudioPlayer.playTheme, 2);
+    FSM.TimeHandler.addEvent(FSM.AudioPlayer.playTheme, 2);
     
     // If there's a function for this, do it
     if(on_entry) {

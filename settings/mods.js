@@ -35,7 +35,7 @@ FullScreenMario.prototype.mods = {
                         
                         if(mod.settings.levels[mod.settings.qcount]) {
                             var level = mod.settings.levels[mod.settings.qcount];
-                            TimeHandler.addEventInterval(function () {
+                            FSM.TimeHandler.addEventInterval(function () {
                                 if(charactersFSM.length < 210) {
                                     var num = floor(random() * level.length),
                                         lul = FSM.ObjectMaker.make.apply(FSM, level[num]);

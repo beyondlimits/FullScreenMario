@@ -25,13 +25,13 @@ function maintainSolids(update) {
     if(solid.alive) {
       if(solid.movement) solid.movement(solid);
     }
-    if(!solid.alive || solid.right < QuadsKeeper.getDelX())
+    if(!solid.alive || solid.right < FSM.QuadsKeeper.getDelX())
       deleteThing(solid, solids, i);
   }
 }
 
 function maintainCharacters(update) {
-  var delx = FSM.MapScreener.right + QuadsKeeper.getOutDifference(),
+  var delx = FSM.MapScreener.right + FSM.QuadsKeeper.getOutDifference(),
       character, i;
   for(i = 0; i < characters.length; ++i) {
     character = characters[i];
@@ -43,7 +43,7 @@ function maintainCharacters(update) {
     
     // Position updating and collision detection
     FSM.updatePosition(character);
-    QuadsKeeper.determineThingQuadrants(character);
+    FSM.QuadsKeeper.determineThingQuadrants(character);
     character.under = character.undermid = false;
     // determineThingCollisions(character);
     ThingHitter.getGroupHolder().setCharacterGroup(characters);

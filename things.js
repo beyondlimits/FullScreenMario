@@ -28,7 +28,7 @@ function placePlayer(xloc, yloc) {
 function unattachPlayer(me) {
   me.movement = FullScreenMario.prototype.movePlayer;
   FSM.removeClasses(me, "climbing", "animated");
-  TimeHandler.clearClassCycle(me, "climbing");
+  FSM.TimeHandler.clearClassCycle(me, "climbing");
   me.yvel = me.attachoff = me.nofall = me.climbing = me.attached = me.attached.attached = false;
   me.xvel = me.keys.run;
 }
@@ -36,8 +36,8 @@ function unattachPlayer(me) {
 function gameOver() {
   gameon = false;
   pause();
-  AudioPlayer.pauseTheme();
-  AudioPlayer.play("Game Over");
+  FSM.AudioPlayer.pauseTheme();
+  FSM.AudioPlayer.play("Game Over");
   
   var innerHTML = "<div style='font-size:49px;padding-top: " + (innerHeight / 2 - 28/*49*/) + "px'>GAME OVER</div>";
   // innerHTML += "<p style='font-size:14px;opacity:.49;width:490px;margin:auto;margin-top:49px;'>";
@@ -56,8 +56,8 @@ function gameRestart() {
   body.appendChild(canvas);
   gameon = true;
   setMap([1,1]);
-  TimeHandler.addEvent(function() { body.style.visibility = ""; });
-  StatsHolder.set("lives", 3);
+  FSM.TimeHandler.addEvent(function() { body.style.visibility = ""; });
+  FSM.StatsHolder.set("lives", 3);
 }
 
 
@@ -72,8 +72,8 @@ function detachPlayer(me) {
 }
 
 function FlagCollisionTop(me, detector) {
-  AudioPlayer.pause();
-  AudioPlayer.play("Flagpole");
+  FSM.AudioPlayer.pause();
+  FSM.AudioPlayer.play("Flagpole");
   
   // All other characters die, and the player is no longer in control
   killOtherCharacters();
@@ -88,7 +88,7 @@ function FlagCollisionTop(me, detector) {
   ++me.star;
   FSM.removeClasses(me, "running jumping skidding");
   FSM.addClass(me, "climbing animated");
-  TimeHandler.addSpriteCycle(me, ["one", "two"], "climbing");
+  FSM.TimeHandler.addSpriteCycle(me, ["one", "two"], "climbing");
   
   // Start moving the player down, as well as the end flag
   var endflag = MapsManager.getArea().getThingByID("endflag"),
@@ -102,10 +102,10 @@ function FlagCollisionTop(me, detector) {
     // If both are at the bottom, clear climbing and allow walking
     if(me.bottom >= bottom_cap && endflag.bottom >= bottom_cap) {
       me.movement = false;
-      TimeHandler.clearClassCycle(me, "climbing");
+      FSM.TimeHandler.clearClassCycle(me, "climbing");
       
       // Wait a little bit to FlagOff, which will start the player walking
-      TimeHandler.addEvent(FlagOff, 21, me);
+      thing.EightBitter.TimeHandler.addEvent(FlagOff, 21, me);
     }
   }
 }
@@ -120,8 +120,8 @@ function FlagOff(me, solid) {
   me.maxspeed = me.walkspeed;
   
   // The walking happens a little bit later as well
-  TimeHandler.addEvent(function() {
-    AudioPlayer.play("Stage Clear");
+  FSM.TimeHandler.addEvent(function() {
+    FSM.AudioPlayer.play("Stage Clear");
     playerHopsOff(me, true);
   }, 14, me);
 }
@@ -140,10 +140,10 @@ function endLevelPoints(me, detector) {
   // Count down the points (x50)
   var points = setInterval(function() {
     // 50 points for each unit of time
-    StatsHolder.decrease("time");
-    StatsHolder.increase("score", 50);
+    FSM.StatsHolder.decrease("time");
+    FSM.StatsHolder.increase("score", 50);
     // Each point(x50) plays the coin noise
-    AudioPlayer.play("Coin");
+    FSM.AudioPlayer.play("Coin");
     // Once it's done, move on to the fireworks.
     if(StatsHolder.get("time") <= 0)  {
       // pause();
@@ -168,7 +168,9 @@ function endLevelFireworks(me, numfire, detector) {
   nextfunc = function() { setTimeout(function() { endLevel(); }, nextnum); };
   
   // If the Stage Clear sound is still playing, wait for it to finish
-  AudioPlayer.addEventImmediate("Stage Clear", "ended", function() { TimeHandler.addEvent(nextfunc, 35); });
+  FSM.AudioPlayer.addEventImmediate("Stage Clear", "ended", function() { 
+    FSM.TimeHandler.addEvent(nextfunc, 35);
+  });
 }
 function explodeFirework(num, castlemid) {
   setTimeout(function() {

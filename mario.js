@@ -37,13 +37,11 @@ function startFSM() {
 
   // Resetting everything may take a while
   resetMeasurements();
-  resetEvents();
   resetCanvas();
   resetThings();
   resetMapsManager();
   resetStatsHolder();
   resetTriggers();
-  resetSounds();
   resetUpkeep();
   
   // These should be placed somewhere else eventually
@@ -114,16 +112,6 @@ function resetTimer(num) {
   window.timerd2 = num / 2;
 }
 
-// Events are done with TimeHandlr.js
-function resetEvents() {
-    window.TimeHandler = FSM.TimeHandler;
-}
-
-// Sounds are done with AudioPlayr.js
-function resetSounds() {
-    window.AudioPlayer = FSM.AudioPlayer;
-}
-
 // Quadrants are done with QuadsKeepr.js
 // This starts off with 7 cols and 6 rows (each has 1 on each side for padding)
 function resetQuadrants() {
@@ -143,5 +131,5 @@ function resetGameState(nocount) {
   // Keep a history of pressed keys
   window.gamehistory = [];
   // Clear audio
-  AudioPlayer.pause();
+  FSM.AudioPlayer.pause();
 }

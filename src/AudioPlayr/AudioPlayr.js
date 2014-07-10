@@ -1,5 +1,5 @@
 function playCurrentThemeHurry(name_raw) {
-  AudioPlayer.playTheme("Hurry " + (name_raw || setting.split(' ')[0]));
+  FSM.AudioPlayer.playTheme("Hurry " + (name_raw || setting.split(' ')[0]));
 }
 
 /* AudioPlayr.js
