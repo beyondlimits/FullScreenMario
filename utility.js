@@ -1,11 +1,6 @@
 /* Utility.js */
 // Contains all needed helper functions not in toned.js
 
-
-// To do: make me.collide and stages w/functions
-// To do: split this into .partner and whatnot
-
-
 /*
  * Deaths & removing
  */
@@ -40,38 +35,5 @@ function killOtherCharacters() {
     for(i = solids.length - 1; i >= 0; --i)
       if(solids[i].killonend)
         deleteThing(solids[i], solids, i);
-  }
-}
-
-function lookTowardPlayer(me, big) {
-  // Player is to the left
-  if(player.right <= me.left) {
-    if(!me.lookleft || big) {
-      me.lookleft = true;
-      me.moveleft = false;
-      me.EightBitter.unflipHoriz(me);
-    }
-  }
-  // Player is to the right
-  else if(player.left >= me.right) {
-    if(me.lookleft || big) {
-      me.lookleft = false;
-      me.moveleft = true;
-      me.EightBitter.flipHoriz(me);
-    }
-  }
-}
-function lookTowardThing(me, thing) {
-  // It's to the left
-  if(thing.right <= me.left) {
-    me.lookleft = true;
-    me.moveleft = false;
-    me.EightBitter.unflipHoriz(me);
-  }
-  // It's to the right
-  else if(thing.left >= me.right) {
-    me.lookleft = false;
-    me.moveleft = true;
-    me.EightBitter.flipHoriz(me);
   }
 }

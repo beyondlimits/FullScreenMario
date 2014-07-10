@@ -2012,7 +2012,7 @@ window.FullScreenMario = (function() {
             }
         }
       
-      // Resting stops a bunch of other stuff
+        // Resting stops a bunch of other stuff
         if(thing.resting) {
             // Hopping
             if(thing.hopping) {
@@ -2455,6 +2455,46 @@ window.FullScreenMario = (function() {
      */
     function unflipVert(thing) {
         thing.EightBitter.removeClass(thing, "flip-vert");
+    }
+    
+    /**
+     * 
+     */
+    function lookTowardsThing(thing, other) {
+        // Case: other is to the left
+        if(other.right <= thing.left) {
+            thing.lookleft = true;
+            thing.moveleft = false;
+            thing.EightBitter.unflipHoriz(thing);
+        }
+        // Case: other is to the right
+        else if(other.left >= thing.right) {
+            thing.lookleft = false;
+            thing.moveleft = true;
+            thing.EightBitter.flipHoriz(thing);
+        }
+    }
+    
+    /**
+     * 
+     */
+    function lookTowardsPlayer(thing, big) {
+        // Case: Player is to the left
+        if(player.right <= thing.left) {
+            if(!thing.lookleft || big) {
+                thing.lookleft = true;
+                thing.moveleft = false;
+                thing.EightBitter.unflipHoriz(thing);
+            }
+        }
+        // Case: Player is to the right
+        else if(player.left >= thing.right) {
+            if(thing.lookleft || big) {
+                thing.lookleft = false;
+                thing.moveleft = true;
+                thing.EightBitter.flipHoriz(thing);
+            }
+        }
     }
     
     
@@ -3118,6 +3158,8 @@ window.FullScreenMario = (function() {
         "flipVert": flipVert,
         "unflipHoriz": unflipHoriz,
         "unflipVert": unflipVert,
+        "lookTowardsThing": lookTowardsThing,
+        "lookTowardsPlayer": lookTowardsPlayer,
         // Death functions
         "killNormal": killNormal,
         "killFlip": killFlip,
