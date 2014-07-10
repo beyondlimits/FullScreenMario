@@ -374,6 +374,7 @@ window.EightBittr = (function(settings) {
                 + "be the manipulated EightBittr object. Unfortunately, 'this' "
                 + "is a " + typeof(this) + ".");
         }
+        return current;
     }
     
     

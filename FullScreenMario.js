@@ -254,6 +254,56 @@ window.FullScreenMario = (function() {
     
     /**
      * 
+     * 
+     * 
+     * @todo Create a generic version of this in GameStartr
+     * @todo Make players as an array of players (native multiplayer!)
+     */
+    function addPlayer(left, top) {
+        var EightBitter = EightBittr.ensureCorrectCaller(this),
+            player;
+        
+        player = EightBitter.player = EightBitter.ObjectMaker.make("Player", {
+            "power": EightBitter.StatsHolder.get("power"),
+            "keys": {
+                "run": 0,
+                "crouch": 0,
+                "jump": 0,
+                "jumplev": 0,
+                "sprint": 0
+            }
+        });
+        
+        EightBitter.InputWriter.setEventInformation(player);
+        EightBitter.setPlayerSizeSmall(player);
+        
+        if(EightBitter.MapScreener.underwater) {
+            player.swimming = true;
+            EightBitter.TimeHandler.addSpriteCycle(player, [
+                "swim1", "swim2"
+            ], "swimming", 5);
+        }
+        
+        EightBitter.addThing(player,
+            left || EightBitter.unitsize * 16,
+            top || EightBitter.unitsize * (map_settings.floor - player.height)
+        );
+        
+        switch(player.power) {
+            case 2:
+                EightBitter.playerGetsBig(player, true);
+                break;
+            case 3:
+                EightBitter.playerGetsBig(player, true);
+                EightBitter.playerGetsFire(player, true);
+                break;
+        }
+        
+        return player;
+    }
+    
+    /**
+     * 
      */
     function thingProcess(thing, type, settings, defaults) {
         thing.title = type;
@@ -856,6 +906,50 @@ window.FullScreenMario = (function() {
         if(thing.player) {
             thing.EightBitter.gainLife(1);
         }
+    }
+    
+    /**
+     * 
+     */
+    function playerStarUp(thing, other) {
+        if(!thing.player || thing.star) {
+            return;
+        }
+        
+        thing.star += 1;
+        
+        thing.EightBitter.switchClass(thing, "normal", "star");
+        
+        thing.EightBitter.AudioPlayer.play("Powerup");
+        thing.EightBitter.AudioPlayer.playTheme("Star", true);
+        
+        thing.EightBitter.TimeHandler.addSpriteCycle(thing, [
+            "star1", "star2", "star3", "star4"
+        ], "star", 5);
+        thing.EightBitter.TimeHandler.addEvent(
+            thing.EightBitter.playerStarDown, 560, thing
+        );
+    }
+    
+    /**
+     * 
+     */
+    function playerStarDown(thing, other) {
+        if(!thing.player) {
+            return;
+        }
+        
+        thing.star -= 1;
+        if(thing.star) {
+            return;
+        }
+        
+        thing.EightBitter.removeClasses(thing, "star star1 star2 star3 star4");
+        thing.EightBitter.addClass(thing, "normal");
+        
+        thing.EightBitter.TimeHandler.clearClassCycle(thing, "star");
+        
+        thing.EightBitter.AudioPlayer.playTheme();
     }
     
     /**
@@ -2179,7 +2273,9 @@ window.FullScreenMario = (function() {
         
         thing.EightBitter.addThing(ball, xloc, thing.top + thing.EightBitter.unitsize * 8);
         ball.animate(ball);
-        ball.ondelete = fireDeleted;
+        ball.ondelete = function () {
+            thing.numballs -= 1;
+        };
         
         thing.EightBitter.TimeHandler.addEvent(function () {
             thing.EightBitter.removeClass(thing, "firing");
@@ -2906,6 +3002,7 @@ window.FullScreenMario = (function() {
     proliferateHard(FullScreenMario.prototype, {
         // Global manipulations
         "addThing": addThing,
+        "addPlayer": addPlayer,
         "thingProcess": thingProcess,
         "thingProcessAttributes": thingProcessAttributes,
         "scrollWindow": scrollWindow,
@@ -2928,9 +3025,8 @@ window.FullScreenMario = (function() {
         "jumpEnemy": jumpEnemy,
         "playerShroom": playerShroom,
         "playerShroom1Up": playerShroom1Up,
-        "playerStar": function () {
-            console.error("no playerStar implemented");
-        },
+        "playerStarUp": playerStarUp,
+        "playerStarDown": playerStarDown,
         "playerGetsBig": playerGetsBig,
         "playerGetsBigAnimation": playerGetsBigAnimation,
         "playerGetsSmall": playerGetsSmall,

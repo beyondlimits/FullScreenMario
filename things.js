@@ -24,40 +24,13 @@ function resetThings() {
  */
 function placePlayer(xloc, yloc) {
   clearOldPlayer();
-  window.player = FSM.player = ObjectMaker.make("Player", {
-    // gravity: map_settings.gravity,
-    keys: new Keys(),
-    power: StatsHolder.get("power")
-  });
-  FSM.InputWriter.setEventInformation(player);
-  toggleLuigi(true);
-  FSM.setPlayerSizeSmall(player);
-  
-  if(map_settings.underwater) {
-    player.swimming = true;
-    TimeHandler.addSpriteCycle(player, ["swim1", "swim2"], "swimming", 5);
-  }
-
-  var adder = FSM.addThing(player, xloc || FullScreenMario.unitsize * 16, yloc || (map_settings.floor - player.height) * FullScreenMario.unitsize);
-  if(StatsHolder.get("power") >= 2) {
-    FSM.playerGetsBig(player, true);
-    if(StatsHolder.get("power") == 3)
-      FSM.playerGetsFire(player, true);
-  }
-  return adder;
+  return window.player = FSM.get("addPlayer")(xloc, yloc);
 }
 function clearOldPlayer() {
   if(!window.player) return;
   player.alive = false;
   player.dead = true;
   nokeys = notime = false;
-}
-
-function Keys() {
-  // Run: 0 for no, 1 for right, -1 for left
-  // Crouch: 0 for no, 1 for yes
-  // Jump: 0 for no, jumplev = 1 through jumpmax for yes
-  this.run = this.crouch = this.jump = this.jumplev = this.sprint = 0;
 }
 
 // Gives player visual running
@@ -97,24 +70,6 @@ function playerHopsOff(me, addrun) {
     }
   }, 21, me);
   
-}
-
-function playerStar(me, timeout) {
-  if(me.star) return;
-  ++me.star;
-  AudioPlayer.play("Powerup");
-  AudioPlayer.playTheme("Star", true);
-  TimeHandler.addEvent(playerRemoveStar, timeout || 560, me);
-  FSM.switchClass(me, "normal", "star");
-  TimeHandler.addSpriteCycle(me, ["star1", "star2", "star3", "star4"], "star", 5);
-}
-function playerRemoveStar(me) {
-  if(!me.star) return;
-  --me.star;
-  FSM.removeClasses(me, "star star1 star2 star3 star4");
-  TimeHandler.clearClassCycle(me, "star");
-  FSM.addClass(me, "normal");
-  AudioPlayer.playTheme();
 }
 
 function gameOver() {

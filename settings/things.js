@@ -187,7 +187,15 @@ FullScreenMario.prototype.things = {
             movement: FullScreenMario.prototype.movePlayer,
             death: FullScreenMario.prototype.killPlayer,
             type: "character",
-            name: "player normal small still"
+            name: "player normal small still",
+            // // This should be copied to a new object whenever used
+            // keys: {
+                // "run": 0,
+                // "crouch": 0,
+                // "jump": 0,
+                // "jumplev": 0,
+                // "sprint": 0
+            // }
         },
         enemy: {
             type: "enemy",
@@ -323,7 +331,7 @@ FullScreenMario.prototype.things = {
             name: "star item", // Item class so player's star isn't confused with this
             width: 7,
             speed: FullScreenMario.unitsize * .56,
-            action: FullScreenMario.prototype.playerStar,
+            action: FullScreenMario.prototype.playerStarUp,
             movement: FullScreenMario.prototype.moveJumping,
             jumpheight: FullScreenMario.unitsize * 1.17,
             gravity: FullScreenMario.gravity / 2.8,
