@@ -111,12 +111,6 @@ function resetTimer(num) {
   window.timerd2 = num / 2;
 }
 
-// Quadrants are done with QuadsKeepr.js
-// This starts off with 7 cols and 6 rows (each has 1 on each side for padding)
-function resetQuadrants() {
-    window.QuadsKeeper = FSM.QuadsKeeper;
-}
-
 // Variables regarding the state of the game
 // This is called in setMap to reset everything
 function resetGameState(nocount) {
@@ -125,8 +119,6 @@ function resetGameState(nocount) {
   window.nokeys = window.spawning = window.spawnon =
     window.notime = window.qcount = window.lastscroll = 0;
   window.gameon = window.speed = 1;
-  // And quadrants
-  resetQuadrants();
   // Keep a history of pressed keys
   window.gamehistory = [];
   // Clear audio

@@ -321,12 +321,12 @@ window.FullScreenMario = (function() {
         var maxquads = 4,
             num;
         num = Math.floor(thing.width 
-            * (FullScreenMario.unitsize / QuadsKeeper.getQuadWidth()));
+            * (FullScreenMario.unitsize / thing.EightBitter.QuadsKeeper.getQuadWidth()));
         if(num > 0) {
             maxquads += ((num + 1) * maxquads / 2);
         }
         num = Math.floor(thing.height 
-            * (FullScreenMario.unitsize / QuadsKeeper.getQuadHeight()));
+            * (FullScreenMario.unitsize / thing.EightBitter.QuadsKeeper.getQuadHeight()));
         if(num > 0) {
             maxquads += ((num + 1) * maxquads / 2);
         }

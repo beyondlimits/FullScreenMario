@@ -86,7 +86,6 @@ function resetMapsManager() {
 
 function setMap(name) {
   if(!name) name = FSM.MapsManager.getMapName();
-  resetQuadrants();
   
   // From shiftToLocation
   FSM.TimeHandler.clearAllEvents();
@@ -96,7 +95,6 @@ function setMap(name) {
     }
   }, 25, Infinity);
   resetGameState();
-  resetQuadrants();
   
   // Globally accessible settings
   window.map_settings = {
