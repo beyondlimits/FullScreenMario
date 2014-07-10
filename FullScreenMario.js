@@ -420,6 +420,24 @@ window.FullScreenMario = (function() {
         FSM.setTop(player, savetop);
     }
     
+    /**
+     * 
+     */
+    function deleteArrayMember(thing, array, location) {
+        if(typeof location === "undefined") {
+            location = array.indexOf(thing);
+            if(location === -1) {
+                return;
+            }
+        }
+        
+        array.splice(location, 1);
+        
+        if(thing.ondelete) {
+            thing.ondelete(thing);
+        }
+    }
+    
     
     /* Collision detectors
     */
@@ -2118,7 +2136,7 @@ window.FullScreenMario = (function() {
         thing.EightBitter.flipHoriz(thing);
         thing.EightBitter.AudioPlayer.play("Powerup Appears");
         // thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Scenery", "Character");
-        switchContainers(thing, characters, scenery);
+        FSM.arraySwitch(thing, characters, scenery);
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
             thing.EightBitter.shiftVert(thing, thing.EightBitter.unitsize / -8);
@@ -2130,7 +2148,7 @@ window.FullScreenMario = (function() {
             
             thing.EightBitter.setBottom(thing, other.top);
             // thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Character", "Scenery");
-            switchContainers(thing, scenery, characters);
+            FSM.arraySwitch(thing, scenery, characters);
             thing.nomove = thing.nocollide = thing.nofall = thing.moveleft = false;
             
             if(thing.emergeOut) {
@@ -2631,33 +2649,33 @@ window.FullScreenMario = (function() {
      * have a .killonend function, that's called on them.
      * Solids are only deleted if their .killonend is true.
      * 
-     * @todo   Rename .killonend to be more accurate
      * @remarks If thing.killonend is a function, it is called on the thing.
+     * @todo   Rename .killonend to be more accurate
      */
     function killNPCs() {
-        var holder = this.ThingHitter.getGroupHolder(),
+        var EightBitter = EightBittr.ensureCorrectCaller(this),
             group, thing, i;
         
         // Characters: they must opt out of being killed with .nokillonend, and
         // may opt into having a function called instead (such as Lakitus).
-        group = holder.getCharacterGroup();
+        group = EightBitter.GroupHolder.getCharacterGroup();
         for(i = group.length - 1; i >= 0; --i) {
             thing = group[i];
             
             if(!thing.nokillend) {
-                this.deleteThing(thing, group, i);
+                FSM.deleteArrayMember(thing, group, i);
             } else if(thing.killonend) {
                 thing.killonend(thing);
             }
         }
         
         // Solids: they may opt into being deleted
-        group = holder.getSolidGroup();
+        group = EightBitter.GroupHolder.getSolidGroup();
         for(i = group.length - 1; i >= 0; --i) {
             thing = group[i];
             
             if(thing.killonend) {
-                this.deleteThing(thing, group, i);
+                FSM.deleteArrayMember(thing, group, i);
             }
         }
     }
@@ -2684,7 +2702,7 @@ window.FullScreenMario = (function() {
         if(!thing.alive || thing.flickering || thing.dying) {
             return;
         }
-        console.warn("killPlayer still uses global notime, nokeys, gravity, containerForefront/characters, setMap, gameOver");
+        console.warn("killPlayer still uses global notime, nokeys, gravity, characters, setMap, gameOver");
         
         // Large big: real, no-animation death
         if(big == 2) {
@@ -2703,12 +2721,12 @@ window.FullScreenMario = (function() {
             // The player can't survive this: animate a death
             else {
                 nokeys = notime = thing.dying = true;
-                containerForefront(thing, characters);
                 
                 thing.EightBitter.setSize(thing, 7.5, 7, true);
                 thing.EightBitter.updateSize(thing);
                 thing.EightBitter.setClass(thing, "character player dead");
                 thing.EightBitter.thingStoreVelocity(thing);
+                thing.EightBitter.containerForefront(thing, characters);
                 
                 thing.EightBitter.TimeHandler.clearAllCycles(thing);
                 thing.EightBitter.TimeHandler.addEvent(function () {
@@ -3084,6 +3102,7 @@ window.FullScreenMario = (function() {
         "thingProcessAttributes": thingProcessAttributes,
         "scrollWindow": scrollWindow,
         "scrollPlayer": scrollPlayer,
+        "deleteArrayMember": deleteArrayMember,
         // Collision detectors
         "canThingCollide": canThingCollide,
         "isThingTouchingThing": isThingTouchingThing,

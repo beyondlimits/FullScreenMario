@@ -492,6 +492,22 @@ window.EightBittr = (function(settings) {
         return obj;
     }
     
+    /**
+     * 
+     */
+    function arraySwitch(thing, arrayOld, arrayNew) {
+        arrayOld.splice(arrayOld.indexOf(thing), 1);
+        arrayNew.push(thing);
+    }
+    
+    /**
+     * 
+     */
+    function arrayForefront(thing, array) {
+        array.splice(array.indexOf(thing), 1);
+        array.push(thing);
+    }
+    
     /* Prototype function holders
     */
     
@@ -526,7 +542,9 @@ window.EightBittr = (function(settings) {
         "clearAllTimeouts": clearAllTimeouts,
         "proliferate": proliferate,
         "proliferateHard": proliferateHard,
-        "createElement": createElement
+        "createElement": createElement,
+        "arraySwitch": arraySwitch,
+        "arrayForefront": arrayForefront
     });
     
     EightBittr.ensureCorrectCaller = ensureCorrectCaller;

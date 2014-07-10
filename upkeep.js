@@ -22,7 +22,7 @@ function maintainSolids(update) {
       if(solid.movement) solid.movement(solid);
     }
     if(!solid.alive || solid.right < FSM.QuadsKeeper.getDelX())
-      deleteThing(solid, solids, i);
+      FSM.deleteArrayMember(solid, solids, i);
   }
 }
 
@@ -60,14 +60,14 @@ function maintainCharacters(update) {
     if(character.alive) {
       if(!character.player && 
           (character.numquads == 0 || character.left > delx) && !character.outerok) {
-        deleteThing(character, characters, i);
+        FSM.deleteArrayMember(character, characters, i);
       }
       else {
         if(!character.nomove && character.movement)
           character.movement(character);
       }
     }
-    else deleteThing(character, characters, i);
+    else FSM.deleteArrayMember(character, characters, i);
   }
 }
 

@@ -144,7 +144,7 @@ function intoPipeVertical(me, pipe) {
       me.right + unitsizet2 > pipe.right ||
       me.left - unitsizet2 < pipe.left) return;
   pipePreparations(me);
-  switchContainers(me, characters, scenery);
+  FSM.arraySwitch(me, characters, scenery);
   unpause();
   var entrance = pipe.entrance,
       move = setInterval(function() {
@@ -161,7 +161,7 @@ function intoPipeHorizontal(me, pipe) {
   // if(abs(me.yvel) > unitsized8) return;
   // if(!map.underwater) return;
   pipePreparations(me);
-  switchContainers(me, characters, scenery);
+  FSM.arraySwitch(me, characters, scenery);
   unpause();
   var entrance = pipe.entrance,
       move = setInterval(function() {
@@ -187,7 +187,7 @@ function pipePreparations(me) {
 }
 
 function exitPipeVertical(pipe) {
-  switchContainers(player, characters, scenery);
+  FSM.arraySwitch(player, characters, scenery);
   player.nofall = nokeys = notime = true;
   FSM.AudioPlayer.play("Pipe");
   FSM.setTop(player, pipe.top);
@@ -195,7 +195,7 @@ function exitPipeVertical(pipe) {
   var dy = unitsize / -4, move = setInterval(function() {
     shiftVert(player, dy, true);
     if(player.bottom <= pipe.top) {
-      switchContainers(player, scenery, characters);
+      FSM.arraySwitch(player, scenery, characters);
       clearInterval(move);
       player.nocollide = player.nofall = nokeys = notime = false;
       player.movement = movePlayer;

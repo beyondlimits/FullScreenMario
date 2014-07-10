@@ -76,7 +76,7 @@ function FlagCollisionTop(me, detector) {
   FSM.AudioPlayer.play("Flagpole");
   
   // All other characters die, and the player is no longer in control
-  killOtherCharacters();
+  FSM.killNPCs();
   nokeys = notime = true;
 
   // The player also is frozen in this dropping state, on the pole

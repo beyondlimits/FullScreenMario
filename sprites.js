@@ -5,8 +5,3 @@ function resetCanvas() {
   window.context = canvas.getContext("2d");
   body.appendChild(canvas);
 }
-
-function resetLibrary() {
-    window.PixelRender = FSM.PixelRender;
-    window.PixelDrawer = FSM.PixelDrawer;
-}
