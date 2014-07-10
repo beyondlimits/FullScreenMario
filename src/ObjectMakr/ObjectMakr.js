@@ -39,6 +39,7 @@ function ObjectMakr(settings) {
         properties = settings.properties || {};
         index_map = settings.index_map;
         on_make = settings.on_make;
+        do_properties_full = settings.do_properties_full;
         
         // An inheritance map is required; a properties map is not
         if (!inheritance) {
@@ -46,6 +47,10 @@ function ObjectMakr(settings) {
         }
 
         functions = {};
+        
+        if(do_properties_full) {
+            properties_full = {};
+        }
 
         if (index_map) {
             processProperties(properties);
@@ -104,6 +109,17 @@ function ObjectMakr(settings) {
         return properties;
     };
 
+    /**
+     * Simple getter for the full properties object, if it's specified to exist.
+     * 
+     * @return {Object}
+     */
+    self.getPropertiesFull = function () {
+        if(do_properties_full) {
+            return properties_full;
+        }
+    };
+    
     /**
      * Simple getter for the functions object
      * 
@@ -189,7 +205,7 @@ function ObjectMakr(settings) {
      * @remarks This uses eval which is evil and almost never a good idea, but
      *          here it's the only way to make functions with dynamic names.
      */
-    function processFunctions(base, Parent) {
+    function processFunctions(base, Parent, parentName) {
         var name, ref;
 
         // For each name in the current object:
@@ -211,8 +227,27 @@ function ObjectMakr(settings) {
                         functions[name].prototype[ref] = properties[name][ref];
                     }
                 }
+                
+                // If the entire property tree is being mapped, copy everything
+                // from both this and its parent to its equivalent
+                if(do_properties_full) {
+                    properties_full[name] = {};
+                    for (ref in properties[name]) {
+                        if (properties[name].hasOwnProperty(ref)) {
+                            properties_full[name][ref] = properties[name][ref];
+                        }
+                    }
+                    
+                    if(parentName) {
+                        for (ref in properties_full[parentName]) {
+                            if (properties_full[parentName].hasOwnProperty(ref)) {
+                                properties_full[name][ref] = properties_full[parentName][ref];
+                            }
+                        }
+                    }
+                }
 
-                processFunctions(base[name], functions[name]);
+                processFunctions(base[name], functions[name], name);
             }
         }
     }

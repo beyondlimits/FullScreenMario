@@ -2,6 +2,7 @@ FullScreenMario.prototype.things = {
     "on_make": "onMake",
     "store_type": "title",
     "index_map": ["width", "height"],
+    "do_properties_full": true,
     "inheritance": {
         "Thing": {
             "character": {
