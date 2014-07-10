@@ -189,14 +189,15 @@ FullScreenMario.prototype.things = {
             death: FullScreenMario.prototype.killPlayer,
             type: "character",
             name: "player normal small still",
-            // // This should be copied to a new object whenever used
-            // keys: {
-                // "run": 0,
-                // "crouch": 0,
-                // "jump": 0,
-                // "jumplev": 0,
-                // "sprint": 0
-            // }
+            getKeys: function () {
+                return {
+                    "run": 0,
+                    "crouch": 0,
+                    "jump": 0,
+                    "jumplev": 0,
+                    "sprint": 0
+                };
+            }
         },
         enemy: {
             type: "enemy",

@@ -265,13 +265,7 @@ window.FullScreenMario = (function() {
         
         player = EightBitter.player = EightBitter.ObjectMaker.make("Player", {
             "power": EightBitter.StatsHolder.get("power"),
-            "keys": {
-                "run": 0,
-                "crouch": 0,
-                "jump": 0,
-                "jumplev": 0,
-                "sprint": 0
-            }
+            "keys": EightBitter.ObjectMaker.getProperties().Player.getKeys()
         });
         
         EightBitter.InputWriter.setEventInformation(player);
