@@ -142,13 +142,13 @@ window.FullScreenMario = (function() {
      *                          things.js (settings/things.js)
      */
     function resetObjectMaker(self) {
-        // self.ObjectMaker = new ObjectMakr(proliferate({
-            // "properties": {
-                // "Thing": {
-                    // "EightBitter": self
-                // }
-            // }
-        // }, self.things));
+        self.ObjectMaker = new ObjectMakr(proliferate({
+            "properties": {
+                "Thing": {
+                    "EightBitter": self
+                }
+            }
+        }, self.things));
     }
     
     /**
@@ -257,9 +257,6 @@ window.FullScreenMario = (function() {
      */
     function thingProcess(thing, type, settings, defaults) {
         thing.title = type;
-        
-        console.warn("Using thing.EightBitter = FSM in thingProcess (on_make in ObjectMakr)");
-        thing.EightBitter = FSM;
         
         // If a width/height is provided but no spritewidth/height,
         // use the default spritewidth/height

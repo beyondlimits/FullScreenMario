@@ -15,9 +15,7 @@
 
 function resetThings() {
     window.ThingHitter = FSM.ThingHitter;
-  
-    window.ObjectMaker = FSM.ObjectMaker = new ObjectMakr(FullScreenMario.prototype.things);
-    console.log("Will have to add FSM in ObjectMaker (Thing: { EightBitter: FSM ...");
+    window.ObjectMaker = FSM.ObjectMaker;
 }
 
 /* Characters (except player, who has his own .js)

@@ -119,8 +119,6 @@ FullScreenMario.prototype.things = {
 
         },
         Thing: {
-            // This will be delegated to FullScreenMario.js
-            // EightBitter: FSM,
             // Sizing
             width: 8,
             height: 8,
