@@ -18,29 +18,11 @@ function resetThings() {
     window.ObjectMaker = FSM.ObjectMaker;
 }
 
-
 /*
  * Player
  */
 function placePlayer(xloc, yloc) {
-  clearOldPlayer();
   return window.player = FSM.get("addPlayer")(xloc, yloc);
-}
-function clearOldPlayer() {
-  if(!window.player) return;
-  player.alive = false;
-  player.dead = true;
-  nokeys = notime = false;
-}
-
-// Gives player visual running
-function playerStartRunningCycle(me) {
-  // setPlayerRunningCycler sets the time between cycles
-  me.running = TimeHandler.addSpriteCycle(me, ["one", "two", "three", "two"], "running", setPlayerRunningCycler);
-}
-// Used by player's running cycle to determine how fast he should switch between sprites
-function setPlayerRunningCycler(event) {
-  event.timeout = 5 + ceil(player.maxspeedsave - abs(player.xvel));
 }
 
 function unattachPlayer(me) {
@@ -66,7 +48,7 @@ function playerHopsOff(me, addrun) {
     me.attached = false;
     if(addrun) {
       FSM.addClass(me, "running")
-      playerStartRunningCycle(me);
+      FSM.animatePlayerRunningCycle(me);
     }
   }, 21, me);
   

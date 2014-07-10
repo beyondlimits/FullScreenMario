@@ -1992,7 +1992,7 @@ window.FullScreenMario = (function() {
         else if(!thing.running) {
             thing.running = true;
             thing.EightBitter.switchClass(thing, "still", "running");
-            playerStartRunningCycle(thing);
+            thing.EightBitter.animatePlayerRunningCycle(thing);
             if(thing.power == 1) {
                 thing.EightBitter.setPlayerSizeSmall(thing);
             }
@@ -2306,6 +2306,17 @@ window.FullScreenMario = (function() {
      */
     function animatePlayerBubbling(thing) {
         thing.EightBitter.addThing("Bubble", thing.right, thing.top);
+    }
+    
+    /**
+     * 
+     */
+    function animatePlayerRunningCycle(thing) {
+        thing.running = thing.EightBitter.TimeHandler.addSpriteCycle(thing, [
+            "one", "two", "three", "two"
+        ], "running", function (event) {
+            event.timeout = 5 + Math.ceil(thing.maxspeedsave - Math.abs(thing.xvel));
+        });
     }
     
     /**
@@ -3077,6 +3088,7 @@ window.FullScreenMario = (function() {
         "animatePlayerFire": animatePlayerFire,
         "animatePlayerPaddling": animatePlayerPaddling,
         "animatePlayerBubbling": animatePlayerBubbling,
+        "animatePlayerRunningCycle": animatePlayerRunningCycle,
         "animateCharacterHop": animateCharacterHop,
         // Spawns
         "spawnDetector": spawnDetector,
