@@ -357,7 +357,27 @@ window.EightBittr = (function(settings) {
     }
     
     
-    /* Utility
+    /* EightBittr utilities
+    */
+    
+    /**
+     * Ensures the current object is an EightBittr by throwing an error if it 
+     * is not. This should be used for functions in any EightBittr descendants
+     * that have to call 'this' to ensure their caller is what the programmer
+     * expected it to be.
+     * 
+     * @param {any} current   
+     */
+    function ensureCorrectCaller(current) {
+        if(!current instanceof EightBittr) {
+            throw new Error("A function that requires the caller ('this') to "
+                + "be the manipulated EightBittr object. Unfortunately, 'this' "
+                + "is a " + typeof(this) + ".");
+        }
+    }
+    
+    
+    /* General utilities
     */
     
     /**
@@ -499,12 +519,16 @@ window.EightBittr = (function(settings) {
         "updateLeft": updateLeft,
         "slideToY": slideToY,
         "slideToX": slideToX,
-        // Utilities
+        // EightBittr Utilities
+        "ensureCorrectCaller": ensureCorrectCaller,
+        // General Utilities
         "clearAllTimeouts": clearAllTimeouts,
         "proliferate": proliferate,
         "proliferateHard": proliferateHard,
         "createElement": createElement
     });
+    
+    EightBittr.ensureCorrectCaller = ensureCorrectCaller;
     
     return EightBittr;
 })();
