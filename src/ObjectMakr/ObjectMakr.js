@@ -17,6 +17,13 @@ function ObjectMakr(settings) {
 
         // An associative array of type properties, as "name" => {properties}
         properties,
+        
+        // Whether a full property mapping should be made for each type
+        do_properties_full,
+        
+        // If do_full_properties, a version of properties that contains the sum
+        // properties for each type (rather than missing inherited indices)
+        properties_full,
 
         // Stored keys for the functions to be made
         functions,
@@ -27,7 +34,7 @@ function ObjectMakr(settings) {
         // Optionally, an index of a function to be run when an object is made
         on_make;
 
-    var reset = self.reset = function reset(settings) {
+    self.reset = function reset(settings) {
         inheritance = settings.inheritance;
         properties = settings.properties || {};
         index_map = settings.index_map;
@@ -209,7 +216,6 @@ function ObjectMakr(settings) {
             }
         }
     }
-
 
 
     /* Utilities

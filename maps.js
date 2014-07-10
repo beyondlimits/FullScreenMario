@@ -148,7 +148,7 @@ function intoPipeVertical(me, pipe) {
   unpause();
   var entrance = pipe.entrance,
       move = setInterval(function() {
-        shiftVert(me, unitsized4);
+        FSM.shiftVert(me, unitsized4);
         if(me.top >= pipe.top) {
           clearInterval(move);
           setTimeout(function() { goToTransport(entrance); }, 700);
@@ -175,9 +175,15 @@ function intoPipeHorizontal(me, pipe) {
 function pipePreparations(me) {
   AudioPlayer.pauseTheme();
   AudioPlayer.play("Pipe");
-  locMovePreparations(me);
-  me.nofall = me.nocollide = nokeys = notime = true;
+  me.nocollide = me.nofall = me.nocollide = nokeys = notime = true;
   me.movement = me.xvel = me.yvel = 0;
+  
+  me.keys = new Keys();
+  FSM.removeCrouch();
+  FSM.removeClass(me, "running");
+  FSM.removeClass(me, "jumping");
+  FSM.removeClass(me, "flipped");
+  FSM.InputWriter.setEventInformation(me);
 }
 
 function exitPipeVertical(pipe) {
@@ -218,16 +224,6 @@ function startWalking(me) {
   me.maxspeed = me.walkspeed;
   nokeys = notime = me.keys.run = true;
   me.nofall = me.nocollide = false;
-}
-
-function locMovePreparations(me) {
-  me.nocollide = 1;
-  me.keys = new Keys();
-  FSM.removeCrouch();
-  FSM.removeClass(me, "running");
-  FSM.removeClass(me, "jumping");
-  FSM.removeClass(me, "flipped");
-  FSM.InputWriter.setEventInformation(me);
 }
 
 function goToTransport(transport) {
@@ -305,9 +301,9 @@ function makePipe(reference) {
     pipe.y += height;
   }
   
-  if(reference.pirhana) {
+  if(reference.piranha) {
     output.push({
-      thing: "Pirhana",
+      thing: "Piranha",
       x: reference.x + 4,
       y: pipe.y + 12
     });

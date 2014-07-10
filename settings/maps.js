@@ -184,9 +184,9 @@ FullScreenMario.prototype.maps = {
         pipe.y += height;
       }
       
-      if(reference.pirhana) {
+      if(reference.piranha) {
         output.push({
-          thing: "Pirhana",
+          thing: "Piranha",
           x: reference.x + 4,
           y: pipe.y + 12
         });

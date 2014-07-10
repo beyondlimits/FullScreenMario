@@ -2,15 +2,6 @@
 // Contains all needed helper functions not in toned.js
 
 
-function collideTransport(me, solid) {
-  FSM.collideCharacterSolid(me, solid);
-  if(solid != me.resting) return;
-  
-  solid.movement = FSM.movePlatformNorm;
-  solid.collide = FSM.collideCharacterSolid;
-  solid.xvel = unitsized2;
-}
-
 // To do: make me.collide and stages w/functions
 // To do: split this into .partner and whatnot
 

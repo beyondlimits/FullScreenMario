@@ -46,7 +46,8 @@ window.FullScreenMario = (function() {
                 "ceillev",
                 "ceilmax",
                 "castlev",
-                "point_levels"
+                "point_levels",
+                "gravity"
             ]        });    }
     FullScreenMario.prototype = EightBitter;
     
@@ -61,6 +62,8 @@ window.FullScreenMario = (function() {
     // The floor is 104 spaces (13 blocks) below the top of the screen (yloc = -16)
     FullScreenMario.ceilmax = 104; 
     FullScreenMario.castlev = -48;
+    // Gravity is always a function of unitsize
+    FullScreenMario.gravity = Math.round(12 * FullScreenMario.unitsize) / 100; // .48
     // When a player is 48 spaces below the bottom, kill it
     FullScreenMario.bottom_death_difference = 48;
     // Levels of points to award for hopping on / shelling enemies
@@ -255,6 +258,9 @@ window.FullScreenMario = (function() {
     function thingProcess(thing, type, settings, defaults) {
         thing.title = type;
         
+        console.warn("Using thing.EightBitter = FSM in thingProcess (on_make in ObjectMakr)");
+        thing.EightBitter = FSM;
+        
         // If a width/height is provided but no spritewidth/height,
         // use the default spritewidth/height
         if(thing.width && !thing.spritewidth) {
@@ -316,6 +322,28 @@ window.FullScreenMario = (function() {
         
         // Mods!
         thing.EightBitter.ModAttacher.fireEvent("onThingMake", thing.EightBitter, thing, type, settings, defaults);
+    }
+    
+    /**
+     * 
+     */
+    function thingProcessAttributes(thing, attributes) {
+        var attribute, i;
+
+        // For each listing in the attributes...
+        for(attribute in attributes) {
+            // If the thing has that attribute as true:
+            if(thing[attribute]) {
+                // Add the extra options
+                proliferate(thing, attributes[attribute]);
+                // Also add a marking to the name, which will go into the className
+                if(thing.name) {
+                    thing.name += ' ' + attribute;
+                } else {
+                    thing.name = thing.title + ' ' + attribute;
+                }
+            }
+        }
     }
     
     /**
@@ -821,6 +849,15 @@ window.FullScreenMario = (function() {
             } else {
                 thing.EightBitter.playerGetsBig(player);
             }
+        }
+    }
+    
+    /**
+     * 
+     */
+    function playerShroom1Up(thing, other) {
+        if(thing.player) {
+            thing.EightBitter.gainLife(1);
         }
     }
     
@@ -1479,6 +1516,36 @@ window.FullScreenMario = (function() {
         thing.EightBitter.TimeHandler.addEvent(thing.EightBitter.animateSolidContents, 7, thing, other);
     }
     
+    /**
+     * 
+     */
+    function collideTransport(thing, solid) {
+        thing.EightBitter.collideCharacterSolid(me, solid);
+        if(thing.resting !== solid) {
+            return;
+        }
+
+        solid.xvel = thing.EightBitter.unitsize / 2;
+        solid.movement = thing.EightBitter.movePlatform;
+        solid.collide = thing.EightBitter.collideCharacterSolid;
+    }
+    
+    /**
+     * 
+     * 
+     * thing is character; other is detector
+     */
+    function collideDetector(thing, other) {
+        if(!thing.player) {
+            if(other.activate_fail) {
+                other.activate_fail(thing);
+            }
+            return;
+        }
+        other.activate(thing, other);
+        thing.EightBitter.killNormal(other);
+    }
+    
     
     /* Movement functions
     */
@@ -2052,6 +2119,13 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function animateFireballEmerge(thing) {
+        AudioPlayer.play("Fireball");
+    }
+    
+    /**
+     * 
+     */
     function animateFireballExplode(thing, level) {
         thing.EightBitter.killNormal(thing);
         if(level === 2) {
@@ -2147,6 +2221,18 @@ window.FullScreenMario = (function() {
     function animateCharacterHop(thing) {
         thing.resting = false;
         thing.yvel = thing.EightBitter.unitsize * -1.4;
+    }
+    
+    
+    /* Spawn functions
+    */
+    
+    /**
+     * 
+     */
+    function spawnDetector(thing) {
+        thing.activate(thing);
+        thing.EightBitter.killNormal(thing);
     }
     
     
@@ -2421,6 +2507,61 @@ window.FullScreenMario = (function() {
         }
     }
     
+    /**
+     * 
+     */
+    function killPlayer(thing, big) {
+        if(!thing.alive || thing.flickering || thing.dying) {
+            return;
+        }
+        console.warn("killPlayer still uses global notime, nokeys, gravity, containerForefront/characters, setMap, gameOver");
+        
+        // Large big: real, no-animation death
+        if(big == 2) {
+            notime = true;
+            thing.dead = thing.dying = true;
+        }
+        // Regular big: regular (enemy, time, etc.) kill
+        else {
+            // If the player can survive this, just power down
+            if(!big && thing.power > 1) {
+                thing.power = 1;
+                thing.EightBitter.AudioPlayer.play("Power Down");
+                thing.EightBitter.playerGetsSmall(thing);
+                return;
+            }
+            // The player can't survive this: animate a death
+            else {
+                nokeys = notime = thing.dying = true;
+                containerForefront(thing, characters);
+                
+                thing.EightBitter.setSize(thing, 7.5, 7, true);
+                thing.EightBitter.updateSize(thing);
+                thing.EightBitter.setClass(thing, "character player dead");
+                thing.EightBitter.thingStoreVelocity(thing);
+                
+                thing.EightBitter.TimeHandler.clearAllCycles(thing);
+                thing.EightBitter.TimeHandler.addEvent(function () {
+                    thing.EightBitter.thingRetrieveVelocity(thing, true);
+                    thing.nocollide = true;
+                    thing.movement = thing.resting = false;
+                    thing.gravity = gravity / 2.1;
+                    thing.yvel = FullScreenMario.unitsize * -1.4;
+                }, 7);
+            }
+        }
+        
+        thing.nocollide = thing.nomove = nokeys = 1;
+        thing.EightBitter.AudioPlayer.pause();
+        thing.EightBitter.StatsHolder.decrease("lives");
+        
+        if(StatsHolder.get("lives") > 0) {
+            thing.EightBitter.TimeHandler.addEvent(setMap, 280);
+        } else {
+            thing.EightBitter.TimeHandler.addEvent(gameOver, 280);
+        }
+    }
+    
     
     /* Scoring
     */
@@ -2619,6 +2760,28 @@ window.FullScreenMario = (function() {
     }
     
     
+    /* Map exits
+    */
+    
+    /**
+     * 
+     * 
+     * @notes thing is player, other is pipe
+     */
+    function mapExitPipeVertical(thing, other) {
+        throw new Error("mapExitPipeVertical not implemented");
+    }
+    
+    /**
+     * 
+     * 
+     * @notes thing is player, other is pipe
+     */
+    function mapExitPipeHorizontal(thing, other) {
+        throw new Error("mapExitPipeHorizontal not implemented");
+    }
+    
+    
     /* Map macros
     */
     
@@ -2747,6 +2910,7 @@ window.FullScreenMario = (function() {
         // Global manipulations
         "addThing": addThing,
         "thingProcess": thingProcess,
+        "thingProcessAttributes": thingProcessAttributes,
         "scrollWindow": scrollWindow,
         "scrollPlayer": scrollPlayer,
         // Collision detectors
@@ -2766,6 +2930,10 @@ window.FullScreenMario = (function() {
         "itemJump": itemJump,
         "jumpEnemy": jumpEnemy,
         "playerShroom": playerShroom,
+        "playerShroom1Up": playerShroom1Up,
+        "playerStar": function () {
+            console.error("no playerStar implemented");
+        },
         "playerGetsBig": playerGetsBig,
         "playerGetsBigAnimation": playerGetsBigAnimation,
         "playerGetsSmall": playerGetsSmall,
@@ -2773,7 +2941,7 @@ window.FullScreenMario = (function() {
         "setPlayerSizeSmall": setPlayerSizeSmall,
         "setPlayerSizeLarge": setPlayerSizeLarge,
         "removeCrouch": removeCrouch,
-        // Collision functions
+        // Collision / actions
         "hitCharacterSolid": hitCharacterSolid,
         "hitCharacterCharacter": hitCharacterCharacter,
         "collideFriendly": collideFriendly,
@@ -2788,6 +2956,8 @@ window.FullScreenMario = (function() {
         "collideEnemy": collideEnemy,
         "collideBottomBrick": collideBottomBrick,
         "collideBottomBlock": collideBottomBlock,
+        "collideTransport": collideTransport,
+        "collideDetector": collideDetector,
         // Movement
         "moveSimple": moveSimple,
         "moveSmart": moveSmart,
@@ -2808,12 +2978,15 @@ window.FullScreenMario = (function() {
         "animateEmerge": animateEmerge,
         "animateEmergeCoin": animateEmergeCoin,
         "animateFlicker": animateFlicker,
+        "animateFireballEmerge": animateFireballEmerge,
         "animateFireballExplode": animateFireballExplode,
         "animateFirework": animateFirework,
         "animatePlayerFire": animatePlayerFire,
         "animatePlayerPaddling": animatePlayerPaddling,
         "animatePlayerBubbling": animatePlayerBubbling,
         "animateCharacterHop": animateCharacterHop,
+        // Spawns
+        "spawnDetector": spawnDetector,
         // Physics
         "shiftBoth": shiftBoth,
         "shiftThings": shiftThings,
@@ -2848,6 +3021,7 @@ window.FullScreenMario = (function() {
         "killToShell": killToShell,
         "killNPCs": killNPCs,
         "killBrick": killBrick,
+        "killPlayer": killPlayer,
         // Scoring
         "findScore": findScore,
         "score": score,
@@ -2861,6 +3035,11 @@ window.FullScreenMario = (function() {
         "mapEntrancePlain": mapEntrancePlain,
         "mapEntranceNormal": mapEntranceNormal,
         "mapEntranceCastle": mapEntranceCastle,
+        // "mapEntrancePipeVertical": mapEntrancePipeVertical,
+        // "mapEntrancePipeHorizontal": mapEntrancePipeHorizontal,
+        // Map exits
+        "mapExitPipeVertical": mapExitPipeVertical,
+        "mapExitPipeHorizontal": mapExitPipeHorizontal,
         // Map macros
         "macros": {
             "Example": macroExample,
