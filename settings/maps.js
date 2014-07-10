@@ -32,7 +32,23 @@ FullScreenMario.prototype.maps = {
             }
         },
     },
-    "patterns": {
+    "patterns": (function (patterns) {
+        var pattern,
+            i;
+        for(i in patterns) {
+            if(patterns.hasOwnProperty(i)) {
+                pattern = patterns[i];
+                if(!pattern.length) {
+                    continue;
+                }
+                
+                // Pattern's last array should previously be ["blank", width]
+                pattern.width = pattern[pattern.length - 1][1];
+                pattern.pop();
+            }
+        }
+        return patterns;
+    })({
         "BackRegular": [
             ["HillLarge", 0, 0],
             ["Cloud1", 68, 68],
@@ -53,13 +69,6 @@ FullScreenMario.prototype.maps = {
             ["Cloud1", 284, 32],
             ["Cloud1", 308, 40],
             ["Cloud1", 372, 0],
-            ["Blank", 384]
-        ],
-        "BackCloudMin": [ // used for random map generation
-            ["Cloud1", 68, 68],
-            ["Cloud1", 156, 76],
-            ["Cloud3", 220, 68],
-            ["Cloud2", 292, 76],
             ["Blank", 384]
         ],
         "BackFence": [
@@ -130,7 +139,7 @@ FullScreenMario.prototype.maps = {
             ["Cloud2", 388, 68],
             ["Blank", 384]
         ]
-    },
+    }),
     // These are filled out later
     "maps": undefined
 };

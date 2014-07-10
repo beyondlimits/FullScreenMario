@@ -2327,6 +2327,32 @@ window.FullScreenMario = (function() {
         thing.yvel = thing.EightBitter.unitsize * -1.4;
     }
     
+    /**
+     * 
+     */
+    function animatePlayerOffPole(thing, doRun) {
+        thing.EightBitter.removeClasses(thing, "climbing running");
+        thing.EightBitter.addClass(thing, "jumping");
+        
+        thing.xvel = 1.4;
+        thing.yvel = -1.4;
+        thing.nocollide = thing.nofall = thing.climbing = false;
+        thing.gravity = thing.EightBitter.MapScreener.gravity / 14;
+        
+        thing.EightBitter.TimeHandler.addEvent(function () {
+            thing.attached = false;
+            thing.movement = thing.EightBitter.movePlayer;
+            thing.gravity = thing.EightBitter.MapScreener.gravity;
+            
+            thing.EightBitter.unflipHoriz(thing);
+            
+            if(doRun) {
+                thing.EightBitter.addClass(thing, "running");
+                thing.EightBitter.animatePlayerRunningCycle(thing);
+            }
+        }, 21);
+    }
+    
     
     /* Spawn functions
     */
@@ -3129,6 +3155,7 @@ window.FullScreenMario = (function() {
         "animatePlayerPaddling": animatePlayerPaddling,
         "animatePlayerBubbling": animatePlayerBubbling,
         "animatePlayerRunningCycle": animatePlayerRunningCycle,
+        "animatePlayerOffPole": animatePlayerOffPole,
         "animateCharacterHop": animateCharacterHop,
         // Spawns
         "spawnDetector": spawnDetector,

@@ -1,9 +1,6 @@
 /* Upkeep.js */
 // Contains functions associated with the upkeep
 
-/* Old stuff
-*/
-
 function resetUpkeep() {
   window.GamesRunner = FSM.GamesRunner;
 }
@@ -137,7 +134,7 @@ function maintainPlayer(update) {
   // It's multiplied by 0 or 1 for map.canscroll
   window.scrolloffset = (map_settings.canscroll) * (player.right - FSM.MapScreener.middlex);
   if(scrolloffset > 0) {
-    FSM.scrollWindow(lastscroll = round(min(player.scrollspeed, scrolloffset)));
+    FSM.scrollWindow(lastscroll = Math.round(min(player.scrollspeed, scrolloffset)));
   }
   else lastscroll = 0;
 }

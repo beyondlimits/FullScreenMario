@@ -40,7 +40,6 @@ function startFSM() {
   resetEvents();
   resetCanvas();
   resetThings();
-  resetScenery();
   resetMapsManager();
   resetStatsHolder();
   resetTriggers();
@@ -105,7 +104,7 @@ function resetUnitsize(num) {
     window["unitsized" + i] = unitsize / i;
   }
   window.scale = unitsized2; // Typically 2
-  window.gravity = round(12 * unitsize) / 100; // Typically .48
+  window.gravity = Math.round(12 * unitsize) / 100; // Typically .48
 }
 
 function resetTimer(num) {
@@ -116,7 +115,6 @@ function resetTimer(num) {
 }
 
 // Events are done with TimeHandlr.js
-// This helps make timing obey pauses, and makes class cycles much easier
 function resetEvents() {
     window.TimeHandler = FSM.TimeHandler;
 }
@@ -147,5 +145,3 @@ function resetGameState(nocount) {
   // Clear audio
   AudioPlayer.pause();
 }
-
-// Similar to scrollWindow, but saves the player's x-loc

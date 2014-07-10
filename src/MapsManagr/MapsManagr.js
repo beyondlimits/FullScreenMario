@@ -86,6 +86,7 @@ function MapsManagr(settings) {
       maps;
   
   self.reset = function reset(settings) {
+        debugger;
     // An external prething_maker must be provided
     if(!settings.prething_maker) {
       console.error("No ObjectMakr for prethings is being provided.", setting);
@@ -359,7 +360,7 @@ function MapsManagr(settings) {
     
     // Attempt to add the thing to the correct grouping
     if(!prethings.hasOwnProperty(thing.grouping)) {
-      console.warn("Map " + map_name + "references a Thing of unknown grouping.", reference);
+      console.warn("Map " + map_name + " references a Thing of unknown grouping.", reference);
       return;
     }
     prethings[thing.grouping].push(prething);
@@ -447,7 +448,8 @@ function MapsManagr(settings) {
   function makePrePattern(reference) {
     // Make sure the pattern exists
     if(!patterns.hasOwnProperty(reference.pattern)) {
-      console.warn("Map " + map_name + "references a pattern of unknown type.", reference);
+        debugger;
+      console.warn("Map " + map_name + " references a pattern of unknown type.", reference);
       return;
     }
     
@@ -541,7 +543,7 @@ function MapsManagr(settings) {
     xloc = xloc_new;
     
     // For each listing of prethings;
-    var xloc_real = round(xloc),
+    var xloc_real = Math.round(xloc),
         prethings_current,
         prething,
         group, id, i;

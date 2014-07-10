@@ -203,3 +203,16 @@ function Firework(me, num) {
   // score(me, 500);
   FSM.StatsHolder.increase("score", 500);
 }
+
+
+/* Scenery 
+*/
+
+// Scenery sizes are stored in window.scenery
+// After creation, they're processed
+function resetScenery() {
+  // Patterns of scenery that can be placed in one call
+  // Each ends with "Blank" to signify the ending width
+  window.Scenery = FullScreenMario.prototype.maps.patterns;
+  // processSceneryPatterns(Scenery);
+}

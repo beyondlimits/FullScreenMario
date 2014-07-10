@@ -54,7 +54,7 @@ function resetMapsManager() {
         "yheight": 8
       }
     },
-    patterns: window.Scenery,
+    patterns: FullScreenMario.prototype.maps.patterns,
     defaults: {
       Map: {
         curloc: -1
@@ -65,7 +65,7 @@ function resetMapsManager() {
         time: 400,
         width: 0,
         underwater: false,
-        gravity: round(12 * unitsize) / 100 // Typically .48
+        gravity: Math.round(12 * unitsize) / 100 // Typically .48
       },
       Location: {
         x: 0,
