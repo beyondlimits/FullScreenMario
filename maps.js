@@ -2,7 +2,7 @@
 // Contains functions for creating, populating, and using maps
 
 function resetMapsManager() {
-  window.MapsManager = new MapsManagr({
+  FSM.MapsManager = new MapsManagr({
     prething_maker: ObjectMaker,
     recipient: window.map_settings || window,
     recipient_receives: [
@@ -33,7 +33,7 @@ function resetMapsManager() {
     },
     entry_default: "plain",
     on_entry: function() { 
-        MapsManager.spawnMap((FSM.MapScreener.right + FSM.QuadsKeeper.getOutDifference() ) / unitsize); 
+        FSM.MapsManager.spawnMap((FSM.MapScreener.right + FSM.QuadsKeeper.getOutDifference() ) / unitsize); 
     },
     macros: {
       "Floor": makeFloor,
@@ -77,7 +77,7 @@ function resetMapsManager() {
     // maps: FullScreenMario.prototype.maps
   });
   
-  MapsManager.mapStore([1,1], FullScreenMario.prototype.maps.maps["1"]["1"]);
+  FSM.MapsManager.mapStore([1,1], FullScreenMario.prototype.maps.maps["1"]["1"]);
 }
 
 
@@ -85,7 +85,7 @@ function resetMapsManager() {
 /* Map Transitions */
 
 function setMap(name) {
-  if(!name) name = MapsManager.getMapName();
+  if(!name) name = FSM.MapsManager.getMapName();
   resetQuadrants();
   
   // From shiftToLocation
@@ -113,10 +113,10 @@ function setMap(name) {
   };
   
   // MapsManager.setRecipient(map_settings);
-  MapsManager.setMap(name);
+  FSM.MapsManager.setMap(name);
   FSM.StatsHolder.set("world", name.join('-'));
   // 1 game second is about 25*16.667=416.675ms
-  FSM.StatsHolder.set("time", MapsManager.getArea().time);
+  FSM.StatsHolder.set("time", FSM.MapsManager.getArea().time);
   FSM.InputWriter.restartHistory();
   unpause();
   
@@ -229,10 +229,10 @@ function startWalking(me) {
 function goToTransport(transport) {
   // Goes to a new map
   if(transport instanceof Array) { 
-    MapsManager.setMap(transport);
+    FSM.MapsManager.setMap(transport);
   }
   // Goes to a new Location
-  else MapsManager.setLocation(transport);
+  else FSM.MapsManager.setLocation(transport);
 }
 
 /* Misc. Helpers */
@@ -253,7 +253,7 @@ function getAreaFillStyle(setting) {
 }
 
 function endLevel() {
-    var currentmap = MapsManager.getMapName();
+    var currentmap = FSM.MapsManager.getMapName();
     if(currentmap[1]++ == 4) {
         ++currentmap[0];
         currentmap[1] = 1;

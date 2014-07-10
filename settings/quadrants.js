@@ -6,7 +6,7 @@ FullScreenMario.prototype.quadrants = {
     "tolerance": FullScreenMario.unitsize / 2,
     "onUpdate": function onUpdate() {
         var diff_right = FSM.MapScreener.right + FSM.QuadsKeeper.getOutDifference();
-        MapsManager.spawnMap(diff_right / FullScreenMario.unitsize);
+        FSM.MapsManager.spawnMap(diff_right / FullScreenMario.unitsize);
     },
     "onCollide": false
 }
