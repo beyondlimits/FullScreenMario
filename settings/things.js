@@ -152,12 +152,12 @@
             },
             "Area": {
                 "toJSON": AreaToJSON,
-                "floor": 140,
+                "floor": 104,
                 "time": 400,
                 "jumpmod": 1.056,
                 "maxyvel": 7,
                 "maxyvelinv": -7,
-                "gravity": FullScreenMario.gravity
+                "gravity": FullScreenMario.gravity,
                 "underwater": false
             },
             "Location": {

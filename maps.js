@@ -93,6 +93,9 @@ function setMap(name) {
     name = FSM.MapsManager.getMapName();
   }
   
+  // For now...
+  FSM.MapsHandler.setMap("1-1");
+  
   // From shiftToLocation
   FSM.TimeHandler.clearAllEvents();
   FSM.TimeHandler.addEventInterval(function () {
@@ -122,12 +125,9 @@ function setMap(name) {
   // 1 game second is about 25*16.667=416.675ms
   FSM.StatsHolder.set("time", FSM.MapsManager.getArea().time);
   FSM.InputWriter.restartHistory();
-  unpause();
+  // unpause();
   
   FSM.ModAttacher.fireEvent("onLocationSet");
-  
-  // For now...
-  FSM.MapsHandler.setMap("1-1");
 }
 
 function entryPlain() {
