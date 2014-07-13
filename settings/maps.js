@@ -11,8 +11,10 @@ FullScreenMario.prototype.maps = {
         "maxyvelinv"
     ],
     "on_spawn": function (EightBitter, prething, xloc) {
+        var thing = prething.thing;
+        
         EightBitter.addThing(
-            prething.thing, 
+            thing, 
             prething.xloc * FullScreenMario.unitsize - EightBitter.MapScreener.left,
             (FSM.MapScreener.floor - prething.yloc) * FullScreenMario.unitsize
         );

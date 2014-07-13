@@ -98,13 +98,6 @@ function maintainPlayer(update) {
     if(!player.piping && !player.dying && player.top > FSM.MapScreener.deathheight) {
       // If the map has an exit loc (cloud world), transport there
       if(map_settings.exitloc) {
-        // Random maps will pretend he died
-        if(map.random) {
-          goToTransport(["Random", "Overworld", "Down"]);
-          playerDropsIn();
-          return;
-        }
-        // Otherwise just shift to the location
         return shiftToLocation(map.exitloc);
       }
       // Otherwise, since Player is below the screen, kill him dead
@@ -117,23 +110,24 @@ function maintainPlayer(update) {
     if(player.right > FSM.MapScreener.middlex) {
       // If Player is to the right of the screen's middle, move the screen
       if(player.right > FSM.MapScreener.right - FSM.MapScreener.left)
-        player.xvel = min(0, player.xvel);
+        player.xvel = Math.min(0, player.xvel);
     }
   }
   // Player is moving to the left
   else if(player.left < 0) {
     // Stop Player from going to the left.
-    player.xvel = max(0, player.xvel);
+    player.xvel = Math.max(0, player.xvel);
   }
   
   // Player is hitting something (stop jumping)
   if(player.under) player.jumpcount = 0;
   
   // Scrolloffset is how far over the middle player's right is
-  // It's multiplied by 0 or 1 for map.canscroll
-  window.scrolloffset = (FSM.MapScreener.canscroll) * (player.right - FSM.MapScreener.middlex);
-  if(scrolloffset > 0) {
-    FSM.scrollWindow(lastscroll = Math.round(min(player.scrollspeed, scrolloffset)));
-  }
-  else lastscroll = 0;
+  // if(FSM.MapScreener.canscroll) {
+    window.scrolloffset = player.right - FSM.MapScreener.middlex;
+      if(scrolloffset > 0) {
+        FSM.scrollWindow(lastscroll = Math.round(min(player.scrollspeed, scrolloffset)));
+      }
+  // }
+  // else lastscroll = 0;
 }

@@ -349,14 +349,7 @@ window.FullScreenMario = (function() {
             imageData = thing.imageData = context.getImageData(0, 0, spritewidthpixels, spriteheightpixels);
         
         // Attributes, such as Koopa.smart
-        if(thing.attributes) {
-            thingProcessAttributes(thing, thing.attributes, settings);
-        }
-        
-        // Important custom functions
-        if(thing.onThingMake) {
-            thing.onThingMake(thing, settings);
-        }
+        // if(thing.attributes) {/
         
         // Initial class / sprite setting
         FSM.setClassInitial(thing, thing.name || thing.title);
