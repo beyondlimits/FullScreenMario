@@ -28,6 +28,7 @@ function maintainSolids(update) {
 
 function maintainCharacters(update) {
   var delx = FSM.MapScreener.right + FSM.QuadsKeeper.getOutDifference(),
+      map_settings = FSM.MapScreener,
       character, i;
   for(i = 0; i < characters.length; ++i) {
     character = characters[i];
@@ -72,13 +73,15 @@ function maintainCharacters(update) {
 }
 
 function maintainPlayer(update) {
-  if(!player.alive) return;
+    var player = FSM.player,
+        map_settings = FSM.MapScreener;
+  if(!FSM.player.alive) return;
   
   // Player is falling
-  if(player.yvel > 0) {
+  if(FSM.player.yvel > 0) {
     if(!map_settings.underwater) player.keys.jump = 0;
     // Jumping?
-    if(!player.jumping) {
+    if(!FSM.player.jumping) {
       // Paddling? (from falling off a solid)
       if(map_settings.underwater) {
         if(!player.paddling) {
@@ -128,7 +131,7 @@ function maintainPlayer(update) {
   
   // Scrolloffset is how far over the middle player's right is
   // It's multiplied by 0 or 1 for map.canscroll
-  window.scrolloffset = (map_settings.canscroll) * (player.right - FSM.MapScreener.middlex);
+  window.scrolloffset = (FSM.MapScreener.canscroll) * (player.right - FSM.MapScreener.middlex);
   if(scrolloffset > 0) {
     FSM.scrollWindow(lastscroll = Math.round(min(player.scrollspeed, scrolloffset)));
   }

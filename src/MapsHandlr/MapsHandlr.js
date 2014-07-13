@@ -4,7 +4,7 @@
 function MapsHandlr(settings) {
     "use strict";
     if(!this || this === window) {
-        return new MapsManagr(settings);
+        return new MapsCreatr(settings);
     }
     var self = this,
         
@@ -132,6 +132,15 @@ function MapsHandlr(settings) {
     };
     
     /**
+     * Simple getter function for the area_current object.
+     * 
+     * @return {Object} The current area object, included area attributes.
+     */
+    self.getArea = function getArea() {
+        return area_current;
+    };
+    
+    /**
      * Simple getter function for the internal prethings object. This will be
      * null before the first self.setMap.
      * 
@@ -217,7 +226,6 @@ function MapsHandlr(settings) {
         }
         
         var name, group, prething, i;
-        console.clear();
         
         // For each group of prethings currently able to spawn:
         for(name in prethings) {

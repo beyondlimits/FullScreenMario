@@ -11,7 +11,7 @@
     
     function KeyDownUp(player) {
         player.keys.up = true;
-        if(player.canjump && (player.resting || map_settings.underwater)) {
+        if(player.canjump && (player.resting || player.EightBitter.MapScreener.underwater)) {
             player.keys.jump = 1;
             player.canjump = player.keys.jumplev = 0;
             

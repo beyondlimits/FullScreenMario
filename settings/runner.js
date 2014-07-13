@@ -20,7 +20,7 @@ FullScreenMario.prototype.runner = {
             this.TimeHandler.handleEvents();
         },
         function () {
-            this.PixelDrawer.refillGlobalCanvas();
+            this.PixelDrawer.refillGlobalCanvas(this.MapsHandler.getArea().background);
         }
     ],
     "on_pause": function () {

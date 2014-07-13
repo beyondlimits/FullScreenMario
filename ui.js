@@ -174,8 +174,8 @@ function setCheats() {
   console.log("If you'd like, go ahead and look around the source code. There are a few surprises you might have fun with... ;)");
   console.log("http://www.github.com/DiogenesTheCynic/FullScreenMario");
   window.cheats = {
-    Change_Map: "game.setMap([#,#]);",
-    Change_Map_Location: "game.MapsManager.setLocation(#);",
+    Change_Map: "game.setMap(\"#-#\");",
+    Change_Map_Location: "game.setLocation(#);",
     Fast_Forward: "game.fastforward(amount; 1 by default);",
     Life: "game.gainLife(# amount or Infinity)",
     Low_Gravity: "game.player.gravity = game.gravity /= 2;",

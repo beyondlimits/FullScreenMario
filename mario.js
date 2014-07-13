@@ -38,7 +38,6 @@ function startFSM() {
   // Resetting everything may take a while
   resetMeasurements();
   resetCanvas();
-  resetMapsManager();
   resetTriggers();
   
   // These should be placed somewhere else eventually

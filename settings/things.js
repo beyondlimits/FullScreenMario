@@ -22,6 +22,7 @@
             "setting": this.setting
         });
     }
+    
     /**
      * 
      */
@@ -30,6 +31,29 @@
             "area": "should put .areaName in location",
             "entry": this.entry
         });
+    }
+    
+    /**
+     * This is used as the OnMake callback for areas. In the future, it would be
+     * better to make areas inherit from base area types (Overworld, etc.) so 
+     * this inelegant switch statement doesn't have to be used.
+     */
+    function AreaSetBackground() {
+        var setting = this.setting;
+        
+        if(this.setting.indexOf("Underwater") !== -1) {
+            this.background = "#2038ec";
+            return;
+        }
+        
+        if(this.setting.indexOf("Underworld") !== -1
+                || this.setting.indexOf("Castle") !== -1
+                || this.setting.indexOf("Night") !== -1) {
+            this.background = "#000000";
+            return;
+        }
+        
+        this.background = "#5c94fc";
     }
 
     FullScreenMario.prototype.things = {
@@ -151,6 +175,7 @@
                 "toJSON": MapToJSON
             },
             "Area": {
+                "onMake": AreaSetBackground,
                 "toJSON": AreaToJSON,
                 "floor": 104,
                 "time": 400,

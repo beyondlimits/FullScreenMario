@@ -137,6 +137,19 @@ FullScreenMario.prototype.mods = {
                     this.ObjectMaker.getFunction("Player").prototype.hidden = 0;
                 }
             }
+        },
+        {
+            "name": "Acid Trip",
+            "description": "Sprites aren't cleared from the screen each game tick.",
+            "enabled": false,
+            "events": {
+                "onModEnable": function (mod) {
+                    this.PixelDrawer.setNoRefill(true);
+                },
+                "onModDisable": function (mod) {
+                    this.PixelDrawer.setNoRefill(false);
+                }
+            }
         }
     ]
 }

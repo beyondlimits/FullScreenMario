@@ -1,100 +1,16 @@
 /* Maps.js */
 // Contains functions for creating, populating, and using maps
 
-function resetMapsManager() {
-  FSM.MapsManager = new MapsManagr({
-    prething_maker: FSM.ObjectMaker,
-    recipient: window.map_settings || window,
-    recipient_receives: [
-      "gravity",
-      "fillStyle",
-      "refy",
-      "setting",
-      "underwater",
-      "time"
-    ],
-    groupings: [
-      "scenery",
-      "solid",
-      "character",
-      "text"
-    ],
-    on_spawn: function(prething, xloc) {
-      var thing = prething.thing;
-      FSM.addThing(
-        thing, 
-        prething.xloc * unitsize - FSM.MapScreener.left, 
-        (map_settings.refy - prething.yloc) * unitsize
-      );
-    },
-    entry_functions: {
-      true: entryPlain,
-      "normal": entryNormal,
-      "Castle": entryCastle,
-      "Cloud": entryCloud,
-      "ExitPipeVertical": exitPipeVertical,
-      "WalkToPipe": walkToPipe
-    },
-    entry_default: "plain",
-    on_entry: function() { 
-        FSM.MapsManager.spawnMap((FSM.MapScreener.right + FSM.QuadsKeeper.getOutDifference() ) / unitsize); 
-    },
-    macros: {
-      "Floor": makeFloor,
-      "Pipe": makePipe,
-      "Ceiling": makeCeiling,
-      "Tree": makeTree,
-      "Shroom": makeShroom,
-      "Water": makeWater,
-      "Bridge": makeBridge,
-      "PlatformGenerator": makePlatformGenerator,
-      "EndCastleOutside": makeEndCastleOutside,
-      "StartCastleInside": makeStartCastleInside,
-      "EndCastleInside": makeEndCastleInside
-    },
-    macros_defaults: {
-      "Fill": {
-        "xwidth": 8,
-        "yheight": 8
-      }
-    },
-    patterns: FullScreenMario.prototype.maps.patterns,
-    defaults: {
-      Map: {
-        curloc: -1
-      },
-      Area: {
-        floor: 140,
-        refy: 140, // floor + yloc
-        time: 400,
-        width: 0,
-        underwater: false,
-        gravity: Math.round(12 * unitsize) / 100 // Typically .48
-      },
-      Location: {
-        x: 0,
-        y: 0,
-        area: 0,
-        entry: "normal"
-      }
-    },
-    // maps: FullScreenMario.prototype.maps
-  });
-  
-  FSM.MapsManager.mapStore([1,1], FullScreenMario.prototype.maps.maps["1"]["1"]);
-}
-
-
-
 /* Map Transitions */
 
 function setMap(name) {
   if(!name) {
-    name = FSM.MapsManager.getMapName();
+    name = FSM.MapsHandler.getMapName();
   }
   
   // For now...
   FSM.MapsHandler.setMap("1-1");
+  FSM.MapsHandler.spawnMap(7000);
   
   // From shiftToLocation
   FSM.TimeHandler.clearAllEvents();
@@ -103,31 +19,18 @@ function setMap(name) {
       FSM.StatsHolder.decrease("time", 1);
     }
   }, 25, Infinity);
+  
   resetGameState();
   
-  // Globally accessible settings
-  window.map_settings = {
-    gravity: window.gravity,
-    shifting: false,
-    refy: 104,
-    gravity: .48,
-    maxyvel: 7,
-    maxyvelinv: -7,
-    floor: 104,
-    underwater: false,
-    jumpmod: 1.056,
-    canscroll: true
-  };
-  
-  // MapsManager.setRecipient(map_settings);
-  FSM.MapsManager.setMap(name);
+  // 1 game second is about 25 * 16.667 = 416.675ms
+  FSM.StatsHolder.set("time", FSM.MapsHandler.getArea().time);
   FSM.StatsHolder.set("world", name.join('-'));
-  // 1 game second is about 25*16.667=416.675ms
-  FSM.StatsHolder.set("time", FSM.MapsManager.getArea().time);
+  
   FSM.InputWriter.restartHistory();
-  // unpause();
   
   FSM.ModAttacher.fireEvent("onLocationSet");
+  
+  entryNormal();
 }
 
 function entryPlain() {
@@ -233,15 +136,6 @@ function startWalking(me) {
   me.nofall = me.nocollide = false;
 }
 
-function goToTransport(transport) {
-  // Goes to a new map
-  if(transport instanceof Array) { 
-    FSM.MapsManager.setMap(transport);
-  }
-  // Goes to a new Location
-  else FSM.MapsManager.setLocation(transport);
-}
-
 /* Misc. Helpers */
 
 // Distance from the yloc to botmax
@@ -260,7 +154,7 @@ function getAreaFillStyle(setting) {
 }
 
 function endLevel() {
-    var currentmap = FSM.MapsManager.getMapName();
+    var currentmap = FSM.MapsHandler.getMapName();
     if(currentmap[1]++ == 4) {
         ++currentmap[0];
         currentmap[1] = 1;

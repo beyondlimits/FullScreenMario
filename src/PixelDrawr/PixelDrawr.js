@@ -24,11 +24,45 @@ function PixelDrawr(settings) {
         // Utility function to create a canvas (typically taken from EightBittr)
         getCanvas,
         
-        innerWidth;
+        innerWidth,
+        
+        // Whether self.refillGlobalCanvas should skip redrawing the main canvas
+        // every time.
+        no_refill;
     
     self.reset = function(settings) {
         getCanvas = settings.getCanvas;
         PixelRender = settings.PixelRender;
+        no_refill = settings.no_refill;
+    }
+    
+    
+    /* Simple gets
+    */
+    
+    /**
+     * 
+     */
+    self.getCanvas = function () {
+        return canvas;
+    };
+    
+    /**
+     * 
+     */
+    self.getContext = function () {
+        return contextd;
+    };
+    
+    
+    /* Simple sets
+    */
+    
+    /**
+     * 
+     */
+    self.setNoRefill = function (enabled) {
+        no_refill = enabled;
     }
     
     
@@ -114,22 +148,32 @@ function PixelDrawr(settings) {
       return sprites;
     }
     
+    
     /* Core drawing
     */
     
     /**
-     * Called every upkeep to refill the entire main canvas
+     * Called every upkeep to refill the entire main canvas. Right now it's 
+     * hardcoded to call window.scenery, window.solids, etc. - in the future
+     * this should be referencing an array passed in self.reset, which will 
+     * contain all the groups in the main FSM GroupsHolder.
      * 
      * @return {Self}
      */
-    self.refillGlobalCanvas = function() {
+    self.refillGlobalCanvas = function(background) {
         var canvas = window.canvas,
             context = window.context,
             i;
         
-        context.fillStyle = window.fillStyle;
-        context.fillRect(0, 0, canvas.width, canvas.height);
+        // context.fillStyle = window.fillStyle;
+        if(!no_refill) {
+            context.fillStyle = background;
+            context.fillRect(0, 0, canvas.width, canvas.height);
+        } 
         
+        // self.setCanvas -> self.setContext should bind a member copy of 
+        // self.drawThingOnCanvas to the context as the first variable, so this
+        // can use .forEach
         for(i = scenery.length - 1; i >= 0; --i) self.drawThingOnCanvas(context, scenery[i]);
         for(i = solids.length - 1; i >= 0; --i) self.drawThingOnCanvas(context, solids[i]);
         for(i = characters.length - 1; i >= 0; --i) self.drawThingOnCanvas(context, characters[i]);
@@ -234,6 +278,7 @@ function PixelDrawr(settings) {
             drawPatternOnCanvas(context, sprites.middle.canvas, leftreal, topreal, widthreal, heightreal);
         }
     }
+    
     
     /* Utilities
     */

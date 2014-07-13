@@ -4,7 +4,7 @@
 function MapsCreatr(settings) {
     "use strict";
     if(!this || this === window) {
-        return new MapsManagr(settings);
+        return new MapsCreatr(settings);
     }
     var self = this,
         
@@ -46,7 +46,7 @@ function MapsCreatr(settings) {
         
         // At least one group type name should be defined for PreThing output
         if(!settings.group_types) {
-            throw new Error("No group type names provided to MapsManager.");
+            throw new Error("No group type names provided to MapsCreatr.");
         }
         group_types = settings.group_types;
         

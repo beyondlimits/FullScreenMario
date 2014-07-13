@@ -86,8 +86,8 @@ function FlagCollisionTop(me, detector) {
   FSM.TimeHandler.addSpriteCycle(me, ["one", "two"], "climbing");
   
   // Start moving the player down, as well as the end flag
-  var endflag = FSM.MapsManager.getArea().getThingByID("endflag"),
-      bottom_cap = (map_settings.floor - 9) * FullScreenMario.unitsize;
+  var endflag = FSM.MapsHandler.getArea().getThingByID("endflag"),
+      bottom_cap = (FSM.MapsHandler.floor - 9) * FullScreenMario.unitsize;
   me.movement = function(me) { 
     if(me.bottom < bottom_cap)
       FSM.shiftVert(me,FullScreenMario.unitsize);

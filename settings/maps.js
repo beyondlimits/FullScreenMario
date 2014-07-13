@@ -14,7 +14,7 @@ FullScreenMario.prototype.maps = {
         EightBitter.addThing(
             prething.thing, 
             prething.xloc * FullScreenMario.unitsize - EightBitter.MapScreener.left,
-            (map_settings.refy - prething.yloc) * FullScreenMario.unitsize
+            (FSM.MapScreener.floor - prething.yloc) * FullScreenMario.unitsize
         );
     },
     "patterns": (function (patterns) {
@@ -124,32 +124,11 @@ FullScreenMario.prototype.maps = {
             ["Cloud2", 388, 68],
             ["Blank", 384]
         ]
-    }),
-    // These are filled out later
-    "maps": undefined
+    })
 };
 
   
     
-    /**
-     * 
-     * 
-     * @param {Object} reference   A listing of the settings for this macro,
-     *                             from an Area's .creation Object.
-     */
-    function macroFloor(reference) {
-        var x = reference.x || 0,
-            y = reference.y || 0,
-            floor = proliferate({
-                thing: "Floor",
-                x: x,
-                y: y,
-                width: (reference.width || 8),
-                height: DtB(y) + 24 // extra 24 so the player doesn't cause scrolling when falling
-            }, reference, true );
-        delete floor.macro;
-        return floor;
-    }
     
     /**
      * 

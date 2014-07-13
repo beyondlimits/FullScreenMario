@@ -15,7 +15,6 @@ window.FullScreenMario = (function() {
     function FullScreenMario() {            // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {
             "constructor": FullScreenMario,            "unitsize": 4,            "scale": 2,            "requirements": {                "global": {                    "AudioPlayr": "src/AudioPlayr.js",                    "ChangeLinr": "src/ChangeLinr.js",                    "FPSAnalyzr": "src/FPSAnalyzr.js",                    "GamesRunnr": "src/GamesRunnr.js",                    "GroupHoldr": "src/GroupHoldr.js",                    "InputWritr": "src/InputWritr.js",                    "MapScreenr": "src/MapScreenr.js",
                     "MapsHandlr": "src/MapsHandlr.js",
-                        "MapsManagr": "src/MapsManagr.js",
                     "ModAttachr": "src/ModAttachr.js",                    "ObjectMakr": "src/ObjectMakr.js",                    "PixelDrawr": "src/PixelDrawr.js",                    "PixelRendr": "src/PixelRendr.js",                    "QuadsKeepr": "src/QuadsKeepr.js",                    "StatsHoldr": "src/StatsHoldr.js",                    "StringFilr": "src/StringFilr.js",                    "ThingHittr": "src/ThingHittr.js",                    "TimeHandlr": "src/TimeHandlr.js"                },                "self": {
                     "audio": "settings/audio.js",
                     "collisions": "settings/collisions.js",                    "events": "settings/events.js",
@@ -52,20 +51,26 @@ window.FullScreenMario = (function() {
     FullScreenMario.prototype = EightBitter;
     
     // For the sake of reset functions, store constants as members of the actual
-    // FullScreenMario function itself
+    // FullScreenMario function itself - this allows prototype setters to use 
+    // them regardless of whether the prototype has been instantiated yet
     FullScreenMario.unitsize = 4;
     FullScreenMario.scale = 2;
     FullScreenMario.jumplev1 = 32;
     FullScreenMario.jumplev2 = 64;
+    
     // The floor is 88 spaces (11 blocks) below the yloc = 0 level
     FullScreenMario.ceillev = 88; 
+    
     // The floor is 104 spaces (13 blocks) below the top of the screen (yloc = -16)
     FullScreenMario.ceilmax = 104; 
     FullScreenMario.castlev = -48;
+    
     // Gravity is always a function of unitsize
     FullScreenMario.gravity = Math.round(12 * FullScreenMario.unitsize) / 100; // .48
+    
     // When a player is 48 spaces below the bottom, kill it
     FullScreenMario.bottom_death_difference = 48;
+    
     // Levels of points to award for hopping on / shelling enemies
     FullScreenMario.point_levels = [
         100, 200, 400, 500, 800, 1000, 2000, 4000, 5000, 8000
@@ -2944,8 +2949,8 @@ window.FullScreenMario = (function() {
      function mapEntranceNormal(thing) {
         thing.EightBitter.mapEntranceSpecific(
             thing, 
-            thing, thing.EightBitter.unitsize * 16,
-            thing, thing.EightBitter.unitsize * 16
+            thing.EightBitter.unitsize * 16,
+            thing.EightBitter.unitsize * 16
         );
      }
      
@@ -3110,6 +3115,26 @@ window.FullScreenMario = (function() {
         console.log("Returning", outputs);
         return outputs;
     }
+    
+    /**
+     * 
+     * 
+     * @param {Object} reference   A listing of the settings for this macro,
+     *                             from an Area's .creation Object.
+     */
+    function macroFloor(reference) {
+        var x = reference.x || 0,
+            y = reference.y || 0,
+            floor = proliferate({
+                thing: "Floor",
+                x: x,
+                y: y,
+                width: (reference.width || 8),
+                height: DtB(y) + 24 // extra 24 so the player doesn't cause scrolling when falling
+            }, reference, true );
+        delete floor.macro;
+        return floor;
+    }
       
     
     // Add all registered functions from above to the FullScreenMario prototype
@@ -3259,7 +3284,8 @@ window.FullScreenMario = (function() {
         "macros": {
             "Example": macroExample,
             "Fill": macroFillPreThings,
-            "Pattern": macroFillPrePattern
+            "Pattern": macroFillPrePattern,
+            "Floor": macroFloor
         }
     });
     
