@@ -1,36 +1,21 @@
 FullScreenMario.prototype.maps = {
     "screen_attributes": [
+        // "fillStyle",
         "gravity",
-        "fillStyle",
-        "refy",
         "setting",
+        "time",
         "underwater",
-        "time"
+        "floor",
+        "jumpmod",
+        "maxyvel",
+        "maxyvelinv"
     ],
-    "ObjectMaker": {
-        "inheritance": {
-            "Map": {},
-            "Area": {},
-            "Location": {}
-        },
-        "properties": {
-            "Map": {
-                "current_location": -1
-            },
-            "Area": {
-                "floor": 140,
-                "refy": 140,
-                "time": 400,
-                "underwater": false,
-                "gravity": Math.round(12 * FullScreenMario.unitsize) / 100
-            },
-            "Location": {
-                "x": 0,
-                "y": 0,
-                "area": 0,
-                "entry": "normal"
-            }
-        },
+    "on_spawn": function (EightBitter, prething, xloc) {
+        EightBitter.addThing(
+            prething.thing, 
+            prething.xloc * FullScreenMario.unitsize - EightBitter.MapScreener.left,
+            (map_settings.refy - prething.yloc) * FullScreenMario.unitsize
+        );
     },
     "patterns": (function (patterns) {
         var pattern,

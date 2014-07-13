@@ -57,6 +57,9 @@ function MapsCreatr(settings) {
         macro_defaults = settings.macro_defaults || {};
         
         maps = {};
+        if(settings.maps) {
+            self.storeMaps(settings.maps);
+        }
     };
     
     
@@ -85,6 +88,23 @@ function MapsCreatr(settings) {
             throw new Error("No map found under: " + name);
         }
         return map;
+    };
+    
+    /**
+     * Creates and stores a set of new maps based on the key/value pairs in a 
+     * given Object. These will be stored as maps by their string keys via 
+     * self.storeMap.
+     * 
+     * @param {Object} settings   An Object containing a set of key/map pairs to
+     *                            store as maps.
+     * @return {Object}   The newly created maps object.
+     */
+    self.storeMaps = function(maps) {
+        for(var i in maps) {
+            if(maps.hasOwnProperty(i)) {
+                self.storeMap(i, maps[i]);
+            }
+        }
     };
     
     /**
@@ -172,7 +192,7 @@ function MapsCreatr(settings) {
                 locs_parsed[i] = ObjectMaker.make("Location", locs_raw[i]);
                 
                 // The area should be an object reference, under the Map's areas
-                locs_parsed[i].area = map.areas[locs_parsed[i].area];
+                locs_parsed[i].area = map.areas[locs_parsed[i].area || 0];
                 if(!locs_parsed[i].area) {
                     throw new Error("Location " + i
                             + " references an invalid area: "
@@ -272,7 +292,7 @@ function MapsCreatr(settings) {
     function analyzePreLocation(reference, prethings, area, map) {
         var location = reference.location;
         
-        if(map.locations.hasOwnProperty(location)) {
+        if(!map.locations.hasOwnProperty(location)) {
             console.warn("A non-existent location is referenced. It will be "
                     + "ignored: " + location, reference, prethings, area, map);
             return;
@@ -310,12 +330,12 @@ function MapsCreatr(settings) {
         
         // If there is any output, recurse on all components of it, Array or not
         if(outputs) {
-            if(output instanceof Array) {
-                for(i = 0, len = output.length; i < len; i += 1) {
-                    analyzePreSwitch(output[i], prethings, area, map);
+            if(outputs instanceof Array) {
+                for(i = 0, len = outputs.length; i < len; i += 1) {
+                    analyzePreSwitch(outputs[i], prethings, area, map);
                 }
             } else {
-                analyzePreSwitch(output, prethings, area, map);
+                analyzePreSwitch(outputs, prethings, area, map);
             }
         }
     }
@@ -343,21 +363,22 @@ function MapsCreatr(settings) {
         
         prething = new PreThing(ObjectMaker.make(thing, reference), reference);
         
-        if(!prething[key_group_type]) {
-            console.warn("A Thing does not contain a " + [key_group_type] + ". "
-                    + "It will be ignored: " + 
-                    prething, reference, prethings, area, map);
+        if(!prething.thing[key_group_type]) {
+            console.warn("A Thing does not contain a " + key_group_type + ". "
+                    + "It will be ignored: ",
+                    prething, "\n", arguments);
             return;
         }
         
-        if(!group_types.indexOf(prething[key_group_type])) {
+        if(group_types.indexOf(prething.thing[key_group_type]) === -1) {
+            console.log("Group types are", group_types, "\n");
             console.warn("A Thing contains an unknown " + key_group_type
-                    + ". It will be ignored: " + prething[key_group_type],
+                    + ". It will be ignored: " + prething.thing[key_group_type],
                     prething, reference, prethings, area, map);
             return;
         }
         
-        prethings[prething[key_group_type]].push(prething);
+        prethings[prething.thing[key_group_type]].push(prething);
         
         // If a Thing has a .exit attribute, that indicates the location should
         // be at the same xloc as that Thing (such as a Pipe)
@@ -394,18 +415,18 @@ function MapsCreatr(settings) {
     
     /**
      * Creates an Object pre-populated with one key for each of the Strings in
-     * the input Array, each pointing to undefined. 
+     * the input Array, each pointing to a new Array. 
      * 
      * @param {String[]} arr
      * @return {Object}
-     * @remarks This is the opposite of Object.keys, which takes in an Object
-     *          and returns an Array of Strings.
+     * @remarks This is a rough opposite of Object.keys, which takes in an 
+     *          Object and returns an Array of Strings.
      */
     function fromKeys(arr) {
         var output = {},
             i;
         for(i = arr.length - 1; i >= 0; i -= 1) {
-            output[arr[i]] = undefined;
+            output[arr[i]] = [];
         }
         return output;
     }

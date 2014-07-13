@@ -21,7 +21,11 @@ function resetMapsManager() {
     ],
     on_spawn: function(prething, xloc) {
       var thing = prething.thing;
-      FSM.addThing(thing, prething.xloc * unitsize - FSM.MapScreener.left, (map_settings.refy - prething.yloc) * unitsize);
+      FSM.addThing(
+        thing, 
+        prething.xloc * unitsize - FSM.MapScreener.left, 
+        (map_settings.refy - prething.yloc) * unitsize
+      );
     },
     entry_functions: {
       true: entryPlain,
@@ -85,7 +89,9 @@ function resetMapsManager() {
 /* Map Transitions */
 
 function setMap(name) {
-  if(!name) name = FSM.MapsManager.getMapName();
+  if(!name) {
+    name = FSM.MapsManager.getMapName();
+  }
   
   // From shiftToLocation
   FSM.TimeHandler.clearAllEvents();
@@ -119,6 +125,9 @@ function setMap(name) {
   unpause();
   
   FSM.ModAttacher.fireEvent("onLocationSet");
+  
+  // For now...
+  FSM.MapsHandler.setMap("1-1");
 }
 
 function entryPlain() {

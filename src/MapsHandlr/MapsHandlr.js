@@ -14,7 +14,7 @@ function MapsHandlr(settings) {
         // MapScreenr container for map attributes, such as "floor" or "setting"
         MapScreener,
         
-        // An Array of Strings representing the names of attributes to be copied
+        // An Array of strings representing the names of attributes to be copied
         // to the MapScreener during self.setLocation
         screen_attributes,
         
@@ -28,7 +28,23 @@ function MapsHandlr(settings) {
         location_current,
         
         // The name of the currently edited map, set by self.setMap
-        map_name;
+        map_name,
+        
+        // The current area's array of prethings that are to be added in order
+        // during self.spawnMap
+        prethings,
+        
+        // When a prething needs to be spawned, this function should put it on
+        // the map
+        on_spawn,
+        
+        // The current x-location of prethings, which will be increased during
+        // self.spawnMap
+        xloc,
+        
+        // For each array within prethings, this stores the current spawn 
+        // location within those arrays
+        currents;
     
     /**
      * 
@@ -46,7 +62,9 @@ function MapsHandlr(settings) {
         }
         MapScreener = settings.MapScreener;
         
-        screen_attributes  = settings.screen_attributes || [];
+        screen_attributes = settings.screen_attributes || [];
+        
+        on_spawn = settings.on_spawn || console.log.bind(console, "Spawning:");
     };
     
     
@@ -90,7 +108,7 @@ function MapsHandlr(settings) {
     
     /** 
      * Gets the map listed under the given name. If no name is provided, the
-     * current_map is returned instead.
+     * map_current is returned instead.
      * 
      * @param {Mixed} [name]   An optional key to find the map under. This will
      *                         typically be a String.
@@ -100,7 +118,7 @@ function MapsHandlr(settings) {
         if(arguments.length) {
             return MapsCreator.getMap(name);
         } else {
-            return current_map;
+            return map_current;
         }
     };
     
@@ -113,6 +131,15 @@ function MapsHandlr(settings) {
         return MapsCreator.getMaps();
     };
     
+    /**
+     * Simple getter function for the internal prethings object. This will be
+     * null before the first self.setMap.
+     * 
+     * return {Prething[]}   An array of the current area's Prethings.
+     */
+    self.getPreThings = function getPreThings() {
+        return prethings;
+    }
     
     /* Map / location setting
     */
@@ -166,18 +193,54 @@ function MapsHandlr(settings) {
             MapScreener[attribute] = area_current[attribute];
         }
         
-        // Reset the area's prethings object, enabling it to be used as a fresh
-        // start for the new Area/Location placements
-        var prethings = MapsCreator.getPreThings(location);
+        // Reset the prethings object, enabling it to be used as a fresh start
+        // for the new Area/Location placements
+        prethings = MapsCreator.getPreThings(location);
+        xloc = 0;
         
-        console.log("Got", prethings);
+        // Start marking where to spawn individual groups of prethings
+        currents = {};
+        for(i in prethings) {
+            if(prethings.hasOwnProperty(i)) {
+                currents[i] = 0;
+            }
+        }
     };
     
     /**
      * 
      */
     self.spawnMap = function spawnMap(xloc_new) {
+        var xloc_real = xloc_new ? Math.round(xloc_new) : 0;
+        if(xloc_real <= xloc) {
+            return;
+        }
         
+        var name, group, prething, i;
+        console.clear();
+        
+        // For each group of prethings currently able to spawn:
+        for(name in prethings) {
+            if(prethings.hasOwnProperty(name)) {
+                group = prethings[name];
+                i = currents[name];
+                
+                // Keep trying to spawn the rightmost thing, spawning whenever
+                // a new one matches
+                while(prething = group[i]) {
+                    // console.log("Trying", prething.title, "(" + prething.xloc + ")");
+                    if(prething.xloc > xloc_real) {
+                        break;
+                    }
+                    i += 1;
+                    
+                    on_spawn(prething, prething.xloc);
+                }
+                
+                // Save the new current index, if it changed
+                currents[name] = i;
+            }
+        }
     };
     
     

@@ -173,9 +173,12 @@ window.FullScreenMario = (function() {
      */
     function resetMapsCreator(self) {
         self.MapsCreator = new MapsCreatr({
-            "ObjectMaker": new ObjectMakr(self.maps.ObjectMaker),
+            "ObjectMaker": self.ObjectMaker,
             "group_types": ["Character", "Scenery", "Solid", "Text"],
-            "macros": self.macros
+            "macros": self.macros,
+            "maps": {
+                "1-1": self.maps.maps[1][1]
+            }
         });
     }
     
@@ -189,7 +192,8 @@ window.FullScreenMario = (function() {
         self.MapsHandler = new MapsHandlr({
             "MapsCreator": self.MapsCreator,
             "MapScreener": self.MapScreener,
-            "screen_attributes": self.maps.screen_attributes
+            "screen_attributes": self.maps.screen_attributes,
+            "on_spawn": self.maps.on_spawn.bind(self, self)
         });
     }
     
@@ -280,7 +284,7 @@ window.FullScreenMario = (function() {
         
         EightBitter.addThing(player,
             left || EightBitter.unitsize * 16,
-            top || EightBitter.unitsize * (map_settings.floor - player.height)
+            top || EightBitter.unitsize * (EightBitter.MapScreener.floor - player.height)
         );
         
         switch(player.power) {
@@ -1491,12 +1495,12 @@ window.FullScreenMario = (function() {
         
         if(!window.collideEnemyWarned) {
             window.collideEnemyWarned = true;
-            console.warn("collideEnemy uses map_settings, scoreEnemyStar, etc.");
+            console.warn("collideEnemy uses scoreEnemyStar, etc.");
         }
         // Player interacting with enemies
         if(thing.player) {
             // Player landing on top of an enemy
-            if(!map_settings.underwater 
+            if(!thing.EightBitter.MapScreener.underwater 
                 && ((thing.star && !other.nostar)
                     || (!other.deadly && isThingOnThing(thing, other)))) {
                 
@@ -1733,8 +1737,6 @@ window.FullScreenMario = (function() {
     
     /**
      * Initial movement function for Things that float up and down (vertically).
-     * This uses map_settings - in the future, it should just be relative
-     * to the starting yloc of the Thing
      * 
      * @param {Thing} thing
      * @remarks thing.begin and thing.end are used as the vertical endpoints;
@@ -1744,10 +1746,9 @@ window.FullScreenMario = (function() {
         // Make sure thing.begin <= thing.end
         thing.EightBitter.setPlatformEndpoints(thing);
         
-        // Make thing.begin and thing.end relative to map_settings.floor
-        console.warn("moveFloating should avoid using map_settings");
-        thing.begin = map_settings.floor * thing.EightBitter.unitsize - thing.begin;
-        thing.end = map_settings.floor * thing.EightBitter.unitsize - thing.end;
+        // Make thing.begin and thing.end relative to the area's floor
+        thing.begin = thing.EightBitter.MapScreener.floor * thing.EightBitter.unitsize - thing.begin;
+        thing.end = thing.EightBitter.MapScreener.floor * thing.EightBitter.unitsize - thing.end;
         
         // Use moveFloatingReal as the actual movement function from now on
         (thing.movement = thing.EightBitter.moveFloatingReal)(thing);
@@ -1895,8 +1896,9 @@ window.FullScreenMario = (function() {
             thing.keys.jump = 0;
         }
         // Jumping
-        else if(thing.keys.jump > 0 && (thing.yvel <= 0 || map_settings.underwater)) {
-            if(map_settings.underwater) {
+        else if(thing.keys.jump > 0 
+                && (thing.yvel <= 0 || thing.EightBitter.MapScreener.underwater)) {
+            if(thing.EightBitter.MapScreener.underwater) {
                 thing.EightBitter.animatePlayerPaddling(thing);
             }
             
@@ -1908,16 +1910,16 @@ window.FullScreenMario = (function() {
             }
             // Jumping, not resting
             else {
-                if(!thing.jumping && !map_settings.underwater) {
+                if(!thing.jumping && !thing.EightBitter.MapScreener.underwater) {
                     FSM.switchClass(thing, "running skidding", "jumping");
                 }
                 thing.jumping = true;
             }
-            if(!map_settings.underwater) {
+            if(!thing.EightBitter.MapScreener.underwater) {
                 thing.keys.jumplev += 1;
                 var dy = FullScreenMario.unitsize 
-                    / (Math.pow(thing.keys.jumplev, map_settings.jumpmod - .0014 * thing.xvel));
-                thing.yvel = Math.max(thing.yvel - dy, map_settings.maxyvelinv);
+                    / (Math.pow(thing.keys.jumplev, thing.EightBitter.MapScreener.jumpmod - .0014 * thing.xvel));
+                thing.yvel = Math.max(thing.yvel - dy, thing.EightBitter.MapScreener.maxyvelinv);
             }
         }
       
@@ -1945,7 +1947,7 @@ window.FullScreenMario = (function() {
         if(thing.keys.run != 0 && !thing.crouching) {
             var dir = thing.keys.run,
                 // No sprinting underwater
-                sprinting = (thing.keys.sprint && !map_settings.underwater) || 0,
+                sprinting = (thing.keys.sprint && !thing.EightBitter.MapScreener.underwater) || 0,
                 adder = dir * (.098 * (sprinting + 1));
             
             // Reduce the speed, both by subtracting and dividing a little
@@ -2011,14 +2013,14 @@ window.FullScreenMario = (function() {
         }
         if(thing.xvel > 0) {
             thing.xvel = Math.min(thing.xvel, thing.maxspeed);
-            if(thing.moveleft && (thing.resting || map_settings.underwater)) {
+            if(thing.moveleft && (thing.resting || thing.EightBitter.MapScreener.underwater)) {
                 thing.EightBitter.unflipHoriz(thing);
                 thing.moveleft = false;
             }
         }
         else if(thing.xvel < 0) {
             thing.xvel = Math.max(thing.xvel, thing.maxspeed * -1);
-            if(!thing.moveleft && (thing.resting || map_settings.underwater)) {
+            if(!thing.moveleft && (thing.resting || thing.EightBitter.MapScreener.underwater)) {
                 thing.moveleft = true;
                 thing.EightBitter.flipHoriz(thing);
             }
@@ -2275,7 +2277,7 @@ window.FullScreenMario = (function() {
                 "speed": thing.EightBitter.unitsize * 1.75,
                 "jumpheight": thing.EightBitter.unitsize * 1.56,
                 // "gravity": thing.EightBitter.MapScreener.gravity * 1.56, // not there!
-                "gravity": map_settings.gravity * 1.56,
+                "gravity": thing.EightBitter.MapScreener.gravity * 1.56,
                 "yvel": thing.EightBitter.unitsize,
                 "movement": thing.EightBitter.moveJumping
             }),
@@ -2720,14 +2722,14 @@ window.FullScreenMario = (function() {
                 thing.EightBitter.updateSize(thing);
                 thing.EightBitter.setClass(thing, "character player dead");
                 thing.EightBitter.thingStoreVelocity(thing);
-                thing.EightBitter.containerForefront(thing, characters);
+                thing.EightBitter.arrayForefront(thing, characters);
                 
                 thing.EightBitter.TimeHandler.clearAllCycles(thing);
                 thing.EightBitter.TimeHandler.addEvent(function () {
                     thing.EightBitter.thingRetrieveVelocity(thing, true);
                     thing.nocollide = true;
                     thing.movement = thing.resting = false;
-                    thing.gravity = gravity / 2.1;
+                    thing.gravity = thing.EightBitter.MapScreener.gravity / 2.1;
                     thing.yvel = FullScreenMario.unitsize * -1.4;
                 }, 7);
             }
@@ -2896,6 +2898,23 @@ window.FullScreenMario = (function() {
         player.EightBitter.scoreOn(amount, player);
     }
     
+    
+    /* Map sets
+    */
+    
+    /**
+     * 
+     * 
+     * @param {Mixed} [name]
+     */
+    function setMap(name) {
+        // var EightBitter = EightBittr.ensureCorrectCaller(this);
+        
+        // if(typeof(name) === "undefined") {
+            // name = EightBitter.MapsHandler.getMapName();
+        // }
+    }
+    
     /* Map entrances
     */
     
@@ -2914,7 +2933,7 @@ window.FullScreenMario = (function() {
         thing.EightBitter.mapEntranceSpecific(
             thing, 
             thing.EightBitter.unitsize * 16,
-            map_settings.floor * thing.EightBitter.unitsize
+            thing.EightBitter.MapScreener.floor * thing.EightBitter.unitsize
         );
         
      }
@@ -3066,6 +3085,8 @@ window.FullScreenMario = (function() {
             o = 0,
             output, prething, i, j;
         
+        console.log("Doing with", repeats, length, pattern);
+        
         // For each time the pattern should be repeated:
         for(i = 0; i < repeats; i += 1) {
             // For each Thing listing in the pattern:
@@ -3079,10 +3100,14 @@ window.FullScreenMario = (function() {
                 // Problem: the .height will need to be calculated from up
                 // the prototypal inheritance tree
                 output.y += defaults[prething[0]].height;
+                
+                outputs[o] = output;
+                o += 1;
             }
             xpos += pattern.width;
         }
         
+        console.log("Returning", outputs);
         return outputs;
     }
       
@@ -3217,6 +3242,9 @@ window.FullScreenMario = (function() {
         "scoreAnimate": scoreAnimate,
         "scorePlayerShell": scorePlayerShell,
         "scorePlayerFlag": scorePlayerFlag,
+        // Map sets
+        "setMap": setMap,
+        // "setLocation": setLocation,
         // Map entrances
         "mapEntranceSpecific": mapEntranceSpecific,
         "mapEntrancePlain": mapEntrancePlain,
