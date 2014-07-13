@@ -111,6 +111,7 @@ function PixelDrawr(settings) {
         var canvas = thing.canvas,
             context = thing.context,
             imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        
         PixelRender.memcpyU8(thing.sprite, imageData.data);
         context.putImageData(imageData, 0, 0);
         
@@ -129,22 +130,27 @@ function PixelDrawr(settings) {
       var sprites_raw = thing.sprite,
           sprites = thing.sprites = { multiple: true },
           canvas, context, imageData, i;
+      
       thing.num_sprites = 1;
+      
       for(i in sprites_raw.sprites) {
         // Make a new sprite for this individual component
         canvas = getCanvas(thing.spritewidth * unitsize, thing.spriteheight * unitsize);
         context = canvas.getContext("2d");
+        
         // Copy over this sprite's information the same way as refillThingCanvas
         imageData = context.getImageData(0, 0, canvas.width, canvas.height);
         PixelRender.memcpyU8(sprites_raw.sprites[i], imageData.data);
         context.putImageData(imageData, 0, 0);
+        
         // Record the canvas and context in thing.sprites
         sprites[i] = {
           canvas: canvas,
           context: context
         }
-        ++thing.num_sprites;
+        thing.num_sprites += 1;
       }
+      
       return sprites;
     }
     
@@ -195,7 +201,7 @@ function PixelDrawr(settings) {
         if(thing.num_sprites == 1) {
             return drawThingOnCanvasSingle(context, thing.canvas, thing, thing.left, thing.top);
         }
-        // Otherwise some calculations will be needed
+        // For multiple sprites, some calculations will be needed
         else {
             return drawThingOnCanvasMultiple(context, thing.canvases, thing.canvas, thing, thing.left, thing.top);
         }

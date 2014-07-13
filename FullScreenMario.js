@@ -2992,6 +2992,24 @@ window.FullScreenMario = (function() {
     */
     
     /**
+     * Gets the distance from the absolute base (bottom of the user's viewport)
+     * to a specific height above the floor (in the form given by map functions 
+     * - distance from the floor).
+     * 
+     * @param {Number} yloc   A height to find the distance to the floor from.
+     * @param {Number} divider   ???
+     * @return {Number}
+     */
+    function getAbsoluteHeight(yloc, divider) {
+        if(!window.warnedAbsoluteHeight) {
+            console.warn("getAbsoluteHeight still uses FSM.MapScreener");
+            window.warnedAbsoluteHeight = true;
+        }
+        
+        return (yloc + FSM.MapScreener.bottom_max) / (divider || 1);
+    }
+    
+    /**
      * Sample macro with no functionality, except to console.log a listing of 
      * the arguments provided to each macro function.
      * For all real macros, arguments are listed as the keys given as members of
@@ -3090,8 +3108,6 @@ window.FullScreenMario = (function() {
             o = 0,
             output, prething, i, j;
         
-        console.log("Doing with", repeats, length, pattern);
-        
         // For each time the pattern should be repeated:
         for(i = 0; i < repeats; i += 1) {
             // For each Thing listing in the pattern:
@@ -3102,9 +3118,8 @@ window.FullScreenMario = (function() {
                     "x": xpos + prething[1],
                     "y": ypos + prething[2]
                 };
-                // Problem: the .height will need to be calculated from up
-                // the prototypal inheritance tree
-                output.y += defaults[prething[0]].height;
+                // .height will be stored as either .height or [1] (scenery)
+                output.y += (defaults[prething[0]].height || defaults[prething[0]][1]);
                 
                 outputs[o] = output;
                 o += 1;
@@ -3112,7 +3127,6 @@ window.FullScreenMario = (function() {
             xpos += pattern.width;
         }
         
-        console.log("Returning", outputs);
         return outputs;
     }
     
@@ -3126,14 +3140,71 @@ window.FullScreenMario = (function() {
         var x = reference.x || 0,
             y = reference.y || 0,
             floor = proliferate({
-                thing: "Floor",
-                x: x,
-                y: y,
-                width: (reference.width || 8),
-                height: DtB(y) + 24 // extra 24 so the player doesn't cause scrolling when falling
+                "thing": "Floor",
+                "x": x,
+                "y": y,
+                "width": (reference.width || 8),
+                // Extra 24 is given so diagonal falling doesn't cause scrolling
+                "height": FullScreenMario.prototype.getAbsoluteHeight(y) + 24 
             }, reference, true );
         delete floor.macro;
         return floor;
+    }
+    
+    /**
+     * 
+     * 
+     * @param {Object} reference   A listing of the settings for this macro,
+     *                             from an Area's .creation Object.
+     */
+    function macroPipe(reference) {
+        console.warn("macroPipe uses FSM.MapScreener for pipe height");
+        var x = reference.x || 0,
+            y = reference.y || 0,
+            height = reference.height || 16,
+            pipe = proliferate({
+                "thing": "Pipe",
+                "x": x,
+                "y": y,
+                "width": 16,
+                "height": reference.height || 8
+            }, reference, true),
+            output = [pipe];
+            
+        delete pipe.macro;
+        
+        if(height == "Infinity") {
+            pipe.height = FSM.MapScreener.height;
+        } else {
+            pipe.y += height;
+        }
+        
+        if(reference.pirhana) {
+            output.push({
+                "thing": "Pirhana",
+                "x": reference.x + 4,
+                "y": pipe.y + 12
+            });
+        }
+        
+        return output;
+    }
+    
+    /**
+     * 
+     * 
+     * @param {Object} reference   A listing of the settings for this macro,
+     *                             from an Area's .creation Object.
+     */
+    function macroCeiling(reference) {
+        return {
+            "macro": "Fill",
+            "thing": "Brick",
+            "x": reference.x,
+            "y": 88, // ceillev
+            "xnum": Math.floor(reference.width / 8),
+            "xwidth": 8
+        };
     }
       
     
@@ -3281,11 +3352,14 @@ window.FullScreenMario = (function() {
         "mapExitPipeVertical": mapExitPipeVertical,
         "mapExitPipeHorizontal": mapExitPipeHorizontal,
         // Map macros
+        "getAbsoluteHeight": getAbsoluteHeight,
         "macros": {
             "Example": macroExample,
             "Fill": macroFillPreThings,
             "Pattern": macroFillPrePattern,
-            "Floor": macroFloor
+            "Floor": macroFloor,
+            "Pipe": macroPipe,
+            "Ceiling": macroCeiling
         }
     });
     

@@ -30,7 +30,7 @@ function setMap(name) {
   
   FSM.ModAttacher.fireEvent("onLocationSet");
   
-  entryNormal();
+  entryPlain();
 }
 
 function entryPlain() {
@@ -49,109 +49,14 @@ function entryCloud() {
   var me = placePlayer();
 }
 
-function intoPipeVertical(me, pipe) {
-  if(!pipe.entrance || !me.resting || 
-      me.right + unitsizet2 > pipe.right ||
-      me.left - unitsizet2 < pipe.left) return;
-  pipePreparations(me);
-  FSM.arraySwitch(me, characters, scenery);
-  unpause();
-  var entrance = pipe.entrance,
-      move = setInterval(function() {
-        FSM.shiftVert(me, unitsized4);
-        if(me.top >= pipe.top) {
-          clearInterval(move);
-          setTimeout(function() { goToTransport(entrance); }, 700);
-        }
-      }, timer);
-}
-function intoPipeHorizontal(me, pipe) {
-  // If Player isn't resting or swimming, he shouldn't be allowed to pipe
-  // (resting may have been cleared at this point, so yvel is how it checks)
-  // if(abs(me.yvel) > unitsized8) return;
-  // if(!map.underwater) return;
-  pipePreparations(me);
-  FSM.arraySwitch(me, characters, scenery);
-  unpause();
-  var entrance = pipe.entrance,
-      move = setInterval(function() {
-      FSM.shiftHoriz(me, unitsized4);
-      if(me.left >= pipe.left) {
-        clearInterval(move);
-        setTimeout(function() { goToTransport(entrance); }, 700);
-      }
-    }, timer);
-}
-function pipePreparations(me) {
-  FSM.AudioPlayer.pauseTheme();
-  FSM.AudioPlayer.play("Pipe");
-  me.nocollide = me.nofall = me.nocollide = nokeys = notime = true;
-  me.movement = me.xvel = me.yvel = 0;
-  
-  me.keys = new Keys();
-  FSM.removeCrouch();
-  FSM.removeClass(me, "running");
-  FSM.removeClass(me, "jumping");
-  FSM.removeClass(me, "flipped");
-  FSM.InputWriter.setEventInformation(me);
-}
-
-function exitPipeVertical(pipe) {
-  FSM.arraySwitch(player, characters, scenery);
-  player.nofall = nokeys = notime = true;
-  FSM.AudioPlayer.play("Pipe");
-  FSM.setTop(player, pipe.top);
-  FSM.setMidXObj(player, pipe, true);
-  var dy = unitsize / -4, move = setInterval(function() {
-    shiftVert(player, dy, true);
-    if(player.bottom <= pipe.top) {
-      FSM.arraySwitch(player, scenery, characters);
-      clearInterval(move);
-      player.nocollide = player.nofall = nokeys = notime = false;
-      player.movement = movePlayer;
-    }
-  }, timer);
-}
-
-function walkToPipe() {
-  placePlayer();
-  startWalking(player);
-
-  var hasPipingStarted = false,
-      move = FSM.TimeHandler.addEventInterval(function() {
-        if(player.piping) {
-          // We have started piping
-          FSM.AudioPlayer.pauseTheme();
-          // nokeys = player.keys.run = notime = false;
-          clearInterval(move);
-          player.maxspeed = player.maxspeedsave;
-        }
-      }, timer);
-}
-
-function startWalking(me) {
-  me.movement = movePlayer;
-  me.maxspeed = me.walkspeed;
-  nokeys = notime = me.keys.run = true;
-  me.nofall = me.nocollide = false;
-}
 
 /* Misc. Helpers */
 
 // Distance from the yloc to botmax
 //// Assumes yloc is in the form given by mapfuncs - distance from floor
-function DtB(yloc, divider) {
-  return (yloc + FSM.MapScreener.bottom_max) / (divider || 1);
-}
-// Given a setting, returns the background color
-function getAreaFillStyle(setting) {
-  if(stringHas(setting, "Underworld") ||
-     stringHas(setting, "Castle") ||
-     stringHas(setting, "Night"))
-      return stringHas(setting, "Underwater") ? "#2038ec" : "black";
-  if(stringHas(setting, "Underwater")) return "#2038ec";
-  return "#5c94fc";
-}
+// function DtB(yloc, divider) {
+  // return (yloc + FSM.MapScreener.bottom_max) / (divider || 1);
+// }
 
 function endLevel() {
     var currentmap = FSM.MapsHandler.getMapName();
@@ -165,64 +70,6 @@ function endLevel() {
 
 /* Macro functions for analyzePreThing
 */
-
-
-function makeFloor(reference) {
-  var x = reference.x || 0,
-      y = reference.y || 0,
-      floor = proliferate({
-        thing: "Floor",
-        x: x,
-        y: y,
-        width: (reference.width || 8),
-        height: DtB(y) + 24 // extra 24 so the player doesn't cause scrolling when falling
-      }, reference, true );
-  delete floor.macro;
-  return floor;
-}
-
-function makePipe(reference) {
-  var x = reference.x || 0,
-      y = reference.y || 0,
-      height = reference.height || 16,
-      pipe = proliferate({
-        thing: "Pipe",
-        x: x,
-        y: y,
-        width: 16,
-        height: reference.height || 8
-      }, reference, true),
-      output = [pipe];
-  
-  delete pipe.macro;
-  if(height == "Infinity") {
-    pipe.height = FSM.MapScreener.height;
-  }
-  else {
-    pipe.y += height;
-  }
-  
-  if(reference.piranha) {
-    output.push({
-      thing: "Piranha",
-      x: reference.x + 4,
-      y: pipe.y + 12
-    });
-  }
-  
-  return output;
-}
-
-function makeCeiling(reference) {
-  return {
-    "macro": "Fill",
-    "thing": "Brick",
-    "x": reference.x,
-    "y": 88, // ceillev
-    "xnum": floor(reference.width / 8),
-    "xwidth": 8
-  };
-}
 
 function makeEndCastleOutside(reference) {
   var x = reference.x || 0,
