@@ -9,7 +9,7 @@ function setMap(name) {
   }
   
   // For now...
-  FSM.MapsHandler.setMap("1-1");
+  FSM.MapsHandler.setMap(name);
   
   // From shiftToLocation
   FSM.TimeHandler.clearAllEvents();
@@ -23,32 +23,15 @@ function setMap(name) {
   
   // 1 game second is about 25 * 16.667 = 416.675ms
   FSM.StatsHolder.set("time", FSM.MapsHandler.getArea().time);
-  FSM.StatsHolder.set("world", name.join('-'));
+  FSM.StatsHolder.set("world", name);
   
   FSM.InputWriter.restartHistory();
   
-  FSM.ModAttacher.fireEvent("onLocationSet");
-  
   FSM.MapsHandler.spawnMap(FSM.MapScreener.width / FSM.unitsize);
-  entryPlain();
+  FSM.MapsHandler.getArea().entry(FSM);
+  
+  FSM.ModAttacher.fireEvent("onLocationSet");
 }
-
-function entryPlain() {
-  var me = placePlayer();
-    return FSM.get("mapEntrancePlain")(me);
-}
-function entryNormal() {
-  var me = placePlayer();
-    return FSM.get("mapEntranceNormal")(me);
-}
-function entryCastle() {
-  var me = placePlayer();
-    return FSM.get("mapEntranceCastle")(me);
-}
-function entryCloud() {
-  var me = placePlayer();
-}
-
 
 /* Misc. Helpers */
 

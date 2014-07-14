@@ -14,11 +14,14 @@ function MapsCreatr(settings) {
         // Associative array storing Map objects created by self.createMap
         maps,
         
-        // Associative array storing macro functions, keyed by shortcut String
+        // Associative array storing macro functions, keyed by string alias
         macros,
         
         // Associative array storing default macro settings for all macros
         macro_defaults,
+        
+        // Associative array storing entrance functions, keyed by string alias
+        entrances,
         
         // An Array of Strings that represents all the possible group types
         // processed PreThings may be placed in
@@ -55,6 +58,7 @@ function MapsCreatr(settings) {
         
         macros = settings.macros || {};
         macro_defaults = settings.macro_defaults || {};
+        entrances = settings.entrances || {};
         
         maps = {};
         if(settings.maps) {
@@ -161,8 +165,12 @@ function MapsCreatr(settings) {
         // Parse all the keys in areas_raw (works for both Arrays and Objects)
         for(i in areas_raw) {
             if(areas_raw.hasOwnProperty(i)) {
-                areas_parsed[i] = ObjectMaker.make("Area", areas_raw[i]);
-                areas_parsed[i].map = map;
+                area = areas_parsed[i] = ObjectMaker.make("Area", areas_raw[i]);
+                area.map = map;
+        
+                // The area's entrance functions are also aliased here
+                area.entry_raw = area.entry;
+                area.entry = entrances[area.entry];
             }
         }
         

@@ -19,6 +19,19 @@ FullScreenMario.prototype.maps = {
             (FSM.MapScreener.floor - prething.yloc) * FullScreenMario.unitsize
         );
     },
+    "macros": {
+        "Example": FullScreenMario.prototype.macroExample,
+        "Fill": FullScreenMario.prototype.macroFillPreThings,
+        "Pattern": FullScreenMario.prototype.macroFillPrePattern,
+        "Floor": FullScreenMario.prototype.macroFloor,
+        "Pipe": FullScreenMario.prototype.macroPipe,
+        "Ceiling": FullScreenMario.prototype.macroCeiling,
+    },
+    "entrances": {
+        "Plain": FullScreenMario.prototype.mapEntrancePlain,
+        "Normal": FullScreenMario.prototype.mapEntranceNormal,
+        "Castle": FullScreenMario.prototype.mapEntranceCastle
+    },
     "patterns": (function (patterns) {
         var pattern,
             i;

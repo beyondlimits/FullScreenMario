@@ -185,7 +185,7 @@
                 "maxyvelinv": -7,
                 "gravity": FullScreenMario.gravity,
                 "underwater": false,
-                "entry": "entryPlain",
+                "entry": "Plain",
             },
             "Location": {
                 "toJSON": LocationToJSON
