@@ -399,7 +399,6 @@ window.FullScreenMario = (function() {
         this.MapScreener.shift(dx, dy);
         this.shiftAll(-dx, -dy);
         
-        // update quadrants
         this.shiftThings(this.QuadsKeeper.getQuadrants(), -dx, -dy);
         this.QuadsKeeper.updateQuadrants(-dx);
     }

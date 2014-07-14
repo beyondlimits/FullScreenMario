@@ -41,19 +41,20 @@
     function AreaSetBackground() {
         var setting = this.setting;
         
+        // Underwater: always a dark blue
         if(this.setting.indexOf("Underwater") !== -1) {
             this.background = "#2038ec";
-            return;
-        }
-        
-        if(this.setting.indexOf("Underworld") !== -1
+        } 
+        // Underworld, Castle, and all Nights: black
+        else if(this.setting.indexOf("Underworld") !== -1
                 || this.setting.indexOf("Castle") !== -1
                 || this.setting.indexOf("Night") !== -1) {
             this.background = "#000000";
-            return;
+        } 
+        // Default (typically Overworld): sky blue
+        else {
+            this.background = "#5c94fc";
         }
-        
-        this.background = "#5c94fc";
     }
 
     FullScreenMario.prototype.things = {

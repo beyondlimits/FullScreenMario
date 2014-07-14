@@ -10,7 +10,7 @@ function setMap(name) {
   
   // For now...
   FSM.MapsHandler.setMap("1-1");
-  FSM.MapsHandler.spawnMap(7000);
+  FSM.MapsHandler.spawnMap(FSM.MapScreener.width / FSM.unitsize);
   
   // From shiftToLocation
   FSM.TimeHandler.clearAllEvents();
