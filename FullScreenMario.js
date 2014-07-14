@@ -2916,12 +2916,47 @@ window.FullScreenMario = (function() {
      * 
      * @param {Mixed} [name]
      */
-    function setMap(name) {
-        // var EightBitter = EightBittr.ensureCorrectCaller(this);
+    function setMap(name, location) {
+        var EightBitter = EightBittr.ensureCorrectCaller(this);
         
-        // if(typeof(name) === "undefined") {
-            // name = EightBitter.MapsHandler.getMapName();
-        // }
+        if(typeof(name) === "undefined") {
+            name = EightBitter.MapsHandler.getMapName();
+        }
+        EightBitter.MapsHandler.setMap(name);
+        
+        EightBitter.StatsHolder.set("world", name);
+        
+        EightBitter.InputWriter.restartHistory();
+        
+        EightBitter.ModAttacher.fireEvent("onSetMap");
+        
+        EightBitter.setLocation(location || 0);
+    }
+    
+    /**
+     * 
+     * 
+     * 
+     */
+    function setLocation(location) {
+        var EightBitter = EightBittr.ensureCorrectCaller(this);
+        
+        EightBitter.TimeHandler.clearAllEvents();
+        
+        EightBitter.MapsHandler.setLocation(location || 0);
+        
+        EightBitter.TimeHandler.addEventInterval(function () {
+            if(!EightBitter.MapScreener.notime) {
+                EightBitter.StatsHolder.decrease("time", 1);
+            }
+        }, 25, Infinity);
+        
+        EightBitter.StatsHolder.set("time", EightBitter.MapsHandler.getArea().time);
+  
+        FSM.MapsHandler.spawnMap(FSM.MapScreener.width / FSM.unitsize);
+        FSM.MapsHandler.getArea().entry(FSM);
+        
+        EightBitter.ModAttacher.fireEvent("onSetLocation");
     }
     
     /* Map entrances
@@ -3347,6 +3382,7 @@ window.FullScreenMario = (function() {
         "scorePlayerFlag": scorePlayerFlag,
         // Map sets
         "setMap": setMap,
+        "setLocation": setLocation,
         // "setLocation": setLocation,
         // Map entrances
         "mapEntranceGeneral": mapEntranceGeneral,

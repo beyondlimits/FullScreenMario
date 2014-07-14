@@ -1,38 +1,6 @@
 /* Maps.js */
 // Contains functions for creating, populating, and using maps
 
-/* Map Transitions */
-
-function setMap(name) {
-  if(!name) {
-    name = FSM.MapsHandler.getMapName();
-  }
-  
-  // For now...
-  FSM.MapsHandler.setMap(name);
-  
-  // From shiftToLocation
-  FSM.TimeHandler.clearAllEvents();
-  FSM.TimeHandler.addEventInterval(function () {
-    if(!notime) {
-      FSM.StatsHolder.decrease("time", 1);
-    }
-  }, 25, Infinity);
-  
-  resetGameState();
-  
-  // 1 game second is about 25 * 16.667 = 416.675ms
-  FSM.StatsHolder.set("time", FSM.MapsHandler.getArea().time);
-  FSM.StatsHolder.set("world", name);
-  
-  FSM.InputWriter.restartHistory();
-  
-  FSM.MapsHandler.spawnMap(FSM.MapScreener.width / FSM.unitsize);
-  FSM.MapsHandler.getArea().entry(FSM);
-  
-  FSM.ModAttacher.fireEvent("onLocationSet");
-}
-
 /* Misc. Helpers */
 
 function endLevel() {

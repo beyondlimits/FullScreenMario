@@ -48,7 +48,7 @@ function startFSM() {
 
   // With that all set, set the map to World11.
   FSM.StatsHolder.set("lives", 3);
-  setMap("1-1");
+  FSM.setMap("1-1");
   FSM.GamesRunner.upkeep();
   document.body.appendChild(FSM.StatsHolder.makeContainer());
   

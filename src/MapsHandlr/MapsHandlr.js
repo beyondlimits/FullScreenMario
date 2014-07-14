@@ -155,12 +155,14 @@ function MapsHandlr(settings) {
     
     /**
      * Sets the currently manipulated map in the handler to be the one under a
-     * given name. Optionally a location in the map may be specified as well.
+     * given name. Note that this will do very little unless a location is 
+     * provided (this is by design - an EightBitter using this should set them
+     * manually).
      * 
      * @param {Mixed} name   A key to find the map under. This will typically be
      *                       a String.
-     * @param {Number} [location]   An optional number for the location to start
-     *                              the map in (by default, 0, or the first).
+     * @param {Number} [location]   An optional number for a location to
+     *                              immediately start the map in. 
      *                          
      */
     self.setMap = function setMap(name, location) {
@@ -173,7 +175,9 @@ function MapsHandlr(settings) {
         map_name = name;
         
         // Most of the work is done by setLocation (by default, the map's first)
-        return self.setLocation(location || 0);
+        if(arguments.length > 1) {
+            self.setLocation(location);
+        }
     };
     
     /**

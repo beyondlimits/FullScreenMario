@@ -50,7 +50,7 @@ function gameRestart() {
   body.innerHTML = body.style.paddingTop = body.style.fontSize = "";
   body.appendChild(canvas);
   gameon = true;
-  setMap([1,1]);
+  FSM.setMap("1-1");
   FSM.TimeHandler.addEvent(function() { body.style.visibility = ""; });
   FSM.StatsHolder.set("lives", 3);
 }
