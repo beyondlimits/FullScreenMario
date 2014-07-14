@@ -184,7 +184,8 @@
                 "maxyvel": 7,
                 "maxyvelinv": -7,
                 "gravity": FullScreenMario.gravity,
-                "underwater": false
+                "underwater": false,
+                "entry": "entryPlain",
             },
             "Location": {
                 "toJSON": LocationToJSON
@@ -214,6 +215,7 @@
                 // Sprites
                 sprite: "",
                 sprite_type: "neither",
+                opacity: 1,
                 // Triggered functions
                 animate: FullScreenMario.prototype.animateEmerge,
                 onMake: FullScreenMario.prototype.thingProcess,

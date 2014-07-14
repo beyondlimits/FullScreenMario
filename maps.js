@@ -10,7 +10,6 @@ function setMap(name) {
   
   // For now...
   FSM.MapsHandler.setMap("1-1");
-  FSM.MapsHandler.spawnMap(FSM.MapScreener.width / FSM.unitsize);
   
   // From shiftToLocation
   FSM.TimeHandler.clearAllEvents();
@@ -30,6 +29,7 @@ function setMap(name) {
   
   FSM.ModAttacher.fireEvent("onLocationSet");
   
+  FSM.MapsHandler.spawnMap(FSM.MapScreener.width / FSM.unitsize);
   entryPlain();
 }
 
