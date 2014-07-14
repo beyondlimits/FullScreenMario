@@ -1,19 +1,6 @@
 /* Upkeep.js */
 // Contains functions associated with the upkeep
 
-function upkeep() {
-  FSM.GamesRunner.upkeep();
-}
-
-function pause(big) {
-  FSM.GamesRunner.pause();
-}
-
-function unpause() {
-  FSM.GamesRunner.unpause();
-}
-
-
 // Solids by themselves don't really do much
 function maintainSolids(update) {
   for(var i = 0, solid; i < solids.length; ++i) {

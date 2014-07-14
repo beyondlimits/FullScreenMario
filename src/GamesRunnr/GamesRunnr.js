@@ -118,7 +118,7 @@ function GamesRunnr(settings) {
             on_pause();
         }
         
-        upkeep_cancel(upkeep);
+        upkeep_cancel(self.upkeep);
         
         return self;
     };

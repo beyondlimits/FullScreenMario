@@ -242,7 +242,6 @@ function MapsHandlr(settings) {
                     }
                     i += 1;
                     
-                    console.log("Spawning", prething.title);
                     on_spawn(prething, prething.xloc);
                 }
                 
