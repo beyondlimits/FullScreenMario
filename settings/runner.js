@@ -1,4 +1,4 @@
-FullScreenMario.prototype.runner = {
+FullScreenMario.prototype.settings.runner = {
     "upkeep_schedule": setTimeout,
     "upkeep_cancel": clearTimeout,
     "interval": 1000 / 60,

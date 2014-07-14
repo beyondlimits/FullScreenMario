@@ -1,8 +1,4 @@
-/**
- * Note: these use onModEnable. However, until thing settings are internalized
- * to FSM, testing them out should use onLocationSet.
- */
-FullScreenMario.prototype.mods = {
+FullScreenMario.prototype.settings.mods = {
     "mods": [
         {
             "name": "ParallaxClouds",

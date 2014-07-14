@@ -91,7 +91,7 @@
         player.EightBitter.GamesRunner.togglePause();
     }
     
-    FullScreenMario.prototype.input = {
+    FullScreenMario.prototype.settings.input = {
         "aliases": {
             // Keyboard aliases
             "left":   [37, 65],     // a,     left

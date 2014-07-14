@@ -1,4 +1,4 @@
-FullScreenMario.prototype.sprites = {
+FullScreenMario.prototype.settings.sprites = {
     "sprite_width": "spritewidthpixels",
     "sprite_height": "spriteheightpixels",
     "palette": [

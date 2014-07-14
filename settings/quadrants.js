@@ -1,4 +1,4 @@
-FullScreenMario.prototype.quadrants = {
+FullScreenMario.prototype.settings.quadrants = {
     "num_rows": 5,
     "num_cols": 6,
     "screen_width": window.innerWidth,

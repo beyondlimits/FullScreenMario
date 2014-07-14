@@ -1,4 +1,4 @@
-FullScreenMario.prototype.statistics = {
+FullScreenMario.prototype.settings.statistics = {
     "prefix": "FullScreenMario",
     "containers": [
         ["table", {
@@ -38,8 +38,8 @@ FullScreenMario.prototype.statistics = {
             "has_element": true,
             "minimum": 0,
             "on_minimum": function () {
-                console.log("statistics.js is calling global killPlayer");
-                FSM.killPlayer(player, true);
+                console.log("statistics.js is calling global FSM");
+                FSM.killPlayer(FSM.player, true);
             }
         },
         "world": {

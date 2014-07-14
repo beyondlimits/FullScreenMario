@@ -32,6 +32,9 @@ window.EightBittr = (function(settings) {
             if(settings.requirements.self) {
                 checkRequirements(self, settings.requirements.self, "self");
             }
+            if(settings.requirements.settings) {
+                checkRequirements(self.settings, settings.requirements.settings, "settings");
+            }
         }
         
         if(settings.resets) {

@@ -277,8 +277,8 @@ function MapsCreatr(settings) {
         if(reference.hasOwnProperty("location")) {
             analyzePreLocation(reference, prethings, area, map);
         }
-        // Case: macro
-        else if(reference.hasOwnProperty("macro")) {
+        // Case: macro (unless it's undefined)
+        else if(reference.macro) {
             analyzePreMacro(reference, prethings, area, map);
         }
         // Case: default (a regular PreThing)

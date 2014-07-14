@@ -8,14 +8,17 @@ window.FullScreenMario = (function() {
         proliferate = EightBitter.proliferate,
         proliferateHard = EightBitter.proliferateHard;
         
-    console.warn("Still using global player object...");    
+    // Subsequent settings will be stored in FullScreenMario.prototype.settings
+    EightBitter.settings = {};
+    
     /**
      * 
      */
     function FullScreenMario() {            // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {
             "constructor": FullScreenMario,            "unitsize": 4,            "scale": 2,            "requirements": {                "global": {                    "AudioPlayr": "src/AudioPlayr.js",                    "ChangeLinr": "src/ChangeLinr.js",                    "FPSAnalyzr": "src/FPSAnalyzr.js",                    "GamesRunnr": "src/GamesRunnr.js",                    "GroupHoldr": "src/GroupHoldr.js",                    "InputWritr": "src/InputWritr.js",                    "MapScreenr": "src/MapScreenr.js",
                     "MapsHandlr": "src/MapsHandlr.js",
-                    "ModAttachr": "src/ModAttachr.js",                    "ObjectMakr": "src/ObjectMakr.js",                    "PixelDrawr": "src/PixelDrawr.js",                    "PixelRendr": "src/PixelRendr.js",                    "QuadsKeepr": "src/QuadsKeepr.js",                    "StatsHoldr": "src/StatsHoldr.js",                    "StringFilr": "src/StringFilr.js",                    "ThingHittr": "src/ThingHittr.js",                    "TimeHandlr": "src/TimeHandlr.js"                },                "self": {
+                    "ModAttachr": "src/ModAttachr.js",                    "ObjectMakr": "src/ObjectMakr.js",                    "PixelDrawr": "src/PixelDrawr.js",                    "PixelRendr": "src/PixelRendr.js",                    "QuadsKeepr": "src/QuadsKeepr.js",                    "StatsHoldr": "src/StatsHoldr.js",                    "StringFilr": "src/StringFilr.js",                    "ThingHittr": "src/ThingHittr.js",                    "TimeHandlr": "src/TimeHandlr.js"                },
+                "settings": {
                     "audio": "settings/audio.js",
                     "collisions": "settings/collisions.js",                    "events": "settings/events.js",
                     "maps": "settings/maps.js",                    "quadrants": "settings/quadrants.js",
@@ -77,13 +80,13 @@ window.FullScreenMario = (function() {
     ];            /* Reset functions, in order    */        /**     * Sets self.PixelRender     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelRendr (src/PixelRendr.js)
      *                          sprites.js (settings/sprites.js)     */    function resetPixelRender(self) {        // PixelRender settings are stored in FullScreenMario.prototype.sprites,        // though they also need the scale measurement added        self.PixelRender = new PixelRendr(proliferateHard({
             "scale": self.scale
-        }, self.sprites));    }        /**     * Sets self.PixelDrawer     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelDrawr (src/PixelDrawr.js)     */    function resetPixelDrawer(self) {        self.PixelDrawer = new PixelDrawr({            "PixelRender": self.PixelRender,
+        }, self.settings.sprites));    }        /**     * Sets self.PixelDrawer     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelDrawr (src/PixelDrawr.js)     */    function resetPixelDrawer(self) {        self.PixelDrawer = new PixelDrawr({            "PixelRender": self.PixelRender,
             "getCanvas": self.getCanvas        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr.js)
      *                          events.js (settings/events.js)     */    function resetTimeHandler(self) {
         self.TimeHandler = new TimeHandlr(proliferate({
             "classAdd": self.addClass,
             "classRemove": self.removeClass
-        }, self.events));    }
+        }, self.settings.events));    }
     
     /**
      * Sets self.AudioPlayer
@@ -93,7 +96,7 @@ window.FullScreenMario = (function() {
      *                          audio.js (settings/audio.js)
      */
     function resetAudioPlayer(self) {
-        self.AudioPlayer = new AudioPlayr(self.audio);
+        self.AudioPlayer = new AudioPlayr(self.settings.audio);
     }
     
     /**
@@ -102,7 +105,7 @@ window.FullScreenMario = (function() {
      *                          quadrants.js (settings/quadrants.js)
      */
     function resetQuadsKeeper(self) {
-        self.QuadsKeeper = new QuadsKeepr(self.quadrants);
+        self.QuadsKeeper = new QuadsKeepr(self.settings.quadrants);
     }
     
     /**
@@ -113,7 +116,7 @@ window.FullScreenMario = (function() {
     function resetGamesRunner(self) {
         self.GamesRunner = new GamesRunnr(proliferate({
             "scope": self,
-        }, self.runner));
+        }, self.settings.runner));
     }
     
     /**
@@ -122,7 +125,7 @@ window.FullScreenMario = (function() {
      *                          statistics.js (settings/statistics.js)
      */
     function resetStatsHolder(self) {
-        self.StatsHolder = new StatsHoldr(self.statistics);
+        self.StatsHolder = new StatsHoldr(self.settings.statistics);
     }
     
     /**
@@ -133,7 +136,8 @@ window.FullScreenMario = (function() {
     function resetThingHitter(self) {
         self.ThingHitter = new ThingHittr(proliferate({
             "scope": self
-        }, self.collisions));
+        }, self.settings.collisions));
+        
         self.GroupHolder = self.ThingHitter.getGroupHolder();
     }
     
@@ -153,7 +157,7 @@ window.FullScreenMario = (function() {
                     "EightBitter": self
                 }
             }
-        }, self.things));
+        }, self.settings.things));
     }
     
     /**
@@ -167,7 +171,7 @@ window.FullScreenMario = (function() {
             "unitsize": FullScreenMario.unitsize,
             "width": window.innerWidth,
             "height": window.innerHeight
-        }, self.screen));
+        }, self.settings.screen));
     }
     
     /**
@@ -180,10 +184,10 @@ window.FullScreenMario = (function() {
         self.MapsCreator = new MapsCreatr({
             "ObjectMaker": self.ObjectMaker,
             "group_types": ["Character", "Scenery", "Solid", "Text"],
-            "macros": self.maps.macros,
-            "entrances": self.maps.entrances,
+            "macros": self.settings.maps.macros,
+            "entrances": self.settings.maps.entrances,
             "maps": {
-                "1-1": self.maps.maps[1][1]
+                "1-1": self.settings.maps.maps[1][1]
             }
         });
     }
@@ -198,8 +202,8 @@ window.FullScreenMario = (function() {
         self.MapsHandler = new MapsHandlr({
             "MapsCreator": self.MapsCreator,
             "MapScreener": self.MapScreener,
-            "screen_attributes": self.maps.screen_attributes,
-            "on_spawn": self.maps.on_spawn.bind(self, self)
+            "screen_attributes": self.settings.maps.screen_attributes,
+            "on_spawn": self.settings.maps.on_spawn.bind(self, self)
         });
     }
     
@@ -211,7 +215,7 @@ window.FullScreenMario = (function() {
      */
      // also fpsanalyzr from gamesrunnr
     function resetInputWriter(self) {
-        self.InputWriter = new InputWritr(self.input);
+        self.InputWriter = new InputWritr(self.settings.input);
     }
     
     /**
@@ -220,7 +224,7 @@ window.FullScreenMario = (function() {
     function resetModAttacher(self) {
         self.ModAttacher = new ModAttachr(proliferate({
             "scope_default": self
-        }, self.mods));
+        }, self.settings.mods));
     }
     
     /** 
@@ -1090,12 +1094,12 @@ window.FullScreenMario = (function() {
     function removeCrouch() {
         console.warn("removeCrouch still uses global player (it should be animateRemoveCrouch)");
         FSM.player.crouching = false;
-        FSM.player.toly = player.toly_old || 0;
+        FSM.player.toly = FSM.player.toly_old || 0;
         if(player.power !== 1) {
-            FSM.player.EightBitter.removeClass(player, "crouching");
+            FSM.player.EightBitter.removeClass(FSM.player, "crouching");
             FSM.player.height = 16;
-            FSM.player.EightBitter.updateBottom(player, 0);
-            FSM.player.EightBitter.updateSize(player);
+            FSM.player.EightBitter.updateBottom(FSM.player, 0);
+            FSM.player.EightBitter.updateSize(FSM.player);
         }
     }
     
@@ -3096,14 +3100,14 @@ window.FullScreenMario = (function() {
      */
     function macroFillPrePattern(reference) {
         // Make sure the pattern exists before doing anything
-        if(!FullScreenMario.prototype.maps.patterns[reference.pattern]) {
+        if(!FullScreenMario.prototype.settings.maps.patterns[reference.pattern]) {
             console.warn("An unknown pattern is referenced: " + reference);
             return;
         }
-        var pattern = FullScreenMario.prototype.maps.patterns[reference.pattern],
+        var pattern = FullScreenMario.prototype.settings.maps.patterns[reference.pattern],
             length = pattern.length,
             // Problem: see where defaults[...].height is referenced below
-            defaults = FullScreenMario.prototype.things.properties,
+            defaults = FullScreenMario.prototype.settings.things.properties,
             repeats = reference.repeat || 1,
             xpos = reference.x || 0,
             ypos = reference.y || 0,
@@ -3150,7 +3154,7 @@ window.FullScreenMario = (function() {
                 // Extra 24 is given so diagonal falling doesn't cause scrolling
                 "height": FullScreenMario.prototype.getAbsoluteHeight(y) + 24 
             }, reference, true );
-        delete floor.macro;
+        floor.macro = undefined;
         return floor;
     }
     
@@ -3174,7 +3178,7 @@ window.FullScreenMario = (function() {
             }, reference, true),
             output = [pipe];
             
-        delete pipe.macro;
+        pipe.macro = undefined;
         
         if(height == "Infinity") {
             pipe.height = FSM.MapScreener.height;

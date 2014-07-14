@@ -1,4 +1,4 @@
-FullScreenMario.prototype.collisions = {
+FullScreenMario.prototype.settings.collisions = {
     "group_names": ["Solid", "Character", "Scenery", "Text"],
     "group_types": "Array",
     "hit_checks": {

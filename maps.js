@@ -35,12 +35,6 @@ function setMap(name) {
 
 /* Misc. Helpers */
 
-// Distance from the yloc to botmax
-//// Assumes yloc is in the form given by mapfuncs - distance from floor
-// function DtB(yloc, divider) {
-  // return (yloc + FSM.MapScreener.bottom_max) / (divider || 1);
-// }
-
 function endLevel() {
     var currentmap = FSM.MapsHandler.getMapName();
     if(currentmap[1]++ == 4) {

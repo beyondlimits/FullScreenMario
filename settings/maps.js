@@ -1,4 +1,4 @@
-FullScreenMario.prototype.maps = {
+FullScreenMario.prototype.settings.maps = {
     "screen_attributes": [
         // "fillStyle",
         "gravity",
@@ -390,7 +390,7 @@ FullScreenMario.prototype.maps = {
       return output;
     }
     
-FullScreenMario.prototype.maps.maps = {
+FullScreenMario.prototype.settings.maps.maps = {
     "1": {
         "1": {
             "locations": [
