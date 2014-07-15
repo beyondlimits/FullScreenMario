@@ -26,6 +26,8 @@ function PixelDrawr(settings) {
         
         innerWidth,
         
+        unitsize,
+        
         // Whether self.refillGlobalCanvas should skip redrawing the main canvas
         // every time.
         no_refill;
@@ -33,6 +35,7 @@ function PixelDrawr(settings) {
     self.reset = function(settings) {
         getCanvas = settings.getCanvas;
         PixelRender = settings.PixelRender;
+        unitsize = settings.unitsize || 4;
         no_refill = settings.no_refill;
     }
     

@@ -79,9 +79,11 @@ window.FullScreenMario = (function() {
         100, 200, 400, 500, 800, 1000, 2000, 4000, 5000, 8000
     ];            /* Reset functions, in order    */        /**     * Sets self.PixelRender     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelRendr (src/PixelRendr.js)
      *                          sprites.js (settings/sprites.js)     */    function resetPixelRender(self) {        // PixelRender settings are stored in FullScreenMario.prototype.sprites,        // though they also need the scale measurement added        self.PixelRender = new PixelRendr(proliferateHard({
+            "unitsize": self.unitsize,
             "scale": self.scale
         }, self.settings.sprites));    }        /**     * Sets self.PixelDrawer     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelDrawr (src/PixelDrawr.js)     */    function resetPixelDrawer(self) {        self.PixelDrawer = new PixelDrawr({            "PixelRender": self.PixelRender,
-            "getCanvas": self.getCanvas        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr.js)
+            "getCanvas": self.getCanvas,
+            "unitsize": self.unitsize        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr.js)
      *                          events.js (settings/events.js)     */    function resetTimeHandler(self) {
         self.TimeHandler = new TimeHandlr(proliferate({
             "classAdd": self.addClass,
@@ -1212,14 +1214,14 @@ window.FullScreenMario = (function() {
             if(thing.right <= other.right) {
                 thing.xvel = Math.min(thing.xvel, 0);
                 thing.EightBitter.shiftHoriz(thing,
-                        Math.max(other.left + unitsize - thing.right,
+                        Math.max(other.left + thing.EightBitter.unitsize - thing.right,
                         thing.EightBitter.unitsize / -2));
             }
             // Character to the right of the solid
             else {
                 thing.xvel = Math.max(thing.xvel, 0);
                 thing.EightBitter.shiftHoriz(thing,
-                        Math.min(other.right - unitsize - thing.left,
+                        Math.min(other.right - thing.EightBitter.unitsize - thing.left,
                         thing.EightBitter.unitsize / 2));
             }
             
@@ -2181,7 +2183,7 @@ window.FullScreenMario = (function() {
      */
     function animateEmergeCoin(thing, solid) {
         thing.nocollide = thing.alive = thing.nofall = true;
-        thing.yvel -= unitsize;
+        thing.yvel -= thing.EightBitter.unitsize;
         
         thing.EightBitter.switchClass(thing, "still", "anim");
         thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Character", "Scenery");
@@ -2579,7 +2581,7 @@ window.FullScreenMario = (function() {
         
         thing.nocollide = thing.dead = true;
         thing.resting = thing.movement = thing.speed = thing.xvel = thing.nofall = false;
-        thing.yvel -= unitsize;
+        thing.yvel -= thing.EightBitter.unitsize;
         thing.EightBitter.TimeHandler.addEvent(thing.EightBitter.killNormal, 70 + extra, thing);
     }
     
@@ -2845,19 +2847,18 @@ window.FullScreenMario = (function() {
     }
     
     /**
-     * Animates a text associated with some points gain upward, and sets an 
-     * event for it to die.
      * 
-     * @param {Number} value   How many points the player is receiving.
+     * 
+     * @param {Thing} thing   
      * @param {Number} [timeout]   How many game ticks to wait before killing
      *                             the text (defaults to 35).
      * @remarks   This is the last function in the score() calling chain:
      *                scoreAnimate <- scoreAnimateOn <- scoreOn <- score
      */
-    function scoreAnimate(text, timeout) {
+    function scoreAnimate(thing, timeout) {
         timeout = timeout || 28;
-        text.EightBitter.TimeHandler.addEventInterval(text.EightBitter.shiftVert, 1, timeout, text, -unitsize / 6);
-        text.EightBitter.TimeHandler.addEvent(text.EightBitter.killNormal, timeout, text);
+        thing.EightBitter.TimeHandler.addEventInterval(thing.EightBitter.shiftVert, 1, timeout, thing, -thing.EightBitter.unitsize / 6);
+        thing.EightBitter.TimeHandler.addEvent(thing.EightBitter.killNormal, timeout, thing);
     }
     
     /**

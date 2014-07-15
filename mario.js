@@ -30,7 +30,6 @@ function startFSM() {
                            || Array;
 
   // Resetting everything may take a while
-  resetMeasurements();
   resetCanvas();
   resetTriggers();
   
@@ -67,32 +66,6 @@ function ensureLocalStorage() {
             "It seems your browser does not allow localStorage!";
     throw nope;
   }
-}
-
-/* Basic reset operations */
-function resetMeasurements() {
-  resetUnitsize(4);
-  
-  window.jumplev1 = 32;
-  window.jumplev2 = 64;
-  window.ceillev  = 88; // The floor is 88 spaces (11 blocks) below the yloc = 0 level
-  window.ceilmax  = 104; // The floor is 104 spaces (13 blocks) below the top of the screen (yloc = -16)
-  window.castlev  = -48;
-  
-  if(!window.parentwindow) {
-    window.parentwindow = false;
-  }
-}
-
-// Unitsize is kept as a measure of how much to expand (typically 4)
-function resetUnitsize(num) {
-  window.unitsize = num;
-  for(var i = 2; i <= 64; ++i) {
-    window["unitsizet" + i] = unitsize * i;
-    window["unitsized" + i] = unitsize / i;
-  }
-  window.scale = unitsized2; // Typically 2
-  window.gravity = Math.round(12 * unitsize) / 100; // Typically .48
 }
 
 // Variables regarding the state of the game

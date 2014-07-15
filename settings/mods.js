@@ -37,7 +37,7 @@ FullScreenMario.prototype.settings.mods = {
                                         lul = FSM.ObjectMaker.make.apply(FSM, level[num]);
                                     
                                     lul.yvel = random() * FSM.unitsize / 4;
-                                    lul.xvel = lul.speed = random() * unitsize * 2;
+                                    lul.xvel = lul.speed = random() * FSM.unitsize * 2;
                                     if(floor(random() * 2)) {
                                         lul.xvel *= -1;
                                     }
@@ -45,7 +45,7 @@ FullScreenMario.prototype.settings.mods = {
                                     characters.push(lul);
                                     FSM.addThing(lul, 
                                         (32 * random() + 128) * FSM.unitsize,
-                                        88 * random() * unitsize);
+                                        88 * random() * FSM.unitsize);
                                 }
                             }, 7, Infinity);
                         }

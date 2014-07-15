@@ -80,6 +80,9 @@ function PixelRendr(settings) {
 
         // Utility RegExp to split strings on every #digitsize characters
         digitsplit,
+        
+        // How much to expand sprites by (definition fuzzy)
+        unitsize,
 
         // How much to repeat each pixel
         scale,
@@ -105,7 +108,8 @@ function PixelRendr(settings) {
         digitsize_default = getDigitSize(palette_default);
         digitsplit = new RegExp('.{1,' + digitsize_default + '}', 'g');
         filters = settings.filters || {};
-        scale = settings.scale || 2,
+        unitsize = settings.unitsize || 4;
+        scale = settings.scale || 2;
         flip_vert = settings.flip_vert || "flip-vert";
         flip_horiz = settings.flip_horiz || "flipped";
         sprite_width = settings.sprite_width || "sprite_width";
