@@ -16,9 +16,6 @@
 /*
  * Player
  */
-function placePlayer(xloc, yloc) {
-  return window.player = FSM.get("addPlayer")(xloc, yloc);
-}
 
 function unattachPlayer(me) {
   me.movement = FullScreenMario.prototype.movePlayer;

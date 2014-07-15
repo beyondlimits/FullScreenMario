@@ -35,7 +35,7 @@ function MapsCreatr(settings) {
         key_group_type,
         
         // What key to check for if a PreThing's Thing is a Location's entrance
-        key_exit;
+        key_entrance;
     
     /**
      * 
@@ -54,7 +54,7 @@ function MapsCreatr(settings) {
         group_types = settings.group_types;
         
         key_group_type = settings.key_group_type || "grouptype";
-        key_exit = settings.key_exit || "exit";
+        key_entrance = settings.key_entrance || "entrance";
         
         macros = settings.macros || {};
         macro_defaults = settings.macro_defaults || {};
@@ -265,7 +265,7 @@ function MapsCreatr(settings) {
             analyzePreSwitch(creation[i], prethings, area, map);
         }
         
-        processPreThingsArray(prethings);
+        processPreThingsArrays(prethings);
         
         return prethings;
     };
@@ -405,11 +405,11 @@ function MapsCreatr(settings) {
         
         prethings[prething.thing[key_group_type]].push(prething);
         
-        // If a Thing has a .exit attribute, that indicates the location should
-        // be at the same xloc as that Thing (such as a Pipe)
-        if(thing[key_exit] !== undefined) {
-            map.locations[thing[key_exit]].xloc = prething.xloc;
-            map.locations[thing[key_exit]].entrance = prething.thing;
+        // If a Thing is an entrance, then the location it is an entrance to 
+        // must it and its xloc.
+        if(thing[key_entrance] !== undefined && typeof thing[key_entrance] != "object") {
+            map.locations[thing[key_entrance]].xloc = prething.xloc;
+            map.locations[thing[key_entrance]].entrance = prething.thing;
         }
     }
     
@@ -426,13 +426,15 @@ function MapsCreatr(settings) {
     
     /**
      * Filters and sorts...
-     * 
-     * 
+     * I don't remember what else this is supposed to do besides sorting haha. 
      */
-    function processPreThingsArray(prethings) {
-        
+    function processPreThingsArrays(prethings) {
+        for(var i in prethings) {
+            if(prethings.hasOwnProperty(i)) {
+                prethings[i].sort(sorterPreThings);
+            }
+        }
     }
-    
     
     
     /* Utilities
@@ -454,6 +456,16 @@ function MapsCreatr(settings) {
             output[arr[i]] = [];
         }
         return output;
+    }
+    
+    /**
+     * 
+     */
+    function sorterPreThings(a, b) {
+        if(a.xloc == b.xloc) {
+            return a.yloc - b.yloc;
+        }
+        return a.xloc - b.xloc;
     }
     
     self.reset(settings || {});

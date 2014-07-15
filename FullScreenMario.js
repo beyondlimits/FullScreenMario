@@ -3248,7 +3248,7 @@ window.FullScreenMario = (function() {
             
             if(thing.top > other.top) { 
                 thing.EightBitter.TimeHandler.addEvent(function () {
-                    thing.EightBitter.setLocation(other.entrance);
+                    thing.EightBitter.setLocation(other.transport);
                 }, 42);
                 return true;
             }
@@ -3268,7 +3268,7 @@ window.FullScreenMario = (function() {
             
             if(thing.left > other.left) { 
                 thing.EightBitter.TimeHandler.addEvent(function () {
-                    thing.EightBitter.setLocation(other.entrance);
+                    thing.EightBitter.setLocation(other.transport);
                 }, 42);
                 return true;
             }

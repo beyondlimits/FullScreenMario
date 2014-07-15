@@ -183,7 +183,7 @@ FullScreenMario.prototype.settings.maps.maps = {
                       { "macro": "Pipe", "x": 368, "height": 32 },
                       { "thing": "Goomba", "x": 412, "y": 8 },
                       { "thing": "Goomba", "x": 422, "y": 8 },
-                      { "macro": "Pipe", "x": 456, "height": 32, "entrance": 2 },
+                      { "macro": "Pipe", "x": 456, "height": 32, "transport": 2 },
                       { "thing": "Block", "x": 512, "y": 40, "contents": "Mushroom1Up", "hidden": true },
                       { "macro": "Floor", "x": 568, "width": 120 },
                       { "thing": "Brick", "x": 616, "y": 32 },
@@ -237,7 +237,7 @@ FullScreenMario.prototype.settings.maps.maps = {
                       { "thing": "Stone", "x": 1248, "y": 24, "height": 24 },
                       { "thing": "Stone", "x": 1256, "y": 16, "height": 16 },
                       { "thing": "Stone", "x": 1264, "y": 8 },
-                      { "macro": "Pipe", "x": 1304, "height": 16, "exit": 1 },
+                      { "macro": "Pipe", "x": 1304, "height": 16, "entrance": 1 },
                       { "thing": "Brick", "x": 1344, "y": 32 },
                       { "thing": "Brick", "x": 1352, "y": 32 },
                       { "thing": "Block", "x": 1360, "y": 32 },
@@ -266,7 +266,7 @@ FullScreenMario.prototype.settings.maps.maps = {
                     { "macro": "Fill", "thing": "Brick", "x": 32, "y": 8, "xnum": 7, "ynum": 3, "xwidth": 8, "yheight": 8 },
                     { "macro": "Fill", "thing": "Coin", "x": 33, "y": 31, "xnum": 7, "ynum": 2, "xwidth": 8, "yheight": 16 },
                     { "macro": "Fill", "thing": "Coin", "x": 41, "y": 63, "xnum": 5, "ynum": 1, "xwidth": 8 },
-                    { "thing": "PipeHorizontal", "x": 104, "y": 16, "entrance": 1, "width": 16 },
+                    { "thing": "PipeHorizontal", "x": 104, "y": 16, "transport": 1, "width": 16 },
                     { "thing": "PipeVertical", "x": 120, "y": 88, "height": 88 }
                 ]
             }

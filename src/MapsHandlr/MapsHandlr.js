@@ -193,16 +193,15 @@ function MapsHandlr(settings) {
      * Goes to a particular location in the given map. This is the primary,
      * meaty function for resetting attributes in the MapScreenr.
      * 
-     * @param [Number] location_number   The number of the location to start
-     *                                   the map in.
+     * @param [mixed] location_number   The number of the location to start in.
      */
-    self.setLocation = function setLocation(location_number) {
+    self.setLocation = function setLocation(name) {
         var location, attribute, len, i;
 
         // Query the location from the current map and ensure it exists
-        location = map_current.locations[location_number];
+        location = map_current.locations[name];
         if(!location) {
-            throw new Error("Unknown location given: " + location_number);
+            throw new Error("Unknown location given: " + name);
         }
         
         // Since the location is valid, mark it as current (with its area)
