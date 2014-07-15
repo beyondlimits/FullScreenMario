@@ -269,6 +269,8 @@ function GamesRunnr(settings) {
     
     /**
      * Curry function to fun a given function. Used in games.forEach(game);
+     * 
+     @param {Function} game
      */
     function run(game) {
         game();

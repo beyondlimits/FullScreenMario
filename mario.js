@@ -9,21 +9,7 @@ function startFSM() {
   // Thanks, Obama...
   ensureLocalStorage();
   
-  // Know when to shut up
-  window.verbosity = { Maps: false, Sounds: false };
-  
-  console.warn("checks like requestAnimationFrame use 16.667 as window.timer");
-  window.requestAnimationFrame = window.requestAnimationFrame
-                           || window.mozRequestAnimationFrame
-                           || window.webkitRequestAnimationFrame
-                           || window.msRequestAnimationFrame
-                           || function(func) { setTimeout(func, 16.667); };
-  window.cancelAnimationFrame = window.cancelAnimationFrame
-                           || window.webkitCancelRequestAnimationFrame
-                           || window.mozCancelRequestAnimationFrame
-                           || window.oCancelRequestAnimationFrame
-                           || window.msCancelRequestAnimationFrame
-                           || clearTimeout;
+  console.warn("Timer is still often replaced with 16.667");
 
   window.Uint8ClampedArray = window.Uint8ClampedArray
                            || window.Uint8Array
@@ -64,4 +50,12 @@ function ensureLocalStorage() {
             "It seems your browser does not allow localStorage!";
     throw nope;
   }
+}
+
+// Resets the main canvas and context
+function resetCanvas() {
+  // The global canvas is one that fills the screen
+  window.canvas = FSM.getCanvas(innerWidth, innerHeight, true);
+  window.context = canvas.getContext("2d");
+  document.body.appendChild(canvas);
 }

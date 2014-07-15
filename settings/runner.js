@@ -8,13 +8,13 @@ FullScreenMario.prototype.settings.runner = {
             this.QuadsKeeper.determineAllQuadrants(solids);
         },
         function () {
-            maintainSolids();
+            this.maintainSolids(this);
         },
         function () {
-            maintainCharacters();
+            this.maintainCharacters(this);
         },
         function () {
-            maintainPlayer();
+            this.maintainPlayer(this);
         },
         function () {
             this.TimeHandler.handleEvents();

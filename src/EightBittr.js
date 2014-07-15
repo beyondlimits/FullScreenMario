@@ -498,6 +498,24 @@ window.EightBittr = (function(settings) {
         array.push(thing);
     }
     
+    /**
+     * 
+     */
+    function arrayDeleteMember(thing, array, location) {
+        if(typeof location === "undefined") {
+            location = array.indexOf(thing);
+            if(location === -1) {
+                return;
+            }
+        }
+        
+        array.splice(location, 1);
+        
+        if(thing.ondelete) {
+            thing.ondelete(thing);
+        }
+    }
+    
     /* Prototype function holders
     */
     
@@ -526,14 +544,15 @@ window.EightBittr = (function(settings) {
         "updateLeft": updateLeft,
         "slideToY": slideToY,
         "slideToX": slideToX,
-        // EightBittr Utilities
+        // EightBittr utilities
         "ensureCorrectCaller": ensureCorrectCaller,
-        // General Utilities
+        // General utilities
         "proliferate": proliferate,
         "proliferateHard": proliferateHard,
         "createElement": createElement,
         "arraySwitch": arraySwitch,
-        "arrayForefront": arrayForefront
+        "arrayForefront": arrayForefront,
+        "arrayDeleteMember": arrayDeleteMember
     });
     
     EightBittr.ensureCorrectCaller = ensureCorrectCaller;

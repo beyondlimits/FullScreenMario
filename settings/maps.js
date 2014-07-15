@@ -9,7 +9,8 @@ FullScreenMario.prototype.settings.maps = {
         "maxyvel",
         "maxyvelinv",
         "notime",
-        "nokeys"
+        "nokeys",
+        "canscroll"
     ],
     "on_spawn": function (prething, xloc) {
         var thing = prething.thing;

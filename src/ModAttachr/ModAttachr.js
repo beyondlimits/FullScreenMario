@@ -184,6 +184,43 @@ function ModAttachr(settings) {
         }
     };
     
+    /**
+     * Toggles a mod via enableMod/disableMod of the given name, if it exists.
+     * 
+     * @param {String} name   The name of the mod to toggle.
+     */
+    self.toggleMod = function (name) {
+        var mod = mods[name];
+        
+        if(!mod) {
+            throw new Error("No mod found under " + name);
+        }
+        
+        if(mod.enabled) {
+            self.disableMod(name);
+        } else {
+            self.enableMod(name);
+        }
+    };
+    
+    /**
+     * Toggles any number of mods, given as any number of Strings or Arrays of
+     * Strings.
+     * 
+     * @param {String} [mods]
+     * @param {Array} [mods]
+     */
+    self.toggleMods = function () {
+        var i;
+        for(i = 0; i < arguments.length; i += 1) {
+            if(arguments[i] instanceof Array) {
+                self.toggleMods(arguments[i]);
+            } else {
+                self.toggleMod(arguments[i]);
+            }
+        }
+    };
+    
     
     /* Actions
     */

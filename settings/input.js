@@ -54,7 +54,7 @@
     }
     
     function KeyDownL(player) {
-        player.EightBitter.toggleLuigi();
+        player.EightBitter.ModAttacher.toggleMod("Luigi");
     }
     
     function KeyUpLeft(player) {

@@ -2,14 +2,14 @@ window.FullScreenMario = (function() {
     "use strict";
     
     // Use an EightBittr as the class parent, with EightBittr's constructor
-    var EightBitter = new EightBittr(),
+    var EightBitterProto = new EightBittr(),
         
         // Used for combining arrays from the prototype to this
-        proliferate = EightBitter.proliferate,
-        proliferateHard = EightBitter.proliferateHard;
+        proliferate = EightBitterProto.proliferate,
+        proliferateHard = EightBitterProto.proliferateHard;
         
     // Subsequent settings will be stored in FullScreenMario.prototype.settings
-    EightBitter.settings = {};
+    EightBitterProto.settings = {};
     
     /**
      * 
@@ -51,7 +51,7 @@ window.FullScreenMario = (function() {
                 "point_levels",
                 "gravity"
             ]        });    }
-    FullScreenMario.prototype = EightBitter;
+    FullScreenMario.prototype = EightBitterProto;
     
     // For the sake of reset functions, store constants as members of the actual
     // FullScreenMario function itself - this allows prototype setters to use 
@@ -339,7 +339,8 @@ window.FullScreenMario = (function() {
      * 
      */
     function thingProcess(thing, type, settings, defaults) {
-        thing.title = type;
+        // If the Thing doesn't specify its own title, use the type by default
+        thing.title = thing.title || type;
         
         // If a width/height is provided but no spritewidth/height,
         // use the default spritewidth/height
@@ -454,21 +455,149 @@ window.FullScreenMario = (function() {
         FSM.setTop(player, savetop);
     }
     
+    
+    /* Upkeep maintenence
+    */
+    
     /**
      * 
+     * 
+     * @param {FullScreenMario} EightBitter
      */
-    function deleteArrayMember(thing, array, location) {
-        if(typeof location === "undefined") {
-            location = array.indexOf(thing);
-            if(location === -1) {
-                return;
+    function maintainSolids(EightBitter) {
+        for (var i = 0, solid; i < solids.length; ++i) {
+            solid = solids[i];
+            if (solid.alive) {
+                if (solid.movement) {
+                    solid.movement(solid);
+                }
+            } else if (solid.right < EightBitter.QuadsKeeper.getDelX()) {
+                EightBitter.arrayDeleteMember(solid, solids, i);
+                i -= 1;
             }
         }
-        
-        array.splice(location, 1);
-        
-        if(thing.ondelete) {
-            thing.ondelete(thing);
+    }
+
+    /**
+     * 
+     * 
+     * @param {FullScreenMario} EightBitter
+     */
+    function maintainCharacters(EightBitter) {
+        var delx = EightBitter.MapScreener.right + EightBitter.QuadsKeeper.getOutDifference(),
+            character, i;
+        for (i = 0; i < characters.length; ++i) {
+            character = characters[i];
+            
+            // Gravity
+            if(character.resting) {
+                character.yvel = 0;
+            } else {
+                if (!character.nofall) {
+                    character.yvel += character.gravity || EightBitter.MapScreener.gravity;
+                }
+                character.yvel = Math.min(character.yvel, EightBitter.MapScreener.maxyvel);
+            }
+
+            // Position updating and collision detection
+            character.under = character.undermid = false;
+            EightBitter.updatePosition(character);
+            EightBitter.QuadsKeeper.determineThingQuadrants(character);
+            EightBitter.ThingHitter.getGroupHolder().setCharacterGroup(characters);
+            EightBitter.ThingHitter.checkHitsOfOne(character);
+
+            // Resting tests
+            if (character.resting) {
+                if (!EightBitter.isCharacterOnResting(character, character.resting)) {
+                    character.resting = false; // Necessary for moving platforms :(
+                } else {
+                    /*character.jumping = */
+                    character.yvel = false;
+                    EightBitter.setBottom(character, character.resting.top);
+                }
+            }
+
+            // Movement or deletion
+            // To do: rethink this...
+            if (character.alive) {
+                if (!character.player &&
+                    (character.numquads == 0 || character.left > delx) && !character.outerok) {
+                    EightBitter.arrayDeleteMember(character, characters, i);
+                } else {
+                    if (!character.nomove && character.movement)
+                        character.movement(character);
+                }
+            } else {
+                EightBitter.arrayDeleteMember(character, characters, i);
+                i -= 1;
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param {FullScreenMario} EightBitter
+     */
+    function maintainPlayer(EightBitter) {
+        var player = EightBitter.player;
+        if (!player.alive) {
+            return;
+        }
+
+        // Player is falling
+        if (player.yvel > 0) {
+            if (!EightBitter.MapScreener.underwater) player.keys.jump = 0;
+            // Jumping?
+            if (!player.jumping) {
+                // Paddling? (from falling off a solid)
+                if (EightBitter.MapScreener.underwater) {
+                    if (!player.paddling) {
+                        switchClass(player, "paddling", "paddling");
+                        player.padding = true;
+                    }
+                } else {
+                    EightBitter.addClass(player, "jumping");
+                    player.jumping = true;
+                }
+            }
+            // Player has fallen too far
+            if (!player.piping && !player.dying && player.top > EightBitter.MapScreener.deathheight) {
+                // If the map has an exit loc (cloud world), transport there
+                if (EightBitter.MapScreener.exitloc) {
+                    return EightBitter.setLocation(map.exitloc);
+                }
+                // Otherwise, since Player is below the screen, kill him dead
+                EightBitter.killPlayer(player, 2);
+            }
+        }
+
+        // Player is moving to the right
+        if (player.xvel > 0) {
+            if (player.right > EightBitter.MapScreener.middlex) {
+                // If Player is to the right of the screen's middle, move the screen
+                if (player.right > EightBitter.MapScreener.right - EightBitter.MapScreener.left) {
+                    player.xvel = Math.min(0, player.xvel);
+                }
+            }
+        }
+        // Player is moving to the left
+        else if (player.left < 0) {
+            // Stop Player from going to the left.
+            player.xvel = Math.max(0, player.xvel);
+        }
+
+        // Player is hitting something (stop jumping)
+        if (player.under) {
+            player.jumpcount = 0;
+        }
+
+        // Scrolloffset is how far over the middle player's right is
+        if(EightBitter.MapScreener.canscroll) {
+            var scrolloffset = player.right - EightBitter.MapScreener.middlex;
+            if (scrolloffset > 0) {
+                EightBitter.scrollWindow(Math.round(Math.min(player.scrollspeed, scrolloffset)));
+            }
         }
     }
     
@@ -2693,7 +2822,7 @@ window.FullScreenMario = (function() {
             thing = group[i];
             
             if(!thing.nokillend) {
-                FSM.deleteArrayMember(thing, group, i);
+                FSM.arrayDeleteMember(thing, group, i);
             } else if(thing.killonend) {
                 thing.killonend(thing);
             }
@@ -2705,7 +2834,7 @@ window.FullScreenMario = (function() {
             thing = group[i];
             
             if(thing.killonend) {
-                FSM.deleteArrayMember(thing, group, i);
+                FSM.arrayDeleteMember(thing, group, i);
             }
         }
     }
@@ -3486,7 +3615,10 @@ window.FullScreenMario = (function() {
         "thingProcessAttributes": thingProcessAttributes,
         "scrollWindow": scrollWindow,
         "scrollPlayer": scrollPlayer,
-        "deleteArrayMember": deleteArrayMember,
+        // Upkeep maintenence
+        "maintainSolids": maintainSolids,
+        "maintainCharacters": maintainCharacters,
+        "maintainPlayer": maintainPlayer,
         // Collision detectors
         "canThingCollide": canThingCollide,
         "isThingTouchingThing": isThingTouchingThing,
@@ -3610,7 +3742,6 @@ window.FullScreenMario = (function() {
         // Map sets
         "setMap": setMap,
         "setLocation": setLocation,
-        // "setLocation": setLocation,
         // Map entrances
         "mapEntranceGeneral": mapEntranceGeneral,
         "mapEntrancePlain": mapEntrancePlain,

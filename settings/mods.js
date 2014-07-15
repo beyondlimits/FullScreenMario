@@ -1,6 +1,32 @@
 FullScreenMario.prototype.settings.mods = {
     "mods": [
         {
+            // FSM.setTitle(player, StatsHolder.get("luigi") ? "Luigi" : "Player");
+            "name": "Luigi",
+            "description": "The little brother who could!",
+            "enabled": true,
+            "events": {
+                "onModEnable": function () {
+                    this.StatsHolder.set("luigi", true);
+                    this.ObjectMaker.getFunction("Player").prototype.title = "Luigi";
+                    
+                    if(this.player) {
+                        this.player.title = "Luigi";
+                        this.PixelDrawer.setThingSprite(this.player);
+                    }
+                },
+                "onModDisable": function () {
+                    this.StatsHolder.set("luigi", false);
+                    this.ObjectMaker.getFunction("Player").prototype.title = "Player";
+                    
+                    if(this.player) {
+                        this.player.title = "Player";
+                        this.PixelDrawer.setThingSprite(this.player);
+                    }
+                }
+            }
+        },
+        {
             "name": "ParallaxClouds",
             "description": "Clouds in the sky scroll at about 63% the normal rate.",
             "enabled": false,

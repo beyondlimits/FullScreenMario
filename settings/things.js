@@ -185,9 +185,10 @@
                 "maxyvel": 7,
                 "maxyvelinv": -7,
                 "gravity": FullScreenMario.gravity,
+                "canscroll": true,
                 "underwater": false,
                 "notime": false,
-                "nokeys": false
+                "nokeys": false,
             },
             "Location": {
                 "toJSON": LocationToJSON
