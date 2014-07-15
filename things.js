@@ -29,7 +29,6 @@ function unattachPlayer(me) {
 }
 
 function gameOver() {
-  gameon = false;
   pause();
   FSM.AudioPlayer.pauseTheme();
   FSM.AudioPlayer.play("Game Over");
@@ -49,10 +48,7 @@ function gameRestart() {
   document.body.style.visibility = "hidden";
   document.body.innerHTML = document.body.style.paddingTop = document.body.style.fontSize = "";
   document.body.appendChild(canvas);
-  gameon = true;
-  FSM.setMap("1-1");
-  FSM.TimeHandler.addEvent(function() { document.body.style.visibility = ""; });
-  FSM.StatsHolder.set("lives", 3);
+  FSM.gameStart();
 }
 
 
@@ -182,10 +178,10 @@ function Firework(me, num) {
   if(num)
     switch(num) {
       // These probably aren't the exact same as original... :(
-      case 1: me.locs = [unitsize * 16,FullScreenMario.unitsize * 16]; break;
-      case 2: me.locs = [-unitsize * 16,FullScreenMario.unitsize * 16]; break;
-      case 3: me.locs = [unitsize * 16 * 2,FullScreenMario.unitsize * 16 * 2]; break;
-      case 4: me.locs = [unitsize * 16 * -2,FullScreenMario.unitsize * 16 * 2]; break;
+      case 1: me.locs = [unitsize * 16, FullScreenMario.unitsize * 16]; break;
+      case 2: me.locs = [-unitsize * 16, FullScreenMario.unitsize * 16]; break;
+      case 3: me.locs = [unitsize * 16 * 2, FullScreenMario.unitsize * 16 * 2]; break;
+      case 4: me.locs = [unitsize * 16 * -2, FullScreenMario.unitsize * 16 * 2]; break;
       case 5: me.locs = [0,unitsize * 16 * 1.5]; break;
       default: me.locs = [0,0]; break;
     }

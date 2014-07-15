@@ -239,6 +239,32 @@ window.FullScreenMario = (function() {
     
     /**
      * 
+     */
+    function gameStart() {
+        var EightBitter = EightBittr.ensureCorrectCaller(this);
+        
+        EightBitter.setMap("1-1");
+        EightBitter.StatsHolder.set("lives", 3);
+        EightBitter.GamesRunner.upkeep();
+        EightBitter.GamesRunner.unpause();
+    }
+    
+    /**
+     * 
+     */
+    function gameOver() {
+        var EightBitter = EightBittr.ensureCorrectCaller(this);
+        
+        EightBitter.GamesRunner.pause();
+        
+        EightBitter.AudioPlayer.pauseTheme();
+        EightBitter.AudioPlayer.play("Game Over");
+        
+        setTimeout(EightBitter.gameStart.bind(EightBitter), 7000);
+    }
+    
+    /**
+     * 
      * 
      * 
      */
@@ -2946,9 +2972,10 @@ window.FullScreenMario = (function() {
         console.warn("FSM.setLocation does not respect FSM.player.power");
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
-        EightBitter.TimeHandler.clearAllEvents();
+        EightBitter.AudioPlayer.pause();
         EightBitter.MapScreener.clearScreen();
         EightBitter.GroupHolder.clearArrays();
+        EightBitter.TimeHandler.clearAllEvents();
         
         EightBitter.MapsHandler.setLocation(location || 0);
         
@@ -3451,6 +3478,8 @@ window.FullScreenMario = (function() {
     // Add all registered functions from above to the FullScreenMario prototype
     proliferateHard(FullScreenMario.prototype, {
         // Global manipulations
+        "gameStart": gameStart,
+        "gameOver": gameOver,
         "addThing": addThing,
         "addPlayer": addPlayer,
         "thingProcess": thingProcess,

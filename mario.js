@@ -40,9 +40,7 @@ function startFSM() {
   window.texts = FSM.GroupHolder.getTextGroup();
 
   // With that all set, set the map to World11.
-  FSM.StatsHolder.set("lives", 3);
-  FSM.setMap("1-1");
-  FSM.GamesRunner.upkeep();
+  FSM.gameStart();
   document.body.appendChild(FSM.StatsHolder.makeContainer());
   
   console.log("It took " + (Date.now() - time_start) + " milliseconds to start.");
@@ -66,18 +64,4 @@ function ensureLocalStorage() {
             "It seems your browser does not allow localStorage!";
     throw nope;
   }
-}
-
-// Variables regarding the state of the game
-// This is called in setMap to reset everything
-function resetGameState(nocount) {
-  // HTML is reset here
-  FSM.clearAllTimeouts();
-  window.nokeys = window.spawning = window.spawnon =
-    window.notime = window.qcount = window.lastscroll = 0;
-  window.gameon = window.speed = 1;
-  // Keep a history of pressed keys
-  window.gamehistory = [];
-  // Clear audio
-  FSM.AudioPlayer.pause();
 }
