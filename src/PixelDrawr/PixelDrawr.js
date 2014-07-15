@@ -299,7 +299,7 @@ function PixelDrawr(settings) {
      * @return {String}
      */
     self.makeClassKey = function(thing) {
-        return (window.setting || window.defaultsetting) + ' ' + thing.libtype + ' ' + thing.title + ' ' + thing.className;
+        return FSM.MapsHandler.getArea().setting + ' ' + thing.libtype + ' ' + thing.title + ' ' + thing.className;
     }
     
     /**

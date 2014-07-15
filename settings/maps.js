@@ -40,7 +40,9 @@ FullScreenMario.prototype.settings.maps = {
     "entrances": {
         "Plain": FullScreenMario.prototype.mapEntrancePlain,
         "Normal": FullScreenMario.prototype.mapEntranceNormal,
-        "Castle": FullScreenMario.prototype.mapEntranceCastle
+        "Castle": FullScreenMario.prototype.mapEntranceCastle,
+        "PipeVertical": FullScreenMario.prototype.mapEntrancePipeVertical,
+        "PipeHorizontal": FullScreenMario.prototype.mapEntrancePipeHorizontal
     },
     "patterns": (function (patterns) {
         var pattern,
@@ -155,9 +157,9 @@ FullScreenMario.prototype.settings.maps = {
 FullScreenMario.prototype.settings.maps.maps = {
     "1-1": {
         "locations": [
-              { "entry": true },
-              { "entry": "ExitPipeVertical" },
-              { "area": 1 }
+              { "entry": "Plain" },
+              { "entry": "PipeVertical" },
+              { "area": 1 },
         ],
         "areas": [
             {

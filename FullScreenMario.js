@@ -243,6 +243,7 @@ window.FullScreenMario = (function() {
     function gameStart() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
+        
         EightBitter.setMap("1-1");
         EightBitter.StatsHolder.set("lives", 3);
         EightBitter.GamesRunner.upkeep();
@@ -2507,6 +2508,28 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function animatePlayerPipingStart(thing) {
+        thing.nocollide = thing.nofall = true;
+        thing.xvel = thing.yvel = 0;
+        
+        thing.movementOld = thing.movement;
+        thing.movement = false;
+        
+        thing.EightBitter.TimeHandler.clearAllCycles(thing);
+    }
+    
+    /**
+     * 
+     */
+    function animatePlayerPipingEnd(thing) {
+        thing.movement = thing.movementOld;
+        
+        thing.nocollide = thing.nofall = false;
+    }
+    
+    /**
+     * 
+     */
     function animatePlayerOffPole(thing, doRun) {
         thing.EightBitter.removeClasses(thing, "climbing running");
         thing.EightBitter.addClass(thing, "jumping");
@@ -3080,6 +3103,8 @@ window.FullScreenMario = (function() {
         if(typeof(name) === "undefined") {
             name = EightBitter.MapsHandler.getMapName();
         }
+        
+        EightBitter.QuadsKeeper.resetQuadrants();
         EightBitter.MapsHandler.setMap(name);
         
         EightBitter.StatsHolder.set("world", name);
@@ -3097,16 +3122,18 @@ window.FullScreenMario = (function() {
      * 
      * @param {Mixed} [location]
      */
-    function setLocation(location) {
+    function setLocation(name) {
         console.warn("FSM.setLocation does not respect FSM.player.power");
-        var EightBitter = EightBittr.ensureCorrectCaller(this);
+        var EightBitter = EightBittr.ensureCorrectCaller(this),
+            location;
         
         EightBitter.AudioPlayer.pause();
         EightBitter.MapScreener.clearScreen();
         EightBitter.GroupHolder.clearArrays();
         EightBitter.TimeHandler.clearAllEvents();
         
-        EightBitter.MapsHandler.setLocation(location || 0);
+        EightBitter.MapsHandler.setLocation(name || 0);
+        location = EightBitter.MapsHandler.getLocation(name || 0);
         
         EightBitter.TimeHandler.addEventInterval(function () {
             if(!EightBitter.MapScreener.notime) {
@@ -3117,7 +3144,8 @@ window.FullScreenMario = (function() {
         EightBitter.StatsHolder.set("time", EightBitter.MapsHandler.getArea().time);
   
         EightBitter.MapsHandler.spawnMap(EightBitter.MapScreener.width / EightBitter.unitsize);
-        EightBitter.MapsHandler.getArea().entry(EightBitter);
+        
+        location.entry(EightBitter, location);
         
         EightBitter.ModAttacher.fireEvent("onSetLocation");
     }
@@ -3171,6 +3199,39 @@ window.FullScreenMario = (function() {
     }
     
     
+    /**
+     * 
+     */
+    function mapEntrancePipeVertical(EightBitter, location) {
+        EightBitter.scrollWindow(location.xloc * EightBitter.unitsize);
+        
+        EightBitter.mapEntranceGeneral(
+            EightBitter,
+            location.entrance.left + EightBitter.player.width * EightBitter.unitsize / 2,
+            location.entrance.top + EightBitter.player.height * EightBitter.unitsize
+        );
+        
+        EightBitter.animatePlayerPipingStart(EightBitter.player);
+        
+        EightBitter.TimeHandler.addEventInterval(function () {
+            EightBitter.shiftVert(EightBitter.player, EightBitter.unitsize / -4);
+            
+            if(EightBitter.player.bottom <= location.entrance.top) {
+                EightBitter.animatePlayerPipingEnd(EightBitter.player);
+                return true;
+            }
+        }, 1, Infinity);
+    }
+    
+    /**
+     * 
+     */
+    function mapEntrancePipeHorizontal(EightBitter, location) {
+        throw new Error("mapEntrancePipeHorizontal is not yet implemented.");
+    }
+
+    
+    
     /* Map exits
     */
     
@@ -3180,7 +3241,18 @@ window.FullScreenMario = (function() {
      * @notes thing is player, other is pipe
      */
     function mapExitPipeVertical(thing, other) {
-        throw new Error("mapExitPipeVertical not implemented");
+        thing.EightBitter.animatePlayerPipingStart(thing);
+        
+        thing.EightBitter.TimeHandler.addEventInterval(function () {
+            thing.EightBitter.shiftVert(thing, thing.EightBitter.unitsize / 4);
+            
+            if(thing.top > other.top) { 
+                thing.EightBitter.TimeHandler.addEvent(function () {
+                    thing.EightBitter.setLocation(other.entrance);
+                }, 42);
+                return true;
+            }
+        }, 1, Infinity);
     }
     
     /**
@@ -3189,7 +3261,18 @@ window.FullScreenMario = (function() {
      * @notes thing is player, other is pipe
      */
     function mapExitPipeHorizontal(thing, other) {
-        throw new Error("mapExitPipeHorizontal not implemented");
+        thing.EightBitter.animatePlayerPipingStart(thing);
+        
+        thing.EightBitter.TimeHandler.addEventInterval(function () {
+            thing.EightBitter.shiftHoriz(thing, thing.EightBitter.unitsize / 4);
+            
+            if(thing.left > other.left) { 
+                thing.EightBitter.TimeHandler.addEvent(function () {
+                    thing.EightBitter.setLocation(other.entrance);
+                }, 42);
+                return true;
+            }
+        }, 1, Infinity);
     }
     
     
@@ -3690,6 +3773,8 @@ window.FullScreenMario = (function() {
         "animatePlayerPaddling": animatePlayerPaddling,
         "animatePlayerBubbling": animatePlayerBubbling,
         "animatePlayerRunningCycle": animatePlayerRunningCycle,
+        "animatePlayerPipingStart": animatePlayerPipingStart,
+        "animatePlayerPipingEnd": animatePlayerPipingEnd,
         "animatePlayerOffPole": animatePlayerOffPole,
         "animateCharacterHop": animateCharacterHop,
         // Spawns
@@ -3747,8 +3832,8 @@ window.FullScreenMario = (function() {
         "mapEntrancePlain": mapEntrancePlain,
         "mapEntranceNormal": mapEntranceNormal,
         "mapEntranceCastle": mapEntranceCastle,
-        // "mapEntrancePipeVertical": mapEntrancePipeVertical,
-        // "mapEntrancePipeHorizontal": mapEntrancePipeHorizontal,
+        "mapEntrancePipeVertical": mapEntrancePipeVertical,
+        "mapEntrancePipeHorizontal": mapEntrancePipeHorizontal,
         // Map exits
         "mapExitPipeVertical": mapExitPipeVertical,
         "mapExitPipeHorizontal": mapExitPipeHorizontal,

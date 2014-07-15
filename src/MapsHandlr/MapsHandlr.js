@@ -141,6 +141,15 @@ function MapsHandlr(settings) {
     };
     
     /**
+     * Simple getter function for a location within the current area's map.
+     * 
+     * @reutrn {Object} The request location object.
+     */
+    self.getLocation = function (location) {
+        return area_current.map.locations[location];
+    }
+    
+    /**
      * Simple getter function for the internal prethings object. This will be
      * null before the first self.setMap.
      * 

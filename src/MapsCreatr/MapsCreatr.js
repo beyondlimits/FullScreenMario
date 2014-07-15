@@ -158,26 +158,38 @@ function MapsCreatr(settings) {
      */
     function setMapAreas(map) {
         var areas_raw = map.areas,
-            // The parsed container should be the same type as the original
+            locations_raw = map.locations,
+            // The parsed containers should be the same types as the originals
             areas_parsed = new areas_raw.constructor(),
-            area, i;
+            locations_parsed = new locations_raw.constructor(),
+            obj, i;
         
-        // Parse all the keys in areas_raw (works for both Arrays and Objects)
+        // Parse all the Area objects (works for both Arrays and Objects)
         for(i in areas_raw) {
             if(areas_raw.hasOwnProperty(i)) {
-                area = areas_parsed[i] = ObjectMaker.make("Area", areas_raw[i]);
-                area.map = map;
-        
-                // The area's entrance functions are also aliased here
-                area.entry_raw = area.entry;
-                area.entry = entrances[area.entry];
+                obj = areas_parsed[i] = ObjectMaker.make("Area", areas_raw[i]);
+                obj.map = map;
             }
         }
         
-        // Store the output object in the Map, and keep the old settings for the
+        // Parse all the Location objects (works for both Arrays and Objects)
+        for(i in locations_raw) {
+            if(locations_raw.hasOwnProperty(i)) {
+                obj = locations_parsed[i] = ObjectMaker.make("Location", locations_raw[i]);
+                // obj.map = map;
+                
+                // Location entrances should actually be the keyed functions
+                obj.entry_raw = obj.entry;
+                obj.entry = entrances[obj.entry];
+            }
+        }
+        
+        // Store the output object in the Map, and keep the raw settings for the
         // sake of debugging / user interest
         map.areas = areas_parsed;
         map.areas_raw = areas_raw;
+        map.locations = locations_parsed;
+        map.lcations_raw = locations_raw;
     }
     
     /**
@@ -374,6 +386,7 @@ function MapsCreatr(settings) {
         }
         
         prething = new PreThing(ObjectMaker.make(thing, reference), reference);
+        thing = prething.thing;
         
         if(!prething.thing[key_group_type]) {
             console.warn("A Thing does not contain a " + key_group_type + ". "
@@ -385,7 +398,7 @@ function MapsCreatr(settings) {
         if(group_types.indexOf(prething.thing[key_group_type]) === -1) {
             console.log("Group types are", group_types, "\n");
             console.warn("A Thing contains an unknown " + key_group_type
-                    + ". It will be ignored: " + prething.thing[key_group_type],
+                    + ". It will be ignored: " + thing[key_group_type],
                     prething, reference, prethings, area, map);
             return;
         }
@@ -394,7 +407,7 @@ function MapsCreatr(settings) {
         
         // If a Thing has a .exit attribute, that indicates the location should
         // be at the same xloc as that Thing (such as a Pipe)
-        if(thing[key_exit]) {
+        if(thing[key_exit] !== undefined) {
             map.locations[thing[key_exit]].xloc = prething.xloc;
             map.locations[thing[key_exit]].entrance = prething.thing;
         }

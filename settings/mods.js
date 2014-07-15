@@ -4,7 +4,7 @@ FullScreenMario.prototype.settings.mods = {
             // FSM.setTitle(player, StatsHolder.get("luigi") ? "Luigi" : "Player");
             "name": "Luigi",
             "description": "The little brother who could!",
-            "enabled": true,
+            "enabled": false,
             "events": {
                 "onModEnable": function () {
                     this.StatsHolder.set("luigi", true);

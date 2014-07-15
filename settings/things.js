@@ -178,7 +178,6 @@
             "Area": {
                 "onMake": AreaSetBackground,
                 "toJSON": AreaToJSON,
-                "entry": "Plain",
                 "floor": 104,
                 "time": 400,
                 "jumpmod": 1.056,
@@ -191,6 +190,8 @@
                 "nokeys": false,
             },
             "Location": {
+                "area": 0,
+                "entry": "Normal",
                 "toJSON": LocationToJSON
             },
             Thing: {
