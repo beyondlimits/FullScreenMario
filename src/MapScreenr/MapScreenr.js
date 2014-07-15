@@ -33,6 +33,18 @@ function MapScreenr(settings) {
             }
         }
         
+        
+        self.clearScreen();
+    }
+    
+    
+    /* State changes
+    */
+    
+    /**
+     * 
+     */
+    self.clearScreen = function () {
         // 
         self.left = 0;
         self.top = 0;
@@ -42,43 +54,39 @@ function MapScreenr(settings) {
         self.bottom = self.top + self.height;
         
         // 
-        self.setMiddleX();
-        self.setMiddleY();
-        self.setBottomMax();
-        self.setBottomDeath();
+        setMiddleX();
+        setMiddleY();
+        setBottomMax();
+        setBottomDeath();
+    };
+    
+    /**
+     * 
+     */
+    function setMiddleX() {
+        self.middlex = (self.left + self.right) / 2;
     }
     
-    
-    /* Simple gets
-    */
-    
     /**
      * 
      */
-    self.setMiddleX = function() {
-        self.middlex = (self.left + self.right) / 2;
-    };
-    
-    /**
-     * 
-     */
-    self.setMiddleY = function() {
+    function setMiddleY() {
         self.middley = (self.top + self.bottom) / 2;
-    };
+    }
     
     /**
      * 
      */
-    self.setBottomMax = function() {
+    function setBottomMax() {
         self.bottom_max = self.height - self.ceiling_max;
-    };
+    }
     
     /**
      * 
      */
-    self.setBottomDeath = function() {
+    function setBottomDeath() {
         self.bottom_death = self.bottom + self.bottom_death_difference;
-    };
+    }
     
     
     /* Element shifting
@@ -95,7 +103,7 @@ function MapScreenr(settings) {
         if(dy) {
             self.shiftY(dy);
         }
-    }
+    };
     
     /**
      * 
@@ -112,7 +120,7 @@ function MapScreenr(settings) {
         self.top += dy;
         self.bottom += dy;
         self.ceiling_max += dy;
-        self.setBottomDeath();
+        setBottomDeath();
     };
     
     self.reset(settings || {});

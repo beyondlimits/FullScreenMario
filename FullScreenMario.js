@@ -186,9 +186,7 @@ window.FullScreenMario = (function() {
             "group_types": ["Character", "Scenery", "Solid", "Text"],
             "macros": self.settings.maps.macros,
             "entrances": self.settings.maps.entrances,
-            "maps": {
-                "1-1": self.settings.maps.maps[1][1]
-            }
+            "maps": self.settings.maps.maps
         });
     }
     
@@ -203,7 +201,7 @@ window.FullScreenMario = (function() {
             "MapsCreator": self.MapsCreator,
             "MapScreener": self.MapScreener,
             "screen_attributes": self.settings.maps.screen_attributes,
-            "on_spawn": self.settings.maps.on_spawn.bind(self, self)
+            "on_spawn": self.settings.maps.on_spawn
         });
     }
     
@@ -213,7 +211,6 @@ window.FullScreenMario = (function() {
      * @remarks Requirement(s): InputWritr (src/InputWritr.js)
      *                          input.js (settings/input.js)
      */
-     // also fpsanalyzr from gamesrunnr
     function resetInputWriter(self) {
         self.InputWriter = new InputWritr(self.settings.input);
     }
@@ -1091,13 +1088,13 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
-    function removeCrouch() {
-        console.warn("removeCrouch still uses global player (it should be animateRemoveCrouch)");
+    function playerRemoveCrouch() {
+        console.warn("playerRemoveCrouch still uses global player (and it should be animateplayerRemoveCrouch)");
         FSM.player.crouching = false;
         FSM.player.toly = FSM.player.toly_old || 0;
-        if(player.power !== 1) {
-            FSM.player.EightBitter.removeClass(FSM.player, "crouching");
+        if(FSM.player.power !== 1) {
             FSM.player.height = 16;
+            FSM.player.EightBitter.removeClass(FSM.player, "crouching");
             FSM.player.EightBitter.updateBottom(FSM.player, 0);
             FSM.player.EightBitter.updateSize(FSM.player);
         }
@@ -2707,11 +2704,11 @@ window.FullScreenMario = (function() {
         if(!thing.alive || thing.flickering || thing.dying) {
             return;
         }
-        console.warn("killPlayer still uses global notime, nokeys, gravity, characters, setMap, gameOver");
+        console.warn("killPlayer still uses global gravity, characters, setMap, gameOver");
         
         // Large big: real, no-animation death
         if(big == 2) {
-            notime = true;
+            thing.EightBitter.MapScreener.notime = true;
             thing.dead = thing.dying = true;
         }
         // Regular big: regular (enemy, time, etc.) kill
@@ -2725,13 +2722,16 @@ window.FullScreenMario = (function() {
             }
             // The player can't survive this: animate a death
             else {
-                nokeys = notime = thing.dying = true;
+                thing.dying = true;
                 
                 thing.EightBitter.setSize(thing, 7.5, 7, true);
                 thing.EightBitter.updateSize(thing);
                 thing.EightBitter.setClass(thing, "character player dead");
                 thing.EightBitter.thingStoreVelocity(thing);
                 thing.EightBitter.arrayForefront(thing, characters);
+                
+                thing.EightBitter.MapScreener.notime = true;
+                thing.EightBitter.MapScreener.nokeys = true;
                 
                 thing.EightBitter.TimeHandler.clearAllCycles(thing);
                 thing.EightBitter.TimeHandler.addEvent(function () {
@@ -2744,7 +2744,8 @@ window.FullScreenMario = (function() {
             }
         }
         
-        thing.nocollide = thing.nomove = nokeys = 1;
+        thing.nocollide = thing.nomove = 1;
+        thing.EightBitter.MapScreener.nokeys = true;
         thing.EightBitter.AudioPlayer.pause();
         thing.EightBitter.StatsHolder.decrease("lives");
         
@@ -2867,7 +2868,7 @@ window.FullScreenMario = (function() {
      */
     function scorePlayerShell(thing, other) {
         // Star player: 200 points
-        if(player.star) {
+        if(thing.star) {
             thing.EightBitter.scoreOn(200, other);
             return;
         }
@@ -2915,6 +2916,7 @@ window.FullScreenMario = (function() {
      * 
      * 
      * @param {Mixed} [name]
+     * @param {Mixed} [location]
      */
     function setMap(name, location) {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
@@ -2937,11 +2939,14 @@ window.FullScreenMario = (function() {
      * 
      * 
      * 
+     * @param {Mixed} [location]
      */
     function setLocation(location) {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
         EightBitter.TimeHandler.clearAllEvents();
+        EightBitter.MapScreener.clearScreen();
+        EightBitter.GroupHolder.clearArrays();
         
         EightBitter.MapsHandler.setLocation(location || 0);
         
@@ -2953,8 +2958,8 @@ window.FullScreenMario = (function() {
         
         EightBitter.StatsHolder.set("time", EightBitter.MapsHandler.getArea().time);
   
-        FSM.MapsHandler.spawnMap(FSM.MapScreener.width / FSM.unitsize);
-        FSM.MapsHandler.getArea().entry(FSM);
+        EightBitter.MapsHandler.spawnMap(EightBitter.MapScreener.width / EightBitter.unitsize);
+        EightBitter.MapsHandler.getArea().entry(EightBitter);
         
         EightBitter.ModAttacher.fireEvent("onSetLocation");
     }
@@ -3035,8 +3040,8 @@ window.FullScreenMario = (function() {
     
     /**
      * Gets the distance from the absolute base (bottom of the user's viewport)
-     * to a specific height above the floor (in the form given by map functions 
-     * - distance from the floor).
+     * to a specific height above the floor (in the form given by map functions,
+     * distance from the floor).
      * 
      * @param {Number} yloc   A height to find the distance to the floor from.
      * @param {Number} divider   ???
@@ -3231,6 +3236,65 @@ window.FullScreenMario = (function() {
         
         return output;
     }
+
+    /**
+     * 
+     * 
+     * @param {Object} reference   A listing of the settings for this macro,
+     *                             from an Area's .creation Object.
+     */
+    function macroTree(reference) {
+        console.warn("macroTree uses FSM.MapScreener for pipe height");
+        // Although the tree trunks in later trees overlap earlier ones, it's ok
+        // because the pattern is indistinguishible when placed correctly.
+        var x = reference.x || 0,
+            y = reference.y || 0,
+            dtb = FSM.MapScreener.getAbsoluteHeight(y),
+            width = reference.width || 24;
+        
+        return [
+            { "thing": "TreeTop", "x": x, "y": y, "width": width },
+            { "thing": "TreeTrunk", "x": x + 8, "y": y - 8, "width": width - 16, "height": dtb - 8 }
+        ];
+    }
+    
+    /**
+     * 
+     * 
+     * @param {Object} reference   A listing of the settings for this macro,
+     *                             from an Area's .creation Object.
+     */
+    function macroShroom(reference) {
+        console.warn("macroShroom uses FSM.MapScreener for pipe height");
+        var x = reference.x || 0,
+            y = reference.y || 0,
+            dtb = FSM.MapScreener.getAbsoluteHeight(y),
+            width = reference.width || 24;
+        return [
+            { "thing": "ShroomTop", "x": x, "y": y, "width": width },
+            { "thing": "ShroomTrunk", "x": x + (width - 8) / 2, "y": y - 8, "height": dtb - 8 }
+        ];
+    }
+    
+    /**
+     * 
+     * 
+     * @param {Object} reference   A listing of the settings for this macro,
+     *                             from an Area's .creation Object.
+     */
+    function macroWater(reference) {
+        var x = reference.x || 0,
+            y = (reference.y || 0) + 2, // water is 3.5 x 5.5
+            output = proliferate({
+                "thing": "Water",
+                "x": x,
+                "y": y,
+                "height": DtB(y),
+                "macro": undefined
+            }, reference, true);
+        
+        return output;
+    }
     
     /**
      * 
@@ -3247,6 +3311,138 @@ window.FullScreenMario = (function() {
             "xnum": Math.floor(reference.width / 8),
             "xwidth": 8
         };
+    }
+    
+    /**
+     * 
+     * 
+     * @param {Object} reference   A listing of the settings for this macro,
+     *                             from an Area's .creation Object.
+     */
+    function macroBridge(reference) {
+        var x = reference.x || 0,
+            y = reference.y || 0,
+            width = max(reference.width || 0, 16),
+            output = [];
+
+        // A beginning column reduces the width and pushes it forward
+        if(reference.begin) {
+            width -= 8;
+            output.push({ "thing": "Stone", "x": x, "y": y, "height": DtB(y) });
+            x += 8;
+        }
+
+        // An ending column just reduces the width 
+        if(reference.end) {
+            width -= 8;
+            output.push({ "thing": "Stone", "x": x + width, "y": y, "height": DtB(y) });
+        }
+
+        // Between any columns is a BridgeBase with a Railing on top
+        output.push({ "thing": "BridgeBase", "x": x, "y": y, "width": width });
+        output.push({ "thing": "Railing", "x": x, "y": y + 4, "width": width });
+
+        return output;
+    }
+    
+    /**
+     * 
+     * 
+     * @param {Object} reference   A listing of the settings for this macro,
+     *                             from an Area's .creation Object.
+     */
+    function macroPlatformGenerator(reference) {
+        return {
+            "thing": "PlatformGenerator",
+            "x": reference.x || 0,
+            "y": reference.y || 120, // ceilmax (104) + 16
+            "width": reference.width || 4,
+            "dir": reference.dir || 1
+        };
+    }
+    
+    /**
+     * 
+     * 
+     * @param {Object} reference   A listing of the settings for this macro,
+     *                             from an Area's .creation Object.
+     */
+    function macroStartInsideCastle(reference) {
+        var x = reference.x || 0,
+            y = reference.y || 0,
+            width = (reference.width || 0) - 40,
+            output = [
+                { "thing": "Stone", "x": x, "y": y + 48, "width": 24, "height": DtB(48) },
+                { "thing": "Stone", "x": x + 24, "y": y + 40, "width": 8, "height": DtB(40) },
+                { "thing": "Stone", "x": x + 32, "y": y + 32, "width": 8, "height": DtB(32) }
+            ];
+        
+        if(width > 0) {
+            output.push({ "macro": "Floor", "x": x + 40, "y": y + 24, "width": width });
+        }
+        
+        return output;
+    }
+    
+    /**
+     * 
+     *
+     * @param {Object} reference   A listing of the settings for this macro,
+     *                             from an Area's .creation Object.
+     */
+    function macroEndOutsideCastle(reference) {
+        var x = reference.x || 0,
+            y = reference.y || 0,
+            output;
+
+        // Output starts off with the general flag & collision detection
+        output = [
+            // Initial collision detector
+            { thing: "DetectCollision", x: x + 8, y: y + 108, height: 108, activate: FlagCollisionTop, activate_fail: FSM.killNormal },
+            // Flag (scenery)
+            { thing: "Flag", x: x + .5, y: y + 79.5, "id": "endflag" },
+            { thing: "FlagTop", x: x + 6.5, y: y + 84 },
+            { thing: "FlagPole", x: x + 8, y: y + 80 },
+            // Bottom stone
+            { thing: "Stone", x: x + 4, y: y + 8 },
+        ];
+
+        // If this is a big castle (*-3), a large ending castle is used
+        // if(reference.big) {
+        //    
+        // }
+        // else {
+        output.push({ thing: "DetectCollision", x: x + 60, y: y + 16, height: 16, activate: endLevelPoints });
+        // }
+
+        return output;
+    }
+
+    /**
+     * 
+     * 
+     * @param {Object} reference   A listing of the settings for this macro,
+     *                             from an Area's .creation Object.
+     */
+    function macroEndInsideCastle(reference) {
+        var x = reference.x || 0,
+            y = reference.y || 0;
+
+        return [
+            { "thing": "Stone", "x": x, "y": y + 88, "width": 256 },
+            { "macro": "Water", "x": x, "y": y, "width": 104 },
+            // Bridge & Bowser area
+            { "thing": "CastleBridge", "x": x, "y": y + 24, "width": 104 },
+            { "thing": "Bowser", "x": x + 69, "y": y + 42, "hard": reference.hard },
+            { "thing": "CastleChain", "x": x + 96, "y": y + 32 },
+            // Axe area
+            { "thing": "Axe", "x": x + 104, "y": y + 40 },
+            { "macro": "Floor", "x": x + 104, "y": y, "width": 152 },
+            { "thing": "Stone", "x": x + 104, "y": y + 32, "width": 24, "height": 32 },
+            { "thing": "Stone", "x": x + 112, "y": y + 80, "width": 16, "height": 24 },
+            // Peach's Magical Happy Chamber of Fantastic Love
+            { "thing": "ScrollBlocker", "x": 112 }
+        ];
     }
       
     
@@ -3286,7 +3482,7 @@ window.FullScreenMario = (function() {
         "playerGetsFire": playerGetsFire,
         "setPlayerSizeSmall": setPlayerSizeSmall,
         "setPlayerSizeLarge": setPlayerSizeLarge,
-        "removeCrouch": removeCrouch,
+        "playerRemoveCrouch": playerRemoveCrouch,
         // Collision / actions
         "hitCharacterSolid": hitCharacterSolid,
         "hitCharacterCharacter": hitCharacterCharacter,
@@ -3401,7 +3597,15 @@ window.FullScreenMario = (function() {
         "macroFillPrePattern": macroFillPrePattern,
         "macroFloor": macroFloor,
         "macroPipe": macroPipe,
-        "macroCeiling": macroCeiling
+        "macroTree": macroTree,
+        "macroShroom": macroShroom,
+        "macroWater": macroWater,
+        "macroCeiling": macroCeiling,
+        "macroBridge": macroBridge,
+        "macroPlatformGenerator": macroPlatformGenerator,
+        "macroStartInsideCastle": macroStartInsideCastle,
+        "macroEndOutsideCastle": macroEndOutsideCastle,
+        "macroEndInsideCastle": macroEndInsideCastle
     });
     
     return FullScreenMario;

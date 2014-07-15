@@ -178,6 +178,7 @@
             "Area": {
                 "onMake": AreaSetBackground,
                 "toJSON": AreaToJSON,
+                "entry": "Plain",
                 "floor": 104,
                 "time": 400,
                 "jumpmod": 1.056,
@@ -185,7 +186,8 @@
                 "maxyvelinv": -7,
                 "gravity": FullScreenMario.gravity,
                 "underwater": false,
-                "entry": "Plain",
+                "notime": false,
+                "nokeys": false
             },
             "Location": {
                 "toJSON": LocationToJSON

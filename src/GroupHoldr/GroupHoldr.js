@@ -327,7 +327,6 @@ function GroupHoldr(settings) {
         functions.add[group_new](object, key_new);
     };
     
-    // apply takes a single given array and sets it as the arguments
     
     /**
      * Calls a function for each group, with that group as the first argument.
@@ -382,6 +381,20 @@ function GroupHoldr(settings) {
         }
     };
     
+    /**
+     * 
+     */
+    self.clearArrays = function () {
+        var group, name, i;
+        
+        for(i = 0; i < group_names.length; i += 1) {
+            group = groups[group_names[i]];
+            
+            if(group instanceof Array) {
+                group.length = 0;
+            }
+        }
+    }
     
     /* Simple gets
     */
