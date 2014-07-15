@@ -852,7 +852,7 @@ function PixelRendr(settings) {
         }
         if (readloc == null) readloc = 0;
         if (writeloc == null) writeloc = 0;
-        if (writelength == null) writelength = max(0, min(source.length, destination.length));
+        if (writelength == null) writelength = Math.max(0, Math.min(source.length, destination.length));
 
         var lwritelength = writelength + 0; // Allow JIT integer optimization (Firefox needs this)
         var lwriteloc = writeloc + 0;

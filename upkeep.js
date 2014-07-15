@@ -21,9 +21,13 @@ function maintainCharacters(update) {
     character = characters[i];
     // Gravity
     if(!character.resting) {
-      if(!character.nofall) character.yvel += character.gravity || map_settings.gravity;
-      character.yvel = min(character.yvel, map_settings.maxyvel);
-    } else character.yvel = 0;
+      if(!character.nofall) {
+        character.yvel += character.gravity || map_settings.gravity;
+      }
+      character.yvel = Math.min(character.yvel, map_settings.maxyvel);
+    } else {
+      character.yvel = 0;
+    }
     
     // Position updating and collision detection
     FSM.updatePosition(character);
@@ -113,7 +117,7 @@ function maintainPlayer(update) {
   // if(FSM.MapScreener.canscroll) {
     window.scrolloffset = player.right - FSM.MapScreener.middlex;
       if(scrolloffset > 0) {
-        FSM.scrollWindow(lastscroll = Math.round(min(player.scrollspeed, scrolloffset)));
+        FSM.scrollWindow(lastscroll = Math.round(Math.min(player.scrollspeed, scrolloffset)));
       }
   // }
   // else lastscroll = 0;

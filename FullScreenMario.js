@@ -2942,6 +2942,7 @@ window.FullScreenMario = (function() {
      * @param {Mixed} [location]
      */
     function setLocation(location) {
+        console.warn("FSM.setLocation does not respect FSM.player.power");
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
         EightBitter.TimeHandler.clearAllEvents();
@@ -3322,7 +3323,7 @@ window.FullScreenMario = (function() {
     function macroBridge(reference) {
         var x = reference.x || 0,
             y = reference.y || 0,
-            width = max(reference.width || 0, 16),
+            width = Math.max(reference.width || 0, 16),
             output = [];
 
         // A beginning column reduces the width and pushes it forward

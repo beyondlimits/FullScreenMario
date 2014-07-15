@@ -9,21 +9,15 @@ function startFSM() {
   // Thanks, Obama...
   ensureLocalStorage();
   
-  // I keep this cute little mini-library for some handy functions
-  TonedJS(true);
-  
-  // It's useful to keep references to the body
-  window.body = document.body;
-  window.bodystyle = body.style;
-  
   // Know when to shut up
   window.verbosity = { Maps: false, Sounds: false };
   
+  console.warn("checks like requestAnimationFrame use 16.667 as window.timer");
   window.requestAnimationFrame = window.requestAnimationFrame
                            || window.mozRequestAnimationFrame
                            || window.webkitRequestAnimationFrame
                            || window.msRequestAnimationFrame
-                           || function(func) { setTimeout(func, timer); };
+                           || function(func) { setTimeout(func, 16.667); };
   window.cancelAnimationFrame = window.cancelAnimationFrame
                            || window.webkitCancelRequestAnimationFrame
                            || window.mozCancelRequestAnimationFrame
@@ -52,7 +46,7 @@ function startFSM() {
   FSM.GamesRunner.upkeep();
   document.body.appendChild(FSM.StatsHolder.makeContainer());
   
-  log("It took " + (Date.now() - time_start) + " milliseconds to start.");
+  console.log("It took " + (Date.now() - time_start) + " milliseconds to start.");
 }
 
 // To do: add in a real polyfill
@@ -78,7 +72,6 @@ function ensureLocalStorage() {
 /* Basic reset operations */
 function resetMeasurements() {
   resetUnitsize(4);
-  resetTimer(1000 / 60);
   
   window.jumplev1 = 32;
   window.jumplev2 = 64;
@@ -100,13 +93,6 @@ function resetUnitsize(num) {
   }
   window.scale = unitsized2; // Typically 2
   window.gravity = Math.round(12 * unitsize) / 100; // Typically .48
-}
-
-function resetTimer(num) {
-  num = roundDigit(num, .001);
-  window.timer = window.timernorm = num;
-  window.timert2 = num * 2;
-  window.timerd2 = num / 2;
 }
 
 // Variables regarding the state of the game

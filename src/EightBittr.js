@@ -351,11 +351,11 @@ window.EightBittr = (function(settings) {
         
         //
         if(midy < y) {
-            thing.EightBitter.shiftVert(thing, min(maxspeed, (y - midy)));
+            thing.EightBitter.shiftVert(thing, Math.min(maxspeed, (y - midy)));
         }
         //
         else {
-            thing.EightBitter.shiftVert(thing, max(-maxspeed, (y - midy)));
+            thing.EightBitter.shiftVert(thing, Math.max(-maxspeed, (y - midy)));
         }
     }
     
@@ -383,19 +383,6 @@ window.EightBittr = (function(settings) {
     
     /* General utilities
     */
-    
-    /**
-     * Removes all setTimeout calls with clearTimeout
-     * @alias clearAllTimeouts
-     * @remarks _this is very expensive - use only on hard clearing
-     */
-    function clearAllTimeouts() {
-        var id = setTimeout(function() {});
-        while (id) {
-            clearTimeout(id);
-            id -= 1;
-        }
-    }
     
     /**
      * 
@@ -542,7 +529,6 @@ window.EightBittr = (function(settings) {
         // EightBittr Utilities
         "ensureCorrectCaller": ensureCorrectCaller,
         // General Utilities
-        "clearAllTimeouts": clearAllTimeouts,
         "proliferate": proliferate,
         "proliferateHard": proliferateHard,
         "createElement": createElement,

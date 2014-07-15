@@ -3,7 +3,7 @@
 // and messages, which would be from an index.html UI
 function resetTriggers() {
     window.InputWriter = FSM.InputWriter;
-    FSM.proliferate(body, {
+    FSM.proliferate(document.body, {
         "onkeydown": FSM.InputWriter.makePipe("onkeydown", "keyCode"),
         "onkeyup": FSM.InputWriter.makePipe("onkeyup", "keyCode"),
         "onmousedown": FSM.InputWriter.makePipe("onmousedown", "which"),

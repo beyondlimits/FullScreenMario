@@ -39,19 +39,19 @@ function gameOver() {
   // innerHTML += "You have run out of lives. Maybe you're not ready for playing real games...";
   innerHTML += "</p>";
   
-  body.className = "Night"; // to make it black
-  body.innerHTML = innerHTML;
+  document.body.className = "Night"; // to make it black
+  document.body.innerHTML = innerHTML;
   
   setTimeout(gameRestart, 7000);
 }
 
 function gameRestart() {
-  body.style.visibility = "hidden";
-  body.innerHTML = body.style.paddingTop = body.style.fontSize = "";
-  body.appendChild(canvas);
+  document.body.style.visibility = "hidden";
+  document.body.innerHTML = document.body.style.paddingTop = document.body.style.fontSize = "";
+  document.body.appendChild(canvas);
   gameon = true;
   FSM.setMap("1-1");
-  FSM.TimeHandler.addEvent(function() { body.style.visibility = ""; });
+  FSM.TimeHandler.addEvent(function() { document.body.style.visibility = ""; });
   FSM.StatsHolder.set("lives", 3);
 }
 
@@ -143,9 +143,9 @@ function endLevelPoints(me, detector) {
     if(FSM.StatsHolder.get("time") <= 0)  {
       // pause();
       clearInterval(points);
-      setTimeout(function() { endLevelFireworks(me, numfire, detector); }, timer * 49);
+      setTimeout(function() { endLevelFireworks(me, numfire, detector); }, 16.667 * 49);
     }
-  }, timer);
+  }, 16.667);
 }
 function endLevelFireworks(me, numfire, detector) {
   var nextnum, nextfunc,
@@ -155,7 +155,7 @@ function endLevelFireworks(me, numfire, detector) {
     var castlemid = detector.left + 32 * FullScreenMario.unitsize / 2;
     while(i < numfire)
       explodeFirework(++i, castlemid); // Pre-increment since explodeFirework expects numbers starting at 1
-    nextnum = timer * (i + 2) * 42;
+    nextnum = 16.667 * (i + 2) * 42;
   }
   else nextnum = 0;
   
@@ -173,7 +173,7 @@ function explodeFirework(num, castlemid) {
     // var fire = FSM.ObjectMaker.make("Firework");
     // addThing(fire, castlemid + fire.locs[0] -FullScreenMario.unitsize * 6,FullScreenMario.unitsize * 16 + fire.locs[1]);
     // fire.animate();
-  }, timer * num * 42);
+  }, 16.667 * num * 42);
 }
 function Firework(me, num) {
   me.width = me.height = 8;

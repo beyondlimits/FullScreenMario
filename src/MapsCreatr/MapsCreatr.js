@@ -334,7 +334,11 @@ function MapsCreatr(settings) {
         // Avoid modifying the original macro by creating a new object in its
         // place, while submissively proliferating any default macro settings
         outputs = macro(reference, prethings, area, map);
-        proliferate(outputs, macro_defaults, true);
+        for(i in macro_defaults) {
+            if(macro_defaults.hasOwnProperty(i) && !outputs.hasOwnProperty(i)) {
+                outputs[i] = macro_defaults[i];
+            }
+        }
         
         // If there is any output, recurse on all components of it, Array or not
         if(outputs) {

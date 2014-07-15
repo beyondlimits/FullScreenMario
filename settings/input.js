@@ -24,9 +24,9 @@
             }
             
             if(player.EightBitter.MapScreener.underwater) {
-                setTimeout(function() {
+                player.EightBitter.TimeHandler.addEvent(function () {
                     player.jumping = player.keys.jump = false;
-                }, timer * 14);
+                }, 14);
             }
         }
     }
