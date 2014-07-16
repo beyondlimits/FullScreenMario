@@ -560,7 +560,8 @@
                 nofire: true // for the "Super Fireballs" mod
             },
             detector: {
-                hidden: true
+                hidden: true,
+                collide_hidden: true
             },
             DetectCollision: {
                 collide: FullScreenMario.prototype.collideDetector

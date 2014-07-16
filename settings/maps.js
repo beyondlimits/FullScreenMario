@@ -30,6 +30,7 @@ FullScreenMario.prototype.settings.maps = {
         "Tree": FullScreenMario.prototype.macroTree,
         "Shroom": FullScreenMario.prototype.macroShroom,
         "Water": FullScreenMario.prototype.macroWater,
+        "CastleSmall": FullScreenMario.prototype.macroCastleSmall,
         "Ceiling": FullScreenMario.prototype.macroCeiling,
         "Bridge": FullScreenMario.prototype.macroBridge,
         "PlatformGenerator": FullScreenMario.prototype.macroPlatformGenerator,
@@ -232,7 +233,7 @@ FullScreenMario.prototype.settings.maps.maps = {
                       { "thing": "Stone", "x": 1200, "y": 24, "height": 24 },
                       { "thing": "Stone", "x": 1208, "y": 32, "height": 32 },
                       { "thing": "Stone", "x": 1216, "y": 32, "height": 32 },
-                      { "macro": "Floor", "x": 1240, "width": 552 },
+                      { "macro": "Floor", "x": 1240, "width": 656 },
                       { "thing": "Stone", "x": 1240, "y": 32, "height": 32 },
                       { "thing": "Stone", "x": 1248, "y": 24, "height": 24 },
                       { "thing": "Stone", "x": 1256, "y": 16, "height": 16 },
@@ -253,7 +254,7 @@ FullScreenMario.prototype.settings.maps.maps = {
                       { "thing": "Stone", "x": 1488, "y": 48, "height": 48 },
                       { "thing": "Stone", "x": 1496, "y": 56, "height": 56 },
                       { "thing": "Stone", "x": 1504, "y": 64, "height": 64, "width": 16 },
-                      { "macro": "EndOutsideCastle", "x": 1580, "y": 0 }
+                      { "macro": "EndOutsideCastle", "x": 1584, "y": 0 }
                 ]
             },
             {

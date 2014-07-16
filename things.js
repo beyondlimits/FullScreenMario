@@ -59,61 +59,6 @@ function detachPlayer(me) {
   player.resting = false;
 }
 
-function FlagCollisionTop(me, detector) {
-  FSM.AudioPlayer.pause();
-  FSM.AudioPlayer.play("Flagpole");
-  
-  // All other characters die, and the player is no longer in control
-  FSM.killNPCs();
-  nokeys = notime = true;
-
-  // The player also is frozen in this dropping state, on the pole
-  me.xvel = me.yvel = 0;
-  me.dropping = me.nofall = me.nocollidechar = 1;
-  FSM.setRight(me, detector.left);
-  
-  // Visually, the player is now climbing, and invincible
-  ++me.star;
-  FSM.removeClasses(me, "running jumping skidding");
-  FSM.addClass(me, "climbing animated");
-  FSM.TimeHandler.addSpriteCycle(me, ["one", "two"], "climbing");
-  
-  // Start moving the player down, as well as the end flag
-  var endflag = FSM.MapsHandler.getArea().getThingByID("endflag"),
-      bottom_cap = (FSM.MapsHandler.floor - 9) * FullScreenMario.unitsize;
-  me.movement = function(me) { 
-    if(me.bottom < bottom_cap)
-      FSM.shiftVert(me,FullScreenMario.unitsize);
-    if(endflag.bottom < bottom_cap)
-      FSM.shiftVert(endflag,FullScreenMario.unitsize);
-    
-    // If both are at the bottom, clear climbing and allow walking
-    if(me.bottom >= bottom_cap && endflag.bottom >= bottom_cap) {
-      me.movement = false;
-      FSM.TimeHandler.clearClassCycle(me, "climbing");
-      
-      // Wait a little bit to FlagOff, which will start the player walking
-      thing.EightBitter.TimeHandler.addEvent(FlagOff, 21, me);
-    }
-  }
-}
-
-function FlagOff(me, solid) {
-  // Flip the player to the other side of the solid
-  FSM.flipHoriz(me);
-  FSM.shiftHoriz(me, (me.width + 1) * FullScreenMario.unitsize);
-  
-  // Prepare the player to walk to the right
-  me.keys.run = 1;
-  me.maxspeed = me.walkspeed;
-  
-  // The walking happens a little bit later as well
-  FSM.TimeHandler.addEvent(function() {
-    FSM.AudioPlayer.play("Stage Clear");
-    playerHopsOff(me, true);
-  }, 14, me);
-}
-
 // Me === Player
 function endLevelPoints(me, detector) {
   if(!me || !me.player) return;
