@@ -610,11 +610,11 @@
             String: [1, 1],
             TreeTrunk: [4, 4],
             Water: {
-                0: 4,
-                1: 5,
-                spriteCycle: [
-                    ["one", "two", "three", "four"]
-                ]
+                "width": 4,
+                "height": 5,
+                // spriteCycle: [
+                    // ["one", "two", "three", "four"]
+                // ]
             },
             WaterFill: [4, 5],
             "text": {

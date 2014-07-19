@@ -3269,8 +3269,10 @@ window.FullScreenMario = (function() {
         var EightBitter = EightBittr.ensureCorrectCaller(this),
             location;
         
-        EightBitter.AudioPlayer.pause();
+        EightBitter.MapScreener.nokeys = false;
+        EightBitter.MapScreener.notime = false;
         EightBitter.MapScreener.clearScreen();
+        EightBitter.AudioPlayer.pause();
         EightBitter.GroupHolder.clearArrays();
         EightBitter.TimeHandler.clearAllEvents();
         
@@ -3290,6 +3292,8 @@ window.FullScreenMario = (function() {
         location.entry(EightBitter, location);
         
         EightBitter.ModAttacher.fireEvent("onSetLocation");
+        
+        EightBitter.GamesRunner.unpause();
     }
     
     /* Map entrances
@@ -3675,14 +3679,14 @@ window.FullScreenMario = (function() {
      * @param {Object} reference   A listing of the settings for this macro,
      *                             from an Area's .creation Object.
      */
-    function macroWater(reference) {
+    function macroWater(reference, prethings, area, map, scope) {
         var x = reference.x || 0,
             y = (reference.y || 0) + 2, // water is 3.5 x 5.5
             output = proliferate({
                 "thing": "Water",
                 "x": x,
                 "y": y,
-                "height": DtB(y),
+                "height": scope.getAbsoluteHeight(y),
                 "macro": undefined
             }, reference, true);
         
@@ -3866,14 +3870,14 @@ window.FullScreenMario = (function() {
      * @param {Object} reference   A listing of the settings for this macro,
      *                             from an Area's .creation Object.
      */
-    function macroStartInsideCastle(reference) {
+    function macroStartInsideCastle(reference, prethings, area, map, scope) {
         var x = reference.x || 0,
             y = reference.y || 0,
             width = (reference.width || 0) - 40,
             output = [
-                { "thing": "Stone", "x": x, "y": y + 48, "width": 24, "height": DtB(48) },
-                { "thing": "Stone", "x": x + 24, "y": y + 40, "width": 8, "height": DtB(40) },
-                { "thing": "Stone", "x": x + 32, "y": y + 32, "width": 8, "height": DtB(32) }
+                { "thing": "Stone", "x": x, "y": y + 48, "width": 24, "height": scope.getAbsoluteHeight(48) },
+                { "thing": "Stone", "x": x + 24, "y": y + 40, "width": 8, "height": scope.getAbsoluteHeight(40) },
+                { "thing": "Stone", "x": x + 32, "y": y + 32, "width": 8, "height": scope.getAbsoluteHeight(32) }
             ];
         
         if(width > 0) {
