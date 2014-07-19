@@ -558,6 +558,9 @@
                     }
                 }
             },
+            PlatformGenerator: {
+                hidden: true
+            },
             Floor: {
                 nofire: true // for the "Super Fireballs" mod
             },

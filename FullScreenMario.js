@@ -188,7 +188,8 @@ window.FullScreenMario = (function() {
             "group_types": ["Character", "Scenery", "Solid", "Text"],
             "macros": self.settings.maps.macros,
             "entrances": self.settings.maps.entrances,
-            "maps": self.settings.maps.maps
+            "maps": self.settings.maps.maps,
+            "scope": self
         });
     }
     
@@ -3468,13 +3469,14 @@ window.FullScreenMario = (function() {
      * @param {Area} area   The area currently being generated.
      * @param {Map} map   The map containing the area currently being generated.
      */
-    function macroExample(reference, prethings, area, map) {
+    function macroExample(reference, prethings, area, map, scope) {
         console.log("This is a macro that may be called by a map creation.");
         console.log("The arguments are:\n");
         console.log("Reference (the listing from area.creation):  ", reference);
         console.log("Prethings (the area's listing of prethings): ", prethings);
         console.log("Area      (the currently generated area):    ", area);
         console.log("Map       (the map containing the area):     ", map);
+        console.log("Scope     (the custom scope container):      ", scope);
     }
     
     /**
@@ -3494,11 +3496,12 @@ window.FullScreenMario = (function() {
      * @example   { "macro": "Fill", "thing": "Brick",
      *              "x": 644, "y": 64, "xnum": 5, "xwidth": 8 }
      */
-    function macroFillPreThings(reference) {
-        var xnum = reference.xnum || 1,
+    function macroFillPreThings(reference, prethings, area, map, scope) {
+        var defaults = scope.ObjectMaker.getPropertiesFull(),
+            xnum = reference.xnum || 1,
             ynum = reference.ynum || 1,
-            xwidth = reference.xwidth || 0,
-            yheight = reference.yheight || 0,
+            xwidth = reference.xwidth || defaults[reference.thing].width,
+            yheight = reference.yheight || defaults[reference.thing].height,
             x = reference.x || 0,
             yref = reference.y || 0,
             ynum = reference.ynum || 1,
@@ -3532,7 +3535,7 @@ window.FullScreenMario = (function() {
      *                           listing in this.patterns.
      * @param {Number} repeat   How many times to repeat the overall pattern.
      */
-    function macroFillPrePattern(reference) {
+    function macroFillPrePattern(reference, prethings, area, map, scope) {
         // Make sure the pattern exists before doing anything
         if(!FullScreenMario.prototype.settings.maps.patterns[reference.pattern]) {
             console.warn("An unknown pattern is referenced: " + reference);
@@ -3540,8 +3543,7 @@ window.FullScreenMario = (function() {
         }
         var pattern = FullScreenMario.prototype.settings.maps.patterns[reference.pattern],
             length = pattern.length,
-            // Problem: see where defaults[...].height is referenced below
-            defaults = FullScreenMario.prototype.settings.things.properties,
+            defaults = scope.ObjectMaker.getPropertiesFull(),
             repeats = reference.repeat || 1,
             xpos = reference.x || 0,
             ypos = reference.y || 0,
@@ -3559,8 +3561,7 @@ window.FullScreenMario = (function() {
                     "x": xpos + prething[1],
                     "y": ypos + prething[2]
                 };
-                // .height will be stored as either .height or [1] (scenery)
-                output.y += (defaults[prething[0]].height || defaults[prething[0]][1]);
+                output.y += defaults[prething[0]].height;
                 
                 outputs[o] = output;
                 o += 1;

@@ -35,7 +35,10 @@ function MapsCreatr(settings) {
         key_group_type,
         
         // What key to check for if a PreThing's Thing is a Location's entrance
-        key_entrance;
+        key_entrance,
+        
+        // An optional scope to pass to macros as an argument after maps
+        scope;
     
     /**
      * 
@@ -59,6 +62,7 @@ function MapsCreatr(settings) {
         macros = settings.macros || {};
         macro_defaults = settings.macro_defaults || {};
         entrances = settings.entrances || {};
+        scope = settings.scope || self;
         
         maps = {};
         if(settings.maps) {
@@ -345,7 +349,7 @@ function MapsCreatr(settings) {
         
         // Avoid modifying the original macro by creating a new object in its
         // place, while submissively proliferating any default macro settings
-        outputs = macro(reference, prethings, area, map);
+        outputs = macro(reference, prethings, area, map, scope);
         for(i in macro_defaults) {
             if(macro_defaults.hasOwnProperty(i) && !outputs.hasOwnProperty(i)) {
                 outputs[i] = macro_defaults[i];
