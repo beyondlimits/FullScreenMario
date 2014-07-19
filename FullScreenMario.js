@@ -214,7 +214,11 @@ window.FullScreenMario = (function() {
      *                          input.js (settings/input.js)
      */
     function resetInputWriter(self) {
-        self.InputWriter = new InputWritr(self.settings.input);
+        self.InputWriter = new InputWritr(proliferate({
+            "can_trigger": function () {
+                return !self.MapScreener.nokeys;
+            }
+        }, self.settings.input));
     }
     
     /**
@@ -262,6 +266,23 @@ window.FullScreenMario = (function() {
         EightBitter.AudioPlayer.play("Game Over");
         
         setTimeout(EightBitter.gameStart.bind(EightBitter), 7000);
+    }
+    
+    /**
+     * 
+     */
+    function nextLevel() {
+        var EightBitter = EightBittr.ensureCorrectCaller(this),
+            ints = EightBitter.MapsHandler.getMapName().split("-").map(Number);
+        
+        if(ints[1] > 3) {
+            ints[0] += 1;
+            ints[1] = 1;
+        } else {
+            ints[1] += 1;
+        }
+        
+        EightBitter.setMap(ints.join("-"));
     }
     
     /**
@@ -1846,6 +1867,36 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function collideCastleDoor(thing, other) {
+        var time = thing.EightBitter.StatsHolder.get("time"),
+            timeStr = String(time),
+            numFireworks = Number(timeStr[timeStr.length - 1]);
+        
+        thing.EightBitter.killNormal(thing);
+        if(!thing.player) {
+            return;
+        }
+        
+        if(!(numFireworks === 1 || numFireworks === 3 || numFireworks === 6)) {
+            numFireworks = 0;
+        }
+        
+        thing.EightBitter.TimeHandler.addEventInterval(function () {
+            console.log("Decreasing");
+            thing.EightBitter.StatsHolder.decrease("time");
+            thing.EightBitter.StatsHolder.increase("score", 50);
+            thing.EightBitter.AudioPlayer.play("Coin");
+            
+            if(thing.EightBitter.StatsHolder.get("time") <= 0) {
+                thing.EightBitter.animateEndLevelFireworks(thing, numFireworks);
+                return true;
+            }
+        }, 1, Infinity);
+    }
+    
+    /**
+     * 
+     */
     function collideTransport(thing, other) {
         thing.EightBitter.collideCharacterSolid(me, other);
         if(thing.resting !== other) {
@@ -1872,6 +1923,26 @@ window.FullScreenMario = (function() {
         other.activate(thing, other);
         thing.EightBitter.killNormal(other);
     }
+    
+    /**
+     * 
+     */
+    function collideLevelTransport(thing, other) {
+        if(other.transport) {
+            switch(other.transport.type) {
+                case "location":
+                    thing.EightBitter.setLocation(other.transport.value);
+                    break;
+                case "map":
+                    thing.EightBitter.setMap(other.transport.value);
+                    break;
+                default:
+                    throw new Error("Unknown transport type:", other.transport);
+            }
+        } else {
+            thing.EightBitter.nextLevel();
+        }
+    }   
     
     
     /* Movement functions
@@ -2198,7 +2269,7 @@ window.FullScreenMario = (function() {
             thing.xvel += decel;
         } else if(thing.xvel != 0) {
             thing.xvel = 0;
-            if(!window.nokeys && thing.keys.run == 0) {
+            if(!thing.EightBitter.MapScreener.nokeys && thing.keys.run == 0) {
                 if(thing.keys.left_down) {
                     thing.keys.run = -1;
                 } else if(thing.keys.right_down) {
@@ -2477,6 +2548,21 @@ window.FullScreenMario = (function() {
         thing.EightBitter.TimeHandler.addEvent(function () {
             thing.EightBitter.killNormal(thing);
         }, i * 7);
+    }
+    
+    /**
+     * 
+     */
+    function animateEndLevelFireworks(thing, numFireworks) {
+        var i;
+        
+        for(i = 0; i < numFireworks; i += 1) {
+            console.log("put firework", i * 42);
+        }
+        
+        thing.EightBitter.AudioPlayer.addEventImmediate("Stage Clear", "ended", function () {
+            thing.EightBitter.nextLevel();
+        }, numFireworks * 42);
     }
     
     /**
@@ -3217,6 +3303,17 @@ window.FullScreenMario = (function() {
             EightBitter.player.height * EightBitter.unitsize * -1
         );
     }
+     
+     /**
+      * 
+      */
+     function mapEntranceNormal(EightBitter) {
+        EightBitter.mapEntranceGeneral(
+            EightBitter,
+            EightBitter.unitsize * 16,
+            EightBitter.unitsize * 16
+        );
+     }
     
     /**
      * 
@@ -3233,12 +3330,14 @@ window.FullScreenMario = (function() {
      /**
       * 
       */
-     function mapEntranceNormal(EightBitter) {
-        EightBitter.mapEntranceGeneral(
-            EightBitter,
-            EightBitter.unitsize * 16,
-            EightBitter.unitsize * 16
-        );
+     function mapEntranceWalking(EightBitter) {
+        EightBitter.mapEntrancePlain(EightBitter);
+        
+        EightBitter.player.keys.run = 1;
+        EightBitter.player.maxspeed = EightBitter.player.walkspeed;
+        
+        EightBitter.MapScreener.nokeys = true;
+        EightBitter.MapScreener.notime = true;
      }
      
     /**
@@ -3743,12 +3842,21 @@ window.FullScreenMario = (function() {
             });
         }
         
-        // Door
+        // Door, and detector if required
         output.push({
             "thing": "CastleDoor",
             "x": x + 40,
             "y": y + 20
         });
+        if(reference.transport) {
+            output.push({
+                "thing": "DetectCollision",
+                "x": x + 56,
+                "y": y + 20,
+                "height": 16,
+                "activate": FullScreenMario.prototype.collideCastleDoor
+            });
+        }
         
         return output;
     }
@@ -3803,7 +3911,8 @@ window.FullScreenMario = (function() {
         output.push({
             "macro": "CastleSmall",
             "x": x + 8,
-            "y": y
+            "y": y,
+            "transport": "setNextLevel"
         });
 
         // If this is a big castle (*-3), a large ending castle is used
@@ -3850,6 +3959,7 @@ window.FullScreenMario = (function() {
         // Global manipulations
         "gameStart": gameStart,
         "gameOver": gameOver,
+        "nextLevel": nextLevel,
         "addThing": addThing,
         "addPlayer": addPlayer,
         "thingProcess": thingProcess,
@@ -3904,8 +4014,10 @@ window.FullScreenMario = (function() {
         "collideBottomBlock": collideBottomBlock,
         "collideFlagTop": collideFlagTop,
         "collideFlagBottom": collideFlagBottom,
+        "collideCastleDoor": collideCastleDoor,
         "collideTransport": collideTransport,
         "collideDetector": collideDetector,
+        "collideLevelTransport": collideLevelTransport,
         // Movement
         "moveSimple": moveSimple,
         "moveSmart": moveSmart,
@@ -3929,6 +4041,7 @@ window.FullScreenMario = (function() {
         "animateFireballEmerge": animateFireballEmerge,
         "animateFireballExplode": animateFireballExplode,
         "animateFirework": animateFirework,
+        "animateEndLevelFireworks": animateEndLevelFireworks,
         "animatePlayerFire": animatePlayerFire,
         "animatePlayerPaddling": animatePlayerPaddling,
         "animatePlayerBubbling": animatePlayerBubbling,
@@ -3989,8 +4102,9 @@ window.FullScreenMario = (function() {
         "setLocation": setLocation,
         // Map entrances
         "mapEntranceGeneral": mapEntranceGeneral,
-        "mapEntrancePlain": mapEntrancePlain,
         "mapEntranceNormal": mapEntranceNormal,
+        "mapEntrancePlain": mapEntrancePlain,
+        "mapEntranceWalking": mapEntranceWalking,
         "mapEntranceCastle": mapEntranceCastle,
         "mapEntrancePipeVertical": mapEntrancePipeVertical,
         "mapEntrancePipeHorizontal": mapEntrancePipeHorizontal,

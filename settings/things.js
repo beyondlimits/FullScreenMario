@@ -116,7 +116,9 @@
                     "CastleBridge": {},
                     "Coral": {},
                     "detector": {
-                        "DetectCollision": {},
+                        "DetectCollision": {
+                            "LevelTransport": {}
+                        },
                         "DetectSpawn": {}
                     },
                 },
@@ -565,6 +567,9 @@
             },
             DetectCollision: {
                 collide: FullScreenMario.prototype.collideDetector
+            },
+            LevelTransport: {
+                activate: FullScreenMario.prototype.collideLevelTransport,
             },
             DetectSpawn: {
                 movement: FullScreenMario.prototype.spawnDetector

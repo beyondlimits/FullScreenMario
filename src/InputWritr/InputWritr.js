@@ -31,6 +31,9 @@ function InputWritr(settings) {
         // An object to be passed to event calls, commonly with key information
         // (such as "Down" => 0 }
         event_information,
+        
+        // An optional boolean callback to disable or enable input triggers
+        can_trigger,
 
         // Whether to record events into the history
         recording;
@@ -57,6 +60,7 @@ function InputWritr(settings) {
         triggers = settings.triggers || {};
         recipients = settings.recipients || {};
         event_information = settings.event_information;
+        can_trigger = settings.can_trigger;
         recording = settings.hasOwnProperty("recording") ? settings.recording : true;
         
         self.addAliases(settings.aliases || {});
@@ -274,7 +278,11 @@ function InputWritr(settings) {
      * @return {Mixed}
      */
     function callEvent(event, keycode) {
-        // If the event doesn't exist, ignore it and display a stack trace
+        if(can_trigger && !can_trigger(event, keycode)) {
+            return;
+        }
+        
+        // If the event doesn't exist, ignore it
         if (!event) {
             console.warn("Blank event given, ignoring it.");
             return;
