@@ -77,7 +77,7 @@ function ObjectMakr(settings) {
             console.error("Unknown type given to ObjectMakr:", type);
             return;
         }
-
+        
         // Create the new object, copying any given settings
         output = new functions[type]();
         if (settings) {
@@ -85,7 +85,11 @@ function ObjectMakr(settings) {
         }
 
         if (on_make && output[on_make]) {
-            output[on_make](output, type, properties[type], functions[type].prototype);
+            if(do_properties_full) {
+                output[on_make](output, type, properties[type], properties_full[type]);
+            } else {
+                output[on_make](output, type, properties[type], functions[type].prototype);
+            }
         }
 
         return output;
@@ -232,17 +236,18 @@ function ObjectMakr(settings) {
                 // from both this and its parent to its equivalent
                 if(do_properties_full) {
                     properties_full[name] = {};
-                    for (ref in properties[name]) {
-                        if (properties[name].hasOwnProperty(ref)) {
-                            properties_full[name][ref] = properties[name][ref];
-                        }
-                    }
                     
                     if(parentName) {
                         for (ref in properties_full[parentName]) {
                             if (properties_full[parentName].hasOwnProperty(ref)) {
                                 properties_full[name][ref] = properties_full[parentName][ref];
                             }
+                        }
+                    }
+                    
+                    for (ref in properties[name]) {
+                        if (properties[name].hasOwnProperty(ref)) {
+                            properties_full[name][ref] = properties[name][ref];
                         }
                     }
                 }

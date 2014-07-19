@@ -214,7 +214,6 @@
                 // Placement
                 alive: true,
                 placed: false,
-                grouping: "solid",
                 // Quadrants
                 maxquads: 4,
                 outerok: false,
@@ -230,7 +229,6 @@
                 movement: false
             },
             character: {
-                grouping: "character",
                 libtype: "characters",
                 grouptype: "Character",
                 character: true,
@@ -463,6 +461,7 @@
             },
             Coin: {
                 width: 5,
+                spritewidth: 5,
                 height: 7,
                 nofall: true,
                 nocollidechar: true,
@@ -473,7 +472,6 @@
                 ]
             },
             solid: {
-                grouping: "solid",
                 type: "solid",
                 libtype: "solids",
                 grouptype: "Solid",
@@ -578,7 +576,6 @@
                 movement: FullScreenMario.prototype.spawnDetector
             },
             scenery: {
-                grouping: "scenery",
                 libtype: "scenery",
                 grouptype: "Scenery",
                 repeat: true
@@ -621,7 +618,6 @@
             },
             WaterFill: [4, 5],
             "text": {
-                "grouping": "Text",
                 "libtype": "Text",
                 "grouptype": "Text",
             },

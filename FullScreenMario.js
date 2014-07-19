@@ -370,7 +370,7 @@ window.FullScreenMario = (function() {
         if(thing.width && !thing.spritewidth) {
             thing.spritewidth = defaults.spritewidth || defaults.width;
         }
-        if(thing.height && thing.spriteheight) {
+        if(thing.height && !thing.spriteheight) {
             thing.spriteheight = defaults.spriteheight || defaults.height;
         }
         
@@ -413,7 +413,8 @@ window.FullScreenMario = (function() {
         }
         
         // Initial class / sprite setting
-        FSM.setClassInitial(thing, thing.name || thing.title);
+        thing.EightBitter.setSize(thing, thing.width, thing.height);
+        thing.EightBitter.setClassInitial(thing, thing.name || thing.title);
         
         // Sprite cycles
         var cycle;
@@ -1491,7 +1492,7 @@ window.FullScreenMario = (function() {
         }
         
         // Hitting a solid (e.g. wall) 
-        if(thing.grouping === "solid") {
+        if(thing.grouptype === "Solid") {
             return thing.EightBitter.collideShellSolid(thing, other);
         }
         
@@ -2035,15 +2036,15 @@ window.FullScreenMario = (function() {
      *          .begin is the bottom and .end is the top (since begin <= end)
      */
     function moveFloating(thing) {
-        // Make sure thing.begin <= thing.end
-        thing.EightBitter.setPlatformEndpoints(thing);
+        // // Make sure thing.begin <= thing.end
+        // thing.EightBitter.setPlatformEndpoints(thing);
         
-        // Make thing.begin and thing.end relative to the area's floor
-        thing.begin = thing.EightBitter.MapScreener.floor * thing.EightBitter.unitsize - thing.begin;
-        thing.end = thing.EightBitter.MapScreener.floor * thing.EightBitter.unitsize - thing.end;
+        // // Make thing.begin and thing.end relative to the area's floor
+        // thing.begin = thing.EightBitter.MapScreener.floor * thing.EightBitter.unitsize - thing.begin;
+        // thing.end = thing.EightBitter.MapScreener.floor * thing.EightBitter.unitsize - thing.end;
         
-        // Use moveFloatingReal as the actual movement function from now on
-        (thing.movement = thing.EightBitter.moveFloatingReal)(thing);
+        // // Use moveFloatingReal as the actual movement function from now on
+        // (thing.movement = thing.EightBitter.moveFloatingReal)(thing);
     }
     
     /**
@@ -3599,8 +3600,7 @@ window.FullScreenMario = (function() {
      * @param {Object} reference   A listing of the settings for this macro,
      *                             from an Area's .creation Object.
      */
-    function macroPipe(reference) {
-        console.warn("macroPipe uses FSM.MapScreener for pipe height");
+    function macroPipe(reference, prethings, area, map, scope) {
         var x = reference.x || 0,
             y = reference.y || 0,
             height = reference.height || 16,
@@ -3616,7 +3616,7 @@ window.FullScreenMario = (function() {
         pipe.macro = undefined;
         
         if(height == "Infinity") {
-            pipe.height = FSM.MapScreener.height;
+            pipe.height = scope.MapScreener.height;
         } else {
             pipe.y += height;
         }
@@ -3638,13 +3638,12 @@ window.FullScreenMario = (function() {
      * @param {Object} reference   A listing of the settings for this macro,
      *                             from an Area's .creation Object.
      */
-    function macroTree(reference) {
-        console.warn("macroTree uses FSM.MapScreener for pipe height");
+    function macroTree(reference, prethings, area, map, scope) {
         // Although the tree trunks in later trees overlap earlier ones, it's ok
         // because the pattern is indistinguishible when placed correctly.
         var x = reference.x || 0,
             y = reference.y || 0,
-            dtb = FSM.MapScreener.getAbsoluteHeight(y),
+            dtb = scope.getAbsoluteHeight(y),
             width = reference.width || 24;
         
         return [
@@ -3659,11 +3658,10 @@ window.FullScreenMario = (function() {
      * @param {Object} reference   A listing of the settings for this macro,
      *                             from an Area's .creation Object.
      */
-    function macroShroom(reference) {
-        console.warn("macroShroom uses FSM.MapScreener for pipe height");
+    function macroShroom(reference, prethings, area, map, scope) {
         var x = reference.x || 0,
             y = reference.y || 0,
-            dtb = FSM.MapScreener.getAbsoluteHeight(y),
+            dtb = scope.getAbsoluteHeight(y),
             width = reference.width || 24;
         return [
             { "thing": "ShroomTop", "x": x, "y": y, "width": width },

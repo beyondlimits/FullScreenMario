@@ -183,6 +183,9 @@ function MapsCreatr(settings) {
                 // obj.map = map;
                 
                 // Location entrances should actually be the keyed functions
+                if(!entrances.hasOwnProperty(obj.entry)) {
+                    throw new Error("Location " + i + " has unknown entry string: " + obj.entry);
+                }
                 obj.entry_raw = obj.entry;
                 obj.entry = entrances[obj.entry];
             }
