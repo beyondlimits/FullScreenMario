@@ -224,6 +224,7 @@ function ObjectMakr(settings) {
 
                 // This sets the function as inheriting from the parent
                 functions[name].prototype = new Parent();
+                functions[name].prototype.constructor = functions[name];
 
                 // Add each property from properties to the function prototype
                 for (ref in properties[name]) {

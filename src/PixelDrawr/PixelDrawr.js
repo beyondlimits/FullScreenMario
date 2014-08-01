@@ -111,6 +111,10 @@ function PixelDrawr(settings) {
      * @private
      */
     function refillThingCanvasSingle(thing) {
+        if(thing.width < 1 || thing.height < 1) {
+            return;
+        }
+        
         var canvas = thing.canvas,
             context = thing.context,
             imageData = context.getImageData(0, 0, canvas.width, canvas.height);

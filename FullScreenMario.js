@@ -249,7 +249,7 @@ window.FullScreenMario = (function() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
         
-        EightBitter.setMap("1-4");
+        EightBitter.setMap("1-1");
         EightBitter.StatsHolder.set("lives", 3);
         EightBitter.GamesRunner.upkeep();
         EightBitter.GamesRunner.unpause();
@@ -1290,6 +1290,14 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function spawnPirhana(thing) {
+        thing.counter = 0;
+        thing.direction = -.1;
+    }
+    
+    /**
+     * 
+     */
     function spawnDetector(thing) {
         thing.activate(thing);
         thing.EightBitter.killNormal(thing);
@@ -2197,6 +2205,49 @@ window.FullScreenMario = (function() {
                 "smart": thing.smart
             };
             thing.EightBitter.killSpawn(thing);
+        }
+    }
+    
+    /**
+     * 
+     */
+    function movePirhana(thing) {
+        var height = thing.height + thing.direction,
+            at_end = false;
+        
+        if(height <= 0) {
+            height = thing.height = 0;
+            at_end = true;
+        } else if(height >= thing.constructor.prototype.height) {
+            height = thing.height = thing.constructor.prototype.height;
+            at_end = true;
+        }
+        
+        thing.EightBitter.setHeight(thing, height, true, true);
+        
+        if(at_end) {
+            thing.counter = 0;
+            thing.movement = movePirhanaLatent;
+        }
+    }
+    
+    /**
+     * 
+     */
+    function movePirhanaLatent(thing) {
+        var playerx = thing.EightBitter.getMidX(thing.EightBitter.player);
+        
+        if(thing.counter >= thing.countermax
+                && (playerx < thing.left - thing.EightBitter.unitsize * 8
+                    || playerx > thing.right + thing.EightBitter.unitsize * 8)) {
+            thing.movement = undefined;
+            thing.direction *= -1;
+            
+            thing.EightBitter.TimeHandler.addEvent(function () {
+                thing.movement = thing.EightBitter.movePirhana;
+            }, 7);
+        } else {
+            thing.counter += 1;
         }
     }
     
@@ -3650,7 +3701,7 @@ window.FullScreenMario = (function() {
         
         if(reference.pirhana) {
             output.push({
-                "thing": "Pirhana",
+                "thing": "Piranha",
                 "x": reference.x + 4,
                 "y": pipe.y + 12
             });
@@ -4024,6 +4075,7 @@ window.FullScreenMario = (function() {
         "setPlayerSizeLarge": setPlayerSizeLarge,
         "playerRemoveCrouch": playerRemoveCrouch,
         // Spawn / actions
+        "spawnPirhana": spawnPirhana,
         "spawnDetector": spawnDetector,
         "activateWindowDetector": activateWindowDetector,
         "activateScrollBlocker": activateScrollBlocker,
@@ -4058,6 +4110,7 @@ window.FullScreenMario = (function() {
         "moveSlidingReal": moveSlidingReal,
         "movePlatform": movePlatform,        "moveFalling": moveFalling,        "moveFreeFalling": moveFreeFalling,
         "moveShell": moveShell,
+        "movePirhana": movePirhana,
         "moveCoinEmerge": moveCoinEmerge,
         "movePlayer": movePlayer,
         // Animations

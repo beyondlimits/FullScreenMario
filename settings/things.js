@@ -151,7 +151,6 @@
                     "FlagTop": {},
                     "HillSmall": {},
                     "HillLarge": {},
-                    "PiranhaScenery": {},
                     "PlantSmall": {},
                     "PlantLarge": {},
                     "Railing": {},
@@ -337,14 +336,13 @@
             },
             Piranha: {
                 height: 12,
-                counter: 0,
-                countermax: 12 * FullScreenMario.unitsize,
-                dir: FullScreenMario.unitsize / 8,
                 toly: FullScreenMario.unitsize * 8,
+                countermax: 49,
                 nofall: true,
                 deadly: true,
                 nocollidesolid: true,
-                movement: false,
+                movement: FullScreenMario.prototype.movePirhana,
+                onThingMake: FullScreenMario.prototype.spawnPirhana,
                 spriteCycleSynched: [
                     ["one", "two"]
                 ]
@@ -612,7 +610,6 @@
             Fence: [8, 8],
             HillSmall: [24, 9.5],
             HillLarge: [40, 17.5],
-            PiranhaScenery: [8, 12],
             PlantSmall: [7, 15],
             PlantLarge: [8, 23],
             Railing: [4, 4],
