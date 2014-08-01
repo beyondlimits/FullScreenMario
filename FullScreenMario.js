@@ -249,7 +249,7 @@ window.FullScreenMario = (function() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
         
-        EightBitter.setMap("1-1");
+        EightBitter.setMap("1-4");
         EightBitter.StatsHolder.set("lives", 3);
         EightBitter.GamesRunner.upkeep();
         EightBitter.GamesRunner.unpause();
@@ -478,7 +478,7 @@ window.FullScreenMario = (function() {
         FSM.setLeft(player, saveleft);
         FSM.setTop(player, savetop);
     }
-    
+        
     
     /* Upkeep maintenence
     */
@@ -648,7 +648,8 @@ window.FullScreenMario = (function() {
      * @return {Boolean}
      * @remarks Only the horizontal checks use unitsize
      */
-    function isThingTouchingThing(thing, other) {        return !thing.nocollide && !other.nocollide
+    function isThingTouchingThing(thing, other) {
+        return !thing.nocollide && !other.nocollide
                 && thing.right - thing.EightBitter.unitsize > other.left
                 && thing.left + thing.EightBitter.unitsize < other.right
                 && thing.bottom >= other.top
@@ -799,7 +800,7 @@ window.FullScreenMario = (function() {
      */
     function isCharacterTouchingSolid(thing, other) {        // Hidden solids can only be touched by the player bottom-bumping them,
         // or by specifying collide_hidden
-        if(other.hidden && !other.collide_hidden) {            if(!thing.player || !thing.EightBitter.isSolidOnCharacter(other, thing)) {                return;            }
+        if(other.hidden && !other.collide_hidden) {            if(!thing.player || !thing.EightBitter.isSolidOnCharacter(other, thing)) {                return false;            }
         }
         
         return thing.EightBitter.isThingTouchingThing(thing, other);
@@ -1280,6 +1281,39 @@ window.FullScreenMario = (function() {
             FSM.player.EightBitter.updateBottom(FSM.player, 0);
             FSM.player.EightBitter.updateSize(FSM.player);
         }
+    }
+    
+    
+    /* Spawn / activate functions
+    */
+    
+    /**
+     * 
+     */
+    function spawnDetector(thing) {
+        thing.activate(thing);
+        thing.EightBitter.killNormal(thing);
+    }
+    
+    /**
+     * 
+     */
+    function activateWindowDetector(thing) {
+        if(thing.EightBitter.MapScreener.right - thing.EightBitter.MapScreener.left
+            < thing.left) {
+            return;
+        }
+        
+        
+        thing.activate(thing);
+        thing.EightBitter.killNormal(thing);
+    }
+    
+    /**
+     * 
+     */
+    function activateScrollBlocker(thing) {
+        thing.EightBitter.MapScreener.canscroll = false;
     }
     
     
@@ -2696,18 +2730,6 @@ window.FullScreenMario = (function() {
     }
     
     
-    /* Spawn functions
-    */
-    
-    /**
-     * 
-     */
-    function spawnDetector(thing) {
-        thing.activate(thing);
-        thing.EightBitter.killNormal(thing);
-    }
-    
-    
     /* Appearance utilities
     */
     
@@ -3072,9 +3094,9 @@ window.FullScreenMario = (function() {
         thing.EightBitter.StatsHolder.decrease("lives");
         
         if(thing.EightBitter.StatsHolder.get("lives") > 0) {
-            thing.EightBitter.TimeHandler.addEvent(setMap, 280);
+            thing.EightBitter.TimeHandler.addEvent(setMap.bind(thing.EightBitter), 280);
         } else {
-            thing.EightBitter.TimeHandler.addEvent(gameOver, 280);
+            thing.EightBitter.TimeHandler.addEvent(gameOver.bind(thing.EightBitter), 280);
         }
     }
     
@@ -3271,6 +3293,7 @@ window.FullScreenMario = (function() {
         
         EightBitter.MapScreener.nokeys = false;
         EightBitter.MapScreener.notime = false;
+        EightBitter.MapScreener.canscroll = true;
         EightBitter.MapScreener.clearScreen();
         EightBitter.AudioPlayer.pause();
         EightBitter.GroupHolder.clearArrays();
@@ -3952,7 +3975,7 @@ window.FullScreenMario = (function() {
             { "thing": "Stone", "x": x + 104, "y": y + 32, "width": 24, "height": 32 },
             { "thing": "Stone", "x": x + 112, "y": y + 80, "width": 16, "height": 24 },
             // Peach's Magical Happy Chamber of Fantastic Love
-            { "thing": "ScrollBlocker", "x": 112 }
+            { "thing": "ScrollBlocker", "x": x + 256 }
         ];
     }
       
@@ -4000,6 +4023,10 @@ window.FullScreenMario = (function() {
         "setPlayerSizeSmall": setPlayerSizeSmall,
         "setPlayerSizeLarge": setPlayerSizeLarge,
         "playerRemoveCrouch": playerRemoveCrouch,
+        // Spawn / actions
+        "spawnDetector": spawnDetector,
+        "activateWindowDetector": activateWindowDetector,
+        "activateScrollBlocker": activateScrollBlocker,
         // Collision / actions
         "hitCharacterSolid": hitCharacterSolid,
         "hitCharacterCharacter": hitCharacterCharacter,
@@ -4053,8 +4080,6 @@ window.FullScreenMario = (function() {
         "animatePlayerPipingEnd": animatePlayerPipingEnd,
         "animatePlayerOffPole": animatePlayerOffPole,
         "animateCharacterHop": animateCharacterHop,
-        // Spawns
-        "spawnDetector": spawnDetector,
         // Physics
         "shiftBoth": shiftBoth,
         "shiftThings": shiftThings,

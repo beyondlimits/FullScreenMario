@@ -119,6 +119,9 @@
                         "DetectCollision": {
                             "LevelTransport": {}
                         },
+                        "DetectWindow": {
+                            "ScrollBlocker": {}
+                        },
                         "DetectSpawn": {}
                     },
                 },
@@ -465,6 +468,7 @@
                 height: 7,
                 nofall: true,
                 nocollidechar: true,
+                nocollidesolid: true,
                 animate: FullScreenMario.prototype.animateEmergeCoin,
                 collide: FullScreenMario.prototype.collideCoin,
                 spriteCycleSynched: [
@@ -571,6 +575,12 @@
             },
             LevelTransport: {
                 activate: FullScreenMario.prototype.collideLevelTransport,
+            },
+            DetectWindow: {
+                movement: FullScreenMario.prototype.activateWindowDetector
+            },
+            ScrollBlocker: {
+                activate: FullScreenMario.prototype.activateScrollBlocker
             },
             DetectSpawn: {
                 movement: FullScreenMario.prototype.spawnDetector

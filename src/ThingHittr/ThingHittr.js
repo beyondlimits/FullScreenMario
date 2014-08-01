@@ -118,7 +118,6 @@ function ThingHittr(settings) {
      */
     self.checkHitsOfGroup = function(type) {
         GroupHolder["get" + type + "Group"]().forEach(self.checkHitsOfOne);
-        
     }
     
     /**
