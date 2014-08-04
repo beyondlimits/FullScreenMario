@@ -1298,6 +1298,14 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function spawnBlooper(thing) {
+        thing.squeeze = 0;
+        thing.counter = 0;
+    }
+    
+    /**
+     * 
+     */
     function spawnDetector(thing) {
         thing.activate(thing);
         thing.EightBitter.killNormal(thing);
@@ -1455,7 +1463,7 @@ window.FullScreenMario = (function() {
                     thing.collide(other, thing);
                 }
             }
-            // Players trigger other actions (e.g. Pipe -> intoPipeHoriz)
+            // Players trigger other actions (e.g. Pipe -> mapExitPipeHorizontal)
             else if(other.actionLeft) {
                 other.actionLeft(thing, other, other.transport);
             }
@@ -2229,6 +2237,77 @@ window.FullScreenMario = (function() {
             thing.counter = 0;
             thing.movement = movePirhanaLatent;
         }
+    }
+    
+    /**
+     * 
+     */
+    function moveBlooper(thing) {
+        switch(thing.counter) {
+            case 56: 
+                thing.squeeze = true; 
+                thing.counter += 1;
+                break;
+            case 63:
+                thing.EightBitter.moveBlooperSqueezing(thing); 
+                break;
+            default: 
+                thing.counter += 1;
+                if(thing.top < thing.EightBitter.unitsize * 18) {
+                    thing.EightBitter.moveBlooperSqueezing(thing);
+                }
+                break;
+        }
+
+        if(thing.squeeze) {
+            thing.yvel = Math.max(thing.yvel + .021, .7); // going down
+        } else {
+            thing.yvel = Math.min(thing.yvel - .035, -.7); // going up
+        }
+        
+        thing.EightBitter.shiftVert(thing, thing.yvel, true);
+
+        if(!thing.squeeze) {
+            if(thing.EightBitter.player.left > thing.right + thing.EightBitter.unitsize * 8) {
+                // Go to the right
+                thing.xvel = Math.min(thing.speed, thing.xvel + thing.EightBitter.unitsize / 32);
+            }
+            else if(thing.EightBitter.player.right < thing.left - thing.EightBitter.unitsize * 8) {
+                // Go to the left
+                thing.xvel = Math.max(-thing.speed, thing.xvel - thing.EightBitter.unitsize / 32);
+            }
+        }
+    }
+    
+    /**
+     * 
+     */
+    function moveBlooperSqueezing(thing) {
+        console.log("Move saqueezing", thing.squeeze);
+        if (thing.squeeze != 2) {
+            thing.squeeze = 2;
+            thing.EightBitter.addClass(thing, "squeeze");
+            thing.EightBitter.setHeight(thing, 10, true, true);
+        }
+        
+        if (thing.squeeze < 7) {
+            thing.xvel /= 1.4;
+        } else if (thing.squeeze === 7) {
+            thing.xvel = 0;
+        }
+        
+        thing.squeeze += 1;
+        
+        if (thing.top > thing.EightBitter.player.bottom || thing.bottom > 360) {
+            // unsqueezeBlooper(thing);
+        }
+    }
+    
+    /**
+     * 
+     */
+    function moveBlooperUnsqueezing(thing) {
+        
     }
     
     /**
@@ -3474,6 +3553,12 @@ window.FullScreenMario = (function() {
      * @notes thing is player, other is pipe
      */
     function mapExitPipeVertical(thing, other) {
+        if(!thing.resting || typeof(other.transport) === "undefined"
+                || thing.right + thing.EightBitter.unitsize * 2 > other.right 
+                || thing.left - thing.EightBitter.unitsize * 2 < other.left) {
+            return;
+        }
+        
         thing.EightBitter.animatePlayerPipingStart(thing);
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
@@ -4076,6 +4161,7 @@ window.FullScreenMario = (function() {
         "playerRemoveCrouch": playerRemoveCrouch,
         // Spawn / actions
         "spawnPirhana": spawnPirhana,
+        "spawnBlooper": spawnBlooper,
         "spawnDetector": spawnDetector,
         "activateWindowDetector": activateWindowDetector,
         "activateScrollBlocker": activateScrollBlocker,
@@ -4111,6 +4197,8 @@ window.FullScreenMario = (function() {
         "movePlatform": movePlatform,        "moveFalling": moveFalling,        "moveFreeFalling": moveFreeFalling,
         "moveShell": moveShell,
         "movePirhana": movePirhana,
+        "moveBlooper": moveBlooper,
+        "moveBlooperSqueezing": moveBlooperSqueezing,
         "moveCoinEmerge": moveCoinEmerge,
         "movePlayer": movePlayer,
         // Animations

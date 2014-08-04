@@ -74,6 +74,7 @@
                         "Koopa": {},
                         "Beetle": {},
                         "Piranha": {},
+                        "Blooper": {},
                         "HammerBro": {
                             "Bowser": {}
                         }
@@ -346,6 +347,15 @@
                 spriteCycleSynched: [
                     ["one", "two"]
                 ]
+            },
+            Blooper: {
+                height: 12,
+                nocollidesolid: 1,
+                nofall: 1,
+                speed: FullScreenMario.unitsize / 2,
+                onThingMake: FullScreenMario.prototype.spawnBlooper,
+                movement: FullScreenMario.prototype.moveBlooper,
+                death: FullScreenMario.prototype.killFlip
             },
             Bowser: {
                 width: 16,
