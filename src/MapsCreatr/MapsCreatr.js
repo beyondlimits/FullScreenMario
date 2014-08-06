@@ -429,6 +429,10 @@ function MapsCreatr(settings) {
         this.reference = reference;
         this.xloc = reference.x || reference.xloc || 0;
         this.yloc = reference.y || reference.yloc || 0;
+        
+        if(reference.position) {
+            this.position = reference.position;
+        }
     }
     
     /**

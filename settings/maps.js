@@ -20,6 +20,15 @@ FullScreenMario.prototype.settings.maps = {
             prething.xloc * thing.EightBitter.unitsize - thing.EightBitter.MapScreener.left,
             (FSM.MapScreener.floor - prething.yloc) * thing.EightBitter.unitsize
         );
+        
+        switch (prething.position) {
+            case "beginning":
+                thing.EightBitter.arrayToBeginning(thing, thing.EightBitter.GroupHolder.getGroup(thing.grouptype));
+                break;
+            case "end":
+                thing.EightBitter.arrayToEnd(thing, thing.EightBitter.GroupHolder.getGroup(thing.grouptype));
+                break;
+        }
     },
     "macros": {
         "Example": FullScreenMario.prototype.macroExample,
