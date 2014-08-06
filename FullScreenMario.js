@@ -2757,7 +2757,7 @@ window.FullScreenMario = (function() {
         
         thing.EightBitter.addThing(ball, xloc, thing.top + thing.EightBitter.unitsize * 8);
         ball.animate(ball);
-        ball.ondelete = function () {
+        ball.onDelete = function () {
             thing.numballs -= 1;
         };
         

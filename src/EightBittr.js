@@ -491,9 +491,23 @@ window.EightBittr = (function(settings) {
     }
     
     /**
+     * Sets an object's position within an array to the front by removing the
+     * object and unshifting it.
+     * 
      * 
      */
-    function arrayForefront(thing, array) {
+    function arrayToBeginning(thing, array) {
+        array.splice(array.indexOf(thing), 1);
+        array.unshift(thing);
+    }
+    
+    /**
+     * Sets an object's position within an array to the end by removing the
+     * object and pushing it.
+     * 
+     * 
+     */
+    function arrayToEnd(thing, array) {
         array.splice(array.indexOf(thing), 1);
         array.push(thing);
     }
@@ -511,8 +525,8 @@ window.EightBittr = (function(settings) {
         
         array.splice(location, 1);
         
-        if(thing.ondelete) {
-            thing.ondelete(thing);
+        if(typeof(thing.onDelete) === "function") {
+            thing.onDelete(thing);
         }
     }
     
@@ -551,7 +565,8 @@ window.EightBittr = (function(settings) {
         "proliferateHard": proliferateHard,
         "createElement": createElement,
         "arraySwitch": arraySwitch,
-        "arrayForefront": arrayForefront,
+        "arrayToBeginning": arrayToBeginning,
+        "arrayToEnd": arrayToEnd,
         "arrayDeleteMember": arrayDeleteMember
     });
     
