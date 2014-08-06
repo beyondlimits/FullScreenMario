@@ -83,7 +83,8 @@ window.FullScreenMario = (function() {
             "scale": self.scale
         }, self.settings.sprites));    }        /**     * Sets self.PixelDrawer     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelDrawr (src/PixelDrawr.js)     */    function resetPixelDrawer(self) {        self.PixelDrawer = new PixelDrawr({            "PixelRender": self.PixelRender,
             "getCanvas": self.getCanvas,
-            "unitsize": self.unitsize        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr.js)
+            "unitsize": self.unitsize,
+            "innerWidth": window.innerWidth        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr.js)
      *                          events.js (settings/events.js)     */    function resetTimeHandler(self) {
         self.TimeHandler = new TimeHandlr(proliferate({
             "classAdd": self.addClass,
@@ -247,7 +248,6 @@ window.FullScreenMario = (function() {
      */
     function gameStart() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
-        
         
         EightBitter.setMap("1-1");
         EightBitter.StatsHolder.set("lives", 3);
@@ -3202,7 +3202,7 @@ window.FullScreenMario = (function() {
                 thing.EightBitter.updateSize(thing);
                 thing.EightBitter.setClass(thing, "character player dead");
                 thing.EightBitter.thingStoreVelocity(thing);
-                thing.EightBitter.arrayForefront(thing, characters);
+                thing.EightBitter.arrayToEnd(thing, thing.EightBitter.GroupHolder.getGroup(thing.grouptype));
                 
                 thing.EightBitter.MapScreener.notime = true;
                 thing.EightBitter.MapScreener.nokeys = true;
@@ -3934,14 +3934,16 @@ window.FullScreenMario = (function() {
             output.push({ 
                 "thing": "BrickHalf", 
                 "x": x + i * 8,
-                "y": y
+                "y": y,
+                "position": "end"
             });
             
             for(j = 0; j < 3; j += 1) { // y
                 output.push({
                     "thing": "BrickPlain",
                     "x": x + 24 + i * 8,
-                    "y": y + 4 + j * 8
+                    "y": y + 4 + j * 8,
+                    "position": "end"
                 });
             }
         }
@@ -3951,14 +3953,16 @@ window.FullScreenMario = (function() {
             output.push({ 
                 "thing": "BrickHalf", 
                 "x": x + 40 + i * 8,
-                "y": y
+                "y": y,
+                "position": "end"
             });
             
             for(j = 0; j < 3; j += 1) { // y
                 output.push({
                     "thing": "BrickPlain",
                     "x": x + 48 + i * 8,
-                    "y": y + 4 + j * 8
+                    "y": y + 4 + j * 8,
+                    "position": "end"
                 });
             }
         }
@@ -3967,7 +3971,8 @@ window.FullScreenMario = (function() {
         output.push({
             "thing": "CastleRailing",
             "x": x + 24,
-            "y": y + 24
+            "y": y + 24,
+            "position": "end"
         });
         
         // Medium railing center
@@ -3975,7 +3980,8 @@ window.FullScreenMario = (function() {
             output.push({
                 "thing": "CastleRailingFilled",
                 "x": x + 32 + i * 8,
-                "y": y + 24
+                "y": y + 24,
+                "position": "end"
             });
         }
         
@@ -3983,7 +3989,8 @@ window.FullScreenMario = (function() {
         output.push({
             "thing": "CastleRailing",
             "x": x + 56,
-            "y": y + 24
+            "y": y + 24,
+            "position": "end"
         });
         
         // Top railing
@@ -3991,7 +3998,8 @@ window.FullScreenMario = (function() {
             output.push({
                 "thing": "CastleRailing",
                 "x": x + 32 + i * 8,
-                "y": y + 40
+                "y": y + 40,
+                "position": "end"
             });
         }
         
@@ -4000,7 +4008,8 @@ window.FullScreenMario = (function() {
             output.push({
                 "thing": "CastleTop",
                 "x": x + 32 + i * 12,
-                "y": y + 36
+                "y": y + 36,
+                "position": "end"
             });
         }
         
@@ -4008,7 +4017,8 @@ window.FullScreenMario = (function() {
         output.push({
             "thing": "CastleDoor",
             "x": x + 40,
-            "y": y + 20
+            "y": y + 20,
+            "position": "end"
         });
         if(reference.transport) {
             output.push({
@@ -4016,7 +4026,8 @@ window.FullScreenMario = (function() {
                 "x": x + 56,
                 "y": y + 20,
                 "height": 16,
-                "activate": FullScreenMario.prototype.collideCastleDoor
+                "activate": FullScreenMario.prototype.collideCastleDoor,
+                "position": "end"
             });
         }
         
@@ -4058,7 +4069,7 @@ window.FullScreenMario = (function() {
             output;
 
         // Output starts off with the general flag & collision detection
-        console.warn("macroEndOutsideCastle: thing.active, etc.should give strings");
+        console.warn("macroEndOutsideCastle: thing.active, etc. should give strings");
         output = [
             // Initial collision detector
             { thing: "DetectCollision", x: x + 8, y: y + 108, height: 100, activate: FSM.collideFlagTop, activate_fail: FSM.killNormal },

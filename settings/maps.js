@@ -13,7 +13,8 @@ FullScreenMario.prototype.settings.maps = {
         "canscroll"
     ],
     "on_spawn": function (prething, xloc) {
-        var thing = prething.thing;
+        var thing = prething.thing,
+            position = prething.position || thing.position;
         
         thing.EightBitter.addThing(
             thing, 
@@ -21,13 +22,19 @@ FullScreenMario.prototype.settings.maps = {
             (FSM.MapScreener.floor - prething.yloc) * thing.EightBitter.unitsize
         );
         
-        switch (prething.position) {
-            case "beginning":
-                thing.EightBitter.arrayToBeginning(thing, thing.EightBitter.GroupHolder.getGroup(thing.grouptype));
-                break;
-            case "end":
-                thing.EightBitter.arrayToEnd(thing, thing.EightBitter.GroupHolder.getGroup(thing.grouptype));
-                break;
+        // Either the prething or thing, in that order, may request to be in the
+        // front or back of the container
+        if(position) {
+            thing.EightBitter.TimeHandler.addEvent(function () {
+                switch (prething.position || thing.position) {
+                    case "beginning":
+                        thing.EightBitter.arrayToBeginning(thing, thing.EightBitter.GroupHolder.getGroup(thing.grouptype));
+                        break;
+                    case "end":
+                        thing.EightBitter.arrayToEnd(thing, thing.EightBitter.GroupHolder.getGroup(thing.grouptype));
+                        break;
+                }
+            });
         }
     },
     "macros": {

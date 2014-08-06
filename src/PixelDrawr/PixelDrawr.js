@@ -17,13 +17,16 @@ function PixelDrawr(settings) {
         // A PixelRender object used to obtain raw sprite data and canvases
         PixelRender,
         
+        // The canvas object each refillGlobalCanvas call goes to
         canvas,
         
+        // The 2D canvas context each refillGlobalCanvas call goes to
         context,
         
         // Utility function to create a canvas (typically taken from EightBittr)
         getCanvas,
         
+        // The known viewport width, beyond which nothing should be drawn
         innerWidth,
         
         unitsize,
@@ -37,25 +40,9 @@ function PixelDrawr(settings) {
         PixelRender = settings.PixelRender;
         unitsize = settings.unitsize || 4;
         no_refill = settings.no_refill;
+        innerWidth = settings.innerWidth;
     }
     
-    
-    /* Simple gets
-    */
-    
-    /**
-     * 
-     */
-    self.getCanvas = function () {
-        return canvas;
-    };
-    
-    /**
-     * 
-     */
-    self.getContext = function () {
-        return contextd;
-    };
     
     
     /* Simple sets
@@ -64,9 +51,25 @@ function PixelDrawr(settings) {
     /**
      * 
      */
+    self.setCanvas = function (canvasNew) {
+        canvas = canvasNew;
+        context = canvas.getContext("2d");
+        self.drawThingOnCanvasBound = self.drawThingOnCanvas.bind(self, context);
+    }
+    
+    /**
+     * 
+     */
+    self.setInnerWidth = function (width) {
+        innerWidth = width;
+    };
+    
+    /**
+     * 
+     */
     self.setNoRefill = function (enabled) {
         no_refill = enabled;
-    }
+    };
     
     
     /* Core rendering
@@ -173,24 +176,16 @@ function PixelDrawr(settings) {
      * 
      * @return {Self}
      */
-    self.refillGlobalCanvas = function(background) {
-        var canvas = window.canvas,
-            context = window.context,
-            i;
-        
-        // context.fillStyle = window.fillStyle;
+    self.refillGlobalCanvas = function (background) {
         if(!no_refill) {
             context.fillStyle = background;
             context.fillRect(0, 0, canvas.width, canvas.height);
         } 
         
-        // self.setCanvas -> self.setContext should bind a member copy of 
-        // self.drawThingOnCanvas to the context as the first variable, so this
-        // can use .forEach
-        for(i = scenery.length - 1; i >= 0; --i) self.drawThingOnCanvas(context, scenery[i]);
-        for(i = solids.length - 1; i >= 0; --i) self.drawThingOnCanvas(context, solids[i]);
-        for(i = characters.length - 1; i >= 0; --i) self.drawThingOnCanvas(context, characters[i]);
-        for(i = texts.length - 1; i >= 0; --i) self.drawThingOnCanvas(context, texts[i]);
+        scenery.forEach(self.drawThingOnCanvasBound);
+        solids.forEach(self.drawThingOnCanvasBound);
+        characters.forEach(self.drawThingOnCanvasBound);
+        texts.forEach(self.drawThingOnCanvasBound);
         
         return self;
     }
@@ -202,7 +197,9 @@ function PixelDrawr(settings) {
      * @return {Self}
      */
     self.drawThingOnCanvas = function(context, thing) {
-        if(thing.hidden || thing.left > innerWidth || thing.right < 0) return;
+        if(thing.hidden || thing.left > innerWidth || thing.right < 0) {
+            return;
+        }
         
         // If there's just one sprite, it's pretty simple
         if(thing.num_sprites == 1) {
@@ -229,6 +226,8 @@ function PixelDrawr(settings) {
         else {
             context.drawImage(canvas, leftc, topc);
         }
+        
+        return self;
     }
     
     /**
@@ -290,6 +289,8 @@ function PixelDrawr(settings) {
         if((canvas = sprites.middle) && topreal < bottomreal && leftreal < rightreal) {
             drawPatternOnCanvas(context, sprites.middle.canvas, leftreal, topreal, widthreal, heightreal);
         }
+        
+        return self;
     }
     
     

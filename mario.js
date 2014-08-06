@@ -54,8 +54,9 @@ function ensureLocalStorage() {
 
 // Resets the main canvas and context
 function resetCanvas() {
-  // The global canvas is one that fills the screen
-  window.canvas = FSM.getCanvas(innerWidth, innerHeight, true);
-  window.context = canvas.getContext("2d");
-  document.body.appendChild(canvas);
+    // The global canvas is one that fills the screen
+    var canvas = FSM.getCanvas(innerWidth, innerHeight, true);
+    
+    FSM.PixelDrawer.setCanvas(canvas);
+    document.body.appendChild(canvas);
 }
