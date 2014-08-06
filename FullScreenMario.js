@@ -247,10 +247,10 @@ window.FullScreenMario = (function() {
         self.canvas = self.getCanvas(window.innerWidth, window.innerHeight, true);
         self.PixelDrawer.setCanvas(self.canvas);
         self.PixelDrawer.setThingArrays([
-            self.GroupHolder.getTextGroup(),
             self.GroupHolder.getSceneryGroup(),
             self.GroupHolder.getSolidGroup(),
-            self.GroupHolder.getCharacterGroup()
+            self.GroupHolder.getCharacterGroup(),
+            self.GroupHolder.getTextGroup()
         ]);
     }
     
@@ -503,7 +503,7 @@ window.FullScreenMario = (function() {
      * 
      * @param {FullScreenMario} EightBitter
      */
-    function maintainSolids(EightBitter) {
+    function maintainSolids(EightBitter, solids) {
         for (var i = 0, solid; i < solids.length; ++i) {
             solid = solids[i];
             if (solid.alive) {
@@ -522,7 +522,7 @@ window.FullScreenMario = (function() {
      * 
      * @param {FullScreenMario} EightBitter
      */
-    function maintainCharacters(EightBitter) {
+    function maintainCharacters(EightBitter, characters) {
         var delx = EightBitter.MapScreener.right + EightBitter.QuadsKeeper.getOutDifference(),
             character, i;
         for (i = 0; i < characters.length; ++i) {
@@ -2602,7 +2602,9 @@ window.FullScreenMario = (function() {
         thing.EightBitter.flipHoriz(thing);
         thing.EightBitter.AudioPlayer.play("Powerup Appears");
         // thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Scenery", "Character");
-        FSM.arraySwitch(thing, characters, scenery);
+        thing.EightBitter.arraySwitch(thing, 
+            thing.EightBitter.GroupHolder.getCharacterGroup(), 
+            thing.EightBitter.GroupHolder.getSceneryGroup());
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
             thing.EightBitter.shiftVert(thing, thing.EightBitter.unitsize / -8);
@@ -2614,7 +2616,9 @@ window.FullScreenMario = (function() {
             
             thing.EightBitter.setBottom(thing, other.top);
             // thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Character", "Scenery");
-            FSM.arraySwitch(thing, scenery, characters);
+        thing.EightBitter.arraySwitch(thing, 
+            thing.EightBitter.GroupHolder.getSceneryGroup(),
+            thing.EightBitter.GroupHolder.getCharacterGroup()); 
             thing.nomove = thing.nocollide = thing.nofall = thing.moveleft = false;
             
             if(thing.emergeOut) {

@@ -10,12 +10,6 @@ function startFSM() {
   
     window.FSM = new FullScreenMario();
 
-    // These should be placed somewhere else eventually
-    window.characters = FSM.GroupHolder.getCharacterGroup();
-    window.solids = FSM.GroupHolder.getSolidGroup();
-    window.scenery = FSM.GroupHolder.getSceneryGroup();
-    window.texts = FSM.GroupHolder.getTextGroup();
-
     // With that all set, set the map to World11.
     FSM.gameStart();
     document.body.appendChild(FSM.canvas);

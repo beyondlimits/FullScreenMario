@@ -5,16 +5,16 @@ FullScreenMario.prototype.settings.runner = {
     "FPSAnalyzer": new FPSAnalyzr(),
     "games": [
         function () {
-            this.QuadsKeeper.determineAllQuadrants(solids);
+            this.QuadsKeeper.determineAllQuadrants(this.GroupHolder.getSolidGroup());
         },
         function () {
-            this.maintainSolids(this);
+            this.maintainSolids(this, this.GroupHolder.getSolidGroup());
         },
         function () {
-            this.maintainCharacters(this);
+            this.maintainCharacters(this, this.GroupHolder.getCharacterGroup());
         },
         function () {
-            this.maintainPlayer(this);
+            this.maintainPlayer(this, this.player);
         },
         function () {
             this.TimeHandler.handleEvents();
