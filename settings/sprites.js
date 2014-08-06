@@ -664,6 +664,7 @@ FullScreenMario.prototype.settings.sprites = {
               normal: "p[2,9]x17,0x17,0x17,0x17,0x17,0x17,x017,1110x17,0x17,0x17,0x17,0x17,01111x016,x15,x06,11110111x010,11011x012,1x017,1x014,11x014,1x0416,",
               Alt2: ["filter", ["scenery", "CastleDoor", "normal"], "Alt2"]
             },
+            CastleFlag: "p[0,1,6,8]02x011,222x011,2x012,3x111,03x15,3x15,03x15,3x15,0311x37,1103111x35,11103111133311110311133133111031113111311103x111,03x012,3x012,3x012,3x012,3x012,3x012,3x012,3x011,",
             CastleRailing: {
               normal: "p[0,2,5,9]2222x07,x25,3332x07,2x37,2x07,2x37,2x07,2x37,2x07,2x37,2x07,2x37,2x07,23333111x29,1111",
               Alt2: ["filter", ["scenery", "CastleRailing", "normal"], "Alt2"]
