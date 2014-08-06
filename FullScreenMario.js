@@ -39,6 +39,7 @@ window.FullScreenMario = (function() {
                 resetInputWriter,
                 resetModAttacher,
                 startModAttacher,
+                resetCanvas
             ],
             "constants": [
                 "unitsize",
@@ -237,6 +238,20 @@ window.FullScreenMario = (function() {
      */
     function startModAttacher(self) {
         self.ModAttacher.fireEvent("onReady", self, self);
+    }
+    
+    /**
+     * 
+     */
+    function resetCanvas(self) {
+        self.canvas = self.getCanvas(window.innerWidth, window.innerHeight, true);
+        self.PixelDrawer.setCanvas(self.canvas);
+        self.PixelDrawer.setThingArrays([
+            self.GroupHolder.getTextGroup(),
+            self.GroupHolder.getSceneryGroup(),
+            self.GroupHolder.getSolidGroup(),
+            self.GroupHolder.getCharacterGroup()
+        ]);
     }
     
     

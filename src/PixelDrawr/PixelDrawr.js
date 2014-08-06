@@ -23,6 +23,9 @@ function PixelDrawr(settings) {
         // The 2D canvas context each refillGlobalCanvas call goes to
         context,
         
+        // Arrays of Things that are to be drawn in each refillGlobalCanvas
+        thing_arrays,
+        
         // Utility function to create a canvas (typically taken from EightBittr)
         getCanvas,
         
@@ -36,8 +39,8 @@ function PixelDrawr(settings) {
         no_refill;
     
     self.reset = function(settings) {
-        getCanvas = settings.getCanvas;
         PixelRender = settings.PixelRender;
+        getCanvas = settings.getCanvas;
         unitsize = settings.unitsize || 4;
         no_refill = settings.no_refill;
         innerWidth = settings.innerWidth;
@@ -47,6 +50,13 @@ function PixelDrawr(settings) {
     
     /* Simple sets
     */
+    
+    /**
+     * 
+     */
+    self.setThingArrays = function (arrays) {
+        thing_arrays = arrays;
+    }
     
     /**
      * 
@@ -174,6 +184,10 @@ function PixelDrawr(settings) {
      * this should be referencing an array passed in self.reset, which will 
      * contain all the groups in the main FSM GroupsHolder.
      * 
+     * @param {string} background   The background to refill the context with
+     *                              before drawing anything, unless no_refill is
+     *                              enabled.
+     * 
      * @return {Self}
      */
     self.refillGlobalCanvas = function (background) {
@@ -182,13 +196,19 @@ function PixelDrawr(settings) {
             context.fillRect(0, 0, canvas.width, canvas.height);
         } 
         
-        scenery.forEach(self.drawThingOnCanvasBound);
-        solids.forEach(self.drawThingOnCanvasBound);
-        characters.forEach(self.drawThingOnCanvasBound);
-        texts.forEach(self.drawThingOnCanvasBound);
+        thing_arrays.forEach(self.refillThingArray);
         
         return self;
-    }
+    };
+    
+    /**
+     * 
+     * 
+     * 
+     */
+    self.refillThingArray = function (array) {
+        array.forEach(self.drawThingOnCanvasBound);
+    };
     
     /**
      * General function to draw a thing to a context
