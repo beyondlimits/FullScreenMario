@@ -1,13 +1,8 @@
-console.warn("settings.statistics still uses window.innerWidth");
 FullScreenMario.prototype.settings.statistics = {
     "prefix": "FullScreenMario",
     "containers": [
         ["table", {
             "id": "data_display",
-            "className": "display",
-            "style": {
-                "width": (window.innerWidth + 14) + "px"
-            }
         }],
         ["tr"]
     ],

@@ -1,7 +1,10 @@
 function startFSM() {
     var time_start = Date.now();
   
-    window.OhLookFSMCanBeNamedWhateverYouWant = new FullScreenMario();
+    window.OhLookFSMCanBeNamedWhateverYouWant = new FullScreenMario({
+        "width": 480, 
+        "height": 464, 
+    });
     document.body.appendChild(OhLookFSMCanBeNamedWhateverYouWant.container);
     OhLookFSMCanBeNamedWhateverYouWant.gameStart();
     

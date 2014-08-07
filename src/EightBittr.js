@@ -3,7 +3,7 @@
  * 
  * Contains a set of useful default functions for the FullScreenMario engine.
  */
-window.EightBittr = (function(settings) {
+window.EightBittr = (function() {
     "use strict";
     
     /**
@@ -38,7 +38,7 @@ window.EightBittr = (function(settings) {
         }
         
         if(settings.resets) {
-            doResets(self, settings.resets);
+            doResets(self, settings.resets, settings.customs);
         }
     }
     
@@ -85,11 +85,11 @@ window.EightBittr = (function(settings) {
      * 
      * 
      */
-    function doResets(self, resets) {
+    function doResets(self, resets, customs) {
         var i;
         
         for(i = 0; i < resets.length; ++i) {
-            resets[i](self)
+            resets[i](self, customs)
         }
     }
     
@@ -422,7 +422,7 @@ window.EightBittr = (function(settings) {
             i;// = arguments.length;
         
         // For each provided object, add those settings to the element
-        for(i = arguments.length - 1; i >= 0; --i) {
+        for(i = 1; i < arguments.length; i += 1) {
             proliferate(element, arguments[i]);
         }
         

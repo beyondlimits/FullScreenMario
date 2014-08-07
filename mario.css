@@ -27,7 +27,8 @@ canvas {
  * Game objects
  */ 
 #data_display {
-  position: fixed;
+  position: absolute;
+  width: 100%;
   font-size: 21px;
   text-transform: uppercase;
 }

@@ -52,7 +52,7 @@ function StatsHoldr(settings) {
       for(var key in settings.values)
         values[key] = new Value(key, settings.values[key]);
     
-    container = makeContainer();
+    container = makeContainer(settings);
   }
   
   function Value(key, settings) {
@@ -188,10 +188,15 @@ function StatsHoldr(settings) {
     container.style.visibility = "";
   };
   
-  function makeContainer() {
+  function makeContainer(settings) {
     var output = EightBittr.prototype.createElement.apply(this, containers[0]),
         current = output,
         child;
+    
+    if(settings.width) {
+        output.style.width = settings.width + "px";
+    }
+        
     for(var i = 1, len = containers.length; i < len; ++i) {
       child = EightBittr.prototype.createElement.apply(this, containers[i]);
       current.appendChild(child);
