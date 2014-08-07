@@ -266,7 +266,6 @@ window.FullScreenMario = (function() {
         
         EightBitter.setMap("1-1");
         EightBitter.StatsHolder.set("lives", 3);
-        EightBitter.GamesRunner.upkeep();
         EightBitter.GamesRunner.unpause();
     }
     
@@ -274,14 +273,21 @@ window.FullScreenMario = (function() {
      * 
      */
     function gameOver() {
-        var EightBitter = EightBittr.ensureCorrectCaller(this);
-        
-        EightBitter.GamesRunner.pause();
+        var EightBitter = EightBittr.ensureCorrectCaller(this),
+            backgroundOld = EightBitter.MapsHandler.getArea().background;
         
         EightBitter.AudioPlayer.pauseTheme();
         EightBitter.AudioPlayer.play("Game Over");
         
-        setTimeout(EightBitter.gameStart.bind(EightBitter), 7000);
+        EightBitter.GroupHolder.clearArrays();
+        EightBitter.MapsHandler.getArea().background = "black";
+        EightBitter.StatsHolder.hideContainer();
+        
+        EightBitter.TimeHandler.addEvent(function () {
+            EightBitter.MapsHandler.getArea().background = backgroundOld;
+            EightBitter.gameStart();
+            EightBitter.StatsHolder.displayContainer();
+        }, 420);
     }
     
     /**
@@ -3268,7 +3274,7 @@ window.FullScreenMario = (function() {
         thing.EightBitter.StatsHolder.decrease("lives");
         
         if(thing.EightBitter.StatsHolder.get("lives") > 0) {
-            thing.EightBitter.TimeHandler.addEvent(setMap.bind(thing.EightBitter), 280);
+            thing.EightBitter.TimeHandler.addEvent(FSM.setMap.bind(thing.EightBitter), 280);
         } else {
             thing.EightBitter.TimeHandler.addEvent(gameOver.bind(thing.EightBitter), 280);
         }

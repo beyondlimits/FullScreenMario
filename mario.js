@@ -13,7 +13,7 @@ function startFSM() {
     // With that all set, set the map to World11.
     FSM.gameStart();
     document.body.appendChild(FSM.canvas);
-    document.body.appendChild(FSM.StatsHolder.makeContainer());
+    document.body.appendChild(FSM.StatsHolder.getContainer());
     
     FSM.proliferate(document.body, {
         "onkeydown": FSM.InputWriter.makePipe("onkeydown", "keyCode"),

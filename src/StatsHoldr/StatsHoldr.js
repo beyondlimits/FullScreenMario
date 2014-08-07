@@ -24,6 +24,9 @@ function StatsHoldr(settings) {
       // A prefix to store things under in localStorage
       prefix,
       
+      // A container element containing a div for each visible stored member
+      container,
+      
       // An array of elements as createElement arguments, outside-to-inside
       containers,
       
@@ -44,6 +47,8 @@ function StatsHoldr(settings) {
     if(settings.values)
       for(var key in settings.values)
         values[key] = new Value(key, settings.values[key]);
+    
+    container = makeContainer();
   }
   
   function Value(key, settings) {
@@ -167,7 +172,19 @@ function StatsHoldr(settings) {
   /* HTML
   */
   
-  self.makeContainer = function() {
+  self.getContainer = function () {
+    return container;
+  };
+  
+  self.hideContainer = function () {
+    container.style.visibility = "hidden";
+  };
+  
+  self.displayContainer = function () {
+    container.style.visibility = "";
+  };
+  
+  function makeContainer() {
     var output = EightBittr.prototype.createElement.apply(this, containers[0]),
         current = output,
         child;

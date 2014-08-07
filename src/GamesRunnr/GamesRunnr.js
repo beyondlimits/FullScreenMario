@@ -57,7 +57,7 @@ function GamesRunnr(settings) {
         FPSAnalyzer     = settings.FPSAnalyzer     || new FPSAnalyzr();
         scope           = settings.scope           || self;
         
-        paused = false;
+        paused = true;
         
         for(i = 0; i < games.length; i += 1) {
             games[i] = games[i].bind(scope);
@@ -131,7 +131,9 @@ function GamesRunnr(settings) {
      * @return {this}
      */
     self.unpause = function() {
-        if(!paused) return;
+        if(!paused) {
+            return;
+        }
         paused = false;
         
         if(on_unpause) {
@@ -142,7 +144,6 @@ function GamesRunnr(settings) {
         
         return self;
     };
-    
     
     /**
      * Toggles whether this is paused, and calls the appropriate function.
