@@ -54,7 +54,7 @@ function TimeHandlr(settings) {
     
     // Function handlers
     addClass    = settings.classAdd    || addClass;
-    removeClass = settings.removeClass || removeClass;
+    removeClass = settings.classRemove || removeClass;
   }
   
   /* Simple gets
@@ -294,8 +294,9 @@ function TimeHandlr(settings) {
     if(cycleCheckValidity != null && !me[cycleCheckValidity]) return true;
     
     // Get rid of the previous class, from settings (-1 by default)
-    if(settings.oldclass != -1 && settings.oldclass !== "")
-      FSM.removeClass(me, settings.oldclass);
+    if(settings.oldclass != -1 && settings.oldclass !== "") {
+      removeClass(me, settings.oldclass);
+    }
     
     // Move to the next location in settings, as a circular list
     settings.loc = (++settings.loc) % settings.length;

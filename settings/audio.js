@@ -1,12 +1,5 @@
 FullScreenMario.prototype.settings.audio = {
     "directory": "Sounds",
-    "getVolumeLocal": function getVolumeLocal() {
-        return .49;
-    },
-    "getThemeDefault": function getThemeDefault() {
-        console.warn("Getting theme default from window, not FSM");
-        return FSM.MapsHandler.getArea().setting.split(' ')[0];
-    },
     "localStorageMuted": "muted",
     "library": {
         "Sounds": [

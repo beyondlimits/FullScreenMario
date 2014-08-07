@@ -85,7 +85,12 @@ window.FullScreenMario = (function() {
         }, self.settings.sprites));    }        /**     * Sets self.PixelDrawer     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelDrawr (src/PixelDrawr.js)     */    function resetPixelDrawer(self) {        self.PixelDrawer = new PixelDrawr({            "PixelRender": self.PixelRender,
             "getCanvas": self.getCanvas,
             "unitsize": self.unitsize,
-            "innerWidth": window.innerWidth        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr.js)
+            "innerWidth": window.innerWidth,
+            "make_object_key": function(thing) {
+                return thing.EightBitter.MapsHandler.getArea().setting 
+                        + ' ' + thing.libtype + ' ' 
+                        + thing.title + ' ' + thing.className;
+            }        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr.js)
      *                          events.js (settings/events.js)     */    function resetTimeHandler(self) {
         self.TimeHandler = new TimeHandlr(proliferate({
             "classAdd": self.addClass,
@@ -100,7 +105,14 @@ window.FullScreenMario = (function() {
      *                          audio.js (settings/audio.js)
      */
     function resetAudioPlayer(self) {
-        self.AudioPlayer = new AudioPlayr(self.settings.audio);
+        self.AudioPlayer = new AudioPlayr(proliferate({
+            "getVolumeLocal": function getVolumeLocal() {
+                return .49;
+            },
+            "getThemeDefault": function getThemeDefault() {
+                return self.MapsHandler.getArea().setting.split(' ')[0];
+            },
+        }, self.settings.audio));
     }
     
     /**
@@ -109,7 +121,12 @@ window.FullScreenMario = (function() {
      *                          quadrants.js (settings/quadrants.js)
      */
     function resetQuadsKeeper(self) {
-        self.QuadsKeeper = new QuadsKeepr(self.settings.quadrants);
+        self.QuadsKeeper = new QuadsKeepr(proliferate({
+            "onUpdate": function () {
+                var diff_right = self.MapScreener.right + self.QuadsKeeper.getOutDifference();
+                self.MapsHandler.spawnMap(diff_right / self.unitsize);
+            }
+        }, self.settings.quadrants));
     }
     
     /**
@@ -120,6 +137,12 @@ window.FullScreenMario = (function() {
     function resetGamesRunner(self) {
         self.GamesRunner = new GamesRunnr(proliferate({
             "scope": self,
+            "on_pause": function () {
+                self.AudioPlayer.pause();
+            },
+            "on_unpause": function () {
+                self.AudioPlayer.resume();
+            }
         }, self.settings.runner));
     }
     
@@ -491,13 +514,13 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
-    function scrollPlayer(player, dx, dy) {
-        var saveleft = player.left,
-            savetop = player.top;
+    function scrollPlayer(thing, dx, dy) {
+        var saveleft = thing.left,
+            savetop = thing.top;
         
-        player.EightBitter.scrollWindow(dx, dy);
-        FSM.setLeft(player, saveleft);
-        FSM.setTop(player, savetop);
+        thing.EightBitter.scrollWindow(dx, dy);
+        thing.EightBitter.setLeft(thing, saveleft);
+        thing.EightBitter.setTop(thing, savetop);
     }
         
     
@@ -1292,15 +1315,17 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
-    function playerRemoveCrouch() {
-        console.warn("playerRemoveCrouch still uses global player (and it should be animateplayerRemoveCrouch)");
-        FSM.player.crouching = false;
-        FSM.player.toly = FSM.player.toly_old || 0;
-        if(FSM.player.power !== 1) {
-            FSM.player.height = 16;
-            FSM.player.EightBitter.removeClass(FSM.player, "crouching");
-            FSM.player.EightBitter.updateBottom(FSM.player, 0);
-            FSM.player.EightBitter.updateSize(FSM.player);
+    function animatePlayerRemoveCrouch() {
+        var EightBitter = EightBittr.ensureCorrectCaller(this);
+        
+        EightBitter.player.crouching = false;
+        EightBitter.player.toly = EightBitter.player.toly_old || 0;
+        
+        if(EightBitter.player.power !== 1) {
+            EightBitter.player.height = 16;
+            EightBitter.player.EightBitter.removeClass(EightBitter.player, "crouching");
+            EightBitter.player.EightBitter.updateBottom(EightBitter.player, 0);
+            EightBitter.player.EightBitter.updateSize(EightBitter.player);
         }
     }
     
@@ -2166,11 +2191,11 @@ window.FullScreenMario = (function() {
      */
     function moveSlidingReal(thing) {
         // If to the left of the endpoint:
-        if(FSM.MapScreener.left + thing.left <= thing.begin) {
+        if(thing.EightBitter.MapScreener.left + thing.left <= thing.begin) {
             thing.xvel = Math.min(thing.xvel + thing.EightBitter.unitsize / 32, thing.maxvel);
         }
         // If to the right of the endpoint:
-        else if(FSM.MapScreener.left + thing.right > thing.end) {
+        else if(thing.EightBitter.MapScreener.left + thing.right > thing.end) {
             thing.xvel = Math.max(thing.xvel - thing.EightBitter.unitsize / 32, -thing.maxvel);
         }
         
@@ -2388,7 +2413,7 @@ window.FullScreenMario = (function() {
             // Jumping, not resting
             else {
                 if(!thing.jumping && !thing.EightBitter.MapScreener.underwater) {
-                    FSM.switchClass(thing, "running skidding", "jumping");
+                    thing.EightBitter.switchClass(thing, "running skidding", "jumping");
                 }
                 thing.jumping = true;
             }
@@ -2746,7 +2771,7 @@ window.FullScreenMario = (function() {
      * 
      */
     function animateEndLevelFireworks(thing, numFireworks) {
-        var flag = FSM.addThing("CastleFlag", 
+        var flag = thing.EightBitter.addThing("CastleFlag", 
                 thing.left,
                 thing.top - thing.EightBitter.unitsize * 30),
             flagMovements = 40,
@@ -3189,7 +3214,7 @@ window.FullScreenMario = (function() {
             thing = group[i];
             
             if(!thing.nokillend) {
-                FSM.arrayDeleteMember(thing, group, i);
+                thing.EightBitter.arrayDeleteMember(thing, group, i);
             } else if(thing.killonend) {
                 thing.killonend(thing);
             }
@@ -3201,7 +3226,7 @@ window.FullScreenMario = (function() {
             thing = group[i];
             
             if(thing.killonend) {
-                FSM.arrayDeleteMember(thing, group, i);
+                thing.EightBitter.arrayDeleteMember(thing, group, i);
             }
         }
     }
@@ -3274,9 +3299,13 @@ window.FullScreenMario = (function() {
         thing.EightBitter.StatsHolder.decrease("lives");
         
         if(thing.EightBitter.StatsHolder.get("lives") > 0) {
-            thing.EightBitter.TimeHandler.addEvent(FSM.setMap.bind(thing.EightBitter), 280);
+            thing.EightBitter.TimeHandler.addEvent(function () {
+                thing.EightBitter.setMap();
+            }, 280);
         } else {
-            thing.EightBitter.TimeHandler.addEvent(gameOver.bind(thing.EightBitter), 280);
+            thing.EightBitter.TimeHandler.addEvent(function () {
+                thing.EightBitter.gameOver();
+            }, 280);
         }
     }
     
@@ -3657,12 +3686,13 @@ window.FullScreenMario = (function() {
      * @return {Number}
      */
     function getAbsoluteHeight(yloc, divider) {
+        var EightBitter = EightBittr.ensureCorrectCaller(this);
         if(!window.warnedAbsoluteHeight) {
             console.warn("getAbsoluteHeight still uses FSM.MapScreener");
             window.warnedAbsoluteHeight = true;
         }
         
-        return (yloc + FSM.MapScreener.bottom_max) / (divider || 1);
+        return (yloc + EightBitter.MapScreener.bottom_max) / (divider || 1);
     }
     
     /**
@@ -3792,7 +3822,7 @@ window.FullScreenMario = (function() {
      * @param {Object} reference   A listing of the settings for this macro,
      *                             from an Area's .creation Object.
      */
-    function macroFloor(reference) {
+    function macroFloor(reference, prethings, area, map, scope) {
         var x = reference.x || 0,
             y = reference.y || 0,
             floor = proliferate({
@@ -3801,7 +3831,7 @@ window.FullScreenMario = (function() {
                 "y": y,
                 "width": (reference.width || 8),
                 // Extra 24 is given so diagonal falling doesn't cause scrolling
-                "height": FullScreenMario.prototype.getAbsoluteHeight(y) + 24 
+                "height": scope.getAbsoluteHeight(y) + 24 
             }, reference, true );
         floor.macro = undefined;
         return floor;
@@ -4122,7 +4152,9 @@ window.FullScreenMario = (function() {
         console.warn("macroEndOutsideCastle: thing.active, etc. should give strings");
         output = [
             // Initial collision detector
-            { thing: "DetectCollision", x: x + 8, y: y + 108, height: 100, activate: FSM.collideFlagTop, activate_fail: FSM.killNormal },
+            { thing: "DetectCollision", x: x + 8, y: y + 108, height: 100, 
+                    activate: FullScreenMario.prototype.collideFlagTop,
+                    activate_fail: FullScreenMario.prototype.killNormal },
             // Flag (scenery)
             { thing: "Flag", x: x - 4.5, y: y + 79.5, "id": "endflag" },
             { thing: "FlagTop", x: x + 1.5, y: y + 84 },
@@ -4219,7 +4251,7 @@ window.FullScreenMario = (function() {
         "playerGetsFire": playerGetsFire,
         "setPlayerSizeSmall": setPlayerSizeSmall,
         "setPlayerSizeLarge": setPlayerSizeLarge,
-        "playerRemoveCrouch": playerRemoveCrouch,
+        "animatePlayerRemoveCrouch": animatePlayerRemoveCrouch,
         // Spawn / actions
         "spawnPirhana": spawnPirhana,
         "spawnBlooper": spawnBlooper,

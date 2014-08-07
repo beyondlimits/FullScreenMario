@@ -115,7 +115,7 @@ function GamesRunnr(settings) {
         paused = true;
         
         if(on_pause) {
-            on_pause();
+            on_pause(self);
         }
         
         upkeep_cancel(self.upkeep);
@@ -137,7 +137,7 @@ function GamesRunnr(settings) {
         paused = false;
         
         if(on_unpause) {
-            on_unpause();
+            on_unpause(self);
         }
         
         self.upkeep();

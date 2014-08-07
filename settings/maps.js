@@ -19,7 +19,7 @@ FullScreenMario.prototype.settings.maps = {
         thing.EightBitter.addThing(
             thing, 
             prething.xloc * thing.EightBitter.unitsize - thing.EightBitter.MapScreener.left,
-            (FSM.MapScreener.floor - prething.yloc) * thing.EightBitter.unitsize
+            (thing.EightBitter.MapScreener.floor - prething.yloc) * thing.EightBitter.unitsize
         );
         
         // Either the prething or thing, in that order, may request to be in the

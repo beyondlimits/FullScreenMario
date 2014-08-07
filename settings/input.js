@@ -74,7 +74,7 @@
     
     function KeyUpDown(player) {
         player.keys.crouch = 0;
-        player.EightBitter.playerRemoveCrouch();
+        player.EightBitter.animatePlayerRemoveCrouch();
     }
     
     function KeyUpSprint(player) {

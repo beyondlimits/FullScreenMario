@@ -34,6 +34,9 @@ function PixelDrawr(settings) {
         
         unitsize,
         
+        // A utility function to generate a class key to get an object sprite
+        make_object_key,
+        
         // Whether self.refillGlobalCanvas should skip redrawing the main canvas
         // every time.
         no_refill;
@@ -44,6 +47,10 @@ function PixelDrawr(settings) {
         unitsize = settings.unitsize || 4;
         no_refill = settings.no_refill;
         innerWidth = settings.innerWidth;
+        
+        make_object_key = settings.make_object_key || function (object) {
+            return object.toString();
+        };
     }
     
     
@@ -99,7 +106,7 @@ function PixelDrawr(settings) {
         }
         
         // PixelRender does most of the work in fetching the rendered sprite
-        thing.sprite = PixelRender.decode(self.makeClassKey(thing), thing);
+        thing.sprite = PixelRender.decode(make_object_key(thing), thing);
         
         // To do: remove dependency on .num_sprites and sprite_type
         if(thing.sprite.multiple) {
@@ -179,10 +186,8 @@ function PixelDrawr(settings) {
     */
     
     /**
-     * Called every upkeep to refill the entire main canvas. Right now it's 
-     * hardcoded to call window.scenery, window.solids, etc. - in the future
-     * this should be referencing an array passed in self.reset, which will 
-     * contain all the groups in the main FSM GroupsHolder.
+     * Called every upkeep to refill the entire main canvas. All Thing arrays
+     * are made to call self.refillThingArray in order.
      * 
      * @param {string} background   The background to refill the context with
      *                              before drawing anything, unless no_refill is
@@ -316,16 +321,6 @@ function PixelDrawr(settings) {
     
     /* Utilities
     */
-    
-    /**
-     * Class keys are used by PixelRender to look up and cache sprites
-     *
-     * @param {Thing} thing
-     * @return {String}
-     */
-    self.makeClassKey = function(thing) {
-        return FSM.MapsHandler.getArea().setting + ' ' + thing.libtype + ' ' + thing.title + ' ' + thing.className;
-    }
     
     /**
      * Macro to draw a pattern onto a canvas because of how

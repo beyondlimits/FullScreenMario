@@ -8,18 +8,18 @@ function startFSM() {
        || window.Uint8Array
        || Array;
   
-    window.FSM = new FullScreenMario();
+    window.OhLookFSMCanBeNamedWhateverYouWant = new FullScreenMario();
 
     // With that all set, set the map to World11.
-    FSM.gameStart();
-    document.body.appendChild(FSM.canvas);
-    document.body.appendChild(FSM.StatsHolder.getContainer());
+    OhLookFSMCanBeNamedWhateverYouWant.gameStart();
+    document.body.appendChild(OhLookFSMCanBeNamedWhateverYouWant.canvas);
+    document.body.appendChild(OhLookFSMCanBeNamedWhateverYouWant.StatsHolder.getContainer());
     
-    FSM.proliferate(document.body, {
-        "onkeydown": FSM.InputWriter.makePipe("onkeydown", "keyCode"),
-        "onkeyup": FSM.InputWriter.makePipe("onkeyup", "keyCode"),
-        "onmousedown": FSM.InputWriter.makePipe("onmousedown", "which"),
-        "oncontextmenu": FSM.InputWriter.makePipe("oncontextmenu", null, true)
+    OhLookFSMCanBeNamedWhateverYouWant.proliferate(document.body, {
+        "onkeydown": OhLookFSMCanBeNamedWhateverYouWant.InputWriter.makePipe("onkeydown", "keyCode"),
+        "onkeyup": OhLookFSMCanBeNamedWhateverYouWant.InputWriter.makePipe("onkeyup", "keyCode"),
+        "onmousedown": OhLookFSMCanBeNamedWhateverYouWant.InputWriter.makePipe("onmousedown", "which"),
+        "oncontextmenu": OhLookFSMCanBeNamedWhateverYouWant.InputWriter.makePipe("oncontextmenu", null, true)
     });
 
     console.log("It took " + (Date.now() - time_start) + " milliseconds to start.");

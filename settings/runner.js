@@ -22,11 +22,5 @@ FullScreenMario.prototype.settings.runner = {
         function () {
             this.PixelDrawer.refillGlobalCanvas(this.MapsHandler.getArea().background);
         }
-    ],
-    "on_pause": function () {
-        FSM.AudioPlayer.pause();
-    },
-    "on_unpause": function () {
-        FSM.AudioPlayer.resume();
-    }
+    ]
 }
