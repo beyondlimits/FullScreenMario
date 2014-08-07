@@ -31,13 +31,17 @@ function StatsHoldr(settings) {
       containers,
       
       // A bit of text between an element's label and value
-      separator;
+      separator,
+      
+      // An object to be passed to triggered events
+      scope;
   
   self.reset = function reset(settings) {
     localStorage = window.localStorage || settings.localStorage || {};
     prefix       = settings.prefix     || "";
     separator    = settings.separator  || "";
     containers   = settings.containers || [ ["div", { "className": prefix + "_container" }] ]
+    scope        = settings.scope;
     
     defaults = {};
     if(settings.defaults)
@@ -151,16 +155,16 @@ function StatsHoldr(settings) {
     // Mins and maxes must be obeyed before any other considerations
     if(this.hasOwnProperty("minimum") && Number(this.value) <= Number(this.minimum)) {
       this.value = this.minimum;
-      if(this.on_minimum) this.on_minimum();
+      if(this.on_minimum) this.on_minimum(scope);
     }
     else if(this.hasOwnProperty("maximum") && Number(this.value) <= Number(this.maximum)) {
       this.value = this.maximum;
-      if(this.on_maximum) this.on_maximum();
+      if(this.on_maximum) this.on_maximum(scope);
     }
     
-    if(this.modularity)    this.check_modularity();
-    if(this.has_element)   this.updateElement();
-    if(this.store_locally) this.updateLocalStorage();
+    if(this.modularity)    this.check_modularity(scope);
+    if(this.has_element)   this.updateElement(scope);
+    if(this.store_locally) this.updateLocalStorage(scope);
   }
   function updateElement() {
     this.element.innerHTML = this.key + separator + this.value;

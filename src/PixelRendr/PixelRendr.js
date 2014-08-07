@@ -97,8 +97,11 @@ function PixelRendr(settings) {
 
         // Associative array of color mapping filters
         // E.x. {"07" => "14"} maps all sevens to fourteens
-        filters;
-
+        filters,
+        
+        // 
+        Uint8ClampedArray;
+    
     self.reset = function reset(settings) {
         if (!settings.palette) {
             throw new Error("No palette given to PixelRendr.");
@@ -114,6 +117,7 @@ function PixelRendr(settings) {
         flip_horiz = settings.flip_horiz || "flipped";
         sprite_width = settings.sprite_width || "sprite_width";
         sprite_height = settings.sprite_height || "sprite_height";
+        Uint8ClampedArray = settings.Uint8ClampedArray || window.Uint8Array || Array;
 
         // The first ChangeLinr does the raw processing, of strings to sprites
         ProcessorBase = new ChangeLinr({

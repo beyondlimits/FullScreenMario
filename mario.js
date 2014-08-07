@@ -1,19 +1,9 @@
-/* mario.js */
-// Starts everything.
-
 function startFSM() {
     var time_start = Date.now();
   
-    window.Uint8ClampedArray = window.Uint8ClampedArray
-       || window.Uint8Array
-       || Array;
-  
     window.OhLookFSMCanBeNamedWhateverYouWant = new FullScreenMario();
-
-    // With that all set, set the map to World11.
+    document.body.appendChild(OhLookFSMCanBeNamedWhateverYouWant.container);
     OhLookFSMCanBeNamedWhateverYouWant.gameStart();
-    document.body.appendChild(OhLookFSMCanBeNamedWhateverYouWant.canvas);
-    document.body.appendChild(OhLookFSMCanBeNamedWhateverYouWant.StatsHolder.getContainer());
     
     OhLookFSMCanBeNamedWhateverYouWant.proliferate(document.body, {
         "onkeydown": OhLookFSMCanBeNamedWhateverYouWant.InputWriter.makePipe("onkeydown", "keyCode"),

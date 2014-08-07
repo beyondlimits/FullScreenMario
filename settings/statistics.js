@@ -1,3 +1,4 @@
+console.warn("settings.statistics still uses window.innerWidth");
 FullScreenMario.prototype.settings.statistics = {
     "prefix": "FullScreenMario",
     "containers": [
@@ -27,9 +28,8 @@ FullScreenMario.prototype.settings.statistics = {
             "digits": 6,
             "has_element": true,
             "modularity": 100000,
-            "on_modular": function () {
-                console.log("statistics.js is calling global FSM");
-                FSM.gainLife();
+            "on_modular": function (EightBitter) {
+                EightBitter.gainLife();
             }
         },
         "time": {
@@ -37,9 +37,8 @@ FullScreenMario.prototype.settings.statistics = {
             "digits": 3,
             "has_element": true,
             "minimum": 0,
-            "on_minimum": function () {
-                console.log("statistics.js is calling global FSM");
-                FSM.killPlayer(FSM.player, true);
+            "on_minimum": function (EightBitter) {
+                EightBitter.killPlayer(FSM.player, true);
             }
         },
         "world": {
@@ -50,9 +49,8 @@ FullScreenMario.prototype.settings.statistics = {
             "value_default": 0,
             "has_element": true,
             "modularity": 100,
-            "on_modular": function () {
-                console.log("statistics.js is calling global FSM");
-                FSM.gainLife();
+            "on_modular": function (EightBitter) {
+                EightBitter.gainLife();
             }
         },
         "lives": {

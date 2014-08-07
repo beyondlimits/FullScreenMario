@@ -39,7 +39,7 @@ window.FullScreenMario = (function() {
                 resetInputWriter,
                 resetModAttacher,
                 startModAttacher,
-                resetCanvas
+                resetContainer
             ],
             "constants": [
                 "unitsize",
@@ -152,7 +152,9 @@ window.FullScreenMario = (function() {
      *                          statistics.js (settings/statistics.js)
      */
     function resetStatsHolder(self) {
-        self.StatsHolder = new StatsHoldr(self.settings.statistics);
+        self.StatsHolder = new StatsHoldr(proliferate({
+            "scope": self
+        }, self.settings.statistics));
     }
     
     /**
@@ -266,8 +268,12 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
-    function resetCanvas(self) {
+    function resetContainer(self) {
         self.canvas = self.getCanvas(window.innerWidth, window.innerHeight, true);
+        self.container = self.createElement("div", {
+            "className": "FullScreenMario EightBitter"
+        });
+        
         self.PixelDrawer.setCanvas(self.canvas);
         self.PixelDrawer.setThingArrays([
             self.GroupHolder.getSceneryGroup(),
@@ -275,6 +281,9 @@ window.FullScreenMario = (function() {
             self.GroupHolder.getCharacterGroup(),
             self.GroupHolder.getTextGroup()
         ]);
+        
+        self.container.appendChild(self.canvas);
+        self.container.appendChild(self.StatsHolder.getContainer());
     }
     
     
