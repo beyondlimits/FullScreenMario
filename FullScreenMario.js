@@ -1949,13 +1949,14 @@ window.FullScreenMario = (function() {
         }
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
-            console.log("Decreasing");
             thing.EightBitter.StatsHolder.decrease("time");
             thing.EightBitter.StatsHolder.increase("score", 50);
             thing.EightBitter.AudioPlayer.play("Coin");
             
             if(thing.EightBitter.StatsHolder.get("time") <= 0) {
-                thing.EightBitter.animateEndLevelFireworks(thing, numFireworks);
+                thing.EightBitter.TimeHandler.addEvent(function () {
+                    thing.EightBitter.animateEndLevelFireworks(thing, numFireworks);
+                }, 35);
                 return true;
             }
         }, 1, Infinity);
@@ -2739,15 +2740,39 @@ window.FullScreenMario = (function() {
      * 
      */
     function animateEndLevelFireworks(thing, numFireworks) {
-        var i;
+        var flag = FSM.addThing("CastleFlag", 
+                thing.left,
+                thing.top - thing.EightBitter.unitsize * 30),
+            flagMovements = 40,
+            fireInterval = 42,
+            fireworkPositions = [
+                [0, -48],
+                [-8, -40],
+                [8, -40],
+                [-8, -32],
+                [0, -48],
+                [-8, -40]
+            ],
+            i = 0,
+            firework;
         
-        for(i = 0; i < numFireworks; i += 1) {
-            console.log("put firework", i * 42);
-        }
+        thing.EightBitter.TimeHandler.addEventInterval(function () {
+            thing.EightBitter.shiftVert(flag, thing.EightBitter.unitsize * -.25);
+        }, 1, flagMovements);
         
-        thing.EightBitter.AudioPlayer.addEventImmediate("Stage Clear", "ended", function () {
-            thing.EightBitter.nextLevel();
-        }, numFireworks * 42);
+        thing.EightBitter.TimeHandler.addEventInterval(function () {
+            firework = thing.EightBitter.addThing("Firework",
+                thing.left + fireworkPositions[i][0] * thing.EightBitter.unitsize,
+                thing.top + fireworkPositions[i][1] * thing.EightBitter.unitsize);
+            firework.animate(firework);
+            i += 1;
+        }, fireInterval, numFireworks);
+        
+        thing.EightBitter.TimeHandler.addEvent(function () {
+            thing.EightBitter.AudioPlayer.addEventImmediate("Stage Clear", "ended", function () {
+                thing.EightBitter.nextLevel();
+            });
+        }, i * fireInterval + 420);
     }
     
     /**
