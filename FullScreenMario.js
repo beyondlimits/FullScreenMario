@@ -40,6 +40,24 @@ window.FullScreenMario = (function() {
      *         "Super Fireballs": true
      *     }
      * });
+     * 
+     * @example Binding the FullScreenMario object controls to the body's mouse
+     *          and key events, and starting the game.
+     * window.FSM = new FullScreenMario({
+     *    "width": window.innerWidth, 
+     *    "height": window.innerHeight
+     * });
+     * 
+     * document.body.appendChild(FSM.container);
+     * 
+     * FSM.proliferate(document.body, {
+     *     "onkeydown": FSM.InputWriter.makePipe("onkeydown", "keyCode"),
+     *     "onkeyup": FSM.InputWriter.makePipe("onkeyup", "keyCode"),
+     *     "onmousedown": FSM.InputWriter.makePipe("onmousedown", "which"),
+     *     "oncontextmenu": FSM.InputWriter.makePipe("oncontextmenu", null, true)
+     * });
+     * 
+     * FSM.gameStart();
      */
     function FullScreenMario(customs) {        // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {
             "customs": customs,

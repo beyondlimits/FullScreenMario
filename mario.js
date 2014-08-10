@@ -1,19 +1,19 @@
 function startFSM() {
     var time_start = Date.now();
   
-    window.OhLookFSMCanBeNamedWhateverYouWant = new FullScreenMario({
-        "width": 480, 
-        "height": 464, 
+    window.FSM = new FullScreenMario({
+        "width": window.innerWidth, 
+        "height": window.innerHeight
     });
-    document.body.appendChild(OhLookFSMCanBeNamedWhateverYouWant.container);
-    OhLookFSMCanBeNamedWhateverYouWant.gameStart();
+    document.body.appendChild(FSM.container);
     
-    OhLookFSMCanBeNamedWhateverYouWant.proliferate(document.body, {
-        "onkeydown": OhLookFSMCanBeNamedWhateverYouWant.InputWriter.makePipe("onkeydown", "keyCode"),
-        "onkeyup": OhLookFSMCanBeNamedWhateverYouWant.InputWriter.makePipe("onkeyup", "keyCode"),
-        "onmousedown": OhLookFSMCanBeNamedWhateverYouWant.InputWriter.makePipe("onmousedown", "which"),
-        "oncontextmenu": OhLookFSMCanBeNamedWhateverYouWant.InputWriter.makePipe("oncontextmenu", null, true)
+    FSM.proliferate(document.body, {
+        "onkeydown": FSM.InputWriter.makePipe("onkeydown", "keyCode"),
+        "onkeyup": FSM.InputWriter.makePipe("onkeyup", "keyCode"),
+        "onmousedown": FSM.InputWriter.makePipe("onmousedown", "which"),
+        "oncontextmenu": FSM.InputWriter.makePipe("oncontextmenu", null, true)
     });
 
+    FSM.gameStart();
     console.log("It took " + (Date.now() - time_start) + " milliseconds to start.");
 }
