@@ -1,7 +1,6 @@
 FullScreenMario.prototype.settings.mods = {
     "mods": [
         {
-            // FSM.setTitle(player, StatsHolder.get("luigi") ? "Luigi" : "Player");
             "name": "Luigi",
             "description": "The little brother who could!",
             "enabled": false,
@@ -41,7 +40,7 @@ FullScreenMario.prototype.settings.mods = {
         },
         {
             "name": "QCount",
-            "description": "",
+            "description": "QQQQQQQ",
             "enabled": true,
             "events": {
                 "onModEnable": function (mod) {

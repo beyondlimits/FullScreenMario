@@ -12,9 +12,36 @@ window.FullScreenMario = (function() {
     EightBitterProto.settings = {};
     
     /**
+     * Constructor for a new FullScreenMario game object.
+     * Static game settings are stored in the appropriate settings/*.js object
+     * as memberes of the FullScreenMario.prototype object.
+     * Dynamic game settings may be given as members of the "customs" argument.
+     * On typical machines, game startup time is approximately 500-700ms.
      * 
+     * @param {Number} width   Width of the game viewport: at least 480.
+     * @param {Number} height   Height of the game viewport: at least 464.
+     * @param {} 
+     * @returns {FullScreenMario}
+     * 
+     * @example Creating a 15 x 14.5 blocks sized FullScreenMario object.
+     * var FSM = new FullScreenMario({
+     *     "width": 480, 
+     *     "height": 464
+     * });
+     * 
+     * @example Creating a full-screen FullScreenMario object with a few mods.
+     * var FSM = new FullScreenMario({
+     *    "width": window.innerWidth,
+     *    "height": window.innerHeight,
+     *    "mods": {
+     *         "Luigi": true,
+     *         "ParallaxClouds": true,
+     *         "High Speed": true,
+     *         "Super Fireballs": true
+     *     }
+     * });
      */
-    function FullScreenMario(customs) {            // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {
+    function FullScreenMario(customs) {        // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {
             "customs": customs,
             "constructor": FullScreenMario,            "unitsize": 4,            "scale": 2,            "requirements": {                "global": {                    "AudioPlayr": "src/AudioPlayr.js",                    "ChangeLinr": "src/ChangeLinr.js",                    "FPSAnalyzr": "src/FPSAnalyzr.js",                    "GamesRunnr": "src/GamesRunnr.js",                    "GroupHoldr": "src/GroupHoldr.js",                    "InputWritr": "src/InputWritr.js",                    "MapScreenr": "src/MapScreenr.js",
                     "MapsHandlr": "src/MapsHandlr.js",
@@ -270,6 +297,17 @@ window.FullScreenMario = (function() {
      * 
      */
     function startModAttacher(self, customs) {
+        var mods = customs.mods,
+            i;
+        
+        if(mods) {
+            for(i in mods) {
+                if(mods[i]) {
+                    self.ModAttacher.enableMod(i);
+                }
+            }
+        }
+        
         self.ModAttacher.fireEvent("onReady", self, self);
     }
     

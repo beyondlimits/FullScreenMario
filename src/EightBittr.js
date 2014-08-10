@@ -13,7 +13,9 @@ window.EightBittr = (function() {
      */
     function EightBittr(settings) {
         var self = this,
-            constants, i;
+            constants,
+            i;
+        
         settings = settings || {};
         
         // Constants, such as unitsize and scale, are always copied first
