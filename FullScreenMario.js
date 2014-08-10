@@ -2724,10 +2724,7 @@ window.FullScreenMario = (function() {
             }
             
             thing.EightBitter.setBottom(thing, other.top);
-            // thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Character", "Scenery");
-        thing.EightBitter.arraySwitch(thing, 
-            thing.EightBitter.GroupHolder.getSceneryGroup(),
-            thing.EightBitter.GroupHolder.getCharacterGroup()); 
+            thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Scenery", "Character");
             thing.nomove = thing.nocollide = thing.nofall = thing.moveleft = false;
             
             if(thing.emergeOut) {
@@ -2969,10 +2966,10 @@ window.FullScreenMario = (function() {
     function animatePlayerPipingStart(thing) {
         thing.nocollide = thing.nofall = true;
         thing.xvel = thing.yvel = 0;
-        
         thing.movementOld = thing.movement;
         thing.movement = false;
         
+        thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Character", "Scenery");
         thing.EightBitter.TimeHandler.clearAllCycles(thing);
     }
     
@@ -2983,6 +2980,8 @@ window.FullScreenMario = (function() {
         thing.movement = thing.movementOld;
         
         thing.nocollide = thing.nofall = false;
+        
+        thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Scenery", "Character");
     }
     
     /**
