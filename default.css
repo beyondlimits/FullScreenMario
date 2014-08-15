@@ -11,10 +11,13 @@ body {
     overflow-x: hidden;
 }
 
-
 header {
     -ms-user-select: none;
     user-select: none;
+}
+
+section {
+    clear: both;
 }
 
 a {
@@ -60,40 +63,85 @@ section#game {
 }
 
 
-/* To be placed in FullScreenMario.css */
+/* Control section */
 
-.FullScreenMario {
+#controls {
+    text-align: center;
+}
+
+#controls .control {
     position: relative;
-    font-family: "Press Start";
+    display: inline-block;
+    margin-top: 0;
+    height: 35px;
+    width: 256px;
+    border: 3px solid black;
+    border-radius: 7px;
+    box-shadow: 0 3px 7px black inset;
+    background: black;
+    font-family: 'Press Start';
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    overflow: hidden;
+    transition: 70ms all;
 }
 
-#data_display {
-  position: absolute;
-  top: 0;
-  width: 100%;
-  font-size: 21px;
-  text-transform: uppercase;
-}
-.FullScreenMario_value  {
-  margin: 7px 14px 0 14px;
-  text-align: center;
-  z-index: 14;
-} 
-
-.text {
-  position: absolute;
-  z-index: 14;
-  text-align: left;
-  line-height: 210%;
-  vertical-align: middle;
-}
-.text * {
-  margin: 0;
+#controls.length-4 .control {
+    min-width: 25%;
 }
 
+#controls.length-5 .control {
+    min-width: 20%;
+}
+
+#controls .control:hover {
+    margin-top: -256px;
+    height: 291px; /* 256px + 28px */
+    border-color: #99ffcc;
+    background: #009966;
+}
+
+#controls .control h4 {
+    position: absolute;
+    right: 0;
+    bottom: 7px;
+    left: 0;
+    margin: 0;
+}
+
+#controls .control-inner {
+    display: none;
+    padding: 7px 3px;
+    opacity: 0;
+    transition: 35ms opacity;
+}
+
+#controls .control:hover .control-inner {
+    display: block;
+    opacity: 1
+}
+
+#controls .select-option {
+    margin: 1px 3px;
+    display: inline-block;
+    background: #ffcc33;
+    border: 3px outset;
+    cursor: pointer;
+    color: black;
+    font-size: 14px;
+}
 
 
+/* Controls - maps grid */
 
+#controls .maps-grid-option {
+    padding: 3px;
+}
+
+#controls .maps-grid-option-extra {
+    width: 231px;
+}
 
 
 
