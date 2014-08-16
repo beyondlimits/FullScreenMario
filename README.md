@@ -14,19 +14,14 @@ However, you may run or host your own copies of the game on your computer, a clo
 
 ### Your Computer (Local)
 
-You may run the game through the helper UI via index.html, or directly via mario.html.
-This will run an entirely local copy of the game (note that via index.html, for security reasons, Chrome may not 
-allow you to access the game through the Javascript console).
+Download and extract the project .zip, and open index.html in a browser. That's it!
 
 ### Your Computer (Virtual Host)
 
 Download and install the <a href='http://www.apachefriends.org/en/xampp.html'>*AMP stack</a> suitable for your operating system.
-Place Full Screen Mario's files in a directory somewhere under htdocs, and access it via localhost in your browser.
+Download the FullScreenMario .zip, and extract the files in a directory somewhere under htdocs. You'll be able to access it via http://localhost/ in your browser.
 
-* For example, htdocs/FSM/index.html will translate to http://localhost/FSM/
-
-Because your browser will allow AJAX requests via a server, delete the "This is an offline copy..." log message
-from maps.js, along with all subsequent functions (they will be loaded over-eagerly by the game).
+* For example, placing the files in C:/xampp/htdocs/FSM/ will translate to http://localhost/FSM/
 
 ### Cloud IDE
 
@@ -38,7 +33,7 @@ from maps.js, along with all subsequent functions (they will be loaded over-eage
 
 ### Your Server
 
-Follow the same steps as running on your computer (virtual host). 
+Follow the same steps as running on your computer (virtual host), but onto your server's file storage (you'll likely need to FTP the files over).
 
 
 ## Developers & Legal
@@ -46,3 +41,7 @@ Follow the same steps as running on your computer (virtual host).
 This is released under the <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Attribution Non-Commercial Share-Alike</a> license. Full Screen Mario is meant to be both a proof of concept and an entertaining pasttime, not a source of income</a>.
 
 The whole project was originally hosted under www.fullscreenmario.com, but that site was taken down by Nintendo for copyright infringement.
+
+### Using Your Own Sprites
+
+Please do! Sprites are stored in /settings/sprites.js. They're compressed into a custom text-based format that's documented in /src/PixelRender/README.md: you'll want to read that to see how to make your own. 
