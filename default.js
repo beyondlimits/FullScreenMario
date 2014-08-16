@@ -76,7 +76,17 @@
     },
     {
         "title": "Mods!",
-        "generator": "OptionsTable"
+        "generator": "OptionsButtons",
+        "options": [
+            "Acid Trip",
+            "High Speed",
+            "Invincibility",
+            "Invisible Player",
+            "Luigi",
+            "ParallaxClouds",
+            "QCount",
+            "Super Fireballs"
+        ]
     },
     {
         "title": "Editor",
@@ -92,6 +102,22 @@
         ]
     },
 ], {
+    "OptionsButtons": function (schema) {
+        var output = document.createElement("div"),
+            options = schema.options,
+            element, i;
+        
+        output.className = "select-options select-options-buttons";
+        
+        for(i = 0; i < options.length; i += 1) {
+            element = document.createElement("div");
+            element.className = "select-option options-button-option";
+            element.innerText = options[i];
+            output.appendChild(element);
+        }
+        
+        return output;
+    },
     "OptionsTable": function (schema) {
         var output = document.createElement("div");
         
@@ -104,20 +130,28 @@
             rangeX = schema.rangeX,
             rangeY = schema.rangeY;
         
+        output.className = "select-options select-options-maps-grid";
+        
         if(rangeX && rangeY) {
-            for(var i = rangeY[0]; i <= rangeY[1]; i += 1) {
-                var row = document.createElement("div");
+            var table = document.createElement("table"),
+                row,
+                i, j;
+                
+            for(i = rangeY[0]; i <= rangeY[1]; i += 1) {
+                row = document.createElement("tr");
                 row.className = "maps-grid-row";
                 
-                for(var j = rangeX[0]; j <= rangeX[1]; j += 1) {
-                    element = document.createElement("div");
+                for(j = rangeX[0]; j <= rangeX[1]; j += 1) {
+                    element = document.createElement("td");
                     element.className = "select-option maps-grid-option maps-grid-option-range";
                     element.innerText = i + "-" + j;
                     row.appendChild(element);
                 }
                 
-                output.appendChild(row);
+                table.appendChild(row);
             }
+            
+            output.appendChild(table);
         }
         
         if(schema.extras) {

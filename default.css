@@ -122,6 +122,10 @@ section#game {
     opacity: 1
 }
 
+#controls .select-options {
+    position: relative;
+}
+
 #controls .select-option {
     margin: 1px 3px;
     display: inline-block;
@@ -130,19 +134,38 @@ section#game {
     cursor: pointer;
     color: black;
     font-size: 14px;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 
+/* Controls - options buttons */
+
+#controls .options-button-option {
+    position: relative;
+    display: block;
+    left: 0;
+    right: 0;
+    padding: 4px 0;
+}
+
 /* Controls - maps grid */
 
+#controls table {
+    width: 100%;
+}
+
 #controls .maps-grid-option {
+    display: table-cell;
     padding: 3px;
 }
 
 #controls .maps-grid-option-extra {
-    width: 231px;
+    display: block;
+    margin: 0 3px 0 2px;
+    padding: 3px 0;
 }
-
 
 
 /* Text sections */
