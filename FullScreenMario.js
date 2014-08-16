@@ -20,6 +20,8 @@ window.FullScreenMario = (function() {
      * 
      * @param {Number} width   Width of the game viewport: at least 480.
      * @param {Number} height   Height of the game viewport: at least 464.
+     * @param {Object} [style]   Additional CSS styles to be given to the
+     *                           game's container <div> element.
      * @param {} 
      * @returns {FullScreenMario}
      * 
@@ -335,10 +337,12 @@ window.FullScreenMario = (function() {
     function resetContainer(self, customs) {
         self.container = self.createElement("div", {
             "className": "FullScreenMario EightBitter",
-            "style": {
-                "width": customs.width,
-                "height": customs.height
-            }
+            "style": proliferate({
+                "position": "relative",
+                "width": customs.width + "px",
+                "height": customs.height + "px",
+                "fontFamily": "Press Start"
+            }, customs.style)
         });
         self.canvas = self.getCanvas(customs.width, customs.height);
         
@@ -3443,7 +3447,11 @@ window.FullScreenMario = (function() {
             return;
         }
         var text = thing.EightBitter.ObjectMaker.make("Text" + value, {
-            "value": value
+            "value": value,
+            "style": {
+                "position": "absolute",
+                "text-align": "left"
+            }
         });
         thing.EightBitter.addThing(text);
         

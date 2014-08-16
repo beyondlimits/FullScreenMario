@@ -3,8 +3,20 @@ FullScreenMario.prototype.settings.statistics = {
     "containers": [
         ["table", {
             "id": "data_display",
+            "style": {
+                "position": "absolute",
+                "top": 0,
+                "width": "100%",
+                "font-size": "21px",
+                "text-transform": "uppercase"
+            }
         }],
-        ["tr"]
+        ["tr", {
+            "style": {
+                "padding": "7px 14px 0 14px",
+                "text-align": "center"
+            }
+        }]
     ],
     "defaults": {
         "element": "td"

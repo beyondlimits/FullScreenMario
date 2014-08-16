@@ -28,6 +28,7 @@
             length = schemas.length,
             i;
         
+        section.innerText = "";
         section.className = "length-" + length;
         
         for(i = 0; i < length; i += 1) {
