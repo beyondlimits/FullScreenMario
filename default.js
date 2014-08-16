@@ -86,7 +86,10 @@
             "ParallaxClouds",
             "QCount",
             "Super Fireballs"
-        ]
+        ],
+        "callback": function (schema, button) {
+            FSM.ModAttacher.toggleMod(button.getAttribute("value") || button.innerText);
+        }
     },
     {
         "title": "Editor",
@@ -97,9 +100,12 @@
         "generator": "MapsGrid",
         "rangeX": [1, 4],
         "rangeY": [1, 8],
-        "extras": [
-            "Map Generator!"
-        ]
+        "extras": {
+            "Map Generator!": "Random"
+        },
+        "callback": function (schema, button) {
+            FSM.setMap(button.getAttribute("value") || button.innerText);
+        }
     },
 ], {
     "OptionsButtons": function (schema) {
@@ -113,6 +119,7 @@
             element = document.createElement("div");
             element.className = "select-option options-button-option";
             element.innerText = options[i];
+            element.onclick = schema.callback.bind(schema, schema, element);
             output.appendChild(element);
         }
         
@@ -145,6 +152,7 @@
                     element = document.createElement("td");
                     element.className = "select-option maps-grid-option maps-grid-option-range";
                     element.innerText = i + "-" + j;
+                    element.onclick = schema.callback.bind(schema, schema, element);
                     row.appendChild(element);
                 }
                 
@@ -155,10 +163,12 @@
         }
         
         if(schema.extras) {
-            for(i = 0; i < schema.extras.length; i += 1) {
+            for(var i in schema.extras) {
                 element = document.createElement("div");
                 element.className = "select-option maps-grid-option maps-grid-option-extra";
-                element.innerText = schema.extras[i];
+                element.innerText = i;
+                element.setAttribute("value", schema.extras[i]);
+                element.onclick = schema.callback.bind(schema, schema, element);
                 output.appendChild(element);
             }
         }
