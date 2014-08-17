@@ -75,6 +75,7 @@
                         "Beetle": {},
                         "Piranha": {},
                         "Blooper": {},
+                        "CheepCheep": {},
                         "HammerBro": {
                             "Bowser": {}
                         }
@@ -357,6 +358,24 @@
                 onThingMake: FullScreenMario.prototype.spawnBlooper,
                 movement: FullScreenMario.prototype.moveBlooper,
                 death: FullScreenMario.prototype.killFlip
+            },
+            CheepCheep: {
+                nofall: true,
+                nocollidesolid: true,
+                nocollidechar: true,
+                movement: false,
+                xvel: FullScreenMario.unitsize / -6,
+                yvel: FullScreenMario.unitsize / -32,
+                death: FullScreenMario.prototype.killFlip,
+                spriteCycleSynched: [
+                    ["one", "two"]
+                ],
+                attributes: {
+                    "red": {
+                        xvel: FullScreenMario.unitsize / -4,
+                        yvel: FullScreenMario.unitsize / -24
+                    }
+                }
             },
             Bowser: {
                 width: 16,
