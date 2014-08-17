@@ -351,8 +351,8 @@
             },
             Blooper: {
                 height: 12,
-                nocollidesolid: 1,
-                nofall: 1,
+                nofall: true,
+                nocollidesolid: true,
                 speed: FullScreenMario.unitsize / 2,
                 onThingMake: FullScreenMario.prototype.spawnBlooper,
                 movement: FullScreenMario.prototype.moveBlooper,

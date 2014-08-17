@@ -368,7 +368,7 @@ window.FullScreenMario = (function() {
     function gameStart() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
-        EightBitter.setMap("1-1");
+        EightBitter.setMap("2-2");
         EightBitter.StatsHolder.set("lives", 3);
         EightBitter.GamesRunner.unpause();
     }
@@ -2427,7 +2427,7 @@ window.FullScreenMario = (function() {
         thing.squeeze += 1;
         
         if (thing.top > thing.EightBitter.player.bottom || thing.bottom > 360) {
-            // unsqueezeBlooper(thing);
+            thing.EightBitter.animateBlooperUnsqueezing(thing);
         }
     }
     
@@ -2803,6 +2803,17 @@ window.FullScreenMario = (function() {
         thing.EightBitter.TimeHandler.addEvent(function () {
             thing.flickering = thing.hidden = false;
         }, cleartime * interval + 1);
+    }
+    
+    /**
+     * 
+     */
+    function animateBlooperUnsqueezing(thing) {
+        thing.counter = 0;
+        thing.squeeze = false;
+        
+        thing.EightBitter.removeClass(thing, "squeeze");
+        thing.EightBitter.setHeight(thing, 12, true, true);
     }
     
     /**
@@ -3825,6 +3836,9 @@ window.FullScreenMario = (function() {
      *              "x": 644, "y": 64, "xnum": 5, "xwidth": 8 }
      */
     function macroFillPreThings(reference, prethings, area, map, scope) {
+        if(!scope.ObjectMaker.getPropertiesFull()[reference.thing]) {
+            debugger;
+        }
         var defaults = scope.ObjectMaker.getPropertiesFull(),
             xnum = reference.xnum || 1,
             ynum = reference.ynum || 1,
@@ -4386,6 +4400,7 @@ window.FullScreenMario = (function() {
         "animateEmerge": animateEmerge,
         "animateEmergeCoin": animateEmergeCoin,
         "animateFlicker": animateFlicker,
+        "animateBlooperUnsqueezing": animateBlooperUnsqueezing,
         "animateFireballEmerge": animateFireballEmerge,
         "animateFireballExplode": animateFireballExplode,
         "animateFirework": animateFirework,
