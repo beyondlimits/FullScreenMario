@@ -368,7 +368,7 @@ window.FullScreenMario = (function() {
     function gameStart() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
-        EightBitter.setMap("2-2");
+        EightBitter.setMap("1-1");
         EightBitter.StatsHolder.set("lives", 3);
         EightBitter.GamesRunner.unpause();
     }
@@ -460,7 +460,7 @@ window.FullScreenMario = (function() {
         
         if(EightBitter.MapScreener.underwater) {
             player.swimming = true;
-            EightBitter.TimeHandler.addSpriteCycle(player, [
+            EightBitter.TimeHandler.addClassCycle(player, [
                 "swim1", "swim2"
             ], "swimming", 5);
         }
@@ -544,10 +544,10 @@ window.FullScreenMario = (function() {
         // Sprite cycles
         var cycle;
         if(cycle = thing.spriteCycle) {
-            thing.EightBitter.TimeHandler.addSpriteCycle(thing, cycle[0], cycle[1] || null, cycle[2] || null);
+            thing.EightBitter.TimeHandler.addClassCycle(thing, cycle[0], cycle[1] || null, cycle[2] || null);
         }
         if(cycle = thing.spriteCycleSynched) {
-            thing.EightBitter.TimeHandler.addSpriteCycleSynched(thing, cycle[0], cycle[1] || null, cycle[2] || null);
+            thing.EightBitter.TimeHandler.addClassCycleSynched(thing, cycle[0], cycle[1] || null, cycle[2] || null);
         }
         
         // Mods!
@@ -1035,7 +1035,10 @@ window.FullScreenMario = (function() {
         if(update_size) {
             thing.EightBitter.updateSize(thing);
             // PixelDrawer.setThingSprite(thing);
-            console.log("Should update thing canvas on setWidth", thing.title);
+            if(!window.warned_update_set_width) {
+                console.log("Should update thing canvas on setWidth", thing.title);
+                window.warned_update_set_width = true;
+            }
         }
     }
     
@@ -1054,7 +1057,10 @@ window.FullScreenMario = (function() {
         if(update_size) {
             thing.EightBitter.updateSize(thing);
             // setThingSprite(thing);
-            console.log("Should update thing canvas on setHeight", thing.title);
+            if(!window.warned_update_set_height) {
+                console.log("Should update thing canvas on setHeight", thing.title);
+                window.warned_update_set_height = true;
+            }
         }
     }
     
@@ -1255,7 +1261,7 @@ window.FullScreenMario = (function() {
         thing.EightBitter.AudioPlayer.play("Powerup");
         thing.EightBitter.AudioPlayer.playTheme("Star", true);
         
-        thing.EightBitter.TimeHandler.addSpriteCycle(thing, [
+        thing.EightBitter.TimeHandler.addClassCycle(thing, [
             "star1", "star2", "star3", "star4"
         ], "star", 5);
         thing.EightBitter.TimeHandler.addEvent(
@@ -1325,7 +1331,7 @@ window.FullScreenMario = (function() {
             return true;
         });
         
-        thing.EightBitter.TimeHandler.addSpriteCycle(thing, stages, "shrooming", 6);
+        thing.EightBitter.TimeHandler.addClassCycle(thing, stages, "shrooming", 6);
     }
     
     /**
@@ -2007,7 +2013,7 @@ window.FullScreenMario = (function() {
         
         thing.EightBitter.removeClasses(thing, "running jumping skidding");
         thing.EightBitter.addClass(thing, "climbing animated");
-        thing.EightBitter.TimeHandler.addSpriteCycle(thing, ["one", "two"], "climbing");
+        thing.EightBitter.TimeHandler.addClassCycle(thing, ["one", "two"], "climbing");
         
         thing.EightBitter.AudioPlayer.pause();
         thing.EightBitter.AudioPlayer.play("Flagpole");
@@ -2411,7 +2417,6 @@ window.FullScreenMario = (function() {
      * 
      */
     function moveBlooperSqueezing(thing) {
-        console.log("Move saqueezing", thing.squeeze);
         if (thing.squeeze != 2) {
             thing.squeeze = 2;
             thing.EightBitter.addClass(thing, "squeeze");
@@ -2769,7 +2774,7 @@ window.FullScreenMario = (function() {
         thing.EightBitter.StatsHolder.increase("score", 200);
         
         thing.EightBitter.TimeHandler.clearClassCycle(thing, 0);
-        thing.EightBitter.TimeHandler.addSpriteCycle(thing, [
+        thing.EightBitter.TimeHandler.addClassCycle(thing, [
             "anim1", "anim2", "anim3", "anim4", "anim3", "anim2"
         ], 0, 5);
         
@@ -2937,8 +2942,8 @@ window.FullScreenMario = (function() {
         if(!thing.paddling) {
             thing.EightBitter.removeClass(thing, "skidding paddle1 paddle2 paddle3 paddle4 paddle5");
             thing.EightBitter.addClass(thing, "paddling");
-            thing.EightBitter.clearClassCycle(thing, "paddling_cycle");
-            thing.EightBitter.addClassCycle(thing, 
+            thing.EightBitter.TimeHandler.clearClassCycle(thing, "paddling_cycle");
+            thing.EightBitter.TimeHandler.addClassCycle(thing, 
                 ["paddle1", "paddle2", "paddle3", "paddle2", "paddle1",
                 function () {
                     return thing.paddling = false;
@@ -2960,7 +2965,7 @@ window.FullScreenMario = (function() {
      * 
      */
     function animatePlayerRunningCycle(thing) {
-        thing.running = thing.EightBitter.TimeHandler.addSpriteCycle(thing, [
+        thing.running = thing.EightBitter.TimeHandler.addClassCycle(thing, [
             "one", "two", "three", "two"
         ], "running", function (event) {
             event.timeout = 5 + Math.ceil(thing.maxspeedsave - Math.abs(thing.xvel));

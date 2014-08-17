@@ -610,7 +610,7 @@
                 "creation": [
                     { "location": 4 },
                     { "macro": "Floor", "width": 464 },
-                    { "macro": "Pipe", "height": 16, "pirhana": true, "entrance": 4 },
+                    { "macro": "Pipe", "height": 16, "pirhana": true, "transport": 4 },
                     { "macro": "Pattern", "pattern": "BackRegular", "x": 104, },
                     { "thing": "Stone", "x": 16, "y": 8 },
                     { "thing": "Stone", "x": 24, "y": 16, "height": 16 },

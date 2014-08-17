@@ -214,7 +214,7 @@ function TimeHandlr(settings) {
   /* Sprite Cycles (advanced)
    * Functions to cycle an object's [className] attribute through an array
    * Sample usage:
-   * addSpriteCycle(
+   * addClassCycle(
    *   me,
    *   ["run_one", "run_two", "run_three"]
    *   "running",
@@ -223,9 +223,9 @@ function TimeHandlr(settings) {
    * Note: These need handlers from the user, such as given by FullScreenMario
   */
   
-  // Public: addSpriteCycle
+  // Public: addClassCycle
   // Sets a sprite cycle (settings) for an object under name
-  var addSpriteCycle = self.addSpriteCycle = function(me, settings, name, timing) {
+  var addClassCycle = self.addClassCycle = function(me, settings, name, timing) {
     // Make sure the object has a holder for cycles...
     if(!me[cycles]) me[cycles] = {};
     // ...and nothing previously existing for that name
@@ -246,10 +246,10 @@ function TimeHandlr(settings) {
     return cycle;
   };
   
-  // Public: addSpriteCycleSynched
-  // Delays the typical addSpriteCycle until it's synched with time
-  // (Note: very similar to addSpriteCycle, and could probably be combined)
-  var addSpriteCycleSynched = self.addSpriteCycleSynched = function(me, settings, name, timing) {
+  // Public: addClassCycleSynched
+  // Delays the typical addClassCycle until it's synched with time
+  // (Note: very similar to addClassCycle, and could probably be combined)
+  var addClassCycleSynched = self.addClassCycleSynched = function(me, settings, name, timing) {
     // Make sure the object has a holder for cycles...
     if(!me[cycles]) me[cycles] = {};
     // ...and nothing previously existing for that name
