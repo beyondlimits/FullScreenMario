@@ -1468,12 +1468,32 @@ window.FullScreenMario = (function() {
      * 
      */
     function spawnCastleBlock(thing) {
-        var fireball, i;
-        for(i = thing.fireballs || 0; i > 0; i -= 1) {
-            fireball = thing.EightBitter.addThing("CastleFireball");
-            thing.EightBitter.setMidObj(fireball, thing);
-            console.log(fireball.left, fireball.top);
+        if(!thing.fireballs) {
+            return;
         }
+        
+        var balls = new Array(thing.fireballs);
+        
+        for(var i = 0; i < thing.fireballs; i += 1) {
+            balls[i] = thing.EightBitter.addThing("CastleFireball");
+            thing.EightBitter.setMidObj(balls[i], thing);
+        }
+        
+        if(thing.speed >= 0) {
+            thing.dt = .07;
+            thing.angle = .25;
+        } else {
+            thing.dt = -.07;
+            thing.angle = -.25;
+        }
+        
+        thing.EightBitter.TimeHandler.addEventInterval(
+            thing.EightBitter.animateCastleBlock,
+            Math.round(7 / Math.abs(thing.speed)),
+            Infinity,
+            thing,
+            balls
+        );
     }
     
     /**
@@ -2978,6 +2998,22 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function animateCastleBlock(thing, balls) {
+        var ax = Math.cos(thing.angle * Math.PI) * thing.EightBitter.unitsize * 4,
+            ay = Math.sin(thing.angle * Math.PI) * thing.EightBitter.unitsize * 4,
+            i;
+        
+        for(i = 1; i < balls.length; i += 1) {
+            thing.EightBitter.setMidX(balls[i], thing.left + ax * i);
+            thing.EightBitter.setMidY(balls[i], thing.top + ay * i);
+        }
+        
+        thing.angle += thing.dt;
+    }
+    
+    /**
+     * 
+     */
     function animatePlayerPaddling(thing) {
         if(!thing.paddling) {
             thing.EightBitter.removeClass(thing, "skidding paddle1 paddle2 paddle3 paddle4 paddle5");
@@ -4452,6 +4488,7 @@ window.FullScreenMario = (function() {
         "animateFireballExplode": animateFireballExplode,
         "animateFirework": animateFirework,
         "animateEndLevelFireworks": animateEndLevelFireworks,
+        "animateCastleBlock": animateCastleBlock,
         "animatePlayerFire": animatePlayerFire,
         "animatePlayerPaddling": animatePlayerPaddling,
         "animatePlayerBubbling": animatePlayerBubbling,
