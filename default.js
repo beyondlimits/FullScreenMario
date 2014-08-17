@@ -69,11 +69,57 @@
 })([
     {
         "title": "Options",
-        "generator": "OptionsTable"
+        "generator": "OptionsTable",
+        "options": [
+            {
+                "title": "Mute",
+                "type": "Boolean",
+                "source": function () {
+                    return false;
+                }
+            },
+            {
+                "title": "FastFwd",
+                "type": "Boolean",
+                "source": function () {
+                    return false;
+                }
+            }
+        ]
     },
     {
         "title": "Controls",
-        "generator": "OptionsTable"
+        "generator": "OptionsTable",
+        "options": [
+            {
+                "title": "Left",
+                "type": "Keys",
+                "source": function () {
+                    return ["a"];
+                }
+            },
+            {
+                "title": "Right",
+                "type": "Keys",
+                "source": function () {
+                    return ["d"];
+                }
+            },
+            {
+                "title": "Up",
+                "type": "Keys",
+                "source": function () {
+                    return ["w"];
+                }
+            },
+            {
+                "title": "Down",
+                "type": "Keys",
+                "source": function () {
+                    return ["s"];
+                }
+            }
+        ]
     },
     {
         "title": "Mods!",
@@ -84,7 +130,7 @@
             "Invincibility",
             "Invisible Player",
             "Luigi",
-            "ParallaxClouds",
+            "Parallax Clouds",
             "QCount",
             "Super Fireballs"
         ],
@@ -94,7 +140,7 @@
     },
     {
         "title": "Editor",
-        "generator": "OptionsTable"
+        "generator": "LevelEditor"
     },
     {
         "title": "Maps",
@@ -126,10 +172,93 @@
         
         return output;
     },
-    "OptionsTable": function (schema) {
-        var output = document.createElement("div");
+    "OptionsTable": (function () {
+        function CreateBooleanRow(details) {
+            var row = document.createElement("tr"),
+                left = document.createElement("td"),
+                right = document.createElement("td");
+            
+            left.innerText = details.title;
+            
+            right.className = "select-option options-button-option";
+            right.innerText = "off";
+            
+            row.appendChild(left);
+            row.appendChild(right);
+            
+            return row;
+        }
         
-        output.innerText = "hello";
+        function CreateKeyRow(details) {
+            var row = document.createElement("tr"),
+                left = document.createElement("td"),
+                right = document.createElement("td"),
+                values, child,
+                i;
+                
+            left.innerText = details.title;
+            
+            values = details.source();
+            for(i = 0; i < values.length; i += 1) {
+                child = document.createElement("td");
+                child.innerText = values[i];
+                right.appendChild(child);
+            }
+            
+            row.appendChild(left);
+            row.appendChild(right);
+            
+            return row;
+        }
+        
+        var optionTypes = {
+            "Boolean": CreateBooleanRow,
+            "Keys": CreateKeyRow
+        };
+
+        return function (schema) {
+            var output = document.createElement("div"),
+                table = document.createElement("table"),
+                generator, i;
+            
+            output.className = "select-options select-options-table";
+            
+            for(i = 0; i < schema.options.length; i += 1) {
+                generator = optionTypes[schema.options[i].type];
+                table.appendChild(generator(schema.options[i]));
+            }
+            
+            output.appendChild(table);
+            
+            return output;
+        };
+    
+    })(),
+    "LevelEditor": function (schema) {
+        var output = document.createElement("div"),
+            title = document.createElement("div"),
+            button = document.createElement("div"),
+            between = document.createElement("div"),
+            uploader = document.createElement("div");
+        
+        output.className = "select-options select-options-level-editor";
+        
+        title.className = "select-option-title";
+        title.innerText = "Create your own custom levels:";
+        
+        button.className = "disabled select-option select-option-large options-button-option";
+        button.innerHTML = "Start the <br /> Level Editor!";
+        
+        between.className = "select-option-title";
+        between.innerHTML = "<em>- or -</em><br /><br />Continue your editor files:";
+        
+        uploader.className = "disabled select-option select-option-large select-option-inset options-button-option";
+        uploader.innerText = "Click here, or drag a file";
+        
+        output.appendChild(title);
+        output.appendChild(button);
+        output.appendChild(between);
+        output.appendChild(uploader);
         
         return output;
     },

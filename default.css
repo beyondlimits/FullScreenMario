@@ -13,6 +13,8 @@ body {
 
 header {
     -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
     user-select: none;
 }
 
@@ -126,6 +128,10 @@ section#game {
     position: relative;
 }
 
+#controls .select-option-title {
+    padding: 11px;
+}
+
 #controls .select-option {
     margin: 1px 3px;
     display: inline-block;
@@ -137,6 +143,25 @@ section#game {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
+}
+
+#controls .select-option.select-option-inset {
+    border: 3px inset;
+}
+
+#controls .select-option.select-option-large {
+    padding: 7px 0;
+    font-size: 15px;
+    line-height: 105%;
+}
+
+#controls .disabled {
+    opacity: .49 !important;
+    cursor: default !important;
+    -ms-user-select: none !important;
+    -moz-user-select: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
 }
 
 

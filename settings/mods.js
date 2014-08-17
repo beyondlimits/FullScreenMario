@@ -26,7 +26,7 @@ FullScreenMario.prototype.settings.mods = {
             }
         },
         {
-            "name": "ParallaxClouds",
+            "name": "Parallax Clouds",
             "description": "Clouds in the sky scroll at about 63% the normal rate.",
             "enabled": false,
             "events": {

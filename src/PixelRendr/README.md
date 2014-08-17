@@ -144,4 +144,4 @@ Objects commonly have to repeat a section of their image. Rather than use two ob
 
 3. #### BaseFiler
 
-    Lookup wrapper for library.sprites. GIven classes as space-joined arrays of strings (e.g. "one two three"), it returns and caches the output of ProcessorBase.
+    Lookup wrapper for library.sprites. Given classes as space-joined arrays of strings (e.g. "one two three"), it returns and caches the output of ProcessorBase.
