@@ -425,6 +425,7 @@ window.FullScreenMario = (function() {
             thing.EightBitter.setLeft(thing, left);
             thing.EightBitter.setTop(thing, top);
         }
+        
         thing.EightBitter.updateSize(thing);
         
         thing.EightBitter.GroupHolder.getFunctions().add[thing.grouptype](thing);
@@ -928,12 +929,31 @@ window.FullScreenMario = (function() {
     
     /**
      * 
+     */
+    function isCharacterTouchingCharacter(thing, other) {
+        if(thing.nocollidechar && !other.player) {
+            return false;
+        }
+        
+        if(other.nocollidechar && !thing.player) {
+            return false;
+        }
+        
+        return thing.EightBitter.isThingTouchingThing(thing, other);
+    }
+    
+    /**
+     * 
      * @param {Thing} thing
      * @param {Thing} other
      */
     function isCharacterTouchingSolid(thing, other) {        // Hidden solids can only be touched by the player bottom-bumping them,
         // or by specifying collide_hidden
         if(other.hidden && !other.collide_hidden) {            if(!thing.player || !thing.EightBitter.isSolidOnCharacter(other, thing)) {                return false;            }
+        }
+        
+        if(thing.nocollidesolid) {
+            return false;
         }
         
         return thing.EightBitter.isThingTouchingThing(thing, other);
@@ -1442,6 +1462,19 @@ window.FullScreenMario = (function() {
     function spawnBlooper(thing) {
         thing.squeeze = 0;
         thing.counter = 0;
+    }
+    
+    /**
+     * 
+     */
+    function spawnCastleBlock(thing) {
+        for(var i = thing.fireballs || 0; i > 0; i -= 1) {
+            thing.EightBitter.addThing(
+                "CastleFireball", 
+                thing.EightBitter.getMidX(thing) - 10,
+                thing.EightBitter.getMidY(thing) - 9
+            );
+        }
     }
     
     /**
@@ -4342,6 +4375,7 @@ window.FullScreenMario = (function() {
         "isThingOnThing": isThingOnThing,
         "isThingOnSolid": isThingOnSolid,
         "isCharacterTouchingSolid": isCharacterTouchingSolid,
+        "isCharacterTouchingCharacter": isCharacterTouchingCharacter,
         "isCharacterOnSolid": isCharacterOnSolid,
         "isCharacterOnResting": isCharacterOnResting,
         "isCharacterAboveEnemy": isCharacterAboveEnemy,
@@ -4366,6 +4400,7 @@ window.FullScreenMario = (function() {
         // Spawn / actions
         "spawnPirhana": spawnPirhana,
         "spawnBlooper": spawnBlooper,
+        "spawnCastleBlock": spawnCastleBlock,
         "spawnDetector": spawnDetector,
         "activateWindowDetector": activateWindowDetector,
         "activateScrollBlocker": activateScrollBlocker,

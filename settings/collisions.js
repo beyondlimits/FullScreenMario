@@ -3,8 +3,8 @@ FullScreenMario.prototype.settings.collisions = {
     "group_types": "Array",
     "hit_checks": {
         "Character": {
-            "Solid": FullScreenMario.prototype.isCharacterTouchingSolid,
-            "Character": FullScreenMario.prototype.isThingTouchingThing
+            "Character": FullScreenMario.prototype.isCharacterTouchingCharacter,
+            "Solid": FullScreenMario.prototype.isCharacterTouchingSolid
         }
     },
     "hit_functions": {
