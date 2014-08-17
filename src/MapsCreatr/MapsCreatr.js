@@ -382,7 +382,7 @@ function MapsCreatr(settings) {
      * @param {Area} area   The Area object to be populated by these PreThings.
      * @param {Map} map   The Map object containing the Area object.
      */
-    function analyzePreThing(reference, prethings, area, map) {
+    function analyzePreThing(reference, prethings, area, map, scope) {
         var thing = reference.thing,
             prething;
         
@@ -391,7 +391,7 @@ function MapsCreatr(settings) {
                     + "ignored: " + thing, reference, prethings, area, map);
             return; 
         }
-        
+                
         prething = new PreThing(ObjectMaker.make(thing, reference), reference);
         thing = prething.thing;
         

@@ -120,8 +120,8 @@ window.FullScreenMario = (function() {
     // Gravity is always a function of unitsize
     FullScreenMario.gravity = Math.round(12 * FullScreenMario.unitsize) / 100; // .48
     
-    // When a player is 48 spaces below the bottom, kill it
-    FullScreenMario.bottom_death_difference = 48;
+    // When a player is far enough below the bottom, that's a death
+    FullScreenMario.bottom_death_difference = 12 * FullScreenMario.unitsize;
     
     // Levels of points to award for hopping on / shelling enemies
     FullScreenMario.point_levels = [
@@ -368,7 +368,7 @@ window.FullScreenMario = (function() {
     function gameStart() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
-        EightBitter.setMap("1-1");
+        EightBitter.setMap("2-3");
         EightBitter.StatsHolder.set("lives", 3);
         EightBitter.GamesRunner.unpause();
     }
@@ -497,6 +497,11 @@ window.FullScreenMario = (function() {
         }
         if(thing.height && !thing.spriteheight) {
             thing.spriteheight = defaults.spriteheight || defaults.height;
+        }
+        
+        // "Infinity" height refers to objects that reach exactly to the bottom
+        if(thing.height === "Infinity") {
+            thing.height = thing.EightBitter.getAbsoluteHeight(thing.y) / thing.EightBitter.unitsize;
         }
         
         // Each thing has at least 4 maximum quadrants (for the QuadsKeepr)
@@ -3782,17 +3787,20 @@ window.FullScreenMario = (function() {
      * distance from the floor).
      * 
      * @param {Number} yloc   A height to find the distance to the floor from.
-     * @param {Number} divider   ???
+     * @param {Boolean} [correct_unitsize]   Whether the yloc accounts for 
+     *                                       unitsize expansion (e.g. 48 rather
+     *                                       than 12, for unitsize=4).
      * @return {Number}
      */
-    function getAbsoluteHeight(yloc, divider) {
-        var EightBitter = EightBittr.ensureCorrectCaller(this);
-        if(!window.warnedAbsoluteHeight) {
-            console.warn("getAbsoluteHeight still uses FSM.MapScreener");
-            window.warnedAbsoluteHeight = true;
+    function getAbsoluteHeight(yloc, correct_unitsize) {
+        var EightBitter = EightBittr.ensureCorrectCaller(this),
+            height = yloc + EightBitter.MapScreener.bottom_death_difference;
+        
+        if (!correct_unitsize) {
+            height *= EightBitter.unitsize;
         }
         
-        return (yloc + EightBitter.MapScreener.bottom_max) / (divider || 1);
+        return height;
     }
     
     /**
@@ -3933,8 +3941,7 @@ window.FullScreenMario = (function() {
                 "x": x,
                 "y": y,
                 "width": (reference.width || 8),
-                // Extra 24 is given so diagonal falling doesn't cause scrolling
-                "height": scope.getAbsoluteHeight(y) + 24 
+                "height": "Infinity",
             }, reference, true );
         floor.macro = undefined;
         return floor;
@@ -3989,12 +3996,11 @@ window.FullScreenMario = (function() {
         // because the pattern is indistinguishible when placed correctly.
         var x = reference.x || 0,
             y = reference.y || 0,
-            dtb = scope.getAbsoluteHeight(y),
             width = reference.width || 24;
         
         return [
             { "thing": "TreeTop", "x": x, "y": y, "width": width },
-            { "thing": "TreeTrunk", "x": x + 8, "y": y - 8, "width": width - 16, "height": dtb - 8 }
+            { "thing": "TreeTrunk", "x": x + 8, "y": y - 8, "width": width - 16, "height": "Infinity" }
         ];
     }
     
@@ -4007,11 +4013,10 @@ window.FullScreenMario = (function() {
     function macroShroom(reference, prethings, area, map, scope) {
         var x = reference.x || 0,
             y = reference.y || 0,
-            dtb = scope.getAbsoluteHeight(y),
             width = reference.width || 24;
         return [
             { "thing": "ShroomTop", "x": x, "y": y, "width": width },
-            { "thing": "ShroomTrunk", "x": x + (width - 8) / 2, "y": y - 8, "height": dtb - 8 }
+            { "thing": "ShroomTrunk", "x": x + (width - 8) / 2, "y": y - 8, "height": "Infinity" }
         ];
     }
     
@@ -4028,7 +4033,7 @@ window.FullScreenMario = (function() {
                 "thing": "Water",
                 "x": x,
                 "y": y,
-                "height": scope.getAbsoluteHeight(y),
+                "height": "Infinity",
                 "macro": undefined
             }, reference, true);
         
@@ -4228,9 +4233,9 @@ window.FullScreenMario = (function() {
             y = reference.y || 0,
             width = (reference.width || 0) - 40,
             output = [
-                { "thing": "Stone", "x": x, "y": y + 48, "width": 24, "height": scope.getAbsoluteHeight(48) },
-                { "thing": "Stone", "x": x + 24, "y": y + 40, "width": 8, "height": scope.getAbsoluteHeight(40) },
-                { "thing": "Stone", "x": x + 32, "y": y + 32, "width": 8, "height": scope.getAbsoluteHeight(32) }
+                { "thing": "Stone", "x": x, "y": y + 48, "width": 24, "height": "Infinity" },
+                { "thing": "Stone", "x": x + 24, "y": y + 40, "width": 8, "height": "Infinity" },
+                { "thing": "Stone", "x": x + 32, "y": y + 32, "width": 8, "height": "Infinity" }
             ];
         
         if(width > 0) {
