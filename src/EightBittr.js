@@ -242,7 +242,7 @@ window.EightBittr = (function() {
      * 
      */
     function setMidX(thing, x) {
-        thing.EightBitter.setLeft(thing, x + thing.left * thing.EightBitter.unitsize / 2);
+        thing.EightBitter.setLeft(thing, x + thing.width * thing.EightBitter.unitsize / 2);
     }
     
     /**

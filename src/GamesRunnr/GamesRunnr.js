@@ -95,9 +95,9 @@ function GamesRunnr(settings) {
      * @return {this}
      */
     self.step = function(num) {
-        unpause();
+        self.unpause();
         self.upkeep();
-        pause();
+        self.pause();
         if(num > 0) {
             self.step(num - 1);
         }
