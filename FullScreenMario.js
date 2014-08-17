@@ -1468,12 +1468,11 @@ window.FullScreenMario = (function() {
      * 
      */
     function spawnCastleBlock(thing) {
-        for(var i = thing.fireballs || 0; i > 0; i -= 1) {
-            thing.EightBitter.addThing(
-                "CastleFireball", 
-                thing.EightBitter.getMidX(thing) - 10,
-                thing.EightBitter.getMidY(thing) - 9
-            );
+        var fireball, i;
+        for(i = thing.fireballs || 0; i > 0; i -= 1) {
+            fireball = thing.EightBitter.addThing("CastleFireball");
+            thing.EightBitter.setMidObj(fireball, thing);
+            console.log(fireball.left, fireball.top);
         }
     }
     

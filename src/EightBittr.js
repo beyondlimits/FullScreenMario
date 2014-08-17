@@ -233,6 +233,14 @@ window.EightBittr = (function() {
     /**
      * 
      */
+    function setMid(thing, x, y) {
+        thing.EightBitter.setMidX(thing, x);
+        thing.EightBitter.setMidY(thing, y);
+    }
+    
+    /**
+     * 
+     */
     function setMidX(thing, x) {
         thing.EightBitter.setLeft(thing, x + thing.left * thing.EightBitter.unitsize / 2);
     }
@@ -261,6 +269,14 @@ window.EightBittr = (function() {
     /**
      * 
      */
+    function setMidObj(thing, other) {
+        thing.EightBitter.setMidXObj(thing, other);
+        thing.EightBitter.setMidYObj(thing, other);
+    }
+    
+    /**
+     * 
+     */
     function setMidXObj(thing, other) {
         thing.EightBitter.setLeft(thing, thing.EightBitter.getMidX(other) - (thing.width * thing.EightBitter.unitsize / 2));
     }
@@ -268,15 +284,15 @@ window.EightBittr = (function() {
     /**
      * 
      */
-    function objectToLeft(thing, other) {
-        return thing.EightBitter.getMidX(thing) < thing.EightBitter.getMidX(other);
+    function setMidYObj(thing, other) {
+        thing.EightBitter.setTop(thing, thing.EightBitter.getMidY(other) - (thing.height * thing.EightBitter.unitsize / 2));
     }
     
     /**
      * 
      */
-    function setMidYObj(thing, other) {
-        thing.EightBitter.setTop(thing, thing.EightBitter.getMidY(other) - (thing.height * thing.EightBitter.unitsize / 2));
+    function objectToLeft(thing, other) {
+        return thing.EightBitter.getMidX(thing) < thing.EightBitter.getMidX(other);
     }
     
     /**
@@ -547,12 +563,14 @@ window.EightBittr = (function() {
         "setRight": setRight,
         "setBottom": setBottom,
         "setLeft": setLeft,
+        "setMid": setMid,
         "setMidY": setMidY,
         "setMidX": setMidX,
         "getMidY": getMidY,
         "getMidX": getMidX,
-        "setMidYObj": setMidYObj,
+        "setMidObj": setMidObj,
         "setMidXObj": setMidXObj,
+        "setMidYObj": setMidYObj,
         "objectToLeft": objectToLeft,
         "updateTop": updateTop,
         "updateRight": updateRight,
