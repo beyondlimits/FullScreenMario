@@ -356,7 +356,7 @@
                     { "macro": "Water", "x": 208, "width": 24 },
                     { "macro": "Floor", "x": 232, "y": 24, "width": 8 },
                     { "macro": "Floor", "x": 240, "y": 16, "width": 8 },
-                    { "thing": "CastleBlock", "x": 240, "y": 24, "fireballs": 6 },
+                    { "thing": "CastleBlock", "x": 240, "y": 24, "fireballs": 6, "speed": -1 },
                     { "thing": "Block", "x": 240, "y": 56, "contents": "Mushroom" },
                     { "macro": "Floor", "x": 248, "y": 24, "width": 8 },
                     { "macro": "Water", "x": 256, "width": 24 },
@@ -621,6 +621,30 @@
                     { "thing": "Stone", "x": 64, "y": 56, "height": 56 },
                     { "thing": "Stone", "x": 72, "y": 64, "height": 64 },
                     { "macro": "EndOutsideCastle", "x": 148 }
+                ]
+            }
+        ]
+    },
+    "2-3": {
+        "locations": [
+            { "entry": "Plain" }
+        ],
+        "areas": [
+            {
+                "setting": "Overworld",
+                "creation": [
+                    { "location": 0 },
+                    { "macro": "Floor", "width": 56 },
+                    { "macro": "Pattern", "pattern": "BackCloud", "repeat": 5 },
+                    { "macro": "ZoneCheepsstart", "x": 64 },
+                    { "macro": "Tree", "x": 64, "width": 64 },
+                    { "thing": "Stone", "x": 80, "y": 8 },
+                    { "thing": "Stone", "x": 88, "y": 16, "height": 16 },
+                    { "thing": "Stone", "x": 96, "y": 24, "width": 24, "height": 24 },
+                    { "macro": "Bridge", "x": 120, "y": 24, "width": 128 },
+                    { "thing": "Stone", "x": 248, "y": 24, "height": "Infinity" },
+                    { "macro": "Bridge", "x": 256, "y": 24, "width": 120 },
+                    { "macro": "Fill", "thing": "Coin", "x": 290, "y": 63, "xnum": 4, "xwidth": 8 },
                 ]
             }
         ]

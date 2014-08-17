@@ -430,6 +430,7 @@
                 nocollidesolid: true,
                 nocollidechar: true,
                 nofall: true,
+                outerok: true
             },
             Firework: {
                 nocollide: true,
@@ -592,7 +593,7 @@
                 hidden: true
             },
             CastleBlock: {
-                onThingAdd: console.log.bind(console, "HELLO"),
+                onThingAdd: FullScreenMario.prototype.spawnCastleBlock,
                 attributes: {
                     "fireballs": {
                         speed: 1
