@@ -1,5 +1,5 @@
 FullScreenMario.prototype.settings.events = {
-    "onSpriteCycleStart": "onadding",
+    "onSpriteCycleStart": "onThingAdd",
     "doSpriteCycleStart": "placed",
     "cycleCheckValidity": "alive",
     "timingDefault": 9

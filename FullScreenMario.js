@@ -368,7 +368,7 @@ window.FullScreenMario = (function() {
     function gameStart() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
-        EightBitter.setMap("2-3");
+        EightBitter.setMap("1-4");
         EightBitter.StatsHolder.set("lives", 3);
         EightBitter.GamesRunner.unpause();
     }
@@ -430,8 +430,8 @@ window.FullScreenMario = (function() {
         thing.EightBitter.GroupHolder.getFunctions().add[thing.grouptype](thing);
         thing.placed = true;
         
-        if(thing.onadding) {
-            thing.onadding(thing);
+        if(thing.onThingAdd) {
+            thing.onThingAdd(thing);
         }
         
         thing.EightBitter.PixelDrawer.setThingSprite(thing);
@@ -638,7 +638,8 @@ window.FullScreenMario = (function() {
      * @param {FullScreenMario} EightBitter
      */
     function maintainCharacters(EightBitter, characters) {
-        var delx = EightBitter.MapScreener.right + EightBitter.QuadsKeeper.getOutDifference(),
+        var deldx = EightBitter.QuadsKeeper.getOutDifference(),
+            delx = EightBitter.MapScreener.right + deldx,
             character, i;
         for (i = 0; i < characters.length; ++i) {
             character = characters[i];
@@ -675,11 +676,13 @@ window.FullScreenMario = (function() {
             // To do: rethink this...
             if (character.alive) {
                 if (!character.player &&
-                    (character.numquads == 0 || character.left > delx) && !character.outerok) {
+                    (character.numquads == 0 || character.left > delx) &&
+                    (!character.outerok || character.right < -deldx)) {
                     EightBitter.arrayDeleteMember(character, characters, i);
                 } else {
-                    if (!character.nomove && character.movement)
+                    if (!character.nomove && character.movement) {
                         character.movement(character);
+                    }
                 }
             } else {
                 EightBitter.arrayDeleteMember(character, characters, i);

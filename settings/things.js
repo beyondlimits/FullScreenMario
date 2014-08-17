@@ -385,7 +385,7 @@
                 spawntype: "Goomba",
                 // killonend: freezeBowser,
                 // death: killBowser,
-                // onadding: addBowser,
+                // onThingAdd: addBowser,
                 spriteCycle: [
                     ["one", "two"]
                 ]
@@ -590,6 +590,14 @@
             },
             PlatformGenerator: {
                 hidden: true
+            },
+            CastleBlock: {
+                onThingAdd: console.log.bind(console, "HELLO"),
+                attributes: {
+                    "fireballs": {
+                        speed: 1
+                    }
+                }
             },
             Floor: {
                 nofire: true // for the "Super Fireballs" mod
