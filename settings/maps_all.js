@@ -732,7 +732,7 @@
                     { "macro": "Floor", "x": 744, "y": 24, "width": 48 },
                     { "thing": "Stone", "x": 744, "y": 88, "width": 48, "height": 24 },
                     { "macro": "Floor", "x": 792, "width": 80 },
-                    { "macro": "Fill", "thing": "Coin", "x": 817, "y": 7, "xnum": 3, "ynum": 2, "yheight": 32 },
+                    { "macro": "Fill", "thing": "Coin", "x": 817, "y": 7, "xnum": 3, "ynum": 2, "xwidth": 8, "yheight": 32 },
                     { "thing": "CastleBlock", "x": 824, "y": 16 },
                     { "thing": "Stone", "x": 864, "y": 24, "height": 24 },
                     { "macro": "Water", "x": 872, "width": 16 },

@@ -380,9 +380,10 @@
             },
             Podoboo: {
                 width: 7,
-                speed: FullScreenMario.unitsize * 1.17,
-                jumpHeight: 35,
-                jumpFrequency: 210,
+                speed: FullScreenMario.unitsize * 1.75,
+                acceleration: FullScreenMario.unitsize / 24,
+                jumpHeight: 28,
+                jumpFrequency: 245,
                 deadly: true,
                 nofall: true,
                 nofire: true,

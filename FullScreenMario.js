@@ -2529,7 +2529,7 @@ window.FullScreenMario = (function() {
             thing.EightBitter.flipVert(thing);
         }
         
-        thing.yvel += thing.EightBitter.unitsize / 32;
+        thing.yvel += thing.acceleration;
     }
     
     /**
