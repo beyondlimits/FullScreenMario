@@ -368,7 +368,7 @@ window.FullScreenMario = (function() {
     function gameStart() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
-        EightBitter.setMap("1-4");
+        EightBitter.setMap("1-1");
         EightBitter.StatsHolder.set("lives", 3);
         EightBitter.GamesRunner.unpause();
     }
@@ -1108,9 +1108,9 @@ window.FullScreenMario = (function() {
             thing.EightBitter.shiftHoriz(thing, thing.xvel);
         }
         
-        if(!thing.nofall || hard) {
+        // if(!thing.nofall || hard) {
             thing.EightBitter.shiftVert(thing, thing.yvel);
-        }
+        // }
     }
     
     /**
@@ -1462,6 +1462,18 @@ window.FullScreenMario = (function() {
     function spawnBlooper(thing) {
         thing.squeeze = 0;
         thing.counter = 0;
+    }
+    
+    /**
+     * 
+     */
+    function spawnPodoboo(thing) {
+        thing.EightBitter.TimeHandler.addEventInterval(
+            thing.EightBitter.animatePodobooJumpUp,
+            thing.jumpFrequency,
+            thing.jumpFrequency,
+            thing
+        );
     }
     
     /**
@@ -2499,6 +2511,30 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function movePodobooFalling(thing) {
+        if(thing.top >= thing.starty) {
+            thing.yvel = 0;
+            thing.movement = undefined;
+            thing.EightBitter.unflipVert(thing);
+            thing.EightBitter.setTop(thing, thing.starty);
+            return;
+        }
+        
+        if(thing.yvel >= thing.speed) {
+            thing.yvel = thing.speed;
+            return;
+        }
+        
+        if(!thing.flipVert && thing.yvel > 0) {
+            thing.EightBitter.flipVert(thing);
+        }
+        
+        thing.yvel += thing.EightBitter.unitsize / 32;
+    }
+    
+    /**
+     * 
+     */
     function moveBlooperUnsqueezing(thing) {
         
     }
@@ -2884,6 +2920,27 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function animatePodobooJumpUp(thing) {
+        thing.starty = thing.top;
+        thing.yvel = thing.speed * -1;
+        
+        thing.EightBitter.TimeHandler.addEvent(
+            thing.EightBitter.animatePodobooJumpDown,
+            thing.jumpHeight, 
+            thing
+        );
+    }
+    
+    /**
+     * 
+     */
+    function animatePodobooJumpDown(thing) {
+        thing.movement = thing.EightBitter.movePodobooFalling;
+    }
+    
+    /**
+     * 
+     */
     function animateFireballEmerge(thing) {
         thing.EightBitter.AudioPlayer.play("Fireball");
     }
@@ -3200,6 +3257,7 @@ window.FullScreenMario = (function() {
      * 
      */
     function flipHoriz(thing) {
+        thing.flipHoriz = true;
         thing.EightBitter.addClass(thing, "flipped");
     }
     
@@ -3207,6 +3265,7 @@ window.FullScreenMario = (function() {
      * 
      */
     function flipVert(thing) {
+        thing.flipVert = true;
         thing.EightBitter.addClass(thing, "flip-vert");
     }
     
@@ -3214,6 +3273,7 @@ window.FullScreenMario = (function() {
      * 
      */
     function unflipHoriz(thing) {
+        thing.flipHoriz = false;
         thing.EightBitter.removeClass(thing, "flipped");
     }
     
@@ -3221,6 +3281,7 @@ window.FullScreenMario = (function() {
      * 
      */
     function unflipVert(thing) {
+        thing.flipVert = false;
         thing.EightBitter.removeClass(thing, "flip-vert");
     }
     
@@ -4143,14 +4204,14 @@ window.FullScreenMario = (function() {
         // A beginning column reduces the width and pushes it forward
         if(reference.begin) {
             width -= 8;
-            output.push({ "thing": "Stone", "x": x, "y": y, "height": DtB(y) });
+            output.push({ "thing": "Stone", "x": x, "y": y, "height": "Infinity" });
             x += 8;
         }
 
         // An ending column just reduces the width 
         if(reference.end) {
             width -= 8;
-            output.push({ "thing": "Stone", "x": x + width, "y": y, "height": DtB(y) });
+            output.push({ "thing": "Stone", "x": x + width, "y": y, "height": "Infinity" });
         }
 
         // Between any columns is a BridgeBase with a Railing on top
@@ -4435,6 +4496,7 @@ window.FullScreenMario = (function() {
         // Spawn / actions
         "spawnPirhana": spawnPirhana,
         "spawnBlooper": spawnBlooper,
+        "spawnPodoboo": spawnPodoboo,
         "spawnCastleBlock": spawnCastleBlock,
         "spawnDetector": spawnDetector,
         "activateWindowDetector": activateWindowDetector,
@@ -4473,6 +4535,7 @@ window.FullScreenMario = (function() {
         "movePirhana": movePirhana,
         "moveBlooper": moveBlooper,
         "moveBlooperSqueezing": moveBlooperSqueezing,
+        "movePodobooFalling": movePodobooFalling,
         "moveCoinEmerge": moveCoinEmerge,
         "movePlayer": movePlayer,
         // Animations
@@ -4484,6 +4547,8 @@ window.FullScreenMario = (function() {
         "animateEmergeCoin": animateEmergeCoin,
         "animateFlicker": animateFlicker,
         "animateBlooperUnsqueezing": animateBlooperUnsqueezing,
+        "animatePodobooJumpUp": animatePodobooJumpUp,
+        "animatePodobooJumpDown": animatePodobooJumpDown,
         "animateFireballEmerge": animateFireballEmerge,
         "animateFireballExplode": animateFireballExplode,
         "animateFirework": animateFirework,

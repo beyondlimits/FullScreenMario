@@ -76,6 +76,7 @@
                         "Piranha": {},
                         "Blooper": {},
                         "CheepCheep": {},
+                        "Podoboo": {},
                         "HammerBro": {
                             "Bowser": {}
                         }
@@ -363,7 +364,7 @@
                 nofall: true,
                 nocollidesolid: true,
                 nocollidechar: true,
-                movement: false,
+                movement: undefined,
                 xvel: FullScreenMario.unitsize / -6,
                 yvel: FullScreenMario.unitsize / -32,
                 death: FullScreenMario.prototype.killFlip,
@@ -376,6 +377,19 @@
                         yvel: FullScreenMario.unitsize / -24
                     }
                 }
+            },
+            Podoboo: {
+                width: 7,
+                speed: FullScreenMario.unitsize * 1.17,
+                jumpHeight: 35,
+                jumpFrequency: 210,
+                deadly: true,
+                nofall: true,
+                nofire: true,
+                nocollidechar: true,
+                nocollidesolid: true,
+                movement: undefined,
+                onThingMake: FullScreenMario.prototype.spawnPodoboo
             },
             Bowser: {
                 width: 16,
