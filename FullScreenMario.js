@@ -1277,11 +1277,7 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
-    function playerStarUp(thing, other) {
-        if(!thing.player || thing.star) {
-            return;
-        }
-        
+    function playerStarUp(thing, timeout) {
         thing.star += 1;
         
         thing.EightBitter.switchClass(thing, "normal", "star");
@@ -1292,8 +1288,11 @@ window.FullScreenMario = (function() {
         thing.EightBitter.TimeHandler.addClassCycle(thing, [
             "star1", "star2", "star3", "star4"
         ], "star", 5);
+        
         thing.EightBitter.TimeHandler.addEvent(
-            thing.EightBitter.playerStarDown, 560, thing
+            thing.EightBitter.playerStarDown, 
+            timeout || 560, 
+            thing
         );
     }
     
@@ -1704,6 +1703,17 @@ window.FullScreenMario = (function() {
             thing.EightBitter.StatsHolder.increase("coins", 1);
             thing.EightBitter.killNormal(other);
         }
+    }
+    
+    /**
+     * 
+     */
+    function collideStar(thing, other) {
+        if(!thing.player || thing.star) {
+            return;
+        }
+        
+        thing.EightBitter.playerStarUp(thing);
     }
     
     /**
@@ -4508,6 +4518,7 @@ window.FullScreenMario = (function() {
         "collideCharacterSolid": collideCharacterSolid,
         "collideCharacterSolidUp": collideCharacterSolidUp,
         "collideCoin": collideCoin,
+        "collideStar": collideStar,
         "collideFireball": collideFireball,
         "collideShell": collideShell,
         "collideShellSolid": collideShellSolid,

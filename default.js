@@ -84,6 +84,13 @@
                 "source": function () {
                     return false;
                 }
+            },
+            {
+                "title": "FullScreen",
+                "type": "Boolean",
+                "source": function () {
+                    return false;
+                }
             }
         ]
     },

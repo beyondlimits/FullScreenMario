@@ -44,11 +44,10 @@ FullScreenMario.prototype.settings.mods = {
             "enabled": true,
             "events": {
                 "onModEnable": function (mod) {
+                    console.log("Enabling mod of status", mod.enabled);
                     var FSM = this,
                         characters = mod.settings.characters,
                         charactersFSM = FSM.GroupHolder.getCharacterGroup(),
-                        random = Math.random,
-                        floor = Math.floor,
                         level;
                     
                     this.InputWriter.addEvent("onkeydown", "q", function () {
@@ -56,26 +55,33 @@ FullScreenMario.prototype.settings.mods = {
                         
                         if(mod.settings.levels[mod.settings.qcount]) {
                             var level = mod.settings.levels[mod.settings.qcount];
-                            FSM.TimeHandler.addEventInterval(function () {
+                            mod.settings.event = FSM.TimeHandler.addEventInterval(function () {
                                 if(charactersFSM.length < 210) {
-                                    var num = floor(random() * level.length),
+                                    var num = Math.floor(Math.random() * level.length),
                                         lul = FSM.ObjectMaker.make.apply(FSM, level[num]);
                                     
-                                    lul.yvel = random() * FSM.unitsize / 4;
-                                    lul.xvel = lul.speed = random() * FSM.unitsize * 2;
-                                    if(floor(random() * 2)) {
+                                    lul.yvel = Math.random() * FSM.unitsize / 4;
+                                    lul.xvel = lul.speed = Math.random() * FSM.unitsize * 2;
+                                    if(Math.floor(Math.random() * 2)) {
                                         lul.xvel *= -1;
                                     }
                                     
                                     characters.push(lul);
-                                    FSM.addThing(lul, 
-                                        (32 * random() + 128) * FSM.unitsize,
-                                        88 * random() * FSM.unitsize);
+                                    FSM.addThing(
+                                        lul, 
+                                        (32 * Math.random() + 128) * FSM.unitsize,
+                                        88 * Math.random() * FSM.unitsize
+                                    );
                                 }
                             }, 7, Infinity);
                         }
                     });
                     this.InputWriter.addAlias("q", [81]);
+                },
+                "onModDisable": function (mod) {
+                    this.TimeHandler.clearEvent(mod.settings.event);
+                    this.InputWriter.clearEvent("onkeydown", 81, true);
+                    this.InputWriter.clearEvent("onkeydown", "q", true);
                 }
             },
             "settings": {
@@ -120,14 +126,14 @@ FullScreenMario.prototype.settings.mods = {
             "events": {
                 "onModEnable": function () {
                     if(this.player) {
-                        playerStar(this.player, Infinity);
+                        FSM.playerStarUp(this.player, Infinity);
                     }
                 },
                 "onModDisable": function () {
-                    playerRemoveStar(this.player);
+                    FSM.playerStarDown(this.player);
                 },
                 "onLocationSet": function () {
-                    playerStar(this.player, Infinity);
+                    FSM.playerStarUp(this.player, Infinity);
                 }
             }
         },

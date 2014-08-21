@@ -53,10 +53,6 @@
         player.EightBitter.AudioPlayer.toggleMute();
     }
     
-    function KeyDownL(player) {
-        player.EightBitter.ModAttacher.toggleMod("Luigi");
-    }
-    
     function KeyUpLeft(player) {
         player.keys.run = player.keys.left_down = 0;
     }
@@ -102,7 +98,6 @@
             "pause":  [80],         // p (pause)
             "mute":   [77],         // m (mute)
             "l":      [76],         // l (luigi)
-            // "q":      [81],         // q (qcount)
             // Mouse aliases
             "rightclick": [3]
         },
@@ -115,8 +110,6 @@
                 "sprint": KeyDownSprint,
                 "pause": KeyDownPause,
                 "mute": KeyDownMute,
-                "l": KeyDownL,
-                // "q": KeyDownQ
             },
             "onkeyup": {
                 "left": KeyUpLeft,

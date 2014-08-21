@@ -456,7 +456,7 @@
                 name: "star item", // Item class so player's star isn't confused with this
                 width: 7,
                 speed: FullScreenMario.unitsize * .56,
-                action: FullScreenMario.prototype.playerStarUp,
+                action: FullScreenMario.prototype.collideStar,
                 movement: FullScreenMario.prototype.moveJumping,
                 jumpheight: FullScreenMario.unitsize * 1.17,
                 gravity: FullScreenMario.gravity / 2.8,

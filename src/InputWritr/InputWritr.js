@@ -208,9 +208,19 @@ function InputWritr(settings) {
         
         if(aliases.hasOwnProperty(label)) {
             for(var i = 0; i < aliases[label].length; i += 1) {
-                triggers[trigger][label][aliases[i]] = callback;
+                if(triggers[trigger][label]) {
+                    triggers[trigger][label][aliases[i]] = callback;
+                }
             }
         }
+    };
+    
+    /**
+     * 
+     */
+    self.clearEvent = function (trigger, label) {
+        self.addEvent(trigger, label, false);
+        debugger;
     };
     
     
@@ -324,7 +334,7 @@ function InputWritr(settings) {
         var functions = triggers[trigger],
             use_label = arguments.length >= 2;
 
-        return function pipe(alias) {
+        return function Pipe(alias) {
             // Typical usage means alias will be an event from a key/mouse input
             if (prevent_defaults && alias.preventDefault instanceof Function) {
                 alias.preventDefault();
@@ -340,7 +350,7 @@ function InputWritr(settings) {
                 if (recording) {
                     history[Math.round(get_timestamp())] = [trigger, alias];
                 }
-
+                
                 callEvent(functions[alias]);
             }
         }
