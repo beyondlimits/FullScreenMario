@@ -154,8 +154,7 @@ function PixelRendr(settings) {
         // Single (actual) sprites process for size (row) scaling, and flipping
         else {
             if(!(sprite instanceof Uint8ClampedArray)) {
-                console.warn("No single raw sprite found.", key, sprite, attributes);
-                return;
+                throw new Error("No single raw sprite found for: '" + key + "'");
             }
             sprite = ProcessorDims.process(sprite, key, attributes);
         }
@@ -216,12 +215,12 @@ function PixelRendr(settings) {
         for (i in setref) {
             objref = setref[i];
             switch (objref.constructor) {
-                // If it's a string, parse it
+            // If it's a string, parse it
             case String:
                 // setnew[i] = spriteGetArray(spriteExpand(spriteUnravel(objref)));
                 setnew[i] = ProcessorBase.process(objref, path + ' ' + i);
                 break;
-                // If it's an array, it should have a command such as 'same' to be post-processed
+            // If it's an array, it should have a command such as 'same' to be post-processed
             case Array:
                 library.posts.push({
                     caller: setnew,
@@ -230,7 +229,7 @@ function PixelRendr(settings) {
                     path: path + ' ' + i
                 });
                 break;
-                // If it's an object, simply recurse
+            // If it's an object, simply recurse
             case Object:
                 setnew[i] = libraryParse(objref, path + ' ' + i);
                 break;
@@ -243,7 +242,7 @@ function PixelRendr(settings) {
     function libraryPosts() {
         var posts = library.posts,
             post, i;
-        for (i in posts) {
+        for (i = 0; i < posts.length; i += 1) {
             post = posts[i];
             post.caller[post.name] = evaluatePost(post.caller, post.command, post.path);
         }
@@ -252,8 +251,8 @@ function PixelRendr(settings) {
     // Returns an obj and the parsed version of the following parts of command
     function evaluatePost(caller, command, path) {
         switch (command[0]) {
-            // Same: just returns a reference to the target
-            // ["same", ["container", "path", "to", "target"]]
+        // Same: just returns a reference to the target
+        // ["same", ["container", "path", "to", "target"]]
         case "same":
             var sprite_raw = followPath(library.raws, command[1], 0);
             switch (sprite_raw.constructor) {
@@ -261,15 +260,12 @@ function PixelRendr(settings) {
                 return ProcessorBase.process(sprite_raw, path);
             case Array:
                 return evaluatePost(caller, sprite_raw, path);
-            case Object:
+            default:
                 return libraryParse(sprite_raw, path);
             }
-            // console.log("Going to", path, command[1], "gives", sprite_raw);
-            // return evaluatePostFilter(sprite_raw, path, {});
-            // return ProcessorBase.process(sprite_raw, path);
 
-            // Filter: takes a reference to the target, and applies a filter to it
-            // ["filter", ["container", "path", "to", "target"], filters.DoThisFilter]
+        // Filter: takes a reference to the target, and applies a filter to it
+        // ["filter", ["container", "path", "to", "target"], filters.DoThisFilter]
         case "filter":
             // Find the sprite this should be filtering from
             var sprite_raw = followPath(library.raws, command[1], 0),
@@ -281,15 +277,16 @@ function PixelRendr(settings) {
             }
             return evaluatePostFilter(sprite_raw, path, filter);
 
-            // Multiple: uses more than one image, either vertically or horizontally
-            // Not to be confused with having .repeat = true.
-            // ["multiple", "vertical", {
-            //    top: "...",       // (just once at the top)
-            //    middle: "..."     // (repeated after top)
-            //  }
+        // Multiple: uses more than one image, either vertically or horizontally
+        // Not to be confused with having .repeat = true.
+        // ["multiple", "vertical", {
+        //    top: "...",       // (just once at the top)
+        //    middle: "..."     // (repeated after top)
+        //  }
         case "multiple":
             return evaluatePostMultiple(path, command);
         }
+        
         // Commands not evaluated by the switch are unknown and bad
         console.warn("Unknown command specified in post-processing: '" + command[0] + "'.", caller, command, path);
     }
