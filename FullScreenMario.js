@@ -2462,9 +2462,10 @@ window.FullScreenMario = (function() {
      */
     function movePiranhaLatent(thing) {
         var playerx = thing.EightBitter.getMidX(thing.EightBitter.player);
-        
-        if(thing.counter >= thing.countermax
-                && (playerx < thing.left - thing.EightBitter.unitsize * 8
+
+        if (thing.counter >= thing.countermax
+                && (thing.height > 0
+                    || playerx < thing.left - thing.EightBitter.unitsize * 8
                     || playerx > thing.right + thing.EightBitter.unitsize * 8)) {
             thing.movement = undefined;
             thing.direction *= -1;
