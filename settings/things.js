@@ -345,6 +345,7 @@
                 nofall: true,
                 deadly: true,
                 nocollidesolid: true,
+                death: FullScreenMario.prototype.killNormal,
                 movement: FullScreenMario.prototype.movePiranha,
                 onThingMake: FullScreenMario.prototype.spawnPiranha,
                 spriteCycleSynched: [
