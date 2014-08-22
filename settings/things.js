@@ -345,8 +345,8 @@
                 nofall: true,
                 deadly: true,
                 nocollidesolid: true,
-                movement: FullScreenMario.prototype.movePirhana,
-                onThingMake: FullScreenMario.prototype.spawnPirhana,
+                movement: FullScreenMario.prototype.movePiranha,
+                onThingMake: FullScreenMario.prototype.spawnPiranha,
                 spriteCycleSynched: [
                     ["one", "two"]
                 ]
