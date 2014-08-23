@@ -39,7 +39,7 @@
         { "macro": "Fill", "thing": "Brick", "x": 720, "y": 56, "xnum": 3 },
         { "macro": "Fill", "thing": "Brick", "x": 736, "y": 24, "xnum": 3 },
         { "macro": "Floor", "x": 768, "width": 248 },
-        { "macro": "Pipe", "x": 816, "height": 24, "pirhana": true },
+        { "macro": "Pipe", "x": 816, "height": 24, "piranha": true },
         { "macro": "Fill", "thing": "Coin", "x": 841, "y": 39, "xnum": 3 },
         { "macro": "Fill", "thing": "Block", "x": 904, "y": 32, "ynum": 2, "yheight": 32, "hidden": true },
         { "thing": "Stone", "x": 976, "y": 8 },

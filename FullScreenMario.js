@@ -419,6 +419,8 @@ window.FullScreenMario = (function() {
     function addThing(thing, left, top) {
         if(typeof(thing) === "string" || thing instanceof String) {
             thing = this.ObjectMaker.make(thing);
+        } else if(thing.constructor === Array) {
+            thing = this.ObjectMaker.make.apply(this.ObjectMaker, thing);
         }
         
         if(arguments.length > 1) {
@@ -620,13 +622,17 @@ window.FullScreenMario = (function() {
      * @param {FullScreenMario} EightBitter
      */
     function maintainSolids(EightBitter, solids) {
-        for (var i = 0, solid; i < solids.length; ++i) {
+        var delx = EightBitter.QuadsKeeper.getDelX(),
+            solid, i;
+        
+        for (i = 0; i < solids.length; ++i) {
             solid = solids[i];
-            if (solid.alive) {
+            
+            if(solid.alive && solid.right > delx) {
                 if (solid.movement) {
                     solid.movement(solid);
                 }
-            } else if (solid.right < EightBitter.QuadsKeeper.getDelX()) {
+            } else {
                 EightBitter.arrayDeleteMember(solid, solids, i);
                 i -= 1;
             }

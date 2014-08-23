@@ -27,7 +27,7 @@
             { "macro": "Fill", "thing": "Stone", "x": 72, "y": 56, "xnum": 5, "xwidth": 16, "height": 32 },
             { "thing": "Stone", "x": 152, "y": 56, "width": 24, "height": 32 },
             { "thing": "Stone", "x": 176, "y": 56, "width": 48 },
-            { "macro": "Pipe", "x": 192, "height": 24, "pirhana": true },
+            { "macro": "Pipe", "x": 192, "height": 24, "piranha": true },
             { "thing": "Stone", "x": 224, "y": 56, "width": 136, 32 },
             { "thing": "CastleBlock", "x": 296, "y": 56, "fireballs": 6, "hidden": true },
             { "macro": "SectionFail", "x": 384, "y": 24, "width": 40, "height": 24 },
