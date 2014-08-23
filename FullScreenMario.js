@@ -1436,7 +1436,7 @@ window.FullScreenMario = (function() {
         EightBitter.player.toly = EightBitter.player.toly_old || 0;
         
         if(EightBitter.player.power !== 1) {
-            EightBitter.player.height = 16;
+            EightBitter.setHeight(EightBitter.player, 16, true, true);
             EightBitter.player.EightBitter.removeClass(EightBitter.player, "crouching");
             EightBitter.player.EightBitter.updateBottom(EightBitter.player, 0);
             EightBitter.player.EightBitter.updateSize(EightBitter.player);
@@ -2625,7 +2625,7 @@ window.FullScreenMario = (function() {
             if(thing.power != 1) {
                 thing.crouching = true;
                 thing.EightBitter.addClass(thing, "crouching");
-                thing.EightBitter.setHeight(thing, 11, false, true);
+                thing.EightBitter.setHeight(thing, 11, true, true);
                 thing.height = 11;
                 thing.toly_old = thing.toly;
                 thing.toly = thing.EightBitter.unitsize * 4;
