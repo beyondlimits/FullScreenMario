@@ -77,6 +77,7 @@
                         "Blooper": {},
                         "CheepCheep": {},
                         "Podoboo": {},
+                        "BulletBill": {},
                         "HammerBro": {
                             "Bowser": {}
                         }
@@ -111,6 +112,7 @@
                     "Platform": {},
                     "PlatformGenerator": {},
                     "Stone": {},
+                    "Cannon": {},
                     "Floor": {},
                     "TreeTop": {},
                     "ShroomTop": {},
@@ -384,7 +386,7 @@
                 speed: FullScreenMario.unitsize * 1.75,
                 acceleration: FullScreenMario.unitsize / 24,
                 jumpHeight: 28,
-                jumpFrequency: 245,
+                frequency: 245,
                 deadly: true,
                 nofall: true,
                 nofire: true,
@@ -392,6 +394,15 @@
                 nocollidesolid: true,
                 movement: undefined,
                 onThingMake: FullScreenMario.prototype.spawnPodoboo
+            },
+            BulletBill: {
+                height: 7,
+                nofall: true,
+                nofire: true,
+                nocollidechar: true,
+                nocollidesolid: true,
+                movement: undefined,
+                xvel: FullScreenMario.unitsize / 2,
             },
             Bowser: {
                 width: 16,
@@ -607,6 +618,10 @@
             },
             PlatformGenerator: {
                 hidden: true
+            },
+            Cannon: {
+                frequency: 280,
+                onThingAdd: FullScreenMario.prototype.spawnCannon
             },
             CastleBlock: {
                 onThingAdd: FullScreenMario.prototype.spawnCastleBlock,

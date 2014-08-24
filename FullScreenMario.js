@@ -1475,8 +1475,20 @@ window.FullScreenMario = (function() {
     function spawnPodoboo(thing) {
         thing.EightBitter.TimeHandler.addEventInterval(
             thing.EightBitter.animatePodobooJumpUp,
-            thing.jumpFrequency,
-            thing.jumpFrequency,
+            thing.frequency,
+            thing.frequency,
+            thing
+        );
+    }
+    
+    /**
+     * 
+     */
+    function spawnCannon(thing) {
+        thing.EightBitter.TimeHandler.addEventInterval(
+            thing.EightBitter.animateCannonFiring,
+            thing.frequency,
+            thing.frequency,
             thing
         );
     }
@@ -3039,6 +3051,31 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function animateCannonFiring(thing) {
+        // Don't fire if Player is too close
+        if(
+            thing.EightBitter.player.right > thing.left - thing.EightBitter.unitsize * 8
+            && thing.EightBitter.player.left < thing.right + thing.EightBitter.unitsize * 8
+        ) {
+            return;
+        }
+        
+        var spawn = thing.EightBitter.ObjectMaker.make("BulletBill");
+        if(thing.EightBitter.objectToLeft(thing.EightBitter.player, thing)) {
+            spawn.direction = spawn.moveleft = true;
+            spawn.xvel *= -1;
+            thing.EightBitter.flipHoriz(spawn);
+            thing.EightBitter.addThing(spawn, thing.left, thing.top);
+        } else {
+            thing.EightBitter.addThing(spawn, thing.left + thing.width, thing.top);
+        }
+        
+        thing.EightBitter.AudioPlayer.playLocal("Bump", thing.right);
+    }
+    
+    /**
+     * 
+     */
     function animatePlayerFire(thing) {
         if(thing.numballs >= 2) {
             return;
@@ -4516,6 +4553,7 @@ window.FullScreenMario = (function() {
         "spawnPiranha": spawnPiranha,
         "spawnBlooper": spawnBlooper,
         "spawnPodoboo": spawnPodoboo,
+        "spawnCannon": spawnCannon,
         "spawnCastleBlock": spawnCastleBlock,
         "spawnDetector": spawnDetector,
         "activateWindowDetector": activateWindowDetector,
@@ -4573,6 +4611,7 @@ window.FullScreenMario = (function() {
         "animateFireballExplode": animateFireballExplode,
         "animateFirework": animateFirework,
         "animateEndLevelFireworks": animateEndLevelFireworks,
+        "animateCannonFiring": animateCannonFiring,
         "animateCastleBlock": animateCastleBlock,
         "animatePlayerFire": animatePlayerFire,
         "animatePlayerPaddling": animatePlayerPaddling,
