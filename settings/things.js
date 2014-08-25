@@ -116,6 +116,7 @@
                     "PlatformGenerator": {},
                     "Stone": {},
                     "Cannon": {},
+                    "Springboard": {},
                     "Floor": {},
                     "TreeTop": {},
                     "ShroomTop": {},
@@ -195,7 +196,7 @@
                 "time": 400,
                 "jumpmod": 1.056,
                 "maxyvel": 7,
-                "maxyvelinv": -7,
+                "maxyvelinv": -14,
                 "gravity": FullScreenMario.gravity,
                 "canscroll": true,
                 "underwater": false,
@@ -650,6 +651,11 @@
             Cannon: {
                 frequency: 280,
                 onThingAdd: FullScreenMario.prototype.spawnCannon
+            },
+            Springboard: {
+                height: 14.5,
+                heightNormal: 14.5,
+                collide: FullScreenMario.prototype.collideSpringboard
             },
             CastleBlock: {
                 onThingAdd: FullScreenMario.prototype.spawnCastleBlock,

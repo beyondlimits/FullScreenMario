@@ -132,14 +132,15 @@
         "title": "Mods!",
         "generator": "OptionsButtons",
         "options": [
-            "Acid Trip",
             "High Speed",
+            "Gradient Skies",
             "Invincibility",
             "Invisible Player",
             "Luigi",
             "Parallax Clouds",
             "QCount",
-            "Super Fireballs"
+            "Super Fireballs",
+            "Trip of Acid"
         ],
         "callback": function (schema, button) {
             FSM.ModAttacher.toggleMod(button.getAttribute("value") || button.innerText);

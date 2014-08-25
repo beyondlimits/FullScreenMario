@@ -2114,6 +2114,26 @@ window.FullScreenMario = (function() {
     
     /**
      * 
+     */
+    function collideSpringboard(thing, other) {
+        if(
+            thing.player && thing.yvel >= 0 && !other.tension
+            && thing.EightBitter.isCharacterOnSolid(thing, other)
+        ) {
+            other.tension = other.tensionSave = Math.max(
+                thing.yvel * .77,
+                thing.EightBitter.unitsize
+            );
+            thing.movement = thing.EightBitter.movePlayerSpringboardDown;
+            thing.spring = other;
+            thing.xvel /= 2.8;
+        } else {
+            thing.EightBitter.collideCharacterSolid(thing, other);
+        }
+    }
+    
+    /**
+     * 
      * 
      * @notes thing is Player; other is the flag detector
      */
@@ -2440,6 +2460,43 @@ window.FullScreenMario = (function() {
                 thing.EightBitter.setRight(player, thing.EightBitter.MapScreener.innerWidth);
             } else if(player.left < 0) {
                 thing.EightBitter.setLeft(player, 0);
+            }
+        }
+    }
+    
+    /**
+     * 
+     */
+    function moveSpringboardUp(thing) {
+        var player = thing.EightBitter.player;
+        
+        thing.EightBitter.reduceHeight(thing, -thing.tension, true);
+        thing.tension *= 2;
+            
+        // If the spring height is past the normal, it's done moving
+        if(thing.height > thing.heightNormal) {
+            thing.EightBitter.reduceHeight(
+                thing, 
+                (thing.height - thing.heightNormal) * thing.EightBitter.unitsize
+            );
+            if(thing === player.spring) {
+                player.yvel = Math.max(
+                    thing.EightBitter.unitsize * -2,
+                    thing.tensionSave * -.98
+                );
+                player.resting = player.spring = undefined;
+                player.movement = FullScreenMario.prototype.movePlayer;
+            }
+            thing.tension = 0;
+            thing.movement = undefined;
+        } else {
+            thing.EightBitter.setBottom(player, thing.top);
+        }
+        
+        if(thing === player.spring) {
+            if(!thing.EightBitter.isThingTouchingThing(player, thing)) {
+                player.spring = undefined;
+                player.movement = FullScreenMario.prototype.movePlayer;
             }
         }
     }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if(thing !== player.resting) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        thing.EightBitter.shiftVert(thing, thing.yvel += thing.EightBitter.unitsize / 8);        thing.EightBitter.setBottom(player, thing.top);                // After a velocity threshold, start always falling        if(thing.yvel >= thing.fall_threshold_start || thing.EightBitter.unitsize * 2.8) {            thing.freefall = true;            thing.movement = thing.EightBitter.moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || thing.EightBitter.unitsize / 16;        thing.EightBitter.shiftVert(thing, thing.yvel);                // After a velocity threshold, stop accelerating        if(thing.yvel >= thing.fall_threshold_end || thing.EightBitter.unitsize * 2) {            thing.movement = movePlatform;        }    }
@@ -2821,6 +2878,44 @@ window.FullScreenMario = (function() {
                 thing.EightBitter.addClass(thing, "running");
             }
         }
+    }
+    
+    /**
+     * 
+     */
+    function movePlayerSpringboardDown(thing) {
+        var other = thing.spring;
+        
+        // If the player has moved off the spring, get outta here
+        if(!thing.EightBitter.isThingTouchingThing(thing, other)) {
+            thing.movement = thing.EightBitter.movePlayer;
+            other.movement = thing.EightBitter.moveSpringboardUp;
+            thing.spring = false;
+            return;
+        }
+        
+        // If the spring is fully contracted, go back up
+        if(
+            other.height < thing.EightBitter.unitsize * 2.5
+            || other.tension < thing.EightBitter.unitsize / 32
+        ) {
+            thing.movement = undefined;
+            other.movement = thing.EightBitter.moveSpringboardUp;
+            return;
+        }
+        
+        // Make sure it's hard to slide off
+        if(
+            thing.left < other.left + thing.EightBitter.unitsize * 2
+            || thing.right > other.right - thing.EightBitter.unitsize * 2
+        ) {
+            thing.xvel /= 1.4;
+        }
+        
+        thing.EightBitter.reduceHeight(other, other.tension, true);
+        other.tension /= 2;
+        thing.EightBitter.setBottom(thing, other.top);
+        thing.EightBitter.updateSize(other);
     }
     
     
@@ -4651,6 +4746,7 @@ window.FullScreenMario = (function() {
         "collideEnemy": collideEnemy,
         "collideBottomBrick": collideBottomBrick,
         "collideBottomBlock": collideBottomBlock,
+        "collideSpringboard": collideSpringboard,
         "collideFlagTop": collideFlagTop,
         "collideFlagBottom": collideFlagBottom,
         "collideCastleDoor": collideCastleDoor,
@@ -4665,7 +4761,8 @@ window.FullScreenMario = (function() {
         "moveFloatingReal": moveFloatingReal,
         "moveSliding": moveSliding,
         "moveSlidingReal": moveSlidingReal,
-        "movePlatform": movePlatform,        "moveFalling": moveFalling,        "moveFreeFalling": moveFreeFalling,
+        "movePlatform": movePlatform,
+        "moveSpringboardUp": moveSpringboardUp,        "moveFalling": moveFalling,        "moveFreeFalling": moveFreeFalling,
         "moveShell": moveShell,
         "movePiranha": movePiranha,
         "moveBlooper": moveBlooper,
@@ -4675,6 +4772,7 @@ window.FullScreenMario = (function() {
         "moveLakituInitial": moveLakituInitial,
         "moveCoinEmerge": moveCoinEmerge,
         "movePlayer": movePlayer,
+        "movePlayerSpringboardDown": movePlayerSpringboardDown,
         // Animations
         "animateSolidBump": animateSolidBump,
         "animateSolidContents": animateSolidContents,

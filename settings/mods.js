@@ -1,8 +1,139 @@
 FullScreenMario.prototype.settings.mods = {
     "mods": [
         {
+            "name": "High Speed",
+            "description": "Mario's maximum speed is quadrupled.",
+            "enabled": false,
+            "events": {
+                "onModEnable": function (mod) {
+                    var stats = this.ObjectMaker.getFunction("Player").prototype;
+                    mod.value_old = stats.maxspeedsave;
+                    stats.maxspeedsave = stats.maxspeed = stats.scrollspeed = mod.value_old * 4;
+                },
+                "onModDisable": function (mod) {
+                    var stats = this.ObjectMaker.getFunction("Player").prototype;
+                    stats.maxspeedsave = stats.maxspeed = stats.scrollspeed = mod.value_old;
+                }
+            }
+        },
+        {
+            "name": "Gradient Skies",
+            "description": "Skies fade out to black in the heavens above.",
+            "enabled": false,
+            "events": {
+                "onModEnable": function (mod) {
+                    mod.events.onSetLocation.call(this, mod);
+                },
+                "onModDisable": function (mod) {
+                    this.MapsHandler.getArea().background = mod.settings.backgroundOld;
+                },
+                "onSetLocation": (function (gradients) {
+                    return function (mod) {
+                        var area = this.MapsHandler.getArea(),
+                            setting = area.setting,
+                            context = this.canvas.getContext("2d"),
+                            background = context.createLinearGradient(
+                                0, 0,
+                                this.MapScreener.width,
+                                this.MapScreener.height
+                            ), gradient, i;
+                        
+                        for(i in gradients) {
+                            if(setting.indexOf(i) !== -1) {
+                                gradient = gradients[i]
+                                break;
+                            }
+                        }
+                        
+                        if(!gradient) {
+                            gradient = gradients["default"];
+                        }
+                        
+                        for(i in gradient) {
+                            background.addColorStop(i, gradient[i]);
+                        }
+                        
+                        mod.settings.backgroundOld = area.background;
+                        
+                        area.background = background;
+                    };
+                })({
+                    "Underwater": {
+                        "0": "#77dddd",
+                        "0.21": "#5cbaf9",
+                        "1": "#2149bb"
+                    },
+                    "Night": {
+                        "0": "#000000",
+                        "0.42": "#000035",
+                        "0.84": "#560056",
+                        "1": "#350000"
+                    },
+                    "Underworld": {
+                        "0.14": "#000000",
+                        "1": "#005649"
+                    },
+                    "Castle": {
+                        "0.21": "#000000",
+                        "1": "#980000"
+                    },
+                    "default": {
+                        "0.21": "#5C94FC",
+                        "0.35": "#77AAFF",
+                        "0.7": "#FFCCAA",
+                        "1": "#FFFFFF"
+                    }
+                })
+            },
+            "settings": {}
+        },
+        {
+            "name": "Invincibility",
+            "description": "Mario is constantly given star power.",
+            "enabled": false,
+            "events": {
+                "onModEnable": function () {
+                    if(this.player) {
+                        FSM.playerStarUp(this.player, Infinity);
+                    }
+                },
+                "onModDisable": function () {
+                    FSM.playerStarDown(this.player);
+                },
+                "onSetLocation": function () {
+                    FSM.playerStarUp(this.player, Infinity);
+                }
+            }
+        },
+        {
+            "name": "Invisible Player",
+            "description": "You can't see the player anymore.",
+            "enabled": false,
+            "events": {
+                "onModEnable": function (mod) {
+                    this.ObjectMaker.getFunction("Player").prototype.hidden = 1;
+                },
+                "onModDisable": function (mod) {
+                    this.ObjectMaker.getFunction("Player").prototype.hidden = 0;
+                }
+            }
+        },
+        {
+            "name": "Parallax Clouds",
+            "description": "Clouds in the sky scroll at about 63% the normal rate.",
+            "enabled": false,
+            "events": {
+                "onModEnable": function () {
+                    this.ObjectMaker.getFunction("Cloud").prototype.parallax = .63;
+                },
+                "onModDisable": function () {
+                    this.ObjectMaker.getFunction("Cloud").prototype.parallax = undefined;
+                }
+            }
+        },
+        {
             "name": "Luigi",
-            "description": "The little brother who could!",
+            "description": "The little brother who couldl!",
             "enabled": false,
             "events": {
                 "onModEnable": function () {
@@ -22,19 +153,6 @@ FullScreenMario.prototype.settings.mods = {
                         this.player.title = "Player";
                         this.PixelDrawer.setThingSprite(this.player);
                     }
-                }
-            }
-        },
-        {
-            "name": "Parallax Clouds",
-            "description": "Clouds in the sky scroll at about 63% the normal rate.",
-            "enabled": false,
-            "events": {
-                "onModEnable": function () {
-                    this.ObjectMaker.getFunction("Cloud").prototype.parallax = .63;
-                },
-                "onModDisable": function () {
-                    this.ObjectMaker.getFunction("Cloud").prototype.parallax = undefined;
                 }
             }
         },
@@ -104,40 +222,6 @@ FullScreenMario.prototype.settings.mods = {
             }
         },
         {
-            "name": "High Speed",
-            "description": "Mario's maximum speed is quadrupled.",
-            "enabled": false,
-            "events": {
-                "onModEnable": function (mod) {
-                    var stats = this.ObjectMaker.getFunction("Player").prototype;
-                    mod.value_old = stats.maxspeedsave;
-                    stats.maxspeedsave = stats.maxspeed = stats.scrollspeed = mod.value_old * 4;
-                },
-                "onModDisable": function (mod) {
-                    var stats = this.ObjectMaker.getFunction("Player").prototype;
-                    stats.maxspeedsave = stats.maxspeed = stats.scrollspeed = mod.value_old;
-                }
-            }
-        },
-        {
-            "name": "Invincibility",
-            "description": "Mario is constantly given star power.",
-            "enabled": false,
-            "events": {
-                "onModEnable": function () {
-                    if(this.player) {
-                        FSM.playerStarUp(this.player, Infinity);
-                    }
-                },
-                "onModDisable": function () {
-                    FSM.playerStarDown(this.player);
-                },
-                "onLocationSet": function () {
-                    FSM.playerStarUp(this.player, Infinity);
-                }
-            }
-        },
-        {
             "name": "Super Fireballs",
             "description": "Fireballs blow up solids, and Mario has unlimited.",
             "enabled": false,
@@ -153,20 +237,7 @@ FullScreenMario.prototype.settings.mods = {
             }
         },
         {
-            "name": "Invisible Player",
-            "description": "You can't see the player anymore.",
-            "enabled": false,
-            "events": {
-                "onModEnable": function (mod) {
-                    this.ObjectMaker.getFunction("Player").prototype.hidden = 1;
-                },
-                "onModDisable": function (mod) {
-                    this.ObjectMaker.getFunction("Player").prototype.hidden = 0;
-                }
-            }
-        },
-        {
-            "name": "Acid Trip",
+            "name": "Trip of Acid",
             "description": "Sprites aren't cleared from the screen each game tick.",
             "enabled": false,
             "events": {
