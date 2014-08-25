@@ -78,6 +78,9 @@
                         "CheepCheep": {},
                         "Podoboo": {},
                         "BulletBill": {},
+                        "Lakitu": {},
+                        "SpinyEgg": {},
+                        "Spiny": {},
                         "HammerBro": {
                             "Bowser": {}
                         }
@@ -403,6 +406,31 @@
                 nocollidesolid: true,
                 movement: undefined,
                 xvel: FullScreenMario.unitsize / 2,
+            },
+            Lakitu: {
+                height: 12,
+                nofall: true,
+                noshiftx: true,
+                nocollidesolid: true,
+                onThingMake: FullScreenMario.prototype.spawnLakitu,
+                movement: FullScreenMario.prototype.moveLakituInitial
+            },
+            SpinyEgg: {
+                width: 7,
+                deadly: true,
+                movement: undefined,
+                onResting: FullScreenMario.prototype.animateSpinyEggHatching,
+                spawntype: "Spiny",
+                spriteCycleSynched: [
+                    ["one", "two"]
+                ]
+            },
+            Spiny: {
+                deadly: true,
+                moveleft: true,
+                spriteCycle: [
+                    ["one", "two"]
+                ]
             },
             Bowser: {
                 width: 16,

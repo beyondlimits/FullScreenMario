@@ -1484,6 +1484,19 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function spawnLakitu(thing) {
+        thing.EightBitter.TimeHandler.addEventInterval(function () {
+            if(thing.alive) {
+                thing.EightBitter.animateLakituThrowingSpiny(thing);
+            } else {
+                return true;
+            }
+        }, 140, Infinity);
+    }
+    
+    /**
+     * 
+     */
     function spawnCannon(thing) {
         thing.EightBitter.TimeHandler.addEventInterval(
             thing.EightBitter.animateCannonFiring,
@@ -1628,6 +1641,9 @@ window.FullScreenMario = (function() {
                 return;
             }
             thing.resting = other;
+            if(thing.onResting) {
+                thing.onResting(thing, other);
+            }
         }
         // Solid on top of character
         else if(thing.EightBitter.isSolidOnCharacter(other, thing)) {
@@ -2586,8 +2602,44 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
-    function moveBlooperUnsqueezing(thing) {
+    function moveLakitu(thing) {
+        var player = thing.EightBitter.player;
+        // If the player is moving quickly to the right, move in front and stay there
+        if(
+            player.xvel > thing.EightBitter.unitsize / 8
+            && player.left > thing.EightBitter.MapScreener.width / 2
+        ) {
+            if(thing.left < player.right + thing.EightBitter.unitsize * 16) {
+                // slide to xloc
+                thing.EightBitter.slideToX(
+                    thing,
+                    player.right + player.xvel + thing.EightBitter.unitsize * 32,
+                    player.maxspeed * 1.4
+                );
+                thing.counter = 0;
+            }
+        } else {
+            thing.counter += .007;
+            thing.EightBitter.slideToX(
+                thing,
+                player.left + player.xvel + Math.sin(Math.PI * thing.counter) * 117,
+                player.maxspeed * .7
+            );
+        }
+    }
+    
+    /**
+     * 
+     */
+    function moveLakituInitial(thing) {
+        if(thing.right < thing.EightBitter.player.left) {
+            thing.counter = 0;
+            thing.movement = thing.EightBitter.moveLakitu;
+            thing.movement(thing);
+            return;
+        }
         
+        thing.EightBitter.shiftHoriz(thing, -thing.EightBitter.unitsize);
     }
     
     /**
@@ -2967,6 +3019,30 @@ window.FullScreenMario = (function() {
      */
     function animatePodobooJumpDown(thing) {
         thing.movement = thing.EightBitter.movePodobooFalling;
+    }
+    
+    /**
+     * 
+     */
+    function animateLakituThrowingSpiny(thing) {
+        thing.EightBitter.switchClass(thing, "out", "hiding");
+        thing.EightBitter.TimeHandler.addEvent(function () {
+            if(thing.dead) {
+                return;
+            }
+            var spawn = thing.EightBitter.addThing("SpinyEgg", thing.left, thing.top);
+            spawn.yvel = thing.EightBitter.unitsize * -2.1;
+            thing.EightBitter.switchClass(thing, "hiding", "out");
+        }, 21);
+    }
+    
+    /**
+     * 
+     */
+    function animateSpinyEggHatching(thing) {
+        var spawn = thing.EightBitter.addThing("Spiny", thing.left, thing.top - thing.yvel);
+        spawn.moveleft = thing.EightBitter.objectToLeft(thing.EightBitter.player, spawn);
+        thing.EightBitter.killNormal(thing);
     }
     
     /**
@@ -4553,6 +4629,7 @@ window.FullScreenMario = (function() {
         "spawnPiranha": spawnPiranha,
         "spawnBlooper": spawnBlooper,
         "spawnPodoboo": spawnPodoboo,
+        "spawnLakitu": spawnLakitu,
         "spawnCannon": spawnCannon,
         "spawnCastleBlock": spawnCastleBlock,
         "spawnDetector": spawnDetector,
@@ -4594,6 +4671,8 @@ window.FullScreenMario = (function() {
         "moveBlooper": moveBlooper,
         "moveBlooperSqueezing": moveBlooperSqueezing,
         "movePodobooFalling": movePodobooFalling,
+        "moveLakitu": moveLakitu,
+        "moveLakituInitial": moveLakituInitial,
         "moveCoinEmerge": moveCoinEmerge,
         "movePlayer": movePlayer,
         // Animations
@@ -4607,6 +4686,8 @@ window.FullScreenMario = (function() {
         "animateBlooperUnsqueezing": animateBlooperUnsqueezing,
         "animatePodobooJumpUp": animatePodobooJumpUp,
         "animatePodobooJumpDown": animatePodobooJumpDown,
+        "animateLakituThrowingSpiny": animateLakituThrowingSpiny,
+        "animateSpinyEggHatching": animateSpinyEggHatching,
         "animateFireballEmerge": animateFireballEmerge,
         "animateFireballExplode": animateFireballExplode,
         "animateFirework": animateFirework,
