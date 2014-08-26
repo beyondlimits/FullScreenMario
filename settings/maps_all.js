@@ -1,14 +1,13 @@
 (function (maps) {
     var proto = FullScreenMario.prototype.settings.maps.maps = {},
-        mapName;
+        i;
     
-    for(mapName in maps) {
-        if(maps.hasOwnProperty(mapName)) {
-            proto[mapName] = maps[mapName];
-        }
+    for(i = 0; i < maps.length; i += 1) {
+        proto[maps[i].name] = maps[i];
     }
-})({
-    "1-1": {
+})([
+    {
+        "name": "1-1",
         "locations": [
               { "entry": "Plain" },
               { "entry": "PipeVertical" },
@@ -22,7 +21,6 @@
                     { "macro": "Pattern", "pattern": "BackRegular", "repeat": 5 },
                     { "macro": "Floor", "width": 552 },
                     { "thing": "Block", "x": 128, "y": 32 },
-                    { "thing": "Springboard", "x": 80, "y": 14.5 },
                     { "thing": "Brick", "x": 160, "y": 32 },
                     { "thing": "Block", "x": 168, "y": 32, "contents": "Mushroom" },
                     { "thing": "Goomba", "x": 176, "y": 8 },
@@ -126,7 +124,8 @@
             }
         ]
     },
-    "1-2": {
+    {
+        "name": "1-2",
         "locations": [
             { "entry": "Walking" },
             { "area": 1 },
@@ -277,7 +276,8 @@
             }
         ]
     },
-    "1-3": {
+    {
+        "name": "1-3",
         "time": 300,
         "locations": [
             { "entry": "Plain" }
@@ -337,7 +337,8 @@
             }
         ]
     },
-    "1-4": {
+    {
+        "name": "1-4",
         "time": 300,
         "locations": [
             { "entry": "Castle" }
@@ -388,7 +389,8 @@
             }
         ]
     },
-    "2-1": {
+    {
+        "name": "2-1",
         "locations": [
             { "entry": "Plain" },
             { "xloc": 1260 },
@@ -505,7 +507,8 @@
             }
         ]
     },
-    "2-2": {
+    {
+        "name": "2-2",
         "locations": [
             { "entry": "Walking" },
             { "area": 1 },
@@ -529,12 +532,12 @@
                     { "location": 1 },
                     { "macro": "Floor", "width": 536 }, 
                     { "thing": "Coral", "x": 96, "y": 24, "height": 24 },
-                    { "macro": "Fill", "thing": "Coin", "x": 121, "y": 7, "xnum": 2 },
+                    { "macro": "Fill", "thing": "Coin", "x": 121, "y": 7, "xnum": 2, "xwidth": 8 },
                     { "thing": "Stone", "x": 152, "y": 32, "width": 24 },
                     { "thing": "Blooper", "x": 184, "y": 16 },
-                    { "macro": "Fill", "thing": "Coin", "x": 224, "y": 64, "xnum": 3 },
+                    { "macro": "Fill", "thing": "Coin", "x": 224, "y": 64, "xnum": 3, "xwidth": 8 },
                     { "thing": "Coral", "x": 272, "y": 40, "height": 80 },
-                    { "macro": "Fill", "thing": "Coin", "x": 296, "y": 7, "xnum": 3 },
+                    { "macro": "Fill", "thing": "Coin", "x": 296, "y": 7, "xnum": 3, "xwidth": 8 },
                     { "thing": "Stone", "x": 344, "y": 32, "width": 16 },
                     { "thing": "Coral", "x": 344, "y": 48, "height": 16 },
                     { "thing": "Blooper", "x": 376, "y": 32 },
@@ -542,7 +545,7 @@
                     { "thing": "Blooper", "x": 448, "y": 24 },
                     { "thing": "Stone", "x": 520, "y": 24, "height": 24 },
                     { "thing": "Stone", "x": 528, "y": 40, "height": 40 },
-                    { "macro": "Fill", "thing": "Coin", "x": 546, "y": 23, "xnum": 3 },
+                    { "macro": "Fill", "thing": "Coin", "x": 546, "y": 23, "xnum": 3, "xwidth": 8 },
                     { "macro": "Floor", "x": 576, "width": 480 },
                     { "thing": "Stone", "x": 576, "y": 40, "height": 40 },
                     { "thing": "Stone", "x": 584, "y": 24, "height": 24 },
@@ -558,11 +561,11 @@
                     { "thing": "Blooper", "x": 760, "y": 80 },
                     { "thing": "CheepCheep", "x": 760, "y": 56 },
                     { "thing": "CheepCheep", "x": 784, "y": 80, "smart": true },
-                    { "macro": "Fill", "thing": "Coin", "x": 816, "y": 15, "xnum": 3 },
+                    { "macro": "Fill", "thing": "Coin", "x": 816, "y": 15, "xnum": 3, "xwidth": 8 },
                     { "thing": "Stone", "x": 824, "y": 32, "width": 16 },
                     { "thing": "Coral", "x": 824, "y": 64, "height": 32 },
                     { "thing": "Blooper", "x": 848, "y": 16 },
-                    { "macro": "Fill", "thing": "Coin", "x": 912, "y": 55, "xnum": 3 },
+                    { "macro": "Fill", "thing": "Coin", "x": 912, "y": 55, "xnum": 3, "xwidth": 8 },
                     { "thing": "Stone", "x": 928, "y": 40, "width": 16 },
                     { "thing": "CheepCheep", "x": 944, "y": 72 },
                     { "thing": "Coral", "x": 968, "y": 32, "height": 32 },
@@ -573,7 +576,7 @@
                     { "thing": "Stone", "x": 1056, "y": 88, "height": 24 },
                     { "thing": "Stone", "x": 1064, "y": 72, "width": 64 },
                     { "thing": "Coin", "x": 1073, "y": 15 },
-                    { "macro": "Fill", "thing": "Coin", "x": 1080, "y": 7, "xnum": 3 },
+                    { "macro": "Fill", "thing": "Coin", "x": 1080, "y": 7, "xnum": 3, "xwidth": 8 },
                     { "thing": "Coin", "x": 1105, "y": 15 },
                     { "thing": "CheepCheep", "x": 1100, "y": 40 },
                     { "macro": "Floor", "x": 1128, "width": 136 },
@@ -626,7 +629,8 @@
             }
         ]
     },
-    "2-3": {
+    {
+        "name": "2-3",
         "time": 300,
         "locations": [
             { "entry": "Plain" }
@@ -686,7 +690,8 @@
             }
         ]
     },
-    "2-4": {
+    {
+        "name": "2-4",
         "time": 300,
         "locations": [
             { "entry": "Castle" }
@@ -751,7 +756,8 @@
             }
         ]
     },
-    "3-1": {
+    {
+        "name": "3-1",
         "time": 300,
         "locations": [
             { "entry": "Plain" },
@@ -898,7 +904,8 @@
             }
         ]
     },
-    "3-2": {
+    {
+        "name": "3-2",
         "time": 300,
         "locations": [
             { "entry": "Plain" }
@@ -955,7 +962,8 @@
             }
         ]
     },
-    "3-3": {
+    {
+        "name": "3-3",
         "time": 300,
         "locations": [
             { "entry": "Plain" }
@@ -1019,7 +1027,8 @@
             }
         ]
     },
-    "3-4": {
+    {
+        "name": "3-4",
         "time": 300,
         "locations": [
             { "entry": "Castle" }
@@ -1085,7 +1094,8 @@
             }
         ]
     },
-    "4-1": {
+    {
+        "name": "4-1",
         "locations": [
             { "entry": "Plain" },
             { "entry": "PipeVertical" },
@@ -1158,7 +1168,8 @@
         ]
     },
     /* Note: 4-1 entrance/exits still need to be fixed */
-    "4-2": {
+    {
+        "name": "4-2",
         "locations": [
             { "entry": "Walking" },
             { "area": 1 },
@@ -1350,7 +1361,8 @@
             }
         ]
     },
-    "4-3": {
+    {
+        "name": "4-3",
         "time": 300,
         "locations": [
             { "entry": "Plain" }
@@ -1409,7 +1421,8 @@
             }
         ]
     },
-    "4-4": {
+    {
+        "name": "4-4",
         "time": 300,
         "locations": [
             { "entry": "Castle" }
@@ -1499,7 +1512,8 @@
             }
         ]
     },
-    "5-1": {
+    {
+        "name": "5-1",
         "locations": [
             { "entry": "Plain" },
             { "entry": "PipeVertical" },
@@ -1575,7 +1589,8 @@
             }
         ]
     },
-    "5-2": {
+    {
+        "name": "5-2",
         "locations": [
             { "entry": "Plain" },
             { "entry": "PipeVertical" },
@@ -1728,7 +1743,8 @@
             }
         ]
     },
-    "5-3": {
+    {
+        "name": "5-3",
         "time": 300,
         "locations": [
             { "entry": "Plain" }
@@ -1789,7 +1805,8 @@
             }
         ]
     },
-    "5-4": {
+    {
+        "name": "5-4",
         "time": 300,
         "locations": [
             { "entry": "Castle" }
@@ -1858,7 +1875,8 @@
             }
         ]
     },
-    "6-1": {
+    {
+        "name": "6-1",
         "locations": [
             { "entry": "Plain" }
         ],
@@ -1937,4 +1955,4 @@
             }
         ]
     }
-});
+]);
