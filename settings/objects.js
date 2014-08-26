@@ -57,7 +57,7 @@
         }
     }
 
-    FullScreenMario.prototype.settings.things = {
+    FullScreenMario.prototype.settings.objects = {
         "on_make": "onMake",
         "store_type": "title",
         "index_map": ["width", "height"],

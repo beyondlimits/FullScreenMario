@@ -232,7 +232,7 @@ window.FullScreenMario = (function() {
      * given a reference to this container FSM via properties.Thing.EightBitter. 
      * 
      * @remarks Requirement(s): ObjectMakr (src/ObjectMakr.js)
-     *                          things.js (settings/things.js)
+     *                          objects.js (settings/objects.js)
      */
     function resetObjectMaker(self, customs) {
         self.ObjectMaker = new ObjectMakr(proliferate({
@@ -241,7 +241,7 @@ window.FullScreenMario = (function() {
                     "EightBitter": self
                 }
             }
-        }, self.settings.things));
+        }, self.settings.objects));
     }
     
     /**
