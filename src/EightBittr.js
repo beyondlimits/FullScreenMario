@@ -418,10 +418,10 @@ window.EightBittr = (function() {
 
                 // If it's an object, recurse on a new version of it
                 if(typeof(setting = donor[i]) == "object") {
-                  if(!recipient.hasOwnProperty(i)) {
-                     recipient[i] = new setting.constructor();
-                  }
-                  proliferate(recipient[i], setting, no_override);
+                    if(!recipient.hasOwnProperty(i)) {
+                        recipient[i] = new setting.constructor();
+                    }
+                    proliferate(recipient[i], setting, no_override);
                 }
                 // Regular primitives are easy to copy otherwise
                 else {
@@ -430,21 +430,6 @@ window.EightBittr = (function() {
             }
         }
         return recipient;
-    }
-    
-    /**
-     * 
-     */
-    function createElement(type) {
-        var element = document.createElement(type || "div"),
-            i;// = arguments.length;
-        
-        // For each provided object, add those settings to the element
-        for(i = 1; i < arguments.length; i += 1) {
-            proliferate(element, arguments[i]);
-        }
-        
-        return element;
     }
     
     /**
@@ -466,7 +451,7 @@ window.EightBittr = (function() {
                 }
 
                 // If it's an object, recurse on a new version of it
-                if(typeof(setting = donor[i]) == "object") {
+                if(typeof(setting = donor[i]) === "object") {
                   if(!recipient[i]) {
                      recipient[i] = new setting.constructor();
                   }
@@ -479,6 +464,73 @@ window.EightBittr = (function() {
             }
         }
         return recipient;
+    }
+    
+    /**
+     * Identical to proliferate, but tailored for HTML elements because many
+     * element attributes don't play nicely with JavaScript standards. Looking
+     * at you, HTMLCollection!
+     * 
+     * @param {Element} recipient
+     * @param {Any} donor
+     * @param {Boolean} [no_override]
+     * @return {Element}
+     */
+    function proliferateElement(recipient, donor, no_override) {
+        var setting, i, j;
+      
+        // For each attribute of the donor:
+        for(i in donor) {
+            if(donor.hasOwnProperty(i)) {
+                // If no_override, don't override already existing properties
+                if(no_override && recipient.hasOwnProperty(i)) {
+                    continue;
+                }
+                
+                setting = donor[i];
+                
+                // Special cases for HTML elements
+                switch(i) {
+                    // Children: just append all of them directly
+                    case "children":
+                        for(var j = 0; j < setting.length; j += 1) {
+                            recipient.appendChild(setting[j]);
+                        }
+                        break;
+                    
+                    // By default, use the normal proliferate logic
+                    default:
+                        // If it's an object, recurse on a new version of it
+                        if(typeof(setting) === "object") {
+                            if(!recipient.hasOwnProperty(i)) {
+                                recipient[i] = new setting.constructor();
+                            }
+                            proliferate(recipient[i], setting, no_override);
+                        }
+                        // Regular primitives are easy to copy otherwise
+                        else {
+                            recipient[i] = setting;
+                        }
+                        break;
+                }
+            }
+        }
+        return recipient;
+    }
+    
+    /**
+     * 
+     */
+    function createElement(type) {
+        var element = document.createElement(type || "div"),
+            i;// = arguments.length;
+        
+        // For each provided object, add those settings to the element
+        for(i = 1; i < arguments.length; i += 1) {
+            proliferateElement(element, arguments[i]);
+        }
+        
+        return element;
     }
     
     /**
@@ -583,6 +635,7 @@ window.EightBittr = (function() {
         // General utilities
         "proliferate": proliferate,
         "proliferateHard": proliferateHard,
+        "proliferateElement": proliferateElement,
         "createElement": createElement,
         "arraySwitch": arraySwitch,
         "arrayToBeginning": arrayToBeginning,
