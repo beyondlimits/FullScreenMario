@@ -155,9 +155,10 @@ function MapsHandlr(settings) {
      * 
      * return {Prething[]}   An array of the current area's Prethings.
      */
-    self.getPreThings = function getPreThings() {
+    self.getPreThings = function () {
         return prethings;
     }
+    
     
     /* Map / location setting
     */

@@ -9,6 +9,7 @@ body {
     background: black;
     color: #fafafa;
     overflow-x: hidden;
+	overflow-y: scroll;
 }
 
 header {

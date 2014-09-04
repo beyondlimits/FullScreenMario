@@ -1,0 +1,156 @@
+.LevelEditor {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 50%;
+    background: rgba(0, 7, 14, .84);
+	user-select: none;
+    box-sizing: border-box;
+    z-index: 70;
+}
+
+
+/* EditorHead
+*/
+
+.LevelEditor .EditorHead {
+    position: relative;
+    height: 35px;
+}
+
+.LevelEditor .EditorHead .EditorNameInput {
+    position: absolute;
+    display: block;
+	padding: 3px 7px;
+    height: 35px;
+    top: 0;
+    right: 2.8em;
+    left: 0;
+    background: white;
+	border: 1px solid black;
+	font-size: 1.75em;
+	box-sizing: border-box;
+}
+
+.LevelEditor .EditorHead .EditorMinimizer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2.8em;
+    background: red;
+}
+
+
+/* EditorSectionChoosers 
+*/
+
+.LevelEditor .EditorSectionChooser {
+    width: 50%;
+    box-sizing: border-box;
+    height: 35px;
+    background: white;
+    border: 3px solid black;
+    color: black;
+    cursor: pointer;
+}
+
+.LevelEditor .EditorSectionChooser.Inactive {
+    background: gray;
+}
+
+
+/* EditorSectionMain
+*/
+
+.LevelEditor .EditorSectionMain {
+    position: absolute;
+    top: 70px;
+    right: 0;
+    bottom: 49px;
+    left: 0;
+    overflow-y: auto;
+}
+
+
+/* EditorJSON
+*/
+
+.LevelEditor .EditorJSON {
+    font-family: Courier;
+}
+
+.LevelEditor .EditorJSONInput {
+    display: block;
+    width: 100%;
+    height: 84%;
+	background: rgba(0, 3, 7, .91);
+	color: rgba(255, 245, 245, .91);
+	box-sizing: border-box;
+    overflow-y: auto;
+    resize: none;
+}
+
+.LevelEditor .EditorJSONInfo {
+    height: 1.75em;
+    padding: 3px 7px;
+}
+
+
+/* EditorOptions
+*/
+
+.LevelEditor .EditorOptions,
+.LevelEditor .EditorOptionContainer {
+	clear: both;
+}
+
+.LevelEditor .EditorListOption {
+    position: relative;
+	float: left;
+	margin: 0 7px 7px 0;
+	width: 70px;
+	height: 70px;
+	background: black;
+	border: white;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.LevelEditor .EditorListOption canvas {
+    position: absolute;
+}
+
+
+/* EditorMenu
+*/
+
+.LevelEditor .EditorMenu {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.LevelEditor .EditorMenuOption {
+	display: inline-block;
+	padding: 7px 14px;
+	background: white;
+	border: 3px solid black;
+	box-sizing: border-box;
+	color: black;
+	text-align: center;
+	cursor: pointer;
+}
+
+.LevelEditor .EditorMenuOption.EditorMenuOptionHalf {
+    width: 50%;
+}
+
+.LevelEditor .EditorMenuOption.EditorMenuOptionThird {
+    width: 33%;
+}
+
+.LevelEditor .EditorMenuOption.EditorMenuOptionFifth {
+    width: 20%;
+}

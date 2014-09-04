@@ -77,6 +77,10 @@ FullScreenMario.prototype.settings.mods = {
                         "0.21": "#000000",
                         "1": "#980000"
                     },
+					"Womb": {
+						"0.14": "#703521",
+						"1": "#770014"
+					},
                     "default": {
                         "0.21": "#5C94FC",
                         "0.35": "#77AAFF",

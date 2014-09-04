@@ -3,34 +3,45 @@
      * 
      */
     function MapToJSON() {
-        return JSON.stringify({
+        return {
+            "name": this.name,
             "areas": this.areas.map(function (area) {
                 return area.toJSON();
             }),
             "locations": this.locations.map(function (location) {
                 return location.toJSON();
             })
-        });
+        };
     }
     
     /**
      * 
      */
     function AreaToJSON() {
-        return JSON.stringify({
-            "creation": "this is going to be a big array",
+        return {
+            "name": this.name,
+            "creation": {},
             "setting": this.setting
-        });
+        };
     }
     
     /**
      * 
      */
     function LocationToJSON() {
-        return JSON.stringify({
-            "area": "should put .areaName in location",
+        return {
+            "name": this.name,
+            "area": this.area,
             "entry": this.entry
-        });
+        };
+    }
+    
+    /**
+     * 
+     */
+    function ThingToJSON() {
+        return "hi";
+        // return this.EightBitter.proliferate({}, this.attributes);
     }
     
     /**
@@ -142,7 +153,6 @@
                     "Bush1": {},
                     "Bush2": {},
                     "Bush3": {},
-                    "Castle": {},
                     "CastleChain": {},
                     "CastleDoor": {},
                     "CastleFlag": {},
@@ -167,8 +177,7 @@
                     "ShroomTrunk": {},
                     "String": {},
                     "TreeTrunk": {},
-                    "Water": {},
-                    "WaterFill": {}
+                    "Water": {}
                 },
                 "text": {
                     "Text100": {},
@@ -209,6 +218,7 @@
                 "toJSON": LocationToJSON
             },
             Thing: {
+                toJSON: ThingToJSON,
                 // Sizing
                 width: 8,
                 height: 8,
@@ -728,7 +738,6 @@
                     // ["one", "two", "three", "four"]
                 // ]
             },
-            WaterFill: [4, 5],
             "text": {
                 "libtype": "Text",
                 "grouptype": "Text",

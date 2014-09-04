@@ -128,16 +128,16 @@ function MapsCreatr(settings) {
     self.storeMap = function(name, settings) {
         var map = ObjectMaker.make("Map", settings);
         
+        if(!name) {
+            throw new Error("Map cannot be created with no name.");
+        }
+        
         if(!map.areas) {
             throw new Error("Maps cannot be used with no areas: " + name);
         }
         
         if(!map.locations) {
             throw new Error("Maps cannot be used with no locations: " + name);
-        }
-        
-        if(maps.hasOwnProperty(name)) {
-            console.warn("Overriding a map that already exists under: " + name);
         }
         
         // Set the one-to-many Map->Area relationships within the Map
@@ -173,14 +173,15 @@ function MapsCreatr(settings) {
             if(areas_raw.hasOwnProperty(i)) {
                 obj = areas_parsed[i] = ObjectMaker.make("Area", areas_raw[i]);
                 obj.map = map;
+                obj.name = i;
             }
         }
         
         // Parse all the Location objects (works for both Arrays and Objects)
         for(i in locations_raw) {
             if(locations_raw.hasOwnProperty(i)) {
+                window.durp = locations_raw[i];
                 obj = locations_parsed[i] = ObjectMaker.make("Location", locations_raw[i]);
-                // obj.map = map;
                 
                 // Location entrances should actually be the keyed functions
                 if(!entrances.hasOwnProperty(obj.entry)) {
@@ -188,6 +189,8 @@ function MapsCreatr(settings) {
                 }
                 obj.entry_raw = obj.entry;
                 obj.entry = entrances[obj.entry];
+                obj.name = i;
+                obj.area = locations_raw[i].area || 0;
             }
         }
         

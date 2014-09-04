@@ -30,7 +30,6 @@
                     { "thing": "Brick", "x": 192, "y": 32 },
                     { "macro": "Pipe", "x": 224, "height": 16 },
                     { "macro": "Pipe", "x": 304, "height": 24 },
-                    { "macro": "Pipe", "x": 368, "height": 32 },
                     { "thing": "Goomba", "x": 340, "y": 8 },
                     { "macro": "Pipe", "x": 368, "height": 32 },
                     { "thing": "Goomba", "x": 412, "y": 8 },

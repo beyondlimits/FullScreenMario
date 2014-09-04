@@ -2,11 +2,11 @@
     var LoadGame = function () {
         var section = document.getElementById("game"),
             FSM = new FullScreenMario({
-                "width": window.innerWidth, 
+                "width": document.body.clientWidth, 
                 "height": 464
             });
             
-        section.innerText = "";
+        section.textContent = "";
         section.appendChild(FSM.container);
         
         FSM.proliferate(document.body, {
@@ -28,7 +28,7 @@
             length = schemas.length,
             i;
         
-        section.innerText = "";
+        section.textContent = "";
         section.className = "length-" + length;
         
         for(i = 0; i < length; i += 1) {
@@ -43,7 +43,7 @@
         
         control.className = "control";
         
-        heading.innerText = schema.title;
+        heading.textContent = schema.title;
         
         inner.className = "control-inner";
         inner.appendChild(generators[schema.generator](schema));
@@ -159,7 +159,7 @@
             "Map Generator!": "Random"
         },
         "callback": function (schema, button) {
-            FSM.setMap(button.getAttribute("value") || button.innerText);
+            FSM.setMap(button.getAttribute("value") || button.textContent);
         }
     },
 ], {
@@ -173,7 +173,7 @@
         for(i = 0; i < options.length; i += 1) {
             element = document.createElement("div");
             element.className = "select-option options-button-option";
-            element.innerText = options[i];
+            element.textContent = options[i];
             element.onclick = schema.callback.bind(schema, schema, element);
             output.appendChild(element);
         }
@@ -186,10 +186,10 @@
                 left = document.createElement("td"),
                 right = document.createElement("td");
             
-            left.innerText = details.title;
+            left.textContent = details.title;
             
             right.className = "select-option options-button-option";
-            right.innerText = "off";
+            right.textContent = "off";
             
             row.appendChild(left);
             row.appendChild(right);
@@ -204,12 +204,12 @@
                 values, child,
                 i;
                 
-            left.innerText = details.title;
+            left.textContent = details.title;
             
             values = details.source();
             for(i = 0; i < values.length; i += 1) {
                 child = document.createElement("td");
-                child.innerText = values[i];
+                child.textContent = values[i];
                 right.appendChild(child);
             }
             
@@ -252,16 +252,19 @@
         output.className = "select-options select-options-level-editor";
         
         title.className = "select-option-title";
-        title.innerText = "Create your own custom levels:";
+        title.textContent = "Create your own custom levels:";
         
-        button.className = "disabled select-option select-option-large options-button-option";
+        button.className = "select-option select-option-large options-button-option";
         button.innerHTML = "Start the <br /> Level Editor!";
+        button.onclick = function () {
+            FSM.LevelEditor.enable();
+        };
         
         between.className = "select-option-title";
         between.innerHTML = "<em>- or -</em><br /><br />Continue your editor files:";
         
         uploader.className = "disabled select-option select-option-large select-option-inset options-button-option";
-        uploader.innerText = "Click here, or drag a file";
+        uploader.textContent = "Click here, or drag a file";
         
         output.appendChild(title);
         output.appendChild(button);
@@ -289,7 +292,7 @@
                 for(j = rangeX[0]; j <= rangeX[1]; j += 1) {
                     element = document.createElement("td");
                     element.className = "select-option maps-grid-option maps-grid-option-range";
-                    element.innerText = i + "-" + j;
+                    element.textContent = i + "-" + j;
                     element.onclick = schema.callback.bind(schema, schema, element);
                     row.appendChild(element);
                 }
@@ -304,7 +307,7 @@
             for(var i in schema.extras) {
                 element = document.createElement("div");
                 element.className = "select-option maps-grid-option maps-grid-option-extra";
-                element.innerText = i;
+                element.textContent = i;
                 element.setAttribute("value", schema.extras[i]);
                 element.onclick = schema.callback.bind(schema, schema, element);
                 output.appendChild(element);

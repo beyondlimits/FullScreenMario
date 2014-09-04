@@ -14,7 +14,7 @@ window.FullScreenMario = (function() {
     /**
      * Constructor for a new FullScreenMario game object.
      * Static game settings are stored in the appropriate settings/*.js object
-     * as memberes of the FullScreenMario.prototype object.
+     * as members of the FullScreenMario.prototype object.
      * Dynamic game settings may be given as members of the "customs" argument.
      * On typical machines, game startup time is approximately 500-700ms.
      * 
@@ -63,7 +63,8 @@ window.FullScreenMario = (function() {
      */
     function FullScreenMario(customs) {        // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {
             "customs": customs,
-            "constructor": FullScreenMario,            "unitsize": 4,            "scale": 2,            "requirements": {                "global": {                    "AudioPlayr": "src/AudioPlayr.js",                    "ChangeLinr": "src/ChangeLinr.js",                    "FPSAnalyzr": "src/FPSAnalyzr.js",                    "GamesRunnr": "src/GamesRunnr.js",                    "GroupHoldr": "src/GroupHoldr.js",                    "InputWritr": "src/InputWritr.js",                    "MapScreenr": "src/MapScreenr.js",
+            "constructor": FullScreenMario,            "unitsize": 4,            "scale": 2,            "requirements": {                "global": {                    "AudioPlayr": "src/AudioPlayr.js",                    "ChangeLinr": "src/ChangeLinr.js",                    "FPSAnalyzr": "src/FPSAnalyzr.js",                    "GamesRunnr": "src/GamesRunnr.js",                    "GroupHoldr": "src/GroupHoldr.js",                    "InputWritr": "src/InputWritr.js",                    "LevelEditr": "src/LevelEditr.js",
+                    "MapScreenr": "src/MapScreenr.js",
                     "MapsHandlr": "src/MapsHandlr.js",
                     "ModAttachr": "src/ModAttachr.js",                    "ObjectMakr": "src/ObjectMakr.js",                    "PixelDrawr": "src/PixelDrawr.js",                    "PixelRendr": "src/PixelRendr.js",                    "QuadsKeepr": "src/QuadsKeepr.js",                    "StatsHoldr": "src/StatsHoldr.js",                    "StringFilr": "src/StringFilr.js",                    "ThingHittr": "src/ThingHittr.js",                    "TimeHandlr": "src/TimeHandlr.js"                },
                 "settings": {
@@ -85,6 +86,7 @@ window.FullScreenMario = (function() {
                 resetMapsCreator,
                 resetMapsHandler,
                 resetInputWriter,
+                resetLevelEditor,
                 resetModAttacher,
                 startModAttacher,
                 resetContainer
@@ -126,11 +128,11 @@ window.FullScreenMario = (function() {
     // Levels of points to award for hopping on / shelling enemies
     FullScreenMario.point_levels = [
         100, 200, 400, 500, 800, 1000, 2000, 4000, 5000, 8000
-    ];            /* Reset functions, in order    */        /**     * Sets self.PixelRender     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelRendr (src/PixelRendr.js)
+    ];            /* Reset functions, in order    */        /**     * Sets self.PixelRender     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelRendr (src/PixelRendr/PixelRendr.js)
      *                          sprites.js (settings/sprites.js)     */    function resetPixelRender(self, customs) {        // PixelRender settings are stored in FullScreenMario.prototype.sprites,        // though they also need the scale measurement added        self.PixelRender = new PixelRendr(proliferateHard({
             "unitsize": self.unitsize,
             "scale": self.scale
-        }, self.settings.sprites));    }        /**     * Sets self.PixelDrawer     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelDrawr (src/PixelDrawr.js)     */    function resetPixelDrawer(self, customs) {        self.PixelDrawer = new PixelDrawr({            "PixelRender": self.PixelRender,
+        }, self.settings.sprites));    }        /**     * Sets self.PixelDrawer     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelDrawr (src/PixelDrawr/PixelDrawr.js)     */    function resetPixelDrawer(self, customs) {        self.PixelDrawer = new PixelDrawr({            "PixelRender": self.PixelRender,
             "getCanvas": self.getCanvas,
             "unitsize": self.unitsize,
             "innerWidth": customs.width,
@@ -138,7 +140,7 @@ window.FullScreenMario = (function() {
                 return thing.EightBitter.MapsHandler.getArea().setting 
                         + ' ' + thing.libtype + ' ' 
                         + thing.title + ' ' + thing.className;
-            }        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr.js)
+            }        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr/TimeHandlr.js)
      *                          events.js (settings/events.js)     */    function resetTimeHandler(self, customs) {
         self.TimeHandler = new TimeHandlr(proliferate({
             "classAdd": self.addClass,
@@ -149,7 +151,7 @@ window.FullScreenMario = (function() {
      * Sets self.AudioPlayer
      * 
      * @param {FullScreenMario} self
-     * @remarks Requirement(s): AudioPlayr (src/AudioPlayr.js)
+     * @remarks Requirement(s): AudioPlayr (src/AudioPlayr/AudioPlayr.js)
      *                          audio.js (settings/audio.js)
      */
     function resetAudioPlayer(self, customs) {
@@ -165,7 +167,7 @@ window.FullScreenMario = (function() {
     
     /**
      * Sets self.QuadsKeeper
-     * @remarks Requirement(s): QuadsKeepr (src/QuadsKeepr.js)
+     * @remarks Requirement(s): QuadsKeepr (src/QuadsKeepr/QuadsKeepr.js)
      *                          quadrants.js (settings/quadrants.js)
      */
     function resetQuadsKeeper(self, customs) {
@@ -181,7 +183,7 @@ window.FullScreenMario = (function() {
     
     /**
      * Sets self.GamesRunner
-     * @remarks Requirement(s): GamesRunnr (src/GamesRunnr.js)
+     * @remarks Requirement(s): GamesRunnr (src/GamesRunnr/GamesRunnr.js)
      *                          runner.js (settings/runner.js)
      */
     function resetGamesRunner(self, customs) {
@@ -198,7 +200,7 @@ window.FullScreenMario = (function() {
     
     /**
      * Sets self.StatsHolder
-     * @remarks Requirement(s): StatsHoldr (src/StatsHoldr.js)
+     * @remarks Requirement(s): StatsHoldr (src/StatsHoldr/StatsHoldr.js)
      *                          statistics.js (settings/statistics.js)
      */
     function resetStatsHolder(self, customs) {
@@ -214,7 +216,7 @@ window.FullScreenMario = (function() {
     
     /**
      * Sets self.ThingHitter
-     * @remarks Requirement(s): ThingHittr (src/ThingHittr.js)
+     * @remarks Requirement(s): ThingHittr (src/ThingHittr/ThingHittr.js)
      *                          collisions.js (settings/collisions.js)
      */
     function resetThingHitter(self, customs) {
@@ -231,7 +233,7 @@ window.FullScreenMario = (function() {
      * Because many Thing functions require access to other FSM modules, each is
      * given a reference to this container FSM via properties.Thing.EightBitter. 
      * 
-     * @remarks Requirement(s): ObjectMakr (src/ObjectMakr.js)
+     * @remarks Requirement(s): ObjectMakr (src/ObjectMakr/ObjectMakr.js)
      *                          objects.js (settings/objects.js)
      */
     function resetObjectMaker(self, customs) {
@@ -247,7 +249,7 @@ window.FullScreenMario = (function() {
     /**
      * Sets self.MapScreener
      * 
-     * @remarks Requirement(s): MapScreenr (src/MapScreenr.js)
+     * @remarks Requirement(s): MapScreenr (src/MapScreenr/MapScreenr.js)
      *                          screen.js (settings/screen.js)
      */
     function resetMapScreener(self, customs) {
@@ -261,7 +263,7 @@ window.FullScreenMario = (function() {
     /**
      * Sets self.MapCreator
      * 
-     * @remarks Requirement(s): MapCreatr (src/MapCreatr.js)
+     * @remarks Requirement(s): MapCreatr (src/MapCreatr/MapCreatr.js)
      *                          maps.js (settings/maps.js)
      */
     function resetMapsCreator(self, customs) {
@@ -278,7 +280,7 @@ window.FullScreenMario = (function() {
     /**
      * Sets self.MapsHandler
      * 
-     * @remarks Requirement(s): MapsHandlr (src/MapsHandlr.js)
+     * @remarks Requirement(s): MapsHandlr (src/MapsHandlr/MapsHandlr.js)
      *                          maps.js (settings/maps.js)
      */
     function resetMapsHandler(self, customs) {
@@ -293,7 +295,7 @@ window.FullScreenMario = (function() {
     /**
      * Sets self.InputWriter
      * 
-     * @remarks Requirement(s): InputWritr (src/InputWritr.js)
+     * @remarks Requirement(s): InputWritr (src/InputWritr/InputWritr.js)
      *                          input.js (settings/input.js)
      */
     function resetInputWriter(self, customs) {
@@ -302,6 +304,18 @@ window.FullScreenMario = (function() {
                 return !self.MapScreener.nokeys;
             }
         }, self.settings.input));
+    }
+    
+    /**
+     * Sets self.resetLevelEditor
+     * 
+     * @remarks Requirement(s): LevelEditr (src/LevelEditr/LevelEditr.js)
+     */
+    function resetLevelEditor(self, customs) {
+        self.LevelEditor = new LevelEditr(proliferate({
+            "GameStarter": self,
+			"beautifier": js_beautify // Eventually there will be a custom beautifier
+        }, self.settings.editor));
     }
     
     /**
@@ -534,6 +548,10 @@ window.FullScreenMario = (function() {
         var canvas = thing.canvas = FullScreenMario.prototype.getCanvas(spritewidthpixels, spriteheightpixels),
             context = thing.context = canvas.getContext("2d"),
             imageData = thing.imageData = context.getImageData(0, 0, spritewidthpixels, spriteheightpixels);
+        
+        if(thing.opacity !== 1) {
+            thing.EightBitter.setOpacity(thing, thing.opacity);
+        }
         
         // Attributes, such as Koopa.smart
         if(thing.attributes) {
@@ -1187,6 +1205,16 @@ window.FullScreenMario = (function() {
         thing.movement = thing.movement_old || thing.movement;
         thing.nofall = thing.nofall_old || false;
         thing.nocollide = thing.nocollide_old || false;
+    }
+    
+    /**
+     * 
+     */
+    function setOpacity(thing, opacity) {
+        thing.opacity = opacity;
+        thing.canvas.opacity = opacity;
+        thing.context.opacity = opacity;
+        thing.EightBitter.PixelDrawer.setThingSprite(thing);
     }
     
     
@@ -4800,7 +4828,7 @@ window.FullScreenMario = (function() {
         "animatePlayerPipingEnd": animatePlayerPipingEnd,
         "animatePlayerOffPole": animatePlayerOffPole,
         "animateCharacterHop": animateCharacterHop,
-        // Physics
+        // Physics & similar
         "shiftBoth": shiftBoth,
         "shiftThings": shiftThings,
         "shiftAll": shiftAll,
@@ -4813,6 +4841,7 @@ window.FullScreenMario = (function() {
         "increaseHeight": increaseHeight,
         "thingStoreVelocity": thingStoreVelocity,
         "thingRetrieveVelocity": thingRetrieveVelocity,
+        "setOpacity": setOpacity,
         // Appearance utilities
         "setTitle": setTitle,
         "setClass": setClass,

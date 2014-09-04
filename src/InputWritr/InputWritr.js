@@ -127,6 +127,22 @@ function InputWritr(settings) {
 
     /* Simple sets
      */
+     
+    /**
+     * Simple set function for the Function used to determine whether this is 
+     * accepting inputs.
+     * 
+     * @param {Function}
+     */
+    self.setCanTrigger = function (status) {
+        if(status.constructor === Boolean) {
+            can_trigger = function () {
+                return status;
+            };
+        } else {
+            can_trigger = status;
+        }
+    }
 
     /**
      * Simple set function for the Boolean of whether this is recording inputs.
