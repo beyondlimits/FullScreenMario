@@ -10,6 +10,17 @@
     z-index: 70;
 }
 
+.LevelEditor h4 {
+    margin: 14px 0 7px 0;
+}
+
+.LevelEditor select,
+.LevelEditor input {
+    margin: 7px;
+    padding: 3px 7px;
+    font-size: 1.17em;
+}
+
 
 /* EditorHead
 */
@@ -72,6 +83,15 @@
     overflow-y: auto;
 }
 
+.LevelEditor .EditorSectionSecondary {
+	position: absolute;
+	top: 35px;
+	right: 343px;
+	bottom: 0px;
+	left: 0;
+	overflow-y: auto;
+}
+
 
 /* EditorJSON
 */
@@ -102,6 +122,7 @@
 
 .LevelEditor .EditorOptions,
 .LevelEditor .EditorOptionContainer {
+    padding-left: 3px;
 	clear: both;
 }
 
@@ -119,6 +140,36 @@
 
 .LevelEditor .EditorListOption canvas {
     position: absolute;
+}
+
+
+/* EditorVisualOptions
+*/
+
+.LevelEditor .EditorVisualOptions {
+    position: absolute;
+    top: 0;
+    right: 21px;
+    top: 119px;
+    bottom: 42px;
+    padding: 7px 11px;
+    width: 305px;
+    border: 1px solid silver;
+    border-width: 1px 0 0 1px;
+	overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.LevelEditor .EditorVisualOptions .VisualOptionName {
+    margin: 3px 0 7px 0;
+}
+
+.LevelEditor .EditorVisualOptions .VisualOptionDescription {
+	padding-bottom: 14px;
+}
+
+.LevelEditor .EditorVisualOptions .VisualOptionRecommendation {
+	font-size: 70%;
 }
 
 
@@ -143,6 +194,10 @@
 	cursor: pointer;
 }
 
+.LevelEditor .EditorMenuOption:hover {
+    opacity: .91;
+}
+
 .LevelEditor .EditorMenuOption.EditorMenuOptionHalf {
     width: 50%;
 }
@@ -153,4 +208,16 @@
 
 .LevelEditor .EditorMenuOption.EditorMenuOptionFifth {
     width: 20%;
+}
+
+
+/* EditorMapSettings
+*/
+
+.LevelEditor .EditorMapSettingsGroup {
+    padding-left: 7px;
+}
+
+.LevelEditor .EditorMapSettingsSubGroup {
+    padding-left: 14px;
 }

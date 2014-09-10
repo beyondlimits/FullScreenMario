@@ -4383,12 +4383,18 @@ window.FullScreenMario = (function() {
         // because the pattern is indistinguishible when placed correctly.
         var x = reference.x || 0,
             y = reference.y || 0,
-            width = reference.width || 24;
+            width = reference.width || 24,
+            output = [
+                { "thing": "TreeTop", "x": x, "y": y, "width": width }
+            ];
         
-        return [
-            { "thing": "TreeTop", "x": x, "y": y, "width": width },
-            { "thing": "TreeTrunk", "x": x + 8, "y": y - 8, "width": width - 16, "height": "Infinity" }
-        ];
+        if(width > 16) {
+            output.push({
+                "thing": "TreeTrunk", "x": x + 8, "y": y - 8, "width": width - 16, "height": "Infinity"
+            });
+        };
+        
+        return output;
     }
     
     /**
@@ -4400,11 +4406,18 @@ window.FullScreenMario = (function() {
     function macroShroom(reference, prethings, area, map, scope) {
         var x = reference.x || 0,
             y = reference.y || 0,
-            width = reference.width || 24;
-        return [
-            { "thing": "ShroomTop", "x": x, "y": y, "width": width },
-            { "thing": "ShroomTrunk", "x": x + (width - 8) / 2, "y": y - 8, "height": "Infinity" }
-        ];
+            width = reference.width || 24,
+            output = [
+                { "thing": "ShroomTop", "x": x, "y": y, "width": width }
+            ];
+        
+        if(width > 16) {
+            output.push({
+                "thing": "ShroomTrunk", "x": x + (width - 8) / 2, "y": y - 8, "height": "Infinity" 
+            });
+        }
+        
+        return output;
     }
     
     /**

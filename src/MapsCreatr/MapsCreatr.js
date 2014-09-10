@@ -301,11 +301,11 @@ function MapsCreatr(settings) {
         }
         // Case: macro (unless it's undefined)
         else if(reference.macro) {
-            analyzePreMacro(reference, prethings, area, map);
+            self.analyzePreMacro(reference, prethings, area, map);
         }
         // Case: default (a regular PreThing)
         else {
-            analyzePreThing(reference, prethings, area, map);
+            self.analyzePreThing(reference, prethings, area, map);
         }
     }
     
@@ -343,7 +343,7 @@ function MapsCreatr(settings) {
      * @param {Area} area   The Area object to be populated by these PreThings.
      * @param {Map} map   The Map object containing the Area object.
      */
-    function analyzePreMacro(reference, prethings, area, map) {
+    self.analyzePreMacro = function(reference, prethings, area, map) {
         var macro = macros[reference.macro],
             outputs, len, i;
         
@@ -372,6 +372,8 @@ function MapsCreatr(settings) {
                 analyzePreSwitch(outputs, prethings, area, map);
             }
         }
+        
+        return outputs;
     }
     
     /**
@@ -385,7 +387,7 @@ function MapsCreatr(settings) {
      * @param {Area} area   The Area object to be populated by these PreThings.
      * @param {Map} map   The Map object containing the Area object.
      */
-    function analyzePreThing(reference, prethings, area, map, scope) {
+    self.analyzePreThing = function (reference, prethings, area, map, scope) {
         var thing = reference.thing,
             prething;
         
@@ -421,6 +423,8 @@ function MapsCreatr(settings) {
             map.locations[thing[key_entrance]].xloc = prething.xloc;
             map.locations[thing[key_entrance]].entrance = prething.thing;
         }
+        
+        return prething;
     }
     
     /**
