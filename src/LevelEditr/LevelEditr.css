@@ -160,6 +160,10 @@
     box-sizing: border-box;
 }
 
+.LevelEditor .EditorVisualOptions .VisualOption {
+    padding: 14px 0;
+}
+
 .LevelEditor .EditorVisualOptions .VisualOptionName {
     margin: 3px 0 7px 0;
 }

@@ -1,4 +1,4 @@
-(function (things) {
+(function (things, macros) {
 	FullScreenMario.prototype.settings.editor = {
 		"blocksize": FullScreenMario.unitsize * 4,
 		"map_default": {
@@ -11,7 +11,7 @@
 					"setting": "Overworld",
 					"creation": [
 						{ "location": "0" },
-						{ "thing": "Floor", "x": 0, "y": 0, "width": 128 }
+						{ "macro": "Floor", "x": 0, "y": 0, "width": 128 }
 					]
 				}
 			]
@@ -27,100 +27,7 @@
 			});
 			return keys;
 		})(),
-		"macros": {
-			"Fill": {
-				"description": "Place a bunch of Things at once, as a grid.",
-				"options": {
-					"thing": "Everything",
-					"xnum": "Number",
-					"ynum": "Number",
-					"xwidth": "Number",
-					"ywidth": "Number"
-				}
-			},
-			"Pattern": {
-				"description": "Fill one of the preset Scenery background patterns.",
-				"options": {
-					"Pattern": [
-						"BackRegular", "BackCloud", "BackFence", "BackFenceMin", "BackFenceMin2", "BackFenceMin3"
-					],
-					"repeat": "Number"
-				}
-			},
-			"Floor": {
-				"description": "Place a floor of infinite height.",
-				"options": {
-					"width": 8
-				}
-			},
-			"Pipe": {
-				"description": "Add a pipe with the option for piranhas and moving to locations.",
-				"options": {
-					"height": 8,
-					"piranha": "Boolean",
-					"transport": "Location",
-					"entrance": "Location"
-				}
-			},
-			"Tree": {
-				"description": "Add a tree to the map.",
-				"options": {
-					"width": 8
-				}
-			},
-			"Shroom": {
-				"function": "macroShroom",
-				"description": "Add a mushroom tree to the map.",
-				"options": {
-					"width": 8
-				}
-			},
-			"Water": {
-				"function": "macroWater",
-				"description": "Fill water of infinite height.",
-				"options": {
-					"width": 4
-				}
-			},
-			"CastleSmall": {
-				"description": "Add a one-story castle to the map."
-			},
-			"CastleLarge": {
-				"description": "Add a two-story castle to the map."
-			},
-			"Ceiling": {
-				"description": "Add an Underworld-style ceiling of Bricks.",
-				"options": {
-					"width": "Number"
-				}
-			},
-			"Bridge": {
-				"description": "Create a bridge, complete with stone columns.",
-				"options": {
-					"width": 8,
-					"start": "Boolean",
-					"end": "Boolean"
-				}
-			},
-			"PlatformGenerator": {
-				"description": "Add a columnn of infinitely generated platforms.",
-				"options": {
-					"width": 8
-				}
-			},
-			"StartInsideCastle": {
-				"description": "Add the castle stones similar to typical Castles.",
-				"options": {
-					"width": 8
-				}
-			},
-			"EndOutsideCastle": {
-				"description": "End the map off with an outdoor flag and Castle."
-			},
-			"EndInsideCastle": {
-				"description": "End the map off with an indoor bridge, Bowser, and Toad."
-			}
-		}
+		"macros": macros
 	};
 	
 })({
@@ -173,40 +80,65 @@
 			]
 		},
 		"Pipe": {
-			"height": "Number"
+			"height": {
+                "type": "Number",
+                "value": 16,
+                "mod": 8,
+                "Infinite": true
+            }
 		},
 		"PipeHorizontal": {
-			"width": "Number",
+			"width": {
+                "type": "Number",
+                "value": 16,
+                "mod": 8
+            },
+            "transport": "Location"
 		},
 		"PipeVertical": {
-			"height": "Number"
+			"height": {
+                "type": "Number",
+                "value": 16,
+                "mod": 8,
+                "Infinite": true
+            },
+            "transport": "Location"
 		},
 		"Platform": {
-			"width": "Number"
+			"width": 8
 		},
 		"Stone": {
-			"Width": "Number",
-			"height": "Number"
+			"width": 8,
+			"height": {
+                "type": "Number",
+                "value": 8,
+                "Infinite": true
+            }
 		},
 		"Cannon": {
-			"height": "Number"
-		},
-		"Springboard": {
-			"height": "Number"
-		},
-		"Floor": {
-			"width": 8,
 			"height": 8
 		},
+		"Springboard": undefined,
+		"Floor": {
+			"width": 8,
+			"height": {
+                "type": "Number",
+                "value": Infinity,
+                "Infinite": true
+            }
+		},
 		"CastleBlock": {
-			"fireballs": "Number"
+			"fireballs": {
+                "value": 0,
+                "mod": 4
+            }
 		},
 		"CastleBridge": {
-			"width": "Number"
+			"width": 8
 		},
 		"Coral": {
-			"width": "Number",
-			"height": "Number"
+			"width": 8,
+			"height": 8
 		}
 	},
 	"Scenery": {
@@ -226,4 +158,117 @@
 		"Railing": undefined,
 		"Water": undefined
 	}
+}, {
+    "Fill": {
+        "description": "Place a bunch of Things at once, as a grid.",
+        "options": {
+            "thing": "Everything",
+            "xnum": "Number",
+            "ynum": "Number",
+            "xwidth": {
+                "type": "Number",
+                "value": 8,
+                "mod": 4
+            },
+            "ywidth": {
+                "type": "Number",
+                "value": 8,
+                "mod": 4
+            }
+        }
+    },
+    "Pattern": {
+        "description": "Fill one of the preset Scenery background patterns.",
+        "options": {
+            "Pattern": [
+                "BackRegular", "BackCloud", "BackFence", "BackFenceMin", "BackFenceMin2", "BackFenceMin3"
+            ],
+            "repeat": "Number"
+        }
+    },
+    "Floor": {
+        "description": "Place a floor of infinite height.",
+        "options": {
+            "width": {
+                "type": "Number",
+                "value": 8,
+                "mod": 4
+            }
+        }
+    },
+    "Pipe": {
+        "description": "Add a pipe with the option for piranhas and moving to locations.",
+        "options": {
+            "height": 8,
+            "piranha": "Boolean",
+            "transport": "Location",
+            "entrance": "Location"
+        }
+    },
+    "Tree": {
+        "description": "Add a tree to the map.",
+        "options": {
+            "width": {
+                "type": "Number",
+                "value": 32,
+                "mod": 8
+            }
+        }
+    },
+    "Shroom": {
+        "function": "macroShroom",
+        "description": "Add a mushroom tree to the map.",
+        "options": {
+            "width": {
+                "type": "Number",
+                "value": 32,
+                "mod": 8
+            }
+        }
+    },
+    "Water": {
+        "function": "macroWater",
+        "description": "Fill water of infinite height.",
+        "options": {
+            "width": 4
+        }
+    },
+    "CastleSmall": {
+        "description": "Add a one-story castle to the map."
+    },
+    "CastleLarge": {
+        "description": "Add a two-story castle to the map."
+    },
+    "Ceiling": {
+        "description": "Add an Underworld-style ceiling of Bricks.",
+        "options": {
+            "width": "Number"
+        }
+    },
+    "Bridge": {
+        "description": "Create a bridge, complete with stone columns.",
+        "options": {
+            "width": 8,
+            "start": "Boolean",
+            "end": "Boolean"
+        }
+    },
+    "PlatformGenerator": {
+        "description": "Add a columnn of infinitely generated platforms.",
+        "options": {
+            "width": 8
+        }
+    },
+    "StartInsideCastle": {
+        "description": "Add the castle stones similar to typical Castles.",
+        "options": {
+            "width": 8
+        }
+    },
+    "EndOutsideCastle": {
+        "description": "End the map off with an outdoor flag and Castle."
+    },
+    "EndInsideCastle": {
+        "description": "End the map off with an indoor bridge, Bowser, and Toad."
+    }
 });

@@ -84,6 +84,8 @@ function LevelEditr(settings) {
         blocksize = settings.blocksize || 1;
         
         current_things = [];
+        current_mode = "Build";
+        current_click_mode = "Thing";
     };
     
     
@@ -100,7 +102,7 @@ function LevelEditr(settings) {
         clearAllThings();
         resetDisplay();
         setTimeout(function () {
-            setTextareaValue(JSON.stringify(map_default), true);
+            setTextareaValue(stringifySmart(map_default), true);
             resetDisplayMap();
             disableThing(FSM.player);
         }, 7);
@@ -132,7 +134,7 @@ function LevelEditr(settings) {
                     current_type, 
                     GameStarter.proliferate({
                         "onThingMake": undefined
-                    }, args)
+                    }, getNormalizedThingArguments(args))
                 )
             }
         ];
@@ -245,7 +247,7 @@ function LevelEditr(settings) {
     function onClickEditingGenericAdd(x, y, type, args) {
         var thing = GameStarter.ObjectMaker.make(type, GameStarter.proliferate({
             "onThingMake": undefined
-        }, args));
+        }, getNormalizedThingArguments(args)));
         
         if(current_mode === "Build") {
             disableThing(thing, .7);
@@ -361,7 +363,7 @@ function LevelEditr(settings) {
         if(map && map.name != name) {
             map.name = name;
             display["namer"].value = name;
-            setTextareaValue(JSON.stringify(map), true);
+            setTextareaValue(stringifySmart(map), true);
             GameStarter.StatsHolder.set("world", name)
         }
     }
@@ -389,7 +391,7 @@ function LevelEditr(settings) {
             display["sections"]["MapSettings"]["Time"].value = time;
         }
         
-        setTextareaValue(JSON.stringify(map), true);
+        setTextareaValue(stringifySmart(map), true);
         GameStarter.StatsHolder.set("time", time)
     }
     
@@ -426,7 +428,7 @@ function LevelEditr(settings) {
             display["sections"]["MapSettings"]["Setting"]["Tertiary"].value = setting[2];
         }
         
-        setTextareaValue(JSON.stringify(map), true);
+        setTextareaValue(stringifySmart(map), true);
         setDisplayMap(true);
     }
     
@@ -441,7 +443,7 @@ function LevelEditr(settings) {
         
         location["area"] = getCurrentArea();
         
-        setTextareaValue(JSON.stringify(map), true);
+        setTextareaValue(stringifySmart(map), true);
         setDisplayMap(true);
     }
     
@@ -459,7 +461,7 @@ function LevelEditr(settings) {
             return;
         }
         
-        setTextareaValue(JSON.stringify(map), true);
+        setTextareaValue(stringifySmart(map), true);
         setDisplayMap(true);
     }
     
@@ -487,7 +489,7 @@ function LevelEditr(settings) {
             display["sections"]["MapSettings"]["Entry"].value = entry;
         }
         
-        setTextareaValue(JSON.stringify(map), true);
+        setTextareaValue(stringifySmart(map), true);
         setDisplayMap(true);
     }
     
@@ -513,7 +515,7 @@ function LevelEditr(settings) {
             
         }
         
-        setTextareaValue(JSON.stringify(map), true);
+        setTextareaValue(stringifySmart(map), true);
         setDisplayMap(true);
     }
     
@@ -532,7 +534,7 @@ function LevelEditr(settings) {
         
         resetAllVisualOptionSelects("VisualOptionLocation", Object.keys(map.locations));
         
-        setTextareaValue(JSON.stringify(map), true);
+        setTextareaValue(stringifySmart(map), true);
         setDisplayMap(true);
     }
     
@@ -551,7 +553,7 @@ function LevelEditr(settings) {
         
         resetAllVisualOptionSelects("VisualOptionArea", Object.keys(map.areas));
         
-        setTextareaValue(JSON.stringify(map), true);
+        setTextareaValue(stringifySmart(map), true);
         setDisplayMap(true);
     }
     
@@ -581,7 +583,7 @@ function LevelEditr(settings) {
     
     function getMapObject() {
         try {
-            var map = JSON.parse(display.stringer.textarea.value);
+            var map = parseSmart(display.stringer.textarea.value);
             display.stringer.messenger.textContent = "";
             display.namer.value = map.name || map_name_default;
             return map;
@@ -645,9 +647,11 @@ function LevelEditr(settings) {
             return false;
         }
         
+        console.log("for json,", thingRaw);
+        
         mapObject.areas[getCurrentArea()].creation.push(thingRaw);
         
-        setTextareaValue(JSON.stringify(mapObject), true);
+        setTextareaValue(stringifySmart(mapObject), true);
         
         return true;
     }
@@ -666,7 +670,7 @@ function LevelEditr(settings) {
         
         mapObject.areas[getCurrentArea()].creation.push(macroRaw);
         
-        setTextareaValue(JSON.stringify(mapObject), true);
+        setTextareaValue(stringifySmart(mapObject), true);
         
         return true;
     }
@@ -1208,26 +1212,46 @@ function LevelEditr(settings) {
                             }, {
                                 "className": "VisualOptionValue",
                                 "onchange": setCurrentArgs
-                            });
+                            }),
+                            children = [input];
                         
                         if(option["Infinite"]) {
-                            var infinite = createSelect(["false", "true"], {
-                                "onchange": function () {
-                                    if(infinite.value === "true") {
-                                        input.value = Infinity;
+                            var valueOld,
+                                infinite = createSelect(["Number", "Infinite"], {
+                                    "onchange": function () {
+                                        if(infinite.value === "Number") {
+                                            input.type = "Number";
+                                            input.disabled = false;
+                                            
+                                            input.value = valueOld;
+                                            input.onchange();
+                                        } else {
+                                            input.type = "Text";
+                                            input.disabled = true;
+                                            
+                                            valueOld = input.value;
+                                            input.value = Infinity;
+                                            input.onchange();
+                                        }
                                     }
-                                }
-                            });
+                                });
+                            
+                            if(option["value"] === Infinity) {
+                                infinite.value = "Infinite";
+                                infinite.onchange();
+                            }
+                            
+                            children.push(infinite);
                         }
                         
                         if(option["mod"] > 1) {
-                            return [input, GameStarter.createElement("div", {
+                            children.push(GameStarter.createElement("div", {
                                 "className": "VisualOptionRecommendation",
                                 "textContent": "(should be multiple of " + (option["mod"] || 1) + ")"
-                            })];
-                        } else {
-                            return [input];
+                            }));
                         }
+                        
+                        return children;
                     })()
                 });
             
@@ -1288,7 +1312,7 @@ function LevelEditr(settings) {
      * 
      */
     function resetDisplayMap() {
-        setTextareaValue(JSON.stringify(map_default), true);
+        setTextareaValue(stringifySmart(map_default), true);
         setDisplayMap(true);
         FSM.InputWriter.setCanTrigger(false);
     }
@@ -1304,7 +1328,7 @@ function LevelEditr(settings) {
             map;
         
         try {
-            testObject = JSON.parse(value);
+            testObject = parseSmart(value);
             setTextareaValue(display.stringer.textarea.value);
         } catch (error) {
             setSectionJSON();
@@ -1351,6 +1375,44 @@ function LevelEditr(settings) {
     /**
      * 
      */
+    var stringifySmart = (function (replacer) {
+        return function(text) {
+            return JSON.stringify(text, replacer);
+        }
+    })(function (key, value) {
+        if(value !== value) {
+            return "NaN";
+        } else if(value === Infinity) {
+            return "Infinity";
+        } else if(value === -Infinity) {
+            return "-Infinity";
+        } else {
+            return value;
+        }
+    });
+    
+    /**
+     * 
+     */
+    var parseSmart = (function (replacer) {
+        return function(text) {
+            return JSON.parse(text, replacer);
+        }
+    })(function (key, value) {
+        if(value === "NaN") {
+            return NaN;
+        } else if(value === "Infinity") {
+            return Infinity;
+        } else if(value === "-Infinity") {
+            return -Infinity;
+        } else {
+            return value;
+        }
+    });
+    
+    /**
+     * 
+     */
     function disableThing(thing, opacity) {
         thing.movement = undefined;
         thing.onThingMake = undefined;
@@ -1391,6 +1453,19 @@ function LevelEditr(settings) {
     
     function getNormalizedY(raw) {
         return GameStarter.MapScreener.floor - (raw / GameStarter.unitsize) + GameStarter.unitsize * 3; // Why +3?
+    }
+    
+    function getNormalizedThingArguments(args) {
+        var argsNormal = GameStarter.proliferate({}, args);
+        
+        if(argsNormal["height"] === Infinity) {
+            argsNormal["height"] = GameStarter.MapScreener.height;
+        }
+        if(argsNormal["width"] === Infinity) {
+            argsNormal["width"] = GameStarter.MapScreener.width;
+        }
+        
+        return argsNormal;
     }
     
     function createSelect(options, attributes) {
