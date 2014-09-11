@@ -12,6 +12,9 @@ function LevelEditr(settings) {
         // The container game object to store Thing and map information
         GameStarter,
         
+        // The GameStarter's settings before this LevelEditr was enabled
+        old_information,
+        
         // The listings of things that the GUI displays
         things,
         
@@ -96,6 +99,12 @@ function LevelEditr(settings) {
      * 
      */
     self.enable = function () {
+        old_information = {
+            "map": GameStarter.MapsHandler.getMapName(),
+            "onmousemove": GameStarter.container.onmousemove,
+            "onclick": GameStarter.container.onclick
+        };
+        
         GameStarter.container.onmousemove = onMouseMoveEditing;
         GameStarter.container.onclick = onClickEditingThing;
         
@@ -104,12 +113,26 @@ function LevelEditr(settings) {
         setTimeout(function () {
             setTextareaValue(stringifySmart(map_default), true);
             resetDisplayMap();
-            disableThing(FSM.player);
+            disableThing(GameStarter.player);
         }, 7);
         
-        FSM.InputWriter.setCanTrigger(false);
+        GameStarter.InputWriter.setCanTrigger(false);
         
         setCurrentMode("Build");
+    };
+    
+    /**
+     * 
+     */
+    self.disable = function () {
+        GameStarter.container.onmousemove = old_information["onmousemove"];
+        GameStarter.container.onclick = old_information["onclick"];
+        
+        GameStarter.container.removeChild(display["container"]);
+        display = undefined;
+        
+        GameStarter.InputWriter.setCanTrigger(true);
+        GameStarter.setMap(old_information["map"]);
     };
     
     function setCurrentMode(mode) {
@@ -732,16 +755,27 @@ function LevelEditr(settings) {
                 GameStarter.createElement("div", {
                     "className": "EditorHead",
                     "children": [
-                        display["namer"] = GameStarter.createElement("input", {
-                            "className": "EditorNameInput",
-                            "type": "text",
-                            "placeholder": map_name_default,
-                            "value": map_name_default,
-                            "onkeyup": setMapName,
-                            "onchange": setMapName
+                        GameStarter.createElement("div", {
+                            "className": "EditorNameContainer",
+                            "children": [
+                                display["namer"] = GameStarter.createElement("input", {
+                                    "className": "EditorNameInput",
+                                    "type": "text",
+                                    "placeholder": map_name_default,
+                                    "value": map_name_default,
+                                    "onkeyup": setMapName,
+                                    "onchange": setMapName
+                                })
+                            ]
                         }),
                         GameStarter.createElement("div", {
-                            "className": "EditorMinimizer"
+                            "className": "EditorHeadButton EditorMinimizer",
+                            "textContent": "-"
+                        }),
+                        GameStarter.createElement("div", {
+                            "className": "EditorHeadButton EditorCloser",
+                            "textContent": "X",
+                            "onclick": self.disable
                         })
                     ]
                 }),

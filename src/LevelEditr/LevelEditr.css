@@ -5,7 +5,7 @@
     bottom: 0;
     left: 50%;
     background: rgba(0, 7, 14, .84);
-	user-select: none;
+    user-select: none;
     box-sizing: border-box;
     z-index: 70;
 }
@@ -30,26 +30,44 @@
     height: 35px;
 }
 
-.LevelEditor .EditorHead .EditorNameInput {
+.LevelEditor .EditorHead .EditorNameContainer {
     position: absolute;
-    display: block;
-	padding: 3px 7px;
+    top: 1px;
+    right: 73px;
+    left: 2px;
     height: 35px;
-    top: 0;
-    right: 2.8em;
-    left: 0;
+}
+
+.LevelEditor .EditorHead .EditorNameInput {
+    display: block;
+    margin: 0;
+    padding: 3px 7px;
+    width: 100%;
     background: white;
-	border: 1px solid black;
-	font-size: 1.75em;
-	box-sizing: border-box;
+    border: 1px solid black;
+    font-size: 1.4em;
+    box-sizing: border-box;
+}
+
+.LevelEditor .EditorHead .EditorHeadButton {
+    position: absolute;
+    top: 2px;
+    width: 32px;
+    height: 32px;
+    background: rgb(35,35,35);
+    border: 1px solid silver;
+    box-sizing: border-box;
+    text-align: center;
+    padding-top: 7px;
+    cursor: pointer;
 }
 
 .LevelEditor .EditorHead .EditorMinimizer {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 2.8em;
-    background: red;
+    right: 38px;
+}
+
+.LevelEditor .EditorHead .EditorCloser {
+    right: 3px;
 }
 
 
@@ -84,12 +102,12 @@
 }
 
 .LevelEditor .EditorSectionSecondary {
-	position: absolute;
-	top: 35px;
-	right: 343px;
-	bottom: 0px;
-	left: 0;
-	overflow-y: auto;
+    position: absolute;
+    top: 35px;
+    right: 343px;
+    bottom: 0px;
+    left: 0;
+    overflow-y: auto;
 }
 
 
@@ -104,9 +122,9 @@
     display: block;
     width: 100%;
     height: 84%;
-	background: rgba(0, 3, 7, .91);
-	color: rgba(255, 245, 245, .91);
-	box-sizing: border-box;
+    background: rgba(0, 3, 7, .91);
+    color: rgba(255, 245, 245, .91);
+    box-sizing: border-box;
     overflow-y: auto;
     resize: none;
 }
@@ -123,17 +141,17 @@
 .LevelEditor .EditorOptions,
 .LevelEditor .EditorOptionContainer {
     padding-left: 3px;
-	clear: both;
+    clear: both;
 }
 
 .LevelEditor .EditorListOption {
     position: relative;
-	float: left;
-	margin: 0 7px 7px 0;
-	width: 70px;
-	height: 70px;
-	background: black;
-	border: white;
+    float: left;
+    margin: 0 7px 7px 0;
+    width: 70px;
+    height: 70px;
+    background: black;
+    border: white;
     overflow: hidden;
     cursor: pointer;
 }
@@ -156,7 +174,7 @@
     width: 305px;
     border: 1px solid silver;
     border-width: 1px 0 0 1px;
-	overflow-y: auto;
+    overflow-y: auto;
     box-sizing: border-box;
 }
 
@@ -169,11 +187,11 @@
 }
 
 .LevelEditor .EditorVisualOptions .VisualOptionDescription {
-	padding-bottom: 14px;
+    padding-bottom: 14px;
 }
 
 .LevelEditor .EditorVisualOptions .VisualOptionRecommendation {
-	font-size: 70%;
+    font-size: 70%;
 }
 
 
@@ -188,14 +206,14 @@
 }
 
 .LevelEditor .EditorMenuOption {
-	display: inline-block;
-	padding: 7px 14px;
-	background: white;
-	border: 3px solid black;
-	box-sizing: border-box;
-	color: black;
-	text-align: center;
-	cursor: pointer;
+    display: inline-block;
+    padding: 7px 14px;
+    background: white;
+    border: 3px solid black;
+    box-sizing: border-box;
+    color: black;
+    text-align: center;
+    cursor: pointer;
 }
 
 .LevelEditor .EditorMenuOption:hover {
