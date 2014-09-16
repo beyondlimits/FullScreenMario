@@ -3658,6 +3658,16 @@ window.FullScreenMario = (function() {
     }
     
     /**
+     * For now, this just returns killToShell. In the future it should
+     * intelligently remove flying from the Koopa if need be.
+     * If thing.jumping is true when hopped upon while flying, it should
+     * be reduced to jumping; otherwise it should be reduced to walking.
+     */
+    function killKoopa(thing, big) {
+        return thing.EightBitter.killToShell(thing, big);
+    }
+    
+    /**
      * 
      */
     function killToShell(thing, big) {

@@ -319,7 +319,7 @@
                 spawntype: "Shell",
                 shelltype: "Shell",
                 toly: FullScreenMario.unitsize * 2,
-                death: FullScreenMario.prototype.killToShell,
+                death: FullScreenMario.prototype.killKoopa,
                 spriteCycle: [
                     ["one", "two"]
                 ],
@@ -345,6 +345,7 @@
             Beetle: {
                 speed: FullScreenMario.unitsize * .21,
                 xvel: FullScreenMario.unitsize * .21,
+                height: 8.5,
                 nofire: 2,
                 shellspawn: true,
                 death: FullScreenMario.prototype.killToShell,
