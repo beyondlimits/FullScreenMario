@@ -1526,12 +1526,14 @@ window.FullScreenMario = (function() {
      * 
      */
     function spawnCannon(thing) {
-        thing.EightBitter.TimeHandler.addEventInterval(
-            thing.EightBitter.animateCannonFiring,
-            thing.frequency,
-            thing.frequency,
-            thing
-        );
+        if(!thing.nofire) {
+            thing.EightBitter.TimeHandler.addEventInterval(
+                thing.EightBitter.animateCannonFiring,
+                thing.frequency,
+                thing.frequency,
+                thing
+            );
+        }
     }
     
     /**
