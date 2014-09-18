@@ -51,7 +51,7 @@ function AudioPlayr(settings) {
     filetypes         = settings.filetypes         || ["mp3", "ogg"];
     muted             = settings.muted             || false;
     directory         = settings.directory         || "";
-    localStorageMuted = settings.localStorageMuted || "";
+    localStorageMuted = settings.localStorageMuted || "muted";
     getVolumeLocal    = settings.getVolumeLocal    || 1;
     getThemeDefault   = settings.getThemeDefault   || "Theme";
     
@@ -68,7 +68,7 @@ function AudioPlayr(settings) {
     
     // If specified, use localStorageMuted to record muted's value
     if(localStorageMuted)
-      muted = localStorage[localStorageMuted];
+      muted = JSON.parse(localStorage[localStorageMuted] || false);
     
     // Preload everything!
     libraryLoad();
