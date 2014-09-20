@@ -206,7 +206,9 @@ window.FullScreenMario = (function() {
     function resetStatsHolder(self, customs) {
         self.StatsHolder = new StatsHoldr(proliferate({
             "scope": self,
-            "width": customs.width
+            "width": customs.width,
+            "proliferate": self.proliferate,
+            "createElement": self.createElement,
         }, self.settings.statistics));
         
         if(customs.width < 560) {
@@ -323,7 +325,10 @@ window.FullScreenMario = (function() {
      */
     function resetModAttacher(self, customs) {
         self.ModAttacher = new ModAttachr(proliferate({
-            "scope_default": self
+            "scope_default": self,
+            "StatsHoldr": StatsHoldr,
+            "proliferate": self.proliferate,
+            "createElement": self.createElement
         }, self.settings.mods));
     }
     

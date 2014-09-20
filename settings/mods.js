@@ -1,4 +1,6 @@
 FullScreenMario.prototype.settings.mods = {
+    "store_locally": true,
+    "prefix": "FullScreenMarioMods",
     "mods": [
         {
             "name": "High Speed",
@@ -163,10 +165,9 @@ FullScreenMario.prototype.settings.mods = {
         {
             "name": "QCount",
             "description": "QQQQQQQ",
-            "enabled": true,
+            "enabled": false,
             "events": {
                 "onModEnable": function (mod) {
-                    console.log("Enabling mod of status", mod.enabled);
                     var FSM = this,
                         characters = mod.settings.characters,
                         charactersFSM = FSM.GroupHolder.getCharacterGroup(),

@@ -16,7 +16,13 @@ function ModAttachr(settings) {
         // (e.g. { "MyMod": { "Name": "Mymod", "enabled": 1, ...} ...})
         mods,
         
-        // A default scope to apply mod events from (optional).
+        // The StatsHoldr constructor for the StatsHolder (optional)
+        
+        // A new StatsHolder object to be created to store whether each
+        // mod is stored locally (optional)
+        StatsHolder,
+        
+        // A default scope to apply mod events from (optional)
         scope_default;
     
     /**
@@ -27,9 +33,18 @@ function ModAttachr(settings) {
         events = {};
         scope_default = settings.scope_default;
         
+        if(settings.store_locally) {
+            StatsHolder = new settings.StatsHoldr({
+                "prefix": settings.prefix,
+                "proliferate": settings.proliferate,
+                "createElement": settings.createElement
+            });
+        }
+        
         if(settings.mods) {
             self.addMods(settings.mods);
         }
+        
     };
     
     
@@ -49,11 +64,16 @@ function ModAttachr(settings) {
      * Returns an Object containing each event, keyed by their name.
      * 
      * @return {Object}
-     * 
-     * 
      */
     self.getEvents = function () {
         return events;
+    };
+    
+    /**
+     * 
+     */
+    self.getStatsHolder = function () {
+        return StatsHolder;
     };
     
     
@@ -89,6 +109,13 @@ function ModAttachr(settings) {
         mods[mod.name] = mod;
         if(mod.enabled && mod.events["onModEnable"]) {
             self.fireModEvent("onModEnable", mod.name, arguments);
+        }
+        
+        if(StatsHolder) {
+            StatsHolder.addStatistic(mod.name, {
+                "value": 0,
+                "store_locally": true
+            });
         }
     };
     
