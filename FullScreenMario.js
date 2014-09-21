@@ -4892,6 +4892,7 @@ window.FullScreenMario = (function() {
         "killFlip": killFlip,
         "killSpawn": killSpawn,
         "killGoomba": killGoomba,
+        "killKoopa": killKoopa,
         "killToShell": killToShell,
         "killNPCs": killNPCs,
         "killBrick": killBrick,
