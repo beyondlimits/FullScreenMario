@@ -114,19 +114,6 @@ FullScreenMario.prototype.settings.mods = {
             }
         },
         {
-            "name": "Invisible Player",
-            "description": "You can't see the player anymore.",
-            "enabled": false,
-            "events": {
-                "onModEnable": function (mod) {
-                    this.ObjectMaker.getFunction("Player").prototype.hidden = 1;
-                },
-                "onModDisable": function (mod) {
-                    this.ObjectMaker.getFunction("Player").prototype.hidden = 0;
-                }
-            }
-        },
-        {
             "name": "Parallax Clouds",
             "description": "Clouds in the sky scroll at about 63% the normal rate.",
             "enabled": false,
@@ -204,9 +191,13 @@ FullScreenMario.prototype.settings.mods = {
                     this.InputWriter.addAlias("q", [81]);
                 },
                 "onModDisable": function (mod) {
+                    mod.settings.qcount = 0;
                     this.TimeHandler.clearEvent(mod.settings.event);
                     this.InputWriter.clearEvent("onkeydown", 81, true);
                     this.InputWriter.clearEvent("onkeydown", "q", true);
+                },
+                "onSetLocation": function (mod) {
+                    mod.settings.qcount = 0;
                 }
             },
             "settings": {
@@ -249,7 +240,15 @@ FullScreenMario.prototype.settings.mods = {
             "enabled": false,
             "events": {
                 "onModEnable": function (mod) {
-                    this.PixelDrawer.setNoRefill(true);
+                    this.TimeHandler.addEvent(function () {
+                        this.PixelDrawer.setNoRefill(true);
+                    }.bind(this), 3);
+                },
+                "onSetLocation": function (mod) {
+                    this.PixelDrawer.setNoRefill(false);
+                    this.TimeHandler.addEvent(function () {
+                        this.PixelDrawer.setNoRefill(true);
+                    }.bind(this), 3);
                 },
                 "onModDisable": function (mod) {
                     this.PixelDrawer.setNoRefill(false);
