@@ -129,6 +129,8 @@ section#game {
 
 #controls .select-options {
     position: relative;
+    max-height: 245px;
+    overflow-y: auto;
 }
 
 #controls .select-option-title {
@@ -146,6 +148,14 @@ section#game {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
+}
+
+#controls .select-option.option-enabled {
+    background: #ffcc33;
+}
+
+#controls .select-option.option-disabled {
+    background: #ccaa33;
 }
 
 #controls .select-option.select-option-inset {

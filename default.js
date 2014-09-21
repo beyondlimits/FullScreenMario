@@ -5,7 +5,9 @@
                 "width": document.body.clientWidth, 
                 "height": 464
             });
-            
+        
+        window["FSM"] = FSM;
+        
         section.textContent = "";
         section.appendChild(FSM.container);
         
@@ -20,7 +22,6 @@
         });
 
         FSM.gameStart();
-        window["FSM"] = FSM;
     };
     
     var LoadControls = function (schemas, generators) {
@@ -61,8 +62,8 @@
         
         var time_start = Date.now();
         
-        LoadControls(schemas, generators);
         LoadGame();
+        LoadControls(schemas, generators);
         
         console.log("It took " + (Date.now() - time_start) + " milliseconds to start");
     };
@@ -131,17 +132,11 @@
     {
         "title": "Mods!",
         "generator": "OptionsButtons",
-        "options": [
-            "High Speed",
-            "Gradient Skies",
-            "Invincibility",
-            "Invisible Player",
-            "Luigi",
-            "Parallax Clouds",
-            "QCount",
-            "Super Fireballs",
-            "Trip of Acid"
-        ],
+        "keyActive": "enabled",
+        "assumeInactive": true,
+        "options": function () {
+            return FSM.ModAttacher.getMods();
+        },
         "callback": function (schema, button) {
             FSM.ModAttacher.toggleMod(button.getAttribute("value") || button.innerText);
         }
@@ -165,16 +160,41 @@
 ], {
     "OptionsButtons": function (schema) {
         var output = document.createElement("div"),
-            options = schema.options,
-            element, i;
+            options = schema.options instanceof Function ? schema.options() : schema.options,
+            optionKeys = Object.keys(options),
+            keyActive = schema.keyActive || "active",
+            classNameStart = "select-option options-button-option",
+            option, element, i;
         
         output.className = "select-options select-options-buttons";
         
-        for(i = 0; i < options.length; i += 1) {
+        for(i = 0; i < optionKeys.length; i += 1) {
+            option = options[optionKeys[i]];
+            
             element = document.createElement("div");
-            element.className = "select-option options-button-option";
-            element.textContent = options[i];
-            element.onclick = schema.callback.bind(schema, schema, element);
+            element.className = classNameStart;
+            element.textContent = optionKeys[i];
+            element.onclick = function (schema, element) {
+                schema.callback.call(schema, schema, element);
+                if(element.getAttribute("option-enabled") == "true") {
+                    element.setAttribute("option-enabled", false);
+                    element.className = classNameStart + " option-disabled";
+                } else {
+                    element.setAttribute("option-enabled", true);
+                    element.className = classNameStart + " option-enabled";
+               }
+            }.bind(undefined, schema, element);
+            
+            if(option[keyActive]) {
+                element.className += " option-enabled";
+                element.setAttribute("option-enabled", true);
+            } else if(schema.assumeInactive) {
+                element.className += " option-disabled";
+                element.setAttribute("option-enabled", false);
+            } else {
+                element.setAttribute("option-enabled", true);
+            }
+            
             output.appendChild(element);
         }
         
