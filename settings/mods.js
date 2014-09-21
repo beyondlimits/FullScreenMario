@@ -127,6 +127,21 @@ FullScreenMario.prototype.settings.mods = {
             }
         },
         {
+            "name": "Low Gravity",
+            "description": "I believe I can fly!",
+            "enabled": false,
+            "events": {
+                "onModEnable": function () {
+                    this.ObjectMaker.getFunction("Player").prototype.gravity 
+                            = this.ObjectMaker.getFunction("Area").prototype.gravity / 1.4
+                },
+                "onModDisable": function () {
+                    this.ObjectMaker.getFunction("Player").prototype.gravity 
+                            = this.ObjectMaker.getFunction("Area").prototype.gravity;
+                }
+            }
+        },
+        {
             "name": "Luigi",
             "description": "The little brother who couldl!",
             "enabled": false,
