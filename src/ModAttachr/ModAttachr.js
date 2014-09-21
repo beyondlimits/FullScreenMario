@@ -113,9 +113,15 @@ function ModAttachr(settings) {
         
         if(StatsHolder) {
             StatsHolder.addStatistic(mod.name, {
-                "value": 0,
+                "value_default": 0,
                 "store_locally": true
             });
+            
+            var name = mod.name;
+            console.log("Getting", name, StatsHolder.get(name));
+            if(StatsHolder.get(name)) {
+                self.enableMod(name);
+            }
         }
     };
     
@@ -150,6 +156,10 @@ function ModAttachr(settings) {
         
         if(mod.events["onModEnable"]) {
             self.fireModEvent("onModEnable", mod.name, arguments);
+        }
+        
+        if(StatsHolder) {
+            StatsHolder.set(name, 1);
         }
     };
     
@@ -190,6 +200,10 @@ function ModAttachr(settings) {
         
         if(mod.events["onModDisable"]) {
             self.fireModEvent("onModDisable", mod.name, args);
+        }
+        
+        if(StatsHolder) {
+            StatsHolder.set(name, 0);
         }
     };
     

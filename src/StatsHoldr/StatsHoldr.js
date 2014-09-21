@@ -76,7 +76,7 @@ function StatsHoldr(settings) {
 
     function Value(key, settings) {
         this.key = key;
-        proliferate(this, defaults);
+        proliferate(this, defaults);  // value
         proliferate(this, settings);
 
         if (!this.hasOwnProperty("value")) {
@@ -105,13 +105,17 @@ function StatsHoldr(settings) {
 
                 // If possible, use the same type as value_default (e.g. #7 is not "7")
                 if (this.hasOwnProperty("value")) {
-                    constructor = this.value.constructor;
+                    if(this.value === null || this.value === undefined) {
+                        constructor = false;
+                    } else {
+                        constructor = this.value.constructor;
+                    }
                 } else if (this.hasOwnProperty("value_default")) {
                     constructor = this.value_default.constructor;
                 }
-
+                
                 this.value = constructor ? new constructor(reference).valueOf() : reference;
-
+                
                 // Remember that the boolean false will be stored as "false", which evaluates to true
                 if (this.value.constructor == Boolean) {
                     console.warn("Key '" + key + "' is a boolean instead of a Number, which will always save to true.");

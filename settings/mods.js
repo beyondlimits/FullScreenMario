@@ -24,13 +24,15 @@ FullScreenMario.prototype.settings.mods = {
             "enabled": false,
             "events": {
                 "onModEnable": function (mod) {
-                    mod.events.onSetLocation.call(this, mod);
+                    if(this.MapsHandler.getMap()) {
+                        mod.events.onSetLocation.call(this, mod);
+                    }
                 },
                 "onModDisable": function (mod) {
                     this.MapsHandler.getArea().background = mod.settings.backgroundOld;
                 },
                 "onSetLocation": (function (gradients) {
-                    return function (mod) {
+                    return function (mod) { 
                         var area = this.MapsHandler.getArea(),
                             setting = area.setting,
                             context = this.canvas.getContext("2d"),
