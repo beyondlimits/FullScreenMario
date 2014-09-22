@@ -95,7 +95,8 @@
                         "HammerBro": {
                             "Bowser": {}
                         },
-                        "Hammer": {}
+                        "Hammer": {},
+                        "BowserFire": {},
                     },
                     "item": {
                         "Mushroom": {
@@ -256,6 +257,7 @@
                 libtype: "characters",
                 grouptype: "Character",
                 character: true,
+                lookleft: true,
                 moveleft: true,
                 firedeath: true,
                 movement: FullScreenMario.prototype.moveSimple
@@ -460,9 +462,13 @@
                 speed: FullScreenMario.unitsize * .28,
                 gravity: FullScreenMario.gravity / 2.8,
                 spawntype: "Goomba",
-                // killonend: freezeBowser,
-                // death: killBowser,
-                // onThingAdd: addBowser,
+                deadly: true,
+                nokillend: true,
+                skipoverlaps: true,
+                killonend: FullScreenMario.prototype.animateBowserFreeze,
+                death: FullScreenMario.prototype.killBowser,
+                onThingMake: FullScreenMario.prototype.spawnBowser,
+                movement: FullScreenMario.prototype.movePacing,
                 spriteCycle: [
                     ["one", "two"]
                 ]
@@ -476,6 +482,23 @@
                 spriteCycle: [
                     ["one", "two", "three", "four"],
                     3
+                ]
+            },
+            BowserFire: {
+                width: 12,
+                height: 4,
+                nocollidesolid: true,
+                nocollidechar: true,
+                nofall: true,
+                deadly: true,
+                nofire: true,
+                movement: FullScreenMario.prototype.moveBowserFire,
+                xvel: FullScreenMario.unitsize * -.63,
+                spriteCycle: [
+                    [
+                        FullScreenMario.prototype.flipVert,
+                        FullScreenMario.prototype.unflipVert
+                    ]
                 ]
             },
             item: {

@@ -1496,6 +1496,17 @@ window.FullScreenMario = (function() {
         thing.EightBitter.TimeHandler.addEventInterval(animateJump, 140, Infinity, thing);
     }
     
+    /** 
+     * 
+     */
+    function spawnBowser(thing) {
+        thing.counter = 0;
+        thing.EightBitter.TimeHandler.addEventInterval(thing.EightBitter.animateBowserJump, 117, Infinity, thing);
+        thing.EightBitter.TimeHandler.addEventInterval(thing.EightBitter.animateBowserFire, 280, Infinity, thing);
+        thing.EightBitter.TimeHandler.addEventInterval(thing.EightBitter.animateBowserFire, 350, Infinity, thing);
+        thing.EightBitter.TimeHandler.addEventInterval(thing.EightBitter.animateBowserFire, 490, Infinity, thing);
+    }
+    
     /**
      * 
      */
@@ -1518,8 +1529,8 @@ window.FullScreenMario = (function() {
     function spawnPodoboo(thing) {
         thing.EightBitter.TimeHandler.addEventInterval(
             thing.EightBitter.animatePodobooJumpUp,
-            Infinity,
             thing.frequency,
+            Infinity,
             thing
         );
     }
@@ -2413,6 +2424,27 @@ window.FullScreenMario = (function() {
     }
     
     /**
+     * 
+     */
+    function moveBowser(thing) {
+        thing.EightBitter.movePacing(thing);
+    }
+    
+    /**
+     * 
+     */
+    function moveBowserFire(thing) {
+        if(Math.round(thing.bottom) === Math.round(thing.ylev)) {
+            thing.movement = undefined;
+            return;
+        }
+        thing.EightBitter.shiftVert(
+            thing,
+            Math.min(Math.max(0, thing.ylev - thing.bottom), thing.EightBitter.unitsize)
+        );
+    }
+    
+    /**
      * Initial movement function for Things that float up and down (vertically).
      * 
      * @param {Thing} thing
@@ -3205,6 +3237,75 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function animateBowserJump(thing) {
+        if(!thing.EightBitter.isCharacterAlive(thing)) {
+            return true;
+        }
+        
+        if(!thing.resting || !thing.lookleft) {
+            return;
+        }
+        
+        thing.resting = false;
+        thing.yvel = thing.EightBitter.unitsize * -1.4;
+        
+        // If there is a platform, don't bump into it
+        thing.nocollidesolid = true;
+        thing.EightBitter.TimeHandler.addEventInterval(function () {
+            if(thing.yvel > thing.EightBitter.unitsize) {
+                thing.nocollidesolid = false;
+                return true;
+            }
+        }, 3, Infinity);
+    }
+    
+    /**
+     * 
+     */
+    function animateBowserFire(thing) {
+        if(thing.lookleft === false || !thing.EightBitter.player) {
+            return;
+        }
+        
+        if(
+            !thing.EightBitter.isCharacterAlive(thing)
+            || !thing.EightBitter.isCharacterAlive(thing.EightBitter.player)
+        ) {
+            return true;
+        }
+        
+        // Close the mouth
+        thing.EightBitter.addClass(thing, "firing");
+        thing.EightBitter.AudioPlayer.playLocal("Bowser Fires", thing.left);
+        
+        // After a bit, re-open and fire
+        thing.EightBitter.TimeHandler.addEvent(function () {
+            var unitsize = thing.EightBitter.unitsize,
+                ylev = Math.max(
+                    -thing.height * unitsize,
+                    Math.round(thing.EightBitter.player.bottom / (unitsize * 8)) * unitsize * 8
+                );
+            thing.EightBitter.removeClass(thing, "firing");
+            thing.EightBitter.addThing(
+                ["BowserFire", {
+                    "ylev": ylev
+                }],
+                thing.left - thing.EightBitter.unitsize * 8,
+                thing.top + thing.EightBitter.unitsize * 4
+            );
+        }, 14);
+    }
+    
+    /**
+     * 
+     */
+    function animateBowserFreeze(thing) {
+        
+    }
+    
+    /**
+     * 
+     */
     function animateJump(thing) {
         // Finish
         if(!thing.EightBitter.isCharacterAlive(thing)) {
@@ -3793,6 +3894,26 @@ window.FullScreenMario = (function() {
      */
     function killKoopa(thing, big) {
         return thing.EightBitter.killToShell(thing, big);
+    }
+    
+    /**
+     * 
+     */
+    function killBowser(thing, big) {
+        if(big) {
+            thing.nofall = false;
+            thing.EightBitter.killFlip(thing);
+            return;
+        }
+        
+        thing.deathcount += 1;
+        if(thing.deathcount === 5) {
+            thing.yvel = 0;
+            thing.speed = 0;
+            thing.movement = 0;
+            thing.EightBitter.killFlip(thing, 350);
+            thing.EightBitter.scoreOn(5000, thing);
+        }
     }
     
     /**
@@ -4901,6 +5022,7 @@ window.FullScreenMario = (function() {
         "animatePlayerRemoveCrouch": animatePlayerRemoveCrouch,
         // Spawn / actions
         "spawnHammerBro": spawnHammerBro,
+        "spawnBowser": spawnBowser,
         "spawnPiranha": spawnPiranha,
         "spawnBlooper": spawnBlooper,
         "spawnPodoboo": spawnPodoboo,
@@ -4939,6 +5061,8 @@ window.FullScreenMario = (function() {
         "moveJumping": moveJumping,
         "movePacing": movePacing,
         "moveHammerBro": moveHammerBro,
+        "moveBowser": moveBowser,
+        "moveBowserFire": moveBowserFire,
         "moveFloating": moveFloating,
         "moveFloatingReal": moveFloatingReal,
         "moveSliding": moveSliding,
@@ -4965,6 +5089,9 @@ window.FullScreenMario = (function() {
         "animateFlicker": animateFlicker,
         "animateJump": animateJump,
         "animateThrowingHammer": animateThrowingHammer,
+        "animateBowserJump": animateBowserJump,
+        "animateBowserFire": animateBowserFire,
+        "animateBowserFreeze": animateBowserFreeze,
         "animateBlooperUnsqueezing": animateBlooperUnsqueezing,
         "animatePodobooJumpUp": animatePodobooJumpUp,
         "animatePodobooJumpDown": animatePodobooJumpDown,
