@@ -74,7 +74,7 @@ function ObjectMakr(settings) {
 
         // Make sure the type actually exists in functions
         if (!functions.hasOwnProperty(type)) {
-            throw new Error("Unknown type given to ObjectMakr:", type);
+            throw new Error("Unknown type given to ObjectMakr: " + type);
         }
         
         // Create the new object, copying any given settings

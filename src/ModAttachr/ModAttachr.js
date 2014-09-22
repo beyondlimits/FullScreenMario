@@ -118,7 +118,6 @@ function ModAttachr(settings) {
             });
             
             var name = mod.name;
-            console.log("Getting", name, StatsHolder.get(name));
             if(StatsHolder.get(name)) {
                 self.enableMod(name);
             }

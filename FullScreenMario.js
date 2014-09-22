@@ -1489,6 +1489,16 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function spawnHammerBro(thing) {
+        thing.counter = 0;
+        thing.gravity = thing.EightBitter.MapScreener.gravity / 2.1;
+        thing.EightBitter.TimeHandler.addEvent(animateThrowingHammer, 35, thing, 7);
+        thing.EightBitter.TimeHandler.addEventInterval(animateJump, 140, Infinity, thing);
+    }
+    
+    /**
+     * 
+     */
     function spawnPiranha(thing) {
         thing.counter = 0;
         thing.direction = -.1;
@@ -2384,6 +2394,25 @@ window.FullScreenMario = (function() {
     }
     
     /**
+     * 
+     * 
+     * @remarks thing.counter must be a number set elsewhere
+     */
+    function movePacing(thing) {
+        thing.counter += .007;
+        thing.xvel = Math.sin(Math.PI * thing.counter) / 2.1;
+    }
+    
+    /**
+     * 
+     */
+    function moveHammerBro(thing) {
+        thing.EightBitter.movePacing(thing);
+        thing.EightBitter.lookTowardsPlayer(thing);
+        thing.nocollidesolid = thing.yvel < 0 || thing.falling;
+    }
+    
+    /**
      * Initial movement function for Things that float up and down (vertically).
      * 
      * @param {Thing} thing
@@ -3121,6 +3150,98 @@ window.FullScreenMario = (function() {
     
     /**
      * 
+     * 
+     * @remarks This could probably be re-written.
+     */
+    function animateThrowingHammer(thing, count) {
+        if( 
+            !thing.EightBitter.isCharacterAlive(thing)
+            || thing.right < thing.EightBitter.unitsize * -32
+        ) {
+            return true;
+        }
+        
+        if(count !== 3) {
+            thing.EightBitter.switchClass(thing, "thrown", "throwing");
+        }
+        
+        thing.EightBitter.TimeHandler.addEvent(function () {
+            if(!thing.EightBitter.isCharacterAlive(thing)) {
+                return;
+            }
+            
+            // Throw the hammer...
+            if(count !== 3) {
+                thing.EightBitter.switchClass(thing, "throwing", "thrown");
+                thing.EightBitter.addThing(
+                    ["Hammer", {
+                        "xvel": thing.lookleft 
+                            ? thing.EightBitter.unitsize / -1.4
+                            : thing.EightBitter.unitsize / 1.4,
+                        "yvel": thing.EightBitter.unitsize * -1.4,
+                        "gravity": thing.EightBitter.MapScreener.gravity / 2.1
+                    }],
+                    thing.left - thing.EightBitter.unitsize * 2,
+                    thing.top - thing.EightBitter.unitsize * 2
+                );
+            }
+            
+            // ...and go again
+            if(count > 0) {
+                thing.EightBitter.TimeHandler.addEvent(
+                    thing.EightBitter.animateThrowingHammer,
+                    7, thing, count - 1
+                );
+            } else {
+                thing.EightBitter.TimeHandler.addEvent(
+                    thing.EightBitter.animateThrowingHammer,
+                    70, thing, 7
+                );
+                thing.EightBitter.removeClass(thing, "thrown");
+            }
+        }, 14);
+    }
+    
+    /**
+     * 
+     */
+    function animateJump(thing) {
+        // Finish
+        if(!thing.EightBitter.isCharacterAlive(thing)) {
+            return true;
+        }
+        
+        // Skip
+        if(!thing.resting) {
+            return;
+        }
+        
+        // Jump up?
+        if(
+            thing.EightBitter.MapScreener.floor - (thing.bottom / thing.EightBitter.unitsize) >= 30
+            && thing.resting.title !== "Floor"
+            && Math.floor(thing.EightBitter.random() * 2)
+        ) {
+            thing.falling = true;
+            thing.yvel = thing.EightBitter.unitsize * -.7;
+            thing.EightBitter.TimeHandler.addEvent(function () {
+                thing.falling = false;
+            }, 42);
+        }
+        // Jump down
+        else {
+            thing.nocollidesolid = true;
+            thing.yvel = thing.EightBitter.unitsize * -2.1;
+            thing.EightBitter.TimeHandler.addEvent(function () {
+                thing.nocollidesolid = false;
+            }, 42);
+        }
+        
+        thing.resting = false;
+    }
+    
+    /**
+     * 
      */
     function animateBlooperUnsqueezing(thing) {
         thing.counter = 0;
@@ -3570,7 +3691,7 @@ window.FullScreenMario = (function() {
      */
     function lookTowardsPlayer(thing, big) {
         // Case: Player is to the left
-        if(player.right <= thing.left) {
+        if(thing.EightBitter.player.right <= thing.left) {
             if(!thing.lookleft || big) {
                 thing.lookleft = true;
                 thing.moveleft = false;
@@ -3578,7 +3699,7 @@ window.FullScreenMario = (function() {
             }
         }
         // Case: Player is to the right
-        else if(player.left >= thing.right) {
+        else if(thing.EightBitter.player.left >= thing.right) {
             if(thing.lookleft || big) {
                 thing.lookleft = false;
                 thing.moveleft = true;
@@ -4779,6 +4900,7 @@ window.FullScreenMario = (function() {
         "setPlayerSizeLarge": setPlayerSizeLarge,
         "animatePlayerRemoveCrouch": animatePlayerRemoveCrouch,
         // Spawn / actions
+        "spawnHammerBro": spawnHammerBro,
         "spawnPiranha": spawnPiranha,
         "spawnBlooper": spawnBlooper,
         "spawnPodoboo": spawnPodoboo,
@@ -4815,6 +4937,8 @@ window.FullScreenMario = (function() {
         "moveSimple": moveSimple,
         "moveSmart": moveSmart,
         "moveJumping": moveJumping,
+        "movePacing": movePacing,
+        "moveHammerBro": moveHammerBro,
         "moveFloating": moveFloating,
         "moveFloatingReal": moveFloatingReal,
         "moveSliding": moveSliding,
@@ -4839,6 +4963,8 @@ window.FullScreenMario = (function() {
         "animateEmerge": animateEmerge,
         "animateEmergeCoin": animateEmergeCoin,
         "animateFlicker": animateFlicker,
+        "animateJump": animateJump,
+        "animateThrowingHammer": animateThrowingHammer,
         "animateBlooperUnsqueezing": animateBlooperUnsqueezing,
         "animatePodobooJumpUp": animatePodobooJumpUp,
         "animatePodobooJumpDown": animatePodobooJumpDown,
@@ -4935,7 +5061,11 @@ window.FullScreenMario = (function() {
         "macroPlatformGenerator": macroPlatformGenerator,
         "macroStartInsideCastle": macroStartInsideCastle,
         "macroEndOutsideCastle": macroEndOutsideCastle,
-        "macroEndInsideCastle": macroEndInsideCastle
+        "macroEndInsideCastle": macroEndInsideCastle,
+        "random": function () {
+            console.log("Should create seeded random.");
+            return Math.random();
+        }
     });
     
     return FullScreenMario;

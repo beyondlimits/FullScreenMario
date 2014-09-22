@@ -94,7 +94,8 @@
                         "Spiny": {},
                         "HammerBro": {
                             "Bowser": {}
-                        }
+                        },
+                        "Hammer": {}
                     },
                     "item": {
                         "Mushroom": {
@@ -444,6 +445,14 @@
                     ["one", "two"]
                 ]
             },
+            HammerBro: {
+                height: 12,
+                onThingMake: FullScreenMario.prototype.spawnHammerBro,
+                movement: FullScreenMario.prototype.moveHammerBro,
+                spriteCycle: [
+                    ["one", "two"]
+                ]
+            },
             Bowser: {
                 width: 16,
                 height: 16,
@@ -455,6 +464,17 @@
                 // onThingAdd: addBowser,
                 spriteCycle: [
                     ["one", "two"]
+                ]
+            },
+            Hammer: {
+                movement: undefined,
+                nocollidesolid: true,
+                nocollidechar: true,
+                deadly: true,
+                nofire: true,
+                spriteCycle: [
+                    ["one", "two", "three", "four"],
+                    3
                 ]
             },
             item: {
