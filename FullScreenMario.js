@@ -749,7 +749,7 @@ window.FullScreenMario = (function() {
                 }
             }
             // Player has fallen too far
-            if (!player.piping && !player.dying && player.top > EightBitter.MapScreener.deathheight) {
+            if (!player.piping && !player.dying && player.top > EightBitter.MapScreener.deathheight * EightBitter.unitsize) {
                 // If the map has an exit loc (cloud world), transport there
                 if (EightBitter.MapScreener.exitloc) {
                     return EightBitter.setLocation(map.exitloc);
@@ -1518,7 +1518,7 @@ window.FullScreenMario = (function() {
     function spawnPodoboo(thing) {
         thing.EightBitter.TimeHandler.addEventInterval(
             thing.EightBitter.animatePodobooJumpUp,
-            thing.frequency,
+            Infinity,
             thing.frequency,
             thing
         );

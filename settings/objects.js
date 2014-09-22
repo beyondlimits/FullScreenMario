@@ -207,6 +207,7 @@
                 "jumpmod": 1.056,
                 "maxyvel": 7,
                 "maxyvelinv": -14,
+                "deathheight": 210,
                 "gravity": FullScreenMario.gravity,
                 "canscroll": true,
                 "underwater": false,

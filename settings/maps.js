@@ -5,6 +5,7 @@ FullScreenMario.prototype.settings.maps = {
         "time",
         "underwater",
         "floor",
+        "deathheight",
         "jumpmod",
         "maxyvel",
         "maxyvelinv",
