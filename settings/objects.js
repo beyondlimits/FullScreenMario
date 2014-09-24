@@ -126,7 +126,6 @@
                     "PipeHorizontal": {},
                     "PipeVertical": {},
                     "Platform": {},
-                    "PlatformGenerator": {},
                     "Stone": {},
                     "Cannon": {},
                     "Springboard": {},
@@ -699,9 +698,6 @@
                         }
                     }
                 }
-            },
-            PlatformGenerator: {
-                hidden: true
             },
             Cannon: {
                 frequency: 280,

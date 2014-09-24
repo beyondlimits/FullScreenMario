@@ -96,7 +96,6 @@ window.FullScreenMario = (function() {
                 "scale",
                 "jumplev1",
                 "jumplev2",
-                "ceillev",
                 "ceilmax",
                 "castlev",
                 "point_levels",
@@ -106,24 +105,19 @@ window.FullScreenMario = (function() {
     
     // For the sake of reset functions, store constants as members of the actual
     // FullScreenMario function itself - this allows prototype setters to use 
-    // them regardless of whether the prototype has been instantiated yet
+    // them regardless of whether the prototype has been instantiated yet.
+    // The floor is 104 spaces (13 blocks) below the top of the screen (yloc = -16).
     FullScreenMario.unitsize = 4;
     FullScreenMario.scale = 2;
-    FullScreenMario.jumplev1 = 32;
-    FullScreenMario.jumplev2 = 64;
-    
-    // The floor is 88 spaces (11 blocks) below the yloc = 0 level
-    FullScreenMario.ceillev = 88; 
-    
-    // The floor is 104 spaces (13 blocks) below the top of the screen (yloc = -16)
-    FullScreenMario.ceilmax = 104; 
-    FullScreenMario.castlev = -48;
     
     // Gravity is always a function of unitsize
     FullScreenMario.gravity = Math.round(12 * FullScreenMario.unitsize) / 100; // .48
     
     // When a player is far enough below the bottom, that's a death
     FullScreenMario.bottom_death_difference = 12 * FullScreenMario.unitsize;
+    
+    // Moving platforms may go down only so far
+    // (FSM.MapScreener.height / 4) + (FSM.MapScreener.bottom_death_difference * 4);
     
     // Levels of points to award for hopping on / shelling enemies
     FullScreenMario.point_levels = [
@@ -258,7 +252,8 @@ window.FullScreenMario = (function() {
         self.MapScreener = new MapScreenr(proliferate({
             "unitsize": FullScreenMario.unitsize,
             "width": customs.width,
-            "height": customs.width
+            "height": customs.width,
+            "variable_args": [self]
         }, self.settings.screen));
     }
     
@@ -694,7 +689,7 @@ window.FullScreenMario = (function() {
             // Resting tests
             if (character.resting) {
                 if (!EightBitter.isCharacterOnResting(character, character.resting)) {
-                    character.resting = false; // Necessary for moving platforms :(
+                    character.resting = undefined; // Necessary for moving platforms :(
                 } else {
                     /*character.jumping = */
                     character.yvel = false;
@@ -2400,7 +2395,7 @@ window.FullScreenMario = (function() {
         // If .resting, jump!
         if(thing.resting) {
             thing.yvel = -Math.abs(thing.jumpheight);
-            thing.resting = false;
+            thing.resting = undefined;
         }
     }
     
@@ -2547,16 +2542,37 @@ window.FullScreenMario = (function() {
         thing.EightBitter.shiftVert(thing, thing.yvel);
         
         // If the player is resting on this and this is alive, move the player
-        if(thing === player.resting && player.alive) {
-            thing.EightBitter.setBottom(player, thing.top);
-            thing.EightBitter.shiftHoriz(player, thing.xvel);
+        if(thing === thing.EightBitter.player.resting && thing.EightBitter.player.alive) {
+            thing.EightBitter.setBottom(thing.EightBitter.player, thing.top);
+            thing.EightBitter.shiftHoriz(thing.EightBitter.player, thing.xvel);
             
             // If the player is too far to the right or left, stop that overlap
-            if(player.right > thing.EightBitter.MapScreener.innerWidth) {
-                thing.EightBitter.setRight(player, thing.EightBitter.MapScreener.innerWidth);
-            } else if(player.left < 0) {
-                thing.EightBitter.setLeft(player, 0);
+            if(thing.EightBitter.player.right > thing.EightBitter.MapScreener.innerWidth) {
+                thing.EightBitter.setRight(
+                    thing.EightBitter.player, 
+                    thing.EightBitter.MapScreener.innerWidth
+                );
+            } else if(thing.EightBitter.player.left < 0) {
+                thing.EightBitter.setLeft(thing.EightBitter.player, 0);
             }
+        }
+    }
+    
+    /**
+     * 
+     */
+    function movePlatformSpawn(thing) {
+        if(thing.bottom < 0) {
+            thing.EightBitter.setTop(thing, thing.EightBitter.MapScreener.bottom_platform_max);
+        } else if(thing.top > thing.EightBitter.MapScreener.bottom_platform_max) {
+            thing.EightBitter.setBottom(thing, 0);
+        } else {
+            thing.EightBitter.movePlatform(thing);
+            return;
+        }
+        
+        if(thing.EightBitter.player && thing.EightBitter.player.resting === thing) {
+            thing.EightBitter.player.resting = undefined;
         }
     }
     
@@ -2826,7 +2842,7 @@ window.FullScreenMario = (function() {
                 if(thing.resting.xvel) {
                     thing.xvel += thing.resting.xvel;
                 }
-                thing.resting = false;
+                thing.resting = undefined;
             }
             // Jumping, not resting
             else {
@@ -3246,7 +3262,7 @@ window.FullScreenMario = (function() {
             return;
         }
         
-        thing.resting = false;
+        thing.resting = undefined;
         thing.yvel = thing.EightBitter.unitsize * -1.4;
         
         // If there is a platform, don't bump into it
@@ -3338,7 +3354,7 @@ window.FullScreenMario = (function() {
             }, 42);
         }
         
-        thing.resting = false;
+        thing.resting = undefined;
     }
     
     /**
@@ -3593,7 +3609,7 @@ window.FullScreenMario = (function() {
      * 
      */
     function animateCharacterHop(thing) {
-        thing.resting = false;
+        thing.resting = undefined;
         thing.yvel = thing.EightBitter.unitsize * -1.4;
     }
     
@@ -3604,7 +3620,7 @@ window.FullScreenMario = (function() {
         thing.nocollide = thing.nofall = true;
         thing.xvel = thing.yvel = 0;
         thing.movementOld = thing.movement;
-        thing.movement = false;
+        thing.movement = undefined;
         
         thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Character", "Scenery");
         thing.EightBitter.TimeHandler.clearAllCycles(thing);
@@ -4033,7 +4049,7 @@ window.FullScreenMario = (function() {
                 thing.EightBitter.TimeHandler.addEvent(function () {
                     thing.EightBitter.thingRetrieveVelocity(thing, true);
                     thing.nocollide = true;
-                    thing.movement = thing.resting = false;
+                    thing.movement = thing.resting = undefined;
                     thing.gravity = thing.EightBitter.MapScreener.gravity / 2.1;
                     thing.yvel = FullScreenMario.unitsize * -1.4;
                 }, 7);
@@ -4260,6 +4276,7 @@ window.FullScreenMario = (function() {
         EightBitter.TimeHandler.clearAllEvents();
         
         EightBitter.MapsHandler.setLocation(name || 0);
+        EightBitter.MapScreener.setVariables();
         location = EightBitter.MapsHandler.getLocation(name || 0);
         
         EightBitter.TimeHandler.addEventInterval(function () {
@@ -4710,7 +4727,7 @@ window.FullScreenMario = (function() {
             "macro": "Fill",
             "thing": "Brick",
             "x": reference.x,
-            "y": 88, // ceillev
+            "y": 88,
             "xnum": Math.floor(reference.width / 8),
             "xwidth": 8
         };
@@ -4754,14 +4771,27 @@ window.FullScreenMario = (function() {
      * @param {Object} reference   A listing of the settings for this macro,
      *                             from an Area's .creation Object.
      */
-    function macroPlatformGenerator(reference) {
-        return {
-            "thing": "PlatformGenerator",
-            "x": reference.x || 0,
-            "y": reference.y || 120, // ceilmax (104) + 16
-            "width": reference.width || 4,
-            "dir": reference.dir || 1
-        };
+    function macroPlatformGenerator(reference, prethings, area, map, scope) {
+        var output = [],
+            direction = reference.direction || 1,
+            levels = direction > 0 ? [0, 48] : [8, 56],
+            width = reference.width || 4,
+            x = reference.x || 0,
+            yvel = direction * scope.unitsize * .42,
+            i;
+        
+        for(i = 0; i < levels.length; i += 1) {
+            output.push({
+                "thing": "Platform",
+                "width": width,
+                "x": x,
+                "y": levels[i],
+                "yvel": yvel,
+                "movement": scope.movePlatformSpawn
+            });
+        }
+        
+        return output;
     }
     
     /**
@@ -5068,6 +5098,7 @@ window.FullScreenMario = (function() {
         "moveSliding": moveSliding,
         "moveSlidingReal": moveSlidingReal,
         "movePlatform": movePlatform,
+        "movePlatformSpawn": movePlatformSpawn,
         "moveSpringboardUp": moveSpringboardUp,        "moveFalling": moveFalling,        "moveFreeFalling": moveFreeFalling,
         "moveShell": moveShell,
         "movePiranha": movePiranha,

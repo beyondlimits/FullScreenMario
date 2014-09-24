@@ -119,7 +119,7 @@ FullScreenMario.prototype.settings.mods = {
             "enabled": false,
             "events": {
                 "onModEnable": function () {
-                    this.ObjectMaker.getFunction("Cloud").prototype.parallax = .63;
+                    this.ObjectMaker.getFunction("Cloud").prototype.parallax = .7;
                 },
                 "onModDisable": function () {
                     this.ObjectMaker.getFunction("Cloud").prototype.parallax = undefined;
