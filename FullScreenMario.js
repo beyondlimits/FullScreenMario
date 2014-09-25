@@ -116,9 +116,6 @@ window.FullScreenMario = (function() {
     // When a player is far enough below the bottom, that's a death
     FullScreenMario.bottom_death_difference = 12 * FullScreenMario.unitsize;
     
-    // Moving platforms may go down only so far
-    // (FSM.MapScreener.height / 4) + (FSM.MapScreener.bottom_death_difference * 4);
-    
     // Levels of points to award for hopping on / shelling enemies
     FullScreenMario.point_levels = [
         100, 200, 400, 500, 800, 1000, 2000, 4000, 5000, 8000
@@ -252,7 +249,7 @@ window.FullScreenMario = (function() {
         self.MapScreener = new MapScreenr(proliferate({
             "unitsize": FullScreenMario.unitsize,
             "width": customs.width,
-            "height": customs.width,
+            "height": customs.height,
             "variable_args": [self]
         }, self.settings.screen));
     }
@@ -744,13 +741,17 @@ window.FullScreenMario = (function() {
                 }
             }
             // Player has fallen too far
-            if (!player.piping && !player.dying && player.top > EightBitter.MapScreener.deathheight * EightBitter.unitsize) {
+            if (!player.piping && !player.dying && player.top > EightBitter.MapScreener.bottom) {
                 // If the map has an exit loc (cloud world), transport there
                 if (EightBitter.MapScreener.exitloc) {
-                    return EightBitter.setLocation(map.exitloc);
+                    EightBitter.setLocation(map.exitloc);
                 }
                 // Otherwise, since Player is below the screen, kill him dead
-                EightBitter.killPlayer(player, 2);
+                else {
+                    EightBitter.killPlayer(player, 2);
+                }
+                
+                return;
             }
         }
 
@@ -2238,6 +2239,42 @@ window.FullScreenMario = (function() {
     
     /**
      * 
+     * 
+     * @param {Thing} thing   player
+     * @param {Thing} other   axe
+     */
+    function collideCastleAxe(thing, other) {
+        if(!thing.EightBitter.isCharacterAlive(thing)) {
+            return;
+        }
+        
+        if(
+            thing.right < other.left + other.EightBitter.unitsize
+            || thing.bottom > other.bottom - other.EightBitter.unitsize
+        ) {
+            return;
+        }
+        
+        thing.EightBitter.thingStoreVelocity(thing);
+        thing.EightBitter.killNormal(other);
+        thing.EightBitter.killNPCs();
+        
+        thing.EightBitter.MapScreener.nokeys = true;
+        thing.EightBitter.MapScreener.notime = true;
+        
+        thing.EightBitter.AudioPlayer.playTheme("World Clear");
+        
+        thing.EightBitter.TimeHandler.addEvent(function () {
+            thing.yvel = 0;
+            thing.keys.run = 1;
+            thing.maxspeed = thing.walkspeed;
+            thing.EightBitter.thingRetrieveVelocity(thing);
+            thing.EightBitter.MapScreener.canscroll = true;
+        }, 140);
+    }
+    
+    /**
+     * 
      */
     function collideCastleDoor(thing, other) {
         var time = thing.EightBitter.StatsHolder.get("time"),
@@ -2265,6 +2302,28 @@ window.FullScreenMario = (function() {
                 return true;
             }
         }, 1, Infinity);
+    }
+    
+    /** 
+     * 
+     */
+    function collideCastleNPC(thing, other) {
+        var text = other.text,
+            interval = 21,
+            i = 0;
+        
+        thing.keys.run = 0;
+        thing.EightBitter.killNormal(other);
+        
+        thing.EightBitter.TimeHandler.addEventInterval(function () {
+            console.log("Placing text", i, text[i]);
+            
+            i += 1;
+        }, interval, text.length);
+        
+        thing.EightBitter.TimeHandler.addEvent(function () {
+            thing.EightBitter.nextLevel();
+        }, (interval * text.length) + 280)
     }
     
     /**
@@ -3268,7 +3327,7 @@ window.FullScreenMario = (function() {
         // If there is a platform, don't bump into it
         thing.nocollidesolid = true;
         thing.EightBitter.TimeHandler.addEventInterval(function () {
-            if(thing.yvel > thing.EightBitter.unitsize) {
+            if(thing.dead || thing.yvel > thing.EightBitter.unitsize) {
                 thing.nocollidesolid = false;
                 return true;
             }
@@ -3316,7 +3375,14 @@ window.FullScreenMario = (function() {
      * 
      */
     function animateBowserFreeze(thing) {
+        thing.nofall = true;
+        thing.nothrow = true;
+        thing.movement = false;
+        thing.EightBitter.thingStoreVelocity(thing);
         
+        thing.EightBitter.TimeHandler.addEvent(function () {
+            thing.nofall = false;
+        }, 70);
     }
     
     /**
@@ -3566,6 +3632,29 @@ window.FullScreenMario = (function() {
         }
         
         thing.angle += thing.dt;
+    }
+    
+    /**
+     * 
+     */
+    function animateCastleBridgeOpen(thing) {
+        thing.EightBitter.TimeHandler.addEvent(function () {
+            thing.EightBitter.TimeHandler.addEventInterval(function () {
+                thing.right -= thing.EightBitter.unitsize * 2;
+                thing.EightBitter.setWidth(thing, thing.width - 2);
+                
+                if(thing.width <= 0) {
+                    return true;
+                }
+            }, 1, Infinity);
+        }, 7);
+    }
+    
+    /**
+     * 
+     */
+    function animateCastleChainOpen(thing) {
+        thing.EightBitter.TimeHandler.addEvent(killNormal, 7, thing);
     }
     
     /**
@@ -3918,6 +4007,7 @@ window.FullScreenMario = (function() {
     function killBowser(thing, big) {
         if(big) {
             thing.nofall = false;
+            thing.movement = undefined;
             thing.EightBitter.killFlip(thing);
             return;
         }
@@ -3989,7 +4079,11 @@ window.FullScreenMario = (function() {
             thing = group[i];
             
             if(thing.killonend) {
-                thing.EightBitter.arrayDeleteMember(thing, group, i);
+                if(thing.killonend instanceof Function) {
+                    thing.killonend(thing, group, i);
+                } else {
+                    thing.EightBitter.arrayDeleteMember(thing, group, i);
+                }
             }
         }
     }
@@ -4984,10 +5078,39 @@ window.FullScreenMario = (function() {
      * @param {Object} reference   A listing of the settings for this macro,
      *                             from an Area's .creation Object.
      */
-    function macroEndInsideCastle(reference) {
+    function macroEndInsideCastle(reference, prethings, area, map, scope) {
         var x = reference.x || 0,
-            y = reference.y || 0;
+            y = reference.y || 0,
+            npc = reference.npc || "Toad",
+            text = reference.text || "",
+            style = reference.style || {};
 
+        if(!text) {
+            if(npc === "Toad") {
+                text = [
+                    "THANK YOU MARIO!",
+                    "",
+                    "BUT OUR PRINCESS IS IN ANOTHER CASTLE!"
+                ];
+                style = {
+                    "textAlign": "left"
+                };
+            } else if(npc === "Peach") {
+                text = [
+                    "THANK YOU MARIO!",
+                    "",
+                    "YOUR QUEST IS OVER.",
+                    "WE PRESENT YOU A NEW QUEST.",
+                    "",
+                    "PRESS BUTTON B",
+                    "TO SELECT A WORLD"
+                ];
+                style = {
+                    "textAlign": "center"
+                };
+            }
+        }
+        
         return [
             { "thing": "Stone", "x": x, "y": y + 88, "width": 256 },
             { "macro": "Water", "x": x, "y": y, "width": 104 },
@@ -4996,11 +5119,14 @@ window.FullScreenMario = (function() {
             { "thing": "Bowser", "x": x + 69, "y": y + 42, "hard": reference.hard },
             { "thing": "CastleChain", "x": x + 96, "y": y + 32 },
             // Axe area
-            { "thing": "Axe", "x": x + 104, "y": y + 40 },
+            { "thing": "CastleAxe", "x": x + 104, "y": y + 40 },
+            { "thing": "ScrollBlocker", "x": x + 112 },
             { "macro": "Floor", "x": x + 104, "y": y, "width": 152 },
             { "thing": "Stone", "x": x + 104, "y": y + 32, "width": 24, "height": 32 },
             { "thing": "Stone", "x": x + 112, "y": y + 80, "width": 16, "height": 24 },
             // Peach's Magical Happy Chamber of Fantastic Love
+            { "thing": "DetectCollision", "x": x + 180, "activate": scope.collideCastleNPC, "text": text },
+            { "thing": npc, "x": x + 194, "y": 13 },
             { "thing": "ScrollBlocker", "x": x + 256 }
         ];
     }
@@ -5081,7 +5207,9 @@ window.FullScreenMario = (function() {
         "collideSpringboard": collideSpringboard,
         "collideFlagTop": collideFlagTop,
         "collideFlagBottom": collideFlagBottom,
+        "collideCastleAxe": collideCastleAxe,
         "collideCastleDoor": collideCastleDoor,
+        "collideCastleNPC": collideCastleNPC,
         "collideTransport": collideTransport,
         "collideDetector": collideDetector,
         "collideLevelTransport": collideLevelTransport,
@@ -5134,6 +5262,8 @@ window.FullScreenMario = (function() {
         "animateEndLevelFireworks": animateEndLevelFireworks,
         "animateCannonFiring": animateCannonFiring,
         "animateCastleBlock": animateCastleBlock,
+        "animateCastleBridgeOpen": animateCastleBridgeOpen,
+        "animateCastleChainOpen": animateCastleChainOpen,
         "animatePlayerFire": animatePlayerFire,
         "animatePlayerPaddling": animatePlayerPaddling,
         "animatePlayerBubbling": animatePlayerBubbling,
@@ -5177,6 +5307,7 @@ window.FullScreenMario = (function() {
         "killSpawn": killSpawn,
         "killGoomba": killGoomba,
         "killKoopa": killKoopa,
+        "killBowser": killBowser,
         "killToShell": killToShell,
         "killNPCs": killNPCs,
         "killBrick": killBrick,
