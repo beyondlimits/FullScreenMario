@@ -236,7 +236,7 @@ function InputWritr(settings) {
      */
     self.clearEvent = function (trigger, label) {
         self.addEvent(trigger, label, false);
-        debugger;
+        console.log("clearEvent called. There used to be \"debugger;\" here, not sure why.");
     };
     
     

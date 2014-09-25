@@ -135,6 +135,7 @@
                     "CastleAxe": {},
                     "CastleBlock": {},
                     "CastleBridge": {},
+                    "CastleChain": {},
                     "Coral": {},
                     "detector": {
                         "DetectCollision": {
@@ -147,14 +148,12 @@
                     },
                 },
                 "scenery": {
-                    "Axe": {},
                     "Blank": {},
                     "BrickHalf": {},
                     "BrickPlain": {},
                     "Bush1": {},
                     "Bush2": {},
                     "Bush3": {},
-                    "CastleChain": {},
                     "CastleDoor": {},
                     "CastleFlag": {},
                     "CastleRailing": {},
@@ -172,11 +171,13 @@
                     "FlagTop": {},
                     "HillSmall": {},
                     "HillLarge": {},
+                    "Peach": {},
                     "PlantSmall": {},
                     "PlantLarge": {},
                     "Railing": {},
                     "ShroomTrunk": {},
                     "String": {},
+                    "Toad": {},
                     "TreeTrunk": {},
                     "Water": {}
                 },
@@ -207,7 +208,6 @@
                 "jumpmod": 1.056,
                 "maxyvel": 7,
                 "maxyvelinv": -14,
-                "deathheight": 210,
                 "gravity": FullScreenMario.gravity,
                 "canscroll": true,
                 "underwater": false,
@@ -708,6 +708,9 @@
                 heightNormal: 14.5,
                 collide: FullScreenMario.prototype.collideSpringboard
             },
+            CastleAxe: {
+                collide: FullScreenMario.prototype.collideCastleAxe
+            },
             CastleBlock: {
                 onThingAdd: FullScreenMario.prototype.spawnCastleBlock,
                 attributes: {
@@ -715,6 +718,18 @@
                         speed: 1
                     }
                 }
+            },
+            CastleBridge: {
+                height: 16,
+                spriteheight: 16,
+                spritewidth: 4,
+                killonend: FullScreenMario.prototype.animateCastleBridgeOpen
+            },
+            CastleChain: {
+                width: 8,
+                height: 8,
+                nocollide: true,
+                killonend: FullScreenMario.prototype.animateCastleChainOpen
             },
             Floor: {
                 nofire: true // for the "Super Fireballs" mod
@@ -750,7 +765,6 @@
             Bush2: [24, 8],
             Bush3: [32, 8],
             Castle: [75, 88],
-            CastleChain: [7.5, 7.5],
             CastleDoor: [8, 20],
             CastleFlag: [6.5, 10],
             CastleRailing: [8, 4],
@@ -766,11 +780,13 @@
             Fence: [8, 8],
             HillSmall: [24, 9.5],
             HillLarge: [40, 17.5],
+            Peach: [13, 16],
             PlantSmall: [7, 15],
             PlantLarge: [8, 23],
             Railing: [4, 4],
             ShroomTrunk: [8, 8],
             String: [1, 1],
+            Toad: [8, 13],
             TreeTrunk: [4, 4],
             Water: {
                 "width": 4,

@@ -138,7 +138,7 @@
             return FSM.ModAttacher.getMods();
         },
         "callback": function (schema, button) {
-            FSM.ModAttacher.toggleMod(button.getAttribute("value") || button.innerText);
+            FSM.ModAttacher.toggleMod(button.getAttribute("value") || button.textContent);
         }
     },
     {
