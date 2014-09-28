@@ -1602,8 +1602,8 @@ window.FullScreenMario = (function() {
      * 
      */
     function activateWindowDetector(thing) {
-        if(thing.EightBitter.MapScreener.right - thing.EightBitter.MapScreener.left
-            < thing.left) {
+        if(thing.EightBitter.MapScreener.right - thing.EightBitter.MapScreener.left < thing.left) {
+            console.log("ah", FSM.MapScreener.width, thing.left);
             return;
         }
         
@@ -2167,6 +2167,32 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function collideVine(thing, other) {
+        if(!thing.player || thing.attachedSolid || thing.climbing) {
+            return;
+        }
+        
+        if(thing.bottom > other.bottom + thing.EightBitter.unitsize * 2) {
+            return;
+        }
+        
+        other.attachedCharacter = thing;
+        thing.attachedSolid = vine;
+        
+        thing.nofall = true;
+        thing.skipoverlaps = true;
+        
+        thing.EightBitter.thingStoreVelocity(thing);
+        
+        thing.attachedLeft = !thing.EightBitter.objectToLeft(thing, other);
+        thing.attachedOff = thing.attachedLeft ? 1 : -1;
+        
+        thing.movement = thing.EightBitter.movePlayerVine;
+    }
+    
+    /**
+     * 
+     */
     function collideSpringboard(thing, other) {
         if(
             thing.player && thing.yvel >= 0 && !other.tension
@@ -2632,6 +2658,21 @@ window.FullScreenMario = (function() {
         
         if(thing.EightBitter.player && thing.EightBitter.player.resting === thing) {
             thing.EightBitter.player.resting = undefined;
+        }
+    }
+    
+    /**
+     * 
+     */
+    function moveVine(thing) {
+        thing.EightBitter.increaseHeight(thing, thing.speed);
+        
+        if(thing.attachedSolid) {
+            thing.EightBitter.setBottom(thing, thing.attachedSolid.top);
+        }
+        
+        if(thing.attachedCharacter) {
+            thing.EightBitter.shiftVert(thing.attachedCharacter, thing.speed); 
         }
     }
     
@@ -3240,6 +3281,20 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function animateEmergeVine(thing, solid) {
+        // This allows the thing's movement to keep it on the solid
+        thing.attachedSolid = solid;
+        
+        thing.EightBitter.setHeight(thing, 0);
+        thing.EightBitter.AudioPlayer.play("Vine Emerging");
+        thing.EightBitter.TimeHandler.addEvent(function () {
+            thing.nocollide = false;
+        }, 14);
+    }
+    
+    /**
+     * 
+     */
     function animateFlicker(thing, cleartime, interval) {
         cleartime = Math.round(cleartime) || 49;
         interval = Math.round(interval) || 3;
@@ -3739,7 +3794,6 @@ window.FullScreenMario = (function() {
         thing.gravity = thing.EightBitter.MapScreener.gravity / 14;
         
         thing.EightBitter.TimeHandler.addEvent(function () {
-            thing.attached = false;
             thing.movement = thing.EightBitter.movePlayer;
             thing.gravity = thing.EightBitter.MapScreener.gravity;
             
@@ -5204,6 +5258,7 @@ window.FullScreenMario = (function() {
         "collideEnemy": collideEnemy,
         "collideBottomBrick": collideBottomBrick,
         "collideBottomBlock": collideBottomBlock,
+        "collideVine": collideVine,
         "collideSpringboard": collideSpringboard,
         "collideFlagTop": collideFlagTop,
         "collideFlagBottom": collideFlagBottom,
@@ -5227,6 +5282,7 @@ window.FullScreenMario = (function() {
         "moveSlidingReal": moveSlidingReal,
         "movePlatform": movePlatform,
         "movePlatformSpawn": movePlatformSpawn,
+        "moveVine": moveVine,
         "moveSpringboardUp": moveSpringboardUp,        "moveFalling": moveFalling,        "moveFreeFalling": moveFreeFalling,
         "moveShell": moveShell,
         "movePiranha": movePiranha,
@@ -5245,6 +5301,7 @@ window.FullScreenMario = (function() {
         "animateBrickShards": animateBrickShards,
         "animateEmerge": animateEmerge,
         "animateEmergeCoin": animateEmergeCoin,
+        "animateEmergeVine": animateEmergeVine,
         "animateFlicker": animateFlicker,
         "animateJump": animateJump,
         "animateThrowingHammer": animateThrowingHammer,

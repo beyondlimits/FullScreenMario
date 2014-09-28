@@ -3,11 +3,21 @@
     top: 0;
     right: 0;
     bottom: 0;
-    left: 50%;
+    min-width: 560px;
+    width: 50%;
+    max-width: 700px;
     background: rgba(0, 7, 14, .84);
+    overflow: hidden;
     user-select: none;
     box-sizing: border-box;
     z-index: 70;
+    transition: 117ms all;
+}
+
+.LevelEditor.minimized {
+    min-width: 117px;
+    width: 117px;
+    max-width: 117px;
 }
 
 .LevelEditor h4 {
@@ -104,7 +114,7 @@
 .LevelEditor .EditorSectionSecondary {
     position: absolute;
     top: 35px;
-    right: 343px;
+    right: 248px;
     bottom: 0px;
     left: 0;
     overflow-y: auto;
@@ -171,11 +181,18 @@
     top: 119px;
     bottom: 42px;
     padding: 7px 11px;
-    width: 305px;
+    width: 210px;
     border: 1px solid silver;
     border-width: 1px 0 0 1px;
+    overflow-x: visible;
     overflow-y: auto;
+    opacity: 1;
     box-sizing: border-box;
+    transition: 117ms opacity;
+}
+
+.LevelEditor.minimized .EditorVisualOptions {
+    opacity: 0;
 }
 
 .LevelEditor .EditorVisualOptions .VisualOption {
@@ -190,8 +207,13 @@
     padding-bottom: 14px;
 }
 
+.LevelEditor .EditorVisualOptions .VisualOptionValue {
+    max-width: 98%;
+}
+
+.LevelEditor .EditorVisualOptions .VisualOptionInfiniter,
 .LevelEditor .EditorVisualOptions .VisualOptionRecommendation {
-    font-size: 70%;
+    display: inline;
 }
 
 
@@ -213,7 +235,12 @@
     box-sizing: border-box;
     color: black;
     text-align: center;
+    overflow: hidden;
     cursor: pointer;
+}
+
+.LevelEditor.minimized .EditorMenuOption {
+    padding: 7px 3px;
 }
 
 .LevelEditor .EditorMenuOption:hover {

@@ -588,9 +588,14 @@
             },
             Vine: {
                 width: 7,
-                movement: false,
+                repeat: true,
                 nofall: true,
-                repeat: true
+                nocollide: true,
+                nocollidesolid: true,
+                speed: FullScreenMario.unitsize / 4,
+                movement: FullScreenMario.prototype.moveVine,
+                collide: FullScreenMario.prototype.collideVine,
+                animate: FullScreenMario.prototype.animateEmergeVine
             },
             BrickShard: {
                 width: 4,

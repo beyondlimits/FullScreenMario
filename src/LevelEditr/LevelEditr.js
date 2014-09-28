@@ -135,6 +135,43 @@ function LevelEditr(settings) {
         GameStarter.setMap(old_information["map"]);
     };
     
+    /**
+     * 
+     */
+    self.minimize = function () {
+        display.minimizer.innerText = "+";
+        display.minimizer.onclick = self.maximize;
+        display.container.className += " minimized";
+    };
+    
+    /**
+     * 
+     */
+    self.maximize = function () {
+        display.minimizer.innerText = "-";
+        display.minimizer.onclick = self.minimize;
+        
+        if(display.container.className.indexOf("minimized") !== -1) {
+            display.container.className = display.container.className.replace(/ minimized/g, '');
+        }
+    };
+    
+    self.startBuilding = function () {
+        beautifyTextareaValue();
+        setDisplayMap(true);
+        FSM.InputWriter.setCanTrigger(false);
+        setCurrentMode("Build");
+        self.maximize();
+    };
+    
+    self.startPlaying = function () {
+        beautifyTextareaValue();
+        setDisplayMap(false);
+        FSM.InputWriter.setCanTrigger(true);
+        setCurrentMode("Play");
+        self.minimize();
+    };
+    
     function setCurrentMode(mode) {
         current_mode = mode;
     }
@@ -222,8 +259,6 @@ function LevelEditr(settings) {
             );
         }
     }
-    
-    self.durp = function () { return current_things; }
     
     /**
      * 
@@ -363,7 +398,7 @@ function LevelEditr(settings) {
                         args[labeler.textContent] = valuer.value === "true" ? true : false;
                         break;
                     case "Number":
-                        args[labeler.textContent] = Number(valuer.value) || 0;
+                        args[labeler.textContent] = (Number(valuer.value) || 0) * (valuer.getAttribute("data:mod") || 1);
                         break;
                     default:
                         args[labeler.textContent] = valuer.value;
@@ -670,8 +705,6 @@ function LevelEditr(settings) {
             return false;
         }
         
-        console.log("for json,", thingRaw);
-        
         mapObject.areas[getCurrentArea()].creation.push(thingRaw);
         
         setTextareaValue(stringifySmart(mapObject), true);
@@ -747,6 +780,8 @@ function LevelEditr(settings) {
         
         display["container"] = GameStarter.createElement("div", {
             "className": "LevelEditor",
+            "onmouseout": self.minimize,
+            "onmouseover": self.maximize,
             "onclick": function (event) {
                 event.stopPropagation();
                 event.cancelBubble = true;
@@ -768,8 +803,9 @@ function LevelEditr(settings) {
                                 })
                             ]
                         }),
-                        GameStarter.createElement("div", {
+                        display["minimizer"] = GameStarter.createElement("div", {
                             "className": "EditorHeadButton EditorMinimizer",
+                            "onclick": self.minimize,
                             "textContent": "-"
                         }),
                         GameStarter.createElement("div", {
@@ -795,7 +831,7 @@ function LevelEditr(settings) {
                             "style": {
                                 "background": "gray"
                             },
-                            "textContent": "Map Settings",
+                            "textContent": "Map",
                             "onclick": setSectionMapSettings,
                         }),
                         display["sections"]["buttons"]["JSON"] = GameStarter.createElement("div", {
@@ -803,7 +839,7 @@ function LevelEditr(settings) {
                             "style": {
                                 "background": "gray"
                             },
-                            "textContent": "Raw JSON",
+                            "textContent": "JSON",
                             "onclick": setSectionJSON
                         })
                     ]
@@ -840,45 +876,59 @@ function LevelEditr(settings) {
                             "style": {
                                 "display": "block"
                             },
-                            "children": Object.keys(things).map(function (key) {
-                                var children = Object.keys(things[key]).map(function (title) {
-                                    var thing = GameStarter.ObjectMaker.make(title),
-                                        container = GameStarter.createElement("div", {
-                                            "className": "EditorListOption",
-                                            "name": title,
-                                            "options": things[key][title],
-                                            "children": [thing.canvas],
-                                            "onclick": onThingIconClick.bind(
-                                                undefined,
-                                                title
-                                            )
-                                        }),
-                                        sizeMax = 70,
-                                        widthThing = thing.width * GameStarter.unitsize,
-                                        heightThing = thing.height * GameStarter.unitsize,
-                                        widthDiff = (sizeMax - widthThing) / 2, 
-                                        heightDiff = (sizeMax - heightThing) / 2;
+                            "children": (function () {
+                                    var containers = Object.keys(things).map(function (key) {
+                                        var children = Object.keys(things[key]).map(function (title) {
+                                            var thing = GameStarter.ObjectMaker.make(title),
+                                                container = GameStarter.createElement("div", {
+                                                    "className": "EditorListOption",
+                                                    "name": title,
+                                                    "options": things[key][title],
+                                                    "children": [thing.canvas],
+                                                    "onclick": onThingIconClick.bind(
+                                                        undefined,
+                                                        title
+                                                    )
+                                                }),
+                                                sizeMax = 70,
+                                                widthThing = thing.width * GameStarter.unitsize,
+                                                heightThing = thing.height * GameStarter.unitsize,
+                                                widthDiff = (sizeMax - widthThing) / 2, 
+                                                heightDiff = (sizeMax - heightThing) / 2;
+                                            
+                                            thing.canvas.style.top = heightDiff + "px";
+                                            thing.canvas.style.right = widthDiff + "px";
+                                            thing.canvas.style.bottom = heightDiff + "px";
+                                            thing.canvas.style.left = widthDiff + "px";
+                                            
+                                            GameStarter.PixelDrawer.setThingSprite(thing);
+                                            
+                                            return container;                                        
+                                        });
+                                        
+                                        return GameStarter.createElement("div", {
+                                            "className": "EditorOptionContainer",
+                                            "style": {
+                                                "display": "none"
+                                            },
+                                            "children": children
+                                        });
+                                    }),
+                                    selectedIndex = 0,
+                                    switcher = createSelect(Object.keys(things), {
+                                        "className": "EditorOptionContainerSwitchers",
+                                        "onchange": function () {
+                                            containers[selectedIndex + 1].style.display = "none";
+                                            containers[switcher.selectedIndex + 1].style.display = "block";
+                                            selectedIndex = switcher.selectedIndex;
+                                        }
+                                    });
                                     
-                                    thing.canvas.style.top = heightDiff + "px";
-                                    thing.canvas.style.right = widthDiff + "px";
-                                    thing.canvas.style.bottom = heightDiff + "px";
-                                    thing.canvas.style.left = widthDiff + "px";
+                                    containers[0].style.display = "block";
+                                    containers.unshift(switcher);
                                     
-                                    GameStarter.PixelDrawer.setThingSprite(thing);
-                                    
-                                    return container;                                        
-                                });
-                                
-                                children.unshift(GameStarter.createElement("h4", {
-                                    "className": "EditorOptionTitle",
-                                    "textContent": key
-                                }));
-                                
-                                return GameStarter.createElement("div", {
-                                    "className": "EditorOptionContainer",
-                                    "children": children
-                                });
-                            })
+                                return containers;
+                            })()
                         }),
                         display["sections"]["ClickToPlace"]["Macros"] = GameStarter.createElement("div", {
                             "className": "EditorSectionSecondary EditorOptions EditorOptions-Macros",
@@ -1053,18 +1103,8 @@ function LevelEditr(settings) {
                             });
                         });
                     })({
-                        "Build": function () {
-                            beautifyTextareaValue();
-                            setDisplayMap(true);
-                            FSM.InputWriter.setCanTrigger(false);
-                            setCurrentMode("Build");
-                        },
-                        "Play": function () {
-                            beautifyTextareaValue();
-                            setDisplayMap(false);
-                            FSM.InputWriter.setCanTrigger(true);
-                            setCurrentMode("Play");
-                        },
+                        "Build": self.startBuilding,
+                        "Play": self.startPlaying,
                         "Save": downloadCurrentJSON,
                         "Load": alert.bind(window, "Loading!"),
                         "Reset": resetDisplayMap
@@ -1239,19 +1279,23 @@ function LevelEditr(settings) {
                 return GameStarter.createElement("div", {
                     "className": "VisualOptionHolder",
                     "children": (function () {
-                        var input = GameStarter.createElement("input", {
+                        var modReal = option["mod"] || 1,
+                            input = GameStarter.createElement("input", {
                                 "type": "Number",
                                 "data:type": "Number",
-                                "value": (option["value"] === undefined) ? (option["mod"] || 1) : option["value"]
+                                "value": (option["value"] === undefined) ? 1 : option["value"]
                             }, {
-                                "className": "VisualOptionValue",
+                                "className": "VisualOptionValue modReal" + modReal,
                                 "onchange": setCurrentArgs
                             }),
                             children = [input];
                         
+                        input.setAttribute("data:mod", 8);
+                        
                         if(option["Infinite"]) {
                             var valueOld,
                                 infinite = createSelect(["Number", "Infinite"], {
+                                    "className": "VisualOptionInfiniter",
                                     "onchange": function () {
                                         if(infinite.value === "Number") {
                                             input.type = "Number";
@@ -1278,10 +1322,10 @@ function LevelEditr(settings) {
                             children.push(infinite);
                         }
                         
-                        if(option["mod"] > 1) {
+                        if(modReal > 1) {
                             children.push(GameStarter.createElement("div", {
                                 "className": "VisualOptionRecommendation",
-                                "textContent": "(should be multiple of " + (option["mod"] || 1) + ")"
+                                "textContent": "x" + option["mod"]
                             }));
                         }
                         

@@ -82,7 +82,7 @@
 		"Pipe": {
 			"height": {
                 "type": "Number",
-                "value": 16,
+                "value": 2,
                 "mod": 8,
                 "Infinite": true
             }
@@ -90,7 +90,7 @@
 		"PipeHorizontal": {
 			"width": {
                 "type": "Number",
-                "value": 16,
+                "value": 2,
                 "mod": 8
             },
             "transport": "Location"
@@ -98,25 +98,25 @@
 		"PipeVertical": {
 			"height": {
                 "type": "Number",
-                "value": 16,
+                "value": 2,
                 "mod": 8,
                 "Infinite": true
             },
             "transport": "Location"
 		},
 		"Platform": {
-			"width": 8
+			"width": 2
 		},
 		"Stone": {
-			"width": 8,
+			"width": 1,
 			"height": {
                 "type": "Number",
-                "value": 8,
+                "value": 1,
                 "Infinite": true
             }
 		},
 		"Cannon": {
-			"height": 8
+			"height": 1
 		},
 		"Springboard": undefined,
 		"Floor": {
@@ -142,7 +142,6 @@
 		}
 	},
 	"Scenery": {
-		"Axe": undefined,
 		"BrickPlain": undefined,
 		"Bush1": undefined,
 		"Bush2": undefined,
@@ -150,7 +149,9 @@
 		"Cloud1": undefined,
 		"Cloud2": undefined,
 		"Cloud3": undefined,
-		"Fence": undefined,
+		"Fence": {
+            "width": 8
+        },
 		"HillSmall": undefined,
 		"HillLarge": undefined,
 		"PlantSmall": undefined,
