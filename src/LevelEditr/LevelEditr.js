@@ -154,6 +154,7 @@ function LevelEditr(settings) {
         if(display.container.className.indexOf("minimized") !== -1) {
             display.container.className = display.container.className.replace(/ minimized/g, '');
         }
+        // display.container.className = display.container.className.replace(" minimized", '');
     };
     
     self.startBuilding = function () {
@@ -780,8 +781,8 @@ function LevelEditr(settings) {
         
         display["container"] = GameStarter.createElement("div", {
             "className": "LevelEditor",
-            "onmouseout": self.minimize,
-            "onmouseover": self.maximize,
+            // "onmouseout": self.minimize,
+            // "onmouseover": self.maximize,
             "onclick": function (event) {
                 event.stopPropagation();
                 event.cancelBubble = true;
