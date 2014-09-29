@@ -265,6 +265,10 @@ function LevelEditr(settings) {
      * 
      */
     function onClickEditingThing(event) {
+        if(current_mode !== "Build") {
+            return;
+        }
+        
         var x = roundTo(event.x || event.clientX || 0, blocksize),
             y = roundTo(event.y || event.clientY || 0, blocksize),
             thing;
@@ -280,6 +284,10 @@ function LevelEditr(settings) {
      * 
      */
     function onClickEditingMacro(event) {
+        if(current_mode !== "Build") {
+            return;
+        }
+        
         var x = roundTo(event.x || event.clientX || 0, blocksize),
             y = roundTo(event.y || event.clientY || 0, blocksize),
             current_thing, i;
@@ -346,8 +354,7 @@ function LevelEditr(settings) {
             setVisualOptions(title, description, options);
         }
         
-        var map = getMapObject(),
-            output = [];
+        var map = getMapObject();
         
         if(!map) {
             return;
@@ -399,7 +406,7 @@ function LevelEditr(settings) {
                         args[labeler.textContent] = valuer.value === "true" ? true : false;
                         break;
                     case "Number":
-                        args[labeler.textContent] = (Number(valuer.value) || 0) * (valuer.getAttribute("data:mod") || 1);
+                        args[labeler.textContent] = (Number(valuer.value) || 0) * (Number(valuer.getAttribute("data:mod")) || 1);
                         break;
                     default:
                         args[labeler.textContent] = valuer.value;
@@ -744,6 +751,7 @@ function LevelEditr(settings) {
         display = {
             "container": undefined,
             "namer": undefined,
+            "minimizer": undefined,
             "stringer": {
                 "textarea": undefined,
                 "messenger": undefined
@@ -753,6 +761,7 @@ function LevelEditr(settings) {
                     "container": undefined,
                     "Things": undefined,
                     "Macros": undefined,
+                    "VisualSummary": undefined,
                     "VisualOptions": undefined,
                 },
                 "MapSettings": {
@@ -964,6 +973,20 @@ function LevelEditr(settings) {
                     },
                     "children": [
                         GameStarter.createElement("div", {
+                            "className": "EditorMapSettingsSubGroup",
+                            "children": [
+                                GameStarter.createElement("label", {
+                                    "textContent": "Current Location"
+                                }),
+                                display["sections"]["MapSettings"]["Location"] = createSelect([
+                                    0
+                                ], {
+                                    "className": "VisualOptionLocation",
+                                    "onchange": setCurrentLocation.bind(undefined, true)
+                                })
+                            ]
+                        }),
+                        GameStarter.createElement("div", {
                             "className": "EditorMapSettingsGroup",
                             "children": [
                                 GameStarter.createElement("h4", {
@@ -990,20 +1013,6 @@ function LevelEditr(settings) {
                             "children": [
                                 GameStarter.createElement("h4", {
                                     "textContent": "Location"
-                                }),
-                                GameStarter.createElement("div", {
-                                    "className": "EditorMapSettingsSubGroup",
-                                    "children": [
-                                        GameStarter.createElement("label", {
-                                            "textContent": "Current Location"
-                                        }),
-                                        display["sections"]["MapSettings"]["Location"] = createSelect([
-                                            0
-                                        ], {
-                                            "className": "VisualOptionLocation",
-                                            "onchange": setCurrentLocation.bind(undefined, true)
-                                        })
-                                    ]
                                 }),
                                 GameStarter.createElement("div", {
                                     "className": "EditorMapSettingsSubGroup",
@@ -1059,13 +1068,13 @@ function LevelEditr(settings) {
                         }),
                         GameStarter.createElement("div", {
                             "className": "EditorMenuOption",
-                            "textContent": "+ Add Location",
-                            "onclick": addLocationToMap
+                            "textContent": "+ Add Area",
+                            "onclick": addAreaToMap
                         }),
                         GameStarter.createElement("div", {
                             "className": "EditorMenuOption",
-                            "textContent": "+ Add Area",
-                            "onclick": addAreaToMap
+                            "textContent": "+ Add Location",
+                            "onclick": addLocationToMap
                         })
                     ]
                 }),
@@ -1085,6 +1094,9 @@ function LevelEditr(settings) {
                             "className": "EditorJSONInfo"
                         })
                     ]
+                }),
+                display["sections"]["ClickToPlace"]["VisualSummary"] = GameStarter.createElement("div", {
+                    "className": "EditorVisualSummary",
                 }),
                 display["sections"]["ClickToPlace"]["VisualOptions"] = GameStarter.createElement("div", {
                     "className": "EditorVisualOptions",
@@ -1163,6 +1175,7 @@ function LevelEditr(settings) {
      * 
      */
     function setSectionClickToPlaceThings(event) {
+        setCurrentClickMode("Thing")
         GameStarter.container.onclick = onClickEditingThing;
         display.sections.ClickToPlace.VisualOptions.style.display = "block";
         display.sections.ClickToPlace.Things.style.display = "block";
@@ -1175,6 +1188,7 @@ function LevelEditr(settings) {
      * 
      */
     function setSectionClickToPlaceMacros(event) {
+        setCurrentClickMode("Macro");
         GameStarter.container.onclick = onClickEditingMacro;
         display.sections.ClickToPlace.VisualOptions.style.display = "block";
         display.sections.ClickToPlace.Things.style.display = "none";
@@ -1238,6 +1252,8 @@ function LevelEditr(settings) {
                 })
             }));
         }
+        
+        display["sections"]["ClickToPlace"]["VisualSummary"].textContent = name;
     }
     
     /**
@@ -1291,7 +1307,7 @@ function LevelEditr(settings) {
                             }),
                             children = [input];
                         
-                        input.setAttribute("data:mod", 8);
+                        input.setAttribute("data:mod", modReal);
                         
                         if(option["Infinite"]) {
                             var valueOld,

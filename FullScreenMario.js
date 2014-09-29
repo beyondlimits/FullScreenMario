@@ -1478,6 +1478,26 @@ window.FullScreenMario = (function() {
         }
     }
     
+    /**
+     * 
+     * 
+     * @param {Thing} thing   A character attached to other
+     * @param {Other} other   A solid the thing is attached to
+     */
+    function unattachPlayer(thing, other) {
+        thing.nofall = false;
+        thing.nocollide = false;
+        thing.skipoverlaps = false;
+        thing.attachedSolid = undefined;
+        thing.xvel = thing.keys.run;
+        thing.movement = thing.EightBitter.movePlayer;
+        
+        thing.EightBitter.addClass(thing, "jumping");
+        thing.EightBitter.removeClasses(thing, "climbing", "animated");
+        
+        other.attachedCharacter = undefined;
+    }
+    
     
     /* Spawn / activate functions
     */
@@ -2177,12 +2197,32 @@ window.FullScreenMario = (function() {
         }
         
         other.attachedCharacter = thing;
-        thing.attachedSolid = vine;
+        thing.attachedSolid = other;
         
         thing.nofall = true;
         thing.skipoverlaps = true;
+        thing.resting = undefined;
         
+        // To the left of the vine
+        if(thing.right < other.right) {
+            thing.lookleft = false;
+            thing.moveleft = false;
+            thing.attachedDirection = -1;
+            thing.EightBitter.unflipHoriz(thing);
+        }
+        // To the right of the vine
+        else {
+            thing.lookleft = true;
+            thing.moveleft = true;
+            thing.attachedDirection = 1;
+            thing.EightBitter.flipHoriz(thing);
+        }
+        
+        thing.EightBitter.addClass(thing, "climbing");
+        thing.EightBitter.removeClasses(thing, "running", "jumping", "skidding");
         thing.EightBitter.thingStoreVelocity(thing);
+        thing.EightBitter.TimeHandler.clearClassCycle(thing, "running");
+        thing.EightBitter.TimeHandler.addClassCycle(thing, ["one", "two"], "climbing");
         
         thing.attachedLeft = !thing.EightBitter.objectToLeft(thing, other);
         thing.attachedOff = thing.attachedLeft ? 1 : -1;
@@ -2672,7 +2712,7 @@ window.FullScreenMario = (function() {
         }
         
         if(thing.attachedCharacter) {
-            thing.EightBitter.shiftVert(thing.attachedCharacter, thing.speed); 
+            thing.EightBitter.shiftVert(thing.attachedCharacter, -thing.speed); 
         }
     }
     
@@ -3095,6 +3135,69 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function movePlayerVine(thing) {
+        var attachedSolid = thing.attachedSolid,
+            animatedClimbing;
+        
+        if(!attachedSolid) {
+            thing.movement = thing.EightBitter.movePlayer;
+            return;
+        }
+        
+        if(thing.bottom < thing.attachedSolid.top) {
+            thing.EightBitter.unattachPlayer(thing, thing.attachedSolid);
+            return;
+        }
+        
+        // Running away from the vine means dropping off
+        if(thing.keys.run !== 0 && thing.keys.run === thing.attachedDirection) {
+            // Leaving to the left
+            if(thing.attachedDirection === -1) {
+                thing.EightBitter.setRight(thing, attachedSolid.left - thing.EightBitter.unitsize);
+            }
+            // Leaving to the right
+            else if(thing.attachedDirection === 1) {
+                thing.EightBitter.setLeft(thing, attachedSolid.right + thing.EightBitter.unitsize);
+            }
+            
+            thing.EightBitter.unattachPlayer(thing, attachedSolid);
+            return;
+        }
+        
+        // If the player is moving up, simply move up
+        if(thing.keys.up) {
+            animatedClimbing = true;
+            thing.EightBitter.shiftVert(thing, thing.EightBitter.unitsize / -4);
+        }
+        // If the thing is moving down, move down and check for unattachment
+        else if(thing.keys.crouch) {
+            animatedClimbing = true;
+            thing.EightBitter.shiftVert(thing, thing.EightBitter.unitsize / 2);
+            if(thing.top > attachedSolid.bottom) {
+                thing.EightBitter.unattachPlayer(thing, thing.attachedSolid);
+            }
+            return;
+        } else {
+            animatedClimbing = false;
+        }
+        
+        
+        if(animatedClimbing && !thing.animatedClimbing) {
+            thing.EightBitter.addClass(thing, "animated");
+        } else if(!animatedClimbing && thing.animatedClimbing) {
+            thing.EightBitter.removeClass(thing, "animated");
+        }
+        
+        thing.animatedClimbing = animatedClimbing;
+        
+        if(thing.bottom < thing.EightBitter.MapScreener.top - thing.EightBitter.unitsize * 4) {
+            thing.EightBitter.setLocation(thing.attachedSolid.entrance);
+        }
+    }
+    
+    /**
+     * 
+     */
     function movePlayerSpringboardDown(thing) {
         var other = thing.spring;
         
@@ -3290,6 +3393,10 @@ window.FullScreenMario = (function() {
         thing.EightBitter.TimeHandler.addEvent(function () {
             thing.nocollide = false;
         }, 14);
+        
+        thing.EightBitter.TimeHandler.addEvent(function () {
+            thing.movement = undefined;
+        }, 700);
     }
     
     /**
@@ -3790,7 +3897,7 @@ window.FullScreenMario = (function() {
         
         thing.xvel = 1.4;
         thing.yvel = -1.4;
-        thing.nocollide = thing.nofall = thing.climbing = false;
+        thing.nocollide = thing.nofall = false;
         thing.gravity = thing.EightBitter.MapScreener.gravity / 14;
         
         thing.EightBitter.TimeHandler.addEvent(function () {
@@ -3935,13 +4042,13 @@ window.FullScreenMario = (function() {
         // Case: other is to the left
         if(other.right <= thing.left) {
             thing.lookleft = true;
-            thing.moveleft = false;
+            thing.moveleft = true;
             thing.EightBitter.unflipHoriz(thing);
         }
         // Case: other is to the right
         else if(other.left >= thing.right) {
             thing.lookleft = false;
-            thing.moveleft = true;
+            thing.moveleft = false;
             thing.EightBitter.flipHoriz(thing);
         }
     }
@@ -5230,6 +5337,7 @@ window.FullScreenMario = (function() {
         "setPlayerSizeSmall": setPlayerSizeSmall,
         "setPlayerSizeLarge": setPlayerSizeLarge,
         "animatePlayerRemoveCrouch": animatePlayerRemoveCrouch,
+        "unattachPlayer": unattachPlayer,
         // Spawn / actions
         "spawnHammerBro": spawnHammerBro,
         "spawnBowser": spawnBowser,
@@ -5293,6 +5401,7 @@ window.FullScreenMario = (function() {
         "moveLakituInitial": moveLakituInitial,
         "moveCoinEmerge": moveCoinEmerge,
         "movePlayer": movePlayer,
+        "movePlayerVine": movePlayerVine,
         "movePlayerSpringboardDown": movePlayerSpringboardDown,
         // Animations
         "animateSolidBump": animateSolidBump,

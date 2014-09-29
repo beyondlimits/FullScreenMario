@@ -180,7 +180,6 @@ function MapsCreatr(settings) {
         // Parse all the Location objects (works for both Arrays and Objects)
         for(i in locations_raw) {
             if(locations_raw.hasOwnProperty(i)) {
-                window.durp = locations_raw[i];
                 obj = locations_parsed[i] = ObjectMaker.make("Location", locations_raw[i]);
                 
                 // Location entrances should actually be the keyed functions

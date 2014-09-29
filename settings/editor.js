@@ -164,18 +164,10 @@
         "description": "Place a bunch of Things at once, as a grid.",
         "options": {
             "thing": "Everything",
-            "xnum": "Number",
-            "ynum": "Number",
-            "xwidth": {
-                "type": "Number",
-                "value": 8,
-                "mod": 4
-            },
-            "ywidth": {
-                "type": "Number",
-                "value": 8,
-                "mod": 4
-            }
+            "xnum": 1,
+            "ynum": 1,
+            "xwidth": 8,
+            "ywidth": 8
         }
     },
     "Pattern": {

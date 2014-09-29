@@ -174,6 +174,16 @@
 /* EditorVisualOptions
 */
 
+.LevelEditor .EditorVisualSummary {
+    margin: 42px 7px;
+    opacity: 0;
+    transition: 117ms opacity;
+}
+
+.LevelEditor.minimized .EditorVisualSummary {
+    opacity: 1;
+}
+
 .LevelEditor .EditorVisualOptions {
     position: absolute;
     top: 0;
@@ -208,7 +218,7 @@
 }
 
 .LevelEditor .EditorVisualOptions .VisualOptionValue {
-    max-width: 98%;
+    max-width: 117px;
 }
 
 .LevelEditor .EditorVisualOptions .VisualOptionInfiniter,
