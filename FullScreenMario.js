@@ -5516,11 +5516,7 @@ window.FullScreenMario = (function() {
         "macroPlatformGenerator": macroPlatformGenerator,
         "macroStartInsideCastle": macroStartInsideCastle,
         "macroEndOutsideCastle": macroEndOutsideCastle,
-        "macroEndInsideCastle": macroEndInsideCastle,
-        "random": function () {
-            console.log("Should create seeded random.");
-            return Math.random();
-        }
+        "macroEndInsideCastle": macroEndInsideCastle
     });
     
     return FullScreenMario;

@@ -20,7 +20,7 @@
                     { "location": 0 },
                     { "macro": "Pattern", "pattern": "BackRegular", "repeat": 5 },
                     { "macro": "Floor", "width": 552 },
-                    { "thing": "Block", "x": 128, "y": 32, "contents": ["Vine", { "entrance": 1 }] },
+                    { "thing": "Block", "x": 128, "y": 32 },
                     { "thing": "Brick", "x": 160, "y": 32 },
                     { "thing": "Block", "x": 168, "y": 32, "contents": "Mushroom" },
                     { "thing": "Goomba", "x": 176, "y": 8 },

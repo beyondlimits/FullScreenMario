@@ -391,13 +391,67 @@ window.EightBittr = (function() {
      */
     function ensureCorrectCaller(current) {
         if(!current instanceof EightBittr) {
-            throw new Error("A function that requires the caller ('this') to "
-                + "be the manipulated EightBittr object. Unfortunately, 'this' "
-                + "is a " + typeof(this) + ".");
+            throw new Error("A function requires the caller ('this') to be the "
+                + "manipulated EightBittr object. Unfortunately, 'this' is a "
+                + typeof(this) + ".");
         }
         return current;
     }
     
+    
+    /* Randomization
+    */
+    
+    /**
+     * 
+     */
+    function random() {
+        EightBittr.ensureCorrectCaller(this);
+        
+        console.log("Bugh random");
+        return Math.random();
+    }
+    
+    /**
+     * 
+     */
+    function randomInteger() {
+        EightBittr.ensureCorrectCaller(this);
+        
+        // 1 argument: return [0, Number1]
+        if(arguments.length === 1) {
+            return Math.round(this.random() * arguments[0]);
+        } 
+        // 2 arguments: return (Number1, Number2]
+        else if(arguments.length === 2) {
+            return Math.round(this.random() * (arguments[1] - arguments[0])) + arguments[0];
+        } 
+        // ? arguments: error!
+        else {
+            throw new Error("randomInteger expects 1 or 2 arguments.");
+        }
+    }
+    
+    /**
+     * 
+     */
+    function randomDouble() {
+        EightBittr.ensureCorrectCaller(this);
+        
+        // 1 argument: return [0, Number1]
+        if(arguments.length === 1) {
+            return this.random() * arguments[0];
+        } 
+        // 2 arguments: return (Number1, Number2]
+        else if(arguments.length === 2) {
+            return this.random() * (arguments[1] - arguments[0]) + arguments[0];
+        } 
+        // ? arguments: error!
+        else {
+            throw new Error("randomDouble expects 1 or 2 arguments.");
+        }
+        
+    }
     
     /* General utilities
     */
@@ -632,6 +686,10 @@ window.EightBittr = (function() {
         "slideToX": slideToX,
         // EightBittr utilities
         "ensureCorrectCaller": ensureCorrectCaller,
+        // Randomization
+        "random": random,
+        "randomInteger": randomInteger,
+        "randomDouble": randomDouble,
         // General utilities
         "proliferate": proliferate,
         "proliferateHard": proliferateHard,
