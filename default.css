@@ -192,6 +192,7 @@ section#game {
 
 #controls table {
     width: 100%;
+    border-spacing: 1px;
 }
 
 #controls .maps-grid-option {
@@ -201,7 +202,7 @@ section#game {
 
 #controls .maps-grid-option-extra {
     display: block;
-    margin: 0 3px 0 2px;
+    margin: 0 2px 0 1px;
     padding: 3px 0;
 }
 
