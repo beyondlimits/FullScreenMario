@@ -95,6 +95,17 @@ function MapsCreatr(settings) {
         if(!map) {
             throw new Error("No map found under: " + name);
         }
+        
+        if(!map.initialized) {
+            // Set the one-to-many Map->Area relationships within the Map
+            setMapAreas(map);
+            
+            // Set the one-to-many Area->Location relationships within the Map
+            setMapLocations(map);    
+            
+            map.initialized = true;
+        }
+        
         return map;
     };
     
@@ -140,11 +151,11 @@ function MapsCreatr(settings) {
             throw new Error("Maps cannot be used with no locations: " + name);
         }
         
-        // Set the one-to-many Map->Area relationships within the Map
-        setMapAreas(map);
+        // // Set the one-to-many Map->Area relationships within the Map
+        // setMapAreas(map);
         
-        // Set the one-to-many Area->Location relationships within the Map
-        setMapLocations(map);
+        // // Set the one-to-many Area->Location relationships within the Map
+        // setMapLocations(map);
         
         maps[name] = map;
         return map;

@@ -66,6 +66,7 @@
         else {
             this.background = "#5c94fc";
         }
+        console.log("areasetbackground", this);
     }
 
     FullScreenMario.prototype.settings.objects = {
@@ -198,7 +199,8 @@
         },
         "properties": {
             "Map": {
-                "toJSON": MapToJSON,
+                "initialized": false,
+                "toJSON": MapToJSON
             },
             "Area": {
                 "onMake": AreaSetBackground,
@@ -215,7 +217,7 @@
                 "nokeys": false,
                 "attributes": {
                     "underwater": {
-                        "gravity": FullScreenMario.gravity / 2.8
+                        "gravity": FullScreenMario.gravity / 2.8,
                     }
                 }
             },

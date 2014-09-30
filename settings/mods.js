@@ -63,8 +63,8 @@ FullScreenMario.prototype.settings.mods = {
                     };
                 })({
                     "Underwater": {
-                        "0": "#77CCAA",
-                        "1": "#2149BB"
+                        "0": "#357749",
+                        "1": "#2149CC"
                     },
                     "Night": {
                         "0": "#000000",
