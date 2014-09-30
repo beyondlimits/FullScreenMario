@@ -66,7 +66,6 @@
         else {
             this.background = "#5c94fc";
         }
-        console.log("areasetbackground", this);
     }
 
     FullScreenMario.prototype.settings.objects = {

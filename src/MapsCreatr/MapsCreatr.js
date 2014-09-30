@@ -84,7 +84,9 @@ function MapsCreatr(settings) {
     };
     
     /**
-     * Simple getter for a map under the maps container
+     * Simple getter for a map under the maps container. If the map has not been
+     * initialized (had its areas and locations set), that is done here as lazy
+     * loading.
      * 
      * @param {Mixed} name   A key to find the map under. This will typically be
      *                       a String.
@@ -128,7 +130,8 @@ function MapsCreatr(settings) {
     
     /**
      * Creates and stores a new map. The internal ObjectMaker factory is used to
-     * auto-generate it based on a given settings object.
+     * auto-generate it based on a given settings object. The actual loading of
+     * areas and locations is deferred to self.getMap as lazy loading.
      * 
      * @param {Mixed} name   A name under which the map should be stored, 
      *                       commonly a String or Array.
@@ -140,7 +143,7 @@ function MapsCreatr(settings) {
         var map = ObjectMaker.make("Map", settings);
         
         if(!name) {
-            throw new Error("Map cannot be created with no name.");
+            throw new Error("Maps cannot be created with no name.");
         }
         
         if(!map.areas) {
@@ -150,12 +153,6 @@ function MapsCreatr(settings) {
         if(!map.locations) {
             throw new Error("Maps cannot be used with no locations: " + name);
         }
-        
-        // // Set the one-to-many Map->Area relationships within the Map
-        // setMapAreas(map);
-        
-        // // Set the one-to-many Area->Location relationships within the Map
-        // setMapLocations(map);
         
         maps[name] = map;
         return map;

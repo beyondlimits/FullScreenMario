@@ -4692,6 +4692,10 @@ window.FullScreenMario = (function() {
      * @notes thing is player, other is pipe
      */
     function mapExitPipeHorizontal(thing, other) {
+        if(!thing.resting && !thing.paddling) {
+            return;
+        }
+        
         thing.EightBitter.animatePlayerPipingStart(thing);
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
