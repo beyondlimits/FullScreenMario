@@ -198,7 +198,7 @@
         },
         "properties": {
             "Map": {
-                "toJSON": MapToJSON
+                "toJSON": MapToJSON,
             },
             "Area": {
                 "onMake": AreaSetBackground,
@@ -213,6 +213,11 @@
                 "underwater": false,
                 "notime": false,
                 "nokeys": false,
+                "attributes": {
+                    "underwater": {
+                        "gravity": FullScreenMario.gravity / 2.8
+                    }
+                }
             },
             "Location": {
                 "area": 0,

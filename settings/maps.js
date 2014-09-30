@@ -12,6 +12,30 @@ FullScreenMario.prototype.settings.maps = {
         "nokeys",
         "canscroll"
     ],
+    "screen_variables": {
+        "bottom_death_difference": function (EightBitter) {
+            return EightBitter.unitsize * 12;
+        },
+        "bottom_platform_max": function (EightBitter) {
+            var area = EightBitter.MapsHandler.getArea(),
+                diff = EightBitter.MapScreener.bottom_death_difference;
+                
+            if(!area) {
+                return -1;
+            }
+                
+            return (area.floor + diff) * EightBitter.unitsize;
+        },
+        "gravity": function (EightBitter) {
+            var area = EightBitter.MapsHandler.getArea();
+            
+            if(area && area.underwater) {
+                return EightBitter.gravity / 2.8;
+            }
+            
+            return EightBitter.gravity;
+        }
+    },
     "on_spawn": function (prething, xloc) {
         var thing = prething.thing,
             position = prething.position || thing.position;

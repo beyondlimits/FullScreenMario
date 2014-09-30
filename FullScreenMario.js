@@ -72,7 +72,6 @@ window.FullScreenMario = (function() {
                     "collisions": "settings/collisions.js",                    "events": "settings/events.js",
                     "maps": "settings/maps.js",                    "quadrants": "settings/quadrants.js",
                     "runner": "settings/runner.js",
-                    "screen": "settings/screen.js",
                     "sprites": "settings/sprites.js",
                     "statistics": "settings/statistics.js"                }            },            "resets": [
                 resetPixelRender,                resetPixelDrawer,                resetTimeHandler,
@@ -243,15 +242,16 @@ window.FullScreenMario = (function() {
      * Sets self.MapScreener
      * 
      * @remarks Requirement(s): MapScreenr (src/MapScreenr/MapScreenr.js)
-     *                          screen.js (settings/screen.js)
+     *                          maps.js (settings/maps.js)
      */
     function resetMapScreener(self, customs) {
-        self.MapScreener = new MapScreenr(proliferate({
+        self.MapScreener = new MapScreenr({
             "unitsize": FullScreenMario.unitsize,
             "width": customs.width,
             "height": customs.height,
-            "variable_args": [self]
-        }, self.settings.screen));
+            "variable_args": [self],
+            "variables": self.settings.maps.screen_variables
+        });
     }
     
     /**

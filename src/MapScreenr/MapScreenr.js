@@ -70,6 +70,7 @@ function MapScreenr(settings) {
      * 
      */
     self.setVariables = function () {
+        console.log(variables);
         for(var i in variables) {
             self[i] = variables[i].apply(self, variable_args);
         }
