@@ -726,14 +726,16 @@ window.FullScreenMario = (function() {
 
         // Player is falling
         if (player.yvel > 0) {
-            if (!EightBitter.MapScreener.underwater) player.keys.jump = 0;
+            if (!EightBitter.MapScreener.underwater) {
+                player.keys.jump = 0;
+            }
             // Jumping?
             if (!player.jumping) {
                 // Paddling? (from falling off a solid)
                 if (EightBitter.MapScreener.underwater) {
                     if (!player.paddling) {
-                        switchClass(player, "paddling", "paddling");
-                        player.padding = true;
+                        EightBitter.switchClass(player, "paddling", "paddling");
+                        player.paddling = true;
                     }
                 } else {
                     EightBitter.addClass(player, "jumping");
@@ -2976,6 +2978,7 @@ window.FullScreenMario = (function() {
                 && (thing.yvel <= 0 || thing.EightBitter.MapScreener.underwater)) {
             if(thing.EightBitter.MapScreener.underwater) {
                 thing.EightBitter.animatePlayerPaddling(thing);
+                thing.EightBitter.removeClass(thing, "running");
             }
             
             if(thing.resting) {
@@ -3180,7 +3183,6 @@ window.FullScreenMario = (function() {
         } else {
             animatedClimbing = false;
         }
-        
         
         if(animatedClimbing && !thing.animatedClimbing) {
             thing.EightBitter.addClass(thing, "animated");
@@ -3833,8 +3835,17 @@ window.FullScreenMario = (function() {
                     return thing.paddling = false;
                 },
                 "paddling_cycle", 3]);
-            thing.paddling = thing.swimming = true;
-            thing.yvel = thing.EightBitter.unitsize * -.84;
+        }
+        thing.paddling = thing.swimming = true;
+        thing.yvel = thing.EightBitter.unitsize * -.84;
+    }
+    
+    /**
+     * 
+     */
+    function animatePlayerLanding(thing) {
+        if(thing.EightBitter.MapScreener.underwater) {
+            thing.EightBitter.removeClass(thing, "paddling");
         }
     }
     
@@ -5432,6 +5443,7 @@ window.FullScreenMario = (function() {
         "animateCastleChainOpen": animateCastleChainOpen,
         "animatePlayerFire": animatePlayerFire,
         "animatePlayerPaddling": animatePlayerPaddling,
+        "animatePlayerLanding": animatePlayerLanding,
         "animatePlayerBubbling": animatePlayerBubbling,
         "animatePlayerRunningCycle": animatePlayerRunningCycle,
         "animatePlayerPipingStart": animatePlayerPipingStart,

@@ -293,6 +293,7 @@
                 fire: FullScreenMario.prototype.animatePlayerFire,
                 movement: FullScreenMario.prototype.movePlayer,
                 death: FullScreenMario.prototype.killPlayer,
+                onResting: FullScreenMario.prototype.animatePlayerLanding,
                 type: "character",
                 name: "player normal small still",
                 getKeys: function () {
