@@ -1653,7 +1653,7 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
-    function activateSection(thing) {
+    function activateSectionBefore(thing) {
         var EightBitter = thing.EightBitter,
             MapsCreator = EightBitter.MapsCreator,
             MapScreener = EightBitter.MapScreener,
@@ -1663,27 +1663,49 @@ window.FullScreenMario = (function() {
             prethings = MapsHandler.getPreThings(),
             section = area.sections[thing.section || 0],
             left = (thing.left + MapScreener.left) / EightBitter.unitsize,
-            before = section.before,
-            command;
+            before = section.before ? section.before.things : undefined,
+            command, i;
         
-        console.log("Placing at left", thing.left, left);
-        
-        // Parse each command from into the current prethings array
-        for(var i = 0; i < before.length; i += 1) {
-            // A copy of the command must be used, so the original isn't modified
-            command = EightBitter.proliferate({}, before[i]);
-            
-            // The command's x-location must be shifted by the thing's placement
-            if(!command.x) {
-                command.x = left;
-            } else {
-                command.x += left;
+        // If there is a before, parse each command into the current prethings array
+        if(before) {
+            for(var i = 0; i < before.length; i += 1) {
+                // A copy of the command must be used, so the original isn't modified
+                command = EightBitter.proliferate({}, before[i]);
+                
+                // The command's x-location must be shifted by the thing's placement
+                if(!command.x) {
+                    command.x = left;
+                } else {
+                    command.x += left;
+                }
+                
+                MapsCreator.analyzePreSwitch(command, prethings, area, map);
             }
+            
+            // Add a prething at the end of all this to trigger the stretch part
+            command = {
+                "thing": "DetectWindow", "x": left + section.before.width, "y": 0, "activate": EightBitter.activateSectionStretch 
+            };
             
             MapsCreator.analyzePreSwitch(command, prethings, area, map);
         }
         
+        
         EightBitter.MapsHandler.spawnMap(MapScreener.width);
+    }
+    
+    /**
+     * 
+     */
+    function activateSectionStretch(thing) {
+        
+    }
+    
+    /**
+     * 
+     */
+    function activateSectionAfter(thing) {
+        
     }
     
     
@@ -5299,9 +5321,11 @@ window.FullScreenMario = (function() {
         console.warn("macroEndOutsideCastle: thing.active, etc. should give strings");
         output = [
             // Initial collision detector
-            { thing: "DetectCollision", x: x + 8, y: y + 108, height: 100, 
-                    activate: FullScreenMario.prototype.collideFlagTop,
-                    activate_fail: FullScreenMario.prototype.killNormal },
+            {
+                thing: "DetectCollision", x: x + 8, y: y + 108, height: 100, 
+                activate: FullScreenMario.prototype.collideFlagTop,
+                activate_fail: FullScreenMario.prototype.killNormal 
+            },
             // Flag (scenery)
             { thing: "Flag", x: x - 4.5, y: y + 79.5, "id": "endflag" },
             { thing: "FlagTop", x: x + 1.5, y: y + 84 },
@@ -5392,7 +5416,7 @@ window.FullScreenMario = (function() {
      */
     function macroSection(reference, prethings, area, map, scope) {
         return [
-            { "thing": "DetectWindow", "x": reference.x, "y": reference.y, "activate": scope.activateSection }
+            { "thing": "DetectWindow", "x": reference.x, "y": reference.y, "activate": scope.activateSectionBefore }
         ];
     }
      
@@ -5454,7 +5478,9 @@ window.FullScreenMario = (function() {
         "spawnDetector": spawnDetector,
         "activateWindowDetector": activateWindowDetector,
         "activateScrollBlocker": activateScrollBlocker,
-        "activateSection": activateSection,
+        "activateSectionBefore": activateSectionBefore,
+        "activateSectionStretch": activateSectionStretch,
+        "activateSectionAfter": activateSectionAfter,
         // Collision / actions
         "hitCharacterSolid": hitCharacterSolid,
         "hitCharacterCharacter": hitCharacterCharacter,

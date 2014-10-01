@@ -1429,28 +1429,35 @@
                 ],
                 "sections": [
                     {
-                        "before": [
-                            { "macro": "Floor", "width": 400 },
-                            { "thing": "Stone", "y": 88, "width": 400 },
-                            { "thing": "Stone", "x": 16, "y": 56, "width": 48, "height": 32 },
-                            { "macro": "Fill", "thing": "Stone", "x": 72, "y": 56, "xnum": 5, "xwidth": 16, "height": 32 },
-                            { "thing": "Stone", "x": 152, "y": 56, "width": 24, "height": 32 },
-                            { "thing": "Stone", "x": 176, "y": 56, "width": 48 },
-                            { "macro": "Pipe", "x": 192, "height": 24, "piranha": true },
-                            { "thing": "Stone", "x": 224, "y": 56, "width": 136, "height": 32 },
-                            { "thing": "CastleBlock", "x": 296, "y": 56, "fireballs": 6, "hidden": true },
-                            { "macro": "SectionFail", "x": 384, "y": 24, "width": 40, "height": 24 },
-                            { "macro": "SectionPass", "x": 394, "y": 80, "width": 40, "height": 24 },
-                            { "thing": "CastleBlock", "x": 352, "y": 32, "fireballs": 6, "hidden": true },
-                        ],
-                        "stretch": [
-                            { "macro": "Floor" },
-                            { "thing": "Stone", "y": 56, "height": 32 },
-                            { "thing": "Stone", "y": 88 }
-                        ],
-                        "after": [
-                            { "macro": "Section", "section": 1 }
-                        ]
+                        "before": {
+                            "width": 400,
+                            "things": [
+                                { "macro": "Floor", "width": 400 },
+                                { "thing": "Stone", "y": 88, "width": 400 },
+                                { "thing": "Stone", "x": 16, "y": 56, "width": 48, "height": 32 },
+                                { "macro": "Fill", "thing": "Stone", "x": 72, "y": 56, "xnum": 5, "xwidth": 16, "height": 32 },
+                                { "thing": "Stone", "x": 152, "y": 56, "width": 24, "height": 32 },
+                                { "thing": "Stone", "x": 176, "y": 56, "width": 48 },
+                                { "macro": "Pipe", "x": 192, "height": 24, "piranha": true },
+                                { "thing": "Stone", "x": 224, "y": 56, "width": 136, "height": 32 },
+                                { "thing": "CastleBlock", "x": 296, "y": 56, "fireballs": 6, "hidden": true },
+                                { "macro": "SectionFail", "x": 384, "y": 24, "width": 40, "height": 24 },
+                                { "macro": "SectionPass", "x": 394, "y": 80, "width": 40, "height": 24 },
+                                { "thing": "CastleBlock", "x": 352, "y": 32, "fireballs": 6, "hidden": true },
+                            ]
+                        },
+                        "stretch": {
+                            "things": [
+                                { "macro": "Floor" },
+                                { "thing": "Stone", "y": 56, "height": 32 },
+                                { "thing": "Stone", "y": 88 }
+                            ]
+                        },
+                        "after": {
+                            "things": [
+                                { "macro": "Section", "section": 1 }
+                            ]
+                        }
                     },
                     {
                         "before": [
@@ -2553,12 +2560,17 @@
                 ],
                 "sections": [
                     {
-                        "before": [
-                            
-                        ],
-                        "stretch": [
-                            
-                        ]
+                        "before": {
+                            "width": 0,
+                            "things": [
+                                
+                            ]
+                        },
+                        "stretch": {
+                            "things": [
+                                
+                            ]
+                        }
                     }
                 ]
             }
@@ -2903,25 +2915,31 @@
                 ],
                 "sections": [
                     {
-                        "stretch": [
-                            { "macro": "Floor" },
-                            { "thing": "Stone", "y": 88 },
-                            { "macro": "SectionFail", "y": 80, "height": 80 },
-                        ],
-                        "after": [
-                            { "macro": "Pipe", "y": 16, "height": "Infinity", "piranha": true, "transport": 1 },
-                            { "macro": "Floor", "x": 16, "width": 72 },
-                            { "macro": "Fill", "thing": "Goomba", "x": 36, "y": 8, "xnum": 3, "xwidth": 12 },
-                            { "macro": "Floor", "x": 88, "y": 24, "width": 32 },
-                            { "macro": "Water", "x": 120, "width": 136 },
-                            { "thing": "Platform", "x": 152, "width": 16, "sliding": true, "start": 140, "end": 232, "speed": 2 },
-                            { "macro": "Floor", "x": 256, "y": 24, "width": 48 },
-                            { "thing": "Stone", "x": 264, "y": 56, "width": 32 },
-                            { "macro": "Pipe", "x": 304, "y": 40, "height": "Infinity", "piranha": true, "transport": 2 },
-                            { "macro": "Floor", "x": 320, "y": 24, "width": 56 },
-                            { "macro": "Pipe", "x": 376, "y": 48, "height": "Infinity", "piranha": true },
-                            { "macro": "Floor", "x": 392, "y": 24, "width": 32 },
-                        ]
+                        "stretch": {
+                            "width": 8,
+                            "things": [
+                                { "macro": "Floor" },
+                                { "thing": "Stone", "y": 88 },
+                                { "macro": "SectionFail", "y": 80, "height": 80 },
+                            ]
+                        },
+                        "after": {
+                            "width": 424,
+                            "things": [
+                                { "macro": "Pipe", "y": 16, "height": "Infinity", "piranha": true, "transport": 1 },
+                                { "macro": "Floor", "x": 16, "width": 72 },
+                                { "macro": "Fill", "thing": "Goomba", "x": 36, "y": 8, "xnum": 3, "xwidth": 12 },
+                                { "macro": "Floor", "x": 88, "y": 24, "width": 32 },
+                                { "macro": "Water", "x": 120, "width": 136 },
+                                { "thing": "Platform", "x": 152, "width": 16, "sliding": true, "start": 140, "end": 232, "speed": 2 },
+                                { "macro": "Floor", "x": 256, "y": 24, "width": 48 },
+                                { "thing": "Stone", "x": 264, "y": 56, "width": 32 },
+                                { "macro": "Pipe", "x": 304, "y": 40, "height": "Infinity", "piranha": true, "transport": 2 },
+                                { "macro": "Floor", "x": 320, "y": 24, "width": 56 },
+                                { "macro": "Pipe", "x": 376, "y": 48, "height": "Infinity", "piranha": true },
+                                { "macro": "Floor", "x": 392, "y": 24, "width": 32 },
+                            ]
+                        }
                     },
                 ]
             },
