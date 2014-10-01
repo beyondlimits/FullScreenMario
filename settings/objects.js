@@ -1,73 +1,4 @@
 (function () {
-    /**
-     * 
-     */
-    function MapToJSON() {
-        return {
-            "name": this.name,
-            "areas": this.areas.map(function (area) {
-                return area.toJSON();
-            }),
-            "locations": this.locations.map(function (location) {
-                return location.toJSON();
-            })
-        };
-    }
-    
-    /**
-     * 
-     */
-    function AreaToJSON() {
-        return {
-            "name": this.name,
-            "creation": {},
-            "setting": this.setting
-        };
-    }
-    
-    /**
-     * 
-     */
-    function LocationToJSON() {
-        return {
-            "name": this.name,
-            "area": this.area,
-            "entry": this.entry
-        };
-    }
-    
-    /**
-     * 
-     */
-    function ThingToJSON() {
-        return "hi";
-        // return this.EightBitter.proliferate({}, this.attributes);
-    }
-    
-    /**
-     * This is used as the OnMake callback for areas. In the future, it would be
-     * better to make areas inherit from base area types (Overworld, etc.) so 
-     * this inelegant switch statement doesn't have to be used.
-     */
-    function AreaSetBackground() {
-        var setting = this.setting;
-        
-        // Underwater: always a dark blue
-        if(this.setting.indexOf("Underwater") !== -1) {
-            this.background = "#2038ec";
-        } 
-        // Underworld, Castle, and all Nights: black
-        else if(this.setting.indexOf("Underworld") !== -1
-                || this.setting.indexOf("Castle") !== -1
-                || this.setting.indexOf("Night") !== -1) {
-            this.background = "#000000";
-        } 
-        // Default (typically Overworld): sky blue
-        else {
-            this.background = "#5c94fc";
-        }
-    }
-
     FullScreenMario.prototype.settings.objects = {
         "on_make": "onMake",
         "store_type": "title",
@@ -137,6 +68,7 @@
                     "CastleBridge": {},
                     "CastleChain": {},
                     "Coral": {},
+                    "WaterBlocker": {},
                     "detector": {
                         "DetectCollision": {
                             "LevelTransport": {}
@@ -145,7 +77,7 @@
                             "ScrollBlocker": {}
                         },
                         "DetectSpawn": {}
-                    },
+                    }
                 },
                 "scenery": {
                     "Blank": {},
@@ -199,11 +131,9 @@
         "properties": {
             "Map": {
                 "initialized": false,
-                "toJSON": MapToJSON
             },
             "Area": {
-                "onMake": AreaSetBackground,
-                "toJSON": AreaToJSON,
+                "onMake": FullScreenMario.prototype.initializeArea,
                 "floor": 104,
                 "time": 400,
                 "jumpmod": 1.056,
@@ -214,19 +144,24 @@
                 "underwater": false,
                 "notime": false,
                 "nokeys": false,
+                // Why are these not being applied?
+                // Will have to put into initializeARea
                 "attributes": {
                     "underwater": {
+                        // Bubbling?
                         "gravity": FullScreenMario.gravity / 2.8,
+                        "stretches": [
+                            { "thing": "WaterBlocker", "y": 104, "height": 16 },
+                            { "thing": "Water", "y": 88 }
+                        ]
                     }
                 }
             },
             "Location": {
                 "area": 0,
-                "entry": "Normal",
-                "toJSON": LocationToJSON
+                "entry": "Normal"
             },
             Thing: {
-                toJSON: ThingToJSON,
                 // Sizing
                 width: 8,
                 height: 8,
@@ -746,6 +681,10 @@
             Floor: {
                 nofire: true // for the "Super Fireballs" mod
             },
+            WaterBlocker: {
+                hidden: true,
+                collide: FullScreenMario.prototype.collideWaterBlocker
+            },
             detector: {
                 hidden: true,
                 collide_hidden: true
@@ -806,6 +745,7 @@
                 // spriteCycle: [
                     // ["one", "two", "three", "four"]
                 // ]
+                "opacity": .35
             },
             "text": {
                 "libtype": "Text",

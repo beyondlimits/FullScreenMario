@@ -44,7 +44,16 @@ function MapsHandlr(settings) {
         
         // For each array within prethings, this stores the current spawn 
         // location within those arrays
-        currents;
+        currents,
+        
+        // Optionally, an array of Things to stretch across the map horizontally
+        stretches,
+        
+        // If stretches exists, the function to call to add one to the map
+        stretch_add,
+        
+        // If stretches exists, the function to call to stretch horizontally
+        on_stretch;
     
     /**
      * 
@@ -65,6 +74,9 @@ function MapsHandlr(settings) {
         screen_attributes = settings.screen_attributes || [];
         
         on_spawn = settings.on_spawn || console.log.bind(console, "Spawning:");
+        
+        stretch_add = settings.stretch_add;
+        on_stretch = settings.on_stretch;
     };
     
     
@@ -227,12 +239,30 @@ function MapsHandlr(settings) {
                 currents[i] = 0;
             }
         }
+        
+        if(area_current.stretches) {
+            setStretches(area_current.stretches);
+        } else {
+            stretches = undefined;
+        }
     };
     
     /**
      * 
      */
+    function setStretches(stretches_raw) {
+        if(!stretches) {
+            stretches = [];
+        }
+        
+        stretches = stretches_raw.map(stretch_add);
+    }
+    
+    /**
+     * 
+     */
     self.spawnMap = function spawnMap(xloc_new) {
+        // Make sure the map has actually moved
         var xloc_real = xloc_new ? Math.round(xloc_new) : 0;
         if(xloc_real <= xloc) {
             return;
@@ -249,7 +279,6 @@ function MapsHandlr(settings) {
                 // Keep trying to spawn the rightmost thing, spawning whenever
                 // a new one matches
                 while(prething = group[i]) {
-                    // console.log("Trying", prething.title, "(" + prething.xloc + ")");
                     if(prething.xloc > xloc_real) {
                         break;
                     }
@@ -262,6 +291,15 @@ function MapsHandlr(settings) {
                 currents[name] = i;
             }
         }
+        
+        // If "stretch" Things are there, increase them to fill the space
+        if(stretches) {
+            for(i = stretches.length - 1; i >= 0; i -= 1) {
+                on_stretch(stretches[i], xloc_real);
+            }
+        }
+        
+        xloc = xloc_real;
     };
     
     

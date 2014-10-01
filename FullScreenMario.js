@@ -282,7 +282,17 @@ window.FullScreenMario = (function() {
             "MapsCreator": self.MapsCreator,
             "MapScreener": self.MapScreener,
             "screen_attributes": self.settings.maps.screen_attributes,
-            "on_spawn": self.settings.maps.on_spawn
+            "on_spawn": self.settings.maps.on_spawn,
+            "stretch_add": function (raw) {
+                var y = (self.MapScreener.floor - raw.y) * self.unitsize;
+                return self.addThing(self.ObjectMaker.make(raw.thing, {
+                    "width": self.MapScreener.width,
+                    "height": raw.height || self.getAbsoluteHeight(raw.y)
+                }), 0, y)
+            },
+            "on_stretch": function (thing, xloc_real) {
+                self.setWidth(thing, xloc_real * self.unitsize);
+            }
         });
     }
     
@@ -1625,7 +1635,6 @@ window.FullScreenMario = (function() {
      */
     function activateWindowDetector(thing) {
         if(thing.EightBitter.MapScreener.right - thing.EightBitter.MapScreener.left < thing.left) {
-            console.log("ah", FSM.MapScreener.width, thing.left);
             return;
         }
         
@@ -2250,6 +2259,13 @@ window.FullScreenMario = (function() {
         } else {
             thing.EightBitter.collideCharacterSolid(thing, other);
         }
+    }
+    
+    /**
+     * 
+     */
+    function collideWaterBlocker(thing, other) {
+        FSM.collideCharacterSolid(thing, other);
     }
     
     /**
@@ -4610,7 +4626,7 @@ window.FullScreenMario = (function() {
         
         EightBitter.MapScreener.nokeys = true;
         EightBitter.MapScreener.notime = true;
-     }
+    }
      
     /**
      * 
@@ -4711,8 +4727,44 @@ window.FullScreenMario = (function() {
     }
     
     
-    /* Map macros
+    /* Map creation
     */
+    
+    /**
+     * This is used as the OnMake callback for areas. In the future, it would be
+     * better to make areas inherit from base area types (Overworld, etc.) so 
+     * this inelegant switch statement doesn't have to be used.
+     */
+    function initializeArea() {
+        var setting = this.setting;
+        
+        // Copy all attributes, if they exist
+        if(this.attributes) {
+            for(var i in this.attributes) {
+                if(this[i]) {
+                    // Add the extra options
+                    proliferate(this, this.attributes[i]);
+                }
+            }
+        }
+        
+        // Underwater: background is always a dark blue
+        if(this.setting.indexOf("Underwater") !== -1) {
+            this.background = "#2038ec";
+        } 
+        // Underworld, Castle, and all Nights: background is black
+        else if(
+            this.setting.indexOf("Underworld") !== -1
+            || this.setting.indexOf("Castle") !== -1
+            || this.setting.indexOf("Night") !== -1
+        ) {
+            this.background = "#000000";
+        } 
+        // Default (typically Overworld): background is sky blue
+        else {
+            this.background = "#5c94fc";
+        }
+    }
     
     /**
      * Gets the distance from the absolute base (bottom of the user's viewport)
@@ -5383,6 +5435,7 @@ window.FullScreenMario = (function() {
         "collideBottomBlock": collideBottomBlock,
         "collideVine": collideVine,
         "collideSpringboard": collideSpringboard,
+        "collideWaterBlocker": collideWaterBlocker,
         "collideFlagTop": collideFlagTop,
         "collideFlagBottom": collideFlagBottom,
         "collideCastleAxe": collideCastleAxe,
@@ -5516,7 +5569,8 @@ window.FullScreenMario = (function() {
         // Map exits
         "mapExitPipeVertical": mapExitPipeVertical,
         "mapExitPipeHorizontal": mapExitPipeHorizontal,
-        // Map macros
+        // Map creation
+        "initializeArea": initializeArea,
         "getAbsoluteHeight": getAbsoluteHeight,
         "macroExample": macroExample,
         "macroFillPreThings": macroFillPreThings,

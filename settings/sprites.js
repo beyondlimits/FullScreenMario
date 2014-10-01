@@ -747,7 +747,7 @@ FullScreenMario.prototype.settings.sprites = {
               }],
               Underwater: ["multiple", "vertical", {
                 top: "p[1,17,20]x212,0x26,010222201102200111022x16,0010x16,010111101101100x19,",
-                middle: "p[20]x088,"
+                middle: "p[17]x088,"
               }],
               Night: ["multiple", "vertical", {
                 top: "p[2,1,19]x028,1x06,121000012210011222100x26,1121x26,1212222122122112",

@@ -530,7 +530,7 @@
                     { "thing": "Stone", "x": 152, "y": 32, "width": 24 },
                     { "thing": "Blooper", "x": 184, "y": 16 },
                     { "macro": "Fill", "thing": "Coin", "x": 224, "y": 64, "xnum": 3, "xwidth": 8 },
-                    { "thing": "Coral", "x": 272, "y": 40, "height": 80 },
+                    { "thing": "Coral", "x": 272, "y": 40, "height": 40 },
                     { "macro": "Fill", "thing": "Coin", "x": 296, "y": 7, "xnum": 3, "xwidth": 8 },
                     { "thing": "Stone", "x": 344, "y": 32, "width": 16 },
                     { "thing": "Coral", "x": 344, "y": 48, "height": 16 },

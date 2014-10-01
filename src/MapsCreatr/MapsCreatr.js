@@ -164,7 +164,7 @@ function MapsCreatr(settings) {
      * These areas are typically stored as an Array or Object inside the Map 
      * containing some number of attribute keys (such as "settings") along with
      * an Array under "Creation" that stores some number of commands for 
-     * populating that area in self.spawnMap.
+     * populating that area in MapsHandlr::spawnMap.
      * 
      * @param {Map} map
      */
