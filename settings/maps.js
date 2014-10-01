@@ -76,7 +76,8 @@ FullScreenMario.prototype.settings.maps = {
         "PlatformGenerator": FullScreenMario.prototype.macroPlatformGenerator,
         "StartInsideCastle": FullScreenMario.prototype.macroStartInsideCastle,
         "EndOutsideCastle": FullScreenMario.prototype.macroEndOutsideCastle,
-        "EndInsideCastle": FullScreenMario.prototype.macroEndInsideCastle
+        "EndInsideCastle": FullScreenMario.prototype.macroEndInsideCastle,
+        "Section": FullScreenMario.prototype.macroSection
     },
     "entrances": {
         "Normal": FullScreenMario.prototype.mapEntranceNormal,

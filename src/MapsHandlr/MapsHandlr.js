@@ -260,6 +260,24 @@ function MapsHandlr(settings) {
     
     /**
      * 
+     * 
+     * 
+     */
+    self.addPrethings = function (extras) {
+        var extra, i;
+        for(i = 0; i < extras.length; i += 1) {
+            extra = extras[i];
+            
+            console.log("Adding", extra);
+            
+            // for example
+            // analyzePreMacro(reference, prethings, area_current, map_current)
+            // analyzePreThing(reference, prethings, area_current, map_current)
+        }
+    }
+    
+    /**
+     * 
      */
     self.spawnMap = function spawnMap(xloc_new) {
         // Make sure the map has actually moved

@@ -22,7 +22,6 @@
                     { "macro": "Floor", "width": 552 },
                     { "thing": "Block", "x": 128, "y": 32 },
                     { "thing": "Brick", "x": 160, "y": 32 },
-                    { "thing": "CastleBlock", "x": 20, "y": 8, "fireballs": 6, "speed": -1 },
                     { "thing": "Block", "x": 168, "y": 32, "contents": "Mushroom" },
                     { "thing": "Goomba", "x": 176, "y": 8 },
                     { "thing": "Brick", "x": 176, "y": 32 },
@@ -1421,12 +1420,12 @@
                     { "macro": "StartInsideCastle", "width": 48 },
                     { "thing": "Stone", "y": 88, "width": 48, "height": 24 },
                     { "macro": "Floor", "x": 48, "y": 24 },
-                    { "thing": "Stone", "x": 48, "y": 88, "width": 88 },
+                    { "thing": "Stone", "x": 48, "y": 88, "width": 80 },
                     { "macro": "Water", "x": 56, "width": 16 },
                     { "macro": "Floor", "x": 72, "y": 24, "width": 16 },
                     { "macro": "Water", "x": 88, "width": 16 },
                     { "macro": "Floor", "x": 104, "y": 24, "width": 24 },
-                    { "macro": "Sections", "x": 128 }
+                    { "macro": "Section", "x": 128, "section": 0 }
                 ],
                 "sections": [
                     {
@@ -1448,6 +1447,9 @@
                             { "macro": "Floor" },
                             { "thing": "Stone", "y": 56, "height": 32 },
                             { "thing": "Stone", "y": 88 }
+                        ],
+                        "after": [
+                            { "macro": "Section", "section": 1 }
                         ]
                     },
                     {
@@ -2547,7 +2549,7 @@
                     { "thing": "Platform", "x": 176, "y": 40, "width": 16, "falling": true },
                     { "macro": "Floor", "x": 216, "y": 24, "width": 40 },
                     { "thing": "Stone", "x": 224, "y": 80, "width": 32, "height": 16 },
-                    { "macro": "Sections", "x": 256 }
+                    { "macro": "Section", "x": 256 }
                 ],
                 "sections": [
                     {
@@ -2897,7 +2899,7 @@
                     { "macro": "Floor", "x": 88, "width": 64 },
                     { "macro": "Pipe", "x": 152, "y": 16, "height": "Infinity", "piranha": true, "entrance": 1 },
                     { "macro": "Floor", "x": 168, "width": 88 },
-                    { "macro": "Sections", "x": 256 }
+                    { "macro": "Section", "x": 256 }
                 ],
                 "sections": [
                     {
@@ -2927,7 +2929,7 @@
                 "setting": "Castle",
                 "creation": [
                     { "location": 2 },
-                    { "macro": "Sections" }
+                    { "macro": "Section" }
                 ],
                 "sections": [
                     {
@@ -2936,7 +2938,7 @@
                             { "thing": "Stone", "y": 88 },
                         ],
                         "after": [
-                            { "macro": "Sections" }
+                            { "macro": "Section" }
                         ]
                     },
                     {
@@ -2976,7 +2978,7 @@
                     { "location": 3 },
                     { "macro": "Floor", "width": 24 },
                     { "thing": "Stone", "y": 88, "width": 24 },
-                    { "macro": "Sections", "x": 24 }
+                    { "macro": "Section", "x": 24 }
                 ],
                 "sections": [
                     {

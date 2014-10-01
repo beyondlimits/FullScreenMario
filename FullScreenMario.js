@@ -93,10 +93,6 @@ window.FullScreenMario = (function() {
             "constants": [
                 "unitsize",
                 "scale",
-                "jumplev1",
-                "jumplev2",
-                "ceilmax",
-                "castlev",
                 "point_levels",
                 "gravity"
             ]        });    }
@@ -389,7 +385,7 @@ window.FullScreenMario = (function() {
     function gameStart() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
-        EightBitter.setMap("1-1");
+        EightBitter.setMap("4-4");
         EightBitter.StatsHolder.set("lives", 3);
         EightBitter.GamesRunner.unpause();
     }
@@ -470,7 +466,7 @@ window.FullScreenMario = (function() {
      * @todo Create a generic version of this in GameStartr
      * @todo Make players as an array of players (native multiplayer!)
      */
-    function addPlayer(left, top) {
+    function addPlayer(left, bottom) {
         var EightBitter = EightBittr.ensureCorrectCaller(this),
             player;
         
@@ -480,29 +476,33 @@ window.FullScreenMario = (function() {
         });
         
         EightBitter.InputWriter.setEventInformation(player);
-        EightBitter.setPlayerSizeSmall(player);
         
         if(EightBitter.MapScreener.underwater) {
             player.swimming = true;
             EightBitter.TimeHandler.addClassCycle(player, [
                 "swim1", "swim2"
             ], "swimming", 5);
+            EightBitter.TimeHandler.addEventInterval(
+                thing.EightBitter.animatePlayerBubbling,
+                96, Infinity,
+                player
+            );
         }
         
-        EightBitter.addThing(player,
-            left || EightBitter.unitsize * 16,
-            top || EightBitter.unitsize * (EightBitter.MapScreener.floor - player.height)
-        );
+        EightBitter.setPlayerSizeSmall(player);
         
-        switch(player.power) {
-            case 2:
-                EightBitter.playerGetsBig(player, true);
-                break;
-            case 3:
-                EightBitter.playerGetsBig(player, true);
+        if(player.power > 1) {
+            EightBitter.playerGetsBig(player, true);
+            if(player.power > 2) {
                 EightBitter.playerGetsFire(player, true);
-                break;
+            }
         }
+        
+        EightBitter.addThing(
+            player,
+            typeof(left) === "undefined" ? EightBitter.unitsize * 16 : left, 
+            bottom - player.height * EightBitter.unitsize
+        );
         
         return player;
     }
@@ -1648,6 +1648,42 @@ window.FullScreenMario = (function() {
      */
     function activateScrollBlocker(thing) {
         thing.EightBitter.MapScreener.canscroll = false;
+    }
+    
+    /**
+     * 
+     */
+    function activateSection(thing) {
+        var EightBitter = thing.EightBitter,
+            MapsCreator = EightBitter.MapsCreator,
+            MapScreener = EightBitter.MapScreener,
+            MapsHandler = EightBitter.MapsHandler,
+            area = MapsHandler.getArea(),
+            map = MapsHandler.getMap(),
+            prethings = MapsHandler.getPreThings(),
+            section = area.sections[thing.section || 0],
+            left = (thing.left + MapScreener.left) / EightBitter.unitsize,
+            before = section.before,
+            command;
+        
+        console.log("Placing at left", thing.left, left);
+        
+        // Parse each command from into the current prethings array
+        for(var i = 0; i < before.length; i += 1) {
+            // A copy of the command must be used, so the original isn't modified
+            command = EightBitter.proliferate({}, before[i]);
+            
+            // The command's x-location must be shifted by the thing's placement
+            if(!command.x) {
+                command.x = left;
+            } else {
+                command.x += left;
+            }
+            
+            MapsCreator.analyzePreSwitch(command, prethings, area, map);
+        }
+        
+        EightBitter.MapsHandler.spawnMap(MapScreener.width);
     }
     
     
@@ -4587,24 +4623,12 @@ window.FullScreenMario = (function() {
     
     /* Map entrances
     */
-    
-    /**
-     * 
-     */
-    function mapEntranceGeneral(EightBitter, left, bottom) {
-        EightBitter.player = EightBitter.addPlayer(left, bottom);
-        EightBitter.shiftVert(
-            EightBitter.player, 
-            EightBitter.player.height * EightBitter.unitsize * -1
-        );
-    }
      
      /**
       * 
       */
      function mapEntranceNormal(EightBitter) {
-        EightBitter.mapEntranceGeneral(
-            EightBitter,
+        EightBitter.addPlayer(
             EightBitter.unitsize * 16,
             EightBitter.unitsize * 16
         );
@@ -4614,8 +4638,7 @@ window.FullScreenMario = (function() {
      * 
      */
      function mapEntrancePlain(EightBitter) {
-        EightBitter.mapEntranceGeneral(
-            EightBitter,
+        EightBitter.addPlayer(
             EightBitter.unitsize * 16,
             EightBitter.MapScreener.floor * EightBitter.unitsize
         );
@@ -4639,8 +4662,7 @@ window.FullScreenMario = (function() {
      * 
      */
     function mapEntranceCastle(EightBitter) {
-        EightBitter.mapEntranceGeneral(
-            EightBitter,
+        EightBitter.addPlayer(
             EightBitter.unitsize * 2,
             EightBitter.unitsize * 56
         );
@@ -4653,8 +4675,7 @@ window.FullScreenMario = (function() {
     function mapEntrancePipeVertical(EightBitter, location) {
         EightBitter.scrollWindow(location.xloc * EightBitter.unitsize);
         
-        EightBitter.mapEntranceGeneral(
-            EightBitter,
+        EightBitter.addPlayer(
             location.entrance.left + EightBitter.player.width * EightBitter.unitsize / 2,
             location.entrance.top + EightBitter.player.height * EightBitter.unitsize
         );
@@ -5365,7 +5386,16 @@ window.FullScreenMario = (function() {
             { "thing": "ScrollBlocker", "x": x + 256 }
         ];
     }
-      
+    
+    /**
+     * 
+     */
+    function macroSection(reference, prethings, area, map, scope) {
+        return [
+            { "thing": "DetectWindow", "x": reference.x, "y": reference.y, "activate": scope.activateSection }
+        ];
+    }
+     
     
     // Add all registered functions from above to the FullScreenMario prototype
     proliferateHard(FullScreenMario.prototype, {
@@ -5424,6 +5454,7 @@ window.FullScreenMario = (function() {
         "spawnDetector": spawnDetector,
         "activateWindowDetector": activateWindowDetector,
         "activateScrollBlocker": activateScrollBlocker,
+        "activateSection": activateSection,
         // Collision / actions
         "hitCharacterSolid": hitCharacterSolid,
         "hitCharacterCharacter": hitCharacterCharacter,
@@ -5567,7 +5598,6 @@ window.FullScreenMario = (function() {
         "setMap": setMap,
         "setLocation": setLocation,
         // Map entrances
-        "mapEntranceGeneral": mapEntranceGeneral,
         "mapEntranceNormal": mapEntranceNormal,
         "mapEntrancePlain": mapEntrancePlain,
         "mapEntranceWalking": mapEntranceWalking,
@@ -5594,7 +5624,8 @@ window.FullScreenMario = (function() {
         "macroPlatformGenerator": macroPlatformGenerator,
         "macroStartInsideCastle": macroStartInsideCastle,
         "macroEndOutsideCastle": macroEndOutsideCastle,
-        "macroEndInsideCastle": macroEndInsideCastle
+        "macroEndInsideCastle": macroEndInsideCastle,
+        "macroSection": macroSection
     });
     
     return FullScreenMario;

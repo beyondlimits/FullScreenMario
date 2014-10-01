@@ -279,7 +279,7 @@ function MapsCreatr(settings) {
         yloc = 0;
         
         for(i = 0, len = creation.length; i < len; i += 1) {
-            analyzePreSwitch(creation[i], prethings, area, map);
+            self.analyzePreSwitch(creation[i], prethings, area, map);
         }
         
         processPreThingsArrays(prethings);
@@ -301,7 +301,7 @@ function MapsCreatr(settings) {
      * @param {Area} area   The Area object to be populated by these PreThings.
      * @param {Map} map   The Map object containing the Area object.
      */
-    function analyzePreSwitch(reference, prethings, area, map) {
+    self.analyzePreSwitch = function (reference, prethings, area, map) {
         // Case: location setter
         if(reference.hasOwnProperty("location")) {
             analyzePreLocation(reference, prethings, area, map);
@@ -373,10 +373,10 @@ function MapsCreatr(settings) {
         if(outputs) {
             if(outputs instanceof Array) {
                 for(i = 0, len = outputs.length; i < len; i += 1) {
-                    analyzePreSwitch(outputs[i], prethings, area, map);
+                    self.analyzePreSwitch(outputs[i], prethings, area, map);
                 }
             } else {
-                analyzePreSwitch(outputs, prethings, area, map);
+                self.analyzePreSwitch(outputs, prethings, area, map);
             }
         }
         
