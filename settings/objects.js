@@ -206,7 +206,6 @@
                 player: 1,
                 power: 1,
                 canjump: 1,
-                nofiredeath: 1,
                 nofire: 1,
                 nokillend: 1,
                 numballs: 0,
@@ -482,7 +481,8 @@
                 nocollidesolid: true,
                 nocollidechar: true,
                 nofall: true,
-                outerok: true
+                outerok: true,
+                collide: FullScreenMario.prototype.collideCastleFireball
             },
             Firework: {
                 nocollide: true,

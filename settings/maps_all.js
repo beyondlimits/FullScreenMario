@@ -22,6 +22,7 @@
                     { "macro": "Floor", "width": 552 },
                     { "thing": "Block", "x": 128, "y": 32 },
                     { "thing": "Brick", "x": 160, "y": 32 },
+                    { "thing": "CastleBlock", "x": 20, "y": 8, "fireballs": 6, "speed": -1 },
                     { "thing": "Block", "x": 168, "y": 32, "contents": "Mushroom" },
                     { "thing": "Goomba", "x": 176, "y": 8 },
                     { "thing": "Brick", "x": 176, "y": 32 },

@@ -1864,6 +1864,13 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function collideCastleFireball(thing, other) {
+        thing.death(thing);
+    }
+    
+    /**
+     * 
+     */
     function collideShell(thing, other) {
         // If only one is a shell, it should be other, not thing
         if(thing.shell) {
@@ -5426,6 +5433,7 @@ window.FullScreenMario = (function() {
         "collideCoin": collideCoin,
         "collideStar": collideStar,
         "collideFireball": collideFireball,
+        "collideCastleFireball": collideCastleFireball,
         "collideShell": collideShell,
         "collideShellSolid": collideShellSolid,
         "collideShellPlayer": collideShellPlayer,
