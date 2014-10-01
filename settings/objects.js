@@ -745,7 +745,6 @@
                 // spriteCycle: [
                     // ["one", "two", "three", "four"]
                 // ]
-                "opacity": .35
             },
             "text": {
                 "libtype": "Text",

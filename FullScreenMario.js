@@ -1227,7 +1227,7 @@ window.FullScreenMario = (function() {
         thing.opacity = opacity;
         thing.canvas.opacity = opacity;
         thing.context.opacity = opacity;
-        thing.EightBitter.PixelDrawer.setThingSprite(thing);
+        // thing.EightBitter.PixelDrawer.setThingSprite(thing);
     }
     
     

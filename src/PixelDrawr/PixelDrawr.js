@@ -287,16 +287,16 @@ function PixelDrawr(settings) {
         switch(thing.sprite.direction) {
             case "vertical":
                 // If there's a bottom, draw that and push up bottomreal
-                if(canvasref = sprites.bottom) {
+                if((canvasref = sprites.bottom)) {
                     sdiff = sprites.bottomheight || thing.spriteheightpixels;
-                    drawPatternOnCanvas(context, canvasref.canvas, leftreal, bottomreal - sdiff, spritewidthpixels, Math.min(heightreal, spriteheightpixels), opacity);
+                    drawPatternOnCanvas(context, canvasref.canvas, leftreal, bottomreal - sdiff, widthreal, Math.min(heightreal, spriteheightpixels), opacity);
                     bottomreal -= sdiff;
                     heightreal -= sdiff;
                 }
                 // If there's a top, draw that and push down topreal
-                if(canvasref = sprites.top) {
+                if((canvasref = sprites.top)) {
                     sdiff = sprites.topheight || thing.spriteheightpixels;
-                    drawPatternOnCanvas(context, canvasref.canvas, leftreal, topreal, spritewidthpixels, Math.min(heightreal, spriteheightpixels), opacity);
+                    drawPatternOnCanvas(context, canvasref.canvas, leftreal, topreal, widthreal, Math.min(heightreal, spriteheightpixels), opacity);
                     topreal += sdiff;
                     heightreal -= sdiff;
                 }
@@ -304,16 +304,16 @@ function PixelDrawr(settings) {
             // Horizontal sprites may have 'left', 'right', 'middle'
             case "horizontal":
                 // If there's a left, draw that and push up leftreal
-                if(canvasref = sprites.left) {
+                if((canvasref = sprites.left)) {
                     sdiff = sprites.leftwidth || thing.spritewidthpixels;
-                    drawPatternOnCanvas(context, canvasref.canvas, leftreal, topreal, Math.min(widthreal, spritewidthpixels), spriteheightpixels, opacity);
+                    drawPatternOnCanvas(context, canvasref.canvas, leftreal, topreal, Math.min(widthreal, spritewidthpixels), heightreal, opacity);
                     leftreal += sdiff;
                     widthreal -= sdiff;
                 }
                 // If there's a right, draw that and push back rightreal
-                if(canvasref = sprites.right) {
+                if((canvasref = sprites.right)) {
                     sdiff = sprites.rightwidth || thing.spritewidthpixels;
-                    drawPatternOnCanvas(context, canvasref.canvas, rightreal - sdiff, topreal, Math.min(widthreal, spritewidthpixels), spriteheightpixels, opacity);
+                    drawPatternOnCanvas(context, canvasref.canvas, rightreal - sdiff, topreal, Math.min(widthreal, spritewidthpixels), heightreal, opacity);
                     rightreal -= sdiff;
                     widthreal -= sdiff;
                 }
@@ -337,11 +337,11 @@ function PixelDrawr(settings) {
      * often it's used by the regular draw functions.
      * Not a fan of this lack of control over pattern source coordinates...
      */
-    function drawPatternOnCanvas(context, source, leftc, topc, unitwidth, unitheight, opacity) {
+    function drawPatternOnCanvas(context, source, leftc, topc, width, height, opacity) {
         context.globalAlpha = opacity;
         context.translate(leftc, topc);
         context.fillStyle = context.createPattern(source, "repeat");
-        context.fillRect(0, 0, unitwidth, unitheight);
+        context.fillRect(0, 0, width, height);
         context.translate(-leftc, -topc);
         context.globalAlpha = 1;
     }
