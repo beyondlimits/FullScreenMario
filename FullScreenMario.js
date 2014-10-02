@@ -1684,13 +1684,16 @@ window.FullScreenMario = (function() {
             
             // Add a prething at the end of all this to trigger the stretch part
             command = {
-                "thing": "DetectWindow", "x": left + section.before.width, "y": 0, "activate": EightBitter.activateSectionStretch 
+                "thing": "DetectWindow", 
+                "x": left + section.before.width, "y": 0, 
+                "activate": EightBitter.activateSectionStretch,
+                "section": thing.section || 0
             };
             
             MapsCreator.analyzePreSwitch(command, prethings, area, map);
         }
         
-        
+        // Spawn the map, so new Things that should be placed will be
         EightBitter.MapsHandler.spawnMap(MapScreener.width);
     }
     
@@ -1698,7 +1701,40 @@ window.FullScreenMario = (function() {
      * 
      */
     function activateSectionStretch(thing) {
+        var EightBitter = thing.EightBitter,
+            MapsCreator = EightBitter.MapsCreator,
+            MapScreener = EightBitter.MapScreener,
+            MapsHandler = EightBitter.MapsHandler,
+            area = MapsHandler.getArea(),
+            map = MapsHandler.getMap(),
+            prethings = MapsHandler.getPreThings(),
+            section = area.sections[thing.section || 0],
+            stretch = section.stretch ? section.stretch.things : undefined,
+            left = (thing.left + MapScreener.left) / EightBitter.unitsize,
+            width = MapScreener.width / EightBitter.unitsize,
+            command, i;
         
+        // If there is a stretch, parse each command into the current prethings array
+        if(stretch) {
+            for(i = 0; i < stretch.length; i += 1) {
+                // A copy of the command must be used, so the original isn't modified
+                command = EightBitter.proliferate({}, stretch[i]);
+                
+                // The command's x-location must be shifted by the thing's placement
+                if(!command.x) {
+                    command.x = left;
+                } else {
+                    command.x += left;
+                }
+                
+                // "stretch" the command by making its width equal to the screen
+                command.width = width;
+                MapsCreator.analyzePreSwitch(command, prethings, area, map);
+            }
+        }
+        
+        // Spawn the map, so new Things that should be placed will be
+        EightBitter.MapsHandler.spawnMap(MapScreener.width + MapScreener.left);
     }
     
     /**
