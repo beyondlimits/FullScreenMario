@@ -1502,24 +1502,22 @@
                         },
                         "after": {
                             "creation": [
-                                { "thing": "Brick", "y": 32 },
-                                { "thing": "Stone", "y": 64, "height": 5 },
-                                { "thing": "Stone", "y": 88, "width": 264, "height": 24 },
-                                { "thing": "Stone", "x": 8, "y": 80, "width": 2, "height": 2 },
                                 { "macro": "Floor", "width": 80 },
-                                { "macro": "Floor", "x": 72, "y": 24, "widht": 32 },
-                                { "thing": "Stone", "x": 72, "y": 88, "width": 80 },
+                                { "thing": "Stone", "y": 64, "height": 40 },
+                                { "thing": "Stone", "y": 88 },
+                                { "thing": "Stone", "x": 8, "y": 88, "width": 16, "height": 24 },
+                                { "macro": "Floor", "x": 72, "y": 24, "width": 32 },
+                                { "thing": "Stone", "x": 72, "y": 88, "width": 64 },
                                 { "macro": "Floor", "x": 96, "width": 32 },
                                 { "macro": "Floor", "x": 120, "y": 24, "width": 16 },
-                                { "macro": "SectionDecider", "x": 120, "pass": 2, "fail": 1, "durp": "durp!" }
+                                { "macro": "SectionDecider", "x": 136, "pass": 2 }
                             ]
                         }
                     },
                     {
                         "before": {
                             "creation": [ 
-                                { "thing": "Block", "x": 0, "y": 32 },
-                                { "macro": "EndInsideCastle", "x": 136 }
+                                { "macro": "EndInsideCastle" }
                             ]
                         }
                     }

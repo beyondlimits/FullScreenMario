@@ -5545,7 +5545,6 @@ window.FullScreenMario = (function() {
                 "x": reference.x, "y": reference.y,
                 "width": reference.width || 8, "height": reference.height || 8,
                 "activate": function (thing) {
-                    console.log("Activated!", reference.durp, thing.EightBitter.MapScreener.sectionPassed);
                     if(thing.EightBitter.MapScreener.sectionPassed) {
                         thing.section = reference.pass || 0;
                     } else {
