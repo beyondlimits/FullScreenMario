@@ -1430,8 +1430,8 @@
                 "sections": [
                     {
                         "before": {
-                            "width": 400,
-                            "things": [
+                            "width": 360,
+                            "creation": [
                                 { "macro": "Floor", "width": 400 },
                                 { "thing": "Stone", "y": 88, "width": 400 },
                                 { "thing": "Stone", "x": 16, "y": 56, "width": 48, "height": 32 },
@@ -1447,61 +1447,72 @@
                             ]
                         },
                         "stretch": {
-                            "things": [
+                            "creation": [
                                 { "macro": "Floor" },
                                 { "thing": "Stone", "y": 56, "height": 32 },
                                 { "thing": "Stone", "y": 88 }
                             ]
                         },
                         "after": {
-                            "things": [
-                                { "macro": "Section", "section": 1 }
+                            "creation": [
+                                { "macro": "Floor", "width": 40 },
+                                { "thing": "Stone", "y": 88, "width": 40 },
+                                { "thing": "Stone", "x": 16, "y": 80, "width": 24, "height": 24 },
+                                { "thing": "Stone", "x": 16, "y": 24, "width": 24, "height": 24 },
+                                { "macro": "SectionDecider", "x": 40, "pass": 1, "fail": 0 }
                             ]
                         }
                     },
                     {
-                        "before": [
-                            { "macro": "Floor", "width": 64 },
-                            { "thing": "Stone", "width": 336 },
-                            { "thing": "Stone", "x": 48, "y": 24, "width": 16 },
-                            { "macro": "Water", "x": 64, "width": 16 },
-                            { "thing": "Stone", "x": 72, "y": 40, "width": 16 },
-                            { "macro": "Floor", "x": 80, "y": 16 },
-                            { "thing": "Stone", "x": 80, "y": 24, "width": 40 },
-                            { "macro": "Water", "x": 88, "width": 32 },
-                            { "thing": "Stone", "x": 104, "y": 48 },
-                            { "thing": "Stone", "x": 112, "y": 40, "height": 16 },
-                            { "macro": "Floor", "x": 120, "width": 216 },
-                            { "thing": "Stone", "x": 120, "y": 56, "height": 16 },
-                            { "thing": "Stone", "x": 128, "y": 24, "width": 208 },
-                            { "thing": "Stone", "x": 128, "y": 56, "width": 16 },
-                            { "thing": "Stone", "x": 160, "y": 56, "width": 32 },
-                            { "thing": "Stone", "x": 200, "y": 48, "height": 24 },
-                            { "thing": "Stone", "x": 200, "y": 56, "width": 24 },
-                            { "thing": "Stone", "x": 240, "y": 56, "width": 96 },
-                            { "thing": "CastleBlock", "x": 280, "y": 56, "fireballs": 6, "hidden": true },
-                            { "thing": "CastleBlock", "x": 328, "y": 24, "fireballs": 6, "hidden": true },
-                            { "macro": "SectionPass", "x": 360, "y": 16, "width": 40, "height": 16 },
-                            { "macro": "SectionFail", "x": 360, "y": 48, "width": 40, "height": 24 },
-                            { "macro": "SectionFail", "x": 360, "y": 80, "width": 40, "height": 24 }
-                        ],
-                        "stretch": [
-                            { "macro": "Floor" },
-                            { "thing": "Stone", "y": 24 },
-                            { "thing": "Stone", "y": 56 },
-                            { "thing": "Stone", "y": 88 }
-                        ],
-                        "after": [
-                            { "thing": "Stone", "y": 64, "height": 5 },
-                            { "thing": "Stone", "y": 88, "width": 264, "height": 24 },
-                            { "thing": "Stone", "x": 8, "y": 80, "width": 2, "height": 2 },
-                            { "macro": "Floor", "width": 80 },
-                            { "macro": "Floor", "x": 72, "y": 24, "widht": 32 },
-                            { "thing": "Stone", "x": 72, "y": 88, "width": 80 },
-                            { "macro": "Floor", "x": 96, "width": 32 },
-                            { "macro": "Floor", "x": 120, "y": 24, "width": 16 },
-                            { "macro": "EndCastleInside", "x": 136 }
-                        ]
+                        "before": {
+                            "width": 360,
+                            "creation": [
+                                { "macro": "Floor", "width": 64 },
+                                { "thing": "Stone", "y": 88, "width": 336 },
+                                { "thing": "Stone", "x": 48, "y": 24, "width": 16 },
+                                { "macro": "Water", "x": 64, "width": 16 },
+                                { "thing": "Stone", "x": 72, "y": 40, "width": 16 },
+                                { "macro": "Floor", "x": 80, "y": 16 },
+                                { "thing": "Stone", "x": 80, "y": 24, "width": 40 },
+                                { "macro": "Water", "x": 88, "width": 32 },
+                                { "thing": "Stone", "x": 104, "y": 48 },
+                                { "thing": "Stone", "x": 112, "y": 40, "height": 16 },
+                                { "macro": "Floor", "x": 120, "width": 216 },
+                                { "thing": "Stone", "x": 120, "y": 56, "height": 16 },
+                                { "thing": "Stone", "x": 128, "y": 24, "width": 208 },
+                                { "thing": "Stone", "x": 128, "y": 56, "width": 16 },
+                                { "thing": "Stone", "x": 160, "y": 56, "width": 32 },
+                                { "thing": "Stone", "x": 200, "y": 48, "height": 24 },
+                                { "thing": "Stone", "x": 200, "y": 56, "width": 24 },
+                                { "thing": "Stone", "x": 240, "y": 56, "width": 96 },
+                                { "thing": "CastleBlock", "x": 280, "y": 56, "fireballs": 6, "hidden": true },
+                                { "thing": "CastleBlock", "x": 328, "y": 24, "fireballs": 6, "hidden": true },
+                                { "macro": "SectionPass", "x": 360, "y": 16, "width": 40, "height": 16 },
+                                { "macro": "SectionFail", "x": 360, "y": 48, "width": 40, "height": 24 },
+                                { "macro": "SectionFail", "x": 360, "y": 80, "width": 40, "height": 24 }
+                            ]
+                        },
+                        "stretch": {
+                            "creation": [
+                                { "macro": "Floor" },
+                                { "thing": "Stone", "y": 24 },
+                                { "thing": "Stone", "y": 56 },
+                                { "thing": "Stone", "y": 88 }
+                            ]
+                        },
+                        "after": {
+                            "creation": [
+                                { "thing": "Stone", "y": 64, "height": 5 },
+                                { "thing": "Stone", "y": 88, "width": 264, "height": 24 },
+                                { "thing": "Stone", "x": 8, "y": 80, "width": 2, "height": 2 },
+                                { "macro": "Floor", "width": 80 },
+                                { "macro": "Floor", "x": 72, "y": 24, "widht": 32 },
+                                { "thing": "Stone", "x": 72, "y": 88, "width": 80 },
+                                { "macro": "Floor", "x": 96, "width": 32 },
+                                { "macro": "Floor", "x": 120, "y": 24, "width": 16 },
+                                { "macro": "EndCastleInside", "x": 136 }
+                            ]
+                        }
                     }
                 ]
             }

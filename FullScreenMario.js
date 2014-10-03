@@ -1663,12 +1663,12 @@ window.FullScreenMario = (function() {
             prethings = MapsHandler.getPreThings(),
             section = area.sections[thing.section || 0],
             left = (thing.left + MapScreener.left) / EightBitter.unitsize,
-            before = section.before ? section.before.things : undefined,
+            before = section.before ? section.before.creation : undefined,
             command, i;
         
         // If there is a before, parse each command into the current prethings array
         if(before) {
-            for(var i = 0; i < before.length; i += 1) {
+            for(i = 0; i < before.length; i += 1) {
                 // A copy of the command must be used, so the original isn't modified
                 command = EightBitter.proliferate({}, before[i]);
                 
@@ -1689,12 +1689,11 @@ window.FullScreenMario = (function() {
                 "activate": EightBitter.activateSectionStretch,
                 "section": thing.section || 0
             };
-            
             MapsCreator.analyzePreSwitch(command, prethings, area, map);
         }
         
         // Spawn the map, so new Things that should be placed will be
-        EightBitter.MapsHandler.spawnMap(MapScreener.width);
+        EightBitter.MapsHandler.spawnMap(MapScreener.right + MapScreener.width);
     }
     
     /**
@@ -1709,7 +1708,7 @@ window.FullScreenMario = (function() {
             map = MapsHandler.getMap(),
             prethings = MapsHandler.getPreThings(),
             section = area.sections[thing.section || 0],
-            stretch = section.stretch ? section.stretch.things : undefined,
+            stretch = section.stretch ? section.stretch.creation : undefined,
             left = (thing.left + MapScreener.left) / EightBitter.unitsize,
             width = MapScreener.width / EightBitter.unitsize,
             command, i;
@@ -1721,27 +1720,69 @@ window.FullScreenMario = (function() {
                 command = EightBitter.proliferate({}, stretch[i]);
                 
                 // The command's x-location must be shifted by the thing's placement
-                if(!command.x) {
-                    command.x = left;
-                } else {
-                    command.x += left;
-                }
+                command.x = left;
                 
                 // "stretch" the command by making its width equal to the screen
                 command.width = width;
                 MapsCreator.analyzePreSwitch(command, prethings, area, map);
             }
+            
+            // Add a prething at the end of all this to trigger the after part
+            command = {
+                "thing": "DetectWindow", 
+                "x": left + width, "y": 0, 
+                "activate": EightBitter.activateSectionAfter,
+                "section": thing.section || 0
+            };
+            MapsCreator.analyzePreSwitch(command, prethings, area, map);
         }
         
         // Spawn the map, so new Things that should be placed will be
-        EightBitter.MapsHandler.spawnMap(MapScreener.width + MapScreener.left);
+        EightBitter.MapsHandler.spawnMap(MapScreener.right + MapScreener.right);
     }
     
     /**
      * 
      */
     function activateSectionAfter(thing) {
+        // Since the section was passed, do the rest of things normally
+        var EightBitter = thing.EightBitter,
+            MapsCreator = EightBitter.MapsCreator,
+            MapScreener = EightBitter.MapScreener,
+            MapsHandler = EightBitter.MapsHandler,
+            area = MapsHandler.getArea(),
+            map = MapsHandler.getMap(),
+            prethings = MapsHandler.getPreThings(),
+            section = area.sections[thing.section || 0],
+            left = (thing.left + MapScreener.left) / EightBitter.unitsize,
+            after = section.after ? section.after.creation : undefined,
+            command, i;
         
+        // // If the section wasn't passed, just do activateSectionBefore
+        // if(!MapScreener.sectionPassed) {
+            // thing.EightBitter.activateSectionBefore(thing);
+            // return;
+        // }
+        
+        // If there is an after, parse each command into the current prethings array
+        if(after) {
+            for(i = 0; i < after.length; i += 1) {
+                // A copy of the command must be used, so the original isn't modified
+                command = EightBitter.proliferate({}, after[i]);
+                
+                // The command's x-location must be shifted by the thing's placement
+                if(!command.x) {
+                    command.x = left;
+                } else {
+                    command.x += left;
+                }
+                
+                MapsCreator.analyzePreSwitch(command, prethings, area, map);
+            }
+        }
+        
+        // Spawn the map, so new Things that should be placed will be
+        EightBitter.MapsHandler.spawnMap(MapScreener.right + MapScreener.width);
     }
     
     
@@ -5452,11 +5493,70 @@ window.FullScreenMario = (function() {
      */
     function macroSection(reference, prethings, area, map, scope) {
         return [
-            { "thing": "DetectWindow", "x": reference.x, "y": reference.y, "activate": scope.activateSectionBefore }
+            { 
+                "thing": "DetectWindow", 
+                "x": reference.x, "y": reference.y, 
+                "activate": scope.activateSectionBefore,
+                "section": reference.section || 0 
+            }
         ];
     }
-     
     
+    /**
+     * 
+     */
+    function macroSectionPass(reference, prethings, area, map, scope) {
+        return [
+            { 
+                "thing": "DetectCollision", 
+                "x": reference.x, "y": reference.y, 
+                "width": reference.width || 8, "height": reference.height || 8, 
+                "activate": function (thing) {
+                    thing.EightBitter.MapScreener.sectionPassed = true;
+                }
+            }
+        ];
+    }
+    
+    /**
+     * 
+     */
+    function macroSectionFail(reference, prethings, area, map, scope) {
+        return [
+            { 
+                "thing": "DetectCollision", 
+                "x": reference.x, "y": reference.y, 
+                "width": reference.width || 8, "height": reference.height || 8, 
+                "activate": function (thing) {
+                    thing.EightBitter.MapScreener.sectionPassed = false;
+                }
+            }
+        ];
+    }
+    
+    /**
+     * 
+     */
+    function macroSectionDecider(reference, prethings, area, map, scope) {
+        return [
+            {
+                "thing": "DetectWindow",
+                "x": reference.x, "y": reference.y,
+                "width": reference.width || 8, "height": reference.height || 8,
+                "activate": function (thing) {
+                    if(thing.EightBitter.MapScreener.sectionPassed) {
+                        thing.section = reference.pass || 0;
+                    } else {
+                        thing.section = reference.fail || 0;
+                    }
+                    console.log("Activating before", thing.section);
+                    thing.EightBitter.activateSectionBefore(thing);
+                }
+            }
+        ];
+    }
+    
+   
     // Add all registered functions from above to the FullScreenMario prototype
     proliferateHard(FullScreenMario.prototype, {
         // Global manipulations
@@ -5687,7 +5787,10 @@ window.FullScreenMario = (function() {
         "macroStartInsideCastle": macroStartInsideCastle,
         "macroEndOutsideCastle": macroEndOutsideCastle,
         "macroEndInsideCastle": macroEndInsideCastle,
-        "macroSection": macroSection
+        "macroSection": macroSection,
+        "macroSectionPass": macroSectionPass,
+        "macroSectionFail": macroSectionFail,
+        "macroSectionDecider": macroSectionDecider
     });
     
     return FullScreenMario;

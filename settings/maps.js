@@ -77,7 +77,10 @@ FullScreenMario.prototype.settings.maps = {
         "StartInsideCastle": FullScreenMario.prototype.macroStartInsideCastle,
         "EndOutsideCastle": FullScreenMario.prototype.macroEndOutsideCastle,
         "EndInsideCastle": FullScreenMario.prototype.macroEndInsideCastle,
-        "Section": FullScreenMario.prototype.macroSection
+        "Section": FullScreenMario.prototype.macroSection,
+        "SectionPass": FullScreenMario.prototype.macroSectionPass,
+        "SectionFail": FullScreenMario.prototype.macroSectionFail,
+        "SectionDecider": FullScreenMario.prototype.macroSectionDecider
     },
     "entrances": {
         "Normal": FullScreenMario.prototype.mapEntranceNormal,
