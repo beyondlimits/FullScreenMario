@@ -281,12 +281,8 @@ function MapsHandlr(settings) {
      */
     self.spawnMap = function spawnMap(xloc_new) {
         // Make sure the map has actually moved
-        var xloc_real = xloc_new ? Math.round(xloc_new) : 0;
-        if(xloc_real <= xloc) {
-            return;
-        }
-        
-        var name, group, prething, i;
+        var xloc_real = xloc_new ? Math.round(xloc_new) : 0,
+            name, group, prething, i;
         
         // For each group of prethings currently able to spawn:
         for(name in prethings) {
