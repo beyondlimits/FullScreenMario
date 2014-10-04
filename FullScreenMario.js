@@ -385,7 +385,7 @@ window.FullScreenMario = (function() {
     function gameStart() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
-        EightBitter.setMap("4-4");
+        EightBitter.setMap("7-4");
         EightBitter.StatsHolder.set("lives", 3);
         EightBitter.GamesRunner.unpause();
     }
@@ -1681,16 +1681,16 @@ window.FullScreenMario = (function() {
                 
                 MapsCreator.analyzePreSwitch(command, prethings, area, map);
             }
-            
-            // Add a prething at the end of all this to trigger the stretch part
-            command = {
-                "thing": "DetectWindow", 
-                "x": left + section.before.width, "y": 0, 
-                "activate": EightBitter.activateSectionStretch,
-                "section": thing.section || 0
-            };
-            MapsCreator.analyzePreSwitch(command, prethings, area, map);
         }
+            
+        // Add a prething at the end of all this to trigger the stretch part
+        command = {
+            "thing": "DetectWindow", 
+            "x": left + (before ? section.before.width : 0), "y": 0, 
+            "activate": EightBitter.activateSectionStretch,
+            "section": thing.section || 0
+        };
+        MapsCreator.analyzePreSwitch(command, prethings, area, map);
         
         // Spawn the map, so new Things that should be placed will be spawned if nearby
         // EightBitter.MapsHandler.spawnMap(MapScreener.right + MapScreener.width);
