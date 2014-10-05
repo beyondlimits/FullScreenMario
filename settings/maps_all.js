@@ -20,6 +20,7 @@
                     { "location": 0 },
                     { "macro": "Pattern", "pattern": "BackRegular", "repeat": 5 },
                     { "macro": "Floor", "width": 552 },
+                    { "macro": "Scale", "x": 64, "y": 48 },
                     { "thing": "Block", "x": 128, "y": 32 },
                     { "thing": "Brick", "x": 160, "y": 32 },
                     { "thing": "Block", "x": 168, "y": 32, "contents": "Mushroom" },

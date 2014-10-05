@@ -385,7 +385,7 @@ window.FullScreenMario = (function() {
     function gameStart() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
-        EightBitter.setMap("7-4");
+        EightBitter.setMap("1-1");
         EightBitter.StatsHolder.set("lives", 3);
         EightBitter.GamesRunner.unpause();
     }
@@ -1630,6 +1630,38 @@ window.FullScreenMario = (function() {
         thing.EightBitter.killNormal(thing);
     }
     
+    /** 
+     * Used by Things in a collection to register themselves as a part of their
+     * container collection Object. This is called by onThingMake, so they're 
+     * immediately put in the collection and have it as a member variable.
+     * 
+     * @remarks This should be bound in prethings as ".bind(scope, collection)"
+     */
+    function spawnCollectionComponent(collection, thing) {
+        thing.collection = collection;
+        collection[thing.collectionName] = thing;
+    }
+    
+    /** 
+     * Used by Things in a collection to get direct references to other Things
+     * ("partners") in that collection. This is called by onThingAdd, so it's
+     * always after spawnCollectionComponent (which is by onThingMake).     
+     * 
+     * @remarks This should be bound in prethings as ".bind(scope, collection)"
+     */
+    function spawnCollectionPartner(collection, thing) {
+        var partnerNames = thing.collectionPartnerNames,
+            partners = thing.partners = {},
+            collection = thing.collection,
+            name;
+        
+        for(name in partnerNames) {
+            if(partnerNames.hasOwnProperty(name)) {
+                thing.partners[name] = collection[partnerNames[name]];
+            }
+        }
+    }
+    
     /**
      * 
      */
@@ -2865,6 +2897,40 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function movePlatformScale(thing) {
+        // If the Player is resting on this, fall hard
+        if(thing.EightBitter.player.resting === thing) {
+            thing.yvel += thing.EightBitter.unitsize / 16;
+        }
+        // If this still has velocity from a player, fall less
+        else if(this.yvel > 0) {
+            thing.yvel -= thing.EightBitter.unitsize / 16;
+        }
+        // Not being rested upon or having a yvel means nothing happens
+        else {
+            return;
+        }
+        
+        thing.tension += thing.yvel;
+        thing.partners.platformOther.tension -= thing.yvel;
+        
+        // If the partner has fallen off, everybody falls!
+        if(thing.partners.platformOther.tension <= 0) {
+            thing.partners.platformOther.yvel = thing.EightBitter.unitsize / 2;
+            thing.collide = thing.partners.platformOther.collide = thing.EightBitter.collideCharacterSolid;
+            thing.movement = thing.partners.platformOther.movement = thing.EightBitter.moveFreeFalling;
+        }
+        
+        thing.EightBitter.shiftVert(thing, thing.yvel);
+        thing.EightBitter.shiftVert(thing.partners.platformOther, -thing.yvel);
+        
+        thing.EightBitter.setHeight(thing.partners.stringHere, thing.partners.stringHere.height + thing.yvel / thing.EightBitter.unitsize);
+        thing.EightBitter.setHeight(thing.partners.stringOther, Math.max(thing.partners.stringOther.height - thing.yvel / thing.EightBitter.unitsize, 0));
+    }
+    
+    /**
+     * 
+     */
     function moveVine(thing) {
         thing.EightBitter.increaseHeight(thing, thing.speed);
         
@@ -2912,7 +2978,9 @@ window.FullScreenMario = (function() {
                 player.movement = FullScreenMario.prototype.movePlayer;
             }
         }
-    }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if(thing !== player.resting) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        thing.EightBitter.shiftVert(thing, thing.yvel += thing.EightBitter.unitsize / 8);        thing.EightBitter.setBottom(player, thing.top);                // After a velocity threshold, start always falling        if(thing.yvel >= thing.fall_threshold_start || thing.EightBitter.unitsize * 2.8) {            thing.freefall = true;            thing.movement = thing.EightBitter.moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || thing.EightBitter.unitsize / 16;        thing.EightBitter.shiftVert(thing, thing.yvel);                // After a velocity threshold, stop accelerating        if(thing.yvel >= thing.fall_threshold_end || thing.EightBitter.unitsize * 2) {            thing.movement = movePlatform;        }    }
+    }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if(thing !== thing.EightBitter.player.resting) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        thing.EightBitter.shiftVert(thing, thing.yvel += thing.EightBitter.unitsize / 8);        thing.EightBitter.setBottom(thing.EightBitter.player, thing.top);                // After a velocity threshold, start always falling        if(thing.yvel >= thing.fall_threshold_start || thing.EightBitter.unitsize * 2.8) {            thing.freefall = true;            thing.movement = thing.EightBitter.moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || thing.EightBitter.unitsize / 16;        thing.EightBitter.shiftVert(thing, thing.yvel);
+                // After a velocity threshold, stop accelerating        if(thing.yvel >= (thing.fall_threshold_end || thing.EightBitter.unitsize * 2)) {
+            thing.movement = movePlatform;        }    }
     
     /**
      * 
@@ -4688,7 +4756,6 @@ window.FullScreenMario = (function() {
      * @param {Mixed} [location]
      */
     function setLocation(name) {
-        console.warn("FSM.setLocation does not respect FSM.player.power");
         var EightBitter = EightBittr.ensureCorrectCaller(this),
             location;
         
@@ -5217,6 +5284,103 @@ window.FullScreenMario = (function() {
     
     /**
      * 
+     */
+    function macroScale(reference, prethings, area, map, scope) {
+        var x = reference.x || 0,
+            y = reference.y || 0,
+            unitsize = scope.unitsize,
+            widthLeft = reference.width || 24,
+            widthRight = reference.width || 24,
+            between = reference.between || 40,
+            dropLeft = reference.dropLeft || 24,
+            dropRight = reference.dropRight || 24,
+            // Tension is always the height from the top to a platform
+            tensionLeft = dropLeft * unitsize,
+            tensionRight = dropRight * unitsize,
+            // Each part of the scale is registered in the collection {}
+            collection = {},
+            onThingMake = scope.spawnCollectionComponent.bind(scope, collection),
+            onThingAdd = scope.spawnCollectionPartner.bind(scope, collection),
+            stringLeft = { 
+                "thing": "String",
+                "x": x, 
+                "y": y - 4, 
+                "height": dropLeft - 4,
+                "onThingMake": onThingMake,
+                "collectionName": "stringLeft"
+            },
+            stringRight = {
+                "thing": "String",
+                "x": x + between,
+                "y": y - 4, 
+                "height": dropRight - 4,
+                "onThingMake": onThingMake,
+                "collectionName": "stringRight"
+            },
+            stringMiddle = { 
+                "thing": "String", 
+                "x": x + 4, 
+                "y": y, 
+                "width": between - 7, 
+                "onThingMake": onThingMake,
+                "collectionName": "stringMiddle" 
+            },
+            cornerLeft = {
+                "thing": "StringCornerLeft", 
+                "x": x, 
+                "y": y
+            },
+            cornerRight = {
+                "thing": "StringCornerRight", 
+                "x": x + between - 4, 
+                "y": y
+            },
+            platformLeft = { 
+                "thing": "Platform",
+                "x": x - (widthLeft / 2), 
+                "y": y - dropLeft, 
+                "width": widthLeft,
+                "scale": true,
+                "tension": (dropLeft - 1.5) * unitsize,
+                "onThingMake": onThingMake,
+                "onThingAdd": onThingAdd,
+                "collectionName": "platformLeft",
+                "collectionPartnerNames": {
+                    "stringHere": "stringLeft",
+                    "stringOther": "stringRight",
+                    "platformOther": "platformRight",
+                }
+            },
+            platformRight = { 
+                "thing": "Platform",
+                "x": x + between - (widthRight / 2),
+                "y": y - dropRight, 
+                "width": widthRight,
+                "scale": true,
+                "tension": (dropRight - 1.5) * unitsize,
+                "onThingMake": onThingMake,
+                "onThingAdd": onThingAdd,
+                "collectionName": "platformRight" ,
+                "collectionPartnerNames": {
+                    "stringHere": "stringRight",
+                    "stringOther": "stringLeft",
+                    "platformOther": "platformLeft",
+                }
+            };
+        
+        return [
+            stringLeft,
+            stringRight,
+            stringMiddle,
+            cornerLeft,
+            cornerRight,
+            platformLeft,
+            platformRight
+        ];
+    }
+    
+    /**
+     * 
      * 
      * @param {Object} reference   A listing of the settings for this macro,
      *                             from an Area's .creation Object.
@@ -5612,6 +5776,8 @@ window.FullScreenMario = (function() {
         "spawnCannon": spawnCannon,
         "spawnCastleBlock": spawnCastleBlock,
         "spawnDetector": spawnDetector,
+        "spawnCollectionComponent": spawnCollectionComponent,
+        "spawnCollectionPartner": spawnCollectionPartner,
         "activateWindowDetector": activateWindowDetector,
         "activateScrollBlocker": activateScrollBlocker,
         "activateSectionBefore": activateSectionBefore,
@@ -5659,6 +5825,7 @@ window.FullScreenMario = (function() {
         "moveSlidingReal": moveSlidingReal,
         "movePlatform": movePlatform,
         "movePlatformSpawn": movePlatformSpawn,
+        "movePlatformScale": movePlatformScale,
         "moveVine": moveVine,
         "moveSpringboardUp": moveSpringboardUp,        "moveFalling": moveFalling,        "moveFreeFalling": moveFreeFalling,
         "moveShell": moveShell,
@@ -5783,6 +5950,7 @@ window.FullScreenMario = (function() {
         "macroCastleSmall": macroCastleSmall,
         "macroCeiling": macroCeiling,
         "macroBridge": macroBridge,
+        "macroScale": macroScale,
         "macroPlatformGenerator": macroPlatformGenerator,
         "macroStartInsideCastle": macroStartInsideCastle,
         "macroEndOutsideCastle": macroEndOutsideCastle,

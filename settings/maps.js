@@ -73,6 +73,7 @@ FullScreenMario.prototype.settings.maps = {
         "CastleSmall": FullScreenMario.prototype.macroCastleSmall,
         "Ceiling": FullScreenMario.prototype.macroCeiling,
         "Bridge": FullScreenMario.prototype.macroBridge,
+        "Scale": FullScreenMario.prototype.macroScale,
         "PlatformGenerator": FullScreenMario.prototype.macroPlatformGenerator,
         "StartInsideCastle": FullScreenMario.prototype.macroStartInsideCastle,
         "EndOutsideCastle": FullScreenMario.prototype.macroEndOutsideCastle,

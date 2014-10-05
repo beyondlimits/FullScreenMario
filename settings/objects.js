@@ -109,6 +109,8 @@
                     "Railing": {},
                     "ShroomTrunk": {},
                     "String": {},
+                    "StringCornerLeft": {},
+                    "StringCornerRight": {},
                     "Toad": {},
                     "TreeTrunk": {},
                     "Water": {}
@@ -643,6 +645,9 @@
                         collide: function () {
                             console.log("Nope! movement should be moveFalling");
                         }
+                    },
+                    "scale": {
+                        "movement": FullScreenMario.prototype.movePlatformScale
                     }
                 }
             },
@@ -737,6 +742,8 @@
             Railing: [4, 4],
             ShroomTrunk: [8, 8],
             String: [1, 1],
+            StringCornerLeft: [5, 5],
+            StringCornerRight: [5, 5],
             Toad: [8, 13],
             TreeTrunk: [4, 4],
             Water: {
