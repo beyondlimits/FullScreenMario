@@ -679,7 +679,7 @@
                     { "thing": "Stone", "x": 1704, "y": 48, "height": 48 },
                     { "thing": "Stone", "x": 1712, "y": 56, "height": 56 },
                     { "thing": "Stone", "x": 1720, "y": 64, "width": 16, "height": 64 },
-                    { "macro": "EndCastleOutside", "x": 1796, "big": true, "wallwidth": 48 }
+                    { "macro": "EndOutsideCastle", "x": 1796, "big": true, "wallwidth": 48 }
                 ]
             }
         ]
@@ -968,7 +968,7 @@
                     { "macro": "Tree", "x": 144, "y": 24, "width": 40 },
                     { "macro": "Tree", "x": 176, "y": 48, "width": 48 },
                     { "thing": "Goomba", "x": 208, "y": 56 },
-                    { "thing": "Platform", "x": 240, "y": 72, "width": 24, "sliding": true, "begin": 228, "end": 26 },
+                    { "thing": "Platform", "x": 240, "y": 72, "width": 24, "sliding": true, "begin": 228, "end": 260 },
                     { "macro": "Tree", "x": 240, "width": 24 },
                     { "macro": "Fill", "thing": "Coin", "x": 249, "y": 7, "xnum": 2, "xwidth": 8 },
                     { "thing": "Platform", "x": 264, "y": 40, "width": 24, "sliding": true, "begin": 244, "end": 276 },
@@ -993,7 +993,7 @@
                     { "macro": "Tree", "x": 584, "y": 48, "width": 24 },
                     { "macro": "Tree", "x": 616, "y": 72, "width": 24 },
                     { "thing": "Coin", "x": 625, "y": 79 },
-
+                    { "macro": "Scale", "x": 660, "y": 86, "between": 56, "dropRight": 44 },
                     { "macro": "Tree", "x": 672, "y": 16, "width": 32 },
                     { "thing": "Platform", "x": 752, "y": 32, "width": 24, "falling": true },
                     { "thing": "Platform", "x": 768, "y": 64, "width": 24, "falling": true },
@@ -1010,9 +1010,9 @@
                     { "macro": "Tree", "x": 952, "y": 24, "width": 96 },
                     { "macro": "Fill", "thing": "Koopa", "x": 992, "y": 36, "xnum": 2, "xwidth": 14, "smart": true },
                     { "thing": "Platform", "x": 1056, "y": 56, "width": 24 },
-
+                    { "macro": "Scale", "x": 1100, "y": 86, "between": 32, "dropRight": 48 },
                     { "macro": "Floor", "x": 1152, "width": 256 },
-                    { "macro": "EndCastleOutside", "x": 1204 }
+                    { "macro": "EndOutsideCastle", "x": 1204 }
                 ]
             }
         ]
@@ -1811,7 +1811,7 @@
                     { "thing": "Stone", "x": 1104, "y": 32, "width": 16, "height": 32 },
                     { "thing": "Stone", "x": 1120, "y": 48, "width": 16, "height": 48 },
                     { "thing": "Stone", "x": 1136, "y": 64, "width": 16, "height": 64 },
-                    { "macro": "EndCastleOutside", "x": 1220, "big": true, "wallwidth": 88 }
+                    { "macro": "EndOutsideCastle", "x": 1220, "big": true, "wallwidth": 88 }
                 ]
             }
         ]
@@ -2551,7 +2551,7 @@
                     { "thing": "Stone", "x": 1704, "y": 48, "height": 48 },
                     { "thing": "Stone", "x": 1712, "y": 56, "height": 56 },
                     { "thing": "Stone", "x": 1720, "y": 64, "width": 16, "height": 64 },
-                    { "macro": "EndCastleOutside", "x": 1796, "big": true, "wallwidth": 48 }
+                    { "macro": "EndOutsideCastle", "x": 1796, "big": true, "wallwidth": 48 }
                 ]
             }
         ]

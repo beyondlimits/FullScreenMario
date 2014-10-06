@@ -280,9 +280,14 @@
                         scoreStomp: 400
                     },
                     "floating": {
+                        onThingMake: function (thing) {
+                            console.log("added", window.durp = thing);
+                            FullScreenMario.prototype.spawnMoveFloating(thing);
+                        },
+                        // onThingAdd: FullScreenMario.prototype.spawnMoveFloating,
                         movement: FullScreenMario.prototype.moveFloating,
                         nofall: true,
-                        yvel: FullScreenMario.unitsize / 4,
+                        yvel: FullScreenMario.unitsize / 8,
                         maxvel: FullScreenMario.unitsize / 4,
                         scoreStomp: 400
                     }
@@ -626,25 +631,25 @@
                 fall_threshold_end: FullScreenMario.unitsize * 2,
                 acceleration: FullScreenMario.unitsize / 16,
                 repeat: true,
-                killonend: true,
-                // maxvel: FullScreenMario.unitsize / 4 * 1.5,
+                killonend: false,
+                maxvel: FullScreenMario.unitsize / 4 * 1.5,
                 attributes: {
                     "floating": {
-                        // movement: moveFloating,
-                        // yvel: FullScreenMario.unitsize / 4 * 1.5
+                        onThingAdd: FullScreenMario.prototype.spawnMoveFloating,
+                        movement: FullScreenMario.prototype.moveFloating,
+                        yvel: FullScreenMario.unitsize / 4 * 1.5
                     },
                     "sliding": {
-                        // movement: moveSliding,
-                        // xvel: FullScreenMario.unitsize / 4 * 1.5
+                        onThingAdd: FullScreenMario.prototype.spawnMoveSliding,
+                        movement: FullScreenMario.prototype.moveSliding,
+                        xvel: FullScreenMario.unitsize / 4 * 1.5
                     },
                     "transport": {
-                        movement: false,
+                        movement: undefined,
                         collide: FullScreenMario.prototype.collideTransport
                     },
                     "falling": {
-                        collide: function () {
-                            console.log("Nope! movement should be moveFalling");
-                        }
+                        movement: FullScreenMario.prototype.moveFalling
                     },
                     "scale": {
                         "movement": FullScreenMario.prototype.movePlatformScale

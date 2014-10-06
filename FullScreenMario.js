@@ -385,7 +385,7 @@ window.FullScreenMario = (function() {
     function gameStart() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
-        EightBitter.setMap("1-1");
+        EightBitter.setMap("3-3");
         EightBitter.StatsHolder.set("lives", 3);
         EightBitter.GamesRunner.unpause();
     }
@@ -1625,6 +1625,26 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function spawnMoveFloating(thing) {
+        // Make sure thing.begin <= thing.end
+        thing.EightBitter.setMovementEndpoints(thing);
+        
+        // Make thing.begin and thing.end relative to the area's floor
+        thing.begin = thing.EightBitter.MapScreener.floor * thing.EightBitter.unitsize - thing.begin;
+        thing.end = thing.EightBitter.MapScreener.floor * thing.EightBitter.unitsize - thing.end;
+    }
+    
+    /**
+     * 
+     */
+    function spawnMoveSliding(thing) {
+        // Make sure thing.begin <= thing.end
+        thing.EightBitter.setMovementEndpoints(thing);
+    }
+    
+    /**
+     * 
+     */
     function spawnDetector(thing) {
         thing.activate(thing);
         thing.EightBitter.killNormal(thing);
@@ -2758,59 +2778,27 @@ window.FullScreenMario = (function() {
     }
     
     /**
-     * Initial movement function for Things that float up and down (vertically).
-     * 
-     * @param {Thing} thing
-     * @remarks thing.begin and thing.end are used as the vertical endpoints;
-     *          .begin is the bottom and .end is the top (since begin <= end)
-     */
-    function moveFloating(thing) {
-        // // Make sure thing.begin <= thing.end
-        // thing.EightBitter.setPlatformEndpoints(thing);
-        
-        // // Make thing.begin and thing.end relative to the area's floor
-        // thing.begin = thing.EightBitter.MapScreener.floor * thing.EightBitter.unitsize - thing.begin;
-        // thing.end = thing.EightBitter.MapScreener.floor * thing.EightBitter.unitsize - thing.end;
-        
-        // // Use moveFloatingReal as the actual movement function from now on
-        // (thing.movement = thing.EightBitter.moveFloatingReal)(thing);
-    }
-    
-    /**
-     * Actual movement function for Things that float up and down (vertically).
+     * Movement function for Things that float up and down (vertically).
      * If the Thing has reached thing.begin or thing.end, it gradually switches
      * thing.yvel
      * 
      * @param {Thing} thing
      * @remarks thing.maxvel is used as the maximum absolute speed vertically
+     * @remarks thing.begin and thing.end are used as the vertical endpoints;
+     *          .begin is the bottom and .end is the top (since begin <= end)
      */
-    function moveFloatingReal(thing) {
+    function moveFloating(thing) {
         // If above the endpoint:
         if(thing.top <= thing.end) {
-            thing.yvel = Math.min(thing.yvel + thing.EightBitter.unitsize / 32, thing.maxvel);
+            thing.yvel = Math.min(thing.yvel + thing.EightBitter.unitsize / 64, thing.maxvel);
         }
         // If below the endpoint:
         else if(thing.bottom >= thing.begin) {
-            thing.yvel = Math.max(thing.yvel - thing.EightBitter.unitsize / 32, -thing.maxvel);
+            thing.yvel = Math.max(thing.yvel - thing.EightBitter.unitsize / 64, -thing.maxvel);
         }
         
         // Deal with velocities and whether the player is resting on this
-        movePlatform(thing);
-    }
-    
-    /**
-     * Initial movement function for Things that float sideways (horizontally).
-     * 
-     * @param {Thing} thing
-     * @remarks thing.begin and thing.end are used as the horizontal endpoints;
-     *          .begin is the left and .end is the right (since begin <= end)
-     */
-    function moveSliding(thing) {
-        // Make sure thing.begin <= thing.end
-        thing.EightBitter.setPlatformEndpoints(thing);
-        
-        // Use moveSlidingReal as the actual movement function from now on
-        (thing.movement = thing.EightBitter.moveSlidingReal)(thing);
+        thing.EightBitter.movePlatform(thing);
     }
     
     /**
@@ -2820,19 +2808,21 @@ window.FullScreenMario = (function() {
      * 
      * @param {Thing} thing
      * @remarks thing.maxvel is used as the maximum absolute speed horizontally
+     * @remarks thing.begin and thing.end are used as the horizontal endpoints;
+     *          .begin is the left and .end is the right (since begin <= end)
      */
-    function moveSlidingReal(thing) {
+    function moveSliding(thing) {
         // If to the left of the endpoint:
         if(thing.EightBitter.MapScreener.left + thing.left <= thing.begin) {
-            thing.xvel = Math.min(thing.xvel + thing.EightBitter.unitsize / 32, thing.maxvel);
+            thing.xvel = Math.min(thing.xvel + thing.EightBitter.unitsize / 64, thing.maxvel);
         }
         // If to the right of the endpoint:
         else if(thing.EightBitter.MapScreener.left + thing.right > thing.end) {
-            thing.xvel = Math.max(thing.xvel - thing.EightBitter.unitsize / 32, -thing.maxvel);
+            thing.xvel = Math.max(thing.xvel - thing.EightBitter.unitsize / 64, -thing.maxvel);
         }
         
         // Deal with velocities and whether the player is resting on this
-        movePlatform(thing);
+        thing.EightBitter.movePlatform(thing);
     }
     
     /**
@@ -2841,12 +2831,15 @@ window.FullScreenMario = (function() {
      * 
      * @param {Thing} thing
      */
-    function setPlatformEndpoints(thing) {
+    function setMovementEndpoints(thing) {
         if(thing.begin > thing.end) {
             var temp = thing.begin;
             thing.begin = thing.end;
             thing.end = temp;
         }
+        
+        thing.begin *= thing.EightBitter.unitsize;
+        thing.end *= thing.EightBitter.unitsize;
     }
     
     /**
@@ -2978,7 +2971,7 @@ window.FullScreenMario = (function() {
                 player.movement = FullScreenMario.prototype.movePlayer;
             }
         }
-    }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if(thing !== thing.EightBitter.player.resting) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        thing.EightBitter.shiftVert(thing, thing.yvel += thing.EightBitter.unitsize / 8);        thing.EightBitter.setBottom(thing.EightBitter.player, thing.top);                // After a velocity threshold, start always falling        if(thing.yvel >= thing.fall_threshold_start || thing.EightBitter.unitsize * 2.8) {            thing.freefall = true;            thing.movement = thing.EightBitter.moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || thing.EightBitter.unitsize / 16;        thing.EightBitter.shiftVert(thing, thing.yvel);
+    }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if(thing.EightBitter.player.resting !== thing) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        thing.EightBitter.shiftVert(thing, thing.yvel += thing.EightBitter.unitsize / 8);        thing.EightBitter.setBottom(thing.EightBitter.player, thing.top);                // After a velocity threshold, start always falling        if(thing.yvel >= (thing.fall_threshold_start || thing.EightBitter.unitsize * 2.8)) {            thing.freefall = true;            thing.movement = thing.EightBitter.moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || thing.EightBitter.unitsize / 16;        thing.EightBitter.shiftVert(thing, thing.yvel);
                 // After a velocity threshold, stop accelerating        if(thing.yvel >= (thing.fall_threshold_end || thing.EightBitter.unitsize * 2)) {
             thing.movement = movePlatform;        }    }
     
@@ -5775,6 +5768,9 @@ window.FullScreenMario = (function() {
         "spawnLakitu": spawnLakitu,
         "spawnCannon": spawnCannon,
         "spawnCastleBlock": spawnCastleBlock,
+        "spawnMoveFloating": spawnMoveFloating,
+        "spawnMoveSliding": spawnMoveSliding,
+        "setMovementEndpoints": setMovementEndpoints,
         "spawnDetector": spawnDetector,
         "spawnCollectionComponent": spawnCollectionComponent,
         "spawnCollectionPartner": spawnCollectionPartner,
@@ -5820,9 +5816,7 @@ window.FullScreenMario = (function() {
         "moveBowser": moveBowser,
         "moveBowserFire": moveBowserFire,
         "moveFloating": moveFloating,
-        "moveFloatingReal": moveFloatingReal,
         "moveSliding": moveSliding,
-        "moveSlidingReal": moveSlidingReal,
         "movePlatform": movePlatform,
         "movePlatformSpawn": movePlatformSpawn,
         "movePlatformScale": movePlatformScale,
