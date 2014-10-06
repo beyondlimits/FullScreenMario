@@ -70,6 +70,8 @@ window.FullScreenMario = (function() {
                 "settings": {
                     "audio": "settings/audio.js",
                     "collisions": "settings/collisions.js",                    "events": "settings/events.js",
+                    "generator": "settings/generator.js",
+                    "input": "settings/input.js",
                     "maps": "settings/maps.js",                    "quadrants": "settings/quadrants.js",
                     "runner": "settings/runner.js",
                     "sprites": "settings/sprites.js",
@@ -86,6 +88,7 @@ window.FullScreenMario = (function() {
                 resetMapsHandler,
                 resetInputWriter,
                 resetLevelEditor,
+                resetWorldSeeder,
                 resetModAttacher,
                 startModAttacher,
                 resetContainer
@@ -307,15 +310,28 @@ window.FullScreenMario = (function() {
     }
     
     /**
-     * Sets self.resetLevelEditor
+     * Sets self.LevelEditor
      * 
      * @remarks Requirement(s): LevelEditr (src/LevelEditr/LevelEditr.js)
+     *                          editor.js (settings/editor.js)
      */
     function resetLevelEditor(self, customs) {
         self.LevelEditor = new LevelEditr(proliferate({
             "GameStarter": self,
-			"beautifier": js_beautify // Eventually there will be a custom beautifier
+			"beautifier": js_beautify // Eventually there will be a custom beautifier... maybe
         }, self.settings.editor));
+    }
+    
+    /**
+     * Sets self.WorldSeeder
+     * 
+     * @remarks Requirement(s): WorldSeedr (src/WorldSeedr/WorldSeedr.js)
+     *                          generator.js (settings/generator.js)
+     */
+    function resetWorldSeeder(self, customs) {
+        self.WorldSeeder = new WorldSeedr(proliferate({
+            "random": self.random
+        }, self.settings.generator));
     }
     
     /**
@@ -385,7 +401,7 @@ window.FullScreenMario = (function() {
     function gameStart() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
-        EightBitter.setMap("3-3");
+        EightBitter.setMap("1-1");
         EightBitter.StatsHolder.set("lives", 3);
         EightBitter.GamesRunner.unpause();
     }

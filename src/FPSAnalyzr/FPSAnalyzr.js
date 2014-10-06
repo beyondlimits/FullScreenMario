@@ -24,7 +24,7 @@ function FPSAnalyzr(settings) {
         // A system-dependant performance.now function
         get_timestamp;
     
-    var reset = self.reset = function reset(settings) {
+    self.reset = function (settings) {
         num_to_keep  = settings.num_to_keep || 35;
         num_recorded = 0;
         ticker       = -1;
@@ -210,5 +210,5 @@ function FPSAnalyzr(settings) {
         return extremes[1] - extremes[0];
     }
     
-    reset(settings || {});
+    self.reset(settings || {});
 }

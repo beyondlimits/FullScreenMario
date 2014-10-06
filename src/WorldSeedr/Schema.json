@@ -1,0 +1,31 @@
+Possibility = {
+    "width": [Number, Number + "%", "parent", "child"],
+    "height": [Number, Number + "%", "parent", "child"],
+    // Optional: if not used, "children" is mandatory
+    "certainty": {
+        "type": ["Thing", "Macro", "Random", "Nothing"],
+        "title": String, // optional if "type" is "Nothing"
+        "arguments": Arguments // optional
+    },
+    // Optional: if not used, "certainty" is mandatory
+    "children": {
+        "orientation": ["vertical", "horizontal"],
+        "spacing": Number, // optional
+        "snap": ["top", "right", "bottom", "left"], // optional
+        "possibilities": [{
+            "percent": [Number],
+            "type": ["Thing", "Macro", "Random"],
+            "title": String,
+            "arguments": Arguments // optional
+        }, ...]
+    }
+}
+
+Arguments = [{
+    "percent": [Number],
+    "values": Object
+}, ...]
+
+
+
+// Should there be a start/end? like in multiple sprites
