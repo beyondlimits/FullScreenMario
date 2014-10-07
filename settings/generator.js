@@ -1,15 +1,44 @@
 FullScreenMario.prototype.settings.generator = {
     "possibilities": {
 
+        "Test": {
+            "width": 30,
+            "height": 24,
+            "children": {
+                "choices": [{
+                    "percent": 50,
+                    "type": "Random",
+                    "title": "Goomba"
+                }, {
+                    "percent": 50,
+                    "type": "Random",
+                    "title": "Beetle"
+                }]
+            }
+        },
 
+        "TestSub": {
+            "width": 15,
+            "height": 24,
+            "children": {
+                "choices": [{
+                    "percent": 50,
+                    "type": "Random",
+                    "title": "Koopa"
+                }, {
+                    "percent": 50,
+                    "type": "Random",
+                    "title": "Beetle"
+                }]
+            }
+        },
 
         // Enemy groups
         "EnemySmall": {
-            "width": "child",
-            "height": "child",
+            "width": 8,
+            "height": 12,
             "children": {
-                "spacing": 2,
-                "possibilities": [{
+                "choices": [{
                     "percent": 45,
                     "type": "Random",
                     "title": "Goomba"
@@ -24,82 +53,48 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
-        "EnemyMedium": {
-            "width": "child",
-            "height": "child",
-            "children": {
-                "spacing": 4,
-                "possibilities": [{
-                    "percent": 25,
-                    "type": "Random",
-                    "title": "Beetle"
-                }, {
-                    "percent": 15,
-                    "type": "Random",
-                    "title": "Cannon"
-                }/*, {
-                    // ...
-                }*/]
-            }
-        },
-        "EnemyLarge": {
-            
-        },
-        "EnemyGeneral": {
-            "width": "child",
-            "height": "child",
-            "children": {
-                "possibilities": [{
-                    "percent": 50,
-                    "type": "Random",
-                    "title": "EnemySmall"
-                }, {
-                    "percent": 25,
-                    "type": "Random",
-                    "title": "EnemyMedium"
-                }, {
-                    "percent": 10,
-                    "type": "Random",
-                    "title": "EnemyLarge"
-                }, {
-                    "percent": 15,
-                    "type": "Nothing"
-                }]
-            }
-        },
-        
-        
-        
+
+
+
         // Characters
         "Goomba": {
             "width": 8,
             "height": 8,
-            "certainty": {
-                "type": "Thing",
-                "title": "Goomba"
+            "children": {
+                "choices": [{
+                    "percent": 100,
+                    "type": "Known",
+                    "title": "Goomba"
+                }]
             }
         },
         "Koopa": {
             "width": 8,
             "height": 8,
-            "certainty": {
-                "type": "Thing",
-                "title": "Koopa",
-                "arguments": [{
-                    "percent": 30
+            "children": {
+                "choices": [{
+                    "percent": 30,
+                    "type": "Known",
+                    "title": "Koopa",
                 }, {
                     "percent": 30,
-                    "values": {
+                    "type": "Known",
+                    "title": "Koopa",
+                    "arguments": {
                         "smart": true
                     }
                 }, {
                     "percent": 20,
-                    "values": {
+                    "type": "Known",
+                    "title": "Koopa",
+                    "arguments": {
                         "jumping": true
                     }
                 }, {
                     "percent": 20,
-                    "values": {
+                    "type": "Known",
+                    "title": "Koopa",
+                    "arguments": {
                         "smart": true,
                         "jumping": true
                     }
@@ -109,48 +104,13 @@ FullScreenMario.prototype.settings.generator = {
         "Beetle": {
             "width": 8,
             "height": 8.5,
-            "certainty": {
-                "type": "Thing",
-                "title": "Beetle"
-            }
-        },
-        
-        // Solids
-        "Cannon": {
-            "width": 8,
-            "height": "child",
             "children": {
-                "snap": "bottom",
-                "possibilities": [{
-                    "percent": 70,
-                    "type": "Thing",
-                    "title": "Cannon",
-                    "arguments": [{
-                        "percent": 50,
-                        "values": {
-                            "height": 24
-                        }
-                    }, {
-                        "percent": 30,
-                        "values": {
-                            "height": 16
-                        }
-                    }, {
-                        "percent": 20,
-                        "values": {
-                            "height": 8
-                        }
-                    }]
-                }, {
-                    "percent": 30,
-                    "type": "Random",
-                    "title": "CannonStack"
+                "choices": [{
+                    "percent": 100,
+                    "type": "Known",
+                    "title": "Beetle"
                 }]
             }
-        },
-        "CannonStack": {
-            "width": 8,
-            // "height": "
         }
     }
 };

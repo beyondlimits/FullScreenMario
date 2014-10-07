@@ -400,17 +400,38 @@ window.EightBittr = (function() {
     
     
     /* Randomization
-    */
+     * 
+     * Right now it uses a really bad old random() function I made once... eventually 
+     * I'll switch to xorshift.
+     * 
+     * Seriously, this is terrible code. 0/10 would not make again.
+     */
     
     /**
      * 
      */
-    function random() {
-        EightBittr.ensureCorrectCaller(this);
+    var randomFunctions = (function () {
+        var seedlast = .007,
+            seed, seeder;
         
-        console.log("Bugh random");
-        return Math.random();
-    }
+        var setSeed = function (number) {
+            seed = number;
+            seeder = 1777771 / seed;
+            console.log("set", seed, seeder);
+        };
+        
+        var random = function () {
+            seedlast = "0." + String(seeder / seedlast).substring(4).replace('.', '');
+            return Number(seedlast);
+        };
+        
+        setSeed(Math.floor(Math.random() * 10000000));
+        
+        return {
+            "setSeed": setSeed,
+            "random": random
+        }
+    })();
     
     /**
      * 
@@ -687,7 +708,7 @@ window.EightBittr = (function() {
         // EightBittr utilities
         "ensureCorrectCaller": ensureCorrectCaller,
         // Randomization
-        "random": random,
+        "random": randomFunctions.random,
         "randomInteger": randomInteger,
         "randomDouble": randomDouble,
         // General utilities

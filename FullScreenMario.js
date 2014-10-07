@@ -403,7 +403,8 @@ window.FullScreenMario = (function() {
         
         EightBitter.setMap("1-1");
         EightBitter.StatsHolder.set("lives", 3);
-        EightBitter.GamesRunner.unpause();
+        // EightBitter.GamesRunner.unpause();
+        EightBitter.GamesRunner.pause();
     }
     
     /**

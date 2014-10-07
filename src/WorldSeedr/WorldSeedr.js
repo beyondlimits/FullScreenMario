@@ -6,7 +6,7 @@ function WorldSeedr(settings) {
     var self = this,
         
         // A very large hashtable of possibilities, by title
-        possibilities,
+        all_possibilities,
         
         // A function use dto generate a random number, by default Math.random
         random;
@@ -15,7 +15,7 @@ function WorldSeedr(settings) {
      * 
      */
     self.reset = function (settings) {
-        possibilities = settings.possibilities
+        all_possibilities = settings.possibilities
         random = settings.random || Math.random.bind(Math);
     };
     
@@ -23,7 +23,7 @@ function WorldSeedr(settings) {
      * 
      */
     self.getPossibilities = function () {
-        return possibilities;
+        return all_possibilities;
     }
     
     
@@ -33,85 +33,91 @@ function WorldSeedr(settings) {
     /**
      * 
      */
-    self.generate = function (name, options) {
-        var schema = possibilities[name];
+    self.generate = function (name, position) {
+        var schema = all_possibilities[name];
         
         if(!schema) {
             throw new Error("No possibility exists under '" + name + "'");
         }
         
-        if(schema.certainty) {
-            return generateCertainty(name, schema, options);
+        if(!schema.children) {
+            throw new Error("The schema for '" + name + "' has no possibile outcomes");
         }
         
-        if(schema.children) {
-            return generateChildren(name, schema, options);
-        }
-        
-        throw new Error("The schema for '" + name + "' has no possibile outcomes");
+        return generateChildren(schema, position);
     }
     
     /**
      * 
      */
-    function generateCertainty(name, schema, options) {
-        var certainty = schema.certainty,
-            args;
-        
-        if(certainty.arguments) {
-            args = chooseArgument(certainty.arguments).values;
-        }
-        
-        return {
-            "type": certainty.type,
-            "title": certainty.title,
-            "arguments": args
-        }
-    }
-    
-    /**
-     * 
-     */
-    function generateChildren(name, schema, options) {
-        var output = [],
-            children = schema.children,
-            width = options.width,
-            height = options.height,
-            orientation = schema.orientation,
-            // In the future, change these based on direction
-            x = 0,
-            y = 0,
+    function generateChildren(schema, position) {
+        var children = [],
+            choices = schema.children.choices,
+            left = position.left,
             child;
         
-        if(typeof(height) === "undefined") {
-            throw new Error("The schema for '" + name + "' is being given an undefined height.");
+        while(position.left < position.right) {
+            child = generateChild(choices, position);
+            position.left = child.right;
+            children.push(child);
+        }
+        position.left = left;
+        
+        return {
+            "children": children,
+            "left": position.left,
+            "right": position.right,
+            "top": position.top,
+            "bottom": position.bottom
+        };
+    }
+    
+    /**
+     * 
+     */
+    function generateChild(choices, position) {
+        var choice = chooseAmong(choices, position),
+            schema = all_possibilities[choice.title];
+        
+        if(choice.type === "Known") {
+            console.log("Placing", choice.title, position.left);
+            return {
+                "left": position.left,
+                "bottom": position.bottom,
+                "top": position.top,
+                "right": position.left + schema.width,
+                "type": "Known",
+                "title": choice.title,
+                "arguments": schema.arguments ? chooseAmong(schema.arguments) : undefined
+            };
         }
         
-        if(typeof(width) === "undefined") {
-            throw new Error("The schema for '" + name + "' is being given an undefined width.");
+        if(choice.type === "Random") {
+            return generateChildren(schema, {
+                "left": position.left,
+                "bottom": position.bottom,
+                "top": position.top,
+                "right": position.left + schema.width,
+            });
         }
-        
-        while(x < width) {
-            console.log("Trying at", x);
-            child = chooseAmong(children.possibilities);
-            
-            console.log("Got", child);
-            break;
-        }
-        return child;
     }
     
     
-    /* Randomization generator
+    /* Utilities
     */
     
     /**
      * From an array of Objects conforming to the Arguments or 
      * Choices schema types, returns one chosen at random.
      * 
-     * 
+     * @remarks There will be a need to make this filter the 
+     *          choices for being greater than a width or height
      */
-    function chooseAmong(choices) {
+    function chooseAmong(choices, position) {
+        if(choices.length === 1) {
+            return choices[0];
+        }
+        
         var choice = randomPercentage(),
             sum = 0,
             i;
