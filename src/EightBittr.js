@@ -417,7 +417,6 @@ window.EightBittr = (function() {
         var setSeed = function (number) {
             seed = number;
             seeder = 1777771 / seed;
-            console.log("set", seed, seeder);
         };
         
         var random = function () {

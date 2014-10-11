@@ -1,11 +1,30 @@
 FullScreenMario.prototype.settings.generator = {
     "possibilities": {
+        
+        "CertainTest": {
+            "width": 24,
+            "height": 24,
+            "contents": {
+                "mode": "Certain",
+                "children": [{
+                    "type": "Known",
+                    "title": "Goomba"
+                }, {
+                    "type": "Known",
+                    "title": "Nothing"
+                }, {
+                    "type": "Known",
+                    "title": "Koopa"
+                }]
+            }
+        },
 
         "Test": {
             "width": 30,
             "height": 24,
-            "children": {
-                "choices": [{
+            "contents": {
+                "mode": "Random",
+                "children": [{
                     "percent": 50,
                     "type": "Random",
                     "title": "Goomba"
@@ -20,8 +39,9 @@ FullScreenMario.prototype.settings.generator = {
         "TestSub": {
             "width": 15,
             "height": 24,
-            "children": {
-                "choices": [{
+            "contents": {
+                "mode": "Random",
+                "children": [{
                     "percent": 50,
                     "type": "Random",
                     "title": "Koopa"
@@ -37,8 +57,9 @@ FullScreenMario.prototype.settings.generator = {
         "EnemySmall": {
             "width": 8,
             "height": 12,
-            "children": {
-                "choices": [{
+            "contents": {
+                "mode": "Random",
+                "children": [{
                     "percent": 45,
                     "type": "Random",
                     "title": "Goomba"
@@ -58,21 +79,22 @@ FullScreenMario.prototype.settings.generator = {
 
         // Characters
         "Goomba": {
-            "width": 8,
+            "width": 80,
             "height": 8,
-            "children": {
-                "choices": [{
-                    "percent": 100,
+            "contents": {
+                "mode": "Certain",
+                "children": [{
                     "type": "Known",
                     "title": "Goomba"
                 }]
             }
         },
         "Koopa": {
-            "width": 8,
+            "width": 80,
             "height": 8,
-            "children": {
-                "choices": [{
+            "contents": {
+                "mode": "Random",
+                "children": [{
                     "percent": 30,
                     "type": "Known",
                     "title": "Koopa",
@@ -102,14 +124,24 @@ FullScreenMario.prototype.settings.generator = {
             }
         },
         "Beetle": {
-            "width": 8,
+            "width": 80,
             "height": 8.5,
-            "children": {
-                "choices": [{
+            "contents": {
+                "mode": "Certain",
+                "children": [{
                     "percent": 100,
                     "type": "Known",
                     "title": "Beetle"
                 }]
+            }
+        },
+        
+        // Misc.
+        "Nothing": {
+            "width": 8,
+            "height": 8,
+            "contents": {
+                "children": []
             }
         }
     }

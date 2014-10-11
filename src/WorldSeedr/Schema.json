@@ -1,15 +1,16 @@
 Possibility = {
     "width": Number,
     "height": Number,
-    "children": {
+    "contents": {
         // "orientation": ["vertical", "horizontal"],
         // "snap": ["top", "right", "bottom", "left"], // optional
-        "choices": [Choice, ...]
+        "mode": ["Random", "Certain"]
+        "children": [Child, ...]
     }
 };
 
-Choice = {
-    "percent": Number,
+Child = {
+    "percent": Number, // Required if Possibility.children.mode = "Random"
     "type": ["Known", "Random"],
     "title": String,
     "arguments": Object // optional

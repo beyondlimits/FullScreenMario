@@ -8,7 +8,7 @@ function WorldSeedr(settings) {
         // A very large hashtable of possibilities, by title
         all_possibilities,
         
-        // A function use dto generate a random number, by default Math.random
+        // A function used to generate a random number, by default Math.random
         random;
     
     /**
@@ -40,28 +40,42 @@ function WorldSeedr(settings) {
             throw new Error("No possibility exists under '" + name + "'");
         }
         
-        if(!schema.children) {
+        if(!schema.contents) {
             throw new Error("The schema for '" + name + "' has no possibile outcomes");
         }
         
-        return generateChildren(schema, position);
+        return generateContentchildren(schema, position);
     }
     
     /**
      * 
      */
-    function generateChildren(schema, position) {
-        var children = [],
-            choices = schema.children.choices,
-            left = position.left,
+    function generateContentchildren(schema, position) {
+        var //children = [],
+            contents = schema.contents,
+            leftSave = position.left,
+            children, 
             child;
         
-        while(position.left < position.right) {
-            child = generateChild(choices, position);
-            position.left = child.right;
-            children.push(child);
+        if(contents.mode === "Certain") {
+            children = contents.children.map(function (choice) {
+                child = parseChoice(choice, position);
+                position.left = child.right;
+                return child;
+            });
+        } else {
+            children = [];
+            while(position.left < position.right) {
+                child = generateChild(contents, position);
+                if(!child) {
+                    break;
+                }
+                position.left = child.right;
+                children.push(child);
+            }
         }
-        position.left = left;
+        
+        position.left = leftSave;
         
         return {
             "children": children,
@@ -75,12 +89,29 @@ function WorldSeedr(settings) {
     /**
      * 
      */
-    function generateChild(choices, position) {
-        var choice = chooseAmong(choices, position),
-            schema = all_possibilities[choice.title];
+    function generateChild(contents, position) {
+        var choice = chooseAmongPosition(contents.children, position),
+            schema;
+        
+        if(!choice) {
+            return undefined;
+        }
+        
+        return parseChoice(choice, position);
+    }
+    
+    
+    
+    /* Utilities
+    */
+    
+    /**
+     * 
+     */
+    function parseChoice(choice, position) {
+        var schema = all_possibilities[choice.title];
         
         if(choice.type === "Known") {
-            console.log("Placing", choice.title, position.left);
             return {
                 "left": position.left,
                 "bottom": position.bottom,
@@ -88,12 +119,12 @@ function WorldSeedr(settings) {
                 "right": position.left + schema.width,
                 "type": "Known",
                 "title": choice.title,
-                "arguments": schema.arguments ? chooseAmong(schema.arguments) : undefined
+                "arguments": schema.arguments ? chooseAmongPosition(schema.arguments, position) : undefined
             };
         }
         
         if(choice.type === "Random") {
-            return generateChildren(schema, {
+            return generateContentchildren(schema, {
                 "left": position.left,
                 "bottom": position.bottom,
                 "top": position.top,
@@ -102,32 +133,41 @@ function WorldSeedr(settings) {
         }
     }
     
-    
-    /* Utilities
-    */
-    
     /**
      * From an array of Objects conforming to the Arguments or 
-     * Choices schema types, returns one chosen at random.
+     * children schema types, returns one chosen at random.
      * 
      * @remarks There will be a need to make this filter the 
-     *          choices for being greater than a width or height
+     *          children for being greater than a width or height
      */
-    function chooseAmong(choices, position) {
-        if(choices.length === 1) {
-            return choices[0];
+    function chooseAmong(children) {
+        if(!children.length) {
+            return undefined;
+        }
+        if(children.length === 1) {
+            return children[0];
         }
         
         var choice = randomPercentage(),
             sum = 0,
             i;
         
-        for(i = 0; i < choices.length; i += 1) {
-            sum += choices[i].percent;
+        for(i = 0; i < children.length; i += 1) {
+            sum += children[i].percent;
             if(sum >= choice) {
-                return choices[i];
+                return children[i];
             }
         }
+    }
+    
+    /**
+     * 
+     */
+    function chooseAmongPosition(children, position) {
+        return chooseAmong(children.filter(function (choice) {
+            choice = all_possibilities[choice.title];
+            return (position.right - position.left) >= choice.width;
+        }));
     }
     
     /**
