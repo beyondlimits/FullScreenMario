@@ -52,7 +52,16 @@ function WorldSeedr(settings) {
     */
     
     /**
+     * Generates a large collection of randomly chosen possibilities based on a
+     * given schema mapping. These will fit within the given position.
      * 
+     * @param {Object} schema   A simple Object with basic information on the
+     *                          chosen possibility.
+     * @param {String} name   The name of the possibility schema to start from.
+     * @param {Object} position   An Object that contains .left, .right, .top, 
+     *                            and .bottom.
+     * @return {Object}   An Object containing a position within the given 
+     *                    position and some number of children.
      */
     self.generate = function (name, position) {
         var schema = all_possibilities[name];
@@ -65,11 +74,23 @@ function WorldSeedr(settings) {
             throw new Error("The schema for '" + name + "' has no possibile outcomes");
         }
         
-        return generateContentChildren(schema, positionSave(position));
+        return generateContentChildren(schema, positionCopy(position));
     };
     
     /**
+     * Generates the children for a given schema, position, and direction. This
+     * is the real hardcore function called by self.generate, which calls the
+     * differnt subroutines based on whether the contents are in "Certain" or
+     * "Random" mode.
      * 
+     * @param {Object} schema   A simple Object with basic information on the
+     *                          chosen possibility.
+     * @param {Object} position   An Object that contains .left, .right, .top, 
+     *                            and .bottom.
+     * @param {String} direction   A string direction to check the position by:
+     *                             "top", "right", "bottom", or "left".
+     * @return {Object}   An Object containing a position within the given 
+     *                    position and some number of children.
      */
     function generateContentChildren(schema, position, direction) {
         var contents = schema.contents,
@@ -92,7 +113,16 @@ function WorldSeedr(settings) {
     }
     
     /**
+     * Generates a schema's children that are known to follow a set listing of
+     * sub-schemas.
      * 
+     * @param {Object} contents   The Array of known possibilities, in order.
+     * @param {Object} position   An Object that contains .left, .right, .top, 
+     *                            and .bottom.
+     * @param {String} direction   A string direction to check the position by:
+     *                             "top", "right", "bottom", or "left".
+     * @return {Object}   An Object containing a position within the given 
+     *                    position and some number of children.
      */
     function generateContentChildrenCertain(contents, position, direction) {
         var child;
@@ -109,7 +139,16 @@ function WorldSeedr(settings) {
     }
     
     /**
+     * Generates a schema's children that are known to be randomly chosen from a
+     * list of possibilities until there is no more room.
      * 
+     * @param {Object} contents   The Array of known possibilities, with 
+     *                            probability percentages.
+     * @param {Object} position   An Object that contains .left, .right, .top, 
+     *                            and .bottom.
+     * @param {String} direction   A string direction to check the position by:
+     *                             "top", "right", "bottom", or "left".
+     * @return 
      */
     function generateContentChildrenRandom(contents, position, direction) {
         var children = [],
@@ -127,8 +166,24 @@ function WorldSeedr(settings) {
         return children;
     }
     
+    
+    
+    /* Choice parsing
+    */
+    
     /**
+     * Shortcut function to choose a choice from an allowed set of choices, and
+     * parse it for positioning and sub-choices.
      * 
+     * @param {Object} contents   An Array of choice Objects, each of which must
+     *                            have a .percentage.
+     * @param {Object} position   An Object that contains .left, .right, .top, 
+     *                            and .bottom.
+     * @param {String} direction   A string direction to check the position by:
+     *                             "top", "right", "bottom", or "left".
+     * @return {Object}   An Object containing the bounding box position of a
+     *                    parsed child, with the basic schema (.title) info 
+     *                    added as well as any optional .arguments.
      */
     function generateChild(contents, position, direction) {
         var choice = chooseAmongPosition(contents.children, position);
@@ -140,17 +195,21 @@ function WorldSeedr(settings) {
         return parseChoice(choice, position, direction);
     }
     
-    
-    
-    /* Utilities
-    */
-    
     /**
      * Creates a parsed version of a choice given the position and direction.
      * This is the function that parses and manipulates the positioning of the
      * new choice.
      * 
-     * 
+     * @param {Object} choice   The simple definition of the object chosen from
+     *                          a choices array. It should have at least .title,
+     *                          and optionally .sizing or .arguments.
+     * @param {Object} position   An Object that contains .left, .right, .top, 
+     *                            and .bottom.
+     * @param {String} direction   A string direction to shrink the position by:
+     *                             "top", "right", "bottom", or "left".
+     * @return {Object}   An Object containing the bounding box position of a
+     *                    parsed child, with the basic schema (.title) info 
+     *                    added as well as any optional .arguments.
      */
     function parseChoice(choice, position, direction) {
         var title = choice.title,
@@ -200,40 +259,45 @@ function WorldSeedr(settings) {
     */
     
     /**
-     * From an array of Objects conforming to the Arguments or 
-     * children schema types, returns one chosen at random.
+     * From an Array of potential choice objects, returns one chosen at random.
      * 
-     * @remarks There will be a need to make this filter the 
-     *          children for being greater than a width or height
+     * @param {Array} choice   An Array of objects with .width and .height.
+     * @return {Boolean}
      */
-    function chooseAmong(children) {
-        if(!children.length) {
+    function chooseAmong(choices) {
+        if(!choices.length) {
             return undefined;
         }
-        if(children.length === 1) {
-            return children[0];
+        if(choices.length === 1) {
+            return choices[0];
         }
         
         var choice = randomPercentage(),
             sum = 0,
             i;
         
-        for(i = 0; i < children.length; i += 1) {
-            sum += children[i].percent;
+        for(i = 0; i < choices.length; i += 1) {
+            sum += choices[i].percent;
             if(sum >= choice) {
-                return children[i];
+                return choices[i];
             }
         }
     }
     
     /**
-     * 
+     * From an Array of potential choice objects, filtered to only include those
+     * within a certain size, returns one chosen at random.
+     *
+     * @param {Array} choice   An Array of objects with .width and .height.
+     * @param {Object} position   An Object that contains .left, .right, .top, 
+     *                            and .bottom.
+     * @return {Boolean}
      */
-    function chooseAmongPosition(children, position) {
+    function chooseAmongPosition(choices, position) {
         var width = position.right - position.left,
             height = position.top - position.bottom;
         
-        return chooseAmong(children.filter(function (choice) {
+        return chooseAmong(choices.filter(function (choice) {
             choice = all_possibilities[choice.title];
             return doesChoiceFit(choice, width, height);
         }));
@@ -242,7 +306,7 @@ function WorldSeedr(settings) {
     /**
      * Checks whether a choice can fit within a width and height.
      * 
-     * @param {Object} choice   An object that contains .width and .height.
+     * @param {Object} choice   An Object that contains .width and .height.
      * @param {Number} width
      * @param {Number} height
      * @return {Boolean} The boolean equivalent of the choice fits
@@ -255,8 +319,8 @@ function WorldSeedr(settings) {
     /**
      * Checks whether a choice can fit within a position.
      * 
-     * @param {Object} choice   An object that contains .width and .height.
-     * @param {Object} position   An object that contains .left, .right, .top, 
+     * @param {Object} choice   An Object that contains .width and .height.
+     * @param {Object} position   An Object that contains .left, .right, .top, 
      *                            and .bottom.
      * @return {Boolean} The boolean equivalent of the choice fits
      *                   within the position.
@@ -292,7 +356,7 @@ function WorldSeedr(settings) {
      * @param {Object} position
      * @return {Object}
      */
-    function positionSave(position) {
+    function positionCopy(position) {
         var output = {},
             i;
         
@@ -306,23 +370,13 @@ function WorldSeedr(settings) {
     }
     
     /**
-     * Copies a position's saved attributes to another position
-     * (really just a shallow copy).
+     * Checks and returns whether a position has open room in a particular
+     * direction (horizontally for left/right and vertically for top/bottom).
      * 
-     * @param {Object} position   An object to have attributes copied to.
-     * @param {object} positionSaved   An object to copy attributes from.
-     */
-    function positionRestore(position, positionSaved) {
-        var i;
-        for(i in positionSaved) {
-            if(positionSaved.hasOwnProperty(i)) {
-                position[i] = positionSaved[i];
-            }
-        }
-    }
-    
-    /**
-     * 
+     * @param {Object} position   An Object that contains .left, .right, .top, 
+     *                            and .bottom.
+     * @param {String} direction   A string direction to check the position in:
+     *                             "top", "right", "bottom", or "left".
      */
     function positionIsNotEmpty(position, direction) {
         if(direction === "right" || direction === "left") {
@@ -335,9 +389,9 @@ function WorldSeedr(settings) {
     /**
      * Shrinks a position by the size of a child, in a particular direction.
      * 
-     * @param {Object} position   An object that contains .left, .right, .top, 
+     * @param {Object} position   An Object that contains .left, .right, .top, 
      *                            and .bottom.
-     * @param {Object} child   An object that contains .left, .right, .top, and
+     * @param {Object} child   An Object that contains .left, .right, .top, and
      *                         .bottom.
      * @param {String} direction   A string direction to shrink the position by:
      *                             "top", "right", "bottom", or "left".
@@ -360,7 +414,13 @@ function WorldSeedr(settings) {
     }
     
     /**
+     * Generates the bounding box position Object (think rectangle) for a set of
+     * children. The top, right, etc. member variables become the most extreme
+     * out of all the possibilities.
      * 
+     * @param {Object} children   An Array of objects with .top, .right,
+     *                            .bottom, and .left.
+     * @return {Object}   An Object with .top, .right, .bottom, and .left.
      */
     function getPositionExtremes(children) {
         var position, child, i;
