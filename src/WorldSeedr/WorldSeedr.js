@@ -9,7 +9,28 @@ function WorldSeedr(settings) {
         all_possibilities,
         
         // A function used to generate a random number, by default Math.random
-        random;
+        random,
+        
+        // A constant listing of direction opposites, like top-bottom
+        directionOpposites = {
+            "top": "bottom",
+            "right": "left",
+            "bottom": "top",
+            "left": "right"
+        },
+        
+        directionSizing = {
+            "top": "height",
+            "right": "width",
+            "bottom": "height",
+            "left": "width"
+        },
+        
+        // A constant Array of direction names
+        directionNames = Object.keys(directionOpposites),
+        
+        // A constant Array of the dimension descriptors
+        sizingNames = ["width", "height"];
     
     /**
      * 
@@ -74,7 +95,6 @@ function WorldSeedr(settings) {
                         break;
                     }
                     shrinkPositionByChild(position, child, direction);
-                    debugger;
                     children.push(child);
                 }
                 break;
@@ -102,7 +122,7 @@ function WorldSeedr(settings) {
             return undefined;
         }
         
-        return parseChoice(choice, position);
+        return parseChoice(choice, position, direction);
     }
     
     
@@ -114,33 +134,34 @@ function WorldSeedr(settings) {
      * 
      */
     function parseChoice(choice, position, direction) {
-        var schema = all_possibilities[choice.title],
-            width = (choice.arguments && choice.arguments.width) 
-                ? choice.arguments.width 
-                : schema.width;
+        var title = choice.title,
+            schema = all_possibilities[title],
+            customs = choice["arguments"],
+            output = {
+                "title": title,
+                "arguments": customs
+            },
+            name, i;
         
-        if(choice.type === "Known") {
-            return {
-                "left": position.left,
-                "bottom": position.bottom,
-                "top": position.top,
-                "right": position.left + width,
-                "type": "Known",
-                "title": choice.title,
-                "arguments": schema.arguments 
-                    ? chooseAmongPosition(schema.arguments, position) 
-                    : undefined
-            };
+        for(i in sizingNames) {
+            name = sizingNames[i];
+            
+            output[name] = (customs && customs[name])
+                ? customs[name]
+                : schema[name];
         }
         
-        if(choice.type === "Random") {
-            return generateContentChildren(schema, {
-                "left": position.left,
-                "bottom": position.bottom,
-                "top": position.top,
-                "right": position.left + width,
-            });
+        for(i in directionNames) {
+            name = directionNames[i];
+            output[name] = position[name];
         }
+        
+        output[direction] = output[directionOpposites[direction]]
+            + output[directionSizing[direction]];
+        
+        // A "snap" direction may be needed (as an example, what should happen 
+        // when a Beetle is given an area of height 24?)
+        return output;
     }
     
     
