@@ -66,57 +66,53 @@ function WorldSeedr(settings) {
         }
         
         return generateContentChildren(schema, position);
-    }
+    };
     
     /**
      * 
      */
-    function generateContentChildren(schema, position) {
+    function generateContentChildren(schema, position, direction) {
         var contents = schema.contents,
-            direction = contents.direction,
-            positionSaved = positionSave(position),
-            leftSave = position.left,
+            positionCopy = positionSave(position),
+            positionExtremes,
             children, 
             child;
+        
+        direction = contents.direction || direction;
         
         switch(contents.mode) {
             case "Certain":
                 children = contents.children.map(function (choice) {
-                    child = parseChoice(choice, position, direction);
-                    shrinkPositionByChild(position, child, direction);
+                    child = parseChoice(choice, positionCopy, direction);
+                    if(child) {
+                        shrinkPositionByChild(positionCopy, child, direction);
+                    }
+                    return child;
+                }).filter(function (child) {
                     return child;
                 });
                 break;
             case "Random":
                 children = [];
-                while(position.left < position.right) {
-                    child = generateChild(contents, position, direction);
+                while(positionIsNotEmpty(positionCopy, direction)) {
+                    child = generateChild(contents, positionCopy, direction);
                     if(!child) {
                         break;
                     }
-                    shrinkPositionByChild(position, child, direction);
+                    shrinkPositionByChild(positionCopy, child, direction);
                     children.push(child);
                 }
                 break;
         }
         
-        positionRestore(position, positionSaved);
-        
-        return {
-            "children": children,
-            "left": position.left,
-            "right": position.right,
-            "top": position.top,
-            "bottom": position.bottom
-        };
+        return getPositionExtremes(children);
     }
     
     /**
      * 
      */
     function generateChild(contents, position, direction) {
-        var choice = chooseAmongPosition(contents.children, position),
-            schema;
+        var choice = chooseAmongPosition(contents.children, position);
         
         if(!choice) {
             return undefined;
@@ -131,23 +127,27 @@ function WorldSeedr(settings) {
     */
     
     /**
+     * Creates a parsed version of a choice given the position and direction.
+     * This is the function that parses and manipulates the positioning of the
+     * new choice.
+     * 
      * 
      */
     function parseChoice(choice, position, direction) {
         var title = choice.title,
             schema = all_possibilities[title],
-            customs = choice["arguments"],
+            sizing = choice["sizing"],
             output = {
-                "title": title,
-                "arguments": customs
+                "title": choice.title,
+                "arguments": choice["arguments"]
             },
-            name, i;
+            output, name, i;
         
         for(i in sizingNames) {
             name = sizingNames[i];
             
-            output[name] = (customs && customs[name])
-                ? customs[name]
+            output[name] = (sizing && sizing[name])
+                ? sizing[name]
                 : schema[name];
         }
         
@@ -155,12 +155,25 @@ function WorldSeedr(settings) {
             name = directionNames[i];
             output[name] = position[name];
         }
-        
         output[direction] = output[directionOpposites[direction]]
             + output[directionSizing[direction]];
         
-        // A "snap" direction may be needed (as an example, what should happen 
-        // when a Beetle is given an area of height 24?)
+        switch(schema.contents.snap) {
+            case "top":
+                output["bottom"] = output["top"] - output["height"];
+                break;
+            case "right":
+                output["left"] = output["right"] - output["width"];
+                break;
+            case "bottom":
+                output["top"] = output["bottom"] + output["height"];
+                break;
+            case "left":
+                output["right"] = output["left"] + output["width"];
+                break;
+        }
+        
+        console.log("Parsed", output);
         return output;
     }
     
@@ -291,6 +304,17 @@ function WorldSeedr(settings) {
     }
     
     /**
+     * 
+     */
+    function positionIsNotEmpty(position, direction) {
+        if(direction === "right" || direction === "left") {
+            return position.left < position.right;
+        } else {
+            return position.top > position.bottom;
+        }
+    }
+    
+    /**
      * Shrinks a position by the size of a child, in a particular direction.
      * 
      * @param {Object} position   An object that contains .left, .right, .top, 
@@ -304,19 +328,57 @@ function WorldSeedr(settings) {
         switch(direction) {
             case "top":
                 position.bottom = child.top;
-                break;
+                return;
             case "right":
                 position.left = child.right;
-                break;
+                return;
             case "bottom":
                 position.top = child.bottom;
-                break;
+                return;
             case "left":
                 position.right = child.left;
-                break;
+                return;
         }
     }
     
+    /**
+     * 
+     */
+    function getPositionExtremes(children) {
+        var position, child, i;
+        
+        if(!children || !children.length) {
+            return {};
+        }
+        
+        child = children[0];
+        position = {
+            "top": child.top,
+            "right": child.right,
+            "bottom": child.bottom,
+            "left": child.left,
+            "children": children
+        };
+        
+        if(children.length === 1) {
+            return position;
+        }
+        
+        for(i = 1; i < children.length; i += 1) {
+            child = children[i];
+            
+            if(!Object.keys(child).length) {
+                return position;
+            }
+            
+            position["top"] = Math.max(position["top"], child["top"]);
+            position["right"] = Math.max(position["right"], child["right"]);
+            position["bottom"] = Math.min(position["bottom"], child["bottom"]);
+            position["left"] = Math.min(position["left"], child["left"]);
+        }
+        
+        return position;
+    }
     
     self.reset(settings || {});
 }
