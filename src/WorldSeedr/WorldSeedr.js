@@ -65,7 +65,7 @@ function WorldSeedr(settings) {
             throw new Error("The schema for '" + name + "' has no possibile outcomes");
         }
         
-        return generateContentChildren(schema, position);
+        return generateContentChildren(schema, positionSave(position));
     };
     
     /**
@@ -73,7 +73,6 @@ function WorldSeedr(settings) {
      */
     function generateContentChildren(schema, position, direction) {
         var contents = schema.contents,
-            positionCopy = positionSave(position),
             positionExtremes,
             children, 
             child;
@@ -82,30 +81,50 @@ function WorldSeedr(settings) {
         
         switch(contents.mode) {
             case "Certain":
-                children = contents.children.map(function (choice) {
-                    child = parseChoice(choice, positionCopy, direction);
-                    if(child) {
-                        shrinkPositionByChild(positionCopy, child, direction);
-                    }
-                    return child;
-                }).filter(function (child) {
-                    return child;
-                });
+                children = generateContentChildrenCertain(contents, position, direction);
                 break;
             case "Random":
-                children = [];
-                while(positionIsNotEmpty(positionCopy, direction)) {
-                    child = generateChild(contents, positionCopy, direction);
-                    if(!child) {
-                        break;
-                    }
-                    shrinkPositionByChild(positionCopy, child, direction);
-                    children.push(child);
-                }
+                children = generateContentChildrenRandom(contents, position, direction);
                 break;
         }
         
         return getPositionExtremes(children);
+    }
+    
+    /**
+     * 
+     */
+    function generateContentChildrenCertain(contents, position, direction) {
+        var child;
+        return contents.children.map(function (choice) {
+            child = parseChoice(choice, position, direction);
+            if(child) {
+                shrinkPositionByChild(position, child, direction);
+                child.contents = self.generate(child.title, position);
+            }
+            return child;
+        }).filter(function (child) {
+            return child;
+        });
+    }
+    
+    /**
+     * 
+     */
+    function generateContentChildrenRandom(contents, position, direction) {
+        var children = [],
+            child;
+        
+        while(positionIsNotEmpty(position, direction)) {
+            child = generateChild(contents, position, direction);
+            if(!child) {
+                break;
+            }
+            shrinkPositionByChild(position, child, direction);
+            children.push(child);
+        }
+        
+        return children;
     }
     
     /**
@@ -173,7 +192,6 @@ function WorldSeedr(settings) {
                 break;
         }
         
-        console.log("Parsed", output);
         return output;
     }
     
