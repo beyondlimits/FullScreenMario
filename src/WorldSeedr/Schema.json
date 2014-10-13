@@ -2,8 +2,7 @@ Possibility = {
     "width": Number,
     "height": Number,
     "contents": {
-        // "orientation": ["vertical", "horizontal"],
-        // "snap": ["top", "right", "bottom", "left"], // optional
+        "direction": ["top", "right", "bottom", "left"],
         "mode": ["Random", "Certain"]
         "children": [Child, ...]
     }
