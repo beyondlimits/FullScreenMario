@@ -268,6 +268,14 @@ FullScreenMario.prototype.settings.mods = {
                     this.PixelDrawer.setNoRefill(false);
                 }
             }
+        },
+        {
+            "name": "Wasted",
+            "description": "Should add in some form of filters option to enable B/W (it should be like GTAV",
+            "enabled": false,
+            "events": {
+                
+            }
         }
     ]
 }
