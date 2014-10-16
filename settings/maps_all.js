@@ -7,6 +7,20 @@
     }
 })([
     {
+        "name": "Random",
+        "locations": [
+            { "entry": "Plain" }
+        ],
+        "areas": [
+            {
+                "setting": "Overworld",
+                "creation": [
+                    { "location": 0 },
+                    { "macro": "Floor", "width": 552 },
+                ]
+            }
+        ]
+    }, {
         "name": "1-1",
         "locations": [
               { "entry": "Plain" },

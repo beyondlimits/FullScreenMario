@@ -205,3 +205,31 @@ FullScreenMario.prototype.settings.generator = {
         }
     }
 };
+
+FullScreenMario.prototype.convertRandomLevel = function (schema) {
+    var EightBitter = EightBittr.ensureCorrectCaller(this),
+        generated = EightBitter.WorldSeeder.generate(schema.title, schema),
+        unitsize = EightBitter.unitsize,
+        child, contents, i;
+        
+    
+    for(i in generated.children) {
+        child = generated.children[i];
+        if(child.type === "Known") {
+            thing = EightBitter.ObjectMaker.make(child.title, child.arguments);
+            EightBitter.addThing(thing, child.left * unitsize, child.top * unitsize);
+        } else {
+            EightBitter.placeGeneratedContent(child.contents || child.children);
+        }
+    }
+}
+
+FullScreenMario.prototype.placeGeneratedContent = function (contents) {
+    var EightBitter = EightBittr.ensureCorrectCaller(this),
+        children = contents.children,
+        child, thing, i;
+    
+    for(i in children) {
+        EightBitter.convertRandomLevel(children[i]);
+    }
+};

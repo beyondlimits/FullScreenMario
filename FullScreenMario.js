@@ -401,10 +401,8 @@ window.FullScreenMario = (function() {
     function gameStart() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
-        EightBitter.setMap("1-1");
         EightBitter.StatsHolder.set("lives", 3);
-        // EightBitter.GamesRunner.unpause();
-        EightBitter.GamesRunner.pause();
+        EightBitter.setMap("1-1");
     }
     
     /**

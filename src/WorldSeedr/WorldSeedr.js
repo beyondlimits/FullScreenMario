@@ -130,7 +130,9 @@ function WorldSeedr(settings) {
             child = parseChoice(choice, position, direction);
             if(child) {
                 shrinkPositionByChild(position, child, direction);
-                child.contents = self.generate(child.title, position);
+                if(child.type !== "Known") {
+                    child.contents = self.generate(child.title, position);
+                }
             }
             return child;
         }).filter(function (child) {
@@ -217,9 +219,10 @@ function WorldSeedr(settings) {
             sizing = choice["sizing"],
             output = {
                 "title": choice.title,
-                "arguments": choice["arguments"]
+                "type": choice.type,
+                "arguments": choice["arguments"],
             },
-            output, name, i;
+            name, i;
         
         for(i in sizingNames) {
             name = sizingNames[i];
