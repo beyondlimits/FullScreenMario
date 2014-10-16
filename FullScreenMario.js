@@ -402,7 +402,20 @@ window.FullScreenMario = (function() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
         EightBitter.StatsHolder.set("lives", 3);
-        EightBitter.setMap("1-1");
+        // EightBitter.setMap("1-1");
+        EightBitter.setMap("Random");
+        
+        EightBitter.convertRandomLevel({
+            "title": "LandObstacleGroupSingleStory",
+            "top": 80,
+            "right": 88,
+            "bottom": 0,
+            "left": 80
+        });
+        
+        EightBitter.MapsHandler.spawnMap(EightBitter.MapScreener.right);
+        
+        EightBitter.GamesRunner.step();
     }
     
     /**

@@ -36,7 +36,7 @@ FullScreenMario.prototype.settings.maps = {
             return EightBitter.gravity;
         }
     },
-    "on_spawn": function (prething, xloc) {
+    "on_spawn": function (prething) {
         var thing = prething.thing,
             position = prething.position || thing.position;
         

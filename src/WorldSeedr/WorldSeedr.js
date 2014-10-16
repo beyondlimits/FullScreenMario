@@ -129,10 +129,10 @@ function WorldSeedr(settings) {
         return contents.children.map(function (choice) {
             child = parseChoice(choice, position, direction);
             if(child) {
-                shrinkPositionByChild(position, child, direction);
                 if(child.type !== "Known") {
                     child.contents = self.generate(child.title, position);
                 }
+                shrinkPositionByChild(position, child, direction);
             }
             return child;
         }).filter(function (child) {

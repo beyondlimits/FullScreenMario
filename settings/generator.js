@@ -21,13 +21,13 @@ FullScreenMario.prototype.settings.generator = {
         },
         "LandObstacleGroupSingleStory": {
             "width": 40,
-            "height": 32,
+            "height": 40,
             "contents": {
                 "mode": "Certain",
                 "direction": "top",
                 "children": [{
                     "type": "Random",
-                    "title": "EnemySmall"
+                    "title": "EnemySmall",
                 }, {
                     "type": "Random",
                     "title": "Nothing",
@@ -107,7 +107,7 @@ FullScreenMario.prototype.settings.generator = {
         },
         "Koopa": {
             "width": 8,
-            "height": 8,
+            "height": 12,
             "contents": {
                 "mode": "Random",
                 "direction": "right",
@@ -209,22 +209,37 @@ FullScreenMario.prototype.settings.generator = {
 FullScreenMario.prototype.convertRandomLevel = function (schema) {
     var EightBitter = EightBittr.ensureCorrectCaller(this),
         generated = EightBitter.WorldSeeder.generate(schema.title, schema),
-        unitsize = EightBitter.unitsize,
         child, contents, i;
-        
     
     for(i in generated.children) {
         child = generated.children[i];
         if(child.type === "Known") {
-            thing = EightBitter.ObjectMaker.make(child.title, child.arguments);
-            EightBitter.addThing(thing, child.left * unitsize, child.top * unitsize);
+            EightBitter.placeGeneratedContent(child);
         } else {
-            EightBitter.placeGeneratedContent(child.contents || child.children);
+            EightBitter.recurseGeneratedContent(child.contents || child.children);
         }
     }
-}
+};
 
-FullScreenMario.prototype.placeGeneratedContent = function (contents) {
+FullScreenMario.prototype.placeGeneratedContent = function (child) {
+    var EightBitter = EightBittr.ensureCorrectCaller(this),
+        MapsCreator = EightBitter.MapsCreator,
+        MapsHandler = EightBitter.MapsHandler,
+        prethings = MapsHandler.getPreThings(),
+        area = MapsHandler.getArea(),
+        map = MapsHandler.getMap(),
+        command = {
+            "thing": child.title,
+            "args": child.arguments,
+            "x": child.left,
+            "y": child.top,
+        };
+    
+    console.log("Placing", child);
+    MapsCreator.analyzePreSwitch(command, prethings, area, map);
+};
+
+FullScreenMario.prototype.recurseGeneratedContent = function (contents) {
     var EightBitter = EightBittr.ensureCorrectCaller(this),
         children = contents.children,
         child, thing, i;
