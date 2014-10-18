@@ -420,21 +420,21 @@ window.FullScreenMario = (function() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
         EightBitter.StatsHolder.set("lives", 3);
-        EightBitter.setMap("1-1");
-        // EightBitter.setMap("Random");
+        // EightBitter.setMap("1-1");
+        EightBitter.setMap("Random");
         
-        // EightBitter.WorldSeeder.generateFull({
-            // "title": "Overworld",
-            // // "title": "EnemySmall",
-            // "top": 80,
-            // "right": 800,
-            // "bottom": -8,
-            // "left": 0
-        // });
+        EightBitter.WorldSeeder.generateFull({
+            "title": "Overworld",
+            // "title": "EnemySmall",
+            "top": 80,
+            "right": 800,
+            "bottom": -8,
+            "left": 0
+        });
         
-        // EightBitter.MapsHandler.spawnMap(EightBitter.MapScreener.right);
+        EightBitter.MapsHandler.spawnMap(EightBitter.MapScreener.right);
         
-        // EightBitter.GamesRunner.step();
+        EightBitter.GamesRunner.step();
     }
     
     /**

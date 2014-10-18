@@ -75,6 +75,11 @@ FullScreenMario.prototype.settings.generator = {
             "contents": {
                 "mode": "Random",
                 "direction": "right",
+                "spacing": {
+                    "min": 0,
+                    "max": 24,
+                    "units": 8
+                },
                 "children": [{
                     "percent": 100, // 25,
                     "type": "Random",

@@ -25,6 +25,7 @@ Child = {
 Spacing = one of...
     Number
     [Number, Number]
+    [Choice, ...]
     {
         "min": Number,
         "max": Number,

@@ -520,7 +520,11 @@ function WorldSeedr(settings) {
         
         switch(spacing.constructor) {
             case Array:
-                return randomBetween(spacing[0], spacing[1]);
+                if(spacing[0].constructor === Number) {
+                    return randomBetween(spacing[0], spacing[1]);
+                } else {
+                    return chooseAmong(spacing);
+                }
             case Object:
                 return parseSpacingObject(spacing);
             default:
