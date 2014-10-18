@@ -91,13 +91,30 @@ FullScreenMario.prototype.settings.generator = {
                     }
                 }],
                 "children": [{
-                    "percent": 100, // 25,
+                    "percent": 30,
+                    "type": "Random",
+                    "title": "LandObstacleGroupPipeSmall"
+                }, {
+                    "percent": 30,
                     "type": "Random",
                     "title": "LandObstacleGroupSingleStory"
-                // }, {
-                    // "percent": 25,
-                    // "type": "Random",
-                    // "title": "LandObstacleGroupDoubleStory"
+                }, {
+                    "percent": 30,
+                    "type": "Random",
+                    "title": "LandObstacleGroupDoubleStory"
+                }] // add more!
+            }
+        },
+        "LandObstacleGroupPipeSmall": {
+            "width": 32,
+            "height": 80,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "children": [{
+                    "percent": 100,
+                    "type": "Random",
+                    "title": "Pipe"
                 }]
             }
         },
@@ -115,16 +132,35 @@ FullScreenMario.prototype.settings.generator = {
                     "title": "Nothing"
                 }, {
                     "type": "Random",
-                    "title": "SolidSmall"
+                    "title": "SolidSmallSpotty"
                 }]
             }
         },
-        "LandObstacleGroupDoubleStory": { // !
-            "width": 40,
+        "LandObstacleGroupDoubleStory": {
+            "width": 64,
             "height": 80,
             "contents": {
                 "mode": "Certain",
-                "direction": "top"
+                "direction": "top",
+                "children": [{
+                    "type": "Random",
+                    "title": "EnemySmall"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "SolidSmall"
+                }, {
+                    "type": "Random",
+                    "title": "EnemySmall"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "SolidSmallSpotty"
+                }]
             }
         },
 
@@ -175,15 +211,33 @@ FullScreenMario.prototype.settings.generator = {
                 "mode": "Random",
                 "direction": "right",
                 "children": [{
+                    "percent": 80,
+                    "type": "Random",
+                    "title": "Brick"
+                }, {
+                    "percent": 20,
+                    "type": "Random",
+                    "title": "Block"
+                }]
+            }
+        },
+        
+        "SolidSmallSpotty": {
+            "width": 8,
+            "height": 12,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "children": [{
                     "percent": 50,
                     "type": "Random",
                     "title": "Brick"
                 }, {
-                    "percent": 25,
+                    "percent": 20,
                     "type": "Random",
                     "title": "Block"
                 }, {
-                    "percent": 24,
+                    "percent": 30,
                     "type": "Random",
                     "title": "Nothing"
                 }]
@@ -314,6 +368,39 @@ FullScreenMario.prototype.settings.generator = {
                     "arguments": {
                         "contents": "Mushroom1Up",
                         "hidden": true
+                    }
+                }]
+            }
+        },
+        "Pipe": {
+            "width": 16,
+            "height": 32,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "percent": 50,
+                    "type": "Known",
+                    "title": "Pipe",
+                    "snap": "bottom",
+                    "sizing": {
+                        "height": 24
+                    },
+                    "arguments": {
+                        // "macro": "Pipe",
+                        "height": 24
+                    }
+                }, {
+                    "percent": 50,
+                    "type": "Known",
+                    "title": "Pipe",
+                    "stretch": {
+                        "height": true
+                    },
+                    "arguments": {
+                        // "macro": "Pipe",
+                        // "piranha": true
                     }
                 }]
             }
