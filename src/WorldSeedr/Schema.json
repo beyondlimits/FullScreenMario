@@ -22,16 +22,20 @@ Child = {
     "arguments": Object // optional
 };
 
-Spacing = one of...
+Spacing = // one of
     Number
     [Number, Number]
-    [Choice, ...]
+    [SpacingChoice, ...]
     {
         "min": Number,
         "max": Number,
         "units": Number // optional
     }
 
+SpacingChoice = {
+    "percent": Number,
+    "value": Number
+}
 
 
 // Should there be a start/end? like in multiple sprites

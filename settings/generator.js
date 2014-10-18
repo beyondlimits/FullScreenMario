@@ -75,11 +75,21 @@ FullScreenMario.prototype.settings.generator = {
             "contents": {
                 "mode": "Random",
                 "direction": "right",
-                "spacing": {
-                    "min": 0,
-                    "max": 24,
-                    "units": 8
-                },
+                "spacing": [{
+                    "percent": 50,
+                    "value": {
+                        "min": 0,
+                        "max": 16,
+                        "units": 8
+                    }
+                }, {
+                    "percent": 50,
+                    "value": {
+                        "min": 24,
+                        "max": 40,
+                        "units": 8
+                    }
+                }],
                 "children": [{
                     "percent": 100, // 25,
                     "type": "Random",
@@ -128,7 +138,16 @@ FullScreenMario.prototype.settings.generator = {
             "contents": {
                 "mode": "Random",
                 "direction": "right",
-                "spacing": 4,
+                "spacing": [{
+                    "percent": 50,
+                    "value": 4
+                }, {
+                    "percent": 25,
+                    "value": 8
+                }, {
+                    "percent": 25,
+                    "value": 25
+                }],
                 "children": [{
                     "percent": 45,
                     "type": "Random",
@@ -156,13 +175,17 @@ FullScreenMario.prototype.settings.generator = {
                 "mode": "Random",
                 "direction": "right",
                 "children": [{
-                    "percent": 70,
+                    "percent": 50,
                     "type": "Random",
                     "title": "Brick"
                 }, {
-                    "percent": 30,
+                    "percent": 25,
                     "type": "Random",
                     "title": "Block"
+                }, {
+                    "percent": 24,
+                    "type": "Random",
+                    "title": "Nothing"
                 }]
             }
         },
@@ -289,7 +312,8 @@ FullScreenMario.prototype.settings.generator = {
                     "type": "Known",
                     "title": "Block",
                     "arguments": {
-                        "contents": "Mushroom1Up"
+                        "contents": "Mushroom1Up",
+                        "hidden": true
                     }
                 }]
             }
