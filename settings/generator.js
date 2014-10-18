@@ -27,12 +27,12 @@ FullScreenMario.prototype.settings.generator = {
                 "direction": "top",
                 "children": [{
                     "type": "Random",
-                    "title": "EnemySmall",
+                    "title": "EnemySmall"
                 }, {
                     "type": "Random",
                     "title": "Nothing",
                     "sizing": {
-                        "height": 12
+                        "height": 8
                     }
                 }, {
                     "type": "Random",
@@ -56,6 +56,7 @@ FullScreenMario.prototype.settings.generator = {
             "contents": {
                 "mode": "Random",
                 "direction": "right",
+                "spacing": 4,
                 "children": [{
                     "percent": 45,
                     "type": "Random",
@@ -213,10 +214,16 @@ FullScreenMario.prototype.convertRandomLevel = function (schema) {
     
     for(i in generated.children) {
         child = generated.children[i];
+        
         if(child.type === "Known") {
             EightBitter.placeGeneratedContent(child);
+        } else if(child.type === "Random") { 
+            EightBitter.convertRandomLevel(child);
         } else {
-            EightBitter.recurseGeneratedContent(child.contents || child.children);
+            contents = child.contents || child.children;
+            if(contents) {
+                EightBitter.recurseGeneratedContent(contents);
+            }
         }
     }
 };
@@ -235,7 +242,9 @@ FullScreenMario.prototype.placeGeneratedContent = function (child) {
             "y": child.top,
         };
     
-    console.log("Placing", child);
+    if(child.y > 12) {
+        console.log("placeGeneratedContent", command.thing, command.x, command.y);
+    }
     MapsCreator.analyzePreSwitch(command, prethings, area, map);
 };
 

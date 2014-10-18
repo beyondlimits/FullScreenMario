@@ -1,9 +1,12 @@
 Possibility = {
     "width": Number,
     "height": Number,
+    // "widthConstant": Boolean,
+    // "heightConstant": Boolean,
     "contents": {
         "direction": ["top", "right", "bottom", "left"],
-        "mode": ["Random", "Certain"]
+        "mode": ["Random", "Certain"],
+        "spacing": Number, // optional
         "children": [Child, ...]
     }
 };

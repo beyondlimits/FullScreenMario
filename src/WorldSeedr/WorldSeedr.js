@@ -74,7 +74,7 @@ function WorldSeedr(settings) {
             throw new Error("The schema for '" + name + "' has no possibile outcomes");
         }
         
-        return generateContentChildren(schema, positionCopy(position));
+        return generateContentChildren(schema, positionCopy(position), undefined);
     };
     
     /**
@@ -87,13 +87,16 @@ function WorldSeedr(settings) {
      *                          chosen possibility.
      * @param {Object} position   An Object that contains .left, .right, .top, 
      *                            and .bottom.
-     * @param {String} direction   A string direction to check the position by:
-     *                             "top", "right", "bottom", or "left".
+     * @param {String} [direction]   A string direction to check the position 
+     *                               by ("top", "right", "bottom", or "left")
+     *                               as a default if contents.direction isn't
+     *                               provided.
      * @return {Object}   An Object containing a position within the given 
      *                    position and some number of children.
      */
-    function generateContentChildren(schema, position, direction) {
+    function generateContentChildren(schema, position, direction, fixSizeMax) {
         var contents = schema.contents,
+            spacing = contents.spacing || 0,
             positionExtremes,
             children, 
             child;
@@ -102,10 +105,10 @@ function WorldSeedr(settings) {
         
         switch(contents.mode) {
             case "Certain":
-                children = generateContentChildrenCertain(contents, position, direction);
+                children = generateContentChildrenCertain(contents, position, direction, spacing);
                 break;
             case "Random":
-                children = generateContentChildrenRandom(contents, position, direction);
+                children = generateContentChildrenRandom(contents, position, direction, spacing);
                 break;
         }
         
@@ -121,10 +124,12 @@ function WorldSeedr(settings) {
      *                            and .bottom.
      * @param {String} direction   A string direction to check the position by:
      *                             "top", "right", "bottom", or "left".
+     * @param {Number} spacing   How much space there should be between each
+     *                           child.
      * @return {Object}   An Object containing a position within the given 
      *                    position and some number of children.
      */
-    function generateContentChildrenCertain(contents, position, direction) {
+    function generateContentChildrenCertain(contents, position, direction, spacing) {
         var child;
         return contents.children.map(function (choice) {
             child = parseChoice(choice, position, direction);
@@ -132,7 +137,7 @@ function WorldSeedr(settings) {
                 if(child.type !== "Known") {
                     child.contents = self.generate(child.title, position);
                 }
-                shrinkPositionByChild(position, child, direction);
+                shrinkPositionByChild(position, child, direction, spacing);
             }
             return child;
         }).filter(function (child) {
@@ -150,9 +155,11 @@ function WorldSeedr(settings) {
      *                            and .bottom.
      * @param {String} direction   A string direction to check the position by:
      *                             "top", "right", "bottom", or "left".
+     * @param {Number} spacing   How much space there should be between each 
+     *                           child.
      * @return 
      */
-    function generateContentChildrenRandom(contents, position, direction) {
+    function generateContentChildrenRandom(contents, position, direction, spacing) {
         var children = [],
             child;
         
@@ -161,7 +168,8 @@ function WorldSeedr(settings) {
             if(!child) {
                 break;
             }
-            shrinkPositionByChild(position, child, direction);
+            
+            shrinkPositionByChild(position, child, direction, spacing);
             children.push(child);
         }
         
@@ -398,20 +406,22 @@ function WorldSeedr(settings) {
      *                         .bottom.
      * @param {String} direction   A string direction to shrink the position by:
      *                             "top", "right", "bottom", or "left".
+     * @param {Number} [spacing]   How much space there should be between each
+     *                             child (defaults to 0).
      */
-    function shrinkPositionByChild(position, child, direction) {
+    function shrinkPositionByChild(position, child, direction, spacing) {
         switch(direction) {
             case "top":
-                position.bottom = child.top;
+                position.bottom = child.top + spacing;
                 return;
             case "right":
-                position.left = child.right;
+                position.left = child.right + spacing;
                 return;
             case "bottom":
-                position.top = child.bottom;
+                position.top = child.bottom - spacing;
                 return;
             case "left":
-                position.right = child.left;
+                position.right = child.left - spacing;
                 return;
         }
     }
