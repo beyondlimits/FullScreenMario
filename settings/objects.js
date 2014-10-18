@@ -299,6 +299,7 @@
                 height: 8.5,
                 nofire: 2,
                 shellspawn: true,
+                movement: FullScreenMario.prototype.moveSmart,
                 death: FullScreenMario.prototype.killToShell,
                 spawntype: "BeetleShell",
                 shelltype: "BeetleShell",
