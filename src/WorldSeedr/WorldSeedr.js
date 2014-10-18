@@ -74,7 +74,7 @@ function WorldSeedr(settings) {
             throw new Error("The schema for '" + name + "' has no possibile outcomes");
         }
         
-        return generateContentChildren(schema, positionCopy(position), undefined);
+        return generateContentChildren(schema, positionCopy(position));
     };
     
     /**
@@ -94,7 +94,7 @@ function WorldSeedr(settings) {
      * @return {Object}   An Object containing a position within the given 
      *                    position and some number of children.
      */
-    function generateContentChildren(schema, position, direction, fixSizeMax) {
+    function generateContentChildren(schema, position, direction) {
         var contents = schema.contents,
             spacing = contents.spacing || 0,
             positionExtremes,
@@ -131,6 +131,7 @@ function WorldSeedr(settings) {
      */
     function generateContentChildrenCertain(contents, position, direction, spacing) {
         var child;
+        
         return contents.children.map(function (choice) {
             child = parseChoice(choice, position, direction);
             if(child) {

@@ -162,17 +162,27 @@ FullScreenMario.prototype.settings.generator = {
             "width": 8,
             "height": 8,
             "contents": {
-                "mode": "Certain",
+                "mode": "Random",
                 "direction": "right",
                 "snap": "top",
                 "children": [{
-                    "percent": 95,
+                    "percent": 85,
                     "type": "Known",
                     "title": "Brick"
                 }, {
+                    "percent": 10,
+                    "type": "Known",
+                    "title": "Brick",
+                    "arguments": {
+                        "contents": "Coin"
+                    }
+                }, {
                     "percent": 5,
                     "type": "Known",
-                    "title": "Brick"
+                    "title": "Brick",
+                    "arguments": {
+                        "contents": "Star"
+                    }
                 }]
             }
         },
@@ -180,7 +190,7 @@ FullScreenMario.prototype.settings.generator = {
             "width": 8,
             "height": 8,
             "contents": {
-                "mode": "Certain",
+                "mode": "Random",
                 "direction": "right",
                 "snap": "top",
                 "children": [{
@@ -188,9 +198,19 @@ FullScreenMario.prototype.settings.generator = {
                     "type": "Known",
                     "title": "Block"
                 }, {
-                    "percent": 10,
+                    "percent": 9,
                     "type": "Known",
-                    "title": "Block"
+                    "title": "Block",
+                    "arguments": {
+                        "contents": "Mushroom"
+                    }
+                }, {
+                    "percent": 1,
+                    "type": "Known",
+                    "title": "Block",
+                    "arguments": {
+                        "contents": "Mushroom1Up"
+                    }
                 }]
             }
         },
@@ -214,16 +234,14 @@ FullScreenMario.prototype.convertRandomLevel = function (schema) {
     
     for(i in generated.children) {
         child = generated.children[i];
-        
-        if(child.type === "Known") {
-            EightBitter.placeGeneratedContent(child);
-        } else if(child.type === "Random") { 
-            EightBitter.convertRandomLevel(child);
-        } else {
-            contents = child.contents || child.children;
-            if(contents) {
-                EightBitter.recurseGeneratedContent(contents);
-            }
+                
+        switch(child.type) {
+            case "Known":
+                EightBitter.placeGeneratedContent(child);
+                break;
+            case "Random":
+                EightBitter.convertRandomLevel(child);
+                break;
         }
     }
 };
@@ -242,9 +260,6 @@ FullScreenMario.prototype.placeGeneratedContent = function (child) {
             "y": child.top,
         };
     
-    if(child.y > 12) {
-        console.log("placeGeneratedContent", command.thing, command.x, command.y);
-    }
     MapsCreator.analyzePreSwitch(command, prethings, area, map);
 };
 
