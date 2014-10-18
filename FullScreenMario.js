@@ -330,7 +330,25 @@ window.FullScreenMario = (function() {
      */
     function resetWorldSeeder(self, customs) {
         self.WorldSeeder = new WorldSeedr(proliferate({
-            "random": self.random
+            "random": self.random,
+            "on_placement": function (child) {
+                var MapsCreator = self.MapsCreator,
+                    MapsHandler = self.MapsHandler,
+                    prethings = MapsHandler.getPreThings(),
+                    area = MapsHandler.getArea(),
+                    map = MapsHandler.getMap(),
+                    command = {
+                        "thing": child.title,
+                        "x": child.left,
+                        "y": child.top,
+                    };
+                
+                if(child.arguments) {
+                    self.proliferate(command, child.arguments);
+                }
+                
+                MapsCreator.analyzePreSwitch(command, prethings, area, map);
+            }
         }, self.settings.generator));
     }
     
@@ -405,13 +423,13 @@ window.FullScreenMario = (function() {
         EightBitter.setMap("1-1");
         // EightBitter.setMap("Random");
         
-        // EightBitter.convertRandomLevel({
-            // "title": "LandObstacleGroupSingleStory",
+        // EightBitter.WorldSeeder.generateFull({
+            // "title": "Overworld",
             // // "title": "EnemySmall",
-            // "top": 40,
-            // "right": 140,
-            // "bottom": 0,
-            // "left": 80
+            // "top": 80,
+            // "right": 800,
+            // "bottom": -8,
+            // "left": 0
         // });
         
         // EightBitter.MapsHandler.spawnMap(EightBitter.MapScreener.right);

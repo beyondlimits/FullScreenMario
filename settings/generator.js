@@ -1,7 +1,74 @@
 FullScreenMario.prototype.settings.generator = {
     "possibilities": {
         
-        // General obstacles
+        /* Whole areas
+        */
+        
+        "Overworld": {
+            "height": 80,
+            "width": 2100,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "children": [{
+                    "type": "Random",
+                    "title": "OverworldStart"
+                }, {
+                    "type": "Random",
+                    "title": "OverworldRandomization"
+                }]
+            }
+        },
+        "OverworldStart": {
+            "height": 80,
+            "width": 112,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Random",
+                    "title": "Floor"
+                }]
+            }
+        },
+        "OverworldRandomization": {
+            "height": 80,
+            "width": 1988,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "spacing": {
+                    "min": 8,
+                    "max": 32,
+                    "units": 8
+                },
+                "children": [{
+                    "percent": 100,
+                    "type": "Random",
+                    "title": "OverworldLandArea"
+                }]
+            }
+        },
+        "OverworldLandArea": {
+            "height": 80,
+            "width": 160,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Random",
+                    "title": "Floor"
+                }, {
+                    "type": "Random",
+                    "title": "LandObstacleGroup"
+                }]
+            }
+        },
+        
+        
+        /* General obstacles
+        */
+        
         "LandObstacleGroup": {
             "width": 40,
             "height": 80,
@@ -9,13 +76,13 @@ FullScreenMario.prototype.settings.generator = {
                 "mode": "Random",
                 "direction": "right",
                 "children": [{
-                    "percent": 25,
+                    "percent": 100, // 25,
                     "type": "Random",
                     "title": "LandObstacleGroupSingleStory"
-                }, {
-                    "percent": 25,
-                    "type": "Random",
-                    "title": "LandObstacleGroupDoubleStory"
+                // }, {
+                    // "percent": 25,
+                    // "type": "Random",
+                    // "title": "LandObstacleGroupDoubleStory"
                 }]
             }
         },
@@ -30,10 +97,7 @@ FullScreenMario.prototype.settings.generator = {
                     "title": "EnemySmall"
                 }, {
                     "type": "Random",
-                    "title": "Nothing",
-                    "sizing": {
-                        "height": 8
-                    }
+                    "title": "Nothing"
                 }, {
                     "type": "Random",
                     "title": "SolidSmall"
@@ -49,7 +113,10 @@ FullScreenMario.prototype.settings.generator = {
             }
         },
 
-        // Enemy groups
+        
+        /* Enemy groups
+        */
+        
         "EnemySmall": {
             "width": 8,
             "height": 12,
@@ -73,7 +140,10 @@ FullScreenMario.prototype.settings.generator = {
             }
         },
         
-        // Solid groups
+        
+        /* Solid groups
+        */
+        
         "SolidSmall": {
             "width": 8,
             "height": 12,
@@ -92,7 +162,10 @@ FullScreenMario.prototype.settings.generator = {
             }
         },
 
-        // Characters
+        
+        /* Characters
+        */
+        
         "Goomba": {
             "width": 8,
             "height": 8,
@@ -150,14 +223,16 @@ FullScreenMario.prototype.settings.generator = {
                 "direction": "right",
                 "snap": "bottom",
                 "children": [{
-                    "percent": 100,
                     "type": "Known",
                     "title": "Beetle"
                 }]
             }
         },
         
-        // Solids
+        
+        /* Solids
+        */
+        
         "Brick": {
             "width": 8,
             "height": 8,
@@ -214,8 +289,30 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
+        "Floor": {
+            "width": 8,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Floor",
+                    "stretch": {
+                        "width": true,
+                    },
+                    "arguments": {
+                        "height": "Infinity"
+                    }
+                }]
+            }
+        },
         
-        // Misc.
+        
+        /* Misc.
+        */
+        
         "Nothing": {
             "width": 8,
             "height": 8,
@@ -224,51 +321,5 @@ FullScreenMario.prototype.settings.generator = {
                 "children": []
             }
         }
-    }
-};
-
-FullScreenMario.prototype.convertRandomLevel = function (schema) {
-    var EightBitter = EightBittr.ensureCorrectCaller(this),
-        generated = EightBitter.WorldSeeder.generate(schema.title, schema),
-        child, contents, i;
-    
-    for(i in generated.children) {
-        child = generated.children[i];
-                
-        switch(child.type) {
-            case "Known":
-                EightBitter.placeGeneratedContent(child);
-                break;
-            case "Random":
-                EightBitter.convertRandomLevel(child);
-                break;
-        }
-    }
-};
-
-FullScreenMario.prototype.placeGeneratedContent = function (child) {
-    var EightBitter = EightBittr.ensureCorrectCaller(this),
-        MapsCreator = EightBitter.MapsCreator,
-        MapsHandler = EightBitter.MapsHandler,
-        prethings = MapsHandler.getPreThings(),
-        area = MapsHandler.getArea(),
-        map = MapsHandler.getMap(),
-        command = {
-            "thing": child.title,
-            "args": child.arguments,
-            "x": child.left,
-            "y": child.top,
-        };
-    
-    MapsCreator.analyzePreSwitch(command, prethings, area, map);
-};
-
-FullScreenMario.prototype.recurseGeneratedContent = function (contents) {
-    var EightBitter = EightBittr.ensureCorrectCaller(this),
-        children = contents.children,
-        child, thing, i;
-    
-    for(i in children) {
-        EightBitter.convertRandomLevel(children[i]);
     }
 };

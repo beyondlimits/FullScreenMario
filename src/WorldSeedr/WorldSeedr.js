@@ -8,8 +8,11 @@ function WorldSeedr(settings) {
         // A very large hashtable of possibilities, by title
         all_possibilities,
         
-        // A function used to generate a random number, by default Math.random
+        // Function used to generate a random number, by default Math.random
         random,
+        
+        // Function called in self.generateFull to place a child
+        on_placement,
         
         // A constant listing of direction opposites, like top-bottom
         directionOpposites = {
@@ -36,8 +39,9 @@ function WorldSeedr(settings) {
      * 
      */
     self.reset = function (settings) {
-        all_possibilities = settings.possibilities
+        all_possibilities = settings.possibilities;
         random = settings.random || Math.random.bind(Math);
+        on_placement = settings.on_placement || console.log.bind(console, "Placing");
     };
     
     /**
@@ -45,7 +49,28 @@ function WorldSeedr(settings) {
      */
     self.getPossibilities = function () {
         return all_possibilities;
-    }
+    };
+    
+    /**
+     * 
+     */
+    self.setPossibilities = function (all_possibilities_new) {
+        all_possibilities = all_possibilities_new;
+    };
+    
+    /**
+     * 
+     */
+    self.getOnPlacement = function () {
+        return on_placement;
+    };
+    
+    /**
+     * 
+     */
+    self.setOnPlacement = function (on_placement_new) {
+        on_placement = on_placement_new;
+    };
     
     
     /* Hardcore generation functions
@@ -75,6 +100,27 @@ function WorldSeedr(settings) {
         }
         
         return generateContentChildren(schema, positionCopy(position));
+    };
+    
+    /**
+     * 
+     */
+    self.generateFull = function (schema) {
+        var generated = self.generate(schema.title, schema),
+            child, contents, i;
+        
+        for(i in generated.children) {
+            child = generated.children[i];
+                    
+            switch(child.type) {
+                case "Known":
+                    on_placement(child);
+                    break;
+                case "Random":
+                    self.generateFull(child);
+                    break;
+            }
+        }
     };
     
     /**
@@ -226,6 +272,7 @@ function WorldSeedr(settings) {
         var title = choice.title,
             schema = all_possibilities[title],
             sizing = choice["sizing"],
+            stretch = choice["stretch"],
             output = {
                 "title": choice.title,
                 "type": choice.type,
@@ -261,6 +308,33 @@ function WorldSeedr(settings) {
             case "left":
                 output["right"] = output["left"] + output["width"];
                 break;
+        }
+        
+        if(stretch) {
+            if(stretch.width) {
+                output.left = position.left;
+                output.right = position.right;
+                output.width = output.right - output.left;
+                if(!output.arguments) {
+                    output.arguments = {
+                        "width": output.width
+                    };
+                } else {
+                    output.arguments.width = output.width;
+                }
+            }
+            if(stretch.height) {
+                output.top = position.top;
+                output.bottom = position.bottom;
+                output.height = output.top - output.bottom;
+                if(!output.arguments) {
+                    output.arguments = {
+                        "height": output.height
+                    };
+                } else {
+                    output.arguments.height = output.height;
+                }
+            }
         }
         
         return output;
@@ -358,6 +432,15 @@ function WorldSeedr(settings) {
         return Math.floor(random() * 100) + 1;
     }
     
+    /**
+     * Chooses an integer in [min, max] at random.
+     * 
+     * @return Number
+     */
+    function randomBetween(min, max) {
+        return Math.floor(random() * (1 + max - min)) + min;
+    }
+    
     
     /* Position manipulation utilities
     */
@@ -407,24 +490,53 @@ function WorldSeedr(settings) {
      *                         .bottom.
      * @param {String} direction   A string direction to shrink the position by:
      *                             "top", "right", "bottom", or "left".
-     * @param {Number} [spacing]   How much space there should be between each
-     *                             child (defaults to 0).
+     * @param {Mixed} [spacing]   How much space there should be between each
+     *                            child (defaults to 0).
      */
     function shrinkPositionByChild(position, child, direction, spacing) {
         switch(direction) {
             case "top":
-                position.bottom = child.top + spacing;
+                position.bottom = child.top + parseSpacing(spacing);
                 return;
             case "right":
-                position.left = child.right + spacing;
+                position.left = child.right + parseSpacing(spacing);
                 return;
             case "bottom":
-                position.top = child.bottom - spacing;
+                position.top = child.bottom - parseSpacing(spacing);
                 return;
             case "left":
-                position.right = child.left - spacing;
+                position.right = child.left - parseSpacing(spacing);
                 return;
         }
+    }
+    
+    /**
+     * 
+     */
+    function parseSpacing(spacing) {
+        if(!spacing) {
+            return 0;
+        }
+        
+        switch(spacing.constructor) {
+            case Array:
+                return randomBetween(spacing[0], spacing[1]);
+            case Object:
+                return parseSpacingObject(spacing);
+            default:
+                return spacing;
+        }
+    }
+    
+    /**
+     * 
+     */
+    function parseSpacingObject(spacing) {
+        var min = spacing.min,
+            max = spacing.max,
+            units = spacing.units || 0;
+        
+        return randomBetween(min / units, max / units) * units;
     }
     
     /**

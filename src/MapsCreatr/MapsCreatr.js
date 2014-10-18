@@ -403,7 +403,7 @@ function MapsCreatr(settings) {
                     + "ignored: " + thing, reference, prethings, area, map);
             return; 
         }
-                
+        
         prething = new PreThing(ObjectMaker.make(thing, reference), reference);
         thing = prething.thing;
         

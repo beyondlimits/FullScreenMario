@@ -6,7 +6,7 @@ Possibility = {
     "contents": {
         "direction": ["top", "right", "bottom", "left"],
         "mode": ["Random", "Certain"],
-        "spacing": Number, // optional
+        "spacing": Spacing, // optional
         "children": [Child, ...]
     }
 };
@@ -15,11 +15,25 @@ Child = {
     "percent": Number, // Required if Possibility.children.mode = "Random"
     "type": ["Known", "Random"],
     "title": String,
+    "stretch": { // optional
+        "width": Boolean, // optional
+        "height": Boolean // optional
+    },
     "arguments": Object // optional
 };
+
+Spacing = one of...
+    Number
+    [Number, Number]
+    {
+        "min": Number,
+        "max": Number,
+        "units": Number // optional
+    }
 
 
 
 // Should there be a start/end? like in multiple sprites
 
-// problem - things should ALWAYS declare width & height ahead of time
+// Should add possibility for overlap (think scenery)
+// Should add possibility for varying width/height (think random area gaps)
