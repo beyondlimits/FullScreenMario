@@ -331,24 +331,33 @@ window.FullScreenMario = (function() {
     function resetWorldSeeder(self, customs) {
         self.WorldSeeder = new WorldSeedr(proliferate({
             "random": self.random,
-            "on_placement": function (child) {
+            "on_placement": function (generated_commands) {
                 var MapsCreator = self.MapsCreator,
                     MapsHandler = self.MapsHandler,
                     prethings = MapsHandler.getPreThings(),
                     area = MapsHandler.getArea(),
                     map = MapsHandler.getMap(),
-                    command = {
-                        "thing": child.title,
-                        "x": child.left,
-                        "y": child.top,
+                    command, output, i;
+                
+                generated_commands.sort(function (a, b) {
+                    return a.left - b.left;
+                });
+                
+                for(i = 0; i < generated_commands.length; i += 1) {
+                    command = generated_commands[i];
+                    
+                    output = {
+                        "thing": command.title,
+                        "x": command.left,
+                        "y": command.top
                     };
-                
-                if(child.arguments) {
-                    self.proliferate(command, child.arguments);
+                    
+                    if(command.arguments) {
+                        self.proliferate(output, command.arguments);
+                    }
+                    
+                    MapsCreator.analyzePreSwitch(output, prethings, area, map);
                 }
-                
-                console.log("Giving", command);
-                MapsCreator.analyzePreSwitch(command, prethings, area, map);
             }
         }, self.settings.generator));
     }
@@ -425,6 +434,7 @@ window.FullScreenMario = (function() {
         
         // EightBitter.setMap("Random");
         
+        // EightBitter.WorldSeeder.clearGeneratedCommands();
         // EightBitter.WorldSeeder.generateFull({
             // "title": "Overworld",
             // "top": 80,
@@ -432,6 +442,7 @@ window.FullScreenMario = (function() {
             // "bottom": -8,
             // "left": 0
         // });
+        // EightBitter.WorldSeeder.runGeneratedCommands();
         
         // EightBitter.MapsHandler.spawnMap(EightBitter.MapScreener.right);
         

@@ -15,7 +15,7 @@ FullScreenMario.prototype.settings.generator = {
                     "title": "OverworldStart"
                 }, {
                     "type": "Random",
-                    "title": "OverworldRandomization"
+                    "title": "OverworldBody"
                 }]
             }
         },
@@ -28,6 +28,20 @@ FullScreenMario.prototype.settings.generator = {
                 "children": [{
                     "type": "Random",
                     "title": "Floor"
+                }]
+            }
+        },
+        "OverworldBody": {
+            "height": 80,
+            "width": 1988,
+            "contents": {
+                "mode": "Multiple",
+                "children": [{
+                    "type": "Random",
+                    "title": "OverworldRandomization"
+                }, {
+                    "type": "Random",
+                    "title": "OverworldClouds"
                 }]
             }
         },
@@ -44,6 +58,20 @@ FullScreenMario.prototype.settings.generator = {
                 },
                 "children": [{
                     "percent": 100,
+                    "type": "Random",
+                    "title": "OverworldClump"
+                }]
+            }
+        },
+        "OverworldClump": {
+            "height": 80,
+            "width": 160,
+            "contents": {
+                "mode": "Multiple",
+                "children": [{
+                    "type": "Random",
+                    "title": "OverworldScenery"
+                }, {
                     "type": "Random",
                     "title": "OverworldLandArea"
                 }]
@@ -376,7 +404,192 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
-
+        
+        /* Scenery groups
+        */
+        
+        "OverworldScenery": {
+            "height": 80,
+            "width": 160,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 8
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "OverworldLandScenery"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 32
+                    }
+                }]
+            }
+        },
+        "OverworldLandScenery": {
+            "height": 40,
+            "width": 160,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "snap": "bottom",
+                "spacing": {
+                    "min": -4,
+                    "max": 40,
+                    "units": 4
+                },
+                "children": [{
+                    "percent": 15,
+                    "type": "Random",
+                    "title": "Bush1"
+                }, {
+                    "percent": 15,
+                    "type": "Random",
+                    "title": "Bush2"
+                }, {
+                    "percent": 15,
+                    "type": "Random",
+                    "title": "Bush3"
+                }, {
+                    "percent": 10,
+                    "type": "Random",
+                    "title": "Fence"
+                }, {
+                    "percent": 15,
+                    "type": "Random",
+                    "title": "HillSmall"
+                }, {
+                    "percent": 10,
+                    "type": "Random",
+                    "title": "HillLarge"
+                }, {
+                    "percent": 10,
+                    "type": "Random",
+                    "title": "PlantSmall"
+                }, {
+                    "percent": 10,
+                    "type": "Random",
+                    "title": "PlantLarge"
+                }]
+            }
+        },
+        "OverworldClouds": {
+            "height": 56,
+            "width": 1988,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "snap": "top",
+                "spacing": {
+                    "min": 8,
+                    "max": 64,
+                    "units": 8
+                },
+                "children": [{
+                    "percent": 40,
+                    "type": "Random",
+                    "title": "CloudClump1"
+                }, {
+                    "percent": 35,
+                    "type": "Random",
+                    "title": "CloudClump2"
+                }, {
+                    "percent": 25,
+                    "type": "Random",
+                    "title": "CloudClump3"
+                }]
+            }
+        },
+        "CloudClump1": {
+            "height": 56,
+            "width": 16,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "spacing": {
+                    "min": 16,
+                    "max": 40,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                }, {
+                    "type": "Random",
+                    "title": "Cloud1"
+                }]
+            }
+        },
+        "CloudClump2": {
+            "height": 56,
+            "width": 24,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "spacing": {
+                    "min": 16,
+                    "max": 40,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                }, {
+                    "type": "Random",
+                    "title": "Cloud2"
+                }]
+            }
+        },
+        "CloudClump3": {
+            "height": 56,
+            "width": 32,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "spacing": {
+                    "min": 16,
+                    "max": 40,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                }, {
+                    "type": "Random",
+                    "title": "Cloud3"
+                }]
+            }
+        },
+        "Cloud": {
+            "width": 32,
+            "height": 12,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "limit": 1,
+                "children": [{
+                    "percent": .100,
+                    "type": "Random",
+                    "title": "Cloud1"
+                }, {
+                    "percent": 35,
+                    "type": "Random",
+                    "title": "Cloud2"
+                }, {
+                    "percent": 25,
+                    "type": "Random",
+                    "title": "Cloud3"
+                }]
+            }
+        },
+        
         
         /* Characters
         */
@@ -597,6 +810,140 @@ FullScreenMario.prototype.settings.generator = {
                     "arguments": {
                         "height": "Infinity"
                     }
+                }]
+            }
+        },
+        
+        
+        /* Scenery
+        */
+        
+        "Bush1": {
+            "width": 16,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Known",
+                    "title": "Bush1"
+                }]
+            }
+        },
+        "Bush2": {
+            "width": 24,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Known",
+                    "title": "Bush2"
+                }]
+            }
+        },
+        "Bush3": {
+            "width": 32,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Known",
+                    "title": "Bush3"
+                }]
+            }
+        },
+        "Cloud1": {
+            "width": 16,
+            "height": 12,
+            "contents": {
+                "mode": "Certain",
+                "children": [{
+                    "type": "Known",
+                    "title": "Cloud1"
+                }]
+            }
+        },
+        "Cloud2": {
+            "width": 24,
+            "height": 12,
+            "contents": {
+                "mode": "Certain",
+                "children": [{
+                    "type": "Known",
+                    "title": "Cloud2"
+                }]
+            }
+        },
+        "Cloud3": {
+            "width": 32,
+            "height": 12,
+            "contents": {
+                "mode": "Certain",
+                "children": [{
+                    "type": "Known",
+                    "title": "Cloud3"
+                }]
+            }
+        },
+        "Fence": {
+            "width": 8,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Known",
+                    "title": "Fence"
+                }]
+            }
+        },
+        "HillSmall": {
+            "width": 24,
+            "height": 9.5,
+            "contents": {
+                "mode": "Certain",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Known",
+                    "title": "HillSmall"
+                }]
+            }
+        },
+        "HillLarge": {
+            "width": 40,
+            "height": 17.5,
+            "contents": {
+                "mode": "Certain",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Known",
+                    "title": "HillLarge"
+                }]
+            }
+        },
+        "PlantSmall": {
+            "width": 7,
+            "height": 15,
+            "contents": {
+                "mode": "Certain",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Known",
+                    "title": "PlantSmall"
+                }]
+            }
+        },
+        "PlantLarge": {
+            "width": 8,
+            "height": 23,
+            "contents": {
+                "mode": "Certain",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Known",
+                    "title": "PlantLarge"
                 }]
             }
         },

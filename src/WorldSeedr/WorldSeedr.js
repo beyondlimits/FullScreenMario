@@ -33,7 +33,10 @@ function WorldSeedr(settings) {
         directionNames = Object.keys(directionOpposites),
         
         // A constant Array of the dimension descriptors
-        sizingNames = ["width", "height"];
+        sizingNames = ["width", "height"],
+        
+        // Scratch Array of prethings to be added to during generation
+        generated_commands;
     
     /**
      * 
@@ -42,6 +45,8 @@ function WorldSeedr(settings) {
         all_possibilities = settings.possibilities;
         random = settings.random || Math.random.bind(Math);
         on_placement = settings.on_placement || console.log.bind(console, "Placing");
+        
+        self.clearGeneratedCommands();
     };
     
     /**
@@ -70,6 +75,20 @@ function WorldSeedr(settings) {
      */
     self.setOnPlacement = function (on_placement_new) {
         on_placement = on_placement_new;
+    };
+    
+    /**
+     * 
+     */
+    self.clearGeneratedCommands = function () {
+        generated_commands = [];
+    };
+    
+    /**
+     * 
+     */
+    self.runGeneratedCommands = function () {
+        on_placement(generated_commands);
     };
     
     
@@ -114,7 +133,7 @@ function WorldSeedr(settings) {
                     
             switch(child.type) {
                 case "Known":
-                    on_placement(child);
+                    generated_commands.push(child);
                     break;
                 case "Random":
                     self.generateFull(child);
@@ -155,6 +174,9 @@ function WorldSeedr(settings) {
                 break;
             case "Random":
                 children = generateContentChildrenRandom(contents, position, direction, spacing);
+                break;
+            case "Multiple":
+                children = generateContentChildrenMultiple(contents, position, direction, spacing);
                 break;
         }
         
@@ -225,11 +247,23 @@ function WorldSeedr(settings) {
             
             shrinkPositionByChild(position, child, direction, spacing);
             children.push(child);
+            
+            if(contents.limit && children.length > contents.limit) {
+                return;
+            }
         }
         
         return children;
     }
     
+    /**
+     * 
+     */
+    function generateContentChildrenMultiple(contents, position, direction, spacing) {
+        return contents.children.map(function (choice) {
+            return parseChoice(choice, positionCopy(position), direction);
+        });
+    }
     
     
     /* Choice parsing
@@ -411,8 +445,7 @@ function WorldSeedr(settings) {
             height = position.top - position.bottom;
         
         return chooseAmong(choices.filter(function (choice) {
-            choice = all_possibilities[choice.title];
-            return doesChoiceFit(choice, width, height);
+            return doesChoiceFit(all_possibilities[choice.title], width, height);
         }));
     }
     
