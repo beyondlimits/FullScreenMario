@@ -75,26 +75,12 @@ FullScreenMario.prototype.settings.generator = {
             "contents": {
                 "mode": "Random",
                 "direction": "right",
-                "spacing": [{
-                    "percent": 50,
-                    "value": {
-                        "min": 0,
-                        "max": 16,
-                        "units": 8
-                    }
-                }, {
-                    "percent": 50,
-                    "value": {
-                        "min": 24,
-                        "max": 40,
-                        "units": 8
-                    }
-                }],
+                "spacing": {
+                    "min": 0,
+                    "max": 48,
+                    "units": 8
+                },
                 "children": [{
-                    "percent": 30,
-                    "type": "Random",
-                    "title": "LandObstacleGroupPipeSmall"
-                }, {
                     "percent": 30,
                     "type": "Random",
                     "title": "LandObstacleGroupSingleStory"
@@ -102,19 +88,18 @@ FullScreenMario.prototype.settings.generator = {
                     "percent": 30,
                     "type": "Random",
                     "title": "LandObstacleGroupDoubleStory"
-                }] // add more!
-            }
-        },
-        "LandObstacleGroupPipeSmall": {
-            "width": 32,
-            "height": 80,
-            "contents": {
-                "mode": "Random",
-                "direction": "right",
-                "children": [{
-                    "percent": 100,
+                }, {
+                    "percent": 15,
                     "type": "Random",
-                    "title": "Pipe"
+                    "title": "LandObstacleGroupPipeSmall"
+                }, {
+                    "percent": 10,
+                    "type": "Random",
+                    "title": "LandObstacleGroupPipeMedium"
+                }, {
+                    "percent": 15,
+                    "type": "Random",
+                    "title": "LandObstacleGroupDifficult"
                 }]
             }
         },
@@ -160,6 +145,117 @@ FullScreenMario.prototype.settings.generator = {
                 }, {
                     "type": "Random",
                     "title": "SolidSmallSpotty"
+                }]
+            }
+        },
+        "LandObstacleGroupDifficult": {
+            "width": 24,
+            "height": 80,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "percent": 500,
+                    "type": "Random",
+                    "title": "LandObstacleGroupCannon"
+                // }, {
+                    // "percent": 50,
+                    // "type": "Random",
+                    // "title": "HammerBroSolo"
+                }]
+            }
+        },
+        "LandObstacleGroupCannon": {
+            "width": 24,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "LandObstacleGroupCannonThin"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing"
+                }]
+            }
+        },
+        "LandObstacleGroupCannonThin": {
+            "width": 8,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Random",
+                    "title": "Cannon"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing",
+                    "stretch": {
+                        "height": true
+                    }
+                }]
+            }
+        },
+        "LandObstacleGroupDifficultSmall": {
+            "width": 48,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "padding": 8,
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "LandObstacleGroupDifficult"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing"
+                }]
+            }
+        },
+        "LandObstacleGroupPipeSmall": {
+            "width": 40,
+            "height": 80,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "spacing": {
+                    "min": 0,
+                    "max": 8,
+                    "units": 8
+                },
+                "children": [{
+                    "percent": 100,
+                    "type": "Random",
+                    "title": "Pipe"
+                }]
+            }
+        },
+        "LandObstacleGroupPipeMedium": {
+            "width": 64,
+            "height": 80,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "spacing": {
+                    "min": 0,
+                    "max": 16,
+                    "units": 8
+                },
+                "children": [{
+                    "percent": 100,
+                    "type": "Random",
+                    "title": "Pipe"
                 }]
             }
         },
@@ -221,7 +317,6 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
-        
         "SolidSmallSpotty": {
             "width": 8,
             "height": 12,
@@ -233,13 +328,51 @@ FullScreenMario.prototype.settings.generator = {
                     "type": "Random",
                     "title": "Brick"
                 }, {
-                    "percent": 20,
-                    "type": "Random",
-                    "title": "Block"
-                }, {
                     "percent": 30,
                     "type": "Random",
                     "title": "Nothing"
+                }, {
+                    "percent": 20,
+                    "type": "Random",
+                    "title": "Block"
+                }]
+            }
+        },
+        "Cannon": {
+            "width": 8,
+            "height": 32,
+            "contents": {
+                "mode": "Random",
+                "direction": "top",
+                "snap": "bottom",
+                "children": [{
+                    "percent": 20,
+                    "type": "Random",
+                    "title": "CannonSmall"
+                }, {
+                    "percent": 40,
+                    "type": "Random",
+                    "title": "CannonMedium"
+                }, {
+                    "percent": 40,
+                    "type": "Random",
+                    "title": "CannonLarge"
+                }]
+            }
+        },
+        "CannonStack": {
+            "width": 8,
+            "height": 32,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Random",
+                    "title": "Cannon"
+                }, {
+                    "type": "Random",
+                    "title": "Cannon"
                 }]
             }
         },
@@ -401,6 +534,49 @@ FullScreenMario.prototype.settings.generator = {
                     "arguments": {
                         // "macro": "Pipe",
                         // "piranha": true
+                    }
+                }]
+            }
+        },
+        "CannonSmall": {
+            "width": 8,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Final",
+                    "source": "CannonSmall",
+                    "title": "Cannon",
+                }]
+            }
+        },
+        "CannonMedium": {
+            "width": 8,
+            "height": 16,
+            "contents": {
+                "mode": "Certain",
+                "children": [{
+                    "type": "Final",
+                    "source": "CannonMedium",
+                    "title": "Cannon",
+                    "arguments": {
+                        "height": 16
+                    }
+                }]
+            }
+        },
+        "CannonLarge": {
+            "width": 8,
+            "height": 24,
+            "contents": {
+                "mode": "Certain",
+                "children": [{
+                    "type": "Final",
+                    "source": "CannonLarge",
+                    "title": "Cannon",
+                    "arguments": {
+                        "height": 24 
                     }
                 }]
             }

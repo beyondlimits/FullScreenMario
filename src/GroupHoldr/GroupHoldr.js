@@ -58,7 +58,8 @@ function GroupHoldr(settings) {
      * 
      * @param {String[]} names   An array of names of groupings to be made
      * @param {Object} types   An associative array of the function types of the
-     *                         names given in names.
+     *                         names given in names. This may also be taken in
+     *                         as a string, to be converted to an Object.
      */
     function setGroupNames(names, types) {
         if(!(names instanceof Array)) {
@@ -70,18 +71,13 @@ function GroupHoldr(settings) {
             clearFunctions();
         }
         
-        // Set the new group_names, as ucFirst and removing duplicates
-        group_names = names.map(function(name_old) {
-            var name_new = ucFirst(name_old);
-            // If the name changed, record the new name in types as well
-            types[name_new] = types[name_old];
-            return name_new;
-        });
-        group_names.sort();
-        
         // Reset the group types and type names, to be filled next
         group_types = {}
         group_type_names = {};
+        
+        // Set the new group_names, as ucFirst
+        group_names = names.map(ucFirst);
+        group_names.sort();
         
         // If group_types is an object, set custom group types for everything
         if(typeof(types) == "object") {

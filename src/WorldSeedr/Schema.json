@@ -12,9 +12,10 @@ Possibility = {
 };
 
 Child = {
-    "percent": Number, // Required if Possibility.children.mode = "Random"
-    "type": ["Known", "Random"],
-    "title": String,
+    "percent": Number, // required if Possibility.children.mode = "Random"
+    "type": ["Known", "Random", "Final"],
+    "title": String, // required if type = "Final"
+    "source": String, // 
     "stretch": { // optional
         "width": Boolean, // optional
         "height": Boolean // optional

@@ -179,6 +179,13 @@ function WorldSeedr(settings) {
         var child;
         
         return contents.children.map(function (choice) {
+            // "Final" choices are ones where no more schema lookups are necessary,
+            // and only known information is to be used. This is good for things 
+            // that can be various sizes
+            if(choice.type === "Final") {
+                return parseChoiceFinal(contents, choice, position, direction);
+            }
+            
             child = parseChoice(choice, position, direction);
             if(child) {
                 if(child.type !== "Known") {
@@ -274,7 +281,7 @@ function WorldSeedr(settings) {
             sizing = choice["sizing"],
             stretch = choice["stretch"],
             output = {
-                "title": choice.title,
+                "title": title,
                 "type": choice.type,
                 "arguments": choice["arguments"],
             },
@@ -336,6 +343,26 @@ function WorldSeedr(settings) {
                 }
             }
         }
+        
+        return output;
+    }
+    
+    /**
+     * should conform to parent (contents) via cannonsmall.snap=bottom
+     */
+    function parseChoiceFinal(parent, choice, position, direction) {
+        var schema = all_possibilities[choice.source],
+            output = {
+                "type": "Known",
+                "title": choice.title,
+                "arguments": choice.arguments,
+                "width": schema.width,
+                "height": schema.height,
+                "top": position.top,
+                "right": position.right,
+                "bottom": position.bottom,
+                "left": position.left
+            };
         
         return output;
     }
