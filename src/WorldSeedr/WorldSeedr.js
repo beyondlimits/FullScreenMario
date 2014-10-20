@@ -388,6 +388,8 @@ function WorldSeedr(settings) {
             }
         }
         
+        copySchemaArguments(schema, choice, output);
+        
         return output;
     }
     
@@ -407,6 +409,8 @@ function WorldSeedr(settings) {
                 "bottom": position.bottom,
                 "left": position.left
             };
+        
+        copySchemaArguments(schema, choice, output);
         
         return output;
     }
@@ -660,6 +664,26 @@ function WorldSeedr(settings) {
         }
         
         return position;
+    }
+    
+    /**
+     * 
+     */
+    function copySchemaArguments(schema, choice, output) {
+        var map = schema.contents.argumentMap,
+            i;
+        
+        if(!map) {
+            return;
+        }
+        
+        if(!output.arguments) {
+            output.arguments = {};
+        }
+        
+        for(i in map) {
+            output.arguments[map[i]] = choice[i];
+        }
     }
     
     self.reset(settings || {});

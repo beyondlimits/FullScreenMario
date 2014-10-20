@@ -433,23 +433,23 @@ window.FullScreenMario = (function() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
         EightBitter.StatsHolder.set("lives", 3);
-        // EightBitter.setMap("1-1");
+        EightBitter.setMap("1-1");
         
-        EightBitter.setMap("Random");
+        // EightBitter.setMap("Random");
         
-        EightBitter.WorldSeeder.clearGeneratedCommands();
-        EightBitter.WorldSeeder.generateFull({
-            "title": "Overworld",
-            "top": 80,
-            "right": 800,
-            "bottom": -8,
-            "left": 0
-        });
-        EightBitter.WorldSeeder.runGeneratedCommands();
+        // EightBitter.WorldSeeder.clearGeneratedCommands();
+        // EightBitter.WorldSeeder.generateFull({
+            // "title": "EndOutsideCastle",
+            // "top": 80,
+            // "right": 800,
+            // "bottom": -8,
+            // "left": 0
+        // });
+        // EightBitter.WorldSeeder.runGeneratedCommands();
         
-        EightBitter.MapsHandler.spawnMap(EightBitter.MapScreener.right / 4);
+        // EightBitter.MapsHandler.spawnMap(EightBitter.MapScreener.right / 4);
         
-        EightBitter.GamesRunner.step();
+        // EightBitter.GamesRunner.step();
     }
     
     /**
@@ -5479,12 +5479,12 @@ window.FullScreenMario = (function() {
         for(i = 0; i < 2; i += 1) { // x
             output.push({ 
                 "thing": "BrickHalf", 
-                "x": x + i * 8,
-                "y": y,
+                "x": x + 24 + i * 8,
+                "y": y + 4,
                 "position": "end"
             });
             
-            for(j = 0; j < 3; j += 1) { // y
+            for(j = 1; j < 3; j += 1) { // y
                 output.push({
                     "thing": "BrickPlain",
                     "x": x + 24 + i * 8,
@@ -5498,12 +5498,12 @@ window.FullScreenMario = (function() {
         for(i = 0; i < 2; i += 1) { // x
             output.push({ 
                 "thing": "BrickHalf", 
-                "x": x + 40 + i * 8,
-                "y": y,
+                "x": x + 48 + i * 8,
+                "y": y + 4,
                 "position": "end"
             });
             
-            for(j = 0; j < 3; j += 1) { // y
+            for(j = 1; j < 3; j += 1) { // y
                 output.push({
                     "thing": "BrickPlain",
                     "x": x + 48 + i * 8,

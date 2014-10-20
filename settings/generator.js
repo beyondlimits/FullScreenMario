@@ -16,6 +16,9 @@ FullScreenMario.prototype.settings.generator = {
                 }, {
                     "type": "Random",
                     "title": "OverworldBody"
+                }, {
+                    "type": "Random",
+                    "title": "EndOutsideCastle"
                 }]
             }
         },
@@ -1128,6 +1131,30 @@ FullScreenMario.prototype.settings.generator = {
                 "children": [{
                     "type": "Known",
                     "title": "PlantLarge"
+                }]
+            }
+        },
+        
+        
+        /* General macros
+        */
+        
+        "EndOutsideCastle": {
+            "width": 160,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "snap": "bottom",
+                "argumentMap": {
+                    "left": "x",
+                    "top": "y"
+                },
+                "children": [{
+                    "type": "Known",
+                    "title": "EndOutsideCastle",
+                    "arguments": {
+                        "macro": "EndOutsideCastle"
+                    }
                 }]
             }
         },

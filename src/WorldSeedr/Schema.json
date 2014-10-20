@@ -5,7 +5,7 @@ Possibility = {
     // "heightConstant": Boolean,
     "contents": {
         "direction": ["top", "right", "bottom", "left"],
-        "mode": ["Random", "Certain"],
+        "mode": ["Random", "Certain", "Multiple"],
         "spacing": Spacing, // optional
         "children": [Child, ...]
     }
@@ -39,7 +39,4 @@ SpacingChoice = {
 }
 
 
-// Should there be a start/end? like in multiple sprites
-
-// Should add possibility for overlap (think scenery)
 // Should add possibility for varying width/height (think random area gaps)
