@@ -1,6 +1,29 @@
 FullScreenMario.prototype.settings.generator = {
     "possibilities": {
         
+        /* Randomization continuation
+        */
+        
+        "RandomSpawner": {
+            "width": 0,
+            "height": 0,
+            "contents": {
+                "mode": "Random",
+                "limit": 1,
+                "children": [{
+                    "percent": 100,
+                    "type": "Known",
+                    "title": "RandomSpawner",
+                    "arguments": {
+                        "randomization": "Overworld",
+                        "randomWidth": 2800,
+                        "randomTop": 80,
+                        "randomBottom": 0
+                    }
+                }]
+            }
+        },
+        
         /* Whole areas
         */
         

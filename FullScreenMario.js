@@ -1733,21 +1733,20 @@ window.FullScreenMario = (function() {
      * 
      */
     function spawnRandomSpawner(thing) {
-        var EightBitter = thing.EightBitter;
+        var EightBitter = thing.EightBitter,
+            left = (thing.left + EightBitter.MapScreener.left) / EightBitter.unitsize;
         
         EightBitter.WorldSeeder.clearGeneratedCommands();
         EightBitter.WorldSeeder.generateFull({
             "title": thing.randomization,
             "top": thing.randomTop,
-            "right": thing.randomRight,
+            "right": left + thing.randomWidth,
             "bottom": thing.randomBottom,
-            "left": thing.randomLeft
+            "left": left
         });
         EightBitter.WorldSeeder.runGeneratedCommands();
         
         EightBitter.MapsHandler.spawnMap(EightBitter.MapScreener.right / 4);
-        
-        console.log("Spawning random spawner");
     }
     
     /**
