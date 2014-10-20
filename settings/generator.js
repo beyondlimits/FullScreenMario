@@ -6,7 +6,7 @@ FullScreenMario.prototype.settings.generator = {
         
         "Overworld": {
             "height": 80,
-            "width": 2100,
+            "width": 2800,
             "contents": {
                 "mode": "Certain",
                 "direction": "right",
@@ -25,15 +25,19 @@ FullScreenMario.prototype.settings.generator = {
             "contents": {
                 "mode": "Certain",
                 "direction": "top",
+                "spacing": -8,
                 "children": [{
                     "type": "Random",
                     "title": "Floor"
+                }, {
+                    "type": "Random",
+                    "title": "OverworldScenery"
                 }]
             }
         },
         "OverworldBody": {
             "height": 80,
-            "width": 1988,
+            "width": 2688,
             "contents": {
                 "mode": "Multiple",
                 "children": [{
@@ -47,7 +51,7 @@ FullScreenMario.prototype.settings.generator = {
         },
         "OverworldRandomization": {
             "height": 80,
-            "width": 1988,
+            "width": 2688,
             "contents": {
                 "mode": "Random",
                 "direction": "right",
@@ -57,9 +61,21 @@ FullScreenMario.prototype.settings.generator = {
                     "units": 8
                 },
                 "children": [{
-                    "percent": 100,
+                    "percent": 60,
                     "type": "Random",
                     "title": "OverworldClump"
+                }, {
+                    "percent": 20,
+                    "type": "Random",
+                    "title": "OverworldBetweenSpotty"
+                }, {
+                    "percent": 20,
+                    "type": "Random",
+                    "title": "OverworldBetweenFloating"
+                // }, {
+                    // "percent": 10,
+                    // "type": "Random",
+                    // "title": "OverworldBetweenWateryBridge"
                 }]
             }
         },
@@ -94,6 +110,84 @@ FullScreenMario.prototype.settings.generator = {
         },
         
         
+        /* Areas between floors
+        */
+        
+        "OverworldBetweenSpotty": {
+            "width": 112,
+            "height": 80,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "children": [{
+                    "percent": 50,
+                    "type": "Random",
+                    "title": "OverworldBetweenSpot",
+                }, {
+                    "percent": 50,
+                    "type": "Random",
+                    "title": "Nothing"
+                }]
+            }
+        },
+        "OverworldBetweenSpot": {
+            "width": 8,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Random",
+                    "title": "Floor"
+                }, {
+                    "type": "Random",
+                    "title": "OverworldBetweenSpotScenery"
+                }]
+            }
+        },
+        "OverworldBetweenFloating": {
+            "width": 112,
+            "height": 80,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "children": [{
+                    "percent": 50,
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "percent": 50,
+                    "type": "Random",
+                    "title": "OverworldBetweenFloat"
+                }]
+            }
+        },
+        "OverworldBetweenFloat": {
+            "width": 8,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Random",
+                    "title": "Stone"
+                }]
+            }
+        },
+        "OverworldBetweenWateryBridge": {
+            "width": 168,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "children": [{
+                    "type": "Random",
+                    "title": "OverworldBetweenFloating"
+                }]
+            }
+        },
+        
+        
         /* General obstacles
         */
         
@@ -109,25 +203,51 @@ FullScreenMario.prototype.settings.generator = {
                     "units": 8
                 },
                 "children": [{
-                    "percent": 30,
+                    "percent": 25,
+                    "type": "Random",
+                    "title": "LandObstacleGroupEnemies"
+                }, {
+                    "percent": 20,
                     "type": "Random",
                     "title": "LandObstacleGroupSingleStory"
                 }, {
-                    "percent": 30,
+                    "percent": 10,
+                    "type": "Random",
+                    "title": "LandObstacleGroupDoubleStorySpotty"
+                }, {
+                    "percent": 10,
                     "type": "Random",
                     "title": "LandObstacleGroupDoubleStory"
                 }, {
-                    "percent": 15,
+                    "percent": 10,
                     "type": "Random",
                     "title": "LandObstacleGroupPipeSmall"
                 }, {
-                    "percent": 10,
+                    "percent": 5,
                     "type": "Random",
                     "title": "LandObstacleGroupPipeMedium"
                 }, {
                     "percent": 15,
                     "type": "Random",
                     "title": "LandObstacleGroupDifficult"
+                }]
+            }
+        },
+        "LandObstacleGroupEnemies": {
+            "width": 64,
+            "height": 80,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "spacing": 4,
+                "children": [{
+                    "percent": 90,
+                    "type": "Random",
+                    "title": "EnemySmall"
+                }, {
+                    "percent": 10,
+                    "type": "Random",
+                    "title": "Nothing"
                 }]
             }
         },
@@ -138,6 +258,33 @@ FullScreenMario.prototype.settings.generator = {
                 "mode": "Certain",
                 "direction": "top",
                 "children": [{
+                    "type": "Random",
+                    "title": "EnemySmall"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "SolidSmallSpotty"
+                }]
+            }
+        },
+        "LandObstacleGroupDoubleStorySpotty": {
+            "width": 64,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Random",
+                    "title": "EnemySmall"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "SolidSmall"
+                }, {
                     "type": "Random",
                     "title": "EnemySmall"
                 }, {
@@ -172,7 +319,10 @@ FullScreenMario.prototype.settings.generator = {
                     "title": "Nothing"
                 }, {
                     "type": "Random",
-                    "title": "SolidSmallSpotty"
+                    "title": "SolidSmall"
+                }, {
+                    "type": "Random",
+                    "title": "EnemySmall"
                 }]
             }
         },
@@ -299,14 +449,11 @@ FullScreenMario.prototype.settings.generator = {
                 "mode": "Random",
                 "direction": "right",
                 "spacing": [{
-                    "percent": 50,
+                    "percent": 75,
                     "value": 4
                 }, {
                     "percent": 25,
                     "value": 8
-                }, {
-                    "percent": 25,
-                    "value": 25
                 }],
                 "children": [{
                     "percent": 45,
@@ -482,7 +629,7 @@ FullScreenMario.prototype.settings.generator = {
         },
         "OverworldClouds": {
             "height": 56,
-            "width": 1988,
+            "width": 2688,
             "contents": {
                 "mode": "Random",
                 "direction": "right",
@@ -575,7 +722,7 @@ FullScreenMario.prototype.settings.generator = {
                 "direction": "right",
                 "limit": 1,
                 "children": [{
-                    "percent": .100,
+                    "percent": 40,
                     "type": "Random",
                     "title": "Cloud1"
                 }, {
@@ -586,6 +733,31 @@ FullScreenMario.prototype.settings.generator = {
                     "percent": 25,
                     "type": "Random",
                     "title": "Cloud3"
+                }]
+            }
+        },
+        "OverworldBetweenSpotScenery": {
+            "width": 8,
+            "height": 23,
+            "contents": {
+                "mode": "Random",
+                "direction": "top",
+                "snap": "bottom",
+                "children": [{
+                    "percent": 70,
+                    "type": "Random",
+                    "title": "Nothing",
+                    "stretch": {
+                        "height": true
+                    }
+                }, {
+                    "percent": 15,
+                    "type": "Random",
+                    "title": "PlantSmall"
+                }, {
+                    "percent": 15,
+                    "type": "Random",
+                    "title": "PlantLarge"
                 }]
             }
         },
@@ -810,6 +982,18 @@ FullScreenMario.prototype.settings.generator = {
                     "arguments": {
                         "height": "Infinity"
                     }
+                }]
+            }
+        },
+        "Stone": {
+            "width": 8,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "children": [{
+                    "type": "Known",
+                    "title": "Stone"
                 }]
             }
         },

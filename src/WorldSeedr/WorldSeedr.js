@@ -125,6 +125,7 @@ function WorldSeedr(settings) {
      * 
      */
     self.generateFull = function (schema) {
+        // console.log("Generate full", schema.title, schema.left, "-", schema.right);
         var generated = self.generate(schema.title, schema),
             child, contents, i;
         
@@ -179,6 +180,8 @@ function WorldSeedr(settings) {
                 children = generateContentChildrenMultiple(contents, position, direction, spacing);
                 break;
         }
+        
+        // console.log("\tGenerated children", children);
         
         return getPositionExtremes(children);
     }
@@ -375,6 +378,13 @@ function WorldSeedr(settings) {
                 } else {
                     output.arguments.height = output.height;
                 }
+            }
+        }
+        
+        if(output.title === "Floor") {
+            // console.log("\t\tCreated floor", output);
+            if(!window.nope && output.left < 8) {
+                // debugger;
             }
         }
         
