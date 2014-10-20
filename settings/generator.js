@@ -790,25 +790,25 @@ FullScreenMario.prototype.settings.generator = {
                 "direction": "right",
                 "snap": "bottom",
                 "children": [{
-                    "percent": 30,
+                    "percent": 20,
                     "type": "Known",
                     "title": "Koopa",
                 }, {
-                    "percent": 30,
+                    "percent": 40,
                     "type": "Known",
                     "title": "Koopa",
                     "arguments": {
                         "smart": true
                     }
                 }, {
-                    "percent": 20,
+                    "percent": 15,
                     "type": "Known",
                     "title": "Koopa",
                     "arguments": {
                         "jumping": true
                     }
                 }, {
-                    "percent": 20,
+                    "percent": 25,
                     "type": "Known",
                     "title": "Koopa",
                     "arguments": {

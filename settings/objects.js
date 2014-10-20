@@ -74,7 +74,8 @@
                             "LevelTransport": {}
                         },
                         "DetectWindow": {
-                            "ScrollBlocker": {}
+                            "ScrollBlocker": {},
+                            "RandomSpawner": {}
                         },
                         "DetectSpawn": {}
                     }
@@ -708,6 +709,9 @@
             },
             DetectWindow: {
                 movement: FullScreenMario.prototype.activateWindowDetector
+            },
+            RandomSpawner: {
+                activate: FullScreenMario.prototype.spawnRandomSpawner
             },
             ScrollBlocker: {
                 activate: FullScreenMario.prototype.activateScrollBlocker

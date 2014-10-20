@@ -16,6 +16,7 @@
                 "setting": "Overworld",
                 "creation": [
                     { "location": 0 },
+                    { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Overworld", "randomTop": 80, "randomRight": 2800, "randomBottom": -8, "randomLeft": 0 }
                 ]
             }
         ]

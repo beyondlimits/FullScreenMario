@@ -434,22 +434,7 @@ window.FullScreenMario = (function() {
         
         EightBitter.StatsHolder.set("lives", 3);
         EightBitter.setMap("1-1");
-        
         // EightBitter.setMap("Random");
-        
-        // EightBitter.WorldSeeder.clearGeneratedCommands();
-        // EightBitter.WorldSeeder.generateFull({
-            // "title": "EndOutsideCastle",
-            // "top": 80,
-            // "right": 800,
-            // "bottom": -8,
-            // "left": 0
-        // });
-        // EightBitter.WorldSeeder.runGeneratedCommands();
-        
-        // EightBitter.MapsHandler.spawnMap(EightBitter.MapScreener.right / 4);
-        
-        // EightBitter.GamesRunner.step();
     }
     
     /**
@@ -1742,6 +1727,27 @@ window.FullScreenMario = (function() {
                 thing.partners[name] = collection[partnerNames[name]];
             }
         }
+    }
+    
+    /**
+     * 
+     */
+    function spawnRandomSpawner(thing) {
+        var EightBitter = thing.EightBitter;
+        
+        EightBitter.WorldSeeder.clearGeneratedCommands();
+        EightBitter.WorldSeeder.generateFull({
+            "title": thing.randomization,
+            "top": thing.randomTop,
+            "right": thing.randomRight,
+            "bottom": thing.randomBottom,
+            "left": thing.randomLeft
+        });
+        EightBitter.WorldSeeder.runGeneratedCommands();
+        
+        EightBitter.MapsHandler.spawnMap(EightBitter.MapScreener.right / 4);
+        
+        console.log("Spawning random spawner");
     }
     
     /**
@@ -4843,6 +4849,29 @@ window.FullScreenMario = (function() {
         EightBitter.GamesRunner.unpause();
     }
     
+    /**
+     * 
+     */
+    function setMapRandom() {
+        var EightBitter = EightBittr.ensureCorrectCaller(this);
+        
+        EightBitter.setMap("Random");
+        
+        EightBitter.WorldSeeder.clearGeneratedCommands();
+        EightBitter.WorldSeeder.generateFull({
+            "title": "Overworld",
+            "top": 80,
+            "right": 800,
+            "bottom": -8,
+            "left": 0
+        });
+        EightBitter.WorldSeeder.runGeneratedCommands();
+        
+        EightBitter.MapsHandler.spawnMap(EightBitter.MapScreener.right / 4);
+        
+        // EightBitter.GamesRunner.step();
+    }
+    
     /* Map entrances
     */
      
@@ -5836,6 +5865,7 @@ window.FullScreenMario = (function() {
         "spawnDetector": spawnDetector,
         "spawnCollectionComponent": spawnCollectionComponent,
         "spawnCollectionPartner": spawnCollectionPartner,
+        "spawnRandomSpawner": spawnRandomSpawner,
         "activateWindowDetector": activateWindowDetector,
         "activateScrollBlocker": activateScrollBlocker,
         "activateSectionBefore": activateSectionBefore,
@@ -5982,6 +6012,7 @@ window.FullScreenMario = (function() {
         // Map sets
         "setMap": setMap,
         "setLocation": setLocation,
+        "setMapRandom": setMapRandom,
         // Map entrances
         "mapEntranceNormal": mapEntranceNormal,
         "mapEntrancePlain": mapEntrancePlain,
