@@ -482,7 +482,7 @@
                     { "thing": "Koopa", "x": 1480, "y": 12 },
                     { "macro": "Fill", "thing": "Brick", "x": 1480, "y": 32, "xnum": 2 },
                     { "thing": "Block", "x": 1488, "y": 64, "contents": "Coin", "hidden": true },
-                    // { "thing": "Springboard", "x": 1504, "y": 14.5 },
+                    { "thing": "Springboard", "x": 1504, "y": 14.5 },
                     { "macro": "Fill", "thing": "Stone", "x": 1520, "y": 80, "xnum": 2, "height": 80 },
                     { "macro": "EndOutsideCastle", "x": 1596 }
                 ]

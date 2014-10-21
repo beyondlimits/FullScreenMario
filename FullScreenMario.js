@@ -531,7 +531,7 @@ window.FullScreenMario = (function() {
                 "swim1", "swim2"
             ], "swimming", 5);
             EightBitter.TimeHandler.addEventInterval(
-                thing.EightBitter.animatePlayerBubbling,
+                player.EightBitter.animatePlayerBubbling,
                 96, Infinity,
                 player
             );
