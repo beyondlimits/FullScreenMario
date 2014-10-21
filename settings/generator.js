@@ -53,8 +53,12 @@ FullScreenMario.prototype.settings.generator = {
                 "direction": "top",
                 "spacing": -8,
                 "children": [{
-                    "type": "Random",
-                    "title": "Floor"
+                    "type": "Known",
+                    "title": "Floor",
+                    "arguments": {
+                        "macro": "Floor",
+                        "width": 112
+                    }
                 }, {
                     "type": "Random",
                     "title": "OverworldScenery"
@@ -87,15 +91,19 @@ FullScreenMario.prototype.settings.generator = {
                     "units": 8
                 },
                 "children": [{
-                    "percent": 60,
+                    "percent": 50,
                     "type": "Random",
                     "title": "OverworldClump"
                 }, {
-                    "percent": 20,
+                    "percent": 15,
                     "type": "Random",
                     "title": "OverworldBetweenSpotty"
                 }, {
-                    "percent": 20,
+                    "percent": 25,
+                    "type": "Random",
+                    "title": "OverworldBetweenRamps"
+                }, {
+                    "percent": 10,
                     "type": "Random",
                     "title": "OverworldBetweenFloating"
                 // }, {
@@ -126,8 +134,12 @@ FullScreenMario.prototype.settings.generator = {
                 "mode": "Certain",
                 "direction": "top",
                 "children": [{
-                    "type": "Random",
-                    "title": "Floor"
+                    "type": "Known",
+                    "title": "Floor",
+                    "arguments": {
+                        "macro": "Floor",
+                        "width": 160
+                    }
                 }, {
                     "type": "Random",
                     "title": "LandObstacleGroup"
@@ -168,6 +180,27 @@ FullScreenMario.prototype.settings.generator = {
                 }, {
                     "type": "Random",
                     "title": "OverworldBetweenSpotScenery"
+                }]
+            }
+        },
+        "OverworldBetweenRamps": {
+            "width": 96,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "children": [{
+                    "type": "Random",
+                    "title": "RampUpSmallFloor"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "width": 40
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "RampDownSmallFloor"
                 }]
             }
         },
@@ -574,6 +607,314 @@ FullScreenMario.prototype.settings.generator = {
                 }, {
                     "type": "Random",
                     "title": "Cannon"
+                }]
+            }
+        },
+        "RampUpSmall": {
+            "width": 32,
+            "height": 32,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Random",
+                    "title": "Stone"
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "height": 16
+                    },
+                    "arguments": {
+                        "height": 16
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "height": 24
+                    },
+                    "arguments": {
+                        "height": 24
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "height": 32
+                    },
+                    "arguments": {
+                        "height": 32
+                    }
+                }]
+            }
+        },
+        "RampUpSmallFloor": {
+            "width": 32,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Floor",
+                    "arguments": {
+                        "macro": "Floor",
+                        "width": 32
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "RampUpSmall"
+                }]
+            }
+        },
+        "RampUpLarge": {
+            "width": 64,
+            "height": 64,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Random",
+                    "title": "Stone"
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "height": 16
+                    },
+                    "arguments": {
+                        "height": 16
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "height": 24
+                    },
+                    "arguments": {
+                        "height": 24
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "height": 32
+                    },
+                    "arguments": {
+                        "height": 32
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "height": 40
+                    },
+                    "arguments": {
+                        "height": 40
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "height": 48
+                    },
+                    "arguments": {
+                        "height": 48
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "height": 56
+                    },
+                    "arguments": {
+                        "height": 56
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "height": 64
+                    },
+                    "arguments": {
+                        "height": 64
+                    }
+                }]
+            }
+        },
+        "RampUpLargeFloor": {
+            "width": 64,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Floor",
+                    "arguments": {
+                        "macro": "Floor",
+                        "width": 64
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "RampUpLarge"
+                }]
+            }
+        },
+        "RampDownSmall": {
+            "width": 32,
+            "height": 32,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "height": 32
+                    },
+                    "arguments": {
+                        "height": 32
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "height": 24
+                    },
+                    "arguments": {
+                        "height": 24
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "height": 16
+                    },
+                    "arguments": {
+                        "height": 16
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone"
+                }]
+            }
+        },
+        "RampDownSmallFloor": {
+            "width": 32,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Floor",
+                    "arguments": {
+                        "macro": "Floor",
+                        "width": 32
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "RampDownSmall"
+                }]
+            }
+        },
+        "RampDownLarge": {
+            "width": 64,
+            "height": 64,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "height": 64
+                    },
+                    "arguments": {
+                        "height": 64
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "height": 56
+                    },
+                    "arguments": {
+                        "height": 56
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "height": 48
+                    },
+                    "arguments": {
+                        "height": 48
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "height": 40
+                    },
+                    "arguments": {
+                        "height": 40
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "height": 32
+                    },
+                    "arguments": {
+                        "height": 32
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "height": 24
+                    },
+                    "arguments": {
+                        "height": 24
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "height": 16
+                    },
+                    "arguments": {
+                        "height": 16
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone"
+                }]
+            }
+        },
+        "RampDownLargeFloor": {
+            "width": 64,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Floor",
+                    "arguments": {
+                        "macro": "Floor",
+                        "width": 64
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "RampDownLarge"
                 }]
             }
         },
@@ -1017,6 +1358,7 @@ FullScreenMario.prototype.settings.generator = {
             "contents": {
                 "mode": "Certain",
                 "direction": "right",
+                "snap": "bottom",
                 "children": [{
                     "type": "Known",
                     "title": "Stone"

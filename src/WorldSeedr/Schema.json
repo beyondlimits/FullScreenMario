@@ -1,21 +1,22 @@
 Possibility = {
     "width": Number,
     "height": Number,
-    // "widthConstant": Boolean,
-    // "heightConstant": Boolean,
-    "contents": {
-        "direction": ["top", "right", "bottom", "left"],
-        "mode": ["Random", "Certain", "Multiple"],
-        "spacing": Spacing, // optional
-        "children": [Child, ...]
-    }
+    "contents": PossibilityContents
+};
+
+PossibilityContents = {
+    "mode": ["Random", "Certain", "Multiple"],
+    "direction": ["top", "right", "bottom", "left"],
+    "snap": ["top", "right", "bottom", "left"],
+    "spacing": Spacing, // optional
+    "children": [Child, ...]
 };
 
 Child = {
     "percent": Number, // required if Possibility.children.mode = "Random"
     "type": ["Known", "Random", "Final"],
-    "title": String, // required if type = "Final"
-    "source": String, // 
+    "title": String, //
+    "source": String, // required if type = "Final"
     "stretch": { // optional
         "width": Boolean, // optional
         "height": Boolean // optional
@@ -27,6 +28,7 @@ Spacing = // one of
     Number
     [Number, Number]
     [SpacingChoice, ...]
+    SpacingContents
     {
         "min": Number,
         "max": Number,
@@ -35,8 +37,12 @@ Spacing = // one of
 
 SpacingChoice = {
     "percent": Number,
-    "value": Number
-}
+    "value": Spacing
+};
 
+SpacingContents = {
+    "mode": ["Random", "Certain"],
+    "children": [Child, ...]
+};
 
 // Should add possibility for varying width/height (think random area gaps)

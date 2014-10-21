@@ -163,7 +163,7 @@ function WorldSeedr(settings) {
     function generateContentChildren(schema, position, direction) {
         var contents = schema.contents,
             spacing = contents.spacing || 0,
-            positionExtremes,
+            positionMerged = positionMerge(schema, position),
             children, 
             child;
         
@@ -171,13 +171,13 @@ function WorldSeedr(settings) {
         
         switch(contents.mode) {
             case "Certain":
-                children = generateContentChildrenCertain(contents, position, direction, spacing);
+                children = generateContentChildrenCertain(contents, positionMerged, direction, spacing);
                 break;
             case "Random":
-                children = generateContentChildrenRandom(contents, position, direction, spacing);
+                children = generateContentChildrenRandom(contents, positionMerged, direction, spacing);
                 break;
             case "Multiple":
-                children = generateContentChildrenMultiple(contents, position, direction, spacing);
+                children = generateContentChildrenMultiple(contents, positionMerged, direction, spacing);
                 break;
         }
         
@@ -366,6 +366,9 @@ function WorldSeedr(settings) {
                 } else {
                     output.arguments.width = output.width;
                 }
+                // if(!window.nope) {
+                    // debugger;
+                // }
             }
             if(stretch.height) {
                 output.top = position.top;
@@ -453,6 +456,10 @@ function WorldSeedr(settings) {
      * @param {Object} position   An Object that contains .left, .right, .top, 
      *                            and .bottom.
      * @return {Boolean}
+     * @remarks Functions that use this will have to react to nothing being 
+     *          chosen. For example, if only 50 percentage is accumulated 
+     *          among fitting ones but 75 is randomly chosen, something should
+     *          still be returned.
      */
     function chooseAmongPosition(choices, position) {
         var width = position.right - position.left,
@@ -532,6 +539,27 @@ function WorldSeedr(settings) {
         for(i in position) {
             if(position.hasOwnProperty(i)) {
                 output[i] = position[i];
+            }
+        }
+        
+        return output;
+    }
+    
+    /**
+     * Creates a new position with all required attributes taking from the 
+     * primary source or secondary source, in that order.
+     * 
+     * @param {Object} primary
+     * @param {Object} secondary
+     * @return {Object}
+     */
+    function positionMerge(primary, secondary) {
+        var output = positionCopy(primary),
+            i;
+        
+        for(i in secondary) {
+            if(!output.hasOwnProperty(i)) {
+                output[i] = secondary[i];
             }
         }
         
