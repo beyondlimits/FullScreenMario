@@ -4990,7 +4990,11 @@ window.FullScreenMario = (function() {
             
             if(thing.top > other.top) { 
                 thing.EightBitter.TimeHandler.addEvent(function () {
-                    thing.EightBitter.setLocation(other.transport);
+                    if(other.transport.constructor === Object) {
+                        thing.EightBitter.setMap(other.transport.map);
+                    } else {
+                        thing.EightBitter.setLocation(other.transport);
+                    }
                 }, 42);
                 return true;
             }
@@ -5503,6 +5507,27 @@ window.FullScreenMario = (function() {
                 "yvel": yvel,
                 "movement": scope.movePlatformSpawn
             });
+        }
+        
+        return output;
+    }
+    
+    /**
+     * 
+     */
+    function macroWarpWorld(reference) {
+        var output = [],
+            x = reference.x || 0,
+            y = reference.y || 0,
+            warps = reference.warps,
+            i;
+        
+        for(i = 0; i < warps.length; i += 1) {
+            output.push({ "macro": "Pipe", "x": x + 10 + i * 32, "height": 24, "piranha": true, "transport": { "map": warps[i] + "-1" } });
+        }
+        
+        if(warps.length === 1) {
+            output[0].x += 32;
         }
         
         return output;
@@ -6057,6 +6082,7 @@ window.FullScreenMario = (function() {
         "macroBridge": macroBridge,
         "macroScale": macroScale,
         "macroPlatformGenerator": macroPlatformGenerator,
+        "macroWarpWorld": macroWarpWorld,
         "macroStartInsideCastle": macroStartInsideCastle,
         "macroEndOutsideCastle": macroEndOutsideCastle,
         "macroEndInsideCastle": macroEndInsideCastle,
