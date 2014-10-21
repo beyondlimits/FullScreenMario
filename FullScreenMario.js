@@ -676,13 +676,22 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
-    function scrollPlayer(thing, dx, dy) {
+    function scrollThing(thing, dx, dy) {
         var saveleft = thing.left,
             savetop = thing.top;
         
         thing.EightBitter.scrollWindow(dx, dy);
         thing.EightBitter.setLeft(thing, saveleft);
         thing.EightBitter.setTop(thing, savetop);
+    }
+    
+    /**
+     * 
+     */
+    function scrollPlayer(dx, dy) {
+        var EightBitter = EightBittr.ensureCorrectCaller(this);
+        
+        EightBitter.scrollThing(EightBitter.player, dx, dy);
     }
         
     
@@ -1768,6 +1777,13 @@ window.FullScreenMario = (function() {
      */
     function activateScrollBlocker(thing) {
         thing.EightBitter.MapScreener.canscroll = false;
+    }
+    
+    /**
+     * 
+     */
+    function activateScrollEnabler(thing) {
+        thing.EightBitter.MapScreener.canscroll = true;
     }
     
     /**
@@ -5816,6 +5832,7 @@ window.FullScreenMario = (function() {
         "thingProcess": thingProcess,
         "thingProcessAttributes": thingProcessAttributes,
         "scrollWindow": scrollWindow,
+        "scrollThing": scrollThing,
         "scrollPlayer": scrollPlayer,
         // Upkeep maintenence
         "maintainSolids": maintainSolids,
@@ -5868,6 +5885,7 @@ window.FullScreenMario = (function() {
         "spawnRandomSpawner": spawnRandomSpawner,
         "activateWindowDetector": activateWindowDetector,
         "activateScrollBlocker": activateScrollBlocker,
+        "activateScrollEnabler": activateScrollEnabler,
         "activateSectionBefore": activateSectionBefore,
         "activateSectionStretch": activateSectionStretch,
         "activateSectionAfter": activateSectionAfter,

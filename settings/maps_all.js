@@ -244,12 +244,14 @@
                     { "macro": "Fill", "thing": "Brick", "x": 1266, "y": 8, "xnum": 17, "ynum": 3 },
                     { "thing": "PipeHorizontal", "x": 1314, "y": 40, "transport": 4 },
                     { "thing": "PipeVertical", "x": 1330, "y": 88, "height": 64 },
+                    { "thing": "ScrollEnabler", "x": 1330, "y": 120, "height": 48 },
                     { "macro": "Ceiling", "x": 1274, "width": 56 },
                     { "macro": "Fill", "thing": "Brick", "x": 1346, "y": 32, "xnum": 7, "ynum": 7 },
                     { "macro": "Ceiling", "x": 1346, "width": 136 },
                     { "thing": "ScrollBlocker", "x": 1346 },
                     { "macro": "WarpWorld", "x": 1400, "warps": [4, 3, 2] },
-                    { "macro": "Fill", "thing": "Brick", "x": 1506, "y": 8, "xnum": 2, "ynum": 11 }
+                    { "macro": "Fill", "thing": "Brick", "x": 1506, "y": 8, "xnum": 2, "ynum": 11 },
+                    { "thing": "ScrollBlocker", "x": 1522, "y": 8 }
                 ]
             },
             {

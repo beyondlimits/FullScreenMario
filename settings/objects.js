@@ -71,6 +71,7 @@
                     "WaterBlocker": {},
                     "detector": {
                         "DetectCollision": {
+                            "ScrollEnabler": {},
                             "LevelTransport": {}
                         },
                         "DetectWindow": {
@@ -703,6 +704,9 @@
             },
             DetectCollision: {
                 collide: FullScreenMario.prototype.collideDetector
+            },
+            ScrollEnabler: {
+                activate: FullScreenMario.prototype.activateScrollEnabler
             },
             LevelTransport: {
                 activate: FullScreenMario.prototype.collideLevelTransport,
