@@ -5,7 +5,7 @@ Possibility = {
 };
 
 PossibilityContents = {
-    "mode": ["Random", "Certain", "Multiple"],
+    "mode": ["Random", "Repeat", "Certain", "Multiple"],
     "direction": ["top", "right", "bottom", "left"],
     "snap": ["top", "right", "bottom", "left"],
     "spacing": Spacing, // optional
@@ -45,4 +45,7 @@ SpacingContents = {
     "children": [Child, ...]
 };
 
-// Should add possibility for varying width/height (think random area gaps)
+
+// "Final" choices are ones where no more schema lookups are necessary,
+// and only known information is to be used. This is good for things 
+// that can be various sizes

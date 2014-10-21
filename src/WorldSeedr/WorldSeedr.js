@@ -170,11 +170,14 @@ function WorldSeedr(settings) {
         direction = contents.direction || direction;
         
         switch(contents.mode) {
+            case "Random":
+                children = generateContentChildrenRandom(contents, positionMerged, direction, spacing);
+                break;
             case "Certain":
                 children = generateContentChildrenCertain(contents, positionMerged, direction, spacing);
                 break;
-            case "Random":
-                children = generateContentChildrenRandom(contents, positionMerged, direction, spacing);
+            case "Repeat":
+                children = generateContentChildrenRepeat(contents, positionMerged, direction, spacing);
                 break;
             case "Multiple":
                 children = generateContentChildrenMultiple(contents, positionMerged, direction, spacing);
@@ -204,9 +207,6 @@ function WorldSeedr(settings) {
         var child;
         
         return contents.children.map(function (choice) {
-            // "Final" choices are ones where no more schema lookups are necessary,
-            // and only known information is to be used. This is good for things 
-            // that can be various sizes
             if(choice.type === "Final") {
                 return parseChoiceFinal(contents, choice, position, direction);
             }
@@ -222,6 +222,54 @@ function WorldSeedr(settings) {
         }).filter(function (child) {
             return child;
         });
+    }
+    
+    
+    /**
+     * Generates a schema's children that are known to follow a set listing of
+     * sub-schemas, repeated until there is no space left.
+     * 
+     * @param {Object} contents   The Array of known possibilities, in order.
+     * @param {Object} position   An Object that contains .left, .right, .top, 
+     *                            and .bottom.
+     * @param {String} direction   A string direction to check the position by:
+     *                             "top", "right", "bottom", or "left".
+     * @param {Number} spacing   How much space there should be between each
+     *                           child.
+     * @return {Object}   An Object containing a position within the given 
+     *                    position and some number of children.
+     */
+    function generateContentChildrenRepeat(contents, position, direction, spacing) {
+        var choices = contents.children,
+            children = [],
+            choice, child, 
+            i = 0;
+        
+        while(positionIsNotEmpty(position, direction)) {
+            choice = choices[i];
+            
+            if(choice.type === "Final") {
+                child = parseChoiceFinal(contents, choice, position, direction);
+            } else {
+                
+                child = parseChoice(choice, position, direction);
+                if(child) {
+                    if(child.type !== "Known") {
+                        child.contents = self.generate(child.title, position);
+                    }
+                    shrinkPositionByChild(position, child, direction, spacing);
+                }
+            }
+            
+            children.push(child);
+            
+            i += 1;
+            if(i >= choices.length) {
+                i = 0;
+            }
+        }
+        
+        return children;
     }
     
     /**

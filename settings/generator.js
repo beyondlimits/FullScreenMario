@@ -83,33 +83,14 @@ FullScreenMario.prototype.settings.generator = {
             "height": 80,
             "width": 2688,
             "contents": {
-                "mode": "Random",
+                "mode": "Repeat",
                 "direction": "right",
-                "spacing": {
-                    "min": 8,
-                    "max": 32,
-                    "units": 8
-                },
                 "children": [{
-                    "percent": 50,
                     "type": "Random",
                     "title": "OverworldClump"
                 }, {
-                    "percent": 15,
                     "type": "Random",
-                    "title": "OverworldBetweenSpotty"
-                }, {
-                    "percent": 25,
-                    "type": "Random",
-                    "title": "OverworldBetweenRamps"
-                }, {
-                    "percent": 10,
-                    "type": "Random",
-                    "title": "OverworldBetweenFloating"
-                // }, {
-                    // "percent": 10,
-                    // "type": "Random",
-                    // "title": "OverworldBetweenWateryBridge"
+                    "title": "OverworldBetween"
                 }]
             }
         },
@@ -151,6 +132,27 @@ FullScreenMario.prototype.settings.generator = {
         /* Areas between floors
         */
         
+        "OverworldBetween": {
+            "height": 80,
+            "width": 112,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "children": [{
+                    "percent": 60,
+                    "type": "Random",
+                    "title": "OverworldBetweenSpotty"
+                }, {
+                    "percent": 20,
+                    "type": "Random",
+                    "title": "OverworldBetweenRamps"
+                }, {
+                    "percent": 20,
+                    "type": "Random",
+                    "title": "OverworldBetweenFloating"
+                }]
+            }
+        },
         "OverworldBetweenSpotty": {
             "width": 112,
             "height": 80,
@@ -164,7 +166,7 @@ FullScreenMario.prototype.settings.generator = {
                 }, {
                     "percent": 50,
                     "type": "Random",
-                    "title": "Nothing"
+                    "title": "Nothing",
                 }]
             }
         },
@@ -196,7 +198,7 @@ FullScreenMario.prototype.settings.generator = {
                     "type": "Random",
                     "title": "Nothing",
                     "sizing": {
-                        "width": 40
+                        "width": 48
                     }
                 }, {
                     "type": "Random",
