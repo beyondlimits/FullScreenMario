@@ -45,6 +45,7 @@
                         "Vine": {}
                     },
                     "BrickShard": {},
+                    "Bubble": {},
                     "Coin": {},
                     "Firework": {},
                 },
@@ -557,6 +558,14 @@
                 spriteCycle: [
                     [FullScreenMario.prototype.unflipHoriz, FullScreenMario.prototype.flipHoriz]
                 ]
+            },
+            Bubble: {
+                width: 2,
+                height: 2,
+                nocollide: true,
+                nofall: true,
+                movement: FullScreenMario.prototype.moveBubble,
+                yvel: FullScreenMario.unitsize / -4
             },
             Coin: {
                 width: 5,

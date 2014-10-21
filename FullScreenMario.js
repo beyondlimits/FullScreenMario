@@ -3109,6 +3109,15 @@ window.FullScreenMario = (function() {
     /**
      * 
      */
+    function moveBubble(thing) {
+        if(thing.top < thing.EightBitter.MapScreener.top + thing.EightBitter.unitsize * 16) {
+            thing.EightBitter.killNormal(thing);
+        }
+    }
+    
+    /**
+     * 
+     */
     function movePiranhaLatent(thing) {
         var playerx = thing.EightBitter.getMidX(thing.EightBitter.player);
 
@@ -4865,29 +4874,6 @@ window.FullScreenMario = (function() {
         EightBitter.GamesRunner.unpause();
     }
     
-    /**
-     * 
-     */
-    function setMapRandom() {
-        var EightBitter = EightBittr.ensureCorrectCaller(this);
-        
-        EightBitter.setMap("Random");
-        
-        EightBitter.WorldSeeder.clearGeneratedCommands();
-        EightBitter.WorldSeeder.generateFull({
-            "title": "Overworld",
-            "top": 80,
-            "right": 800,
-            "bottom": -8,
-            "left": 0
-        });
-        EightBitter.WorldSeeder.runGeneratedCommands();
-        
-        EightBitter.MapsHandler.spawnMap(EightBitter.MapScreener.right / 4);
-        
-        // EightBitter.GamesRunner.step();
-    }
-    
     /* Map entrances
     */
      
@@ -5047,12 +5033,8 @@ window.FullScreenMario = (function() {
             }
         }
         
-        // Underwater: background is always a dark blue
-        if(this.setting.indexOf("Underwater") !== -1) {
-            this.background = "#2038ec";
-        } 
         // Underworld, Castle, and all Nights: background is black
-        else if(
+        if(
             this.setting.indexOf("Underworld") !== -1
             || this.setting.indexOf("Castle") !== -1
             || this.setting.indexOf("Night") !== -1
@@ -5959,6 +5941,7 @@ window.FullScreenMario = (function() {
         "moveSpringboardUp": moveSpringboardUp,        "moveFalling": moveFalling,        "moveFreeFalling": moveFreeFalling,
         "moveShell": moveShell,
         "movePiranha": movePiranha,
+        "moveBubble": moveBubble,
         "moveBlooper": moveBlooper,
         "moveBlooperSqueezing": moveBlooperSqueezing,
         "movePodobooFalling": movePodobooFalling,
@@ -6055,7 +6038,6 @@ window.FullScreenMario = (function() {
         // Map sets
         "setMap": setMap,
         "setLocation": setLocation,
-        "setMapRandom": setMapRandom,
         // Map entrances
         "mapEntranceNormal": mapEntranceNormal,
         "mapEntrancePlain": mapEntrancePlain,
