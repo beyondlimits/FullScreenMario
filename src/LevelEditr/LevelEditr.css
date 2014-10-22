@@ -3,21 +3,7 @@
     top: 0;
     right: 0;
     bottom: 0;
-    min-width: 560px;
-    width: 50%;
-    max-width: 700px;
-    background: rgba(0, 7, 14, .84);
-    overflow: hidden;
-    user-select: none;
-    box-sizing: border-box;
-    z-index: 70;
-    transition: 117ms all;
-}
-
-.LevelEditor.minimized {
-    min-width: 117px;
-    width: 117px;
-    max-width: 117px;
+    left: 0;
 }
 
 .LevelEditor h4 {
@@ -30,6 +16,61 @@
     padding: 3px 7px;
     font-size: 1.17em;
 }
+
+
+/* EditorGui & EditorScrollers
+*/
+
+.LevelEditor .EditorGui {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 50%;
+    background: rgba(0, 7, 14, .84);
+    overflow: hidden;
+    user-select: none;
+    box-sizing: border-box;
+    z-index: 70;
+    transition: 117ms all;
+}
+
+.LevelEditor .EditorScrollers {
+    position: absolute;
+    top: 0;
+    right: 50%;
+    bottom: 0;
+    left: 0;
+    transition: 117ms all;
+}
+
+.EditorScroller {
+    position: absolute;
+    width: 70px;
+    height: 101%;
+    cursor: pointer;
+    box-sizing: border-box;
+    text-align: center;
+    transition: 280ms opacity;
+}
+
+.EditorScrollerRight {
+    right: 0;
+}
+
+.EditorScrollerLeft {
+    left: 0;
+}
+
+.LevelEditor.minimized .EditorGui {
+    width: 117px;
+}
+
+.LevelEditor.minimized .EditorScrollers {
+    right: 117px;
+    padding-right: 117px;
+}
+
 
 
 /* EditorHead
@@ -152,6 +193,7 @@
 .LevelEditor .EditorOptionContainer {
     padding-left: 3px;
     clear: both;
+    min-width: 98px;
 }
 
 .LevelEditor .EditorListOption {

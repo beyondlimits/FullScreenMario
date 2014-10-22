@@ -101,12 +101,7 @@ function LevelEditr(settings) {
     self.enable = function () {
         old_information = {
             "map": GameStarter.MapsHandler.getMapName(),
-            "onmousemove": GameStarter.container.onmousemove,
-            "onclick": GameStarter.container.onclick
         };
-        
-        GameStarter.container.onmousemove = onMouseMoveEditing;
-        GameStarter.container.onclick = onClickEditingThing;
         
         clearAllThings();
         resetDisplay();
@@ -119,15 +114,14 @@ function LevelEditr(settings) {
         GameStarter.InputWriter.setCanTrigger(false);
         
         setCurrentMode("Build");
+        
+        window.durp = display;
     };
     
     /**
      * 
      */
     self.disable = function () {
-        GameStarter.container.onmousemove = old_information["onmousemove"];
-        GameStarter.container.onclick = old_information["onclick"];
-        
         GameStarter.container.removeChild(display["container"]);
         display = undefined;
         
@@ -154,7 +148,6 @@ function LevelEditr(settings) {
         if(display.container.className.indexOf("minimized") !== -1) {
             display.container.className = display.container.className.replace(/ minimized/g, '');
         }
-        // display.container.className = display.container.className.replace(" minimized", '');
     };
     
     self.startBuilding = function () {
@@ -194,7 +187,8 @@ function LevelEditr(settings) {
                 "thing": GameStarter.ObjectMaker.make(
                     current_type, 
                     GameStarter.proliferate({
-                        "onThingMake": undefined
+                        "onThingMake": undefined,
+                        "outerok": true
                     }, getNormalizedThingArguments(args))
                 )
             }
@@ -209,6 +203,7 @@ function LevelEditr(settings) {
         
         for(i = 0; i < current_things.length; i += 1) {
             current_thing = current_things[i];
+            current_thing.outerok = true;
             
             disableThing(current_thing["thing"]);
             GameStarter.addThing(
@@ -232,6 +227,37 @@ function LevelEditr(settings) {
     
     /* Mouse events
     */
+    
+    /**
+     * 
+     */
+    function onMouseDownScroller(direction, event) {
+        var target = event.target;
+        
+        target.setAttribute("scrolling", 1);
+        
+        GameStarter.TimeHandler.addEventInterval(function () {
+            if(target.getAttribute("scrolling") != 1) {
+                return true;
+            }
+            
+            if(direction < 0 && GameStarter.MapScreener.left <= 0) {
+                display["scrollers"]["left"].style.opacity = 0;
+                return;
+            }
+            
+            GameStarter.scrollWindow(direction);
+                display["scrollers"]["left"].style.opacity = 1;
+        }, 1, Infinity);
+    }
+    
+    /**
+     * 
+     */
+    function onMouseUpScrolling(event) {
+        event.target.setAttribute("scrolling", 0);
+    }
+
     
     /**
      * 
@@ -705,7 +731,7 @@ function LevelEditr(settings) {
         var mapObject = getMapObject(),
             thingRaw = GameStarter.proliferate({
                 "thing": current_type,
-                "x": getNormalizedX(x),
+                "x": getNormalizedX(x) + (GameStarter.MapScreener.left / GameStarter.unitsize),
                 "y": getNormalizedY(y)
             }, current_args);
         
@@ -724,7 +750,7 @@ function LevelEditr(settings) {
         var mapObject = getMapObject(),
             macroRaw = GameStarter.proliferate({
                 "macro": current_type,
-                "x": getNormalizedX(x),
+                "x": getNormalizedX(x) + (GameStarter.MapScreener.left / GameStarter.unitsize),
                 "y": getNormalizedY(y)
             }, getCurrentArgs());
         
@@ -750,6 +776,12 @@ function LevelEditr(settings) {
         
         display = {
             "container": undefined,
+            "scrollers": {
+                "container": undefined,
+                "left": undefined,
+                "right": undefined
+            },
+            "gui": undefined,
             "namer": undefined,
             "minimizer": undefined,
             "stringer": {
@@ -790,338 +822,370 @@ function LevelEditr(settings) {
         
         display["container"] = GameStarter.createElement("div", {
             "className": "LevelEditor",
-            // "onmouseout": self.minimize,
-            // "onmouseover": self.maximize,
-            "onclick": function (event) {
-                event.stopPropagation();
-                event.cancelBubble = true;
-            },
+            "onclick": cancelEvent,
             "children": [
-                GameStarter.createElement("div", {
-                    "className": "EditorHead",
+                display["scrollers"]["container"] = GameStarter.createElement("div", {
+                    "className": "EditorScrollers",
+                    "onmousemove": onMouseMoveEditing,
+                    "onclick": onClickEditingThing,
                     "children": [
-                        GameStarter.createElement("div", {
-                            "className": "EditorNameContainer",
-                            "children": [
-                                display["namer"] = GameStarter.createElement("input", {
-                                    "className": "EditorNameInput",
-                                    "type": "text",
-                                    "placeholder": map_name_default,
-                                    "value": map_name_default,
-                                    "onkeyup": setMapName,
-                                    "onchange": setMapName
-                                })
-                            ]
+                        display["scrollers"]["left"] = GameStarter.createElement("div", {
+                            "className": "EditorScroller EditorScrollerLeft",
+                            "onmousedown": onMouseDownScroller.bind(undefined, -GameStarter.unitsize * 2),
+                            "onmouseup": onMouseUpScrolling,
+                            "onmouseout": onMouseUpScrolling,
+                            "onclick": cancelEvent,
+                            "innerText": "<",
+                            "style": {
+                                "paddingTop": GameStarter.MapScreener.height / 2 - 35 + "px",
+                                "fontSize": "70px",
+                                "opacity": 0
+                            }
                         }),
-                        display["minimizer"] = GameStarter.createElement("div", {
-                            "className": "EditorHeadButton EditorMinimizer",
-                            "onclick": self.minimize,
-                            "textContent": "-"
-                        }),
-                        GameStarter.createElement("div", {
-                            "className": "EditorHeadButton EditorCloser",
-                            "textContent": "X",
-                            "onclick": self.disable
+                        display["scrollers"]["right"] = GameStarter.createElement("div", {
+                            "className": "EditorScroller EditorScrollerRight",
+                            "onmousedown": onMouseDownScroller.bind(undefined, GameStarter.unitsize * 2),
+                            "onmouseup": onMouseUpScrolling,
+                            "onmouseout": onMouseUpScrolling,
+                            "onclick": cancelEvent,
+                            "innerText": ">",
+                            "style": {
+                                "paddingTop": GameStarter.MapScreener.height / 2 - 35 + "px",
+                                "fontSize": "70px"
+                            }
                         })
                     ]
                 }),
-                GameStarter.createElement("div", {
-                    "className": "EditorSectionChoosers",
-                    "children": [
-                        display["sections"]["buttons"]["ClickToPlace"]["container"] = GameStarter.createElement("div", {
-                            "className": "EditorMenuOption EditorSectionChooser EditorMenuOptionThird",
-                            "style": {
-                                "background": "white"
-                            },
-                            "textContent": "Visual",
-                            "onclick": setSectionClickToPlace,
-                        }),
-                        display["sections"]["buttons"]["MapSettings"] = GameStarter.createElement("div", {
-                            "className": "EditorMenuOption EditorSectionChooser EditorMenuOptionThird",
-                            "style": {
-                                "background": "gray"
-                            },
-                            "textContent": "Map",
-                            "onclick": setSectionMapSettings,
-                        }),
-                        display["sections"]["buttons"]["JSON"] = GameStarter.createElement("div", {
-                            "className": "EditorMenuOption EditorSectionChooser EditorMenuOptionThird",
-                            "style": {
-                                "background": "gray"
-                            },
-                            "textContent": "JSON",
-                            "onclick": setSectionJSON
-                        })
-                    ]
-                }),
-                display["sections"]["ClickToPlace"]["container"] = GameStarter.createElement("div", {
-                    "className": "EditorOptionsList EditorSectionMain",
-                    "style": {
-                        "display": "block"
-                    },
+                display["gui"] = GameStarter.createElement("div", {
+                    "className": "EditorGui",
                     "children": [
                         GameStarter.createElement("div", {
-                            "className": "EditorSubOptionsListsMenu",
+                            "className": "EditorHead",
                             "children": [
-                                display["sections"]["buttons"]["ClickToPlace"]["Things"] = GameStarter.createElement("div", {
-                                    "className": "EditorMenuOption EditorSubOptionsListChooser EditorMenuOptionHalf",
-                                    "textContent": "Things",
-                                    "onclick": setSectionClickToPlaceThings,
-                                    "style": {
-                                        "background": "#CCC"
-                                    }
+                                GameStarter.createElement("div", {
+                                    "className": "EditorNameContainer",
+                                    "children": [
+                                        display["namer"] = GameStarter.createElement("input", {
+                                            "className": "EditorNameInput",
+                                            "type": "text",
+                                            "placeholder": map_name_default,
+                                            "value": map_name_default,
+                                            "onkeyup": setMapName,
+                                            "onchange": setMapName
+                                        })
+                                    ]
                                 }),
-                                display["sections"]["buttons"]["ClickToPlace"]["Macros"] = GameStarter.createElement("div", {
-                                    "className": "EditorMenuOption EditorSubOptionsListChooser EditorMenuOptionHalf",
-                                    "textContent": "Macros",
-                                    "onclick": setSectionClickToPlaceMacros,
-                                    "style": {
-                                        "background": "#777"
-                                    }
+                                display["minimizer"] = GameStarter.createElement("div", {
+                                    "className": "EditorHeadButton EditorMinimizer",
+                                    "onclick": self.minimize,
+                                    "textContent": "-"
+                                }),
+                                GameStarter.createElement("div", {
+                                    "className": "EditorHeadButton EditorCloser",
+                                    "textContent": "X",
+                                    "onclick": self.disable
                                 })
                             ]
                         }),
-                        display["sections"]["ClickToPlace"]["Things"] = GameStarter.createElement("div", {
-                            "className": "EditorSectionSecondary EditorOptions EditorOptions-Things",
+                        GameStarter.createElement("div", {
+                            "className": "EditorSectionChoosers",
+                            "children": [
+                                display["sections"]["buttons"]["ClickToPlace"]["container"] = GameStarter.createElement("div", {
+                                    "className": "EditorMenuOption EditorSectionChooser EditorMenuOptionThird",
+                                    "style": {
+                                        "background": "white"
+                                    },
+                                    "textContent": "Visual",
+                                    "onclick": setSectionClickToPlace,
+                                }),
+                                display["sections"]["buttons"]["MapSettings"] = GameStarter.createElement("div", {
+                                    "className": "EditorMenuOption EditorSectionChooser EditorMenuOptionThird",
+                                    "style": {
+                                        "background": "gray"
+                                    },
+                                    "textContent": "Map",
+                                    "onclick": setSectionMapSettings,
+                                }),
+                                display["sections"]["buttons"]["JSON"] = GameStarter.createElement("div", {
+                                    "className": "EditorMenuOption EditorSectionChooser EditorMenuOptionThird",
+                                    "style": {
+                                        "background": "gray"
+                                    },
+                                    "textContent": "JSON",
+                                    "onclick": setSectionJSON
+                                })
+                            ]
+                        }),
+                        display["sections"]["ClickToPlace"]["container"] = GameStarter.createElement("div", {
+                            "className": "EditorOptionsList EditorSectionMain",
                             "style": {
                                 "display": "block"
                             },
-                            "children": (function () {
-                                    var containers = Object.keys(things).map(function (key) {
-                                        var children = Object.keys(things[key]).map(function (title) {
-                                            var thing = GameStarter.ObjectMaker.make(title),
-                                                container = GameStarter.createElement("div", {
-                                                    "className": "EditorListOption",
-                                                    "name": title,
-                                                    "options": things[key][title],
-                                                    "children": [thing.canvas],
-                                                    "onclick": onThingIconClick.bind(
-                                                        undefined,
-                                                        title
-                                                    )
-                                                }),
-                                                sizeMax = 70,
-                                                widthThing = thing.width * GameStarter.unitsize,
-                                                heightThing = thing.height * GameStarter.unitsize,
-                                                widthDiff = (sizeMax - widthThing) / 2, 
-                                                heightDiff = (sizeMax - heightThing) / 2;
+                            "children": [
+                                GameStarter.createElement("div", {
+                                    "className": "EditorSubOptionsListsMenu",
+                                    "children": [
+                                        display["sections"]["buttons"]["ClickToPlace"]["Things"] = GameStarter.createElement("div", {
+                                            "className": "EditorMenuOption EditorSubOptionsListChooser EditorMenuOptionHalf",
+                                            "textContent": "Things",
+                                            "onclick": setSectionClickToPlaceThings,
+                                            "style": {
+                                                "background": "#CCC"
+                                            }
+                                        }),
+                                        display["sections"]["buttons"]["ClickToPlace"]["Macros"] = GameStarter.createElement("div", {
+                                            "className": "EditorMenuOption EditorSubOptionsListChooser EditorMenuOptionHalf",
+                                            "textContent": "Macros",
+                                            "onclick": setSectionClickToPlaceMacros,
+                                            "style": {
+                                                "background": "#777"
+                                            }
+                                        })
+                                    ]
+                                }),
+                                display["sections"]["ClickToPlace"]["Things"] = GameStarter.createElement("div", {
+                                    "className": "EditorSectionSecondary EditorOptions EditorOptions-Things",
+                                    "style": {
+                                        "display": "block"
+                                    },
+                                    "children": (function () {
+                                            var containers = Object.keys(things).map(function (key) {
+                                                var children = Object.keys(things[key]).map(function (title) {
+                                                    var thing = GameStarter.ObjectMaker.make(title),
+                                                        container = GameStarter.createElement("div", {
+                                                            "className": "EditorListOption",
+                                                            "name": title,
+                                                            "options": things[key][title],
+                                                            "children": [thing.canvas],
+                                                            "onclick": onThingIconClick.bind(
+                                                                undefined,
+                                                                title
+                                                            )
+                                                        }),
+                                                        sizeMax = 70,
+                                                        widthThing = thing.width * GameStarter.unitsize,
+                                                        heightThing = thing.height * GameStarter.unitsize,
+                                                        widthDiff = (sizeMax - widthThing) / 2, 
+                                                        heightDiff = (sizeMax - heightThing) / 2;
+                                                    
+                                                    thing.canvas.style.top = heightDiff + "px";
+                                                    thing.canvas.style.right = widthDiff + "px";
+                                                    thing.canvas.style.bottom = heightDiff + "px";
+                                                    thing.canvas.style.left = widthDiff + "px";
+                                                    
+                                                    GameStarter.PixelDrawer.setThingSprite(thing);
+                                                    
+                                                    return container;                                        
+                                                });
+                                                
+                                                return GameStarter.createElement("div", {
+                                                    "className": "EditorOptionContainer",
+                                                    "style": {
+                                                        "display": "none"
+                                                    },
+                                                    "children": children
+                                                });
+                                            }),
+                                            selectedIndex = 0,
+                                            switcher = createSelect(Object.keys(things), {
+                                                "className": "EditorOptionContainerSwitchers",
+                                                "onchange": function () {
+                                                    containers[selectedIndex + 1].style.display = "none";
+                                                    containers[switcher.selectedIndex + 1].style.display = "block";
+                                                    selectedIndex = switcher.selectedIndex;
+                                                }
+                                            });
                                             
-                                            thing.canvas.style.top = heightDiff + "px";
-                                            thing.canvas.style.right = widthDiff + "px";
-                                            thing.canvas.style.bottom = heightDiff + "px";
-                                            thing.canvas.style.left = widthDiff + "px";
+                                            containers[0].style.display = "block";
+                                            containers.unshift(switcher);
                                             
-                                            GameStarter.PixelDrawer.setThingSprite(thing);
-                                            
-                                            return container;                                        
-                                        });
-                                        
+                                        return containers;
+                                    })()
+                                }),
+                                display["sections"]["ClickToPlace"]["Macros"] = GameStarter.createElement("div", {
+                                    "className": "EditorSectionSecondary EditorOptions EditorOptions-Macros",
+                                    "style": {
+                                        "display": "none"
+                                    },
+                                    "children": Object.keys(macros).map(function (key) {
+                                        var macro = macros[key];
                                         return GameStarter.createElement("div", {
                                             "className": "EditorOptionContainer",
-                                            "style": {
-                                                "display": "none"
-                                            },
-                                            "children": children
-                                        });
-                                    }),
-                                    selectedIndex = 0,
-                                    switcher = createSelect(Object.keys(things), {
-                                        "className": "EditorOptionContainerSwitchers",
-                                        "onchange": function () {
-                                            containers[selectedIndex + 1].style.display = "none";
-                                            containers[switcher.selectedIndex + 1].style.display = "block";
-                                            selectedIndex = switcher.selectedIndex;
-                                        }
-                                    });
-                                    
-                                    containers[0].style.display = "block";
-                                    containers.unshift(switcher);
-                                    
-                                return containers;
-                            })()
+                                            "children": [
+                                                GameStarter.createElement("div", {
+                                                    "className": "EditorOptionTitle EditorMenuOption",
+                                                    "textContent": key,
+                                                    "onclick": onMacroIconClick.bind(
+                                                        undefined,
+                                                        key,
+                                                        macro["description"],
+                                                        macro["options"]
+                                                    )
+                                                })
+                                            ]
+                                        })
+                                    })
+                                })
+                            ]
                         }),
-                        display["sections"]["ClickToPlace"]["Macros"] = GameStarter.createElement("div", {
-                            "className": "EditorSectionSecondary EditorOptions EditorOptions-Macros",
+                        display["sections"]["MapSettings"]["container"] = GameStarter.createElement("div", {
+                            "className": "EditorMapSettings EditorSectionMain",
                             "style": {
                                 "display": "none"
                             },
-                            "children": Object.keys(macros).map(function (key) {
-                                var macro = macros[key];
-                                return GameStarter.createElement("div", {
-                                    "className": "EditorOptionContainer",
+                            "children": [
+                                GameStarter.createElement("div", {
+                                    "className": "EditorMapSettingsSubGroup",
                                     "children": [
-                                        GameStarter.createElement("div", {
-                                            "className": "EditorOptionTitle EditorMenuOption",
-                                            "textContent": key,
-                                            "onclick": onMacroIconClick.bind(
-                                                undefined,
-                                                key,
-                                                macro["description"],
-                                                macro["options"]
-                                            )
+                                        GameStarter.createElement("label", {
+                                            "textContent": "Current Location"
+                                        }),
+                                        display["sections"]["MapSettings"]["Location"] = createSelect([
+                                            0
+                                        ], {
+                                            "className": "VisualOptionLocation",
+                                            "onchange": setCurrentLocation.bind(undefined, true)
                                         })
                                     ]
+                                }),
+                                GameStarter.createElement("div", {
+                                    "className": "EditorMapSettingsGroup",
+                                    "children": [
+                                        GameStarter.createElement("h4", {
+                                            "textContent": "Map"
+                                        }),
+                                        GameStarter.createElement("div", {
+                                            "className": "EditorMapSettingsSubGroup",
+                                            "children": [
+                                                GameStarter.createElement("label", {
+                                                    "className": "EditorMapSettingsLabel",
+                                                    "textContent": "Time"
+                                                }),
+                                                display["sections"]["MapSettings"]["Time"] = createSelect([
+                                                    "100", "200", "300", "400", "500", "1000", "2000", "Infinity"
+                                                ], {
+                                                    "onchange": setMapTime.bind(undefined, true)
+                                                })
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                GameStarter.createElement("div", {
+                                    "className": "EditorMapSettingsGroup",
+                                    "children": [
+                                        GameStarter.createElement("h4", {
+                                            "textContent": "Location"
+                                        }),
+                                        GameStarter.createElement("div", {
+                                            "className": "EditorMapSettingsSubGroup",
+                                            "children": [
+                                                GameStarter.createElement("label", {
+                                                    "textContent": "Area"
+                                                }),
+                                                display["sections"]["MapSettings"]["Area"] = createSelect([
+                                                    0
+                                                ], {
+                                                    "className": "VisualOptionArea",
+                                                    "onchange": setLocationArea.bind(undefined, true)
+                                                })
+                                            ]
+                                        }),
+                                        GameStarter.createElement("div", {
+                                            "className": "EditorMapSettingsSubGroup",
+                                            "children": [
+                                                GameStarter.createElement("label", {
+                                                    "textContent": "Setting"
+                                                }),
+                                                display["sections"]["MapSettings"]["Setting"]["Primary"] = createSelect([
+                                                    "Overworld", "Underworld", "Underwater", "Castle"
+                                                ], {
+                                                    "onchange": setMapSetting.bind(undefined, true)
+                                                }),
+                                                display["sections"]["MapSettings"]["Setting"]["Secondary"] = createSelect([
+                                                    "", "Night", "Underwater", "Alt"
+                                                ], {
+                                                    "onchange": setMapSetting.bind(undefined, true)
+                                                }),
+                                                display["sections"]["MapSettings"]["Setting"]["Tertiary"] = createSelect([
+                                                    "", "Night", "Underwater", "Alt"
+                                                ], {
+                                                    "onchange": setMapSetting.bind(undefined, true)
+                                                })
+                                            ]
+                                        }),
+                                        GameStarter.createElement("div", {
+                                            "className": "EditorMapSettingsSubGroup",
+                                            "children": [
+                                                GameStarter.createElement("label", {
+                                                    "textContent": "Entrance"
+                                                }),
+                                                display["sections"]["MapSettings"]["Entry"] = createSelect([
+                                                    "Plain", "Normal", "Castle", "PipeVertical", "PipeHorizontal"
+                                                ], {
+                                                    "onchange": setMapEntry.bind(undefined, true)
+                                                }),
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                GameStarter.createElement("div", {
+                                    "className": "EditorMenuOption",
+                                    "textContent": "+ Add Area",
+                                    "onclick": addAreaToMap
+                                }),
+                                GameStarter.createElement("div", {
+                                    "className": "EditorMenuOption",
+                                    "textContent": "+ Add Location",
+                                    "onclick": addLocationToMap
                                 })
+                            ]
+                        }),
+                        display["sections"]["JSON"] = GameStarter.createElement("div", {
+                            "className": "EditorJSON EditorSectionMain",
+                            "style": {
+                                "display": "none"
+                            },
+                            "children": [
+                                display["stringer"]["textarea"] = GameStarter.createElement("textarea", {
+                                    "className": "EditorJSONInput",
+                                    "spellcheck": false,
+                                    "onkeyup": getMapObjectAndTry,
+                                    "onchange": getMapObjectAndTry
+                                }),
+                                display["stringer"]["messenger"] = GameStarter.createElement("div", {
+                                    "className": "EditorJSONInfo"
+                                })
+                            ]
+                        }),
+                        display["sections"]["ClickToPlace"]["VisualSummary"] = GameStarter.createElement("div", {
+                            "className": "EditorVisualSummary",
+                        }),
+                        display["sections"]["ClickToPlace"]["VisualOptions"] = GameStarter.createElement("div", {
+                            "className": "EditorVisualOptions",
+                            "textContent": "Click an icon to view options.",
+                            "style": {
+                                "display": "block"
+                            }
+                        }),
+                        GameStarter.createElement("div", {
+                            "className": "EditorMenu",
+                            "children": (function (actions) {
+                                return Object.keys(actions).map(function (key) {
+                                    return GameStarter.createElement("div", {
+                                        "className": "EditorMenuOption EditorMenuOptionFifth EditorMenuOption-" + key,
+                                        "textContent": key,
+                                        "onclick": actions[key]
+                                    });
+                                });
+                            })({
+                                "Build": self.startBuilding,
+                                "Play": self.startPlaying,
+                                "Save": downloadCurrentJSON,
+                                "Load": alert.bind(window, "Loading!"),
+                                "Reset": resetDisplayMap
                             })
                         })
                     ]
-                }),
-                display["sections"]["MapSettings"]["container"] = GameStarter.createElement("div", {
-                    "className": "EditorMapSettings EditorSectionMain",
-                    "style": {
-                        "display": "none"
-                    },
-                    "children": [
-                        GameStarter.createElement("div", {
-                            "className": "EditorMapSettingsSubGroup",
-                            "children": [
-                                GameStarter.createElement("label", {
-                                    "textContent": "Current Location"
-                                }),
-                                display["sections"]["MapSettings"]["Location"] = createSelect([
-                                    0
-                                ], {
-                                    "className": "VisualOptionLocation",
-                                    "onchange": setCurrentLocation.bind(undefined, true)
-                                })
-                            ]
-                        }),
-                        GameStarter.createElement("div", {
-                            "className": "EditorMapSettingsGroup",
-                            "children": [
-                                GameStarter.createElement("h4", {
-                                    "textContent": "Map"
-                                }),
-                                GameStarter.createElement("div", {
-                                    "className": "EditorMapSettingsSubGroup",
-                                    "children": [
-                                        GameStarter.createElement("label", {
-                                            "className": "EditorMapSettingsLabel",
-                                            "textContent": "Time"
-                                        }),
-                                        display["sections"]["MapSettings"]["Time"] = createSelect([
-                                            "100", "200", "300", "400", "500", "1000", "2000", "Infinity"
-                                        ], {
-                                            "onchange": setMapTime.bind(undefined, true)
-                                        })
-                                    ]
-                                })
-                            ]
-                        }),
-                        GameStarter.createElement("div", {
-                            "className": "EditorMapSettingsGroup",
-                            "children": [
-                                GameStarter.createElement("h4", {
-                                    "textContent": "Location"
-                                }),
-                                GameStarter.createElement("div", {
-                                    "className": "EditorMapSettingsSubGroup",
-                                    "children": [
-                                        GameStarter.createElement("label", {
-                                            "textContent": "Area"
-                                        }),
-                                        display["sections"]["MapSettings"]["Area"] = createSelect([
-                                            0
-                                        ], {
-                                            "className": "VisualOptionArea",
-                                            "onchange": setLocationArea.bind(undefined, true)
-                                        })
-                                    ]
-                                }),
-                                GameStarter.createElement("div", {
-                                    "className": "EditorMapSettingsSubGroup",
-                                    "children": [
-                                        GameStarter.createElement("label", {
-                                            "textContent": "Setting"
-                                        }),
-                                        display["sections"]["MapSettings"]["Setting"]["Primary"] = createSelect([
-                                            "Overworld", "Underworld", "Underwater", "Castle"
-                                        ], {
-                                            "onchange": setMapSetting.bind(undefined, true)
-                                        }),
-                                        display["sections"]["MapSettings"]["Setting"]["Secondary"] = createSelect([
-                                            "", "Night", "Underwater", "Alt"
-                                        ], {
-                                            "onchange": setMapSetting.bind(undefined, true)
-                                        }),
-                                        display["sections"]["MapSettings"]["Setting"]["Tertiary"] = createSelect([
-                                            "", "Night", "Underwater", "Alt"
-                                        ], {
-                                            "onchange": setMapSetting.bind(undefined, true)
-                                        })
-                                    ]
-                                }),
-                                GameStarter.createElement("div", {
-                                    "className": "EditorMapSettingsSubGroup",
-                                    "children": [
-                                        GameStarter.createElement("label", {
-                                            "textContent": "Entrance"
-                                        }),
-                                        display["sections"]["MapSettings"]["Entry"] = createSelect([
-                                            "Plain", "Normal", "Castle", "PipeVertical", "PipeHorizontal"
-                                        ], {
-                                            "onchange": setMapEntry.bind(undefined, true)
-                                        }),
-                                    ]
-                                })
-                            ]
-                        }),
-                        GameStarter.createElement("div", {
-                            "className": "EditorMenuOption",
-                            "textContent": "+ Add Area",
-                            "onclick": addAreaToMap
-                        }),
-                        GameStarter.createElement("div", {
-                            "className": "EditorMenuOption",
-                            "textContent": "+ Add Location",
-                            "onclick": addLocationToMap
-                        })
-                    ]
-                }),
-                display["sections"]["JSON"] = GameStarter.createElement("div", {
-                    "className": "EditorJSON EditorSectionMain",
-                    "style": {
-                        "display": "none"
-                    },
-                    "children": [
-                        display["stringer"]["textarea"] = GameStarter.createElement("textarea", {
-                            "className": "EditorJSONInput",
-                            "spellcheck": false,
-                            "onkeyup": getMapObjectAndTry,
-                            "onchange": getMapObjectAndTry
-                        }),
-                        display["stringer"]["messenger"] = GameStarter.createElement("div", {
-                            "className": "EditorJSONInfo"
-                        })
-                    ]
-                }),
-                display["sections"]["ClickToPlace"]["VisualSummary"] = GameStarter.createElement("div", {
-                    "className": "EditorVisualSummary",
-                }),
-                display["sections"]["ClickToPlace"]["VisualOptions"] = GameStarter.createElement("div", {
-                    "className": "EditorVisualOptions",
-                    "textContent": "Click an icon to view options.",
-                    "style": {
-                        "display": "block"
-                    }
-                }),
-                GameStarter.createElement("div", {
-                    "className": "EditorMenu",
-                    "children": (function (actions) {
-                        return Object.keys(actions).map(function (key) {
-                            return GameStarter.createElement("div", {
-                                "className": "EditorMenuOption EditorMenuOptionFifth EditorMenuOption-" + key,
-                                "textContent": key,
-                                "onclick": actions[key]
-                            });
-                        });
-                    })({
-                        "Build": self.startBuilding,
-                        "Play": self.startPlaying,
-                        "Save": downloadCurrentJSON,
-                        "Load": alert.bind(window, "Loading!"),
-                        "Reset": resetDisplayMap
-                    })
                 })
             ]
         });
@@ -1176,7 +1240,7 @@ function LevelEditr(settings) {
      */
     function setSectionClickToPlaceThings(event) {
         setCurrentClickMode("Thing")
-        GameStarter.container.onclick = onClickEditingThing;
+        display.gui.onclick = onClickEditingThing;
         display.sections.ClickToPlace.VisualOptions.style.display = "block";
         display.sections.ClickToPlace.Things.style.display = "block";
         display.sections.ClickToPlace.Macros.style.display = "none";
@@ -1189,7 +1253,7 @@ function LevelEditr(settings) {
      */
     function setSectionClickToPlaceMacros(event) {
         setCurrentClickMode("Macro");
-        GameStarter.container.onclick = onClickEditingMacro;
+        display.gui.onclick = onClickEditingMacro;
         display.sections.ClickToPlace.VisualOptions.style.display = "block";
         display.sections.ClickToPlace.Things.style.display = "none";
         display.sections.ClickToPlace.Macros.style.display = "block";
@@ -1592,6 +1656,11 @@ function LevelEditr(settings) {
         link.click();
         display.container.removeChild(link);
         return link;
+    }
+    
+    function cancelEvent(event) {
+        event.stopPropagation();
+        event.cancelBubble = true;
     }
     
     self.reset(settings || {});
