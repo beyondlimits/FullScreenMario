@@ -35,7 +35,7 @@ function PixelDrawr(settings) {
         unitsize,
         
         // A utility function to generate a class key to get an object sprite
-        make_object_key,
+        generateObjectKey,
         
         // Whether self.refillGlobalCanvas should skip redrawing the main canvas
         // every time.
@@ -48,7 +48,7 @@ function PixelDrawr(settings) {
         no_refill = settings.no_refill;
         innerWidth = settings.innerWidth;
         
-        make_object_key = settings.make_object_key || function (object) {
+        generateObjectKey = settings.generateObjectKey || function (object) {
             return object.toString();
         };
     }
@@ -106,7 +106,7 @@ function PixelDrawr(settings) {
         }
         
         // PixelRender does most of the work in fetching the rendered sprite
-        thing.sprite = PixelRender.decode(make_object_key(thing), thing);
+        thing.sprite = PixelRender.decode(generateObjectKey(thing), thing);
         
         // To do: remove dependency on .num_sprites and sprite_type
         if(thing.sprite.multiple) {

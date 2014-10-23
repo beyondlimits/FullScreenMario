@@ -389,6 +389,15 @@ var GameStartr = (function (EightBittr) {
     /**
      * 
      */
+    function generateObjectKey(thing) {
+        return thing.EightBitter.MapsHandler.getArea().setting 
+                + ' ' + thing.libtype + ' ' 
+                + thing.title + ' ' + thing.className;
+    }
+    
+    /**
+     * 
+     */
     function setTitle(thing, string) {
         thing.title = string;
         thing.EightBitter.PixelDrawer.setThingSprite(thing);
@@ -537,6 +546,7 @@ var GameStartr = (function (EightBittr) {
         "thingStoreVelocity": thingStoreVelocity,
         "thingRetrieveVelocity": thingRetrieveVelocity,
         // Appearance utilities
+        "generateObjectKey": generateObjectKey,
         "setTitle": setTitle,
         "setClass": setClass,
         "setClassInitial": setClassInitial,

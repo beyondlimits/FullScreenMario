@@ -121,11 +121,7 @@ var FullScreenMario = (function(GameStartr) {
             "getCanvas": self.getCanvas,
             "unitsize": self.unitsize,
             "innerWidth": customs.width,
-            "make_object_key": function(thing) {
-                return thing.EightBitter.MapsHandler.getArea().setting 
-                        + ' ' + thing.libtype + ' ' 
-                        + thing.title + ' ' + thing.className;
-            }        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr/TimeHandlr.js)
+            "generateObjectKey": self.generateObjectKey        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr/TimeHandlr.js)
      *                          events.js (settings/events.js)     */    function resetTimeHandler(self, customs) {
         self.TimeHandler = new TimeHandlr(proliferate({
             "classAdd": self.addClass,
@@ -141,12 +137,8 @@ var FullScreenMario = (function(GameStartr) {
      */
     function resetAudioPlayer(self, customs) {
         self.AudioPlayer = new AudioPlayr(proliferate({
-            "getVolumeLocal": function getVolumeLocal() {
-                return .49;
-            },
-            "getThemeDefault": function getThemeDefault() {
-                return self.MapsHandler.getArea().setting.split(' ')[0];
-            },
+            "getVolumeLocal": self.getVolumeLocal.bind(self, self),
+            "getThemeDefault": self.getAudioThemeDefault.bind(self, self)
         }, self.settings.audio));
     }
     
@@ -159,10 +151,7 @@ var FullScreenMario = (function(GameStartr) {
         self.QuadsKeeper = new QuadsKeepr(proliferate({
             "screen_width": customs.width,
             "screen_height": customs.height,
-            "onUpdate": function () {
-                var diff_right = self.MapScreener.right + self.QuadsKeeper.getOutDifference();
-                self.MapsHandler.spawnMap(diff_right / self.unitsize);
-            }
+            "onUpdate": self.updateQuadrants.bind(self, self)
         }, self.settings.quadrants));
     }
     
@@ -174,12 +163,8 @@ var FullScreenMario = (function(GameStartr) {
     function resetGamesRunner(self, customs) {
         self.GamesRunner = new GamesRunnr(proliferate({
             "scope": self,
-            "on_pause": function () {
-                self.AudioPlayer.pause();
-            },
-            "on_unpause": function () {
-                self.AudioPlayer.resume();
-            }
+            "on_pause": self.onGamePause.bind(self, self),
+            "on_unpause": self.onGameUnpause.bind(self, self)
         }, self.settings.runner));
     }
     
@@ -278,16 +263,8 @@ var FullScreenMario = (function(GameStartr) {
             "MapScreener": self.MapScreener,
             "screen_attributes": self.settings.maps.screen_attributes,
             "on_spawn": self.settings.maps.on_spawn,
-            "stretch_add": function (raw) {
-                var y = (self.MapScreener.floor - raw.y) * self.unitsize;
-                return self.addThing(self.ObjectMaker.make(raw.thing, {
-                    "width": self.MapScreener.width,
-                    "height": raw.height || self.getAbsoluteHeight(raw.y)
-                }), 0, y)
-            },
-            "on_stretch": function (thing, xloc_real) {
-                self.setWidth(thing, xloc_real * self.unitsize);
-            }
+            "stretch_add": self.mapAddStretched,
+            "on_stretch": self.mapStretchThing
         });
     }
     
@@ -299,9 +276,7 @@ var FullScreenMario = (function(GameStartr) {
      */
     function resetInputWriter(self, customs) {
         self.InputWriter = new InputWritr(proliferate({
-            "can_trigger": function () {
-                return !self.MapScreener.nokeys;
-            }
+            "can_trigger": self.canInputsTrigger.bind(self, self)
         }, self.settings.input));
     }
     
@@ -327,37 +302,7 @@ var FullScreenMario = (function(GameStartr) {
     function resetWorldSeeder(self, customs) {
         self.WorldSeeder = new WorldSeedr(proliferate({
             "random": self.random,
-            "on_placement": function (generated_commands) {
-                var MapsCreator = self.MapsCreator,
-                    MapsHandler = self.MapsHandler,
-                    prethings = MapsHandler.getPreThings(),
-                    area = MapsHandler.getArea(),
-                    map = MapsHandler.getMap(),
-                    command, output, i;
-                
-                generated_commands.sort(function (a, b) {
-                    return a.left - b.left;
-                });
-                
-                // console.log("Generated", generated_commands);
-                
-                for(i = 0; i < generated_commands.length; i += 1) {
-                    command = generated_commands[i];
-                    
-                    output = {
-                        "thing": command.title,
-                        "x": command.left,
-                        "y": command.top
-                    };
-                    
-                    if(command.arguments) {
-                        self.proliferate(output, command.arguments);
-                    }
-                    
-                    // console.log("Placing", i, output);
-                    MapsCreator.analyzePreSwitch(output, prethings, area, map);
-                }
-            }
+            "on_placement": self.mapPlaceRandomCommands.bind(self, self)
         }, self.settings.generator));
     }
     
@@ -528,7 +473,28 @@ var FullScreenMario = (function(GameStartr) {
         
         EightBitter.scrollThing(EightBitter.player, dx, dy);
     }
-        
+    
+    /**
+     * 
+     */
+    function onGamePause(EightBitter) {
+        EightBitter.AudioPlayer.pause();
+    }
+    
+    /**
+     * 
+     */
+    function onGameUnpause(EightBitter) {
+        EightBitter.AudioPlayer.resume();
+    }
+    
+    /**
+     * 
+     */
+    function canInputsTrigger(EightBitter) {
+        return !EightBitter.MapScreener.nokeys;
+    }
+    
     
     /* Upkeep maintenence
     */
@@ -686,6 +652,14 @@ var FullScreenMario = (function(GameStartr) {
                 EightBitter.scrollWindow(Math.round(Math.min(player.scrollspeed, scrolloffset)));
             }
         }
+    }
+    
+    /**
+     * 
+     */
+    function updateQuadrants(EightBitter) {
+        var diff_right = EightBitter.MapScreener.right + EightBitter.QuadsKeeper.getOutDifference();
+        EightBitter.MapsHandler.spawnMap(diff_right / EightBitter.unitsize);
     }
     
     
@@ -4341,6 +4315,24 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     
+    /* Audio
+    */
+    
+    /**
+     * 
+     */
+    function getVolumeLocal(EightBitter) {
+        return .49;
+    }
+    
+    /**
+     * 
+     */
+    function getAudioThemeDefault(EightBitter) {
+        return EightBitter.MapsHandler.getArea().setting.split(' ')[0];
+    }
+    
+    
     /* Map sets
     */
     
@@ -4601,6 +4593,56 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         return height;
+    }
+    
+    /**
+     * 
+     */
+    function mapAddStretched(raw) {
+        var y = (self.MapScreener.floor - raw.y) * self.unitsize;
+        return self.addThing(self.ObjectMaker.make(raw.thing, {
+            "width": self.MapScreener.width,
+            "height": raw.height || self.getAbsoluteHeight(raw.y)
+        }), 0, y);
+    }
+    
+    /**
+     * 
+     */
+    function mapPlaceRandomCommands(EightBitter, generated_commands) {
+        var MapsCreator = EightBitter.MapsCreator,
+            MapsHandler = EightBitter.MapsHandler,
+            prethings = MapsHandler.getPreThings(),
+            area = MapsHandler.getArea(),
+            map = MapsHandler.getMap(),
+            command, output, i;
+        
+        generated_commands.sort(function (a, b) {
+            return a.left - b.left;
+        });
+        
+        for(i = 0; i < generated_commands.length; i += 1) {
+            command = generated_commands[i];
+            
+            output = {
+                "thing": command.title,
+                "x": command.left,
+                "y": command.top
+            };
+            
+            if(command.arguments) {
+                EightBitter.proliferate(output, command.arguments);
+            }
+            
+            MapsCreator.analyzePreSwitch(output, prethings, area, map);
+        }
+    }
+    
+    /**
+     * 
+     */
+    function mapStretchThing(thing, xloc_real) {
+        thing.EightBitter.setWidth(thing, xloc_real * thing.EightBitter.unitsize);
     }
     
     /**
@@ -5389,10 +5431,14 @@ var FullScreenMario = (function(GameStartr) {
         "nextLevel": nextLevel,
         "addPlayer": addPlayer,
         "scrollPlayer": scrollPlayer,
+        "onGamePause": onGamePause,
+        "onGameUnpause": onGameUnpause,
+        "canInputsTrigger": canInputsTrigger,
         // Upkeep maintenence
         "maintainSolids": maintainSolids,
         "maintainCharacters": maintainCharacters,
         "maintainPlayer": maintainPlayer,
+        "updateQuadrants": updateQuadrants,
         // Collision detectors
         "canThingCollide": canThingCollide,
         "isThingTouchingThing": isThingTouchingThing,
@@ -5557,6 +5603,9 @@ var FullScreenMario = (function(GameStartr) {
         "scoreAnimate": scoreAnimate,
         "scorePlayerShell": scorePlayerShell,
         "scorePlayerFlag": scorePlayerFlag,
+        // Audio
+        "getVolumeLocal": getVolumeLocal,
+        "getAudioThemeDefault": getAudioThemeDefault,
         // Map sets
         "setMap": setMap,
         "setLocation": setLocation,
@@ -5573,6 +5622,9 @@ var FullScreenMario = (function(GameStartr) {
         // Map creation
         "initializeArea": initializeArea,
         "getAbsoluteHeight": getAbsoluteHeight,
+        "mapAddStretched": mapAddStretched,
+        "mapPlaceRandomCommands": mapPlaceRandomCommands,
+        "mapStretchThing": mapStretchThing,
         "macroExample": macroExample,
         "macroFillPreThings": macroFillPreThings,
         "macroFillPrePattern": macroFillPrePattern,
