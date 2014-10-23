@@ -91,7 +91,7 @@ window.EightBittr = (function() {
         var i;
         
         for(i = 0; i < resets.length; ++i) {
-            resets[i](self, customs)
+            self[resets[i]](self, customs)
         }
     }
     
