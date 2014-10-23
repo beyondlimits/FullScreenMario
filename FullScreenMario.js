@@ -1,15 +1,15 @@
-window.FullScreenMario = (function() {
+var FullScreenMario = (function(GameStartr) {
     "use strict";
     
-    // Use an EightBittr as the class parent, with EightBittr's constructor
-    var EightBitterProto = new EightBittr(),
+    // Use an GameStartr as the class parent, with GameStartr's constructor
+    var GameStartrProto = new GameStartr(),
         
         // Used for combining arrays from the prototype to this
-        proliferate = EightBitterProto.proliferate,
-        proliferateHard = EightBitterProto.proliferateHard;
+        proliferate = GameStartrProto.proliferate,
+        proliferateHard = GameStartrProto.proliferateHard;
         
     // Subsequent settings will be stored in FullScreenMario.prototype.settings
-    EightBitterProto.settings = {};
+    GameStartrProto.settings = {};
     
     /**
      * Constructor for a new FullScreenMario game object.
@@ -63,11 +63,7 @@ window.FullScreenMario = (function() {
      */
     function FullScreenMario(customs) {        // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {
             "customs": customs,
-            "constructor": FullScreenMario,            "unitsize": 4,            "scale": 2,            "requirements": {                "global": {                    "AudioPlayr": "src/AudioPlayr.js",                    "ChangeLinr": "src/ChangeLinr.js",                    "FPSAnalyzr": "src/FPSAnalyzr.js",                    "GamesRunnr": "src/GamesRunnr.js",                    "GroupHoldr": "src/GroupHoldr.js",                    "InputWritr": "src/InputWritr.js",                    "LevelEditr": "src/LevelEditr.js",
-                    "MapScreenr": "src/MapScreenr.js",
-                    "MapsHandlr": "src/MapsHandlr.js",
-                    "ModAttachr": "src/ModAttachr.js",                    "ObjectMakr": "src/ObjectMakr.js",                    "PixelDrawr": "src/PixelDrawr.js",                    "PixelRendr": "src/PixelRendr.js",                    "QuadsKeepr": "src/QuadsKeepr.js",                    "StatsHoldr": "src/StatsHoldr.js",                    "StringFilr": "src/StringFilr.js",                    "ThingHittr": "src/ThingHittr.js",                    "TimeHandlr": "src/TimeHandlr.js"                },
-                "settings": {
+            "constructor": FullScreenMario,            "unitsize": 4,            "scale": 2,            "requirements": {                "settings": {
                     "audio": "settings/audio.js",
                     "collisions": "settings/collisions.js",                    "events": "settings/events.js",
                     "generator": "settings/generator.js",
@@ -99,7 +95,7 @@ window.FullScreenMario = (function() {
                 "point_levels",
                 "gravity"
             ]        });    }
-    FullScreenMario.prototype = EightBitterProto;
+    FullScreenMario.prototype = GameStartrProto;
     
     // For the sake of reset functions, store constants as members of the actual
     // FullScreenMario function itself - this allows prototype setters to use 
@@ -6075,4 +6071,4 @@ window.FullScreenMario = (function() {
     });
     
     return FullScreenMario;
-})();
+})(GameStartr);
