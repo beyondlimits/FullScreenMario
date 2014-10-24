@@ -718,7 +718,7 @@ window.EightBittr = (function() {
         "arraySwitch": arraySwitch,
         "arrayToBeginning": arrayToBeginning,
         "arrayToEnd": arrayToEnd,
-        "arrayDeleteMember": arrayDeleteMember
+        "arrayDeleteMember": arrayDeleteMember,
     });
     
     EightBittr.ensureCorrectCaller = ensureCorrectCaller;

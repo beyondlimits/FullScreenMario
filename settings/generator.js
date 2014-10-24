@@ -139,7 +139,11 @@ FullScreenMario.prototype.settings.generator = {
                 "mode": "Random",
                 "direction": "right",
                 "children": [{
-                    "percent": 60,
+                    "percent": 30,
+                    "type": "Random",
+                    "title": "OverworldBetweenSmallEnemies",
+                }, {
+                    "percent": 30,
                     "type": "Random",
                     "title": "OverworldBetweenSpotty"
                 }, {
@@ -150,6 +154,44 @@ FullScreenMario.prototype.settings.generator = {
                     "percent": 20,
                     "type": "Random",
                     "title": "OverworldBetweenFloating"
+                }]
+            }
+        },
+        "OverworldBetweenSmallEnemies": {
+            "width": 112,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Floor",
+                    "arguments": {
+                        "macro": "Floor",
+                        "width": 112
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "OverworldBetweenSmallEnemiesLand",
+                    "sizing": {
+                        "width": 112
+                    }
+                }]
+            }
+        },
+        "OverworldBetweenSmallEnemiesLand": {
+            "width": 112,
+            "height": 80,
+            "contents": {
+                "mode": "Multiple",
+                "direction": "top",
+                "spacing": -8,
+                "children": [{
+                    "type": "Random",
+                    "title": "LandObstacleGroupEnemies"
+                }, {
+                    "type": "Random",
+                    "title": "OverworldScenery"
                 }]
             }
         },
@@ -302,11 +344,11 @@ FullScreenMario.prototype.settings.generator = {
                 "direction": "right",
                 "spacing": 4,
                 "children": [{
-                    "percent": 90,
+                    "percent": 80,
                     "type": "Random",
                     "title": "EnemySmall"
                 }, {
-                    "percent": 10,
+                    "percent": 20,
                     "type": "Random",
                     "title": "Nothing"
                 }]
@@ -1004,8 +1046,8 @@ FullScreenMario.prototype.settings.generator = {
                 "direction": "right",
                 "snap": "top",
                 "spacing": {
-                    "min": 8,
-                    "max": 64,
+                    "min": 16,
+                    "max": 80,
                     "units": 8
                 },
                 "children": [{

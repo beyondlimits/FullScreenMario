@@ -113,73 +113,13 @@ var FullScreenMario = (function(GameStartr) {
     // Levels of points to award for hopping on / shelling enemies
     FullScreenMario.point_levels = [
         100, 200, 400, 500, 800, 1000, 2000, 4000, 5000, 8000
-    ];            /* Reset functions, in order    */        /**     * Sets self.PixelRender     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelRendr (src/PixelRendr/PixelRendr.js)
-     *                          sprites.js (settings/sprites.js)     */    function resetPixelRender(self, customs) {        // PixelRender settings are stored in FullScreenMario.prototype.sprites,        // though they also need the scale measurement added        self.PixelRender = new PixelRendr(proliferateHard({
-            "unitsize": self.unitsize,
-            "scale": self.scale
-        }, self.settings.sprites));    }        /**     * Sets self.PixelDrawer     *      * @param {FullScreenMario} self     * @remarks Requirement(s): PixelDrawr (src/PixelDrawr/PixelDrawr.js)     */    function resetPixelDrawer(self, customs) {        self.PixelDrawer = new PixelDrawr({            "PixelRender": self.PixelRender,
-            "getCanvas": self.getCanvas,
-            "unitsize": self.unitsize,
-            "innerWidth": customs.width,
-            "generateObjectKey": self.generateObjectKey        });    }        /**     * Sets self.TimeHandler     *      * @param {FullScreenMario} self     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr/TimeHandlr.js)
-     *                          events.js (settings/events.js)     */    function resetTimeHandler(self, customs) {
-        self.TimeHandler = new TimeHandlr(proliferate({
-            "classAdd": self.addClass,
-            "classRemove": self.removeClass
-        }, self.settings.events));    }
+    ];            /* Resets    */
     
     /**
-     * Sets self.AudioPlayer
      * 
-     * @param {FullScreenMario} self
-     * @remarks Requirement(s): AudioPlayr (src/AudioPlayr/AudioPlayr.js)
-     *                          audio.js (settings/audio.js)
-     */
-    function resetAudioPlayer(self, customs) {
-        self.AudioPlayer = new AudioPlayr(proliferate({
-            "getVolumeLocal": self.getVolumeLocal.bind(self, self),
-            "getThemeDefault": self.getAudioThemeDefault.bind(self, self)
-        }, self.settings.audio));
-    }
-    
-    /**
-     * Sets self.QuadsKeeper
-     * @remarks Requirement(s): QuadsKeepr (src/QuadsKeepr/QuadsKeepr.js)
-     *                          quadrants.js (settings/quadrants.js)
-     */
-    function resetQuadsKeeper(self, customs) {
-        self.QuadsKeeper = new QuadsKeepr(proliferate({
-            "screen_width": customs.width,
-            "screen_height": customs.height,
-            "onUpdate": self.updateQuadrants.bind(self, self)
-        }, self.settings.quadrants));
-    }
-    
-    /**
-     * Sets self.GamesRunner
-     * @remarks Requirement(s): GamesRunnr (src/GamesRunnr/GamesRunnr.js)
-     *                          runner.js (settings/runner.js)
-     */
-    function resetGamesRunner(self, customs) {
-        self.GamesRunner = new GamesRunnr(proliferate({
-            "scope": self,
-            "on_pause": self.onGamePause.bind(self, self),
-            "on_unpause": self.onGameUnpause.bind(self, self)
-        }, self.settings.runner));
-    }
-    
-    /**
-     * Sets self.StatsHolder
-     * @remarks Requirement(s): StatsHoldr (src/StatsHoldr/StatsHoldr.js)
-     *                          statistics.js (settings/statistics.js)
      */
     function resetStatsHolder(self, customs) {
-        self.StatsHolder = new StatsHoldr(proliferate({
-            "scope": self,
-            "width": customs.width,
-            "proliferate": self.proliferate,
-            "createElement": self.createElement,
-        }, self.settings.statistics));
+        self.constructor.prototype.constructor.prototype.resetStatsHolder(self, customs);
         
         if(customs.width < 560) {
             self.StatsHolder.getContainer().children[0].cells[4].style.display = "none";
@@ -187,180 +127,19 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
-     * Sets self.ThingHitter
-     * @remarks Requirement(s): ThingHittr (src/ThingHittr/ThingHittr.js)
-     *                          collisions.js (settings/collisions.js)
-     */
-    function resetThingHitter(self, customs) {
-        self.ThingHitter = new ThingHittr(proliferate({
-            "scope": self
-        }, self.settings.collisions));
-        
-        self.GroupHolder = self.ThingHitter.getGroupHolder();
-    }
-    
-    /**
-     * Sets self.ObjectMaker
-     * 
-     * Because many Thing functions require access to other FSM modules, each is
-     * given a reference to this container FSM via properties.Thing.EightBitter. 
-     * 
-     * @remarks Requirement(s): ObjectMakr (src/ObjectMakr/ObjectMakr.js)
-     *                          objects.js (settings/objects.js)
-     */
-    function resetObjectMaker(self, customs) {
-        self.ObjectMaker = new ObjectMakr(proliferate({
-            "properties": {
-                "Thing": {
-                    "EightBitter": self
-                }
-            }
-        }, self.settings.objects));
-    }
-    
-    /**
-     * Sets self.MapScreener
-     * 
-     * @remarks Requirement(s): MapScreenr (src/MapScreenr/MapScreenr.js)
-     *                          maps.js (settings/maps.js)
-     */
-    function resetMapScreener(self, customs) {
-        self.MapScreener = new MapScreenr({
-            "unitsize": FullScreenMario.unitsize,
-            "width": customs.width,
-            "height": customs.height,
-            "variable_args": [self],
-            "variables": self.settings.maps.screen_variables
-        });
-    }
-    
-    /**
-     * Sets self.MapCreator
-     * 
-     * @remarks Requirement(s): MapCreatr (src/MapCreatr/MapCreatr.js)
-     *                          maps.js (settings/maps.js)
-     */
-    function resetMapsCreator(self, customs) {
-        self.MapsCreator = new MapsCreatr({
-            "ObjectMaker": self.ObjectMaker,
-            "group_types": ["Character", "Scenery", "Solid", "Text"],
-            "macros": self.settings.maps.macros,
-            "entrances": self.settings.maps.entrances,
-            "maps": self.settings.maps.maps,
-            "scope": self
-        });
-    }
-    
-    /**
-     * Sets self.MapsHandler
-     * 
-     * @remarks Requirement(s): MapsHandlr (src/MapsHandlr/MapsHandlr.js)
-     *                          maps.js (settings/maps.js)
-     */
-    function resetMapsHandler(self, customs) {
-        self.MapsHandler = new MapsHandlr({
-            "MapsCreator": self.MapsCreator,
-            "MapScreener": self.MapScreener,
-            "screen_attributes": self.settings.maps.screen_attributes,
-            "on_spawn": self.settings.maps.on_spawn,
-            "stretch_add": self.mapAddStretched,
-            "on_stretch": self.mapStretchThing
-        });
-    }
-    
-    /**
-     * Sets self.InputWriter
-     * 
-     * @remarks Requirement(s): InputWritr (src/InputWritr/InputWritr.js)
-     *                          input.js (settings/input.js)
-     */
-    function resetInputWriter(self, customs) {
-        self.InputWriter = new InputWritr(proliferate({
-            "can_trigger": self.canInputsTrigger.bind(self, self)
-        }, self.settings.input));
-    }
-    
-    /**
-     * Sets self.LevelEditor
-     * 
-     * @remarks Requirement(s): LevelEditr (src/LevelEditr/LevelEditr.js)
-     *                          editor.js (settings/editor.js)
-     */
-    function resetLevelEditor(self, customs) {
-        self.LevelEditor = new LevelEditr(proliferate({
-            "GameStarter": self,
-			"beautifier": js_beautify // Eventually there will be a custom beautifier... maybe
-        }, self.settings.editor));
-    }
-    
-    /**
-     * Sets self.WorldSeeder
-     * 
-     * @remarks Requirement(s): WorldSeedr (src/WorldSeedr/WorldSeedr.js)
-     *                          generator.js (settings/generator.js)
-     */
-    function resetWorldSeeder(self, customs) {
-        self.WorldSeeder = new WorldSeedr(proliferate({
-            "random": self.random,
-            "on_placement": self.mapPlaceRandomCommands.bind(self, self)
-        }, self.settings.generator));
-    }
-    
-    /**
-     * 
-     */
-    function resetModAttacher(self, customs) {
-        self.ModAttacher = new ModAttachr(proliferate({
-            "scope_default": self,
-            "StatsHoldr": StatsHoldr,
-            "proliferate": self.proliferate,
-            "createElement": self.createElement
-        }, self.settings.mods));
-    }
-    
-    /** 
-     * 
-     */
-    function startModAttacher(self, customs) {
-        var mods = customs.mods,
-            i;
-        
-        if(mods) {
-            for(i in mods) {
-                if(mods[i]) {
-                    self.ModAttacher.enableMod(i);
-                }
-            }
-        }
-        
-        self.ModAttacher.fireEvent("onReady", self, self);
-    }
-    
-    /**
      * 
      */
     function resetContainer(self, customs) {
-        self.container = self.createElement("div", {
-            "className": "FullScreenMario EightBitter",
-            "style": proliferate({
-                "position": "relative",
-                "width": customs.width + "px",
-                "height": customs.height + "px",
-                "fontFamily": "Press Start"
-            }, customs.style)
-        });
-        self.canvas = self.getCanvas(customs.width, customs.height);
+        self.constructor.prototype.constructor.prototype.resetContainer(self, customs);
         
-        self.PixelDrawer.setCanvas(self.canvas);
+        self.container.style["fontFamily"] = "Press Start";
+        
         self.PixelDrawer.setThingArrays([
             self.GroupHolder.getSceneryGroup(),
             self.GroupHolder.getSolidGroup(),
             self.GroupHolder.getCharacterGroup(),
             self.GroupHolder.getTextGroup()
         ]);
-        
-        self.container.appendChild(self.canvas);
-        self.container.appendChild(self.StatsHolder.getContainer());
     }
     
     
@@ -5268,10 +5047,10 @@ var FullScreenMario = (function(GameStartr) {
 
         // If this is a big castle (*-3), a large ending castle is used
         // if(reference.big) {
-        //    
+            //    
         // }
         // else {
-        // output.push({ thing: "DetectCollision", x: x + 60, y: y + 16, height: 16, activate: endLevelPoints });
+            // output.push({ thing: "DetectCollision", x: x + 60, y: y + 16, height: 16, activate: endLevelPoints });
         // }
 
         return output;
@@ -5407,23 +5186,7 @@ var FullScreenMario = (function(GameStartr) {
     // Add all registered functions from above to the FullScreenMario prototype
     proliferateHard(FullScreenMario.prototype, {
         // Resets
-        "resetPixelRender": resetPixelRender,
-        "resetPixelDrawer": resetPixelDrawer,
-        "resetTimeHandler": resetTimeHandler,
-        "resetAudioPlayer": resetAudioPlayer,
-        "resetQuadsKeeper": resetQuadsKeeper,
-        "resetGamesRunner": resetGamesRunner,
         "resetStatsHolder": resetStatsHolder,
-        "resetThingHitter": resetThingHitter,
-        "resetObjectMaker": resetObjectMaker,
-        "resetMapScreener": resetMapScreener,
-        "resetMapsCreator": resetMapsCreator,
-        "resetMapsHandler": resetMapsHandler,
-        "resetInputWriter": resetInputWriter,
-        "resetLevelEditor": resetLevelEditor,
-        "resetWorldSeeder": resetWorldSeeder,
-        "resetModAttacher": resetModAttacher,
-        "startModAttacher": startModAttacher,
         "resetContainer": resetContainer,
         // Global manipulations
         "gameStart": gameStart,

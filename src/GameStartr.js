@@ -43,6 +43,295 @@ var GameStartr = (function (EightBittr) {
     EightBitterProto.settings = {};
     
     
+    /* Resets
+    */
+    
+    /**
+     * Sets self.PixelRender
+     * 
+     * @param {EightBittr} EightBitter
+     * @remarks Requirement(s): PixelRendr (src/PixelRendr/PixelRendr.js)
+     *                          sprites.js (settings/sprites.js)
+     */
+    function resetPixelRender(EightBitter, customs) {
+        // PixelRender settings are stored in FullScreenMario.prototype.sprites,
+        // though they also need the scale measurement added
+        EightBitter.PixelRender = new PixelRendr(proliferateHard({
+            "unitsize": EightBitter.unitsize,
+            "scale": EightBitter.scale
+        }, EightBitter.settings.sprites));
+    }
+    
+    /**
+     * Sets self.PixelDrawer
+     * 
+     * @param {EightBittr} EightBitter
+     * @remarks Requirement(s): PixelDrawr (src/PixelDrawr/PixelDrawr.js)
+     */
+    function resetPixelDrawer(EightBitter, customs) {
+        EightBitter.PixelDrawer = new PixelDrawr({
+            "PixelRender": EightBitter.PixelRender,
+            "getCanvas": EightBitter.getCanvas,
+            "unitsize": EightBitter.unitsize,
+            "innerWidth": customs.width,
+            "generateObjectKey": EightBitter.generateObjectKey
+        });
+    }
+    
+    /**
+     * Sets EightBitter.TimeHandler
+     * 
+     * @param {EightBittr} EightBitter
+     * @remarks Requirement(s): TimeHandlr (src/TimeHandlr/TimeHandlr.js)
+     *                          events.js (settings/events.js)
+     */
+    function resetTimeHandler(EightBitter, customs) {
+        EightBitter.TimeHandler = new TimeHandlr(proliferate({
+            "classAdd": EightBitter.addClass,
+            "classRemove": EightBitter.removeClass
+        }, EightBitter.settings.events));
+    }
+    
+    /**
+     * Sets self.AudioPlayer
+     * 
+     * @param {EightBittr} EightBitter
+     * @remarks Requirement(s): AudioPlayr (src/AudioPlayr/AudioPlayr.js)
+     *                          audio.js (settings/audio.js)
+     */
+    function resetAudioPlayer(EightBitter, customs) {
+        EightBitter.AudioPlayer = new AudioPlayr(proliferate({
+            "getVolumeLocal": EightBitter.getVolumeLocal.bind(EightBitter, EightBitter),
+            "getThemeDefault": EightBitter.getAudioThemeDefault.bind(EightBitter, EightBitter)
+        }, EightBitter.settings.audio));
+    }
+    
+    /**
+     * Sets self.QuadsKeeper
+     * @param {EightBittr} EightBitter
+     * @remarks Requirement(s): QuadsKeepr (src/QuadsKeepr/QuadsKeepr.js)
+     *                          quadrants.js (settings/quadrants.js)
+     */
+    function resetQuadsKeeper(EightBitter, customs) {
+        EightBitter.QuadsKeeper = new QuadsKeepr(proliferate({
+            "screen_width": customs.width,
+            "screen_height": customs.height,
+            "onUpdate": EightBitter.updateQuadrants.bind(EightBitter, EightBitter)
+        }, EightBitter.settings.quadrants));
+    }
+    
+    /**
+     * Sets self.GamesRunner
+     * @param {EightBittr} EightBitter
+     * @remarks Requirement(s): GamesRunnr (src/GamesRunnr/GamesRunnr.js)
+     *                          runner.js (settings/runner.js)
+     */
+    function resetGamesRunner(EightBitter, customs) {
+        EightBitter.GamesRunner = new GamesRunnr(proliferate({
+            "scope": EightBitter,
+            "on_pause": EightBitter.onGamePause.bind(EightBitter, EightBitter),
+            "on_unpause": EightBitter.onGameUnpause.bind(EightBitter, EightBitter)
+        }, EightBitter.settings.runner));
+    }
+    
+    /**
+     * Sets self.StatsHolder
+     * @param {EightBittr} EightBitter
+     * @remarks Requirement(s): StatsHoldr (src/StatsHoldr/StatsHoldr.js)
+     *                          statistics.js (settings/statistics.js)
+     */
+    function resetStatsHolder(EightBitter, customs) {
+        EightBitter.StatsHolder = new StatsHoldr(proliferate({
+            "scope": EightBitter,
+            "width": customs.width,
+            "proliferate": EightBitter.proliferate,
+            "createElement": EightBitter.createElement,
+        }, EightBitter.settings.statistics));
+    }
+    
+    /**
+     * Sets self.ThingHitter
+     * @param {EightBittr} EightBitter
+     * @remarks Requirement(s): ThingHittr (src/ThingHittr/ThingHittr.js)
+     *                          collisions.js (settings/collisions.js)
+     */
+    function resetThingHitter(EightBitter, customs) {
+        EightBitter.ThingHitter = new ThingHittr(proliferate({
+            "scope": EightBitter
+        }, EightBitter.settings.collisions));
+        
+        EightBitter.GroupHolder = EightBitter.ThingHitter.getGroupHolder();
+    }
+    
+    /**
+     * Sets self.ObjectMaker
+     * 
+     * Because many Thing functions require access to other FSM modules, each is
+     * given a reference to this container FSM via properties.Thing.EightBitter. 
+     * 
+     * @param {EightBittr} EightBitter
+     * @remarks Requirement(s): ObjectMakr (src/ObjectMakr/ObjectMakr.js)
+     *                          objects.js (settings/objects.js)
+     */
+    function resetObjectMaker(EightBitter, customs) {
+        EightBitter.ObjectMaker = new ObjectMakr(proliferate({
+            "properties": {
+                "Thing": {
+                    "EightBitter": EightBitter
+                }
+            }
+        }, EightBitter.settings.objects));
+    }
+    
+    /**
+     * Sets self.MapScreener
+     * 
+     * @param {EightBittr} EightBitter
+     * @remarks Requirement(s): MapScreenr (src/MapScreenr/MapScreenr.js)
+     *                          maps.js (settings/maps.js)
+     */
+    function resetMapScreener(EightBitter, customs) {
+        EightBitter.MapScreener = new MapScreenr({
+            "unitsize": FullScreenMario.unitsize,
+            "width": customs.width,
+            "height": customs.height.EightBitter,
+            "variable_args": [EightBitter],
+            "variables": EightBitter.settings.maps.screen_variables
+        });
+    }
+    
+    /**
+     * Sets self.MapCreator
+     * 
+     * @param {EightBittr} EightBitter
+     * @remarks Requirement(s): MapCreatr (src/MapCreatr/MapCreatr.js)
+     *                          maps.js (settings/maps.js)
+     */
+    function resetMapsCreator(EightBitter, customs) {
+        EightBitter.MapsCreator = new MapsCreatr({
+            "ObjectMaker": EightBitter.ObjectMaker,
+            "group_types": ["Character", "Scenery", "Solid", "Text"],
+            "macros": EightBitter.settings.maps.macros,
+            "entrances": EightBitter.settings.maps.entrances,
+            "maps": EightBitter.settings.maps.maps,
+            "scope": EightBitter
+        });
+    }
+    
+    /**
+     * Sets self.MapsHandler
+     * 
+     * @param {EightBittr} EightBitter
+     * @remarks Requirement(s): MapsHandlr (src/MapsHandlr/MapsHandlr.js)
+     *                          maps.js (settings/maps.js)
+     */
+    function resetMapsHandler(EightBitter, customs) {
+        EightBitter.MapsHandler = new MapsHandlr({
+            "MapsCreator": EightBitter.MapsCreator,
+            "MapScreener": EightBitter.MapScreener,
+            "screen_attributes": EightBitter.settings.maps.screen_attributes,
+            "on_spawn": EightBitter.settings.maps.on_spawn,
+            "stretch_add": EightBitter.mapAddStretched,
+            "on_stretch": EightBitter.mapStretchThing
+        });
+    }
+    
+    /**
+     * Sets self.InputWriter
+     * 
+     * @param {EightBittr} EightBitter
+     * @remarks Requirement(s): InputWritr (src/InputWritr/InputWritr.js)
+     *                          input.js (settings/input.js)
+     */
+    function resetInputWriter(EightBitter, customs) {
+        EightBitter.InputWriter = new InputWritr(proliferate({
+            "can_trigger": EightBitter.canInputsTrigger.bind(EightBitter, EightBitter)
+        }, EightBitter.settings.input));
+    }
+    
+    /**
+     * Sets self.LevelEditor
+     * 
+     * @param {EightBittr} EightBitter
+     * @remarks Requirement(s): LevelEditr (src/LevelEditr/LevelEditr.js)
+     *                          editor.js (settings/editor.js)
+     */
+    function resetLevelEditor(EightBitter, customs) {
+        EightBitter.LevelEditor = new LevelEditr(proliferate({
+            "GameStarter": EightBitter,
+			"beautifier": js_beautify // Eventually there will be a custom beautifier... maybe
+        }, EightBitter.settings.editor));
+    }
+    
+    /**
+     * Sets self.WorldSeeder
+     * 
+     * @param {EightBittr} EightBitter
+     * @remarks Requirement(s): WorldSeedr (src/WorldSeedr/WorldSeedr.js)
+     *                          generator.js (settings/generator.js)
+     */
+    function resetWorldSeeder(EightBitter, customs) {
+        EightBitter.WorldSeeder = new WorldSeedr(proliferate({
+            "random": EightBitter.random,
+            "on_placement": EightBitter.mapPlaceRandomCommands.bind(EightBitter, EightBitter)
+        }, EightBitter.settings.generator));
+    }
+    
+    /**
+     * Sets self.ModAttacher
+     * 
+     * @param {EightBittr} EightBitter
+     * @remarks Requirement(s): ModAttachr (src/ModAttachr/ModAttachr.js)
+     *                          mods.js (settings/mods.js)
+     */
+    function resetModAttacher(EightBitter, customs) {
+        EightBitter.ModAttacher = new ModAttachr(proliferate({
+            "scope_default": EightBitter,
+            "StatsHoldr": StatsHoldr,
+            "proliferate": EightBitter.proliferate,
+            "createElement": EightBitter.createElement
+        }, EightBitter.settings.mods));
+    }
+    
+    /** 
+     * 
+     */
+    function startModAttacher(EightBitter, customs) {
+        var mods = customs.mods,
+            i;
+        
+        if(mods) {
+            for(i in mods) {
+                if(mods[i]) {
+                    EightBitter.ModAttacher.enableMod(i);
+                }
+            }
+        }
+        
+        EightBitter.ModAttacher.fireEvent("onReady", EightBitter, EightBitter);
+    }
+    
+    /**
+     * 
+     */
+    function resetContainer(EightBitter, customs) {
+        EightBitter.container = EightBitter.createElement("div", {
+            "className": "FullScreenMario EightBitter",
+            "style": EightBitter.proliferate({
+                "position": "relative",
+                "width": customs.width + "px",
+                "height": customs.height + "px"
+            }, customs.style)
+        });
+        
+        EightBitter.canvas = EightBitter.getCanvas(customs.width, customs.height);
+        EightBitter.PixelDrawer.setCanvas(EightBitter.canvas);
+        
+        EightBitter.container.appendChild(EightBitter.canvas);
+        EightBitter.container.appendChild(EightBitter.StatsHolder.getContainer());
+    }
+    
+    
     /* Global manipulations
     */
     
@@ -526,6 +815,25 @@ var GameStartr = (function (EightBittr) {
     
     // Add all registered functions from above to the GameStartr prototype
     proliferateHard(GameStartr.prototype, {
+        // Resets
+        "resetPixelRender": resetPixelRender,
+        "resetPixelDrawer": resetPixelDrawer,
+        "resetTimeHandler": resetTimeHandler,
+        "resetAudioPlayer": resetAudioPlayer,
+        "resetQuadsKeeper": resetQuadsKeeper,
+        "resetGamesRunner": resetGamesRunner,
+        "resetStatsHolder": resetStatsHolder,
+        "resetThingHitter": resetThingHitter,
+        "resetObjectMaker": resetObjectMaker,
+        "resetMapScreener": resetMapScreener,
+        "resetMapsCreator": resetMapsCreator,
+        "resetMapsHandler": resetMapsHandler,
+        "resetInputWriter": resetInputWriter,
+        "resetLevelEditor": resetLevelEditor,
+        "resetWorldSeeder": resetWorldSeeder,
+        "resetModAttacher": resetModAttacher,
+        "startModAttacher": startModAttacher,
+        "resetContainer": resetContainer,
         // Global manipulations
         "scrollWindow": scrollWindow,
         "scrollThing": scrollThing,

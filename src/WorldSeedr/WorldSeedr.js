@@ -284,7 +284,8 @@ function WorldSeedr(settings) {
      *                             "top", "right", "bottom", or "left".
      * @param {Number} spacing   How much space there should be between each 
      *                           child.
-     * @return 
+     * @return {Object}   An Object containing a position within the given 
+     *                    position and some number of children.
      */
     function generateContentChildrenRandom(contents, position, direction, spacing) {
         var children = [],
@@ -308,11 +309,30 @@ function WorldSeedr(settings) {
     }
     
     /**
+     * Generates a schema's children that are all to be placed within the same
+     * position. If a direction is provided, each subsequent one is shifted in
+     * that direction by spacing.
      * 
+     * @param {Object} contents   The Array of known possibilities, with 
+     *                            probability percentages.
+     * @param {Object} position   An Object that contains .left, .right, .top, 
+     *                            and .bottom.
+     * @param {String} [direction]   A string direction to check the position by:
+     *                               "top", "right", "bottom", or "left".
+     * @param {Number} [spacing]   How much space there should be between each 
+     *                             child.
+     * @return {Object}   An Object containing a position within the given 
+     *                    position and some number of children.
      */
     function generateContentChildrenMultiple(contents, position, direction, spacing) {
         return contents.children.map(function (choice) {
-            return parseChoice(choice, positionCopy(position), direction);
+            var output = parseChoice(choice, positionCopy(position), direction);
+            
+            if(direction) {
+                movePositionByChild(position, direction, spacing);
+            }
+            
+            return output;
         });
     }
     
@@ -656,6 +676,32 @@ function WorldSeedr(settings) {
                 return;
             case "left":
                 position.right = child.left - parseSpacing(spacing);
+                return;
+        }
+    }
+    
+    /**
+     * 
+     */
+    function movePositionByChild(position, direction, spacing) {
+        var space = parseSpacing(spacing);
+        
+        switch(direction) {
+            case "top":
+                position.top += space;
+                position.bottom += space;
+                return;
+            case "right":
+                position.left += space;
+                position.right += space;
+                return;
+            case "bottom":
+                position.top -= space;
+                position.bottom -= space;
+                return;
+            case "left":
+                position.left -= space;
+                position.right -= space;
                 return;
         }
     }
