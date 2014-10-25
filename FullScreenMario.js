@@ -72,13 +72,13 @@ var FullScreenMario = (function(GameStartr) {
                     "runner": "settings/runner.js",
                     "sprites": "settings/sprites.js",
                     "statistics": "settings/statistics.js"                }            },            "resets": [
+                "resetObjectMaker",
                 "resetPixelRender",                "resetPixelDrawer",                "resetTimeHandler",
                 "resetAudioPlayer",
                 "resetQuadsKeeper",
                 "resetGamesRunner",
                 "resetStatsHolder",
                 "resetThingHitter",
-                "resetObjectMaker",
                 "resetMapScreener",
                 "resetMapsCreator",
                 "resetMapsHandler",
@@ -155,7 +155,7 @@ var FullScreenMario = (function(GameStartr) {
         EightBitter.StatsHolder.set("lives", 3);
         EightBitter.setMap("1-1");
         // EightBitter.setMap("Random");
-        // EightBitter.GamesRunner.step();
+        EightBitter.GamesRunner.step();
     }
     
     /**

@@ -5,6 +5,7 @@
         "index_map": ["width", "height"],
         "do_properties_full": true,
         "inheritance": {
+            "Quadrant": {},
             "Map": {},
             "Area": {},
             "Location": {},
@@ -134,6 +135,10 @@
             }
         },
         "properties": {
+            "Quadrant": {
+                "tolx": 0,
+                "toly": 0
+            },
             "Map": {
                 "initialized": false,
             },

@@ -1,3 +1,8 @@
+/**
+ * GameStartr.js
+ * 
+ * Virtual / abstract constructor for games
+ */
 var GameStartr = (function (EightBittr) {
     "use strict";
     
@@ -47,6 +52,46 @@ var GameStartr = (function (EightBittr) {
     */
     
     /**
+     * Sets self.ObjectMaker
+     * 
+     * Because many Thing functions require access to other FSM modules, each is
+     * given a reference to this container FSM via properties.Thing.EightBitter. 
+     * 
+     * @param {EightBittr} EightBitter
+     * @remarks Requirement(s): ObjectMakr (src/ObjectMakr/ObjectMakr.js)
+     *                          objects.js (settings/objects.js)
+     */
+    function resetObjectMaker(EightBitter, customs) {
+        debugger;
+        EightBitter.ObjectMaker = new ObjectMakr(proliferate({
+            "properties": {
+                "Quadrant": {
+                    "EightBitter": EightBitter
+                },
+                "Thing": {
+                    "EightBitter": EightBitter
+                }
+            }
+        }, EightBitter.settings.objects));
+    }
+    
+    /**
+     * Sets self.QuadsKeeper
+     * @param {EightBittr} EightBitter
+     * @remarks Requirement(s): QuadsKeepr (src/QuadsKeepr/QuadsKeepr.js)
+     *                          quadrants.js (settings/quadrants.js)
+     */
+    function resetQuadsKeeper(EightBitter, customs) {
+        debugger;
+        EightBitter.QuadsKeeper = new QuadsKeepr(proliferate({
+            "screen_width": customs.width,
+            "screen_height": customs.height,
+            "onUpdate": EightBitter.updateQuadrants.bind(EightBitter, EightBitter),
+            "ObjectMaker": EightBitter.ObjectMaker
+        }, EightBitter.settings.quadrants));
+    }
+    
+    /**
      * Sets self.PixelRender
      * 
      * @param {EightBittr} EightBitter
@@ -57,6 +102,7 @@ var GameStartr = (function (EightBittr) {
         // PixelRender settings are stored in FullScreenMario.prototype.sprites,
         // though they also need the scale measurement added
         EightBitter.PixelRender = new PixelRendr(proliferateHard({
+            "QuadsKeeper": EightBitter.QuadsKeeper,
             "unitsize": EightBitter.unitsize,
             "scale": EightBitter.scale
         }, EightBitter.settings.sprites));
@@ -107,20 +153,6 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
-     * Sets self.QuadsKeeper
-     * @param {EightBittr} EightBitter
-     * @remarks Requirement(s): QuadsKeepr (src/QuadsKeepr/QuadsKeepr.js)
-     *                          quadrants.js (settings/quadrants.js)
-     */
-    function resetQuadsKeeper(EightBitter, customs) {
-        EightBitter.QuadsKeeper = new QuadsKeepr(proliferate({
-            "screen_width": customs.width,
-            "screen_height": customs.height,
-            "onUpdate": EightBitter.updateQuadrants.bind(EightBitter, EightBitter)
-        }, EightBitter.settings.quadrants));
-    }
-    
-    /**
      * Sets self.GamesRunner
      * @param {EightBittr} EightBitter
      * @remarks Requirement(s): GamesRunnr (src/GamesRunnr/GamesRunnr.js)
@@ -161,26 +193,6 @@ var GameStartr = (function (EightBittr) {
         }, EightBitter.settings.collisions));
         
         EightBitter.GroupHolder = EightBitter.ThingHitter.getGroupHolder();
-    }
-    
-    /**
-     * Sets self.ObjectMaker
-     * 
-     * Because many Thing functions require access to other FSM modules, each is
-     * given a reference to this container FSM via properties.Thing.EightBitter. 
-     * 
-     * @param {EightBittr} EightBitter
-     * @remarks Requirement(s): ObjectMakr (src/ObjectMakr/ObjectMakr.js)
-     *                          objects.js (settings/objects.js)
-     */
-    function resetObjectMaker(EightBitter, customs) {
-        EightBitter.ObjectMaker = new ObjectMakr(proliferate({
-            "properties": {
-                "Thing": {
-                    "EightBitter": EightBitter
-                }
-            }
-        }, EightBitter.settings.objects));
     }
     
     /**
@@ -501,22 +513,78 @@ var GameStartr = (function (EightBittr) {
     /* Physics & similar
     */
     
+    /** 
+     * Sets a Thing's "changed" flag to true, which indicates to the
+     * PixelDrawer to redraw the Thing and its quadrant.
+     * 
+     * @param {Thing} thing
+     */
+    function markChanged(thing) {
+        thing.changed = true;
+    }
+    
+    /**
+     * 
+     */
+    function shiftVert(thing, dy) {
+        EightBittr.prototype.shiftVert(thing, dy);
+        thing.EightBitter.markChanged(thing);
+    }
+    
+    /**
+     * 
+     */
+    function shiftHoriz(thing, dx) {
+        EightBittr.prototype.shiftHoriz(thing, dx);
+        thing.EightBitter.markChanged(thing);
+    }
+    
+    /**
+     * 
+     */
+    function setTop(thing, top) {
+        EightBittr.prototype.setTop(thing, top);
+        thing.EightBitter.markChanged(thing);
+    }
+    
+    /**
+     * 
+     */
+    function setRight(thing, right) {
+        EightBittr.prototype.setRight(thing, right);
+        thing.EightBitter.markChanged(thing);
+    }
+    
+    /**
+     * 
+     */
+    function setBottom(thing, bottom) {
+        EightBittr.prototype.setBottom(thing, bottom);
+        thing.EightBitter.markChanged(thing);
+    }
+    
+    /**
+     * 
+     */
+    function setLeft(thing, left) {
+        EightBittr.prototype.setLeft(thing, left);
+        thing.EightBitter.markChanged(thing);
+    }
+    
     /**
      * 
      * 
-     * @remarks This must be kept using "this.", since it can be applied to
-     *          Quadrants during scrollWindow events.
      */
     function shiftBoth(thing, dx, dy) {
         if(!thing.noshiftx) {
             if(thing.parallax) {
-                this.shiftHoriz(thing, thing.parallax * dx);
+                thing.EightBitter.shiftHoriz(thing, thing.parallax * dx);
             } else {
-                this.shiftHoriz(thing, dx);
+                thing.EightBitter.shiftHoriz(thing, dx);
             }
         }
         if(!thing.noshifty) {
-            this.shiftVert(thing, dy);
+            thing.EightBitter.shiftVert(thing, dy);
         }
     }
     
@@ -525,7 +593,7 @@ var GameStartr = (function (EightBittr) {
      */
     function shiftThings(things, dx, dy) {
         for(var i = things.length - 1; i >= 0; i -= 1) {
-            this.shiftBoth(things[i], dx, dy);
+            things[i].EightBitter.shiftBoth(things[i], dx, dy);
         }
     }
     
@@ -533,7 +601,8 @@ var GameStartr = (function (EightBittr) {
      * 
      */
     function shiftAll(dx, dy) {
-        this.GroupHolder.callAll(this, shiftThings, dx, dy);
+        var EightBitter = EightBittr.ensureCorrectCaller(this);
+        EightBitter.GroupHolder.callAll(EightBitter, EightBitter.shiftThings, dx, dy);
     }
 
     /**
@@ -814,17 +883,17 @@ var GameStartr = (function (EightBittr) {
     
     
     // Add all registered functions from above to the GameStartr prototype
-    proliferateHard(GameStartr.prototype, {
+    proliferateHard(EightBitterProto, {
         // Resets
+        "resetObjectMaker": resetObjectMaker,
+        "resetQuadsKeeper": resetQuadsKeeper,
         "resetPixelRender": resetPixelRender,
         "resetPixelDrawer": resetPixelDrawer,
         "resetTimeHandler": resetTimeHandler,
         "resetAudioPlayer": resetAudioPlayer,
-        "resetQuadsKeeper": resetQuadsKeeper,
         "resetGamesRunner": resetGamesRunner,
         "resetStatsHolder": resetStatsHolder,
         "resetThingHitter": resetThingHitter,
-        "resetObjectMaker": resetObjectMaker,
         "resetMapScreener": resetMapScreener,
         "resetMapsCreator": resetMapsCreator,
         "resetMapsHandler": resetMapsHandler,
@@ -841,6 +910,13 @@ var GameStartr = (function (EightBittr) {
         "thingProcess": thingProcess,
         "thingProcessAttributes": thingProcessAttributes,
         // Physics & similar
+        "markChanged": markChanged,
+        "shiftVert": shiftVert,
+        "shiftHoriz": shiftHoriz,
+        "setTop": setTop,
+        "setRight": setRight,
+        "setBottom": setBottom,
+        "setLeft": setLeft,
         "shiftBoth": shiftBoth,
         "shiftThings": shiftThings,
         "shiftAll": shiftAll,

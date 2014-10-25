@@ -3,7 +3,7 @@
  * 
  * Contains a set of useful default functions for the FullScreenMario engine.
  */
-window.EightBittr = (function() {
+var EightBittr = (function() {
     "use strict";
     
     /**
@@ -526,10 +526,10 @@ window.EightBittr = (function() {
 
                 // If it's an object, recurse on a new version of it
                 if(typeof(setting = donor[i]) === "object") {
-                  if(!recipient[i]) {
-                     recipient[i] = new setting.constructor();
-                  }
-                  proliferate(recipient[i], setting, no_override);
+                    if(!recipient[i]) {
+                        recipient[i] = new setting.constructor();
+                    }
+                    proliferate(recipient[i], setting, no_override);
                 }
                 // Regular primitives are easy to copy otherwise
                 else {
@@ -689,6 +689,7 @@ window.EightBittr = (function() {
         "setRight": setRight,
         "setBottom": setBottom,
         "setLeft": setLeft,
+        "setLeftOld": setLeft,
         "setMid": setMid,
         "setMidY": setMidY,
         "setMidX": setMidX,
