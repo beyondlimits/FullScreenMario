@@ -62,7 +62,6 @@ var GameStartr = (function (EightBittr) {
      *                          objects.js (settings/objects.js)
      */
     function resetObjectMaker(EightBitter, customs) {
-        debugger;
         EightBitter.ObjectMaker = new ObjectMakr(proliferate({
             "properties": {
                 "Quadrant": {
@@ -82,12 +81,12 @@ var GameStartr = (function (EightBittr) {
      *                          quadrants.js (settings/quadrants.js)
      */
     function resetQuadsKeeper(EightBitter, customs) {
-        debugger;
         EightBitter.QuadsKeeper = new QuadsKeepr(proliferate({
+            "ObjectMaker": EightBitter.ObjectMaker,
+            "getCanvas": EightBitter.getCanvas,
             "screen_width": customs.width,
             "screen_height": customs.height,
             "onUpdate": EightBitter.updateQuadrants.bind(EightBitter, EightBitter),
-            "ObjectMaker": EightBitter.ObjectMaker
         }, EightBitter.settings.quadrants));
     }
     

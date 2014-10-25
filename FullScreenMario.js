@@ -874,9 +874,6 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function playerGetsSmall(thing) {
-        console.warn("playerGetsSmall uses some global and global-style stuff.");
-        console.warn("\tthingStoreVelocity, thingRetrieveVelocity, flicker");
-        
         var bottom = thing.bottom;
         thing.keys.down = 0;
         thing.EightBitter.thingStoreVelocity(thing);
@@ -3882,7 +3879,6 @@ var FullScreenMario = (function(GameStartr) {
         if(!thing.alive || thing.flickering || thing.dying) {
             return;
         }
-        console.warn("killPlayer still uses global gravity, characters, setMap, gameOver");
         
         // Large big: real, no-animation death
         if(big == 2) {

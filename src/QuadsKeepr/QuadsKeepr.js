@@ -9,6 +9,9 @@ function QuadsKeepr(settings) {
         
         // The ObjectMakr factory used to create Quadrant objects
         ObjectMaker,
+        
+        // Function used to create a canvas of a given width and height
+        getCanvas,
 
         // Quadrants, listed as a raw array
         quadrants,
@@ -60,6 +63,8 @@ function QuadsKeepr(settings) {
         columns = [];
         
         ObjectMaker = settings.ObjectMaker;
+        
+        getCanvas = settings.getCanvas;
 
         num_rows = settings.num_rows;
         num_cols = settings.num_cols;
@@ -146,9 +151,10 @@ function QuadsKeepr(settings) {
 
     // Quadrant Constructor
     function createQuadrant(row, left) {
-        var quadrant = ObjectMaker.make("Quadrant", {
-            "numobjects": 0
-        });
+        var canvas = getCanvas(1, 1),
+            quadrant = ObjectMaker.make("Quadrant", {
+                "numobjects": 0,
+            });
         
         // Position updating
         quadrant.left = left;
@@ -158,6 +164,9 @@ function QuadsKeepr(settings) {
 
         // Keep track of contained Things with an Array
         quadrant.things = [];
+        
+        quadrant.canvas = canvas;
+        quadrant.context = canvas.getContext("2d");
         
         return quadrant;
     }
