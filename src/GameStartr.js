@@ -625,6 +625,8 @@ var GameStartr = (function (EightBittr) {
                 window.warned_update_set_width = true;
             }
         }
+        
+        thing.EightBitter.markChanged(thing);
     }
     
     /**
@@ -647,6 +649,8 @@ var GameStartr = (function (EightBittr) {
                 window.warned_update_set_height = true;
             }
         }
+        
+        thing.EightBitter.markChanged(thing);
     }
     
     /**
@@ -684,6 +688,8 @@ var GameStartr = (function (EightBittr) {
             thing.canvas.height = thing.spriteheightpixels;
             thing.EightBitter.PixelDrawer.setThingSprite(thing);
         }
+        
+        thing.EightBitter.markChanged(thing);
     }
     
     /**
@@ -695,6 +701,8 @@ var GameStartr = (function (EightBittr) {
         
         if(see) {
             thing.EightBitter.updateSize(thing);
+        } else {
+            thing.EightBitter.markChanged(thing);
         }
     }
     
@@ -705,6 +713,7 @@ var GameStartr = (function (EightBittr) {
         thing.top -= dy;
         thing.height += dy / thing.EightBitter.unitsize;
         thing.unitheight = thing.height * thing.EightBitter.unitsize;
+        thing.EightBitter.markChanged(thing);
     }
     
     /**
@@ -759,6 +768,7 @@ var GameStartr = (function (EightBittr) {
     function setTitle(thing, string) {
         thing.title = string;
         thing.EightBitter.PixelDrawer.setThingSprite(thing);
+        thing.EightBitter.markChanged(thing);
     }
     
     /**
@@ -767,6 +777,7 @@ var GameStartr = (function (EightBittr) {
     function setClass(thing, string) {
         thing.className = string;
         thing.EightBitter.PixelDrawer.setThingSprite(thing);
+        thing.EightBitter.markChanged(thing);
     }
     
     /**
@@ -782,6 +793,7 @@ var GameStartr = (function (EightBittr) {
     function addClass(thing, string) {
         thing.className += " " + string;
         thing.EightBitter.PixelDrawer.setThingSprite(thing);
+        thing.EightBitter.markChanged(thing);
     }
     
     /**
@@ -820,15 +832,17 @@ var GameStartr = (function (EightBittr) {
      * 
      */
     function removeClasses(thing) {
-      var strings, arr, i, j;
-      for(i = 1; i < arguments.length; ++i) {
-        arr = arguments[i];
-        if(!(arr instanceof Array)) {
-            arr = arr.split(" ");
+        var strings, arr, i, j;
+        for(i = 1; i < arguments.length; ++i) {
+            arr = arguments[i];
+            if(!(arr instanceof Array)) {
+                arr = arr.split(" ");
+            }
+            
+            for(j = arr.length - 1; j >= 0; --j) {
+                thing.EightBitter.removeClass(thing, arr[j]);
+            }
         }
-        for(j = arr.length - 1; j >= 0; --j)
-          thing.EightBitter.removeClass(thing, arr[j]);
-      }
     }
     
     /**
@@ -879,6 +893,7 @@ var GameStartr = (function (EightBittr) {
         thing.canvas.opacity = opacity;
         thing.context.opacity = opacity;
         // thing.EightBitter.PixelDrawer.setThingSprite(thing);
+        thing.EightBitter.markChanged(thing);
     }
     
     
