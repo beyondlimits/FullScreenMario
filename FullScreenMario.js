@@ -377,7 +377,7 @@ var FullScreenMario = (function(GameStartr) {
                 player.keys.jump = 0;
             }
             // Jumping?
-            if (!player.jumping) {
+            if (!player.jumping && !player.crouching) {
                 // Paddling? (from falling off a solid)
                 if (EightBitter.MapScreener.underwater) {
                     if (!player.paddling) {
@@ -2689,8 +2689,10 @@ var FullScreenMario = (function(GameStartr) {
             thing.keys.jump = 0;
         }
         // Jumping
-        else if(thing.keys.jump > 0 
-                && (thing.yvel <= 0 || thing.EightBitter.MapScreener.underwater)) {
+        else if(
+            thing.keys.jump > 0 
+            && (thing.yvel <= 0 || thing.EightBitter.MapScreener.underwater)
+        ) {
             if(thing.EightBitter.MapScreener.underwater) {
                 thing.EightBitter.animatePlayerPaddling(thing);
                 thing.EightBitter.removeClass(thing, "running");
@@ -2721,6 +2723,7 @@ var FullScreenMario = (function(GameStartr) {
         if(thing.keys.crouch && !thing.crouching && thing.resting) {
             if(thing.power != 1) {
                 thing.crouching = true;
+                thing.EightBitter.removeClass(thing, "running");
                 thing.EightBitter.addClass(thing, "crouching");
                 thing.EightBitter.setHeight(thing, 11, true, true);
                 thing.height = 11;
