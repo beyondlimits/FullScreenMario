@@ -53,6 +53,7 @@ function QuadsKeepr(settings) {
         thing_num_quads,
         thing_max_quads,
         thing_quadrants,
+        thing_changed,
 
         // Callbacks for...
         onUpdate, // when Quadrants are updated
@@ -87,6 +88,7 @@ function QuadsKeepr(settings) {
         thing_num_quads = settings.thing_num_quads || "numquads";
         thing_max_quads = settings.thing_max_quads || "maxquads";
         thing_quadrants = settings.thing_quadrants || "quadrants";
+        thing_changed = settings.thing_changed || "changed";
 
         onUpdate = settings.onUpdate;
         onCollide = settings.onCollide;
@@ -154,6 +156,7 @@ function QuadsKeepr(settings) {
         var canvas = getCanvas(1, 1),
             quadrant = ObjectMaker.make("Quadrant", {
                 "numobjects": 0,
+                "changed": true
             });
         
         // Position updating
@@ -256,6 +259,11 @@ function QuadsKeepr(settings) {
     // Public: determineThingQuadrants
     // Checks and sets the correct quadrants for a Thing
     self.determineThingQuadrants = function(thing) {
+        // Mark each of the thing's quadrants as changed
+        if(thing[thing_changed]) {
+            markThingQuadrantsChanged(thing);
+        }
+        
         thing[thing_num_quads] = 0;
         
         // Check each Quadrant for collision
@@ -264,9 +272,14 @@ function QuadsKeepr(settings) {
             if (thingInQuadrant(thing, quadrants[i])) {
                 setThingInQuadrant(thing, quadrants[i], i);
                 if (thing[thing_num_quads] > thing[thing_max_quads]) {
-                    return;
+                    break;
                 }
             }
+        }
+        
+        // Mark the thing's quadrants as changed again, in case they changed
+        if(thing[thing_changed]) {
+            markThingQuadrantsChanged(thing);
         }
     }
 
@@ -290,6 +303,15 @@ function QuadsKeepr(settings) {
             && thing[thing_bottom] + tolerance >= quadrant.top 
             && thing[thing_top] - tolerance <= quadrant.bottom
         );
+    }
+    
+    /**
+     * 
+     */
+    function markThingQuadrantsChanged(thing) {
+        for(var i = 0; i < thing[thing_num_quads]; i += 1) {
+            thing[thing_quadrants][i].changed = true;
+        }
     }
 
     self.reset(settings || {});
