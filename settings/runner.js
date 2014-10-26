@@ -5,9 +5,6 @@ FullScreenMario.prototype.settings.runner = {
     "FPSAnalyzer": new FPSAnalyzr(),
     "games": [
         function () {
-            this.QuadsKeeper.determineAllQuadrants(this.GroupHolder.getSolidGroup());
-        },
-        function () {
             this.maintainSolids(this, this.GroupHolder.getSolidGroup());
         },
         function () {
@@ -20,7 +17,8 @@ FullScreenMario.prototype.settings.runner = {
             this.TimeHandler.handleEvents();
         },
         function () {
-            this.PixelDrawer.refillGlobalCanvas(this.MapsHandler.getArea().background);
+            // this.PixelDrawer.refillGlobalCanvas(this.MapsHandler.getArea().background);
+            this.PixelDrawer.refillQuadrants(this.QuadsKeeper.getQuadrants());
         }
     ]
 }

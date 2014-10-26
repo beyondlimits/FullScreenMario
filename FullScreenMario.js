@@ -287,6 +287,8 @@ var FullScreenMario = (function(GameStartr) {
         var delx = EightBitter.QuadsKeeper.getDelX(),
             solid, i;
         
+        EightBitter.QuadsKeeper.determineAllQuadrants(solids);
+        
         for (i = 0; i < solids.length; ++i) {
             solid = solids[i];
             

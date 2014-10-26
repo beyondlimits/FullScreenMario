@@ -199,11 +199,29 @@ function PixelDrawr(settings) {
         if(!no_refill) {
             context.fillStyle = background;
             context.fillRect(0, 0, canvas.width, canvas.height);
-        } 
+        }
         
         thing_arrays.forEach(self.refillThingArray);
         
         return self;
+    };
+    
+    /**
+     * 
+     */
+    self.refillQuadrants = function (quadrants) {
+        for(var i = 0; i < quadrants.length; i += 1) {
+            if(quadrants[i].changed) {
+                self.refillQuadrant(quadrants[i]);
+            }
+        }
+    };
+    
+    /**
+     * 
+     */
+    self.refillQuadrant = function (quadrant){
+        
     };
     
     /**

@@ -54,6 +54,10 @@ function QuadsKeepr(settings) {
         thing_max_quads,
         thing_quadrants,
         thing_changed,
+        thing_group_name,
+        
+        // An Array of string names a Thing may be placed into 
+        group_names,
 
         // Callbacks for...
         onUpdate, // when Quadrants are updated
@@ -89,6 +93,9 @@ function QuadsKeepr(settings) {
         thing_max_quads = settings.thing_max_quads || "maxquads";
         thing_quadrants = settings.thing_quadrants || "quadrants";
         thing_changed = settings.thing_changed || "changed";
+        thing_group_name = settings.thing_group_name || "group";
+        
+        group_names = settings.group_names;
 
         onUpdate = settings.onUpdate;
         onCollide = settings.onCollide;
@@ -155,19 +162,23 @@ function QuadsKeepr(settings) {
     function createQuadrant(row, left) {
         var canvas = getCanvas(1, 1),
             quadrant = ObjectMaker.make("Quadrant", {
-                "numobjects": 0,
                 "changed": true
-            });
+            }),
+            i;
         
-        // Position updating
+        // Keep track of contained Things with an Array for each group type
+        quadrant.things = {};
+        quadrant.numthings = {};
+        for(i = 0; i < group_names.length; i += 1) {
+            quadrant.things[group_names[i]] = {};
+            quadrant.numthings[group_names[i]] = 0;
+        }
+        
         quadrant.left = left;
         quadrant.top = (row - 1) * quad_height;
         quadrant.right = quadrant.left + quad_width;
         quadrant.bottom = quadrant.top + quad_height;
 
-        // Keep track of contained Things with an Array
-        quadrant.things = [];
-        
         quadrant.canvas = canvas;
         quadrant.context = canvas.getContext("2d");
         
@@ -238,15 +249,17 @@ function QuadsKeepr(settings) {
     // Public: determineAllQuadrants
     // Sets the Things (in any number of given arrays) against all Quadrants
     self.determineAllQuadrants = function () {
-        var i;
+        var i, j;
 
         // Set each quadrant not to have anything in it
-        for (i = 0; i < num_quads; ++i) {
-            quadrants[i].numthings = 0;
+        for (i = 0; i < num_quads; i += 1) {
+            for(j = 0; j < group_names.length; j += 1) {
+                quadrants[i].numthings[group_names[j]] = 0;
+            }
         }
 
         // For each argument, set each of its Things
-        for (i = 0; i < arguments.length; ++i) {
+        for (i = 0; i < arguments.length; i += 1) {
             determineThingArrayQuadrants(arguments[i]);
         }
     };
@@ -269,7 +282,7 @@ function QuadsKeepr(settings) {
         // Check each Quadrant for collision
         // (to do: mathematically determine this)
         for (var i = 0; i < num_quads; ++i) {
-            if (thingInQuadrant(thing, quadrants[i])) {
+            if (isThingInQuadrant(thing, quadrants[i])) {
                 setThingInQuadrant(thing, quadrants[i], i);
                 if (thing[thing_num_quads] > thing[thing_max_quads]) {
                     break;
@@ -286,17 +299,19 @@ function QuadsKeepr(settings) {
     // Let a Thing and Quadrant know they're related
     // This assumes the thing already has a [thing_quadrants] array
     function setThingInQuadrant(thing, quadrant, num_quad) {
+        var group = thing[thing_group_name];
+        
         // Place the Quadrant in the Thing
         thing[thing_quadrants][thing[thing_num_quads]] = quadrant;
-        ++thing[thing_num_quads];
+        thing[thing_num_quads] += 1;
 
         // Place the Thing in the Quadrant
-        quadrant.things[quadrant.numthings] = thing;
-        ++quadrant.numthings;
+        quadrant.things[group][quadrant.numthings[group]] = thing;
+        quadrant.numthings[group] += 1;
     }
 
     // Checks if a Thing is in a Quadrant
-    function thingInQuadrant(thing, quadrant) {
+    function isThingInQuadrant(thing, quadrant) {
         return (
             thing[thing_right] + tolerance >= quadrant.left 
             && thing[thing_left] - tolerance <= quadrant.right 
