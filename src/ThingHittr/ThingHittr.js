@@ -11,6 +11,9 @@ function ThingHittr(settings) {
         // QuadsKeepr object used for collision checking
         QuadsKeeper,
         
+        // Names of groups to check collisions within
+        group_names,
+        
         // Container for functions to collision check between specific types
         // E.x. ["character"] = { "solid": function(a,b) {...} }
         hit_checks,
@@ -38,10 +41,15 @@ function ThingHittr(settings) {
         GroupHolder = settings.GroupHolder || new GroupHoldr(settings);
         QuadsKeeper = settings.QuadsKeeper || new QuadsKeepr(settings);
         
+        
         // Collision checking information should be given in the settings
+        if(!settings.group_names) {
+            throw new Error("No group_names given to ThingHittr");
+        }
         if(!settings.hit_checks) {
             throw new Error("No hit_checks given to ThingHittr");
         }
+        group_names = settings.group_names;
         hit_checks = settings.hit_checks;
         hit_check_keys = Object.keys(hit_checks);
         
@@ -125,7 +133,7 @@ function ThingHittr(settings) {
      */
     self.checkHitsOfOne = function(thing, id) {
         var others, other,
-            i, j;
+            i, j, k;
          
         // Don't do anything if the thing shouldn't be checking
         if(!global_checks[thing.grouptype].can_collide(thing)) {
@@ -133,20 +141,24 @@ function ThingHittr(settings) {
         }
         
         // For each quadrant this is in, find each other thing in that quadrant
-        for(i = 0; i < thing.numquads; ++i) {
-            others = thing.quadrants[i].things;
-            for(j = 0; j < others.length; ++j) {
-                other = others[j];
-                
-                // If the two are the same, breaking prevents double hits
-                if(thing === other) {
-                    break;
+        for(i = 0; i < thing.numquads; i += 1) {
+            for(j = 0; j < group_names.length; j += 1) {
+                others = thing.quadrants[i].things[group_names[j]];
+                for(k = 0; k < others.length; k += 1) {
+                    other = others[k];
+                    
+                    // If the two are the same, breaking prevents double hits
+                    if(thing === other) {
+                        break;
+                    }
+                    
+                    // Check whether a collision should be happening
+                    tryCollision(
+                        hit_checks[thing.grouptype][other.grouptype],
+                        thing, other, id
+                    );
                 }
-                
-                // Check whether a collision should be happening
-                tryCollision(hit_checks[thing.grouptype][other.grouptype]
-                        , thing, other, id);
-            }
+           }
         }
     }
     

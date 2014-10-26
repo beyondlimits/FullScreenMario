@@ -98,9 +98,7 @@ var GameStartr = (function (EightBittr) {
      *                          sprites.js (settings/sprites.js)
      */
     function resetPixelRender(EightBitter, customs) {
-        // PixelRender settings are stored in FullScreenMario.prototype.sprites,
-        // though they also need the scale measurement added
-        EightBitter.PixelRender = new PixelRendr(proliferateHard({
+        EightBitter.PixelRender = new PixelRendr(proliferate({
             "QuadsKeeper": EightBitter.QuadsKeeper,
             "unitsize": EightBitter.unitsize,
             "scale": EightBitter.scale
@@ -112,15 +110,16 @@ var GameStartr = (function (EightBittr) {
      * 
      * @param {EightBittr} EightBitter
      * @remarks Requirement(s): PixelDrawr (src/PixelDrawr/PixelDrawr.js)
+     *                          renderer.js (settings/renderer.js)
      */
     function resetPixelDrawer(EightBitter, customs) {
-        EightBitter.PixelDrawer = new PixelDrawr({
+        EightBitter.PixelDrawer = new PixelDrawr(proliferate({
             "PixelRender": EightBitter.PixelRender,
             "getCanvas": EightBitter.getCanvas,
             "unitsize": EightBitter.unitsize,
             "innerWidth": customs.width,
             "generateObjectKey": EightBitter.generateObjectKey
-        });
+        }, EightBitter.settings.renderer));
     }
     
     /**

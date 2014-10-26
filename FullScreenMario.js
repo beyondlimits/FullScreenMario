@@ -312,6 +312,7 @@ var FullScreenMario = (function(GameStartr) {
         var deldx = EightBitter.QuadsKeeper.getOutDifference(),
             delx = EightBitter.MapScreener.right + deldx,
             character, i;
+        
         for (i = 0; i < characters.length; ++i) {
             character = characters[i];
             
@@ -329,7 +330,6 @@ var FullScreenMario = (function(GameStartr) {
             character.under = character.undermid = false;
             EightBitter.updatePosition(character);
             EightBitter.QuadsKeeper.determineThingQuadrants(character);
-            EightBitter.ThingHitter.getGroupHolder().setCharacterGroup(characters);
             EightBitter.ThingHitter.checkHitsOfOne(character);
 
             // Resting tests

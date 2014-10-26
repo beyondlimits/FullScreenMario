@@ -23,7 +23,7 @@ function PixelDrawr(settings) {
         // The 2D canvas context each refillGlobalCanvas call goes to
         context,
         
-        // Arrays of Things that are to be drawn in each refillGlobalCanvas
+        // Arrays of Array[Thing]s that are to be drawn in each refillGlobalCanvas
         thing_arrays,
         
         // Utility function to create a canvas (typically taken from EightBittr)
@@ -39,7 +39,10 @@ function PixelDrawr(settings) {
         
         // Whether self.refillGlobalCanvas should skip redrawing the main canvas
         // every time.
-        no_refill;
+        no_refill,
+        
+        // For refillQuadrant, an Array of string names to refill (bottom-to-top)
+        group_names;
     
     self.reset = function(settings) {
         PixelRender = settings.PixelRender;
@@ -47,6 +50,7 @@ function PixelDrawr(settings) {
         unitsize = settings.unitsize || 4;
         no_refill = settings.no_refill;
         innerWidth = settings.innerWidth;
+        group_names = settings.group_names;
         
         generateObjectKey = settings.generateObjectKey || function (object) {
             return object.toString();
@@ -208,24 +212,6 @@ function PixelDrawr(settings) {
     
     /**
      * 
-     */
-    self.refillQuadrants = function (quadrants) {
-        for(var i = 0; i < quadrants.length; i += 1) {
-            if(quadrants[i].changed) {
-                self.refillQuadrant(quadrants[i]);
-            }
-        }
-    };
-    
-    /**
-     * 
-     */
-    self.refillQuadrant = function (quadrant){
-        
-    };
-    
-    /**
-     * 
      * 
      * 
      */
@@ -234,18 +220,52 @@ function PixelDrawr(settings) {
     };
     
     /**
-     * General function to draw a thing to a context
+     * 
+     */
+    self.refillQuadrants = function (quadrants, background) {
+        for(var i = 0; i < quadrants.length; i += 1) {
+            if(quadrants[i].changed) {
+                self.refillQuadrant(quadrants[i], background);
+                context.drawImage(quadrants[i].canvas, quadrants[i].left, quadrants[i].top);
+            }
+        }
+    };
+    
+    /**
+     * 
+     */
+    self.refillQuadrant = function (quadrant, background) {
+        var group, i, j;
+        
+        if(!no_refill) {
+            quadrant.context.fillStyle = background;
+            quadrant.context.fillRect(0, 0, quadrant.canvas.width, quadrant.canvas.height);
+        }
+        
+        for(i = group_names.length - 1; i >= 0; i -= 1) {
+            group = quadrant.things[group_names[i]];
+            
+            for(j = 0; j < group.length; j += 1) {
+                self.drawThingOnQuadrant(group[j], quadrant);
+            }
+        }
+        
+        quadrant.changed = false;
+    };
+    
+    /**
+     * General function to draw a Thing to a context
      * This will call drawThingOnCanvas[Single/Multiple] with more arguments
      * 
      * @return {Self}
      */
     self.drawThingOnCanvas = function(context, thing) {
-        if(thing.hidden || thing.left > innerWidth || thing.right < 0) {
+        if(thing.hidden || thing.right < 0 || thing.left > innerWidth) {
             return;
         }
         
         // If there's just one sprite, it's pretty simple
-        if(thing.num_sprites == 1) {
+        if(thing.num_sprites === 1) {
             return drawThingOnCanvasSingle(context, thing.canvas, thing, thing.left, thing.top);
         }
         // For multiple sprites, some calculations will be needed
@@ -253,6 +273,24 @@ function PixelDrawr(settings) {
             return drawThingOnCanvasMultiple(context, thing.canvases, thing.canvas, thing, thing.left, thing.top);
         }
     }
+    
+    /**
+     * 
+     */
+    self.drawThingOnQuadrant = function (thing, quadrant) {
+        if(thing.hidden) {
+            return;
+        }
+        
+        // If there's just one sprite, it's pretty simple
+        if(thing.num_sprites === 1) {
+            return drawThingOnCanvasSingle(quadrant.context, thing.canvas, thing, thing.left - quadrant.left, thing.top - quadrant.top);
+        }
+        // For multiple sprites, some calculations will be needed
+        else {
+            return drawThingOnCanvasMultiple(quadrant.context, thing.canvases, thing.canvas, thing, thing.left - quadrant.left, thing.top - quadrant.top);
+        }
+    };
     
     /**
      * Draws a Thing's single canvas onto a context (called by self.drawThingOnCanvas).

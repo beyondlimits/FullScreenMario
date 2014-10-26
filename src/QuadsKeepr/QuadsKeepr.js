@@ -160,17 +160,17 @@ function QuadsKeepr(settings) {
 
     // Quadrant Constructor
     function createQuadrant(row, left) {
-        var canvas = getCanvas(1, 1),
+        var canvas = getCanvas(quad_width, quad_height),
             quadrant = ObjectMaker.make("Quadrant", {
-                "changed": true
-            }),
-            i;
+                "changed": true,
+                "numthings": 0
+            }), i;
         
         // Keep track of contained Things with an Array for each group type
         quadrant.things = {};
         quadrant.numthings = {};
         for(i = 0; i < group_names.length; i += 1) {
-            quadrant.things[group_names[i]] = {};
+            quadrant.things[group_names[i]] = [];
             quadrant.numthings[group_names[i]] = 0;
         }
         
@@ -283,7 +283,7 @@ function QuadsKeepr(settings) {
         // (to do: mathematically determine this)
         for (var i = 0; i < num_quads; ++i) {
             if (isThingInQuadrant(thing, quadrants[i])) {
-                setThingInQuadrant(thing, quadrants[i], i);
+                setThingInQuadrant(thing, quadrants[i]);
                 if (thing[thing_num_quads] > thing[thing_max_quads]) {
                     break;
                 }
@@ -298,7 +298,7 @@ function QuadsKeepr(settings) {
 
     // Let a Thing and Quadrant know they're related
     // This assumes the thing already has a [thing_quadrants] array
-    function setThingInQuadrant(thing, quadrant, num_quad) {
+    function setThingInQuadrant(thing, quadrant) {
         var group = thing[thing_group_name];
         
         // Place the Quadrant in the Thing
