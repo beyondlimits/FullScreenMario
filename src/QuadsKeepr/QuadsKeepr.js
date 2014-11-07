@@ -78,8 +78,8 @@ function QuadsKeepr(settings) {
         screen_width = settings.screen_width || 640;
         screen_height = settings.screen_height || 480;
 
-        quad_width = screen_width / (num_cols - 3);
-        quad_height = screen_height / (num_rows - 2);
+        quad_width = (screen_width / (num_cols - 3)) | 0;
+        quad_height = (screen_height / (num_rows - 2)) | 0;
 
         tolerance = settings.tolerance || 0;
         delx = settings.delx || quad_width * -2;
