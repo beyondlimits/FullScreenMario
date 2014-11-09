@@ -50,6 +50,22 @@ function FPSAnalyzr(settings) {
     */
     
     /**
+     * Standard public measurement function.
+     * Gets the time difference since the last measurement, and adds it to the
+     * stored measurements.
+     * 
+     * @alias self.measure
+     * @param {DOMHighResTimeStamp} time   An optional timestamp, without which
+     *                                     get_timestamp() is used instead.
+     */
+    var measureGeneral = function measureGeneral(time) {
+        var time_new = time || get_timestamp(),
+            fps_new = 1000 / (time_new - time_current);
+        self.addFPS(fps_new);
+        time_current = time_new;
+    }
+    
+    /**
      * The first call self.measure runs: because no other times were recorded,
      * this only marks time_current and makes future self.measure calls redirect
      * to the actual measure() function.
@@ -60,24 +76,8 @@ function FPSAnalyzr(settings) {
      */
     self.measure = function measureFirst(time) {
         time_current = time || get_timestamp();
-        self.measure = measure;
+        self.measure = measureGeneral;
     };
-    
-    /**
-     * Standard public measurement function.
-     * Gets the time difference since the last measurement, and adds it to the
-     * stored measurements.
-     * 
-     * @alias self.measure
-     * @param {DOMHighResTimeStamp} time   An optional timestamp, without which
-     *                                     get_timestamp() is used instead.
-     */
-    function measure(time) {
-        var time_new = time || get_timestamp(),
-            fps_new = 1000 / (time_new - time_current);
-        self.addFPS(fps_new);
-        time_current = time_new;
-    }
     
     /**
      * Adds an FPS measurement to measurements, and incremends the associated
@@ -87,9 +87,9 @@ function FPSAnalyzr(settings) {
      *                       timestamps (ideally 1000 / dt[DomHighResTimeStamp])
      */
     self.addFPS = function(fps) {
-        ticker = (++ticker) % num_to_keep;
+        ticker = (ticker += 1) % num_to_keep;
         measurements[ticker] = fps;
-        ++num_recorded;
+        num_recorded += 1;
     };
     
     

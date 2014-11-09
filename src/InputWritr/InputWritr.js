@@ -276,7 +276,7 @@ function InputWritr(settings) {
         for (time in events) {
             if (events.hasOwnProperty(time)) {
                 call = makeEventCall(events[time]);
-                timeouts[time] = setTimeout(Math.round(time - starting_time));
+                timeouts[time] = setTimeout(call, Math.round(time - starting_time));
             }
         }
     }

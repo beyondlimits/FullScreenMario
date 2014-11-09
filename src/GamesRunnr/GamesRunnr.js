@@ -56,7 +56,6 @@ function GamesRunnr(settings) {
         speed           = settings.speed           || 1;
         FPSAnalyzer     = settings.FPSAnalyzer     || new FPSAnalyzr();
         scope           = settings.scope           || self;
-        
         paused = true;
         
         for(i = 0; i < games.length; i += 1) {
@@ -65,6 +64,7 @@ function GamesRunnr(settings) {
         
         setSpeedReal();
     };
+    
     
     /* Runtime
     */
@@ -222,6 +222,13 @@ function GamesRunnr(settings) {
     
     /* Gets
     */
+    
+    /** 
+     * 
+     */
+    self.getFPSAnalyzer = function () {
+        return FPSAnalyzer;
+    };
     
     /**
      * Simple get function for the true/false paused status

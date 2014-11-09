@@ -392,7 +392,7 @@ var FullScreenMario = (function(GameStartr) {
                 }
             }
             // Player has fallen too far
-            if (!player.piping && !player.dying && player.top > EightBitter.MapScreener.bottom) {
+            if (!player.dying && player.top > EightBitter.MapScreener.bottom) {
                 // If the map has an exit loc (cloud world), transport there
                 if (EightBitter.MapScreener.exitloc) {
                     EightBitter.setLocation(map.exitloc);
@@ -534,12 +534,12 @@ var FullScreenMario = (function(GameStartr) {
      */
     function isThingOnSolid(thing, other) {
         // If thing is too far to the right, they're not touching
-        if(thing.left + thing.EightBitter.unitsize > other.right) {
+        if(thing.left + thing.EightBitter.unitsize >= other.right) {
             return false;
         }
         
         // If thing is too far to the left, they're not touching
-        if(thing.right - thing.EightBitter.unitsize < other.left) {
+        if(thing.right - thing.EightBitter.unitsize <= other.left) {
             return false;
         }
         
@@ -598,12 +598,12 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         // Corner case: when character is exactly falling off the right (false)
-        if(thing.left + thing.xvel + thing.EightBitter.unitsize == other.right) {
+        if(thing.left + thing.xvel + thing.EightBitter.unitsize === other.right) {
             return false;
         }
         
         // Corner case: when character is exactly falling off the left (false)
-        if(thing.right - thing.xvel - thing.EightBitter.unitsize == other.left) {
+        if(thing.right - thing.xvel - thing.EightBitter.unitsize === other.left) {
             return false;
         }
         
@@ -1433,23 +1433,33 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         // Character bumping into the side of the solid
-        if(!thing.EightBitter.isCharacterBumpingSolid(thing, other)
-                && !thing.EightBitter.isThingOnThing(thing, other)
-                && !thing.EightBitter.isThingOnThing(other, thing) && !thing.under) {
-            
+        if(
+            !thing.EightBitter.isCharacterBumpingSolid(thing, other)
+            && !thing.EightBitter.isThingOnThing(thing, other)
+            && !thing.EightBitter.isThingOnThing(other, thing) 
+            && !thing.under
+        ) {
             // Character to the left of the solid
             if(thing.right <= other.right) {
                 thing.xvel = Math.min(thing.xvel, 0);
-                thing.EightBitter.shiftHoriz(thing,
-                        Math.max(other.left + thing.EightBitter.unitsize - thing.right,
-                        thing.EightBitter.unitsize / -2));
+                thing.EightBitter.shiftHoriz(
+                    thing,
+                    Math.max(
+                        other.left + thing.EightBitter.unitsize - thing.right,
+                        thing.EightBitter.unitsize / -2
+                    )
+                );
             }
             // Character to the right of the solid
             else {
                 thing.xvel = Math.max(thing.xvel, 0);
-                thing.EightBitter.shiftHoriz(thing,
-                        Math.min(other.right - thing.EightBitter.unitsize - thing.left,
-                        thing.EightBitter.unitsize / 2));
+                thing.EightBitter.shiftHoriz(
+                    thing,
+                    Math.min(
+                        other.right - thing.EightBitter.unitsize - thing.left,
+                        thing.EightBitter.unitsize / 2
+                    )
+                );
             }
             
             // Non-players flip horizontally
@@ -3030,10 +3040,10 @@ var FullScreenMario = (function(GameStartr) {
         
         thing.EightBitter.flipHoriz(thing);
         thing.EightBitter.AudioPlayer.play("Powerup Appears");
-        // thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Scenery", "Character");
         thing.EightBitter.arraySwitch(thing, 
             thing.EightBitter.GroupHolder.getCharacterGroup(), 
-            thing.EightBitter.GroupHolder.getSceneryGroup());
+            thing.EightBitter.GroupHolder.getSceneryGroup()
+        );
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
             thing.EightBitter.shiftVert(thing, thing.EightBitter.unitsize / -8);
