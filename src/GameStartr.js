@@ -81,19 +81,24 @@ var GameStartr = (function (EightBittr) {
      *                          quadrants.js (settings/quadrants.js)
      */
     function resetQuadsKeeper(EightBitter, customs) {
+        var quadrant_width = customs.width / (EightBitter.settings.quadrants.num_cols - 3),
+            quadrant_height = customs.height / (EightBitter.settings.quadrants.num_rows - 2);
+        
         EightBitter.QuadsKeeper = new QuadsKeepr(proliferate({
             "ObjectMaker": EightBitter.ObjectMaker,
             "getCanvas": EightBitter.getCanvas,
-            "quad_width": customs.width / (EightBitter.settings.quadrants.num_cols - 3),
-            "quad_height": customs.height / (EightBitter.settings.quadrants.num_rows - 2),
+            "quad_width": quadrant_width,
+            "quad_height": quadrant_height,
             "onUpdate": EightBitter.updateQuadrants.bind(EightBitter, EightBitter),
         }, EightBitter.settings.quadrants));
         
         EightBitter.QuadsKeeperNew = new QuadsKeeprNew(proliferate({
             "ObjectMaker": EightBitter.ObjectMaker,
             "getCanvas": EightBitter.getCanvas,
-            "quadrant_width": customs.width / (EightBitter.settings.quadrants.num_cols - 3),
-            "quadrant_height": customs.height / (EightBitter.settings.quadrants.num_rows - 2),
+            "quadrant_width": quadrant_width,
+            "quadrant_height": quadrant_height,
+            "start_left": -quadrant_width,
+            "start_height": -quadrant_height,
             "onUpdate": EightBitter.updateQuadrants.bind(EightBitter, EightBitter),
         }, EightBitter.settings.quadrants));
     }
