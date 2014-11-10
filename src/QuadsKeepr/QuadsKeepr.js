@@ -59,11 +59,10 @@ function QuadsKeepr(settings) {
         // An Array of string names a Thing may be placed into 
         group_names,
 
-        // Callbacks for...
-        onUpdate, // when Quadrants are updated
-        onCollide; // when two Things touch (not used... yet!)
+        // Callback for when Quadrants get updated
+        onUpdate;
 
-    self.reset = function reset(settings) {
+    self.reset = function (settings) {
         quadrants = [];
         columns = [];
         
@@ -75,11 +74,8 @@ function QuadsKeepr(settings) {
         num_cols = settings.num_cols;
         num_quads = num_rows * num_cols;
 
-        screen_width = settings.screen_width || 640;
-        screen_height = settings.screen_height || 480;
-
-        quad_width = (screen_width / (num_cols - 3)) | 0;
-        quad_height = (screen_height / (num_rows - 2)) | 0;
+        quad_width = settings.quad_width | 0;
+        quad_height = settings.quad_height | 0;
 
         tolerance = settings.tolerance || 0;
         delx = settings.delx || quad_width * -2;
@@ -98,7 +94,6 @@ function QuadsKeepr(settings) {
         group_names = settings.group_names;
 
         onUpdate = settings.onUpdate;
-        onCollide = settings.onCollide;
 
         self.resetQuadrants();
     }
@@ -107,35 +102,35 @@ function QuadsKeepr(settings) {
     /* Public gets
     */
     
-    self.getQuadrants = function() {
+    self.getQuadrants = function () {
         return quadrants;
     };
     
-    self.getNumQuads = function() {
+    self.getNumQuads = function () {
         return num_quads;
     };
     
-    self.getNumRows = function() {
+    self.getNumRows = function () {
         return num_rows;
     };
     
-    self.getNumCols = function() {
+    self.getNumCols = function () {
         return num_cols;
     };
     
-    self.getQuadWidth = function() {
+    self.getQuadWidth = function () {
         return quad_width;
     };
     
-    self.getQuadHeight = function() {
+    self.getQuadHeight = function () {
         return quad_height;
     };
     
-    self.getDelX = function() {
+    self.getDelX = function () {
         return delx;
     };
     
-    self.getOutDifference = function() {
+    self.getOutDifference = function () {
         return out_difference;
     };
 

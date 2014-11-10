@@ -84,8 +84,16 @@ var GameStartr = (function (EightBittr) {
         EightBitter.QuadsKeeper = new QuadsKeepr(proliferate({
             "ObjectMaker": EightBitter.ObjectMaker,
             "getCanvas": EightBitter.getCanvas,
-            "screen_width": customs.width,
-            "screen_height": customs.height,
+            "quad_width": customs.width / (EightBitter.settings.quadrants.num_cols - 3),
+            "quad_height": customs.height / (EightBitter.settings.quadrants.num_rows - 2),
+            "onUpdate": EightBitter.updateQuadrants.bind(EightBitter, EightBitter),
+        }, EightBitter.settings.quadrants));
+        
+        EightBitter.QuadsKeeperNew = new QuadsKeeprNew(proliferate({
+            "ObjectMaker": EightBitter.ObjectMaker,
+            "getCanvas": EightBitter.getCanvas,
+            "quadrant_width": customs.width / (EightBitter.settings.quadrants.num_cols - 3),
+            "quadrant_height": customs.height / (EightBitter.settings.quadrants.num_rows - 2),
             "onUpdate": EightBitter.updateQuadrants.bind(EightBitter, EightBitter),
         }, EightBitter.settings.quadrants));
     }
