@@ -89,7 +89,7 @@ var GameStartr = (function (EightBittr) {
             "getCanvas": EightBitter.getCanvas,
             "quad_width": quadrant_width,
             "quad_height": quadrant_height,
-            "onUpdate": EightBitter.updateQuadrants.bind(EightBitter, EightBitter),
+            "on_update": EightBitter.updateQuadrants.bind(EightBitter, EightBitter),
         }, EightBitter.settings.quadrants));
         
         EightBitter.QuadsKeeperNew = new QuadsKeeprNew(proliferate({
@@ -99,7 +99,7 @@ var GameStartr = (function (EightBittr) {
             "quadrant_height": quadrant_height,
             "start_left": -quadrant_width,
             "start_height": -quadrant_height,
-            "onUpdate": EightBitter.updateQuadrants.bind(EightBitter, EightBitter),
+            "on_update": EightBitter.updateQuadrants.bind(EightBitter, EightBitter),
         }, EightBitter.settings.quadrants));
     }
     
@@ -357,6 +357,15 @@ var GameStartr = (function (EightBittr) {
     
     /* Global manipulations
     */
+    
+    /** 
+     * 
+     */
+    function spawnArea(EightBitter, top, right, bottom, left) {
+        console.log("Spawning area", top, right, bottom, left);
+        // var diff_right = EightBitter.MapScreener.right + EightBitter.QuadsKeeper.getOutDifference();
+        // EightBitter.MapsHandler.spawnMap(diff_right / EightBitter.unitsize);
+    }
     
     /**
      * 

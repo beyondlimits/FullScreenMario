@@ -60,7 +60,7 @@ function QuadsKeepr(settings) {
         group_names,
 
         // Callback for when Quadrants get updated
-        onUpdate;
+        on_update;
 
     self.reset = function (settings) {
         quadrants = [];
@@ -93,7 +93,7 @@ function QuadsKeepr(settings) {
         
         group_names = settings.group_names;
 
-        onUpdate = settings.onUpdate;
+        on_update = settings.on_update;
 
         self.resetQuadrants();
     }
@@ -196,8 +196,8 @@ function QuadsKeepr(settings) {
             // Add a new one instead
             addQuadCol(rightmost.right);
             // If there's a callback for this, run it
-            if (onUpdate) {
-                onUpdate();
+            if (on_update) {
+                on_update();
             }
         }
     };
