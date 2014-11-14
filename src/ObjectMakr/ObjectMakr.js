@@ -108,8 +108,8 @@ function ObjectMakr(settings) {
      * 
      * @return {Object}
      */
-    self.getProperties = function () {
-        return properties;
+    self.getProperties = function (title) {
+        return title ? properties[title] : properties;
     };
 
     /**
@@ -117,9 +117,9 @@ function ObjectMakr(settings) {
      * 
      * @return {Object}
      */
-    self.getPropertiesFull = function () {
+    self.getPropertiesFull = function (title) {
         if(do_properties_full) {
-            return properties_full;
+            return title ? properties_full[title] : properties;
         }
     };
     

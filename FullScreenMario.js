@@ -438,9 +438,14 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      */
-    function updateQuadrants(EightBitter) {
-        var diff_right = EightBitter.MapScreener.right + EightBitter.QuadsKeeper.getOutDifference();
-        EightBitter.MapsHandler.spawnMap(diff_right / EightBitter.unitsize);
+    function updateQuadrants(EightBitter, width) {
+        EightBitter.MapsHandler.spawnMap(
+            "xInc",
+            EightBitter.MapScreener.bottom / EightBitter.unitsize,
+            (EightBitter.MapScreener.right + width) / EightBitter.unitsize,
+            EightBitter.MapScreener.bottom / EightBitter.unitsize,
+            EightBitter.MapScreener.right / EightBitter.unitsize
+        );
     }
     
     
@@ -4168,6 +4173,7 @@ var FullScreenMario = (function(GameStartr) {
         EightBitter.AudioPlayer.pause();
         EightBitter.GroupHolder.clearArrays();
         EightBitter.TimeHandler.clearAllEvents();
+        EightBitter.QuadsKeeper.resetQuadrants();
         
         EightBitter.MapsHandler.setLocation(name || 0);
         EightBitter.MapScreener.setVariables();
@@ -4181,7 +4187,13 @@ var FullScreenMario = (function(GameStartr) {
         
         EightBitter.StatsHolder.set("time", EightBitter.MapsHandler.getArea().time);
   
-        EightBitter.MapsHandler.spawnMap(EightBitter.MapScreener.width / EightBitter.unitsize);
+        EightBitter.MapsHandler.spawnMap(
+            "xInc",
+            EightBitter.MapScreener.top / EightBitter.unitsize,
+            EightBitter.MapScreener.right / EightBitter.unitsize,
+            EightBitter.MapScreener.bottom / EightBitter.unitsize,
+            EightBitter.MapScreener.left / EightBitter.unitsize
+        );
         
         location.entry(EightBitter, location);
         

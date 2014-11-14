@@ -245,30 +245,32 @@ function MapsCreatr(settings) {
     }
     
     
-    /* Area setup (Prething analysis)
+    /* Area setup (PreThing analysis)
     */
     
     /**
      * Given a Location object, which should contain a .area reference to its
      * parent Area and .map reference to its parent Map, this returns an 
-     * associative array of Prethings arrays.
+     * associative array of PreThings containers.
      * 
      * Each reference (which is a JSON object taken from an Area's .creation 
      * Array) is an instruction to this script to switch to a location, push 
-     * some number of PreThings to the prethings object via a predefined macro,
-     * or push a single PreThing to the prethings object.
+     * some number of PreThings to the PreThings object via a predefined macro,
+     * or push a single PreThing to the PreThings object.
      * 
      * Once those PreThing objects are obtained, they are filtered for validity
-     * (e.g. location setter commands are irrelevent after a single use), and 
+     * (e.g. location setter commands are irrelevant after a single use), and 
      * sorted on .xloc and .yloc.
      * 
      * @param {Location} location 
-     * @return {Object}   An associative array of Prething arrays. The keys will
-     *                    be the unique group types of all the allowed Thing
-     *                    groups, which will be stored in the parent
-     *                    EightBittr's GroupHoldr.
+     * @return {Object}   An associative array of PreThing containers. The keys 
+     *                    will be the unique group types of all the allowed 
+     *                    Thing groups, which will be stored in the parent
+     *                    EightBittr's GroupHoldr. Each container stores Arrays
+     *                    of the PreThings sorted by .xloc and .yloc in both
+     *                    increasing and decreasing order.
      */
-    self.getPreThings = function getPreThings(location) {
+    self.getPreThings = function (location) {
         var area = location.area,
             map = area.map,
             creation = area.creation,
@@ -282,9 +284,7 @@ function MapsCreatr(settings) {
             self.analyzePreSwitch(creation[i], prethings, area, map);
         }
         
-        processPreThingsArrays(prethings);
-        
-        return prethings;
+        return processPreThingsArrays(prethings);
     };
     
     /**
@@ -293,10 +293,10 @@ function MapsCreatr(settings) {
      * x- and y- location offset), a macro (to repeat some number of actions),
      * or a raw PreThing.
      * Any modifications done in a called function will be to push some number
-     * of PreThings to their respective group in the output prethings Object.
+     * of PreThings to their respective group in the output PreThings Object.
      * 
      * @param {Object} reference   A JSON mapping of some number of PreThings. 
-     * @param {Object} prethings   An associative array of PreThing Arrays, 
+     * @param {Object} PreThings   An associative array of PreThing Arrays, 
      *                             keyed by the allowed group types.
      * @param {Area} area   The Area object to be populated by these PreThings.
      * @param {Map} map   The Map object containing the Area object.
@@ -321,7 +321,7 @@ function MapsCreatr(settings) {
      * xloc and yloc variables to match that location's.
      * 
      * @param {Object} reference   A JSON mapping of some number of PreThings. 
-     * @param {Object} prethings   An associative array of PreThing Arrays, 
+     * @param {Object} PreThings   An associative array of PreThing Arrays, 
      *                             keyed by the allowed group types.
      * @param {Area} area   The Area object to be populated by these PreThings.
      * @param {Map} map   The Map object containing the Area object.
@@ -345,7 +345,7 @@ function MapsCreatr(settings) {
      * function on the output(s). 
      * 
      * @param {Object} reference   A JSON mapping of some number of PreThings. 
-     * @param {Object} prethings   An associative array of PreThing Arrays, 
+     * @param {Object} PreThings   An associative array of PreThing Arrays, 
      *                             keyed by the allowed group types.
      * @param {Area} area   The Area object to be populated by these PreThings.
      * @param {Map} map   The Map object containing the Area object.
@@ -385,11 +385,11 @@ function MapsCreatr(settings) {
     
     /**
      * Macro case: PreThing instruction. This creates a PreThing from the
-     * given reference and adds it to its respective group in prethings (based
+     * given reference and adds it to its respective group in PreThings (based
      * on the PreThing's [key_group_type] variable).
      * 
      * @param {Object} reference   A JSON mapping of some number of PreThings. 
-     * @param {Object} prethings   An associative array of PreThing Arrays, 
+     * @param {Object} PreThings   An associative array of PreThing Arrays, 
      *                             keyed by the allowed group types.
      * @param {Area} area   The Area object to be populated by these PreThings.
      * @param {Map} map   The Map object containing the Area object.
@@ -425,9 +425,10 @@ function MapsCreatr(settings) {
         prethings[prething.thing[key_group_type]].push(prething);
         
         // If a Thing is an entrance, then the location it is an entrance to 
-        // must it and its xloc.
+        // must it and its position. Note that this will have to be changed
+        // for Pokemon/Zelda style games.
         if(thing[key_entrance] !== undefined && typeof thing[key_entrance] != "object") {
-            map.locations[thing[key_entrance]].xloc = prething.xloc;
+            map.locations[thing[key_entrance]].xloc = prething.left;
             map.locations[thing[key_entrance]].entrance = prething.thing;
         }
         
@@ -441,8 +442,12 @@ function MapsCreatr(settings) {
         this.thing = thing;
         this.title = thing.title;
         this.reference = reference;
-        this.xloc = reference.x || reference.xloc || 0;
-        this.yloc = reference.y || reference.yloc || 0;
+        
+        this.left = (reference.x || reference.left) | 0;
+        this.top = (reference.y || reference.top) | 0;
+        
+        this.right = this.left + ObjectMaker.getPropertiesFull(this.title).width;
+        this.bottom = this.top + ObjectMaker.getPropertiesFull(this.title).height;
         
         if(reference.position) {
             this.position = reference.position;
@@ -450,15 +455,31 @@ function MapsCreatr(settings) {
     }
     
     /**
-     * Filters and sorts...
-     * I don't remember what else this is supposed to do besides sorting haha. 
+     * Creates an Object wrapper around a PreThings Object with versions of
+     * each child PreThing[]sorted by xloc and yloc, in increasing and 
+     * decreasing order.
+     * 
+     * @param {Object} prethings
+     * @return {Object} A PreThing wrapper with the keys "xInc", "xDec",
+     *                  "yInc", and "yDec".
      */
     function processPreThingsArrays(prethings) {
-        for(var i in prethings) {
+        var output = {},
+            children, i;
+        
+        for(i in prethings) {
             if(prethings.hasOwnProperty(i)) {
-                prethings[i].sort(sorterPreThings);
+                children = prethings[i];
+                output[i] = {
+                    "xInc": getArraySorted(children, sortPreThingsXInc),
+                    "xDec": getArraySorted(children, sortPreThingsXDec),
+                    "yInc": getArraySorted(children, sortPreThingsYInc),
+                    "yDec": getArraySorted(children, sortPreThingsYDec)
+                };
             }
         }
+        
+        return output;
     }
     
     
@@ -486,11 +507,38 @@ function MapsCreatr(settings) {
     /**
      * 
      */
-    function sorterPreThings(a, b) {
-        if(a.xloc == b.xloc) {
-            return a.yloc - b.yloc;
-        }
-        return a.xloc - b.xloc;
+    function getArraySorted(arr, func) {
+        arr = arr.slice();
+        arr.sort(func);
+        return arr;
+    }
+    
+    /**
+     * 
+     */
+    function sortPreThingsXInc(a, b) {
+        return a.left === b.left ? a.top - b.top : a.left - b.left;
+    }
+    
+    /**
+     * 
+     */
+    function sortPreThingsXDec(a, b) {
+        return b.right === a.right ? b.bottom - a.bottom : b.right - a.right;
+    }
+    
+    /**
+     * 
+     */
+    function sortPreThingsYInc(a, b) {
+        return a.top === b.top ? a.left - b.left : a.top - b.top;
+    }
+    
+    /**
+     * 
+     */
+    function sortPreThingsYDec(a, b) {
+        return b.bottom === a.bottom ? b.right - a.right : b.bottom - a.bottom;
     }
     
     self.reset(settings || {});

@@ -197,7 +197,7 @@ function QuadsKeepr(settings) {
             addQuadCol(rightmost.right);
             // If there's a callback for this, run it
             if (on_update) {
-                on_update();
+                on_update(rightmost.right - rightmost.left);
             }
         }
     };

@@ -38,14 +38,6 @@ function MapsHandlr(settings) {
         // the map
         on_spawn,
         
-        // The current x-location of prethings, which will be increased during
-        // self.spawnMap
-        xloc,
-        
-        // For each array within prethings, this stores the current spawn 
-        // location within those arrays
-        currents,
-        
         // Optionally, an array of Things to stretch across the map horizontally
         stretches,
         
@@ -53,7 +45,23 @@ function MapsHandlr(settings) {
         stretch_add,
         
         // If stretches exists, the function to call to stretch horizontally
-        on_stretch;
+        on_stretch,
+        
+        // Directional equivalents for converting from directions to keys
+        directionKeys = {
+            "xInc": "left",
+            "xDec": "right",
+            "yInc": "top",
+            "yDec": "bottom"
+        },
+        
+        // Opposite directions for when finding descending order Arrays
+        directionOpposites = {
+            "xInc": "xDec",
+            "xDec": "xInc",
+            "yInc": "yDec",
+            "yDec": "yInc"
+        };
     
     /**
      * 
@@ -230,15 +238,6 @@ function MapsHandlr(settings) {
         // Reset the prethings object, enabling it to be used as a fresh start
         // for the new Area/Location placements
         prethings = MapsCreator.getPreThings(location);
-        xloc = 0;
-        
-        // Start marking where to spawn individual groups of prethings
-        currents = {};
-        for(i in prethings) {
-            if(prethings.hasOwnProperty(i)) {
-                currents[i] = 0;
-            }
-        }
         
         if(area_current.stretches) {
             setStretches(area_current.stretches);
@@ -278,43 +277,103 @@ function MapsHandlr(settings) {
     
     /**
      * 
+     * 
+     * 
+     * @todo This will almost certainly present problems when different 
+     *       directions are used. For Pokemon/Zelda style games, the system
+     *       will probably need to be adapted to use a Quadrants approach
+     *       instead of plain Arrays.
      */
-    self.spawnMap = function spawnMap(xloc_new) {
-        // Make sure the map has actually moved
-        var xloc_real = xloc_new ? Math.round(xloc_new) : 0,
-            name, group, prething, i;
+    self.spawnMap = function (direction, top, right, bottom, left) {
+        var name, group, mid, start, end, i, prething;
         
-        // For each group of prethings currently able to spawn:
+        // For each group of PreThings currently able to spawn...
         for(name in prethings) {
-            if(prethings.hasOwnProperty(name)) {
-                group = prethings[name];
-                i = currents[name];
+            if(!prethings.hasOwnProperty(name)) {
+                continue;
+            }
+            
+            // Don't bother trying to spawn the group if it has no members
+            group = prethings[name][direction];
+            if(group.length === 0) {
+                continue;
+            }
+            
+            // Find the start and end points within the PreThings Array
+            // Ex. if direction="xInc", go from .left >= left to .left <= right
+            mid = (group.length / 2) | 0;
+            start = findPreThingsSpawnStart(direction, group, mid, top, right, bottom, left);
+            end = findPreThingsSpawnEnd(direction, group, mid, top, right, bottom, left);
+            
+            // Loop through all the directionally valid PreThings, spawning if they're
+            // within the bounding box
+            for(i = start; i <= end; i += 1) {
+                prething = group[i];
                 
-                // Keep trying to spawn the rightmost thing, spawning whenever
-                // a new one matches
-                while(prething = group[i]) {
-                    if(prething.xloc > xloc_real) {
-                        break;
-                    }
-                    i += 1;
-                    
-                    on_spawn(prething, prething.xloc);
-                }
+                // This will have to be made relative to work for Pokemon/Zelda games...
+                // if(
+                    // prething.top > bottom
+                    // || prething.right < left
+                    // || prething.bottom < top
+                    // || prething.left > right
+                // ) {
+                    // continue;
+                // }
                 
-                // Save the new current index, if it changed
-                currents[name] = i;
+                on_spawn(prething);
             }
         }
-        
-        // If "stretch" Things are there, increase them to fill the space
-        if(stretches) {
-            for(i = stretches.length - 1; i >= 0; i -= 1) {
-                on_stretch(stretches[i], xloc_real);
-            }
-        }
-        
-        xloc = xloc_real;
     };
+    
+    
+    /**
+     * Warning: very inefficient! Should switch to binary search.
+     */
+    function findPreThingsSpawnStart(direction, group, i, top, right, bottom, left) {
+        var directionKey = directionKeys[direction],
+            directionEnd = getDirectionEnd(directionKey, top, right, bottom, left);
+        
+        for(var i = 0; i < group.length; i += 1) {
+            if(group[i][directionKey] >= directionEnd) {
+                return i;
+            }
+        }
+        
+        return i;
+    }
+    
+    /**
+     * Warning: very inefficient! Should switch to binary search.
+     */
+    function findPreThingsSpawnEnd(direction, group, i, top, right, bottom, left) {
+        var directionKey = directionKeys[direction],
+            directionKeyOpposite = directionKeys[directionOpposites[direction]],
+            directionEnd = getDirectionEnd(directionKeyOpposite, top, right, bottom, left);
+        
+        for(var i = group.length - 1; i >= 0; i -= 1) {
+            if(group[i][directionKey] <= directionEnd) {
+                return i;
+            }
+        }
+        
+        return i;
+    }
+    
+    /**
+     * 
+     */
+    function getDirectionEnd(directionKey, top, right, bottom, left) {
+        switch(directionKey) {
+            case "top": 
+                return top;
+            case "right":
+                return right;
+            case "bottom":
+                return bottom;
+            case "left":
+                return left;
+        }
+    }
     
     
     self.reset(settings || {});

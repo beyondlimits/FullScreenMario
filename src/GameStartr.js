@@ -92,15 +92,15 @@ var GameStartr = (function (EightBittr) {
             "on_update": EightBitter.updateQuadrants.bind(EightBitter, EightBitter),
         }, EightBitter.settings.quadrants));
         
-        EightBitter.QuadsKeeperNew = new QuadsKeeprNew(proliferate({
-            "ObjectMaker": EightBitter.ObjectMaker,
-            "getCanvas": EightBitter.getCanvas,
-            "quadrant_width": quadrant_width,
-            "quadrant_height": quadrant_height,
-            "start_left": -quadrant_width,
-            "start_height": -quadrant_height,
-            "on_update": EightBitter.updateQuadrants.bind(EightBitter, EightBitter),
-        }, EightBitter.settings.quadrants));
+        // EightBitter.QuadsKeeperNew = new QuadsKeeprNew(proliferate({
+            // "ObjectMaker": EightBitter.ObjectMaker,
+            // "getCanvas": EightBitter.getCanvas,
+            // "quadrant_width": quadrant_width,
+            // "quadrant_height": quadrant_height,
+            // "start_left": -quadrant_width,
+            // "start_height": -quadrant_height,
+            // "on_update": EightBitter.updateQuadrants.bind(EightBitter, EightBitter),
+        // }, EightBitter.settings.quadrants));
     }
     
     /**
@@ -217,7 +217,7 @@ var GameStartr = (function (EightBittr) {
         EightBitter.MapScreener = new MapScreenr({
             "unitsize": FullScreenMario.unitsize,
             "width": customs.width,
-            "height": customs.height.EightBitter,
+            "height": customs.height,
             "variable_args": [EightBitter],
             "variables": EightBitter.settings.maps.screen_variables
         });
@@ -529,6 +529,7 @@ var GameStartr = (function (EightBittr) {
             }
         }
     }
+    
     
     /* Physics & similar
     */
