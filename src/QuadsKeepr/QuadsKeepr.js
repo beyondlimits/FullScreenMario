@@ -40,6 +40,9 @@ function QuadsKeepr(settings) {
 
         // How far to the right the spawning column should go
         out_difference,
+        
+        // Total offset of how far this has scrolled
+        out_difference_total,
 
         // The left- and right-most quads (for delx checking)
         leftmost,
@@ -80,6 +83,7 @@ function QuadsKeepr(settings) {
         tolerance = settings.tolerance || 0;
         delx = settings.delx || quad_width * -2;
         out_difference = quad_width;
+        out_difference_total = 0;
 
         thing_left = settings.thing_left || "left";
         thing_right = settings.thing_right || "right";
@@ -151,6 +155,8 @@ function QuadsKeepr(settings) {
 
         // Record the leftmost quad
         leftmost = quadrants[0];
+        
+        out_difference_total = 0;
     };
 
     // Quadrant Constructor
@@ -189,6 +195,7 @@ function QuadsKeepr(settings) {
     self.updateQuadrants = function (xdiff) {
         xdiff = xdiff || 0;
         out_difference += xdiff;
+        out_difference_total -= xdiff;
         // As many times as needed, while the leftmost is out of bounds
         while (leftmost.left <= delx) {
             // Delete the offending columns
@@ -197,7 +204,13 @@ function QuadsKeepr(settings) {
             addQuadCol(rightmost.right);
             // If there's a callback for this, run it
             if (on_update) {
-                on_update(rightmost.right - rightmost.left);
+                on_update(
+                    "xInc",
+                    quadrants[0].top,
+                    out_difference_total + quadrants[quadrants.length - num_rows - 1].right,
+                    quadrants[quadrants.length - 2].bottom,
+                    out_difference_total + quadrants[quadrants.length - num_rows - 1].left
+                );
             }
         }
     };

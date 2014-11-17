@@ -438,14 +438,15 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      */
-    function updateQuadrants(EightBitter, width) {
+    function updateQuadrants(EightBitter, direction, top, right, bottom, left) {
         EightBitter.MapsHandler.spawnMap(
-            "xInc",
-            EightBitter.MapScreener.bottom / EightBitter.unitsize,
-            (EightBitter.MapScreener.right + width) / EightBitter.unitsize,
-            EightBitter.MapScreener.bottom / EightBitter.unitsize,
-            EightBitter.MapScreener.right / EightBitter.unitsize
+            direction,
+            top / EightBitter.unitsize,
+            right / EightBitter.unitsize,
+            bottom / EightBitter.unitsize,
+            left / EightBitter.unitsize
         );
+
     }
     
     
@@ -1241,6 +1242,7 @@ var FullScreenMario = (function(GameStartr) {
         // EightBitter.MapsHandler.spawnMap(MapScreener.right + MapScreener.width);
         var diff_right = MapScreener.right + EightBitter.QuadsKeeper.getOutDifference();
         MapsHandler.spawnMap(diff_right / EightBitter.unitsize);
+        console.warn("spawnMap in activateSectionBefore is broken.");
     }
     
     /**
@@ -1288,6 +1290,7 @@ var FullScreenMario = (function(GameStartr) {
         // EightBitter.MapsHandler.spawnMap(MapScreener.right + MapScreener.width);
         var diff_right = MapScreener.right + EightBitter.QuadsKeeper.getOutDifference();
         MapsHandler.spawnMap(diff_right / EightBitter.unitsize);
+        console.warn("spawnMap in activateSectionBefore is broken.");
     }
     
     /**
@@ -1329,6 +1332,7 @@ var FullScreenMario = (function(GameStartr) {
         // EightBitter.MapsHandler.spawnMap(MapScreener.right + MapScreener.width);
         var diff_right = MapScreener.right + EightBitter.QuadsKeeper.getOutDifference();
         MapsHandler.spawnMap(diff_right / EightBitter.unitsize);
+        console.warn("spawnMap in activateSectionBefore is broken.");
     }
     
     

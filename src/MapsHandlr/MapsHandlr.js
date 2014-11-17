@@ -285,6 +285,7 @@ function MapsHandlr(settings) {
      *       instead of plain Arrays.
      */
     self.spawnMap = function (direction, top, right, bottom, left) {
+        console.log("Spawning map", left, "to", right);
         var name, group, mid, start, end, i, prething;
         
         // For each group of PreThings currently able to spawn...
