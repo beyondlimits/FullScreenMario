@@ -1166,7 +1166,13 @@ var FullScreenMario = (function(GameStartr) {
         });
         EightBitter.WorldSeeder.runGeneratedCommands();
         
-        EightBitter.MapsHandler.spawnMap(EightBitter.MapScreener.right / 4);
+        EightBitter.MapsHandler.spawnMap(
+            "xInc",
+            EightBitter.MapScreener.top / EightBitter.unitsize,
+            EightBitter.MapScreener.right / EightBitter.unitsize,
+            EightBitter.MapScreener.bottom / EightBitter.unitsize,
+            left
+        );
     }
     
     /**
@@ -1240,9 +1246,17 @@ var FullScreenMario = (function(GameStartr) {
         
         // Spawn the map, so new Things that should be placed will be spawned if nearby
         // EightBitter.MapsHandler.spawnMap(MapScreener.right + MapScreener.width);
-        var diff_right = MapScreener.right + EightBitter.QuadsKeeper.getOutDifference();
-        MapsHandler.spawnMap(diff_right / EightBitter.unitsize);
-        console.warn("spawnMap in activateSectionBefore is broken.");
+        // var diff_right = MapScreener.right + EightBitter.QuadsKeeper.getOutDifference();
+        // MapsHandler.spawnMap(diff_right / EightBitter.unitsize);
+        // console.warn("spawnMap in activateSectionBefore is broken.");
+        
+        EightBitter.MapsHandler.spawnMap(
+            "xInc",
+            EightBitter.MapScreener.top / EightBitter.unitsize,
+            EightBitter.MapScreener.right / EightBitter.unitsize,
+            EightBitter.MapScreener.bottom / EightBitter.unitsize,
+            left
+        );
     }
     
     /**
@@ -1288,9 +1302,17 @@ var FullScreenMario = (function(GameStartr) {
         
         // Spawn the map, so new Things that should be placed will be spawned if nearby
         // EightBitter.MapsHandler.spawnMap(MapScreener.right + MapScreener.width);
-        var diff_right = MapScreener.right + EightBitter.QuadsKeeper.getOutDifference();
-        MapsHandler.spawnMap(diff_right / EightBitter.unitsize);
-        console.warn("spawnMap in activateSectionBefore is broken.");
+        // var diff_right = MapScreener.right + EightBitter.QuadsKeeper.getOutDifference();
+        // MapsHandler.spawnMap(diff_right / EightBitter.unitsize);
+        // console.warn("spawnMap in activateSectionBefore is broken.");
+        
+        EightBitter.MapsHandler.spawnMap(
+            "xInc",
+            EightBitter.MapScreener.top / EightBitter.unitsize,
+            EightBitter.MapScreener.right / EightBitter.unitsize,
+            EightBitter.MapScreener.bottom / EightBitter.unitsize,
+            left
+        );
     }
     
     /**
@@ -1330,9 +1352,17 @@ var FullScreenMario = (function(GameStartr) {
         
         // Spawn the map, so new Things that should be placed will be spawned if nearby
         // EightBitter.MapsHandler.spawnMap(MapScreener.right + MapScreener.width);
-        var diff_right = MapScreener.right + EightBitter.QuadsKeeper.getOutDifference();
-        MapsHandler.spawnMap(diff_right / EightBitter.unitsize);
-        console.warn("spawnMap in activateSectionBefore is broken.");
+        // var diff_right = MapScreener.right + EightBitter.QuadsKeeper.getOutDifference();
+        // MapsHandler.spawnMap(diff_right / EightBitter.unitsize);
+        // console.warn("spawnMap in activateSectionBefore is broken.");
+        
+        EightBitter.MapsHandler.spawnMap(
+            "xInc",
+            EightBitter.MapScreener.top / EightBitter.unitsize,
+            EightBitter.MapScreener.right / EightBitter.unitsize,
+            EightBitter.MapScreener.bottom / EightBitter.unitsize,
+            left
+        );
     }
     
     
@@ -1967,7 +1997,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function collideWaterBlocker(thing, other) {
-        FSM.collideCharacterSolid(thing, other);
+        thing.EightBitter.collideCharacterSolid(thing, other);
     }
     
     /**

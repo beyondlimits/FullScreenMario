@@ -476,6 +476,15 @@ function MapsCreatr(settings) {
                     "yInc": getArraySorted(children, sortPreThingsYInc),
                     "yDec": getArraySorted(children, sortPreThingsYDec)
                 };
+                
+                // Adding in a "push" lambda allows MapsCreatr to interact with
+                // this using the same .push syntax as Arrays.
+                output[i].push = (function (prethings, prething) {
+                    addArraySorted(prethings["xInc"], prething, sortPreThingsXInc);
+                    addArraySorted(prethings["xDec"], prething, sortPreThingsXDec);
+                    addArraySorted(prethings["yInc"], prething, sortPreThingsYInc);
+                    addArraySorted(prethings["yDec"], prething, sortPreThingsYDec);
+                }).bind(undefined, output[i]);
             }
         }
         
@@ -511,6 +520,21 @@ function MapsCreatr(settings) {
         arr = arr.slice();
         arr.sort(func);
         return arr;
+    }
+    
+    /**
+     * 
+     * 
+     * @remarks This should eventually be O(logN), instead of O(N).
+     */
+    function addArraySorted(arr, object, sorter) {
+        for(var i = 0; i < arr.length; i += 1) {
+            if(sorter(object, arr[i]) < 0) {
+                arr.splice(i, 0, object);
+                return;
+            }
+        }
+        arr.push(object);
     }
     
     /**
