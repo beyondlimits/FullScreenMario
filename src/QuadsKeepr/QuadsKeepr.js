@@ -523,6 +523,18 @@ function QuadsKeepr(settings) {
         
         things.forEach(self.determineThingQuadrants);
     };
+        
+    /**
+     * 
+     */
+    function isThingInQuadrant(thing, quadrant) {
+        return (
+            thing.right >= quadrant.left 
+            && thing.left <= quadrant.right
+            && thing.top <= quadrant.bottom
+            && thing.bottom >= quadrant.top
+        );
+    }
     
     /**
      * 
@@ -543,15 +555,6 @@ function QuadsKeepr(settings) {
         
         // The Thing no longer has any Quadrants: rebuild them!
         thing[thing_num_quads] = 0;
-        
-        function isThingInQuadrant(thing, quadrant) {
-            return (
-                thing.right >= quadrant.left 
-                && thing.left <= quadrant.right
-                && thing.top <= quadrant.bottom
-                && thing.bottom >= quadrant.top
-            );
-        }
         
         // for(row = rowStart; row <= rowEnd; row += 1) {
             // for(col = colStart; col <= colEnd; col += 1) {
