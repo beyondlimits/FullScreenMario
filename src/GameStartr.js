@@ -19,24 +19,24 @@ var GameStartr = (function (EightBittr) {
                 "constructor": GameStartr,
                 "requirements": {
                     "global": {
-                        "AudioPlayr": "src/AudioPlayr.js",
-                        "ChangeLinr": "src/ChangeLinr.js",
-                        "FPSAnalyzr": "src/FPSAnalyzr.js",
-                        "GamesRunnr": "src/GamesRunnr.js",
-                        "GroupHoldr": "src/GroupHoldr.js",
-                        "InputWritr": "src/InputWritr.js",
-                        "LevelEditr": "src/LevelEditr.js",
-                        "MapScreenr": "src/MapScreenr.js",
-                        "MapsHandlr": "src/MapsHandlr.js",
-                        "ModAttachr": "src/ModAttachr.js",
-                        "ObjectMakr": "src/ObjectMakr.js",
-                        "PixelDrawr": "src/PixelDrawr.js",
-                        "PixelRendr": "src/PixelRendr.js",
-                        "QuadsKeepr": "src/QuadsKeepr.js",
-                        "StatsHoldr": "src/StatsHoldr.js",
-                        "StringFilr": "src/StringFilr.js",
-                        "ThingHittr": "src/ThingHittr.js",
-                        "TimeHandlr": "src/TimeHandlr.js"
+                        "AudioPlayr": "src/AudioPlayr/AudioPlayr.js",
+                        "ChangeLinr": "src/ChangeLinr/ChangeLinr.js",
+                        "FPSAnalyzr": "src/FPSAnalyzr/FPSAnalyzr.js",
+                        "GamesRunnr": "src/GamesRunnr/GamesRunnr.js",
+                        "GroupHoldr": "src/GroupHoldr/GroupHoldr.js",
+                        "InputWritr": "src/InputWritr/InputWritr.js",
+                        "LevelEditr": "src/LevelEditr/LevelEditr.js",
+                        "MapScreenr": "src/MapScreenr/MapScreenr.js",
+                        "MapsHandlr": "src/MapsHandlr/MapsHandlr.js",
+                        "ModAttachr": "src/ModAttachr/ModAttachr.js",
+                        "ObjectMakr": "src/ObjectMakr/ObjectMakr.js",
+                        "PixelDrawr": "src/PixelDrawr/PixelDrawr.js",
+                        "PixelRendr": "src/PixelRendr/PixelRendr.js",
+                        "QuadsKeepr": "src/QuadsKeepr/QuadsKeepr.js",
+                        "StatsHoldr": "src/StatsHoldr/StatsHoldr.js",
+                        "StringFilr": "src/StringFilr/StringFilr.js",
+                        "ThingHittr": "src/ThingHittr/ThingHittr.js",
+                        "TimeHandlr": "src/TimeHandlr/TimeHandlr.js"
                     },
                 }
             });
@@ -87,20 +87,12 @@ var GameStartr = (function (EightBittr) {
         EightBitter.QuadsKeeper = new QuadsKeepr(proliferate({
             "ObjectMaker": EightBitter.ObjectMaker,
             "getCanvas": EightBitter.getCanvas,
-            "quad_width": quadrant_width,
-            "quad_height": quadrant_height,
+            "quadrant_width": quadrant_width,
+            "quadrant_height": quadrant_height,
+            "start_left": -quadrant_width,
+            "start_height": -quadrant_height,
             "on_update": EightBitter.updateQuadrants.bind(EightBitter, EightBitter),
         }, EightBitter.settings.quadrants));
-        
-        // EightBitter.QuadsKeeperNew = new QuadsKeeprNew(proliferate({
-            // "ObjectMaker": EightBitter.ObjectMaker,
-            // "getCanvas": EightBitter.getCanvas,
-            // "quadrant_width": quadrant_width,
-            // "quadrant_height": quadrant_height,
-            // "start_left": -quadrant_width,
-            // "start_height": -quadrant_height,
-            // "on_update": EightBitter.updateQuadrants.bind(EightBitter, EightBitter),
-        // }, EightBitter.settings.quadrants));
     }
     
     /**
@@ -358,29 +350,23 @@ var GameStartr = (function (EightBittr) {
     /* Global manipulations
     */
     
-    /** 
-     * 
-     */
-    function spawnArea(EightBitter, top, right, bottom, left) {
-        console.log("Spawning area", top, right, bottom, left);
-        // var diff_right = EightBitter.MapScreener.right + EightBitter.QuadsKeeper.getOutDifference();
-        // EightBitter.MapsHandler.spawnMap(diff_right / EightBitter.unitsize);
-    }
-    
     /**
      * 
      */
     function scrollWindow(dx, dy) {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
-        dx = dx || 0;
-        dy = dy || 0;
+        dx = dx | 0;
+        dy = dy | 0;
+        
+        if(!dx && !dy) {
+            return;
+        }
         
         EightBitter.MapScreener.shift(dx, dy);
         EightBitter.shiftAll(-dx, -dy);
         
-        EightBitter.shiftThings(EightBitter.QuadsKeeper.getQuadrants(), -dx, -dy);
-        EightBitter.QuadsKeeper.updateQuadrants(-dx);
+        EightBitter.QuadsKeeper.shiftQuadrants(-dx, -dy);
     }
     
     /**
@@ -453,12 +439,12 @@ var GameStartr = (function (EightBittr) {
         var maxquads = 4,
             num;
         num = Math.floor(thing.width 
-            * (FullScreenMario.unitsize / thing.EightBitter.QuadsKeeper.getQuadWidth()));
+            * (FullScreenMario.unitsize / thing.EightBitter.QuadsKeeper.getQuadrantWidth()));
         if(num > 0) {
             maxquads += ((num + 1) * maxquads / 2);
         }
         num = Math.floor(thing.height 
-            * (FullScreenMario.unitsize / thing.EightBitter.QuadsKeeper.getQuadHeight()));
+            * (FullScreenMario.unitsize / thing.EightBitter.QuadsKeeper.getQuadrantHeight()));
         if(num > 0) {
             maxquads += ((num + 1) * maxquads / 2);
         }

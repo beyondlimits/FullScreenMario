@@ -225,11 +225,27 @@ function PixelDrawr(settings) {
     /**
      * 
      */
+    self.refillQuadrantGroups = function (groups, background) {
+        for(var i = 0; i < groups.length; i += 1) {
+            self.refillQuadrants(groups[i].quadrants, background);
+        }
+    };
+    
+    /**
+     * 
+     */
     self.refillQuadrants = function (quadrants, background) {
-        for(var i = 0; i < quadrants.length; i += 1) {
-            if(quadrants[i].changed) {
-                self.refillQuadrant(quadrants[i], background);
-                context.drawImage(quadrants[i].canvas, quadrants[i].left, quadrants[i].top);
+        var quadrant, i;
+        
+        for(i = 0; i < quadrants.length; i += 1) {
+            quadrant = quadrants[i];
+            if(quadrant.changed) {
+                self.refillQuadrant(quadrant, background);
+                context.drawImage(
+                    quadrant.canvas,
+                    quadrant.left,
+                    quadrant.top
+                );
             }
         }
     };

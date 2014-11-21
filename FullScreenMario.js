@@ -198,6 +198,35 @@ var FullScreenMario = (function(GameStartr) {
     
     /**
      * 
+     */
+    function addPreThing(prething) {
+        var thing = prething.thing,
+            position = prething.position || thing.position;
+        
+        thing.EightBitter.addThing(
+            thing, 
+            prething.left * thing.EightBitter.unitsize - thing.EightBitter.MapScreener.left,
+            (thing.EightBitter.MapScreener.floor - prething.top) * thing.EightBitter.unitsize
+        );
+        
+        // Either the prething or thing, in that order, may request to be in the
+        // front or back of the container
+        if(position) {
+            thing.EightBitter.TimeHandler.addEvent(function () {
+                switch (prething.position || thing.position) {
+                    case "beginning":
+                        thing.EightBitter.arrayToBeginning(thing, thing.EightBitter.GroupHolder.getGroup(thing.grouptype));
+                        break;
+                    case "end":
+                        thing.EightBitter.arrayToEnd(thing, thing.EightBitter.GroupHolder.getGroup(thing.grouptype));
+                        break;
+                }
+            });
+        }
+    }
+    
+    /**
+     * 
      * 
      * 
      * @todo Create a generic version of this in GameStartr
@@ -284,10 +313,10 @@ var FullScreenMario = (function(GameStartr) {
      * @param {FullScreenMario} EightBitter
      */
     function maintainSolids(EightBitter, solids) {
-        var delx = EightBitter.QuadsKeeper.getDelX(),
+        var delx = EightBitter.QuadsKeeper.left,
             solid, i;
         
-        EightBitter.QuadsKeeper.determineAllQuadrants(solids);
+        EightBitter.QuadsKeeper.determineAllQuadrants("Solid", solids);
         
         for (i = 0; i < solids.length; ++i) {
             solid = solids[i];
@@ -309,8 +338,7 @@ var FullScreenMario = (function(GameStartr) {
      * @param {FullScreenMario} EightBitter
      */
     function maintainCharacters(EightBitter, characters) {
-        var deldx = EightBitter.QuadsKeeper.getOutDifference(),
-            delx = EightBitter.MapScreener.right + deldx,
+        var delx = EightBitter.QuadsKeeper.right,
             character, i;
         
         for (i = 0; i < characters.length; ++i) {
@@ -442,9 +470,9 @@ var FullScreenMario = (function(GameStartr) {
         EightBitter.MapsHandler.spawnMap(
             direction,
             top / EightBitter.unitsize,
-            right / EightBitter.unitsize,
+            (right + EightBitter.MapScreener.left) / EightBitter.unitsize,
             bottom / EightBitter.unitsize,
-            left / EightBitter.unitsize
+            (left + EightBitter.MapScreener.left) / EightBitter.unitsize
         );
 
     }
@@ -3750,7 +3778,9 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         thing.hidden = thing.dead = true;
-        thing.alive = thing.resting = thing.movement = false;
+        thing.alive = false;
+        thing.numquads = 0;
+        thing.resting = thing.movement = undefined;
         
         if(thing.EightBitter) {
             thing.EightBitter.TimeHandler.clearAllCycles(thing);
@@ -4178,7 +4208,6 @@ var FullScreenMario = (function(GameStartr) {
             name = EightBitter.MapsHandler.getMapName();
         }
         
-        EightBitter.QuadsKeeper.resetQuadrants();
         EightBitter.MapsHandler.setMap(name);
         
         EightBitter.StatsHolder.set("world", name);
@@ -4207,7 +4236,6 @@ var FullScreenMario = (function(GameStartr) {
         EightBitter.AudioPlayer.pause();
         EightBitter.GroupHolder.clearArrays();
         EightBitter.TimeHandler.clearAllEvents();
-        EightBitter.QuadsKeeper.resetQuadrants();
         
         EightBitter.MapsHandler.setLocation(name || 0);
         EightBitter.MapScreener.setVariables();
@@ -4221,14 +4249,7 @@ var FullScreenMario = (function(GameStartr) {
         
         EightBitter.StatsHolder.set("time", EightBitter.MapsHandler.getArea().time);
   
-        EightBitter.MapsHandler.spawnMap(
-            "xInc",
-            EightBitter.MapScreener.top / EightBitter.unitsize,
-            EightBitter.MapScreener.right / EightBitter.unitsize,
-            EightBitter.MapScreener.bottom / EightBitter.unitsize,
-            EightBitter.MapScreener.left / EightBitter.unitsize
-        );
-        
+        EightBitter.QuadsKeeper.resetQuadrants();
         location.entry(EightBitter, location);
         
         EightBitter.ModAttacher.fireEvent("onSetLocation");
@@ -5249,6 +5270,7 @@ var FullScreenMario = (function(GameStartr) {
         "gameStart": gameStart,
         "gameOver": gameOver,
         "nextLevel": nextLevel,
+        "addPreThing": addPreThing,
         "addPlayer": addPlayer,
         "scrollPlayer": scrollPlayer,
         "onGamePause": onGamePause,

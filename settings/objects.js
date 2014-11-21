@@ -289,7 +289,6 @@
                     },
                     "floating": {
                         onThingMake: function (thing) {
-                            console.log("added", window.durp = thing);
                             FullScreenMario.prototype.spawnMoveFloating(thing);
                         },
                         // onThingAdd: FullScreenMario.prototype.spawnMoveFloating,

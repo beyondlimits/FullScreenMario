@@ -36,31 +36,7 @@ FullScreenMario.prototype.settings.maps = {
             return EightBitter.gravity;
         }
     },
-    "on_spawn": function (prething) {
-        var thing = prething.thing,
-            position = prething.position || thing.position;
-        
-        thing.EightBitter.addThing(
-            thing, 
-            prething.left * thing.EightBitter.unitsize - thing.EightBitter.MapScreener.left,
-            (thing.EightBitter.MapScreener.floor - prething.top) * thing.EightBitter.unitsize
-        );
-        
-        // Either the prething or thing, in that order, may request to be in the
-        // front or back of the container
-        if(position) {
-            thing.EightBitter.TimeHandler.addEvent(function () {
-                switch (prething.position || thing.position) {
-                    case "beginning":
-                        thing.EightBitter.arrayToBeginning(thing, thing.EightBitter.GroupHolder.getGroup(thing.grouptype));
-                        break;
-                    case "end":
-                        thing.EightBitter.arrayToEnd(thing, thing.EightBitter.GroupHolder.getGroup(thing.grouptype));
-                        break;
-                }
-            });
-        }
-    },
+    "on_spawn": FullScreenMario.prototype.addPreThing,
     "macros": {
         "Example": FullScreenMario.prototype.macroExample,
         "Fill": FullScreenMario.prototype.macroFillPreThings,
