@@ -527,18 +527,6 @@ function QuadsKeepr(settings) {
     /**
      * 
      */
-    function isThingInQuadrant(thing, quadrant) {
-        return (
-            thing.right >= quadrant.left 
-            && thing.left <= quadrant.right
-            && thing.top <= quadrant.bottom
-            && thing.bottom >= quadrant.top
-        );
-    }
-    
-    /**
-     * 
-     */
     self.determineThingQuadrants = function (thing) {
         var group = thing[thing_group_name],
             rowStart = findQuadrantRowStart(thing),
@@ -556,16 +544,9 @@ function QuadsKeepr(settings) {
         // The Thing no longer has any Quadrants: rebuild them!
         thing[thing_num_quads] = 0;
         
-        // for(row = rowStart; row <= rowEnd; row += 1) {
-            // for(col = colStart; col <= colEnd; col += 1) {
-                // self.setThingInQuadrant(group, thing, quadrant_rows[row].quadrants[col]);
-            // }
-        // }
-        for(row = 0; row < num_rows; row += 1) {
-            for(col = 0; col < num_cols; col += 1) {
-                if(isThingInQuadrant(thing, quadrant_rows[row].quadrants[col])) {
-                    self.setThingInQuadrant(group, thing, quadrant_rows[row].quadrants[col]);
-                }
+        for(row = rowStart; row <= rowEnd; row += 1) {
+            for(col = colStart; col <= colEnd; col += 1) {
+                self.setThingInQuadrant(group, thing, quadrant_rows[row].quadrants[col]);
             }
         }
         
@@ -601,28 +582,28 @@ function QuadsKeepr(settings) {
      * 
      */
     function findQuadrantRowStart(thing) {
-        return Math.floor((thing.top - self.top) / quadrant_height);
+        return Math.max(Math.floor((thing.top - self.top) / quadrant_height), 0);
     }
     
     /**
      * 
      */
     function findQuadrantRowEnd(thing) {
-        return Math.floor((thing.bottom - self.top) / quadrant_height);
+        return Math.min(Math.floor((thing.bottom - self.top) / quadrant_height), num_rows - 1);
     }
     
     /**
      * 
      */
     function findQuadrantColStart(thing) {
-        return Math.floor((thing.left - self.left) / quadrant_width);
+        return Math.max(Math.floor((thing.left - self.left) / quadrant_width), 0);
     }
     
     /**
      * 
      */
     function findQuadrantColEnd(thing) {
-        return Math.floor((thing.right - self.left) / quadrant_width);
+        return Math.min(Math.floor((thing.right - self.left) / quadrant_width), num_cols - 1);
     }
     
     
