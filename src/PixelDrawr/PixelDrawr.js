@@ -294,7 +294,13 @@ function PixelDrawr(settings) {
      * 
      */
     self.drawThingOnQuadrant = function (thing, quadrant) {
-        if(thing.hidden) {
+        if(
+            thing.hidden
+            || thing.top > quadrant.bottom
+            || thing.right < quadrant.left
+            || thing.bottom < quadrant.top
+            || thing.left > quadrant.right
+        ) {
             return;
         }
         
