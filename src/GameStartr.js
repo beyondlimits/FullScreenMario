@@ -154,6 +154,11 @@ var GameStartr = (function (EightBittr) {
             "getVolumeLocal": EightBitter.getVolumeLocal.bind(EightBitter, EightBitter),
             "getThemeDefault": EightBitter.getAudioThemeDefault.bind(EightBitter, EightBitter)
         }, EightBitter.settings.audio));
+        
+        EightBitter.AudioPlayer = new AudioPlayr(proliferate({
+            "getVolumeLocal": EightBitter.getVolumeLocal.bind(EightBitter, EightBitter),
+            "getThemeDefault": EightBitter.getAudioThemeDefault.bind(EightBitter, EightBitter)
+        }, EightBitter.settings.audio));
     }
     
     /**
