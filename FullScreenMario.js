@@ -73,13 +73,14 @@ var FullScreenMario = (function(GameStartr) {
                     "sprites": "settings/sprites.js",
                     "statistics": "settings/statistics.js"                }            },            "resets": [
                 "resetObjectMaker",
-                "resetPixelRender",                "resetPixelDrawer",                "resetTimeHandler",
+                "resetPixelRender",                "resetTimeHandler",
                 "resetAudioPlayer",
                 "resetQuadsKeeper",
                 "resetGamesRunner",
                 "resetStatsHolder",
                 "resetThingHitter",
                 "resetMapScreener",
+                "resetPixelDrawer",
                 "resetMapsCreator",
                 "resetMapsHandler",
                 "resetInputWriter",
@@ -4548,9 +4549,6 @@ var FullScreenMario = (function(GameStartr) {
      *              "x": 644, "y": 64, "xnum": 5, "xwidth": 8 }
      */
     function macroFillPreThings(reference, prethings, area, map, scope) {
-        if(!scope.ObjectMaker.getPropertiesFull()[reference.thing]) {
-            debugger;
-        }
         var defaults = scope.ObjectMaker.getPropertiesFull(),
             xnum = reference.xnum || 1,
             ynum = reference.ynum || 1,

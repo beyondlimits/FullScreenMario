@@ -120,6 +120,7 @@ var GameStartr = (function (EightBittr) {
     function resetPixelDrawer(EightBitter, customs) {
         EightBitter.PixelDrawer = new PixelDrawr(proliferate({
             "PixelRender": EightBitter.PixelRender,
+            "MapScreener": EightBitter.MapScreener,
             "getCanvas": EightBitter.getCanvas,
             "unitsize": EightBitter.unitsize,
             "innerWidth": customs.width,
@@ -533,17 +534,23 @@ var GameStartr = (function (EightBittr) {
     /**
      * 
      */
-    function shiftVert(thing, dy) {
+    function shiftVert(thing, dy, notChanged) {
         EightBittr.prototype.shiftVert(thing, dy);
-        thing.EightBitter.markChanged(thing);
+        
+        if(!notChanged) {
+            thing.EightBitter.markChanged(thing);
+        }
     }
     
     /**
      * 
      */
-    function shiftHoriz(thing, dx) {
+    function shiftHoriz(thing, dx, notChanged) {
         EightBittr.prototype.shiftHoriz(thing, dx);
-        thing.EightBitter.markChanged(thing);
+        
+        if(!notChanged) {
+            thing.EightBitter.markChanged(thing);
+        }
     }
     
     /**
@@ -582,25 +589,25 @@ var GameStartr = (function (EightBittr) {
      * 
      * 
      */
-    function shiftBoth(thing, dx, dy) {
+    function shiftBoth(thing, dx, dy, notChanged) {
         if(!thing.noshiftx) {
             if(thing.parallax) {
-                thing.EightBitter.shiftHoriz(thing, thing.parallax * dx);
+                thing.EightBitter.shiftHoriz(thing, thing.parallax * dx, notChanged);
             } else {
-                thing.EightBitter.shiftHoriz(thing, dx);
+                thing.EightBitter.shiftHoriz(thing, dx, notChanged);
             }
         }
         if(!thing.noshifty) {
-            thing.EightBitter.shiftVert(thing, dy);
+            thing.EightBitter.shiftVert(thing, dy, notChanged);
         }
     }
     
     /**
      * 
      */
-    function shiftThings(things, dx, dy) {
+    function shiftThings(things, dx, dy, notChanged) {
         for(var i = things.length - 1; i >= 0; i -= 1) {
-            things[i].EightBitter.shiftBoth(things[i], dx, dy);
+            things[i].EightBitter.shiftBoth(things[i], dx, dy, notChanged);
         }
     }
     
@@ -609,7 +616,7 @@ var GameStartr = (function (EightBittr) {
      */
     function shiftAll(dx, dy) {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
-        EightBitter.GroupHolder.callAll(EightBitter, EightBitter.shiftThings, dx, dy);
+        EightBitter.GroupHolder.callAll(EightBitter, EightBitter.shiftThings, dx, dy, true);
     }
 
     /**
@@ -910,13 +917,13 @@ var GameStartr = (function (EightBittr) {
         "resetObjectMaker": resetObjectMaker,
         "resetQuadsKeeper": resetQuadsKeeper,
         "resetPixelRender": resetPixelRender,
-        "resetPixelDrawer": resetPixelDrawer,
         "resetTimeHandler": resetTimeHandler,
         "resetAudioPlayer": resetAudioPlayer,
         "resetGamesRunner": resetGamesRunner,
         "resetStatsHolder": resetStatsHolder,
         "resetThingHitter": resetThingHitter,
         "resetMapScreener": resetMapScreener,
+        "resetPixelDrawer": resetPixelDrawer,
         "resetMapsCreator": resetMapsCreator,
         "resetMapsHandler": resetMapsHandler,
         "resetInputWriter": resetInputWriter,

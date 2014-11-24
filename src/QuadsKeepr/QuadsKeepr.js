@@ -211,6 +211,7 @@ function QuadsKeepr(settings) {
         quadrant.right += x;
         quadrant.bottom += y;
         quadrant.left += x;
+        quadrant.changed = true;
     }
     
     
@@ -554,6 +555,9 @@ function QuadsKeepr(settings) {
         if(thing[thing_changed]) {
             markThingQuadrantsChanged(thing);
         }
+        
+        // The thing is no longer considered changed, since quadrants know it
+        thing[thing_changed] = false;
     };
     
     /**

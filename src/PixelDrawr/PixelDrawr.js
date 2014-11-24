@@ -1,12 +1,3 @@
-/* PixelDrawr.js
- * A FullScreenMario-specific object that draws Things 
- * External requirements:
- * * getCanvas
- * * window.canvas
- * * window.context
- * * innerWidth
- */
-
 function PixelDrawr(settings) {
     "use strict";
     if(this === window) {
@@ -16,6 +7,9 @@ function PixelDrawr(settings) {
         
         // A PixelRender object used to obtain raw sprite data and canvases
         PixelRender,
+        
+        // A MapScreenr variable to be used for bounds checking
+        MapScreener,
         
         // The canvas object each refillGlobalCanvas call goes to
         canvas,
@@ -30,6 +24,7 @@ function PixelDrawr(settings) {
         getCanvas,
         
         // The known viewport width, beyond which nothing should be drawn
+        // SOON TO BE OBSOLUTE WHOOO
         innerWidth,
         
         unitsize,
@@ -46,6 +41,7 @@ function PixelDrawr(settings) {
     
     self.reset = function(settings) {
         PixelRender = settings.PixelRender;
+        MapScreener = settings.MapScreener;
         getCanvas = settings.getCanvas;
         unitsize = settings.unitsize || 4;
         no_refill = settings.no_refill;
@@ -239,7 +235,13 @@ function PixelDrawr(settings) {
         
         for(i = 0; i < quadrants.length; i += 1) {
             quadrant = quadrants[i];
-            if(quadrant.changed) {
+            if(
+                quadrant.changed
+                && quadrant.top < MapScreener.height
+                && quadrant.right > 0
+                && quadrant.bottom > 0
+                && quadrant.left < MapScreener.width
+            ) {
                 self.refillQuadrant(quadrant, background);
                 context.drawImage(
                     quadrant.canvas,
