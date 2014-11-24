@@ -23,10 +23,6 @@ function PixelDrawr(settings) {
         // Utility function to create a canvas (typically taken from EightBittr)
         getCanvas,
         
-        // The known viewport width, beyond which nothing should be drawn
-        // SOON TO BE OBSOLUTE WHOOO
-        innerWidth,
-        
         unitsize,
         
         // A utility function to generate a class key to get an object sprite
@@ -45,7 +41,6 @@ function PixelDrawr(settings) {
         getCanvas = settings.getCanvas;
         unitsize = settings.unitsize || 4;
         no_refill = settings.no_refill;
-        innerWidth = settings.innerWidth;
         group_names = settings.group_names;
         
         generateObjectKey = settings.generateObjectKey || function (object) {
@@ -71,15 +66,8 @@ function PixelDrawr(settings) {
     self.setCanvas = function (canvasNew) {
         canvas = canvasNew;
         context = canvas.getContext("2d");
-        self.drawThingOnCanvasBound = self.drawThingOnCanvas.bind(self, context);
+        self.drawThingOnContextBound = self.drawThingOnContext.bind(self, context);
     }
-    
-    /**
-     * 
-     */
-    self.setInnerWidth = function (width) {
-        innerWidth = width;
-    };
     
     /**
      * 
@@ -215,7 +203,7 @@ function PixelDrawr(settings) {
      * 
      */
     self.refillThingArray = function (array) {
-        array.forEach(self.drawThingOnCanvasBound);
+        array.forEach(self.drawThingOnContextBound);
     };
     
     /**
@@ -276,22 +264,29 @@ function PixelDrawr(settings) {
     
     /**
      * General function to draw a Thing to a context
-     * This will call drawThingOnCanvas[Single/Multiple] with more arguments
+     * This will call drawThingOnContext[Single/Multiple] with more arguments
      * 
      * @return {Self}
      */
-    self.drawThingOnCanvas = function(context, thing) {
-        if(thing.hidden || thing.right < 0 || thing.left > innerWidth) {
+    // self.drawThingOnContext = function(context, thing) {
+    self.drawThingOnContext = function(context, thing) {
+        if(
+            thing.hidden
+            || thing.top > MapScreener.bottom
+            || thing.right < MapScreener.left
+            || thing.bottom < MapScreener.top
+            || thing.left > MapScreener.right
+        ) {
             return;
         }
         
         // If there's just one sprite, it's pretty simple
         if(thing.num_sprites === 1) {
-            return drawThingOnCanvasSingle(context, thing.canvas, thing, thing.left, thing.top);
+            return drawThingOnContextSingle(context, thing.canvas, thing, thing.left, thing.top);
         }
         // For multiple sprites, some calculations will be needed
         else {
-            return drawThingOnCanvasMultiple(context, thing.canvases, thing, thing.left, thing.top);
+            return drawThingOnContextMultiple(context, thing.canvases, thing, thing.left, thing.top);
         }
     }
     
@@ -305,16 +300,16 @@ function PixelDrawr(settings) {
         
         // If there's just one sprite, it's pretty simple
         if(thing.num_sprites === 1) {
-            return drawThingOnCanvasSingle(quadrant.context, thing.canvas, thing, thing.left - quadrant.left, thing.top - quadrant.top);
+            return drawThingOnContextSingle(quadrant.context, thing.canvas, thing, thing.left - quadrant.left, thing.top - quadrant.top);
         }
         // For multiple sprites, some calculations will be needed
         else {
-            return drawThingOnCanvasMultiple(quadrant.context, thing.canvases, thing, thing.left - quadrant.left, thing.top - quadrant.top);
+            return drawThingOnContextMultiple(quadrant.context, thing.canvases, thing, thing.left - quadrant.left, thing.top - quadrant.top);
         }
     };
     
     /**
-     * Draws a Thing's single canvas onto a context (called by self.drawThingOnCanvas).
+     * Draws a Thing's single canvas onto a context (called by self.drawThingOnContext).
      * 
      * @param {CanvasRenderingContext2D} context    
      * @param {Canvas} canvas
@@ -324,7 +319,7 @@ function PixelDrawr(settings) {
      * @return {Self}
      * @private
      */
-    function drawThingOnCanvasSingle(context, canvas, thing, leftc, topc) {
+    function drawThingOnContextSingle(context, canvas, thing, leftc, topc) {
         // If the sprite should repeat, use the pattern equivalent
         if(thing.repeat) {
             drawPatternOnCanvas(context, canvas, leftc, topc, thing.unitwidth, thing.unitheight, thing.opacity || 1);
@@ -342,12 +337,12 @@ function PixelDrawr(settings) {
     }
     
     /**
-     * Draws a Thing's multiple canvases onto a context (called by self.drawThingOnCanvas)
+     * Draws a Thing's multiple canvases onto a context (called by self.drawThingOnContext)
      * 
      * @return {Self}
      * @private
      */
-    function drawThingOnCanvasMultiple(context, canvases, thing, leftc, topc) {
+    function drawThingOnContextMultiple(context, canvases, thing, leftc, topc) {
         var sprite = thing.sprite,
             topreal = topc,
             leftreal = leftc,
