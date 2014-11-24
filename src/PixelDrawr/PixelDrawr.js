@@ -240,6 +240,15 @@ function PixelDrawr(settings) {
         }
     };
     
+    // var letters = '0123456789ABCDEF'.split('');
+    // function getRandomColor() {
+        // var color = '#';
+        // for (var i = 0; i < 6; i++ ) {
+            // color += letters[Math.floor(Math.random() * 16)];
+        // }
+        // return color;
+    // }
+    
     /**
      * 
      */
@@ -250,6 +259,8 @@ function PixelDrawr(settings) {
             quadrant.context.fillStyle = background;
             quadrant.context.fillRect(0, 0, quadrant.canvas.width, quadrant.canvas.height);
         }
+        // quadrant.context.fillStyle = getRandomColor();
+        // quadrant.context.fillRect(0, 0, quadrant.canvas.width, quadrant.canvas.height);
         
         for(i = group_names.length - 1; i >= 0; i -= 1) {
             group = quadrant.things[group_names[i]];
