@@ -58,7 +58,12 @@ function FPSAnalyzr(settings) {
      * @param {DOMHighResTimeStamp} time   An optional timestamp, without which
      *                                     get_timestamp() is used instead.
      */
-    var measureGeneral = function measureGeneral(time) {
+    self.measure = function (time) {
+        if(!time_current) {
+            measureFirst(time);
+            return;
+        }
+        
         var time_new = time || get_timestamp(),
             fps_new = 1000 / (time_new - time_current);
         self.addFPS(fps_new);
@@ -74,9 +79,8 @@ function FPSAnalyzr(settings) {
      * @param {DOMHighResTimeStamp} time   An optional timestamp, without which
      *                                     get_timestamp() is used instead.
      */
-    self.measure = function measureFirst(time) {
+    function measureFirst(time) {
         time_current = time || get_timestamp();
-        self.measure = measureGeneral;
     };
     
     /**
