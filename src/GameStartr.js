@@ -229,7 +229,7 @@ var GameStartr = (function (EightBittr) {
             "group_types": ["Character", "Scenery", "Solid", "Text"],
             "macros": EightBitter.settings.maps.macros,
             "entrances": EightBitter.settings.maps.entrances,
-            "maps": EightBitter.settings.maps.maps,
+            "maps": EightBitter.settings.maps.library,
             "scope": EightBitter
         });
     }

@@ -1,5 +1,5 @@
 (function (maps) {
-    var proto = FullScreenMario.prototype.settings.maps.maps = {},
+    var proto = FullScreenMario.prototype.settings.maps.library = {},
         i;
     
     for(i = 0; i < maps.length; i += 1) {
