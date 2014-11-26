@@ -573,7 +573,7 @@ function AudioPlayr(settings) {
         var settings, i;
         
         this.oscillator = context.createOscillator();
-        this.oscillator.connect(volumeControl);
+        this.oscillator.connect(transforms[0])
         
         for(i = arguments.length - 1; i >= 0; i -= 1) {
             settings = arguments[i];
@@ -628,7 +628,7 @@ function AudioPlayr(settings) {
             this.noise.loop = true;
         },
         "postSetup": function (settings) {
-            this.noise.connect(volumeControl);
+            this.noise.connect(transforms[0])
         },
         "play": function (time) {
             this.noise.start(time | 0);
