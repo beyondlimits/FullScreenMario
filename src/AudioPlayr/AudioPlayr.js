@@ -1,316 +1,666 @@
-function playCurrentThemeHurry(name_raw) {
-  FSM.AudioPlayer.playTheme("Hurry " + (name_raw || setting.split(' ')[0]));
-}
-
-/* AudioPlayr.js
- * A library to play audio files derived from Full Screen Mario
- * This will:
- * 1. Load files via AJAX upon startup
- * 2. Create appropriate HTML5 <audio> elements 
- * 3. Play and pause those audio files on demand
-*/
+/**
+ * A new JSON-based audio player for Full Screen Mario. 
+ * Influenced by Cody Lundquist: https://github.com/meenie/band.js
+ * Pink noise measurements: http://www.firstpr.com.au/dsp/pink-noise/
+ * GameBoy sound table: http://www.devrs.com/gb/files/sndtab.html
+ * Note frequencies: http://www.phy.mtu.edu/~suits/notefreqs.html
+ */
 function AudioPlayr(settings) {
-  "use strict";
-  if(!this || this === window) {
-    return new AudioPlayr(settings);
-  }
-  var self = this,
-  
-      // A list of filenames to be turned into <audio> objects
-      library,
-      
-      // What file types to add as sources to sounds
-      filetypes,
-      
-      // Currently playing sound objects, keyed by name (no extensions)
-      sounds,
-      
-      // The currently playing theme
-      theme,
-      
-      // Whether all sounds should be muted
-      muted,
-      
-      // Directory from which audio files are AJAXed if needed
-      directory,
-      
-      // What name to store the value of muted under localStorage
-      localStorageMuted,
-      
-      // The function or int used to determine what playLocal's volume is
-      getVolumeLocal,
-      
-      // The function or string used to get a default theme name
-      getThemeDefault,
-      
-      // Default settings used when creating a new sound
-      soundSettings;
-  
-  var reset = self.reset = function reset(settings) {
-    library           = settings.library           || {};
-    filetypes         = settings.filetypes         || ["mp3", "ogg"];
-    muted             = settings.muted             || false;
-    directory         = settings.directory         || "";
-    localStorageMuted = settings.localStorageMuted || "muted";
-    getVolumeLocal    = settings.getVolumeLocal    || 1;
-    getThemeDefault   = settings.getThemeDefault   || "Theme";
+    "use strict";
+    if(!this || this === window) {
+        return new AudioPlayr(settings);
+    }
+    var self = this,
+        
+        // The Web Audio API AudioContext this is streaming to
+        context,
+        
+        // ???
+        library,
+        
+        // ???
+        collections,
+        
+        // Currently playing sounds
+        currentSounds,
+        
+        // Currently playing theme
+        currentTheme,
+        
+        // Current volume Number in [0, 100]
+        volume,
+        
+        // Whether all sounds should be muted (ignoring volume)
+        muted,
+        
+        // What name to store the value of muted under localStorage
+        localMutedKey,
+        
+        // The Function or Number used to determine what playLocal's volume is
+        getVolumeLocal,
+        
+        // The Function or String used to get a default theme name
+        getThemeDefault,
+        
+        // Default settings used when creating a new sound
+        soundDefaults,
+        
+        // Lookup table of Strings to generator Functions
+        generatorNames = {
+            "Oscillator": OscillatorGenerator,
+            "WhiteNoise": WhiteNoiseGenerator,
+            "PinkNoise": PinkNoiseGenerator,
+            "BrownianNoise": BrownianNoiseGenerator
+        },
+        
+        // Lookup table of String note names to their frequency Numbers
+        // Note: the GB table is an octave lower (this standardizes to 8bit.js)
+        noteFrequencies = {
+            "C0": 16.35,
+            "C#0": 17.32,
+            "Db0": 17.32,
+            "D0": 18.35,
+            "D#0": 19.45,
+            "Eb0": 19.45,
+            "E0": 20.6,
+            "F0": 21.83,
+            "F#0": 23.12,
+            "Gb0": 23.12,
+            "G0": 24.5,
+            "G#0": 25.96,
+            "Ab0": 25.96,
+            "A0": 27.5,
+            "A#0": 29.14,
+            "Bb0": 29.14,
+            "B0": 30.87,
+            "C1": 32.7,
+            "C#1": 34.65,
+            "Db1": 34.65,
+            "D1": 36.71,
+            "D#1": 38.89,
+            "Eb1": 38.89,
+            "E1": 41.2,
+            "F1": 43.65,
+            "F#1": 46.25,
+            "Gb1": 46.25,
+            "G1": 49,
+            "G#1": 51.91,
+            "Ab1": 51.91,
+            "A1": 55,
+            "A#1": 58.27,
+            "Bb1": 58.27,
+            "B1": 61.74,
+            "C2": 65.41,
+            "C#2": 69.3,
+            "Db2": 69.3,
+            "D2": 73.42,
+            "D#2": 77.78,
+            "Eb2": 77.78,
+            "E2": 82.41,
+            "F2": 87.31,
+            "F#2": 92.5,
+            "Gb2": 92.5,
+            "G2": 98,
+            "G#2": 103.83,
+            "Ab2": 103.83,
+            "A2": 110,
+            "A#2": 116.54,
+            "Bb2": 116.54,
+            "B2": 123.47,
+            "C3": 130.81,
+            "C#3": 138.59,
+            "Db3": 138.59,
+            "D3": 146.83,
+            "D#3": 155.56,
+            "Eb3": 155.56,
+            "E3": 164.81,
+            "F3": 174.61,
+            "F#3": 185,
+            "Gb3": 185,
+            "G3": 196,
+            "G#3": 207.65,
+            "Ab3": 207.65,
+            "A3": 220,
+            "A#3": 233.08,
+            "Bb3": 233.08,
+            "B3": 246.94,
+            "C4": 261.63,
+            "C#4": 277.18,
+            "Db4": 277.18,
+            "D4": 293.66,
+            "D#4": 311.13,
+            "Eb4": 311.13,
+            "E4": 329.63,
+            "F4": 349.23,
+            "F#4": 369.99,
+            "Gb4": 369.99,
+            "G4": 392,
+            "G#4": 415.3,
+            "Ab4": 415.3,
+            "A4": 440,
+            "A#4": 466.16,
+            "Bb4": 466.16,
+            "B4": 493.88,
+            "C5": 523.25,
+            "C#5": 554.37,
+            "Db5": 554.37,
+            "D5": 587.33,
+            "D#5": 622.25,
+            "Eb5": 622.25,
+            "E5": 659.25,
+            "F5": 698.46,
+            "F#5": 739.99,
+            "Gb5": 739.99,
+            "G5": 783.99,
+            "G#5": 830.61,
+            "Ab5": 830.61,
+            "A5": 880,
+            "A#5": 932.33,
+            "Bb5": 932.33,
+            "B5": 987.77,
+            "C6": 1046.5,
+            "C#6": 1108.73,
+            "Db6": 1108.73,
+            "D6": 1174.66,
+            "D#6": 1244.51,
+            "Eb6": 1244.51,
+            "E6": 1318.51,
+            "F6": 1396.91,
+            "F#6": 1479.98,
+            "Gb6": 1479.98,
+            "G6": 1567.98,
+            "G#6": 1661.22,
+            "Ab6": 1661.22,
+            "A6": 1760,
+            "A#6": 1864.66,
+            "Bb6": 1864.66,
+            "B6": 1975.53,
+            "C7": 2093,
+            "C#7": 2217.45,
+            "Db7": 2217.46,
+            "D7": 2349.32,
+            "D#7": 2489.02,
+            "Eb7": 2489.02,
+            "E7": 2637.02,
+            "F7": 2793.83,
+            "F#7": 2959.96,
+            "Gb7": 2959.96,
+            "G7": 3135.96,
+            "G#7": 3322.44,
+            "Ab7": 3322.44,
+            "A7": 3520,
+            "A#7": 3729.31,
+            "Bb7": 3729.31,
+            "B7": 3951.07,
+            "C8": 4186.01,
+            "C#8": 4434.92,
+            "Db8": 4434.92,
+            "D8": 4698.63,
+            "D#8": 4978.03,
+            "Eb8": 4978.03,
+            "E8": 5274.04,
+            "F8": 5587.65,
+            "F#8": 5919.91,
+            "Gb8": 5919.91,
+            "G8": 6271.93,
+            "G#8": 6644.88,
+            "Ab8": 6644.88,
+            "A8": 7040,
+            "A#8": 7458.62,
+            "Bb8": 7458.62,
+            "B8": 7902.13
+        };
     
-    // Each sound starts with some certain settings
-    var soundSetsRef  = settings.soundSettings     || {}
-    soundSettings     = settings.soundSettings     || {
-      preload: soundSetsRef.preload   || "auto",
-      used:    0,
-      volume:  0
+    /**
+     * 
+     */
+    self.reset = function (settings) {
+        context = new AudioContext();
+        
+        localMutedKey = settings.localMutedKey || "AudioPlayerMuted";
+        getVolumeLocal = settings.getVolumeLocal || 100;
+        getThemeDefault = settings.getThemeDefault || "Theme";
+        
+        if(settings.library) {
+            library = settings.library;
+            collections = self.processLibrary(library);
+        } else {
+            library = {};
+            collections = {};
+        }
+        
+        currentSounds = {};
+        currentTheme = undefined;
+        
+        if(localMutedKey) {
+            muted = JSON.parse(localStorage[localMutedKey] || false);
+        } else {
+            muted = settings.muted || false;
+        }
     };
     
-    // Sounds should always start blank
-    sounds = {};
     
-    // If specified, use localStorageMuted to record muted's value
-    if(localStorageMuted)
-      muted = JSON.parse(localStorage[localStorageMuted] || false);
+    /* Storage modifiers
+    */
     
-    // Preload everything!
-    libraryLoad();
-  }
-  
-  /* Public play functions
-  */
-  
-  // Public: play
-  // Plays a file from the library of files
-  var play = self.play = function(name_raw) {
-    // First check if this is already in sounds
-    var sound = sounds[name_raw];
+    /** 
+     * 
+     */
+    self.getLibrary = function () {
+        return library;
+    };
     
-    // If it's not already being played...
-    if(!sound) {
-      // Check for it in the library
-      if(sound = library[name_raw]) {
-        // Since it exists, add it to sounds
-        sounds[name_raw] = sound;
-      }
-      // If it's not in the library, we've got a problem
-      else {
-        console.log("Unknown sound: '" + name_raw + "'");
-        return sound;
-      }
+    /**
+     * 
+     */
+    self.setLibrary = function (libraryNew) {
+        library = libraryNew;
+    };
+    
+    /**
+     * 
+     */
+    self.getCollections = function () {
+        return collections;
+    };
+    
+    /**
+     * 
+     */
+    self.getCollection = function (key) {
+        return collections[key];
     }
     
-    // Reset the sound to the start, at the correct volume
-    sound.name_raw = name_raw; // just to be sure
-    soundStop(sound);
-    sound.volume = !muted; /* = 0; /**/
     
-    // This plays the sound.
-    sound.play();
+    /* Playback
+    */
     
-    // If this was the first time the sound was added, let it know how to stop
-    if(!(sound.used++))
-      sound.addEventListener("ended", function() {
-        soundFinish(sound, name_raw);
-      });
-    
-    return sound;
-  }
-  
-  // Public: playLocal
-  // Changes the volume of a sound based on distance from the reference object
-  self.playLocal = function(name_raw, location) {
-    // Start off with a typical sound
-    var sound = play(name_raw),
-        volume_real;
-    
-    // If that sound didn't work, quit it
-    if(!sound) return sound;
-    
-    // There must be a user-defined way to determine what the volume should be
-    switch(getVolumeLocal.constructor) {
-      case Function:
-        volume_real = getVolumeLocal(location);
-      break;
-      case Number:
-        volume_real = getVolumeLocal;
-      break;
-      default:
-        volume_real = Number(volume_real) || 1;
-      break;
-    }
-    sound.volume = sound.volume_real = volume_real /**/ = 0; /**/;
-    
-    return sound;
-  }
-  
-  // Public: playTheme
-  // Plays a theme as sounds.theme via play()
-  // If no theme is provided, who the hell knows
-  self.playTheme = function(name_raw, resume, loop) {
-    // Set loop default to true
-    loop = typeof loop !== 'undefined' ? loop : true;
-    
-    // If name_raw isn't given, use the default getter
-    if(!name_raw) 
-      switch(getThemeDefault.constructor) {
-        case Function:
-          name_raw = getThemeDefault();
-        break
-        case String:
-          name_raw = getThemeDefault;
-        break;
-      }
-    
-    // First make sure there isn't already a theme playing
-    if(sound = theme) {
-      soundStop(sound);
-      theme = undefined;
-      delete sounds[sound.name_raw];
-    }
-    
-    // This creates the sound.
-    var sound = theme = play(name_raw);
-    sound.loop = loop;
-    
-    // Don't resume the sound again if specified not to
-    if(!resume)
-      sound.used = false;
-    
-    // If it's used (no repeat), add the event listener to resume theme
-    if(sound.used == 1)
-      sound.addEventListener("ended", self.playTheme);
-    
-    return sound;
-  }
-  
-  
-  /* Public utilities
-  */
-  
-  // Public: addEventListener
-  // Adds an event listener to a sound, if it exists
-  self.addEventListener = function(name_raw, event, func) {
-    var sound = sounds[name_raw];
-    if(sound) sound.addEventListenever(event, func);
-  }
-  
-  // Public: addEventImmediate
-  // Calls a function when a sound calls a trigger, or immediately if it's not playing
-  self.addEventImmediate = function(name_raw, event, func) {
-    var sound = sounds[name_raw];
-    if(sound && !sound.paused)
-      sound.addEventListener(event, func);
-    else func();
-  }
-  
-  // Public: toggleMute
-  // Swaps whether mute is enabled, saving to localStorage if needed
-  self.toggleMute = function() {
-    // Swap all sounds' volume on muted
-    muted = !muted;
-    for(var i in sounds)
-      sounds[i].volume = muted ? 0 : (sounds[i].volume_real || 1);
-    // If specified, store this in localStorage
-    if(localStorageMuted) 
-      localStorage[localStorageMuted] = muted;
-  }
-  
-  // Public: simple pause and resume functions
-  self.pause = function() { for(var i in sounds) if(sounds[i]) soundPause(sounds[i]); }
-  self.resume = function() { for(var i in sounds) if(sounds[i]) soundPlay(sounds[i]); }
-  self.pauseTheme = function() { if(theme) theme.pause(); }
-  self.resumeTheme = function() { if(theme) theme.play(); }
-  self.clear = function() {
-    self.pause();
-    sounds = {};
-    self.theme = undefined;
-  }
-  
-  
-  /* Public gets
-  */
-  self.getLibrary = function() { return library; }
-  self.getSounds = function() { return sounds; }
-  
-  /* Private utilities
-  */
-  
-  // Called when a sound is done to get it out of sounds
-  function soundFinish(sound, name_raw) {
-    if(sounds[name_raw])
-      delete sounds[name_raw];
-  }
-  
-  // Quick play, pause
-  function soundPlay(sound) { sound.play(); }
-  function soundPause(sound) { sound.pause(); }
-  
-  // Carefully stops a sound
-  function soundStop(sound) {
-    if(sound && sound.pause) {
-      sound.pause();
-      if(sound.readyState)
-        sound.currentTime = 0;
-    }
-  }
-  
-  
-  /* Private loading / resetting
-  */
-  
-  // Sounds given as strings are requested via AJAX
-  function libraryLoad() {
-    var section, name, s_name, j;
-    
-    // For each given section (names, themes):
-    for(s_name in library) {
-      section = library[s_name];
-      // For each thing in that section:
-      for(j in section) {
-        name = section[j];
-        // Create the sound and store it in the container
-        library[name] = createAudio(name, s_name);
-      }
-    }
-  }
-  
-  // Creates an audio element, gives it the sources, and starts preloading
-  function createAudio(name, section) {
-    var sound = document.createElement("Audio"),
-        type, i;
-    
-    // Copy the default settings into the sound
-    proliferate(sound, soundSettings);
-    
-    // Create an audio source for each child
-    for(i in filetypes) {
-      type = filetypes[i];
-      sound.appendChild(proliferate(
-        document.createElement("Source"), {
-          type: "audio/" + type,
-          src: directory + "/" + section + "/" + type + "/" + name + "." + type
+    /**
+     * 
+     */
+    self.play = function (key) {
+        var collection = collections[key],
+            components = collection.components,
+            component, instructions, i;
+        
+        for(i in components) {
+            component = components[i];
+            instructions = component.instructions;
+            playComponent(component, collection);
         }
-      ));
+    };
+    
+    /**
+     * Move to core?
+     * doesn't check for rest.
+     */
+    function playComponent(component, collection) {
+        var instruction = component.instructions[component.index];
+        
+        switch(instruction.type) {
+            case "notes":
+                playComponentNotes(instruction, component, collection);
+                break;
+            case "rest":
+                playComponentRest(instruction, component, collection);
+                break;
+            case "repeat":
+                playComponentRepeat(instruction, component, collection);
+                break;
+        }
     }
     
-    // This preloads the sound.
-    sound.play();
-    
-    return sound;
-  }
-  
-  // (This function copied from toned.js)
-  // Copies everything from settings into the elem
-  function proliferate(elem, settings) {
-    var setting, i;
-    for(i in settings) {
-      if(typeof(setting = settings[i]) == "object") {
-        if(!elem[i]) elem[i] = {};
-        proliferate(elem[i], setting);
-      }
-      else elem[i] = setting;
+    /**
+     * 
+     */
+    function getBeatsPerLength(instruction, collection) {
+        return instruction.length * collection.beatsPer.second * 166.6666667;
     }
-    return elem;  
-  }
-  
-  reset(settings || {});
-  return self;
+    
+    /**
+     * 
+     */
+    function playComponentNotes(instruction, component, collection) {
+        var length = getBeatsPerLength(instruction, collection),
+            players = instruction.notes.map(createPlayer.bind(undefined, component, instruction)),
+            i;
+        
+        for(i = 0; i < players.length; i += 1) {
+            players[i].play();
+        }
+        
+        setTimeout(function () {
+            for(i = 0; i < players.length; i += 1) {
+                players[i].stop();
+            }
+            continueComponent(component, collection);
+        }, length);
+    }
+    
+    /**
+     * 
+     */
+    function playComponentRest(instruction, component, collection) {
+        var length = getBeatsPerLength(instruction, collection);
+        setTimeout(function () {
+            continueComponent(component, collection);
+        }, length);
+    }
+    
+    /** 
+     * 
+     */
+    function playComponentRepeat(instruction, component, collection) {
+        switch(instruction.action) {
+            case "start":
+                playComponentRepeatStart(instruction, component, collection);
+                break;
+            case "play":
+                playComponentRepeatPlay(instruction, component, collection);
+                break;
+        }
+        
+        continueComponent(component, collection);
+    }
+    
+    /**
+     * 
+     */
+    function playComponentRepeatStart(instruction, component, collection) {
+        component.repeatStack.push({
+            "index": component.index,
+            "repeated": 0
+        });
+    }
+    
+    /**
+     * 
+     */
+    function playComponentRepeatPlay(instruction, component, collection) {
+        var repeater = component.repeatStack[component.repeatStack.length - 1];
+        
+        if(repeater.repeated >= instruction.times) {
+            component.repeatStack.pop();
+            return;
+        }
+        
+        component.index = repeater.index;
+        repeater.repeated += 1;
+    }
+    
+    /** 
+     * 
+     */
+    function continueComponent(component, collection) {
+        component.index += 1;
+        
+        if(component.index < component.instructions.length) {
+            playComponent(component, collection);
+        }
+    }
+    
+    /**
+     * Move to core?
+     */
+    function createPlayer(component, instruction, note) {
+        return new component.generatorConstructor(component.settings, {
+            "frequency": noteFrequencies[note]
+        });
+    }
+    
+    /**
+     * 
+     */
+    self.playLocal = function () {
+        
+    };
+    
+    /**
+     * 
+     */
+    self.playTheme = function () {
+        
+    };
+    
+    /**
+     * 
+     */
+    self.pause = function () {
+        
+    };
+    
+    /**
+     * 
+     */
+    self.pauseTheme = function () {
+        
+    };
+    
+    /**
+     * 
+     */
+    self.resume = function () {
+        
+    };
+    
+    /**
+     * 
+     */
+    self.resumeTheme = function () {
+        
+    };
+    
+    
+    /* Core processing
+    */
+    
+    /**
+     * 
+     */
+    self.processLibrary = function (library) {
+        var output = {},
+            key;
+            
+        for(key in library) {
+            output[key] = self.processAudio(library[key]);
+        }
+        
+        return output;
+    }
+    
+    /**
+     * 
+     */
+    self.addAudio = function (key, settings) {
+        library[key] = settings;
+        processed[key] = self.processAudio(settings);
+    };
+    
+    /**
+     * 
+     */
+    self.processAudio = function (settings) {
+        return new AudioContainer(settings);
+    }
+    
+    /**
+     * 
+     */
+    function AudioContainer(settings) {
+        var components = this.components = {},
+            i;
+        
+        for(i in settings.components) {
+            components[i] = new AudioComponent(settings.components[i]);
+        }
+        
+        this.beatsPer = {
+            "minute": settings.bpm,
+            "second": (settings.bpm / 60)
+        };
+        
+        this.playing = false;
+    };
+    
+    /**
+     * 
+     */
+    function AudioComponent(settings) {
+        this.generatorConstructor = generatorNames[settings.generator];
+        this.settings = settings.settings;
+        this.instructions = settings.instructions;
+        this.timeout = undefined;
+        this.index = 0;
+        this.repeatStack = [];
+    }
+    
+    
+    /* Oscillator generator
+    */
+    
+    /**
+     * 
+     */
+    function OscillatorGenerator() {
+        var settings, i;
+        
+        this.oscillator = context.createOscillator();
+        this.oscillator.connect(context.destination);
+        
+        for(i = arguments.length - 1; i >= 0; i -= 1) {
+            settings = arguments[i];
+            if(typeof(settings.frequency) !== "undefined") {
+                this.oscillator.frequency.value = settings.frequency;
+            }
+            if(typeof(settings.detune) !== "undefined") {
+                this.oscillator.detune.value = settings.detune;
+            }
+            if(typeof(settings.type) !== "undefined") {
+                this.oscillator.type = settings.type;
+            }
+        }
+    }
+    
+    /**
+     * 
+     */
+    OscillatorGenerator.prototype.play = function (time) {
+        this.oscillator.start(time | 0);
+    };
+
+    /**
+     * 
+     */
+    OscillatorGenerator.prototype.stop = function (time) {
+        this.oscillator.stop(time | 0);
+    };
+    
+    /**
+     * 
+     */
+    OscillatorGenerator.prototype.getEngine = function () {
+        return this.oscillator;
+    };
+    
+    
+    /* Noise generators
+    */
+    
+    /**
+     * 
+     */
+    var AbstractNoiseGenerator = {
+        "preSetup": function (settings) {
+            this.bufferSize = 2 * context.sampleRate;
+            this.noiseBuffer = context.createBuffer(1, this.bufferSize, context.sampleRate);
+            this.output = this.noiseBuffer.getChannelData(0);
+            
+            this.noise = context.createBufferSource();
+            this.noise.buffer = this.noiseBuffer;
+            this.noise.loop = true;
+        },
+        "postSetup": function (settings) {
+            this.noise.connect(context.destination);
+        },
+        "play": function (time) {
+            this.noise.start(time | 0);
+        },
+        "stop": function (time) {
+            this.noise.stop(time | 0);
+        },
+        "getEngine": function () {
+            return this.noise;
+        }
+    };
+    
+    /**
+     * 
+     */
+    function WhiteNoiseGenerator(settings) {
+        debugger;
+        this.preSetup();
+        
+        for(var i = 0; i < this. output.length; i += 1) {
+            this.output[i] = Math.random() * 2 - 1;
+        }
+        
+        this.postSetup();
+    }
+    
+    WhiteNoiseGenerator.prototype = AbstractNoiseGenerator;
+    
+    /**
+     * 
+     */
+    function PinkNoiseGenerator(settings) {
+        var b0 = 0.0,
+            b1 = 0.0, 
+            b2 = 0.0, 
+            b3 = 0.0, 
+            b4 = 0.0, 
+            b5 = 0.0,
+            b6 = 0.0,
+            white, i;
+        
+        this.preSetup();
+
+        for(i = 0; i < this.bufferSize; ++i) {
+            white = Math.random() * 2 - 1;
+            b0 = 0.99886 * b0 + white * 0.0555179;
+            b1 = 0.99332 * b1 + white * 0.0750759;
+            b2 = 0.96900 * b2 + white * 0.1538520;
+            b3 = 0.86650 * b3 + white * 0.3104856;
+            b4 = 0.55000 * b4 + white * 0.5329522;
+            b5 = -0.7616 * b5 - white * 0.0168980;
+            b6 = white * 0.115926;
+            this.output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * .11;
+        }
+
+        this.postSetup();
+    }
+    
+    PinkNoiseGenerator.prototype = AbstractNoiseGenerator;
+    
+    /**
+     * 
+     */
+    function BrownianNoiseGenerator(settings) {
+        var record = 0,
+            i;
+        
+        this.preSetup();
+        
+        for(i = 0; i < this.bufferSize; ++i) {
+            this.output[i] = (record + (Math.random() * .04 - 1)) / 1.02;
+            record = this.output[i];
+            this.output[i] *= 3.5;
+        }
+        
+        this.postSetup();
+    }
+    
+    BrownianNoiseGenerator.prototype = AbstractNoiseGenerator;
+    
+    
+    self.reset(settings || {});
 }
