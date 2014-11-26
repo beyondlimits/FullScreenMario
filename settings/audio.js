@@ -1,5 +1,18 @@
 FullScreenMario.prototype.settings.audio = {
-    "prefix": "FullScreenMarioAudioPlayer",
+    "statistics": {
+        "no_container": true,
+        "prefix": "FullScreenMarioAudioPlayer",
+        "values": {
+            "volume": {
+                "value_default": 1,
+                "store_locally": true
+            },
+            "muted": {
+                "value_default": 0,
+                "store_locally": true
+            }
+        }
+    },
     // Note: the GB table is an octave lower (this standardizes to 8bit.js)
     "noteFrequencies": {
         "C0": 16.35,

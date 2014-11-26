@@ -41,18 +41,16 @@ function StatsHoldr(settings) {
         
         // Helper function to create an element, such as given by an EightBittr
         createElement;
-
+    
+    /**
+     * 
+     */
     self.reset = function reset(settings) {
         proliferate = settings.proliferate;
         createElement = settings.createElement;
-        localStorage = window.localStorage || settings.localStorage || {};
+        localStorage = settings.localStorage || window.localStorage || {};
         prefix = settings.prefix || "";
         separator = settings.separator || "";
-        containers = settings.containers || [
-            ["div", {
-                "className": prefix + "_container"
-            }]
-        ]
         scope = settings.scope;
 
         defaults = {};
@@ -67,13 +65,26 @@ function StatsHoldr(settings) {
             }
         }
 
-        container = makeContainer(settings);
+        if(!settings.no_container) {
+            containers = settings.containers || [
+                ["div", {
+                    "className": prefix + "_container"
+                }]
+            ]
+            container = makeContainer(settings);
+        }
     }
     
+    /**
+     * 
+     */
     self.addStatistic = function (key, settings) {
         values[key] = new Value(key, settings);
     };
-
+    
+    /**
+     * 
+     */
     function Value(key, settings) {
         this.key = key;
         proliferate(this, defaults);  // value
@@ -133,7 +144,10 @@ function StatsHoldr(settings) {
 
     /* Updating values
      */
-
+    
+    /**
+     * 
+     */
     self.set = function(key, value) {
         if (!checkExistence(key)) {
             return;
@@ -147,6 +161,9 @@ function StatsHoldr(settings) {
         values[key].update();
     }
     
+    /**
+     * 
+     */
     self.increase = function(key, value) {
         if (!checkExistence(key)) {
             return;
@@ -158,6 +175,9 @@ function StatsHoldr(settings) {
         values[key].update();
     }
     
+    /**
+     * 
+     */
     self.decrease = function(key, value) {
         if (!checkExistence(key)) {
             return;
@@ -169,6 +189,9 @@ function StatsHoldr(settings) {
         values[key].update();
     }
 
+    /**
+     * 
+     */
     // Toggling requires the type to be a bool, since true -> "true" -> NaN
     self.toggle = function(key) {
         if (!checkExistence(key)) {
@@ -178,6 +201,9 @@ function StatsHoldr(settings) {
         values[key].update();
     }
 
+    /**
+     * 
+     */
     function checkExistence(key) {
         if (!values.hasOwnProperty(key)) {
             console.warn("The key '" + key + "' does not exist in storage.");
@@ -186,6 +212,9 @@ function StatsHoldr(settings) {
         return true;
     }
 
+    /**
+     * 
+     */
     function checkModularity() {
         while (this.value > this.modularity) {
             this.value = this.value % this.modularity;
@@ -199,6 +228,9 @@ function StatsHoldr(settings) {
     /* Updating components
      */
 
+    /**
+     * 
+     */
     // Updates whatever's needed from the visual element and localStorage
     function update() {
         // Mins and maxes must be obeyed before any other considerations
@@ -225,10 +257,16 @@ function StatsHoldr(settings) {
         }
     }
 
+    /**
+     * 
+     */
     function updateElement() {
         this.element.innerHTML = this.key + separator + this.value;
     }
 
+    /**
+     * 
+     */
     function updateLocalStorage() {
         localStorage[prefix + this.key] = this.value;
     }
@@ -236,18 +274,30 @@ function StatsHoldr(settings) {
     /* HTML
      */
 
+    /**
+     * 
+     */
     self.getContainer = function () {
         return container;
     };
 
+    /**
+     * 
+     */
     self.hideContainer = function () {
         container.style.visibility = "hidden";
     };
 
+    /**
+     * 
+     */
     self.displayContainer = function () {
         container.style.visibility = "";
     };
 
+    /**
+     * 
+     */
     function makeContainer(settings) {
         var output = createElement.apply(this, containers[0]),
             current = output,
@@ -274,10 +324,16 @@ function StatsHoldr(settings) {
     /* Retrieval
      */
      
+    /**
+     * 
+     */
     self.getKeyNames = function () {
         return Object.keys(values);
     };
 
+    /**
+     * 
+     */
     self.get = function(key) {
         if (!checkExistence(key)) {
             return;
@@ -285,6 +341,9 @@ function StatsHoldr(settings) {
         return values[key].value;
     }
     
+    /**
+     * 
+     */
     self.getObject = function(key) {
         return values[key];
     }

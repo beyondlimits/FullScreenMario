@@ -33,6 +33,9 @@ function AudioPlayr(settings) {
         // Lookup table of String note names to their frequency Numbers
         noteFrequencies,
         
+        // Storage container for settings like volume and muted status
+        StatsHolder,
+        
         // Lookup table of Strings to generator Functions
         generatorNames = {
             "Oscillator": OscillatorGenerator,
@@ -66,7 +69,12 @@ function AudioPlayr(settings) {
             collections = {};
         }
         
-        currentSounds = [];
+        currentSounds = {};
+        
+        StatsHolder = new StatsHoldr(settings.statistics);
+        
+        self.setVolume(StatsHolder.get("volume"));
+        self.setMuted(StatsHolder.get("muted"));
     };
     
     /**
@@ -121,7 +129,14 @@ function AudioPlayr(settings) {
      */
     self.getCollection = function (key) {
         return collections[key];
-    }
+    };
+    
+    /**
+     *
+     */
+    self.getCurrentSounds = function () {
+        return currentSounds;
+    };
     
     
     /* Playback modifiers
@@ -132,7 +147,28 @@ function AudioPlayr(settings) {
      */
     self.setVolume = function (volume) {
         volumeControl.gain.value = volume;
+        StatsHolder.set("volume", volume);
     };
+    
+    /**
+     * 
+     */
+    self.getVolume = function () {
+        return StatsHolder.get("volume");
+    };
+    
+    /**
+     * 
+     */
+    self.setMuted = function (muted) {
+        if(muted) {
+            volumeControl.gain.value = 0;
+        } else {
+            volumeControl.gain.value = self.getVolume();
+        }
+        
+        StatsHolder.set("muted", muted);
+    }
     
     
     /* Playback
@@ -148,7 +184,7 @@ function AudioPlayr(settings) {
             throw new Error("Unknown key given to AudioPlayr.play: '" + key + "'.");
         }
         
-        playCollection(collection);
+        currentSounds[key] = playCollection(collection);
     };
     
     /**
