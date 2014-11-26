@@ -12,8 +12,14 @@ function AudioPlayr(settings) {
     }
     var self = this,
         
-        // The Web Audio API AudioContext this is streaming to
+        // The AudioContext this is streaming to
         context,
+        
+        // The transforms being applied to the AudioContext output
+        transforms,
+        
+        // The final transform, which is a gainNode to control volume
+        volumeControl,
         
         // ???
         library,
@@ -51,6 +57,13 @@ function AudioPlayr(settings) {
             "WhiteNoise": WhiteNoiseGenerator,
             "PinkNoise": PinkNoiseGenerator,
             "BrownianNoise": BrownianNoiseGenerator
+        },
+        
+        // Lookup table for playComponent actions
+        playComponentActions = {
+            "notes": playComponentNotes,
+            "rest": playComponentRest,
+            "repeat": playComponentRepeat
         },
         
         // Lookup table of String note names to their frequency Numbers
@@ -217,6 +230,8 @@ function AudioPlayr(settings) {
     self.reset = function (settings) {
         context = new AudioContext();
         
+        resetTransforms(settings.transforms || []);
+        
         localMutedKey = settings.localMutedKey || "AudioPlayerMuted";
         getVolumeLocal = settings.getVolumeLocal || 100;
         getThemeDefault = settings.getThemeDefault || "Theme";
@@ -238,6 +253,28 @@ function AudioPlayr(settings) {
             muted = settings.muted || false;
         }
     };
+    
+    /**
+     * 
+     */
+    function resetTransforms(transformsRaw) {
+        var i;
+        
+        // The internal transforms are a copy of the given transforms...
+        transforms = transformsRaw.slice();
+        
+        // ...except also with a volumeControl at the end
+        volumeControl = context.createGain();
+        transforms.push(volumeControl);
+        
+        // Each transform then points to the next one...
+        for(i = 0; i < transforms.length - 1; i += 1) {
+            transforms[i].connect(transforms[i + 1].destination);
+        }
+        
+        // ...which points to the final context
+        transforms[i].connect(context.destination);
+    }
     
     
     /* Storage modifiers
@@ -272,6 +309,17 @@ function AudioPlayr(settings) {
     }
     
     
+    /* Playback modifiers
+    */
+    
+    /**
+     * 
+     */
+    self.setVolume = function (volume) {
+        volumeControl.gain.value = volume;
+    };
+    
+    
     /* Playback
     */
     
@@ -279,16 +327,26 @@ function AudioPlayr(settings) {
      * 
      */
     self.play = function (key) {
-        var collection = collections[key],
-            components = collection.components,
+        var collection = collections[key];
+        
+        if(!collection) {
+            throw new Error("Unknown key given to AudioPlayr.play: '" + key + "'.");
+        }
+        
+        playCollection(collection);
+    };
+    
+    /**
+     * 
+     */
+    function playCollection(collection) {
+        var components = collection.components,
             component, instructions, i;
         
         for(i in components) {
-            component = components[i];
-            instructions = component.instructions;
-            playComponent(component, collection);
+            playComponent(components[i], collection);
         }
-    };
+    }
     
     /**
      * Move to core?
@@ -296,18 +354,7 @@ function AudioPlayr(settings) {
      */
     function playComponent(component, collection) {
         var instruction = component.instructions[component.index];
-        
-        switch(instruction.type) {
-            case "notes":
-                playComponentNotes(instruction, component, collection);
-                break;
-            case "rest":
-                playComponentRest(instruction, component, collection);
-                break;
-            case "repeat":
-                playComponentRepeat(instruction, component, collection);
-                break;
-        }
+        playComponentActions[instruction.type](instruction, component, collection);
     }
     
     /**
@@ -510,8 +557,9 @@ function AudioPlayr(settings) {
         this.settings = settings.settings;
         this.instructions = settings.instructions;
         this.timeout = undefined;
-        this.index = 0;
         this.repeatStack = [];
+        this.index = 0;
+        this.playing = false;
     }
     
     
@@ -525,7 +573,7 @@ function AudioPlayr(settings) {
         var settings, i;
         
         this.oscillator = context.createOscillator();
-        this.oscillator.connect(context.destination);
+        this.oscillator.connect(volumeControl);
         
         for(i = arguments.length - 1; i >= 0; i -= 1) {
             settings = arguments[i];
@@ -580,7 +628,7 @@ function AudioPlayr(settings) {
             this.noise.loop = true;
         },
         "postSetup": function (settings) {
-            this.noise.connect(context.destination);
+            this.noise.connect(volumeControl);
         },
         "play": function (time) {
             this.noise.start(time | 0);
