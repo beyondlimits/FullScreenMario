@@ -132,7 +132,7 @@ function ThingHittr(settings) {
      * 
      */
     self.checkHitsOfOne = function(thing, id) {
-        var others, other,
+        var others, other, hit_check,
             i, j, k;
          
         // Don't do anything if the thing shouldn't be checking
@@ -144,6 +144,13 @@ function ThingHittr(settings) {
         for(i = 0; i < thing.numquads; i += 1) {
             for(j = 0; j < group_names.length; j += 1) {
                 others = thing.quadrants[i].things[group_names[j]];
+                hit_check = hit_checks[thing.grouptype][group_names[j]];
+                
+                // If no hit check exists for this combo, don't bother
+                if(!hit_check) {
+                    continue;
+                }
+                
                 for(k = 0; k < others.length; k += 1) {
                     other = others[k];
                     
@@ -152,11 +159,8 @@ function ThingHittr(settings) {
                         break;
                     }
                     
-                    // Check whether a collision should be happening
-                    tryCollision(
-                        hit_checks[thing.grouptype][other.grouptype],
-                        thing, other, id
-                    );
+                    // If needed, check whether a collision should be happening
+                    tryCollision(hit_check, thing, other);
                 }
            }
         }
@@ -165,13 +169,8 @@ function ThingHittr(settings) {
     /**
      * 
      */
-    function tryCollision(hit_check, thing, other, id) {
-        // If there's no hit_checks[~][~], hit_check will be falsy, so skip it
-        if(!hit_check) {
-            return;
-        }
-        
-        // Also do nothing if these two shouldn't be colliding
+    function tryCollision(hit_check, thing, other) {
+        // Do nothing if these two shouldn't be colliding
         if(!global_checks[other.grouptype].can_collide(other)) {
             return;
         }
