@@ -178,6 +178,11 @@ function AudioPlayr(settings) {
         }
         
         currentSounds[key] = collection;
+        
+        if(collection.playing) {
+            collection.stop();
+        }
+        
         collection.play();
     };
     
@@ -185,15 +190,36 @@ function AudioPlayr(settings) {
      * 
      */
     self.pause = function () {
-        
+        for(var key in currentSounds) {
+            currentSounds[key].pause();
+        }
     };
     
     /**
      * 
      */
     self.resume = function () {
-        
+        for(var key in currentSounds) {
+            currentSounds[key].resume();
+        }
     };
+    
+    /**
+     * 
+     */
+    self.stop = function () {
+        for(var key in currentSounds) {
+            currentSounds[key].stop();
+        }
+    }
+    
+    /**
+     * 
+     */
+    self.clear = function () {
+        self.stop();
+        currentSounds = {};
+    }
     
     
     /* Core processing
@@ -266,6 +292,15 @@ function AudioPlayr(settings) {
     /**
      * 
      */
+    AudioCollection.prototype.resume = function () {
+        if(!this.playing) {
+            this.play();
+        }
+    };
+    
+    /**
+     * 
+     */
     AudioCollection.prototype.pause = function () {
         if(!this.playing) {
             return;
@@ -331,14 +366,22 @@ function AudioPlayr(settings) {
      * 
      */
     AudioComponent.prototype.pause = function () {
+        if(this.playing) {
+            for(var i = 0; i < this.players.length; i += 1) {
+                this.players[i].stop();
+            }
+        }
         
+        this.playing = false;
+        clearTimeout(this.timeout);
     };
     
     /**
      * 
      */
     AudioComponent.prototype.stop = function () {
-        
+        this.pause();
+        this.index = 0;
     };
     
     /**
@@ -364,6 +407,9 @@ function AudioPlayr(settings) {
         
         if(this.index < this.instructions.length) {
             this.play();
+        } else {
+            this.index = 0;
+            this.playing = false;
         }
     };
     
@@ -427,11 +473,10 @@ function AudioPlayr(settings) {
         
         if(repeater.repeated >= instruction.times) {
             this.repeatStack.pop();
-            return;
+        } else {
+            this.index = repeater.index;
+            repeater.repeated += 1;
         }
-        
-        this.index = repeater.index;
-        repeater.repeated += 1;
         
         this.timeout = setTimeout(this.instructionContinueBound);
     };
