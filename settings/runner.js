@@ -21,11 +21,13 @@ FullScreenMario.prototype.settings.runner = {
             this.TimeHandler.handleEvents();
         },
         function () {
-            // this.PixelDrawer.refillGlobalCanvas(this.MapsHandler.getArea().background);
-            this.PixelDrawer.refillQuadrantGroups(
-                this.QuadsKeeper.getQuadrantRows(),
-                this.MapsHandler.getArea().background
-            );
+            this.PixelDrawer.refillGlobalCanvas(this.MapsHandler.getArea().background);
+            // this.PixelDrawer.refillQuadrantGroups(
+                // this.QuadsKeeper.getQuadrantRows(),
+                // this.MapsHandler.getArea().background
+            // );
         }
     ]
 }
+
+console.warn("The old refillGlobalCanvas is being used because quadrants aren't performant.");

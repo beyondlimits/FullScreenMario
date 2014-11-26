@@ -283,10 +283,10 @@ function PixelDrawr(settings) {
     self.drawThingOnContext = function(context, thing) {
         if(
             thing.hidden
-            || thing.top > MapScreener.bottom
-            || thing.right < MapScreener.left
-            || thing.bottom < MapScreener.top
-            || thing.left > MapScreener.right
+            // || thing.top > MapScreener.bottom
+            // || thing.right < MapScreener.left
+            // || thing.bottom < MapScreener.top
+            // || thing.left > MapScreener.right
         ) {
             return;
         }

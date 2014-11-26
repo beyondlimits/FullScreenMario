@@ -161,7 +161,7 @@
                     "length": .5
                 }, {
                     "type": "repeat",
-                    "action": "play",
+                    "action": "back",
                     "times": 1
                 }, {
                     "type": "rest",
@@ -221,28 +221,28 @@
                     "notes": ["D5", "F4"]
                 }]
             },
-            "LeftHand": {
-                "generator": "Oscillator",
-                "settings": {
-                    "type": "triangle"
-                },
-                "instructions": [{
-                    "type": "notes",
-                    "length": .25,
-                    "notes": ["D3"]
-                }, {
-                    "type": "notes",
-                    "length": .25,
-                    "notes": ["D3"]
-                }, {
-                    "type": "rest",
-                    "length": .25
-                }, {
-                    "type": "notes",
-                    "length": .25,
-                    "notes": ["D3"]
-                }]
-            },
+            // "LeftHand": {
+                // "generator": "Oscillator",
+                // "settings": {
+                    // "type": "triangle"
+                // },
+                // "instructions": [{
+                    // "type": "notes",
+                    // "length": .25,
+                    // "notes": ["D3"]
+                // }, {
+                    // "type": "notes",
+                    // "length": .25,
+                    // "notes": ["D3"]
+                // }, {
+                    // "type": "rest",
+                    // "length": .25
+                // }, {
+                    // "type": "notes",
+                    // "length": .25,
+                    // "notes": ["D3"]
+                // }]
+            // },
             // "Beat": {
                 // "generator": "WhiteNoise",
                 // "instructions": [{

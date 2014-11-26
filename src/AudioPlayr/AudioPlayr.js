@@ -38,17 +38,10 @@ function AudioPlayr(settings) {
         
         // Lookup table of Strings to generator Functions
         generatorNames = {
-            "Oscillator": OscillatorGenerator,
+            "Oscillator": OscillationGenerator,
             "WhiteNoise": NoiseGenerator.bind(undefined, "White"),
             "PinkNoise": NoiseGenerator.bind(undefined, "Pink"),
             "BrownianNoise": NoiseGenerator.bind(undefined, "Brownian")
-        },
-        
-        // Lookup table for playComponent actions
-        playComponentActions = {
-            "notes": playComponentNotes,
-            "rest": playComponentRest,
-            "repeat": playComponentRepeat
         };
     
     /**
@@ -184,131 +177,9 @@ function AudioPlayr(settings) {
             throw new Error("Unknown key given to AudioPlayr.play: '" + key + "'.");
         }
         
-        currentSounds[key] = playCollection(collection);
+        currentSounds[key] = collection;
+        collection.play();
     };
-    
-    /**
-     * 
-     */
-    function playCollection(collection) {
-        var components = collection.components,
-            component, instructions, i;
-        
-        collection.playing = true;
-        
-        for(i in components) {
-            playComponent(components[i], collection);
-        }
-    }
-    
-    /**
-     * Move to core?
-     * doesn't check for rest.
-     */
-    function playComponent(component, collection) {
-        var instruction = component.instructions[component.index];
-        playComponentActions[instruction.type](instruction, component, collection);
-        
-        component.playing = true;
-    }
-    
-    /**
-     * 
-     */
-    function getBeatsPerLength(instruction, collection) {
-        return instruction.length * collection.beatsPer.second * 166.6666667;
-    }
-    
-    /**
-     * 
-     */
-    function playComponentNotes(instruction, component, collection) {
-        var length = getBeatsPerLength(instruction, collection),
-            players = instruction.notes.map(createPlayer.bind(undefined, component, instruction)),
-            i;
-        
-        for(i = 0; i < players.length; i += 1) {
-            players[i].play();
-        }
-        
-        component.timeout = setTimeout(function () {
-            for(i = 0; i < players.length; i += 1) {
-                players[i].stop();
-            }
-            continueComponent(component, collection);
-        }, length);
-    }
-    
-    /**
-     * 
-     */
-    function playComponentRest(instruction, component, collection) {
-        var length = getBeatsPerLength(instruction, collection);
-        setTimeout(function () {
-            continueComponent(component, collection);
-        }, length);
-    }
-    
-    /** 
-     * 
-     */
-    function playComponentRepeat(instruction, component, collection) {
-        switch(instruction.action) {
-            case "start":
-                playComponentRepeatStart(instruction, component, collection);
-                break;
-            case "play":
-                playComponentRepeatPlay(instruction, component, collection);
-                break;
-        }
-        
-        continueComponent(component, collection);
-    }
-    
-    /**
-     * 
-     */
-    function playComponentRepeatStart(instruction, component, collection) {
-        component.repeatStack.push({
-            "index": component.index,
-            "repeated": 0
-        });
-    }
-    
-    /**
-     * 
-     */
-    function playComponentRepeatPlay(instruction, component, collection) {
-        var repeater = component.repeatStack[component.repeatStack.length - 1];
-        
-        if(repeater.repeated >= instruction.times) {
-            component.repeatStack.pop();
-            return;
-        }
-        
-        component.index = repeater.index;
-        repeater.repeated += 1;
-    }
-    
-    /** 
-     * 
-     */
-    function continueComponent(component, collection) {
-        component.index += 1;
-        
-        if(component.index < component.instructions.length) {
-            playComponent(component, collection);
-        }
-    }
-    
-    /**
-     * Move to core?
-     */
-    function createPlayer(component, instruction, note) {
-        return new component.generatorConstructor(component.settings, {
-            "frequency": note.constructor === String ? noteFrequencies[note] : note
-        });
-    }
     
     /**
      * 
@@ -354,24 +225,25 @@ function AudioPlayr(settings) {
      * 
      */
     self.processAudio = function (settings) {
-        return new AudioContainer(settings);
+        return new AudioCollection(settings);
     }
+    
+    
+    /* Audio collections
+    */
     
     /**
      * 
      */
-    function AudioContainer(settings) {
+    function AudioCollection(settings) {
         var components = this.components = {},
             i;
         
         for(i in settings.components) {
-            components[i] = new AudioComponent(settings.components[i]);
+            components[i] = new AudioComponent(settings.components[i], this);
         }
         
-        this.beatsPer = {
-            "minute": settings.bpm,
-            "second": (settings.bpm / 60)
-        };
+        this.beatLength = settings.bpm / 60 * 166.6666667;
         
         this.playing = false;
     };
@@ -379,66 +251,212 @@ function AudioPlayr(settings) {
     /**
      * 
      */
-    function AudioComponent(settings) {
-        this.generatorConstructor = generatorNames[settings.generator];
+    AudioCollection.prototype.play = function () {
+        if(this.playing) {
+            this.stop();
+        } else {
+            this.playing = true;
+        }
+        
+        for(var i in this.components) {
+            this.components[i].play();
+        }
+    };
+    
+    /**
+     * 
+     */
+    AudioCollection.prototype.pause = function () {
+        if(!this.playing) {
+            return;
+        }
+        
+        for(var i in this.components) {
+            this.components[i].pause();
+        }
+        
+        this.playing = false;
+    };
+    
+    /**
+     * 
+     */
+    AudioCollection.prototype.stop = function () {
+        if(!this.playing) {
+            return;
+        }
+        
+        for(var i in this.components) {
+            this.components[i].stop();
+        }
+        
+        this.playing = false;
+    };
+    
+    
+    /* Audio components
+    */
+    
+    /**
+     * 
+     */
+    function AudioComponent(settings, collection) {
+        this.collection = collection;
+        
         this.settings = settings.settings;
         this.instructions = settings.instructions;
-        this.timeout = undefined;
-        this.repeatStack = [];
+        
+        this.timeout = 0;
         this.index = 0;
         this.playing = false;
+        
+        this.players = [];
+        this.repeatStack = [];
+        
+        this.generatorConstructor = generatorNames[settings.generator];
+        this.createPlayerBound = this.createPlayer.bind(this);
+        this.instructionContinueBound = this.instructionContinue.bind(this);
     }
+    
+    /**
+     * 
+     */
+    AudioComponent.prototype.play = function () {
+        var instruction = this.instructions[this.index];
+        this.actions[instruction.type].call(this, instruction);
+        this.playing = true;
+    };
+    
+    /**
+     * 
+     */
+    AudioComponent.prototype.pause = function () {
+        
+    };
+    
+    /**
+     * 
+     */
+    AudioComponent.prototype.stop = function () {
+        
+    };
+    
+    /**
+     * 
+     */
+    AudioComponent.prototype.createPlayer = function (note) {
+        return new this.generatorConstructor(this.settings, {
+            "frequency": note.constructor === Number
+                ? note
+                : noteFrequencies[note]
+        });
+    };
+    
+    /**
+     * 
+     */
+    AudioComponent.prototype.instructionContinue = function (players) {
+        for(var i = 0; i < this.players.length; i += 1) {
+            this.players[i].stop();
+        }
+        
+        this.index += 1;
+        
+        if(this.index < this.instructions.length) {
+            this.play();
+        }
+    };
+    
+    /**
+     * 
+     */
+    AudioComponent.prototype.instructionPlay = function (instruction) {
+        var length = this.getInstructionLength(instruction),
+            i;
+        
+        this.players = instruction.notes.map(this.createPlayerBound);
+        
+        for(i = 0; i < this.players.length; i += 1) {
+            this.players[i].play();
+        }
+        
+        this.timeout = setTimeout(this.instructionContinueBound, length);
+    };
+    
+    /**
+     * 
+     */
+    AudioComponent.prototype.instructionRest = function (instruction) {
+        var length = this.getInstructionLength(instruction);
+        
+        this.players.length = 0;
+        
+        this.timeout = setTimeout(this.instructionContinueBound, length);
+    };
+    
+    /**
+     * 
+     */
+    AudioComponent.prototype.instructionRepeat = function (instruction) {
+        switch(instruction.action) {
+            case "start":
+                this.instructionRepeatStart(instruction);
+                break;
+            case "back":
+                this.instructionRepeatBack(instruction);
+                break;
+        }
+    };
+    
+    /**
+     * 
+     */
+    AudioComponent.prototype.instructionRepeatStart = function (instruction) {
+        this.repeatStack.push({
+            "index": this.index,
+            "repeated": 0
+        });
+        this.timeout = setTimeout(this.instructionContinueBound);
+    };
+    
+    /**
+     * 
+     */
+    AudioComponent.prototype.instructionRepeatBack = function (instruction) {
+        var repeater = this.repeatStack[this.repeatStack.length - 1];
+        
+        if(repeater.repeated >= instruction.times) {
+            this.repeatStack.pop();
+            return;
+        }
+        
+        this.index = repeater.index;
+        repeater.repeated += 1;
+        
+        this.timeout = setTimeout(this.instructionContinueBound);
+    };
+    
+    /**
+     * 
+     */
+    AudioComponent.prototype.getInstructionLength = function (instruction) {
+        return instruction.length * this.collection.beatLength;
+    };
+    
+    AudioComponent.prototype.actions = {
+        "notes": AudioComponent.prototype.instructionPlay,
+        "rest": AudioComponent.prototype.instructionRest,
+        "repeat": AudioComponent.prototype.instructionRepeat
+    };
     
     
     /* Oscillator generator
     */
     
-    var AbstractOscillatorGenerator = {
-        /**
-         * 
-         */
-        "recreate": function () {
-            this.oscillator = context.createOscillator();
-            this.oscillator.connect(transforms[0]);
-            
-            if(this.frequency) {
-                this.oscillator.frequency.value = this.frequency;
-            }
-            if(this.settings) {
-                this.oscillator.detune.value = this.detune;
-            }
-            if(this.type) {
-                this.oscillator.type = this.type;
-            }
-        },
-        
-        /**
-         * 
-         */
-        "play": function (time) {
-            this.oscillator.start(time | 0);
-        },
-        
-        /**
-         * 
-         */
-        "stop": function (time) {
-            this.oscillator.stop(time | 0);
-            this.recreate();
-        },
-        
-        /**
-         * 
-         */
-        "getEngine": function () {
-            return this.oscillator;
-        }
-    };
-    
     /**
      * 
      */
-    function OscillatorGenerator() {
+    function OscillationGenerator() {
         var settings, i;
         
         for(i = arguments.length - 1; i >= 0; i -= 1) {
@@ -457,122 +475,46 @@ function AudioPlayr(settings) {
         this.recreate();
     }
     
-    OscillatorGenerator.prototype = AbstractOscillatorGenerator;
-    
-    
-    self.getThing = function () {
-        return new OscillatorGenerator();
-    }
-    
-    /* Noise generators
-    */
+    OscillationGenerator.prototype.recreate = function () {
+        this.oscillator = context.createOscillator();
+        this.oscillator.connect(transforms[0]);
+        
+        if(this.frequency) {
+            this.oscillator.frequency.value = this.frequency;
+        }
+        if(this.settings) {
+            this.oscillator.detune.value = this.detune;
+        }
+        if(this.type) {
+            this.oscillator.type = this.type;
+        }
+    };
     
     /**
      * 
      */
-    var AbstractNoiseGenerator = {
-        /**
-         * 
-         */
-        "preSetup": function (settings) {
-            this.bufferSize = 2 * context.sampleRate;
-            this.noiseBuffer = context.createBuffer(1, this.bufferSize, context.sampleRate);
-            this.output = this.noiseBuffer.getChannelData(0);
-            
-            this.noise = context.createBufferSource();
-            this.noise.buffer = this.noiseBuffer;
-            this.noise.loop = true;
-        },
-        
-        /**
-         * 
-         */
-        "postSetup": function (settings) {
-            this.noise.connect(transforms[0])
-        },
-        
-        /**
-         * 
-         */
-        "play": function () {
-            this.noise.start();
-        },
-        
-        /**
-         * 
-         */
-        "stop": function () {
-            this.noise.stop();
-            this.recreate(this.type);
-        },
-        
-        /**
-         * 
-         */
-        "recreate": function () {
-            this.preSetup();
-            this.generators[this.type].call(this, settings);
-            this.postSetup();
-        },
-        
-        /**
-         * 
-         */
-        "getEngine": function () {
-            return this.noise;
-        },
-        
-        "generators": {
-            /**
-             * 
-             */
-            "white": function () {
-                for(var i = 0; i < this. output.length; i += 1) {
-                    this.output[i] = Math.random() * 2 - 1;
-                }
-            },
-            
-            /**
-             * 
-             */
-            "pink": function () {
-                var b0 = 0.0,
-                    b1 = 0.0,
-                    b2 = 0.0,
-                    b3 = 0.0,
-                    b4 = 0.0,
-                    b5 = 0.0,
-                    b6 = 0.0,
-                    white, i;
-                
-                for(i = 0; i < this.bufferSize; ++i) {
-                    white = Math.random() * 2 - 1;
-                    b0 = 0.99886 * b0 + white * 0.0555179;
-                    b1 = 0.99332 * b1 + white * 0.0750759;
-                    b2 = 0.96900 * b2 + white * 0.1538520;
-                    b3 = 0.86650 * b3 + white * 0.3104856;
-                    b4 = 0.55000 * b4 + white * 0.5329522;
-                    b5 = -0.7616 * b5 - white * 0.0168980;
-                    b6 = white * 0.115926;
-                    this.output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * .11;
-                }
-            },
-            
-            /**
-             * 
-             */
-            "brownian": function () {
-                var record = 0,
-                    i;
-                
-                for(i = 0; i < this.bufferSize; ++i) {
-                    this.output[i] = (record + (Math.random() * .04 - 1)) / 1.02;
-                    record = this.output[i];
-                    this.output[i] *= 3.5;
-                }
-            }
-        }
+    OscillationGenerator.prototype.play = function (time) {
+        this.oscillator.start(time | 0);
     };
+    
+    /**
+     * 
+     */
+    OscillationGenerator.prototype.stop = function (time) {
+        this.oscillator.stop(time | 0);
+        this.recreate();
+    };
+    
+    /**
+     * 
+     */
+    OscillationGenerator.prototype.getEngine = function () {
+        return this.oscillator;
+    };
+    
+    
+    /* Noise generators
+    */
     
     /**
      * 
@@ -582,7 +524,108 @@ function AudioPlayr(settings) {
         this.recreate();
     }
     
-    NoiseGenerator.prototype = AbstractNoiseGenerator;
+    /**
+     * 
+     */
+    NoiseGenerator.prototype.preSetup = function (settings) {
+        this.bufferSize = 2 * context.sampleRate;
+        this.noiseBuffer = context.createBuffer(1, this.bufferSize, context.sampleRate);
+        this.output = this.noiseBuffer.getChannelData(0);
+        
+        this.noise = context.createBufferSource();
+        this.noise.buffer = this.noiseBuffer;
+        this.noise.loop = true;
+    };
+    
+    /**
+     * 
+     */
+    NoiseGenerator.prototype.postSetup = function (settings) {
+        this.noise.connect(transforms[0])
+    };
+    
+    /**
+     * 
+     */
+    NoiseGenerator.prototype.play = function () {
+        this.noise.start();
+    };
+    
+    /**
+     * 
+     */
+    NoiseGenerator.prototype.stop = function () {
+        this.noise.stop();
+        this.recreate(this.type);
+    };
+    
+    /**
+     * 
+     */
+    NoiseGenerator.prototype.recreate = function () {
+        this.preSetup();
+        this.generators[this.type].call(this, settings);
+        this.postSetup();
+    };
+    
+    /**
+     * 
+     */
+    NoiseGenerator.prototype.getEngine = function () {
+        return this.noise;
+    };
+    
+    NoiseGenerator.prototype.generators = {
+        /**
+         * 
+         */
+        "white": function () {
+            for(var i = 0; i < this. output.length; i += 1) {
+                this.output[i] = Math.random() * 2 - 1;
+            }
+        },
+        
+        /**
+         * 
+         */
+        "pink": function () {
+            var b0 = 0.0,
+                b1 = 0.0,
+                b2 = 0.0,
+                b3 = 0.0,
+                b4 = 0.0,
+                b5 = 0.0,
+                b6 = 0.0,
+                white, i;
+            
+            for(i = 0; i < this.bufferSize; ++i) {
+                white = Math.random() * 2 - 1;
+                b0 = 0.99886 * b0 + white * 0.0555179;
+                b1 = 0.99332 * b1 + white * 0.0750759;
+                b2 = 0.96900 * b2 + white * 0.1538520;
+                b3 = 0.86650 * b3 + white * 0.3104856;
+                b4 = 0.55000 * b4 + white * 0.5329522;
+                b5 = -0.7616 * b5 - white * 0.0168980;
+                b6 = white * 0.115926;
+                this.output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * .11;
+            }
+        },
+        
+        /**
+         * 
+         */
+        "brownian": function () {
+            var record = 0,
+                i;
+            
+            for(i = 0; i < this.bufferSize; ++i) {
+                this.output[i] = (record + (Math.random() * .04 - 1)) / 1.02;
+                record = this.output[i];
+                this.output[i] *= 3.5;
+            }
+        }
+    };
+    
     
     self.reset(settings || {});
 }
