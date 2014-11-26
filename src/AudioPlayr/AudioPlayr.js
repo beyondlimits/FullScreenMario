@@ -39,9 +39,9 @@ function AudioPlayr(settings) {
         // Lookup table of Strings to generator Functions
         generatorNames = {
             "Oscillator": OscillatorGenerator,
-            "WhiteNoise": WhiteNoiseGenerator,
-            "PinkNoise": PinkNoiseGenerator,
-            "BrownianNoise": BrownianNoiseGenerator
+            "WhiteNoise": NoiseGenerator.bind(undefined, "White"),
+            "PinkNoise": NoiseGenerator.bind(undefined, "Pink"),
+            "BrownianNoise": NoiseGenerator.bind(undefined, "Brownian")
         },
         
         // Lookup table for playComponent actions
@@ -194,6 +194,8 @@ function AudioPlayr(settings) {
         var components = collection.components,
             component, instructions, i;
         
+        collection.playing = true;
+        
         for(i in components) {
             playComponent(components[i], collection);
         }
@@ -206,6 +208,8 @@ function AudioPlayr(settings) {
     function playComponent(component, collection) {
         var instruction = component.instructions[component.index];
         playComponentActions[instruction.type](instruction, component, collection);
+        
+        component.playing = true;
     }
     
     /**
@@ -227,7 +231,7 @@ function AudioPlayr(settings) {
             players[i].play();
         }
         
-        setTimeout(function () {
+        component.timeout = setTimeout(function () {
             for(i = 0; i < players.length; i += 1) {
                 players[i].stop();
             }
@@ -389,50 +393,76 @@ function AudioPlayr(settings) {
     /* Oscillator generator
     */
     
+    var AbstractOscillatorGenerator = {
+        /**
+         * 
+         */
+        "recreate": function () {
+            this.oscillator = context.createOscillator();
+            this.oscillator.connect(transforms[0]);
+            
+            if(this.frequency) {
+                this.oscillator.frequency.value = this.frequency;
+            }
+            if(this.settings) {
+                this.oscillator.detune.value = this.detune;
+            }
+            if(this.type) {
+                this.oscillator.type = this.type;
+            }
+        },
+        
+        /**
+         * 
+         */
+        "play": function (time) {
+            this.oscillator.start(time | 0);
+        },
+        
+        /**
+         * 
+         */
+        "stop": function (time) {
+            this.oscillator.stop(time | 0);
+            this.recreate();
+        },
+        
+        /**
+         * 
+         */
+        "getEngine": function () {
+            return this.oscillator;
+        }
+    };
+    
     /**
      * 
      */
     function OscillatorGenerator() {
         var settings, i;
         
-        this.oscillator = context.createOscillator();
-        this.oscillator.connect(transforms[0])
-        
         for(i = arguments.length - 1; i >= 0; i -= 1) {
             settings = arguments[i];
             if(typeof(settings.frequency) !== "undefined") {
-                this.oscillator.frequency.value = settings.frequency;
+                this.frequency = settings.frequency;
             }
             if(typeof(settings.detune) !== "undefined") {
-                this.oscillator.detune.value = settings.detune;
+                this.detune = settings.detune;
             }
             if(typeof(settings.type) !== "undefined") {
-                this.oscillator.type = settings.type;
+                this.type = settings.type;
             }
         }
+        
+        this.recreate();
     }
     
-    /**
-     * 
-     */
-    OscillatorGenerator.prototype.play = function (time) {
-        this.oscillator.start(time | 0);
-    };
-
-    /**
-     * 
-     */
-    OscillatorGenerator.prototype.stop = function (time) {
-        this.oscillator.stop(time | 0);
-    };
+    OscillatorGenerator.prototype = AbstractOscillatorGenerator;
     
-    /**
-     * 
-     */
-    OscillatorGenerator.prototype.getEngine = function () {
-        return this.oscillator;
-    };
     
+    self.getThing = function () {
+        return new OscillatorGenerator();
+    }
     
     /* Noise generators
     */
@@ -441,6 +471,9 @@ function AudioPlayr(settings) {
      * 
      */
     var AbstractNoiseGenerator = {
+        /**
+         * 
+         */
         "preSetup": function (settings) {
             this.bufferSize = 2 * context.sampleRate;
             this.noiseBuffer = context.createBuffer(1, this.bufferSize, context.sampleRate);
@@ -450,88 +483,106 @@ function AudioPlayr(settings) {
             this.noise.buffer = this.noiseBuffer;
             this.noise.loop = true;
         },
+        
+        /**
+         * 
+         */
         "postSetup": function (settings) {
             this.noise.connect(transforms[0])
         },
-        "play": function (time) {
-            this.noise.start(time | 0);
+        
+        /**
+         * 
+         */
+        "play": function () {
+            this.noise.start();
         },
-        "stop": function (time) {
-            this.noise.stop(time | 0);
+        
+        /**
+         * 
+         */
+        "stop": function () {
+            this.noise.stop();
+            this.recreate(this.type);
         },
+        
+        /**
+         * 
+         */
+        "recreate": function () {
+            this.preSetup();
+            this.generators[this.type].call(this, settings);
+            this.postSetup();
+        },
+        
+        /**
+         * 
+         */
         "getEngine": function () {
             return this.noise;
+        },
+        
+        "generators": {
+            /**
+             * 
+             */
+            "white": function () {
+                for(var i = 0; i < this. output.length; i += 1) {
+                    this.output[i] = Math.random() * 2 - 1;
+                }
+            },
+            
+            /**
+             * 
+             */
+            "pink": function () {
+                var b0 = 0.0,
+                    b1 = 0.0,
+                    b2 = 0.0,
+                    b3 = 0.0,
+                    b4 = 0.0,
+                    b5 = 0.0,
+                    b6 = 0.0,
+                    white, i;
+                
+                for(i = 0; i < this.bufferSize; ++i) {
+                    white = Math.random() * 2 - 1;
+                    b0 = 0.99886 * b0 + white * 0.0555179;
+                    b1 = 0.99332 * b1 + white * 0.0750759;
+                    b2 = 0.96900 * b2 + white * 0.1538520;
+                    b3 = 0.86650 * b3 + white * 0.3104856;
+                    b4 = 0.55000 * b4 + white * 0.5329522;
+                    b5 = -0.7616 * b5 - white * 0.0168980;
+                    b6 = white * 0.115926;
+                    this.output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * .11;
+                }
+            },
+            
+            /**
+             * 
+             */
+            "brownian": function () {
+                var record = 0,
+                    i;
+                
+                for(i = 0; i < this.bufferSize; ++i) {
+                    this.output[i] = (record + (Math.random() * .04 - 1)) / 1.02;
+                    record = this.output[i];
+                    this.output[i] *= 3.5;
+                }
+            }
         }
     };
     
     /**
      * 
      */
-    function WhiteNoiseGenerator(settings) {
-        debugger;
-        this.preSetup();
-        
-        for(var i = 0; i < this. output.length; i += 1) {
-            this.output[i] = Math.random() * 2 - 1;
-        }
-        
-        this.postSetup();
+    function NoiseGenerator(type) {
+        this.type = type;
+        this.recreate();
     }
     
-    WhiteNoiseGenerator.prototype = AbstractNoiseGenerator;
-    
-    /**
-     * 
-     */
-    function PinkNoiseGenerator(settings) {
-        var b0 = 0.0,
-            b1 = 0.0, 
-            b2 = 0.0, 
-            b3 = 0.0, 
-            b4 = 0.0, 
-            b5 = 0.0,
-            b6 = 0.0,
-            white, i;
-        
-        this.preSetup();
-
-        for(i = 0; i < this.bufferSize; ++i) {
-            white = Math.random() * 2 - 1;
-            b0 = 0.99886 * b0 + white * 0.0555179;
-            b1 = 0.99332 * b1 + white * 0.0750759;
-            b2 = 0.96900 * b2 + white * 0.1538520;
-            b3 = 0.86650 * b3 + white * 0.3104856;
-            b4 = 0.55000 * b4 + white * 0.5329522;
-            b5 = -0.7616 * b5 - white * 0.0168980;
-            b6 = white * 0.115926;
-            this.output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * .11;
-        }
-
-        this.postSetup();
-    }
-    
-    PinkNoiseGenerator.prototype = AbstractNoiseGenerator;
-    
-    /**
-     * 
-     */
-    function BrownianNoiseGenerator(settings) {
-        var record = 0,
-            i;
-        
-        this.preSetup();
-        
-        for(i = 0; i < this.bufferSize; ++i) {
-            this.output[i] = (record + (Math.random() * .04 - 1)) / 1.02;
-            record = this.output[i];
-            this.output[i] *= 3.5;
-        }
-        
-        this.postSetup();
-    }
-    
-    BrownianNoiseGenerator.prototype = AbstractNoiseGenerator;
-    
+    NoiseGenerator.prototype = AbstractNoiseGenerator;
     
     self.reset(settings || {});
 }
