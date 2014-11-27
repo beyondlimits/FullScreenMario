@@ -117,7 +117,6 @@ section#game {
 }
 
 #controls .control-inner {
-    /* display: none; */
     margin-top: 28px;
     padding: 7px 3px;
     opacity: 0;
@@ -189,13 +188,16 @@ section#game {
     left: 0;
     right: 0;
     padding: 4px 0;
+    /* width: 70px; */
 }
 
-#controls input {
+#controls input[type=number] {
+    display: inline;
+    margin-left: -3px;
+    padding-left: 17px;
+    width: 42px;
     font-size: 1em;
     font-weight: bold;
-    text-align: right;
-    display: inline;
 }
 
 

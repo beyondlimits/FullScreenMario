@@ -3189,7 +3189,7 @@ var FullScreenMario = (function(GameStartr) {
      */
     function animateFlicker(thing, cleartime, interval) {
         cleartime = Math.round(cleartime) || 49;
-        interval = Math.round(interval) || 3;
+        interval = Math.round(interval) || 2;
         
         thing.flickering = true;
         
