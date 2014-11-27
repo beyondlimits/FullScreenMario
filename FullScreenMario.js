@@ -287,14 +287,14 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function onGamePause(EightBitter) {
-        EightBitter.AudioPlayer.pause();
+        EightBitter.AudioPlayer.pauseAll();
     }
     
     /**
      * 
      */
     function onGameUnpause(EightBitter) {
-        EightBitter.AudioPlayer.resume();
+        EightBitter.AudioPlayer.resumeAll();
     }
     
     /**
@@ -2048,7 +2048,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.addClass(thing, "climbing animated");
         thing.EightBitter.TimeHandler.addClassCycle(thing, ["one", "two"], "climbing");
         
-        thing.EightBitter.AudioPlayer.pause();
+        thing.EightBitter.AudioPlayer.pauseAll();
         thing.EightBitter.AudioPlayer.play("Flagpole");
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
@@ -4005,7 +4005,7 @@ var FullScreenMario = (function(GameStartr) {
         
         thing.nocollide = thing.nomove = 1;
         thing.EightBitter.MapScreener.nokeys = true;
-        thing.EightBitter.AudioPlayer.pause();
+        thing.EightBitter.AudioPlayer.pauseAll();
         thing.EightBitter.StatsHolder.decrease("lives");
         
         if(thing.EightBitter.StatsHolder.get("lives") > 0) {
@@ -4234,7 +4234,6 @@ var FullScreenMario = (function(GameStartr) {
         EightBitter.MapScreener.notime = false;
         EightBitter.MapScreener.canscroll = true;
         EightBitter.MapScreener.clearScreen();
-        EightBitter.AudioPlayer.pause();
         EightBitter.GroupHolder.clearArrays();
         EightBitter.TimeHandler.clearAllEvents();
         
@@ -4250,6 +4249,9 @@ var FullScreenMario = (function(GameStartr) {
         
         EightBitter.StatsHolder.set("time", EightBitter.MapsHandler.getArea().time);
   
+        EightBitter.AudioPlayer.clearAll();
+        EightBitter.AudioPlayer.playTheme();
+        
         EightBitter.QuadsKeeper.resetQuadrants();
         location.entry(EightBitter, location);
         

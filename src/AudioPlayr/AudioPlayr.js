@@ -1,316 +1,442 @@
-function playCurrentThemeHurry(name_raw) {
-  FSM.AudioPlayer.playTheme("Hurry " + (name_raw || setting.split(' ')[0]));
-}
-
 /* AudioPlayr.js
  * A library to play audio files derived from Full Screen Mario
  * This will:
  * 1. Load files via AJAX upon startup
- * 2. Create appropriate HTML5 <audio> elements 
+ * 2. Create appropriate HTML5 <audio> elements
  * 3. Play and pause those audio files on demand
-*/
+ */
 function AudioPlayr(settings) {
-  "use strict";
-  if(!this || this === window) {
-    return new AudioPlayr(settings);
-  }
-  var self = this,
-  
-      // A list of filenames to be turned into <audio> objects
-      library,
-      
-      // What file types to add as sources to sounds
-      filetypes,
-      
-      // Currently playing sound objects, keyed by name (no extensions)
-      sounds,
-      
-      // The currently playing theme
-      theme,
-      
-      // Whether all sounds should be muted
-      muted,
-      
-      // Directory from which audio files are AJAXed if needed
-      directory,
-      
-      // What name to store the value of muted under localStorage
-      localStorageMuted,
-      
-      // The function or int used to determine what playLocal's volume is
-      getVolumeLocal,
-      
-      // The function or string used to get a default theme name
-      getThemeDefault,
-      
-      // Default settings used when creating a new sound
-      soundSettings;
-  
-  var reset = self.reset = function reset(settings) {
-    library           = settings.library           || {};
-    filetypes         = settings.filetypes         || ["mp3", "ogg"];
-    muted             = settings.muted             || false;
-    directory         = settings.directory         || "";
-    localStorageMuted = settings.localStorageMuted || "muted";
-    getVolumeLocal    = settings.getVolumeLocal    || 1;
-    getThemeDefault   = settings.getThemeDefault   || "Theme";
+    "use strict";
+    if (!this || this === window) {
+        return new AudioPlayr(settings);
+    }
+    var self = this,
+
+        // A list of filenames to be turned into <audio> objects
+        library,
+
+        // What file types to add as sources to sounds
+        filetypes,
+
+        // Currently playing sound objects, keyed by name (no extensions)
+        sounds,
+
+        // The currently playing theme
+        theme,
+
+        // Directory from which audio files are AJAXed if needed
+        directory,
+
+        // The function or int used to determine what playLocal's volume is
+        getVolumeLocal,
+
+        // The function or string used to get a default theme name
+        getThemeDefault,
+
+        // Storage container for settings like volume and muted status
+        StatsHolder;
     
-    // Each sound starts with some certain settings
-    var soundSetsRef  = settings.soundSettings     || {}
-    soundSettings     = settings.soundSettings     || {
-      preload: soundSetsRef.preload   || "auto",
-      used:    0,
-      volume:  0
+    /**
+     * 
+     */
+    self.reset = function reset(settings) {
+        library = settings.library || {};
+        filetypes = settings.filetypes || ["mp3", "ogg"];
+        directory = settings.directory || "";
+        getVolumeLocal = settings.getVolumeLocal || 1;
+        getThemeDefault = settings.getThemeDefault || "Theme";
+
+        // Sounds should always start blank
+        sounds = {};
+
+        // Preload everything!
+        libraryLoad();
+        
+        StatsHolder = new StatsHoldr(settings.statistics);
+        
+        self.setVolume(StatsHolder.get("volume"));
+        self.setMuted(StatsHolder.get("muted"));
+    }
+    
+    
+    /* Simple getters
+    */
+    
+    /**
+     * 
+     */
+    self.getLibrary = function () {
+        return library;
     };
     
-    // Sounds should always start blank
-    sounds = {};
+    /**
+     * 
+     */
+    self.getFileTypes = function () {
+        return filetypes;
+    };
     
-    // If specified, use localStorageMuted to record muted's value
-    if(localStorageMuted)
-      muted = JSON.parse(localStorage[localStorageMuted] || false);
+    /**
+     * 
+     */
+    self.getCurrentSounds = function () {
+        return sounds;
+    };
     
-    // Preload everything!
-    libraryLoad();
-  }
-  
-  /* Public play functions
-  */
-  
-  // Public: play
-  // Plays a file from the library of files
-  var play = self.play = function(name_raw) {
-    // First check if this is already in sounds
-    var sound = sounds[name_raw];
+    /**
+     * 
+     */
+    self.getCurrentTheme = function () {
+        return theme;
+    };
     
-    // If it's not already being played...
-    if(!sound) {
-      // Check for it in the library
-      if(sound = library[name_raw]) {
-        // Since it exists, add it to sounds
-        sounds[name_raw] = sound;
-      }
-      // If it's not in the library, we've got a problem
-      else {
-        console.log("Unknown sound: '" + name_raw + "'");
-        return sound;
-      }
-    }
+    /**
+     * 
+     */
+    self.getDirectory = function () {
+        return directory;
+    };
     
-    // Reset the sound to the start, at the correct volume
-    sound.name_raw = name_raw; // just to be sure
-    soundStop(sound);
-    sound.volume = !muted; /* = 0; /**/
     
-    // This plays the sound.
-    sound.play();
+    /* Playback modifiers
+    */
     
-    // If this was the first time the sound was added, let it know how to stop
-    if(!(sound.used++))
-      sound.addEventListener("ended", function() {
-        soundFinish(sound, name_raw);
-      });
+    /**
+     * 
+     */
+    self.getVolume = function () {
+        return StatsHolder.get("volume");
+    };
     
-    return sound;
-  }
-  
-  // Public: playLocal
-  // Changes the volume of a sound based on distance from the reference object
-  self.playLocal = function(name_raw, location) {
-    // Start off with a typical sound
-    var sound = play(name_raw),
-        volume_real;
-    
-    // If that sound didn't work, quit it
-    if(!sound) return sound;
-    
-    // There must be a user-defined way to determine what the volume should be
-    switch(getVolumeLocal.constructor) {
-      case Function:
-        volume_real = getVolumeLocal(location);
-      break;
-      case Number:
-        volume_real = getVolumeLocal;
-      break;
-      default:
-        volume_real = Number(volume_real) || 1;
-      break;
-    }
-    sound.volume = sound.volume_real = volume_real /**/ = 0; /**/;
-    
-    return sound;
-  }
-  
-  // Public: playTheme
-  // Plays a theme as sounds.theme via play()
-  // If no theme is provided, who the hell knows
-  self.playTheme = function(name_raw, resume, loop) {
-    // Set loop default to true
-    loop = typeof loop !== 'undefined' ? loop : true;
-    
-    // If name_raw isn't given, use the default getter
-    if(!name_raw) 
-      switch(getThemeDefault.constructor) {
-        case Function:
-          name_raw = getThemeDefault();
-        break
-        case String:
-          name_raw = getThemeDefault;
-        break;
-      }
-    
-    // First make sure there isn't already a theme playing
-    if(sound = theme) {
-      soundStop(sound);
-      theme = undefined;
-      delete sounds[sound.name_raw];
-    }
-    
-    // This creates the sound.
-    var sound = theme = play(name_raw);
-    sound.loop = loop;
-    
-    // Don't resume the sound again if specified not to
-    if(!resume)
-      sound.used = false;
-    
-    // If it's used (no repeat), add the event listener to resume theme
-    if(sound.used == 1)
-      sound.addEventListener("ended", self.playTheme);
-    
-    return sound;
-  }
-  
-  
-  /* Public utilities
-  */
-  
-  // Public: addEventListener
-  // Adds an event listener to a sound, if it exists
-  self.addEventListener = function(name_raw, event, func) {
-    var sound = sounds[name_raw];
-    if(sound) sound.addEventListenever(event, func);
-  }
-  
-  // Public: addEventImmediate
-  // Calls a function when a sound calls a trigger, or immediately if it's not playing
-  self.addEventImmediate = function(name_raw, event, func) {
-    var sound = sounds[name_raw];
-    if(sound && !sound.paused)
-      sound.addEventListener(event, func);
-    else func();
-  }
-  
-  // Public: toggleMute
-  // Swaps whether mute is enabled, saving to localStorage if needed
-  self.toggleMute = function() {
-    // Swap all sounds' volume on muted
-    muted = !muted;
-    for(var i in sounds)
-      sounds[i].volume = muted ? 0 : (sounds[i].volume_real || 1);
-    // If specified, store this in localStorage
-    if(localStorageMuted) 
-      localStorage[localStorageMuted] = muted;
-  }
-  
-  // Public: simple pause and resume functions
-  self.pause = function() { for(var i in sounds) if(sounds[i]) soundPause(sounds[i]); }
-  self.resume = function() { for(var i in sounds) if(sounds[i]) soundPlay(sounds[i]); }
-  self.pauseTheme = function() { if(theme) theme.pause(); }
-  self.resumeTheme = function() { if(theme) theme.play(); }
-  self.clear = function() {
-    self.pause();
-    sounds = {};
-    self.theme = undefined;
-  }
-  
-  
-  /* Public gets
-  */
-  self.getLibrary = function() { return library; }
-  self.getSounds = function() { return sounds; }
-  
-  /* Private utilities
-  */
-  
-  // Called when a sound is done to get it out of sounds
-  function soundFinish(sound, name_raw) {
-    if(sounds[name_raw])
-      delete sounds[name_raw];
-  }
-  
-  // Quick play, pause
-  function soundPlay(sound) { sound.play(); }
-  function soundPause(sound) { sound.pause(); }
-  
-  // Carefully stops a sound
-  function soundStop(sound) {
-    if(sound && sound.pause) {
-      sound.pause();
-      if(sound.readyState)
-        sound.currentTime = 0;
-    }
-  }
-  
-  
-  /* Private loading / resetting
-  */
-  
-  // Sounds given as strings are requested via AJAX
-  function libraryLoad() {
-    var section, name, s_name, j;
-    
-    // For each given section (names, themes):
-    for(s_name in library) {
-      section = library[s_name];
-      // For each thing in that section:
-      for(j in section) {
-        name = section[j];
-        // Create the sound and store it in the container
-        library[name] = createAudio(name, s_name);
-      }
-    }
-  }
-  
-  // Creates an audio element, gives it the sources, and starts preloading
-  function createAudio(name, section) {
-    var sound = document.createElement("Audio"),
-        type, i;
-    
-    // Copy the default settings into the sound
-    proliferate(sound, soundSettings);
-    
-    // Create an audio source for each child
-    for(i in filetypes) {
-      type = filetypes[i];
-      sound.appendChild(proliferate(
-        document.createElement("Source"), {
-          type: "audio/" + type,
-          src: directory + "/" + section + "/" + type + "/" + name + "." + type
+    /**
+     * 
+     */
+    self.setVolume = function (volume) {
+        console.log("Setting", volume, sounds);
+        for(var i in sounds) {
+            sounds[i].volume = sounds[i].volume_real * volume;
         }
-      ));
+        
+        StatsHolder.set("volume", volume);
     }
     
-    // This preloads the sound.
-    sound.play();
+    /**
+     * 
+     */
+    self.getMuted = function () {
+        return StatsHolder.get("muted");
+    };
     
-    return sound;
-  }
-  
-  // (This function copied from toned.js)
-  // Copies everything from settings into the elem
-  function proliferate(elem, settings) {
-    var setting, i;
-    for(i in settings) {
-      if(typeof(setting = settings[i]) == "object") {
-        if(!elem[i]) elem[i] = {};
-        proliferate(elem[i], setting);
-      }
-      else elem[i] = setting;
+    /**
+     * 
+     */
+    self.setMuted = function (muted) {
+        muted ? self.setMutedOn() : self.setMutedOff();
     }
-    return elem;  
-  }
-  
-  reset(settings || {});
-  return self;
+    
+    /**
+     * 
+     */
+    self.setMutedOn = function () {
+        for(var i in sounds) {
+            if(sounds.hasOwnProperty(i)) {
+                sounds[i].volume = 0;
+                console.log("Sounds of", i, sounds[i].volume);
+            }
+        }
+        StatsHolder.set("muted", 1);
+    };
+    
+    /**
+     * 
+     */
+    self.setMutedOff = function () {
+        var volume = self.getVolume(),
+            sound, i;
+        
+        for(i in sounds) {
+            if(sounds.hasOwnProperty(i)) {
+                sound = sounds[i];
+                sound.volume = sound.volume_real * volume;
+            }
+        }
+        
+        StatsHolder.set("muted", 0);
+    };
+    
+    /**
+     * 
+     */
+    self.toggleMuted = function () {
+        self.setMuted(!self.getMuted());
+    };
+    
+    
+    /* Playback
+    */
+    
+    /**
+     * 
+     */
+    self.play = function (name) {
+        var sound;
+        
+        // If the sound isn't yet being played, see if it's in the library
+        if(!sounds.hasOwnProperty(name)) {
+            // If the sound also isn't in the library, it's unknown
+            if(!library.hasOwnProperty(name)) {
+                throw new Error("Unknown name given to AudioPlayr.play: '" + name + "'."); 
+            }
+            sounds[name] = sound = library[name];
+        } else {
+            sound = sounds[name];
+        }
+        
+        soundStop(sound);
+        
+        if(self.getMuted()) {
+            sound.volume = 0;
+        } else {
+            sound.volume = sound.volume_real * self.getVolume();
+        }
+        
+        sound.play();
+        
+        // If this is the song's first play, let it know how to stop
+        if(!sound.used) {
+            sound.used += 1;
+            sound.addEventListener("ended", soundFinish.bind(undefined, name));
+        }
+        
+        return sound;
+    };
+    
+    /**
+     * 
+     */
+    self.pauseAll = function () {
+        for(var i in sounds) {
+            if(!sounds.hasOwnProperty(i)) {
+                continue;
+            }
+            
+            sounds[i].pause();
+        }
+    };
+    
+    /**
+     * 
+     */
+    self.resumeAll = function () {
+        for(var i in sounds) {
+            if(!sounds.hasOwnProperty(i)) {
+                continue;
+            }
+            
+            sounds[i].play();
+        }
+    };
+    
+    /**
+     * 
+     */
+    self.pauseTheme = function () {
+        if(theme) {
+            theme.pause();
+        }
+    };
+    
+    /**
+     * 
+     */
+    self.resumeTheme = function () {
+        if(theme) {
+            theme.play();
+        }
+    };
+    
+    /**
+     * 
+     */
+    self.clearAll = function () {
+        self.pauseAll();
+        self.theme = undefined;
+        sounds = {};
+    };
+    
+    /**
+     * 
+     */
+    self.playLocal = function (name, location) {
+        var sound = self.play(name);
+
+        switch (getVolumeLocal.constructor) {
+            case Function:
+                sound.volume_real = getVolumeLocal(location);
+                break;
+            case Number:
+                sound.volume_real = getVolumeLocal;
+                break;
+            default:
+                sound.volume_real = Number(volume_real) || 1;
+                break;
+        }
+        
+        if(self.getMuted()) {
+            sound.volume = 0;
+        } else {
+            sound.volume = sound.volume_real * self.getVolume();
+        }
+
+        return sound;
+    }
+    
+    /**
+     * 
+     */
+    self.playTheme = function (name, loop) {
+        // Loop defaults to true
+        loop = typeof loop !== 'undefined' ? loop : true;
+
+        // If name isn't given, use the default getter
+        if (typeof(name) === "undefined") {
+            switch (getThemeDefault.constructor) {
+                case Function:
+                    name = getThemeDefault();
+                    break
+                case String:
+                    name = getThemeDefault;
+                    break;
+            }
+        }
+        
+        sounds[name] = theme = self.play(name);
+        theme.loop = loop;
+
+        // If it's used (no repeat), add the event listener to resume theme
+        if (theme.used === 1) {
+            theme.addEventListener("ended", self.playTheme);
+        }
+
+        return theme;
+    }
+
+
+    /* Public utilities
+     */
+
+    /**
+     * Adds an event listener to a currently playing sound.
+     * 
+     * @param {String} name   The name of the sound.
+     * @param {String} event   The name of the event, such as "onended".
+     * @param {Function} callback   The Function to be called by the event.
+     */
+    self.addEventListener = function(name, event, callback) {
+        if(!sounds.hasOwnProperty(name)) {
+            throw new Error("Unknown name given to AudioPlayr.addEventListener: '" + name + "'.");
+        }
+        
+        sounds[name].addEventListenever(event, callback);
+    }
+
+    // Public: addEventImmediate
+    // Calls a function when a sound calls a trigger, or immediately if it's not playing
+    
+    /**
+     * Adds an event listener to a sound. If the sound doesn't exist or has 
+     * finished playing, it's called immediately.
+     * 
+     * @param {String} name   The name of the sound.
+     * @param {String} event   The name of the event, such as "onended".
+     * @param {Function} callback   The Function to be called by the event.
+     */
+    self.addEventImmediate = function(name, event, callback) {
+        if(!sounds.hasOwnProperty(name) || sounds[name].paused) {
+            callback();
+            return;
+        }
+        
+        sounds[name].addEventListener(event, callback);
+    }
+    
+
+    /* Private utilities
+    */
+
+    /**
+     * Called when a sound has completed to get it out of sounds.
+     */
+    function soundFinish(name) {
+        if(sounds.hasOwnProperty(name)) {
+            delete sounds[name];
+        }
+    }
+
+    /**
+     * Carefully stops a sound. HTMLAudioElements don't natively have a .stop()
+     * function, so this is the shim to do that.
+     */
+    function soundStop(sound) {
+        sound.pause();
+        if (sound.readyState) {
+            sound.currentTime = 0;
+        }
+    }
+
+
+    /* Private loading / resetting
+     */
+
+    /**
+     * Loads every sound defined in the library via AJAX. Sounds are loaded
+     * into <audio> elements via createAudio and stored in the library.
+     */
+    function libraryLoad() {
+        var section, name, sectionName, j;
+
+        // For each given section (e.g. names, themes):
+        for (sectionName in library) {
+            section = library[sectionName];
+            // For each thing in that section:
+            for (j in section) {
+                name = section[j];
+                // Create the sound and store it in the container
+                library[name] = createAudio(name, sectionName);
+            }
+        }
+    }
+
+    /**
+     * Creates an audio element, gives it sources, and starts preloading.
+     * 
+     * @param {String} name
+     * @param {String} sectionName
+     * @return {HTMLAudioElement}
+     */
+    function createAudio(name, sectionName) {
+        var sound = document.createElement("audio"),
+            type, child, i;
+
+        // Create an audio source for each child
+        for (i in filetypes) {
+            type = filetypes[i];
+            child = document.createElement("source");
+            child.type = "audio/" + type;
+            child.src = directory + "/" + sectionName + "/" + type + "/" + name + "." + type;
+            
+            sound.appendChild(child);
+        }
+
+        // This preloads the sound.
+        sound.volume = 0;
+        sound.volume_real = 1;
+        sound.used = 0;
+        sound.play();
+        
+        return sound;
+    }
+    
+    
+    self.reset(settings || {});
 }

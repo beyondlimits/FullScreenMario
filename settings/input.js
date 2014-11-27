@@ -15,8 +15,6 @@
             player.keys.jump = 1;
             player.canjump = player.keys.jumplev = 0;
             
-            // To do: can player make a jumping sound during springs?
-            // To do: can player make a jumping sound during pipe cutscenes?
             if(player.power > 1) {
                 player.EightBitter.AudioPlayer.play("Jump Super");
             } else {
@@ -50,7 +48,7 @@
     }
     
     function KeyDownMute(player) {
-        player.EightBitter.AudioPlayer.toggleMute();
+        player.EightBitter.AudioPlayer.toggleMuted();
     }
     
     function KeyUpLeft(player) {
