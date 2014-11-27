@@ -91,7 +91,7 @@ var GameStartr = (function (EightBittr) {
             "quadrant_height": quadrant_height,
             "start_left": -quadrant_width,
             "start_height": -quadrant_height,
-            "on_update": EightBitter.updateQuadrants.bind(EightBitter, EightBitter),
+            "on_add": EightBitter.onAreaSpawn.bind(EightBitter, EightBitter),
         }, EightBitter.settings.quadrants));
     }
     

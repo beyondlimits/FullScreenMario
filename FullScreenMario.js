@@ -467,7 +467,7 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      */
-    function updateQuadrants(EightBitter, direction, top, right, bottom, left) {
+    function onAreaSpawn(EightBitter, direction, top, right, bottom, left) {
         EightBitter.MapsHandler.spawnMap(
             direction,
             top / EightBitter.unitsize,
@@ -475,7 +475,13 @@ var FullScreenMario = (function(GameStartr) {
             bottom / EightBitter.unitsize,
             (left + EightBitter.MapScreener.left) / EightBitter.unitsize
         );
-
+    }
+    
+    /**
+     * 
+     */
+    function onAreaUnspawn(EightBitter, direction, top, right, bottom, left) {
+        
     }
     
     
@@ -5279,7 +5285,7 @@ var FullScreenMario = (function(GameStartr) {
         "maintainSolids": maintainSolids,
         "maintainCharacters": maintainCharacters,
         "maintainPlayer": maintainPlayer,
-        "updateQuadrants": updateQuadrants,
+        "onAreaSpawn": onAreaSpawn,
         // Collision detectors
         "canThingCollide": canThingCollide,
         "isThingTouchingThing": isThingTouchingThing,

@@ -47,8 +47,9 @@ function QuadsKeepr(settings) {
         // An Array of string names a Thing may be placed into 
         group_names,
 
-        // Callback for when Quadrants get updated
-        on_update;
+        // Callback for when Quadrants are added or removed, respectively
+        on_add,
+        on_remove;
         
 
     /**
@@ -69,7 +70,8 @@ function QuadsKeepr(settings) {
         
         group_names = settings.group_names;
 
-        on_update = settings.on_update; 
+        on_add = settings.on_add;
+        on_remove = settings.on_remove;
 
         thing_left = settings.thing_left || "left";
         thing_right = settings.thing_right || "right";
@@ -268,7 +270,7 @@ function QuadsKeepr(settings) {
             top += quadrant_height;
         }
         
-        on_update("xInc", self.top, self.right, self.bottom, self.left);
+        on_add("xInc", self.top, self.right, self.bottom, self.left);
     };
     
     /**
@@ -338,7 +340,7 @@ function QuadsKeepr(settings) {
     /**
      * Adds a Quadrant row to the end of the quadrant_rows Array.
      * 
-     * @param {Boolean} callUpdate   Whether this should call the on_update 
+     * @param {Boolean} callUpdate   Whether this should call the on_add 
      *                               trigger with the new row's bounding box.
      */
     self.pushQuadrantRow = function (callUpdate) {
@@ -354,8 +356,14 @@ function QuadsKeepr(settings) {
         
         self.bottom += quadrant_height;
         
-        if(callUpdate) {
-            on_update("yInc", self.bottom, self.right, self.bottom - quadrant_height, self.left);
+        if(callUpdate && on_add) {
+            on_add(
+                "yInc",
+                self.bottom, 
+                self.right, 
+                self.bottom - quadrant_height, 
+                self.left
+            );
         }
         
         return row;
@@ -364,7 +372,7 @@ function QuadsKeepr(settings) {
     /**
      * Adds a Quadrant col to the end of the quadrant_cols Array.
      * 
-     * @param {Boolean} callUpdate   Whether this should call the on_update 
+     * @param {Boolean} callUpdate   Whether this should call the on_add 
      *                               trigger with the new col's bounding box.
      */
     self.pushQuadrantCol = function (callUpdate) {
@@ -380,8 +388,8 @@ function QuadsKeepr(settings) {
         
         self.right += quadrant_width;
         
-        if(callUpdate) {
-            on_update(
+        if(callUpdate && on_add) {
+            on_add(
                 "xInc", 
                 self.top,
                 self.right - offset_y, 
@@ -395,8 +403,11 @@ function QuadsKeepr(settings) {
     
     /**
      * Removes the last Quadrant row from the end of the quadrant_rows Array.
+     * 
+     * @param {Boolean} callUpdate   Whether this should call the on_add 
+     *                               trigger with the new row's bounding box.
      */
-    self.popQuadrantRow = function () {
+    self.popQuadrantRow = function (callUpdate) {
         for(var i = 0; i < quadrant_cols.length; i += 1) {
             quadrant_cols[i].quadrants.pop();
         }
@@ -404,13 +415,26 @@ function QuadsKeepr(settings) {
         num_rows -= 1;
         quadrant_rows.pop();
         
+        if(callUpdate && on_remove) {
+            on_remove(
+                "yDec",
+                self.bottom, 
+                self.right, 
+                self.bottom - quadrant_height, 
+                self.left
+            );
+        }
+        
         self.bottom -= quadrant_height;
     };
     
     /**
      * Removes the last Quadrant col from the end of the quadrant_cols Array.
+     * 
+     * @param {Boolean} callUpdate   Whether this should call the on_add 
+     *                               trigger with the new row's bounding box.
      */
-    self.popQuadrantCol = function () {
+    self.popQuadrantCol = function (callUpdate) {
         for(var i = 0; i < quadrant_rows.length; i += 1) {
             quadrant_rows[i].quadrants.pop();
         }
@@ -418,13 +442,23 @@ function QuadsKeepr(settings) {
         num_cols -= 1;
         quadrant_cols.pop();
         
+        if(callUpdate && on_remove) {
+            on_remove(
+                "xDec", 
+                self.top,
+                self.right - offset_y, 
+                self.bottom, 
+                self.right - quadrant_width - offset_y
+            );
+        }
+        
         self.right -= quadrant_width;
     };
     
     /**
      * Adds a Quadrant row to the beginning of the quadrant_rows Array.
      * 
-     * @param {Boolean} callUpdate   Whether this should call the on_update 
+     * @param {Boolean} callUpdate   Whether this should call the on_add 
      *                               trigger with the new row's bounding box.
      */
     self.unshiftQuadrantRow = function (callUpdate) {
@@ -440,8 +474,14 @@ function QuadsKeepr(settings) {
         
         self.top -= quadrant_height;
         
-        if(callUpdate) {
-            on_update("yDec", self.top, self.right, self.top + quadrant_height, self.left);
+        if(callUpdate && on_add) {
+            on_add(
+                "yInc",
+                self.top,
+                self.right, 
+                self.top + quadrant_height, 
+                self.left
+            );
         }
         
         return row;
@@ -450,7 +490,7 @@ function QuadsKeepr(settings) {
     /**
      * Adds a Quadrant col to the beginning of the quadrant_cols Array.
      * 
-     * @param {Boolean} callUpdate   Whether this should call the on_update 
+     * @param {Boolean} callUpdate   Whether this should call the on_add 
      *                               trigger with the new row's bounding box.
      */
     self.unshiftQuadrantCol = function (callUpdate) {
@@ -466,8 +506,14 @@ function QuadsKeepr(settings) {
         
         self.left -= quadrant_width;
         
-        if(callUpdate) {
-            on_update("xDec", self.top, self.left, self.bottom, self.left + quadrant_width);
+        if(callUpdate && on_add) {
+            on_add(
+                "xInc",
+                self.top,
+                self.left,
+                self.bottom, 
+                self.left + quadrant_width
+            );
         }
         
         return col;
@@ -475,8 +521,11 @@ function QuadsKeepr(settings) {
     
     /**
      * Removes a Quadrant row from the beginning of the quadrant_rows Array.
+     * 
+     * @param {Boolean} callUpdate   Whether this should call the on_add 
+     *                               trigger with the new row's bounding box.
      */
-    self.shiftQuadrantRow = function () {
+    self.shiftQuadrantRow = function (callUpdate) {
         for(var i = 0; i < quadrant_cols.length; i += 1) {
             quadrant_cols[i].quadrants.shift();
         }
@@ -484,19 +533,42 @@ function QuadsKeepr(settings) {
         num_rows -= 1;
         quadrant_rows.pop();
         
+        if(callUpdate && on_remove) {
+            on_remove(
+                "yDec",
+                self.top,
+                self.right, 
+                self.top + quadrant_height, 
+                self.left
+            );
+        }
+        
         self.top += quadrant_height;
     };
     
     /**
      * Removes a Quadrant col from the beginning of the quadrant_cols Array.
+     * 
+     * @param {Boolean} callUpdate   Whether this should call the on_add 
+     *                               trigger with the new row's bounding box.
      */
-    self.shiftQuadrantCol = function () {
+    self.shiftQuadrantCol = function (callUpdate) {
         for(var i = 0; i < quadrant_rows.length; i += 1) {
             quadrant_rows[i].quadrants.shift();
         }
         
         num_cols -= 1;
         quadrant_cols.pop();
+        
+        if(callUpdate && on_remove) {
+            on_remove(
+                "xDec",
+                self.top,
+                self.left,
+                self.bottom, 
+                self.left + quadrant_width
+            );
+        }
         
         self.left += quadrant_width;
     };
