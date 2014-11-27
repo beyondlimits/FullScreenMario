@@ -112,9 +112,10 @@ function AudioPlayr(settings) {
      * 
      */
     self.setVolume = function (volume) {
-        console.log("Setting", volume, sounds);
-        for(var i in sounds) {
-            sounds[i].volume = sounds[i].volume_real * volume;
+        if(!self.getMuted()) {
+            for(var i in sounds) {
+                sounds[i].volume = sounds[i].volume_real * volume;
+            }
         }
         
         StatsHolder.set("volume", volume);
@@ -141,7 +142,6 @@ function AudioPlayr(settings) {
         for(var i in sounds) {
             if(sounds.hasOwnProperty(i)) {
                 sounds[i].volume = 0;
-                console.log("Sounds of", i, sounds[i].volume);
             }
         }
         StatsHolder.set("muted", 1);

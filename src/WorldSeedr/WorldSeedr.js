@@ -434,9 +434,6 @@ function WorldSeedr(settings) {
                 } else {
                     output.arguments.width = output.width;
                 }
-                // if(!window.nope) {
-                    // debugger;
-                // }
             }
             if(stretch.height) {
                 output.top = position.top;
@@ -449,13 +446,6 @@ function WorldSeedr(settings) {
                 } else {
                     output.arguments.height = output.height;
                 }
-            }
-        }
-        
-        if(output.title === "Floor") {
-            // console.log("\t\tCreated floor", output);
-            if(!window.nope && output.left < 8) {
-                // debugger;
             }
         }
         
