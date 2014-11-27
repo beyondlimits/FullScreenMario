@@ -134,50 +134,20 @@
     {
         "title": "Controls",
         "generator": "OptionsTable",
-        "options": [
-            {
-                "title": "Left",
-                "type": "Keys",
-                "source": function () {
-                    return FSM.InputWriter.getAliasAsKeyStrings("left");
-                }
-            },
-            {
-                "title": "Right",
-                "type": "Keys",
-                "source": function () {
-                    return FSM.InputWriter.getAliasAsKeyStrings("right");
-                }
-            },
-            {
-                "title": "Up",
-                "type": "Keys",
-                "source": function () {
-                    return FSM.InputWriter.getAliasAsKeyStrings("up");
-                }
-            },
-            {
-                "title": "Down",
-                "type": "Keys",
-                "source": function () {
-                    return FSM.InputWriter.getAliasAsKeyStrings("down");
-                }
-            },
-            {
-                "title": "Sprint",
-                "type": "Keys",
-                "source": function () {
-                    return FSM.InputWriter.getAliasAsKeyStrings("sprint");
-                }
-            },
-            {
-                "title": "Pause",
-                "type": "Keys",
-                "source": function () {
-                    return FSM.InputWriter.getAliasAsKeyStrings("pause");
-                }
-            }
-        ]
+        "options": (function (controls) {
+            return controls.map(function (title) {
+                return {
+                    "title": title[0].toUpperCase() + title.substr(1),
+                    "type": "Keys",
+                    "source": function () {
+                        return FSM.InputWriter.getAliasAsKeyStrings(title);
+                    },
+                    "callback": function (valueOld, valueNew) {
+                       FSM.InputWriter.switchAlias(title, valueOld, valueNew);
+                    }
+                };
+            });
+        })(["left", "right", "up", "down", "sprint", "pause"])
     },
     {
         "title": "Mods!",
@@ -286,14 +256,29 @@
             };
         }
         
+        var allPossibleKeys = [
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+            'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+            'up', 'right', 'bottom', 'left', 'space', 'shift', 'ctrl'
+        ];
+        
         function setKeyInput(input, details) {
             var values = details.source(),
-                child, i;
+                child, i, j;
             
             for(i = 0; i < values.length; i += 1) {
-                child = document.createElement("div");
+                child = document.createElement("select");
                 child.className = "options-key-option";
-                child.textContent = values[i];
+                
+                for(j = 0; j < allPossibleKeys.length; j += 1) {
+                    child.appendChild(new Option(allPossibleKeys[j]));
+                }
+                child.value = child.valueOld = values[i].toLowerCase();
+                
+                child.onchange = (function (child) {
+                    details.callback(child.valueOld, child.value);
+                }).bind(undefined, child);
+                
                 input.appendChild(child);
             }
         }

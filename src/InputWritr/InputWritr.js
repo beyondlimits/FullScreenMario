@@ -119,17 +119,20 @@ function InputWritr(settings) {
     /**
      * 
      */
-    function convertAliasToKeyString(key) {
-        // String.fromCharCode((96 <= key && key <= 105)? key-48 : key)
-        if(key > 96 && key < 105) {
-            return String.fromCharCode(key - 48);
+    function convertAliasToKeyString(alias) {
+        if(alias.constructor === String) {
+            return alias;
         }
         
-        if(key > 64 && key < 97) {
-            return String.fromCharCode(key);
+        if(alias > 96 && alias < 105) {
+            return String.fromCharCode(alias - 48);
         }
         
-        switch(key) {
+        if(alias > 64 && alias < 97) {
+            return String.fromCharCode(alias);
+        }
+        
+        switch(alias) {
             case 16:
                 return "shift";
             case 17:
@@ -146,6 +149,48 @@ function InputWritr(settings) {
                 return "down";
         }
         return "?";
+    }
+    
+    /**
+     * 
+     */
+    self.switchAlias = function (title, valueOld, valueNew) {
+        var alias = convertKeyStringToAlias(valueNew);
+        
+        // self.addAlias(title, valueNew);
+        // self.removeAlias(title, valueOld);
+    };
+    
+    /**
+     * 
+     */
+    function convertKeyStringToAlias(key) {
+        if(key.constructor === Number) {
+            return key;
+        }
+        
+        if(key.length === 1) {
+            return key.charCodeAt(0) - 32;
+        }
+        
+        switch(key) {
+            case "shift":
+                return 16;
+            case "ctrl":
+                return 17;
+            case "space":
+                return 32;
+            case "left":
+                return 37;
+            case "up":
+                return 38;
+            case "right":
+                return 39;
+            case "down":
+                return 40;
+        }
+        
+        return -1;
     }
     
     /**
@@ -228,6 +273,7 @@ function InputWritr(settings) {
      *                         be callable.
      */
     self.addAlias = function (name, values) {
+        console.log("Adding", name, values);
         var trigger_name, trigger_group, 
             i;
         
