@@ -102,8 +102,8 @@ function InputWritr(settings) {
         var output = {},
             alias;
         
-        for(i in aliases) {
-            output[i] = self.getAliasAsKeyStrings(alias);
+        for(alias in aliases) {
+            output[alias] = self.getAliasAsKeyStrings(alias);
         }
         
         return output;

@@ -180,7 +180,7 @@ section#game {
 }
 
 
-/* Controls - options buttons */
+/* Controls - option buttons */
 
 #controls .options-button-option {
     position: relative;
@@ -198,6 +198,25 @@ section#game {
     width: 42px;
     font-size: 1em;
     font-weight: bold;
+}
+
+
+/* Controls - option keys */
+
+#controls .options-label-Keys {
+    padding-left: 14px;
+}
+
+#controls .options-cell-Keys {
+    padding: 7px 0;
+}
+
+#controls .options-key-option {
+    display: inline;
+}
+
+#controls .options-key-option:not(:last-of-type):after {
+    content: ", ";
 }
 
 

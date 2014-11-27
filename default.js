@@ -162,6 +162,20 @@
                 "source": function () {
                     return FSM.InputWriter.getAliasAsKeyStrings("down");
                 }
+            },
+            {
+                "title": "Sprint",
+                "type": "Keys",
+                "source": function () {
+                    return FSM.InputWriter.getAliasAsKeyStrings("sprint");
+                }
+            },
+            {
+                "title": "Pause",
+                "type": "Keys",
+                "source": function () {
+                    return FSM.InputWriter.getAliasAsKeyStrings("pause");
+                }
             }
         ]
     },
@@ -275,9 +289,10 @@
         function setKeyInput(input, details) {
             var values = details.source(),
                 child, i;
-                
+            
             for(i = 0; i < values.length; i += 1) {
                 child = document.createElement("div");
+                child.className = "options-key-option";
                 child.textContent = values[i];
                 input.appendChild(child);
             }
@@ -309,7 +324,7 @@
         return function (schema) {
             var output = document.createElement("div"),
                 table = document.createElement("table"),
-                etails, row, label, input,
+                details, row, label, input,
                 i;
             
             output.className = "select-options select-options-table";
@@ -321,7 +336,10 @@
                 
                 details = schema.options[i],
                 
+                label.className = "options-label-" + details.type;
                 label.textContent = details.title;
+                
+                input.className = "options-cell-" + details.type;
                 
                 row.appendChild(label);
                 row.appendChild(input);
