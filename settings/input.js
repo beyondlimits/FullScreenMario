@@ -88,10 +88,10 @@
     FullScreenMario.prototype.settings.input = {
         "aliases": {
             // Keyboard aliases
-            "left":   [37, 65],     // a,     left
-            "right":  [39, 68],     // d,     right
-            "up":     [38, 87, 32], // w,     up
-            "down":   [40, 83],     // s,     down
+            "left":   [65, 37],     // a,     left
+            "right":  [68, 39],     // d,     right
+            "up":     [87, 38, 32], // w,     up,    space
+            "down":   [83, 40],     // s,     down
             "sprint": [16, 17],     // shift, ctrl
             "pause":  [80],         // p (pause)
             "mute":   [77],         // m (mute)

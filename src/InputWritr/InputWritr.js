@@ -41,7 +41,7 @@ function InputWritr(settings) {
     /**
      *
      */
-    self.reset = function reset(settings) {
+    self.reset = function (settings) {
         get_timestamp = (
             settings.get_timestamp
             || performance.now 
@@ -74,7 +74,7 @@ function InputWritr(settings) {
      *                                   of inputs should be added to the master
      *                                   Array of histories (defaults to true).
      */
-    self.restartHistory = function restartHistory(keep_history) {
+    self.restartHistory = function (keep_history) {
         if (history && arguments.length && keep_history) {
             histories.push(history);
         }
@@ -91,9 +91,55 @@ function InputWritr(settings) {
      * 
      * @return {Object} aliases
      */
-    self.getAliases = function getAliases() {
+    self.getAliases = function () {
         return aliases;
     };
+    
+    /**
+     * 
+     */
+    self.getAliasesAsKeyStrings = function () {
+        var output = {},
+            list, i, j;
+        
+        for(i in aliases) {
+            output[i] = aliases[i].map(convertAliasToKeyString);
+        }
+        
+        return output;
+    };
+    
+    /**
+     * 
+     */
+    function convertAliasToKeyString(key) {
+        // String.fromCharCode((96 <= key && key <= 105)? key-48 : key)
+        if(key > 96 && key < 105) {
+            return String.fromCharCode(key - 48);
+        }
+        
+        if(key > 64 && key < 97) {
+            return String.fromCharCode(key);
+        }
+        
+        switch(key) {
+            case 16:
+                return "shift";
+            case 17:
+                return "ctrl";
+            case 32:
+                return "space";
+            case 37:
+                return "left";
+            case 38:
+                return "up";
+            case 39:
+                return "right";
+            case 40:
+                return "down";
+        }
+        return "?";
+    }
     
     /**
      * Get function for a single history, either the current or a past one.
@@ -102,7 +148,7 @@ function InputWritr(settings) {
      *                          none is provided, the current history is used.
      * @return {Object}   A history of inputs
      */
-    self.getHistory = function getHistory(name) {
+    self.getHistory = function (name) {
         return arguments.length ? histories[name] : history;
     };
 
@@ -111,7 +157,7 @@ function InputWritr(settings) {
      *
      * @return {Array}
      */
-    self.getHistories = function getHistories() {
+    self.getHistories = function () {
         return histories;
     };
 
@@ -120,7 +166,7 @@ function InputWritr(settings) {
      *
      * @return {Boolean}
      */
-    self.getRecording = function getRecording() {
+    self.getRecording = function () {
         return recording;
     };
 
@@ -149,7 +195,7 @@ function InputWritr(settings) {
      *
      * @param {Boolean}
      */
-    self.setRecording = function setRecording(recording_new) {
+    self.setRecording = function (recording_new) {
         recording = recording_new;
     };
 
@@ -158,7 +204,7 @@ function InputWritr(settings) {
      *
      * @param {Object}
      */
-    self.setEventInformation = function setEventInformation(event_info_new) {
+    self.setEventInformation = function (event_info_new) {
         event_information = event_info_new;
     };
 
@@ -248,7 +294,7 @@ function InputWritr(settings) {
      * @remarks Histories are stored in an Array, so it's more performant to not
      *          provide a name if you do call this function often.
      */
-    self.saveHistory = function saveHistory(name) {
+    self.saveHistory = function (name) {
         histories.push(history);
         if (arguments.length) {
             histories[name] = history;
@@ -264,8 +310,7 @@ function InputWritr(settings) {
      * @remarks This will execute the same actions in the same order as before,
      *          but the arguments object may be different.
      */
-    // Sets a native JS timeout for each of the events in history
-    self.playHistory = function playHistory(events) {
+    self.playHistory = function (events) {
         var timeouts = {},
             time, call;
 
@@ -341,7 +386,7 @@ function InputWritr(settings) {
      *            preventDefault of the argument.
      *            InputWriter.makePipe("oncontextmenu", null, true);
      */
-    self.makePipe = function makePipe(trigger, code_label, prevent_defaults) {
+    self.makePipe = function (trigger, code_label, prevent_defaults) {
         if (!triggers.hasOwnProperty(trigger)) {
             console.warn("No trigger of label '" + trigger + "' has been defined.");
             return;
