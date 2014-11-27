@@ -100,14 +100,21 @@ function InputWritr(settings) {
      */
     self.getAliasesAsKeyStrings = function () {
         var output = {},
-            list, i, j;
+            alias;
         
         for(i in aliases) {
-            output[i] = aliases[i].map(convertAliasToKeyString);
+            output[i] = self.getAliasAsKeyStrings(alias);
         }
         
         return output;
     };
+    
+    /**
+     * 
+     */
+    self.getAliasAsKeyStrings = function (alias) {
+        return aliases[alias].map(convertAliasToKeyString);
+    }
     
     /**
      * 

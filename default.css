@@ -192,6 +192,8 @@ section#game {
 #controls input {
     font-size: 1em;
     font-weight: bold;
+    text-align: right;
+    display: inline;
 }
 
 

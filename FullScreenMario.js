@@ -1680,7 +1680,6 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function collideShellPlayer(thing, other) {
-        console.warn("collideShellPlayer uses some global-style functions.");
         var shelltoleft = thing.EightBitter.objectToLeft(other, thing),
             playerjump = thing.yvel > 0 && (
                 thing.bottom <= other.top + thing.EightBitter.unitsize * 2

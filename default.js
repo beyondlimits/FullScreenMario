@@ -100,7 +100,7 @@
                 "title": "FastFwd",
                 "type": "Boolean",
                 "source": function () {
-                    FSM.GamesRunner.getSpeed() === 1;
+                    return FSM.GamesRunner.getSpeed() !== 1;
                 },
                 "enable": function () {
                     FSM.GamesRunner.setSpeed(3);
@@ -128,28 +128,28 @@
                 "title": "Left",
                 "type": "Keys",
                 "source": function () {
-                    return ["a"];
+                    return FSM.InputWriter.getAliasAsKeyStrings("left");
                 }
             },
             {
                 "title": "Right",
                 "type": "Keys",
                 "source": function () {
-                    return ["d"];
+                    return FSM.InputWriter.getAliasAsKeyStrings("right");
                 }
             },
             {
                 "title": "Up",
                 "type": "Keys",
                 "source": function () {
-                    return ["w"];
+                    return FSM.InputWriter.getAliasAsKeyStrings("up");
                 }
             },
             {
                 "title": "Down",
                 "type": "Keys",
                 "source": function () {
-                    return ["s"];
+                    return FSM.InputWriter.getAliasAsKeyStrings("down");
                 }
             }
         ]
