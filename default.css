@@ -189,6 +189,12 @@ section#game {
     padding: 4px 0;
 }
 
+#controls input {
+    font-size: 1em;
+    font-weight: bold;
+}
+
+
 /* Controls - maps grid */
 
 #controls table {

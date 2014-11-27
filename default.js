@@ -54,7 +54,6 @@
         return control;
     }
     
-    // document.body.onload = function () {
     document.onreadystatechange = function (event) {
         if(event.target.readyState != "complete") {
             return;
@@ -73,17 +72,42 @@
         "generator": "OptionsTable",
         "options": [
             {
+                "title": "Volume",
+                "type": "Number",
+                "minimum": 0,
+                "maximum": 100,
+                "source": function () {
+                    return FSM.AudioPlayer.getVolume() * 100;
+                },
+                "update": function (value) {
+                    FSM.AudioPlayer.setVolume(value / 100);
+                }
+            },
+            {
                 "title": "Mute",
                 "type": "Boolean",
                 "source": function () {
-                    return false;
+                    return FSM.AudioPlayer.getMuted();
+                },
+                "enable": function () {
+                    FSM.AudioPlayer.setMutedOn();
+                },
+                "disable": function () {
+                    FSM.AudioPlayer.setMutedOff();
                 }
             },
             {
                 "title": "FastFwd",
                 "type": "Boolean",
                 "source": function () {
-                    return false;
+                    FSM.GamesRunner.getSpeed() === 1;
+                },
+                "enable": function () {
+                    FSM.GamesRunner.setSpeed(3);
+                },
+                "disable": function () {
+                    FSM.GamesRunner.setSpeed(1);
+                    
                 }
             },
             {
@@ -91,7 +115,8 @@
                 "type": "Boolean",
                 "source": function () {
                     return false;
-                }
+                },
+                "confirmation": true
             }
         ]
     },
@@ -201,59 +226,82 @@
         return output;
     },
     "OptionsTable": (function () {
-        function CreateBooleanRow(details) {
-            var row = document.createElement("tr"),
-                left = document.createElement("td"),
-                right = document.createElement("td");
+        function setBooleanInput(input, details) {
+            var status = details.source() ? "on" : "off",
+                statusString = status === "on" ? "enabled" : "disabled";
             
-            left.textContent = details.title;
+            input.className = "select-option options-button-option option-" + statusString;
+            input.textContent = status;
             
-            right.className = "select-option options-button-option";
-            right.textContent = "off";
-            
-            row.appendChild(left);
-            row.appendChild(right);
-            
-            return row;
+            input.onclick = function () {
+                if(input.textContent === "on") {
+                    details.disable();
+                    input.textContent = "off";
+                    input.className = input.className.replace("enabled", "disabled");
+                } else {
+                    details.enable();
+                    input.textContent = "on";
+                    input.className = input.className.replace("disabled", "enabled");
+                }
+            };
         }
         
-        function CreateKeyRow(details) {
-            var row = document.createElement("tr"),
-                left = document.createElement("td"),
-                right = document.createElement("td"),
-                values, child,
-                i;
+        function setKeyInput(input, details) {
+            var values = details.source(),
+                child, i;
                 
-            left.textContent = details.title;
-            
-            values = details.source();
             for(i = 0; i < values.length; i += 1) {
-                child = document.createElement("td");
+                child = document.createElement("div");
                 child.textContent = values[i];
-                right.appendChild(child);
+                input.appendChild(child);
             }
+        }
+        
+        function setNumberInput(input, details) {
+            var child = document.createElement("input");
             
-            row.appendChild(left);
-            row.appendChild(right);
+            child.type = "number";
+            child.value = Number(details.source());
+            child.min = details.minimum || 0;
+            child.max = details.maximum || Math.max(details.minimum + 10, 10);
             
-            return row;
+            child.onchange = child.oninput = function () {
+                if(child.checkValidity()) {
+                    details.update(child.value);
+                }
+            };
+            
+            input.appendChild(child);
         }
         
         var optionTypes = {
-            "Boolean": CreateBooleanRow,
-            "Keys": CreateKeyRow
+            "Boolean": setBooleanInput,
+            "Keys": setKeyInput,
+            "Number": setNumberInput
         };
 
         return function (schema) {
             var output = document.createElement("div"),
                 table = document.createElement("table"),
-                generator, i;
+                etails, row, label, input,
+                i;
             
             output.className = "select-options select-options-table";
             
             for(i = 0; i < schema.options.length; i += 1) {
-                generator = optionTypes[schema.options[i].type];
-                table.appendChild(generator(schema.options[i]));
+                row = document.createElement("tr");
+                label = document.createElement("td");
+                input = document.createElement("td");
+                
+                details = schema.options[i],
+                
+                label.textContent = details.title;
+                
+                row.appendChild(label);
+                row.appendChild(input);
+                
+                optionTypes[schema.options[i].type](input, details);
+                table.appendChild(row);
             }
             
             output.appendChild(table);
