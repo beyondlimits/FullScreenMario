@@ -117,7 +117,8 @@ section#game {
 }
 
 #controls .control-inner {
-    display: none;
+    /* display: none; */
+    margin-top: 28px;
     padding: 7px 3px;
     opacity: 0;
     transition: 35ms opacity;
@@ -125,6 +126,7 @@ section#game {
 
 #controls .control:hover .control-inner {
     display: block;
+    margin-top: 0;
     opacity: 1
 }
 

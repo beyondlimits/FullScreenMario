@@ -48,9 +48,20 @@
         
         inner.className = "control-inner";
         inner.appendChild(generators[schema.generator](schema));
-
+        
         control.appendChild(heading);
         control.appendChild(inner);
+        
+        // Touch events often propogate to children before the control div has
+        // been fully extended. Setting the "active" attribute fixes that.
+        control.onmouseover = setTimeout.bind(undefined, function () {
+            control.setAttribute("active", "on");
+        }, 35);
+        
+        control.onmouseout = function () {
+            control.setAttribute("active", "off");
+        };
+        
         return control;
     }
     
@@ -178,7 +189,8 @@
         "extras": {
             "Map Generator!": "Random"
         },
-        "callback": function (schema, button) {
+        "callback": function (schema, button, event) {
+            console.log("Setting map");
             FSM.setMap(button.getAttribute("value") || button.textContent);
         }
     },
@@ -190,6 +202,15 @@
             keyActive = schema.keyActive || "active",
             classNameStart = "select-option options-button-option",
             option, element, i;
+    
+        function getParentControlDiv(element) {
+            if(element.className === "control") {
+                return element;
+            } else if(!element.parentNode) {
+                return undefined;
+            } 
+            return getParentControlDiv(element.parentNode);
+        }
         
         output.className = "select-options select-options-buttons";
         
@@ -199,8 +220,13 @@
             element = document.createElement("div");
             element.className = classNameStart;
             element.textContent = optionKeys[i];
+            
             element.onclick = function (schema, element) {
+                if(getParentControlDiv(element).getAttribute("active") !== "on") {
+                    return;
+                }
                 schema.callback.call(schema, schema, element);
+                
                 if(element.getAttribute("option-enabled") == "true") {
                     element.setAttribute("option-enabled", false);
                     element.className = classNameStart + " option-disabled";
@@ -353,6 +379,15 @@
                 row,
                 i, j;
                 
+            function getParentControlDiv(element) {
+                if(element.className === "control") {
+                    return element;
+                } else if(!element.parentNode) {
+                    return undefined;
+                } 
+                return getParentControlDiv(element.parentNode);
+            }    
+            
             for(i = rangeY[0]; i <= rangeY[1]; i += 1) {
                 row = document.createElement("tr");
                 row.className = "maps-grid-row";
@@ -361,7 +396,12 @@
                     element = document.createElement("td");
                     element.className = "select-option maps-grid-option maps-grid-option-range";
                     element.textContent = i + "-" + j;
-                    element.onclick = schema.callback.bind(schema, schema, element);
+                    element.onclick = function () {
+                        if(getParentControlDiv(element).getAttribute("active") !== "on") {
+                            return;
+                        }
+                        schema.callback.bind(schema, schema, element);
+                    };
                     row.appendChild(element);
                 }
                 
