@@ -92,6 +92,7 @@ var GameStartr = (function (EightBittr) {
             "start_left": -quadrant_width,
             "start_height": -quadrant_height,
             "on_add": EightBitter.onAreaSpawn.bind(EightBitter, EightBitter),
+            "on_remove": EightBitter.onAreaUnspawn.bind(EightBitter, EightBitter),
         }, EightBitter.settings.quadrants));
     }
     
@@ -383,6 +384,32 @@ var GameStartr = (function (EightBittr) {
         thing.EightBitter.scrollWindow(dx, dy);
         thing.EightBitter.setLeft(thing, saveleft);
         thing.EightBitter.setTop(thing, savetop);
+    }
+    
+    /**
+     * 
+     */
+    function onAreaSpawn(EightBitter, direction, top, right, bottom, left) {
+        EightBitter.MapsHandler.spawnMap(
+            direction,
+            top / EightBitter.unitsize,
+            (right + EightBitter.MapScreener.left) / EightBitter.unitsize,
+            bottom / EightBitter.unitsize,
+            (left + EightBitter.MapScreener.left) / EightBitter.unitsize
+        );
+    }
+    
+    /**
+     * 
+     */
+    function onAreaUnspawn(EightBitter, direction, top, right, bottom, left) {
+        EightBitter.MapsHandler.unspawnMap(
+            direction,
+            top / EightBitter.unitsize,
+            (right + EightBitter.MapScreener.left) / EightBitter.unitsize,
+            bottom / EightBitter.unitsize,
+            (left + EightBitter.MapScreener.left) / EightBitter.unitsize
+        );
     }
     
     /**
@@ -938,6 +965,8 @@ var GameStartr = (function (EightBittr) {
         // Global manipulations
         "scrollWindow": scrollWindow,
         "scrollThing": scrollThing,
+        "onAreaSpawn": onAreaSpawn,
+        "onAreaUnspawn": onAreaUnspawn,
         "addThing": addThing,
         "thingProcess": thingProcess,
         "thingProcessAttributes": thingProcessAttributes,

@@ -442,6 +442,7 @@ function MapsCreatr(settings) {
         this.thing = thing;
         this.title = thing.title;
         this.reference = reference;
+        this.spawned = false;
         
         this.left = (reference.x || reference.left) | 0;
         this.top = (reference.y || reference.top) | 0;

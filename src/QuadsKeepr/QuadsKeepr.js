@@ -178,28 +178,28 @@ function QuadsKeepr(settings) {
     function adjustOffsets() {
         // Quadrant shift: add to the right
         while(-offset_x > quadrant_width) {
-            self.shiftQuadrantCol();
+            self.shiftQuadrantCol(true);
             self.pushQuadrantCol(true);
             offset_x += quadrant_width;
         }
         
         // Quadrant shift: add to the left
         while(offset_x > quadrant_width) {
-            self.popQuadrantCol();
+            self.popQuadrantCol(true);
             self.unshiftQuadrantCol(true);
             offset_x -= quadrant_width;
         }
         
         // Quadrant shift: add to the bottom
         while(-offset_y > quadrant_height) {
-            self.unshiftQuadrantRow();
+            self.unshiftQuadrantRow(true);
             self.pushQuadrantRow(true);
             offset_y += quadrant_height;
         }
         
         // Quadrant shift: add to the top
         while(offset_y > quadrant_height) {
-            self.popQuadrantRow();
+            self.popQuadrantRow(true);
             self.unshiftQuadrantRow(true);
             offset_y -= quadrant_height;
         }

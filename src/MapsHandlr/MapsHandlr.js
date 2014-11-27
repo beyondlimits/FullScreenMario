@@ -34,9 +34,11 @@ function MapsHandlr(settings) {
         // during self.spawnMap
         prethings,
         
-        // When a prething needs to be spawned, this function should put it on
-        // the map
+        // When a prething is to be spawned, this function should spawn it
         on_spawn,
+        
+        // When a prething is to be unspawned, this function should unspawn it
+        on_unspawn,
         
         // Optionally, an array of Things to stretch across the map horizontally
         stretches,
@@ -81,7 +83,8 @@ function MapsHandlr(settings) {
         
         screen_attributes = settings.screen_attributes || [];
         
-        on_spawn = settings.on_spawn || console.log.bind(console, "Spawning:");
+        on_spawn = settings.on_spawn;
+        on_unspawn = settings.on_unspawn;
         
         stretch_add = settings.stretch_add;
         on_stretch = settings.on_stretch;
@@ -279,12 +282,37 @@ function MapsHandlr(settings) {
      * 
      * 
      * 
+     */
+    self.spawnMap = function (direction, top, right, bottom, left) {
+        applySpawnAction(on_spawn, true, direction, top, right, bottom, left);
+    };
+    
+    /**
+     * 
+     * 
+     * 
+     */
+    self.unspawnMap = function (direction, top, right, bottom, left) {
+        applySpawnAction(on_unspawn, false, direction, top, right, bottom, left);
+    };
+    
+    /**
+     *
+     *
+     *
+     * @param {Function} [callback]   The callback to be run whenever a 
+     *                                matching PreThing is found.
+     * @param {Boolean} status   The spawn status to match PreThings against.
+     *                           Only PreThings with .spawned === status will 
+     *                           have the callback applied to them.
+     *
+     *
      * @todo This will almost certainly present problems when different 
      *       directions are used. For Pokemon/Zelda style games, the system
      *       will probably need to be adapted to use a Quadrants approach
      *       instead of plain Arrays.
      */
-    self.spawnMap = function (direction, top, right, bottom, left) {
+    function applySpawnAction(callback, status, direction, top, right, bottom, left) {
         var name, group, mid, start, end, i, prething;
         
         // For each group of PreThings currently able to spawn...
@@ -320,10 +348,16 @@ function MapsHandlr(settings) {
                     // continue;
                 // }
                 
-                on_spawn(prething);
+                // For example: if status is true (spawned), don't spawn again
+                if(prething.spawned !== status) {
+                    prething.spawned = status;
+                    if(callback) {
+                        callback(prething);
+                    }
+                }
             }
         }
-    };
+    }
     
     
     /**
