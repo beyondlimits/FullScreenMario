@@ -54,7 +54,26 @@ var GameStartr = (function (EightBittr) {
     
     // Subsequent settings will be stored in GameStartr.prototype.settings
     EightBitterProto.settings = {};
-    
+    EightBitterProto.resets = [
+        "resetObjectMaker",
+        "resetPixelRender",
+        "resetTimeHandler",
+        "resetAudioPlayer",
+        "resetQuadsKeeper",
+        "resetGamesRunner",
+        "resetStatsHolder",
+        "resetThingHitter",
+        "resetMapScreener",
+        "resetPixelDrawer",
+        "resetMapsCreator",
+        "resetMapsHandler",
+        "resetInputWriter",
+        "resetLevelEditor",
+        "resetWorldSeeder",
+        "resetModAttacher",
+        "startModAttacher",
+        "resetContainer"
+    ];
     
     /* Resets
     */
@@ -63,26 +82,14 @@ var GameStartr = (function (EightBittr) {
      * 
      */
     function reset(EightBitter, customs) {
-        EightBittr.prototype.reset(EightBitter, [
-            "resetObjectMaker",
-            "resetPixelRender",
-            "resetTimeHandler",
-            "resetAudioPlayer",
-            "resetQuadsKeeper",
-            "resetGamesRunner",
-            "resetStatsHolder",
-            "resetThingHitter",
-            "resetMapScreener",
-            "resetPixelDrawer",
-            "resetMapsCreator",
-            "resetMapsHandler",
-            "resetInputWriter",
-            "resetLevelEditor",
-            "resetWorldSeeder",
-            "resetModAttacher",
-            "startModAttacher",
-            "resetContainer"
-        ], customs);
+        EightBittr.prototype.reset(EightBitter, EightBitter.resets, customs);
+    };
+    
+    /**
+     * 
+     */
+    function resetTimed(EightBitter, customs) {
+        return EightBittr.prototype.resetTimed(EightBitter, EightBitter.resets, customs);
     };
     
     /**
@@ -979,6 +986,7 @@ var GameStartr = (function (EightBittr) {
     proliferateHard(EightBitterProto, {
         // Resets
         "reset": reset,
+        "resetTimed": resetTimed,
         "resetObjectMaker": resetObjectMaker,
         "resetQuadsKeeper": resetQuadsKeeper,
         "resetPixelRender": resetPixelRender,

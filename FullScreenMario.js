@@ -20,6 +20,9 @@ var FullScreenMario = (function(GameStartr) {
      * 
      * @param {Number} width   Width of the game viewport: at least 480.
      * @param {Number} height   Height of the game viewport: at least 464.
+     * @param {Boolean} resetTimes   Whether the amount of time in milliseconds
+     *                               of each reset function should be stored as
+     *                               a member .resetTimes.
      * @param {Object} [style]   Additional CSS styles to be given to the
      *                           game's container <div> element.
      * @param {} 
@@ -30,6 +33,15 @@ var FullScreenMario = (function(GameStartr) {
      *     "width": 480, 
      *     "height": 464
      * });
+     * 
+     * @example Creating a 15 x 14.5 blocks sized FullScreenMario object and
+     *          logging the amount of time each reset function took.
+     * var FSM = new FullScreenMario({
+     *     "width": 480, 
+     *     "height": 464,
+     *     "resetTimed": true
+     * });
+     * console.log(FSM.resetTimes);
      * 
      * @example Creating a full-screen FullScreenMario object with a few mods.
      * var FSM = new FullScreenMario({
@@ -85,7 +97,12 @@ var FullScreenMario = (function(GameStartr) {
                 "gravity"
             ]        });
         
-        this.reset(this, customs);    }
+        if(customs.resetTimed) {
+            this.resetTimes = this.resetTimed(this, customs);
+        } else {
+            this.reset(this, customs);
+        }
+    }
     FullScreenMario.prototype = GameStartrProto;
     
     // For the sake of reset functions, store constants as members of the actual

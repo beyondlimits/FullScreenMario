@@ -87,9 +87,35 @@ var EightBittr = (function() {
     function reset(self, resets, customs) {
         var i;
         
-        for(i = 0; i < resets.length; ++i) {
+        for(i = 0; i < resets.length; i += 1) {
             self[resets[i]](self, customs)
         }
+    }
+    
+    /**
+     * 
+     */
+    function resetTimed(self, resets, customs) {
+        var timeStart = performance.now(),
+            times = new Array(resets.length + 1),
+            timeEach, i;
+        
+        for(i = 0; i < resets.length; i += 1) {
+            timeEach = performance.now();
+            self[resets[i]](self, customs);
+            
+            times[i] = {
+                "name": resets[i],
+                "time": performance.now() - timeEach
+            };
+        }
+        
+        times[i] = {
+            "name": "resetTimed",
+            "time": performance.now() - timeStart
+        };
+        
+        return times;
     }
     
     /**
@@ -673,6 +699,7 @@ var EightBittr = (function() {
     proliferateHard(EightBittr.prototype, {
         // Setup
         "reset": reset,
+        "resetTimed": resetTimed,
         // Collisions
         "canThingCollide": canThingCollide,
         // HTML
