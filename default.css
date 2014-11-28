@@ -196,8 +196,13 @@ section#game {
     margin-left: -3px;
     padding-left: 17px;
     width: 42px;
-    font-size: 1em;
-    font-weight: bold;
+    /* font-size: 1em; */
+    font-family: "Press Start";
+}
+
+#controls select {
+    /* font-size: 1em; */
+    font-family: "Press Start";
 }
 
 

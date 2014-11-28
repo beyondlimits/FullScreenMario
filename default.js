@@ -130,6 +130,20 @@
                     return false;
                 },
                 "confirmation": true
+            },
+            {
+                "title": "Framerate",
+                "type": "Select",
+                "options": function () {
+                    return ["60fps", "30fps"];
+                },
+                "source": function () {
+                    return 1 / FSM.PixelDrawer.getFramerateSkip() * 60;
+                },
+                "update": function (value) {
+                    var numeric = Number(value.replace("fps", ""));
+                    FSM.PixelDrawer.setFramerateSkip(1 / numeric * 60);
+                }
             }
         ]
     },
@@ -305,10 +319,29 @@
             input.appendChild(child);
         }
         
+        function setSelectInput(input, details) {
+            var child = document.createElement("select"),
+                options = details.options(),
+                i;
+            
+            for(i = 0; i < options.length; i += 1) {
+                child.appendChild(new Option(options[i]));
+            }
+            
+            child.value = details.source();
+            
+            child.onchange = function () {
+                details.update(child.value);
+            };
+            
+            input.appendChild(child);
+        }
+        
         var optionTypes = {
             "Boolean": setBooleanInput,
             "Keys": setKeyInput,
-            "Number": setNumberInput
+            "Number": setNumberInput,
+            "Select": setSelectInput
         };
 
         return function (schema) {
