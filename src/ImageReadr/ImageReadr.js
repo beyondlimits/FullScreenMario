@@ -94,6 +94,40 @@ document.onreadystatechange = (function (settings) {
     var initializeInput = function (selector) {
         var input = document.querySelector(selector);
         
+        initializeClickInput(input);
+        initializeDragInput(input);
+    };
+    
+    /**
+     * 
+     */
+    var initializeClickInput = function (input) {
+        var dummy = document.createElement("input");
+        
+        dummy.type = "file";
+        dummy.multiple = "multiple";
+        dummy.onchange = handleFileDrop.bind(undefined, dummy);
+        
+        input.addEventListener("click", function () {
+            dummy.click();
+        });
+        
+        input.appendChild(dummy);
+    };
+    
+    /**
+     * 
+     */
+    var handleFileUpload = function (input, event) {
+         var files = dummy.files;
+         
+         console.log("handleFileUpload", input, event, files);
+    };
+    
+    /**
+     * 
+     */
+    var initializeDragInput = function (input) {
         input.ondragenter = handleFileDragEnter.bind(undefined, input);
         input.ondragover = handleFileDragOver.bind(undefined, input);
         input.ondragleave = input.ondragend = handleFileDragLeave.bind(undefined, input);
@@ -104,7 +138,9 @@ document.onreadystatechange = (function (settings) {
      * 
      */
     var handleFileDragEnter = function (input, event) {
-        event.dataTransfer.dropEffect = "copy"
+        if(event.dataTransfer) {
+            event.dataTransfer.dropEffect = "copy"
+        }
         input.className += " hovering";
     };
     
@@ -120,15 +156,20 @@ document.onreadystatechange = (function (settings) {
      * 
      */
     var handleFileDragLeave = function (input, event) {
-        event.dataTransfer.dropEffect = "none"
+        if(event.dataTransfer) {
+            event.dataTransfer.dropEffect = "none"
+        }
         input.className = input.className.replace(" hovering", "");
     };
     
     /**
      * 
+     * 
+     * @remarks input.files is when the input[type=file] is the source, while
+     *          event.dataTransfer.files is for drag-and-drop.
      */
     var handleFileDrop = (function (allowedFiles, output, input, event) {
-        var files = event.dataTransfer.files,
+        var files = input.files || event.dataTransfer.files,
             elements = [],
             file, type, element, i;
         
@@ -285,6 +326,7 @@ document.onreadystatechange = (function (settings) {
             settings.paletteBackgroundImage,
             settings.paletteDefault
         );
+        
         initializeInput(settings.inputSelector);
     };
 })({
