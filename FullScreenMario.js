@@ -61,55 +61,41 @@ var FullScreenMario = (function(GameStartr) {
      * 
      * FSM.gameStart();
      */
-    function FullScreenMario(customs) {        // Call the parent EightBittr constructor to set the base settings,        // verify the prototype requirements, and call the reset functions        EightBittr.call(this, {
+    function FullScreenMario(customs) {        // Call the parent GameStartr constructor to set the base settings and        // verify the prototype requirements
+        GameStartr.call(this, {
             "customs": customs,
-            "constructor": FullScreenMario,            "unitsize": 4,            "scale": 2,            "requirements": {                "settings": {
+            "constructor": FullScreenMario,            "requirements": {                "settings": {
                     "audio": "settings/audio.js",
-                    "collisions": "settings/collisions.js",                    "events": "settings/events.js",
+                    "collisions": "settings/collisions.js",                    "editor": "settings/editor.js",
+                    "events": "settings/events.js",
                     "generator": "settings/generator.js",
                     "input": "settings/input.js",
-                    "maps": "settings/maps.js",                    "quadrants": "settings/quadrants.js",
+                    "maps": "settings/maps.js",
+                    "mods": "settings/mods.js",
+                    "objects": "settings/objects.js",                    "quadrants": "settings/quadrants.js",
+                    "renderer": "settings/renderer.js",
                     "runner": "settings/runner.js",
+                    "screen": "settings/screen.js",
                     "sprites": "settings/sprites.js",
-                    "statistics": "settings/statistics.js"                }            },            "resets": [
-                "resetObjectMaker",
-                "resetPixelRender",                "resetTimeHandler",
-                "resetAudioPlayer",
-                "resetQuadsKeeper",
-                "resetGamesRunner",
-                "resetStatsHolder",
-                "resetThingHitter",
-                "resetMapScreener",
-                "resetPixelDrawer",
-                "resetMapsCreator",
-                "resetMapsHandler",
-                "resetInputWriter",
-                "resetLevelEditor",
-                "resetWorldSeeder",
-                "resetModAttacher",
-                "startModAttacher",
-                "resetContainer"
-            ],
+                    "statistics": "settings/statistics.js"                }            },
             "constants": [
                 "unitsize",
                 "scale",
                 "point_levels",
                 "gravity"
-            ]        });    }
+            ]        });
+        
+        this.reset(this, customs);    }
     FullScreenMario.prototype = GameStartrProto;
     
     // For the sake of reset functions, store constants as members of the actual
     // FullScreenMario function itself - this allows prototype setters to use 
     // them regardless of whether the prototype has been instantiated yet.
-    // The floor is 104 spaces (13 blocks) below the top of the screen (yloc = -16).
     FullScreenMario.unitsize = 4;
-    FullScreenMario.scale = 2;
+    FullScreenMario.scale = FullScreenMario.unitsize / 2;
     
     // Gravity is always a function of unitsize
     FullScreenMario.gravity = Math.round(12 * FullScreenMario.unitsize) / 100; // .48
-    
-    // When a player is far enough below the bottom, that's a death
-    FullScreenMario.bottom_death_difference = 12 * FullScreenMario.unitsize;
     
     // Levels of points to award for hopping on / shelling enemies
     FullScreenMario.point_levels = [
@@ -120,7 +106,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function resetStatsHolder(self, customs) {
-        self.constructor.prototype.constructor.prototype.resetStatsHolder(self, customs);
+        GameStartr.prototype.resetStatsHolder(self, customs);
         
         if(customs.width < 560) {
             self.StatsHolder.getContainer().children[0].cells[4].style.display = "none";
@@ -131,7 +117,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function resetContainer(self, customs) {
-        self.constructor.prototype.constructor.prototype.resetContainer(self, customs);
+        GameStartr.prototype.resetContainer(self, customs);
         
         self.container.style["fontFamily"] = "Press Start";
         
@@ -204,9 +190,6 @@ var FullScreenMario = (function(GameStartr) {
         var thing = prething.thing,
             position = prething.position || thing.position;
         
-        if(prething.title === "Goomba" || prething.title === "Beetle") {
-            console.log("Adding prething", prething);
-        }
         thing.EightBitter.addThing(
             thing, 
             prething.left * thing.EightBitter.unitsize - thing.EightBitter.MapScreener.left,

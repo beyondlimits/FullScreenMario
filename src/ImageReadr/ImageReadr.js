@@ -185,12 +185,7 @@ document.onreadystatechange = (function (settings) {
             if(!allowedFiles.hasOwnProperty(type)) {
                 element = document.createElement("div");
                 element.className = "output output-failed";
-                
-                if(file.type !== "") {
-                    element.textContent = "'" + file.name + "' is of a non-image type...";
-                } else {
-                    element.textContent = "'" + file.name + "' is either a folder or has no type...";
-                }
+                element.textContent = "'" + file.name + "' is either a folder or has a non-image type...";
                 elements.push(element);
                 continue;
             }

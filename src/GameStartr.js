@@ -11,45 +11,79 @@ var GameStartr = (function (EightBittr) {
         
         // Used for combining arrays from the prototype to this
         proliferate = EightBitterProto.proliferate,
-        proliferateHard = EightBitterProto.proliferateHard,
+        proliferateHard = EightBitterProto.proliferateHard;
+    
+    /**
+     * 
+     */
+    function GameStartr(customs) {
+        if(typeof(customs) === "undefined") {
+            customs = {};
+        }
         
-        GameStartr = function GameStartr(customs) {
-            EightBittr.call(this, {
-                "customs": customs,
-                "constructor": GameStartr,
-                "requirements": {
-                    "global": {
-                        "AudioPlayr": "src/AudioPlayr/AudioPlayr.js",
-                        "ChangeLinr": "src/ChangeLinr/ChangeLinr.js",
-                        "FPSAnalyzr": "src/FPSAnalyzr/FPSAnalyzr.js",
-                        "GamesRunnr": "src/GamesRunnr/GamesRunnr.js",
-                        "GroupHoldr": "src/GroupHoldr/GroupHoldr.js",
-                        "InputWritr": "src/InputWritr/InputWritr.js",
-                        "LevelEditr": "src/LevelEditr/LevelEditr.js",
-                        "MapScreenr": "src/MapScreenr/MapScreenr.js",
-                        "MapsHandlr": "src/MapsHandlr/MapsHandlr.js",
-                        "ModAttachr": "src/ModAttachr/ModAttachr.js",
-                        "ObjectMakr": "src/ObjectMakr/ObjectMakr.js",
-                        "PixelDrawr": "src/PixelDrawr/PixelDrawr.js",
-                        "PixelRendr": "src/PixelRendr/PixelRendr.js",
-                        "QuadsKeepr": "src/QuadsKeepr/QuadsKeepr.js",
-                        "StatsHoldr": "src/StatsHoldr/StatsHoldr.js",
-                        "StringFilr": "src/StringFilr/StringFilr.js",
-                        "ThingHittr": "src/ThingHittr/ThingHittr.js",
-                        "TimeHandlr": "src/TimeHandlr/TimeHandlr.js"
-                    },
-                }
-            });
-        };
+        EightBittr.call(this, {
+            "constants": customs.constants,
+            "constructor": customs.constructor || GameStartr,
+            "customs": customs,
+            "requirements": {
+                "global": {
+                    "AudioPlayr": "src/AudioPlayr/AudioPlayr.js",
+                    "ChangeLinr": "src/ChangeLinr/ChangeLinr.js",
+                    "FPSAnalyzr": "src/FPSAnalyzr/FPSAnalyzr.js",
+                    "GamesRunnr": "src/GamesRunnr/GamesRunnr.js",
+                    "GroupHoldr": "src/GroupHoldr/GroupHoldr.js",
+                    "InputWritr": "src/InputWritr/InputWritr.js",
+                    "LevelEditr": "src/LevelEditr/LevelEditr.js",
+                    "MapScreenr": "src/MapScreenr/MapScreenr.js",
+                    "MapsHandlr": "src/MapsHandlr/MapsHandlr.js",
+                    "ModAttachr": "src/ModAttachr/ModAttachr.js",
+                    "ObjectMakr": "src/ObjectMakr/ObjectMakr.js",
+                    "PixelDrawr": "src/PixelDrawr/PixelDrawr.js",
+                    "PixelRendr": "src/PixelRendr/PixelRendr.js",
+                    "QuadsKeepr": "src/QuadsKeepr/QuadsKeepr.js",
+                    "StatsHoldr": "src/StatsHoldr/StatsHoldr.js",
+                    "StringFilr": "src/StringFilr/StringFilr.js",
+                    "ThingHittr": "src/ThingHittr/ThingHittr.js",
+                    "TimeHandlr": "src/TimeHandlr/TimeHandlr.js"
+                },
+            }
+        });
+    }
     
     GameStartr.prototype = EightBitterProto;
     
-    // Subsequent settings will be stored in FullScreenMario.prototype.settings
+    // Subsequent settings will be stored in GameStartr.prototype.settings
     EightBitterProto.settings = {};
     
     
     /* Resets
     */
+    
+    /**
+     * 
+     */
+    function reset(EightBitter, customs) {
+        EightBittr.prototype.reset(EightBitter, [
+            "resetObjectMaker",
+            "resetPixelRender",
+            "resetTimeHandler",
+            "resetAudioPlayer",
+            "resetQuadsKeeper",
+            "resetGamesRunner",
+            "resetStatsHolder",
+            "resetThingHitter",
+            "resetMapScreener",
+            "resetPixelDrawer",
+            "resetMapsCreator",
+            "resetMapsHandler",
+            "resetInputWriter",
+            "resetLevelEditor",
+            "resetWorldSeeder",
+            "resetModAttacher",
+            "startModAttacher",
+            "resetContainer"
+        ], customs);
+    };
     
     /**
      * Sets self.ObjectMaker
@@ -944,6 +978,7 @@ var GameStartr = (function (EightBittr) {
     // Add all registered functions from above to the GameStartr prototype
     proliferateHard(EightBitterProto, {
         // Resets
+        "reset": reset,
         "resetObjectMaker": resetObjectMaker,
         "resetQuadsKeeper": resetQuadsKeeper,
         "resetPixelRender": resetPixelRender,

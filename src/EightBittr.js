@@ -17,12 +17,13 @@ var EightBittr = (function() {
             i;
         
         settings = settings || {};
+        self.constructor = settings.constructor || EightBittr,
         
         // Constants, such as unitsize and scale, are always copied first
-        self.constructor = settings.constructor || EightBittr,
         constants = settings.constants;
         if(constants) {
             for(i = 0; i < constants.length; i += 1) {
+                // self[constants[i]] = self.constructor[constants[i]];
                 self[constants[i]] = self.constructor[constants[i]];
             }
         }
@@ -37,10 +38,6 @@ var EightBittr = (function() {
             if(settings.requirements.settings) {
                 checkRequirements(self.settings, settings.requirements.settings, "settings");
             }
-        }
-        
-        if(settings.resets) {
-            doResets(self, settings.resets, settings.customs);
         }
     }
     
@@ -87,7 +84,7 @@ var EightBittr = (function() {
      * 
      * 
      */
-    function doResets(self, resets, customs) {
+    function reset(self, resets, customs) {
         var i;
         
         for(i = 0; i < resets.length; ++i) {
@@ -160,13 +157,9 @@ var EightBittr = (function() {
         canvas.width = width;
         canvas.height = height;
         
-        // If necessary, increase the visual style by the multiplier
-        if (multiplier) {
-            // The multiplier 1 by default, but may be different (e.g. unitsize)
-            multiplier = multiplier || this.unitsize;
-            canvas.style.width = (width * multiplier) + "px";
-            canvas.style.height = (height * multiplier) + "px";
-        }
+        // The multiplier 1 by default, but may be different (e.g. unitsize)
+        canvas.style.width = (width * multiplier) + "px";
+        canvas.style.height = (height * multiplier) + "px";
         
         // For speed's sake, disable image smoothing in all browsers
         context.imageSmoothingEnabled = false;
@@ -678,6 +671,8 @@ var EightBittr = (function() {
     */
     
     proliferateHard(EightBittr.prototype, {
+        // Setup
+        "reset": reset,
         // Collisions
         "canThingCollide": canThingCollide,
         // HTML
