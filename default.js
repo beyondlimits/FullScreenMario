@@ -1,4 +1,6 @@
 (function (schemas, generators) {
+    "use strict";
+    
     var LoadGame = function () {
         var section = document.getElementById("game"),
             FSM = new FullScreenMario({

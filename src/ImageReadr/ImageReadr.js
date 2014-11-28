@@ -1,0 +1,302 @@
+document.onreadystatechange = (function (settings) {
+    "use strict";
+    
+    var PixelRender = new PixelRendr({
+        "palette": settings.palettes[settings.paletteDefault]
+    });
+    
+    /**
+     * 
+     */
+    var initializePalettes = function (palettes, backgroundImage) {
+        var section = document.getElementById("palettes"),
+            name;
+        
+        for(name in palettes) {
+            section.appendChild(initializePalette(name, palettes[name], backgroundImage));
+        }
+    }
+    
+    /**
+     * 
+     */
+    var initializePalette = function (name, palette, backgroundImage) {
+        var surround = document.createElement("div"),
+            label = document.createElement("h4"),
+            container = document.createElement("div"),
+            color, boxOut, boxIn, i;
+        
+        surround.className = "palette";
+        label.className = "palette-label";
+        container.className = "palette-container";
+        
+        label.textContent = "Palette: " + name;
+        
+        for(i = 0; i < palette.length; i += 1) {
+            color = palette[i];
+            
+            boxOut = document.createElement("div");
+            boxOut.className = "palette-box";
+            
+            boxIn = document.createElement("div");
+            boxIn.className = "palette-box-in";
+            boxIn.style.background = "rgba(" + color.join(",") + ")";
+            
+            boxOut.appendChild(boxIn);
+            container.appendChild(boxOut);
+        }
+        
+        surround.appendChild(label);
+        surround.appendChild(container);
+        
+        return surround;
+    }
+    
+    
+    /* Input
+    */
+    
+    /**
+     * 
+     */
+    var initializeInput = function (selector) {
+        var input = document.querySelector(selector);
+        
+        input.ondragenter = handleFileDragEnter.bind(undefined, input);
+        input.ondragover = handleFileDragOver.bind(undefined, input);
+        input.ondragleave = handleFileDragLeave.bind(undefined, input);
+        input.ondrop = handleFileDrop.bind(undefined, input);
+    };
+    
+    /**
+     * 
+     */
+    var handleFileDragEnter = function (input, event) {
+        event.dataTransfer.dropEffect = "copy"
+        input.className += " hovering";
+    };
+    
+    /**
+     * 
+     */
+    var handleFileDragOver = function (input, event) {
+        event.preventDefault();
+        return false;
+    };
+    
+    /**
+     * 
+     */
+    var handleFileDragLeave = function (input, event) {
+        event.dataTransfer.dropEffect = "none"
+        input.className = input.className.replace(" hovering", "");
+    };
+    
+    /**
+     * 
+     */
+    var handleFileDrop = (function (allowedFiles, output, input, event) {
+        var files = event.dataTransfer.files,
+            elements = [],
+            file, type, element, i;
+        
+        event.preventDefault();
+        event.stopPropagation();
+        
+        for(i = 0; i < files.length; i += 1) {
+            file = files[i];
+            type = file.type.split("/")[1];
+            
+            if(!allowedFiles.hasOwnProperty(type)) {
+                element = document.createElement("div");
+                element.className = "output output-failed";
+                
+                if(file.type !== "") {
+                    element.textContent = "'" + file.name + "' is of a non-image type...";
+                } else {
+                    element.textContent = "'" + file.name + "' is either a folder or has no type...";
+                }
+                elements.push(element);
+                continue;
+            }
+            
+            elements.push(createWorkerElement(files[i]));
+        }
+        
+        for(i = 0; i < elements.length; i += 1) {
+            output.insertBefore(elements[i], output.firstElementChild);
+        }
+    }).bind(
+        undefined, 
+        settings.allowedFiles, 
+        document.querySelector(settings.outputSelector)
+    );
+    
+    /**
+     * 
+     */
+    var createWorkerElement = function (file) {
+        var element = document.createElement("div"),
+            reader = new FileReader();
+        
+        element.className = "output output-uploading";
+        element.innerText = "Uploading '" + file.name + "'...";
+        
+        reader.onprogress = workerUpdateProgress.bind(undefined, file, element);
+        reader.onloadend = workerTryStartWorking.bind(undefined, file, element);
+        reader.readAsDataURL(file);
+        
+        return element;
+    };
+    
+    /**
+     * 
+     */
+    var workerUpdateProgress = function (file, element, event) {
+        var percent;
+        
+        if(!event.lengthComputable) {
+            return;
+        }
+        
+        percent = Math.round((event.loaded / event.total) * 100);
+        
+        if(percent > 100) {
+            percent = 100;
+        }
+        
+        element.innerText = "Uploading '" + file.name + "' (" + percent + "%)...";
+    };
+    
+    /**
+     * 
+     * 
+     * 
+     * @remarks It would be nice to use a web worker for this, but each worker
+     *          would have to instantiate a PixelRendr separately...
+     */
+    var workerTryStartWorking = function (file, element, event) {
+        var result = event.currentTarget.result;
+        
+        if(result.length > 100000) {
+            workerCannotStartWorking(result, file, element, event);
+        } else {
+            workerStartWorking(result, file, element, event);
+        }
+    };
+    
+    /**
+     * 
+     */
+    var workerCannotStartWorking = function (result, file, element, event) {
+        element.innerText = "'" + file.name + "' is too big! Use a smaller file.";
+        element.className = "output output-failed";
+    };
+    
+    /**
+     * 
+     */
+    var workerStartWorking = function (result, file, element, event) {
+        var displayBase64 = document.createElement("input");
+        
+        element.className = "output output-working";
+        element.innerText = "Working on " + file.name + "...";
+        
+        displayBase64.className = "selectable";
+        displayBase64.type = "text";
+        displayBase64.setAttribute("value", result);
+        
+        element.appendChild(document.createElement("br"));
+        element.appendChild(displayBase64);
+        
+        parseBase64Image(file, result, workerFinishRender.bind(undefined, file, element));
+    }
+    
+    /**
+     * 
+     */
+    var parseBase64Image = function (file, string, callback) {
+        var image = document.createElement("img");
+        image.onload = PixelRender.encode.bind(undefined, image, callback);
+        image.src = string;
+    };
+    
+    /**
+     * 
+     */
+    var workerFinishRender = function (file, element, result) {
+        var displayResult = document.createElement("input");
+        
+        displayResult.className = "selectable";
+        displayResult.type = "text";
+        displayResult.setAttribute("value", result);
+        
+        element.firstChild.textContent = "Finished '" + file.name + "'.";
+        element.className = "output output-complete";
+        
+        element.appendChild(displayResult);
+    };
+    
+
+    return function (event) {
+        if(event.target.readyState != "complete") {
+            return;
+        }
+        
+        initializePalettes(settings.palettes, settings.paletteBackgroundImage);
+        initializeInput(settings.inputSelector);
+    };
+})({
+    "allowedFiles": {
+        "gif": true,
+        "png": true,
+        "jpeg": true,
+        "jpg": true
+    },
+    "inputSelector": "#input",
+    "outputSelector": "#output",
+    "paletteDefault": "Mario",
+    "palettes": {
+        "Black & White": [
+          [0,0,0,0],
+          [255,255,255,255],
+          [0,0,0,255]
+        ],
+        "GameBoy": [
+          [0,0,0,0],
+          [255,255,255,255],
+          [0,0,0,255],
+          [199,199,192,255],
+          [128,128,128,255]
+        ],
+        "Mario": [
+            [0,0,0,0],
+            // Grayscales (1-4)
+            [255,255,255,255],
+            [0,0,0,255],
+            [188,188,188,255],
+            [116,116,116,255],
+            // Reds & Browns (5-11)
+            [252,216,168,255],
+            [252,152,56,255],
+            [252,116,180,255],
+            [216,40,0,255],
+            [200,76,12,255],
+            [136,112,0,255],
+            [124,7,0,255],
+            // Greens (12-14, and 21)
+            [168,250,188,255],
+            [128,208,16,255],
+            [0,168,0,255],
+            // Blues (15-20)
+            [24,60,92,255],
+            [0,128,136,255],
+            [32,56,236,255],
+            [156,252,240,255],
+            [60,188,252,255],
+            [92,148,252,255],
+            // Green (21) for Luigi
+            [0,130,0,255]
+        ]
+    }
+});
