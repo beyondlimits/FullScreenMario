@@ -113,13 +113,13 @@ function InputWritr(settings) {
      * 
      */
     self.getAliasAsKeyStrings = function (alias) {
-        return aliases[alias].map(convertAliasToKeyString);
+        return aliases[alias].map(self.convertAliasToKeyString);
     }
     
     /**
      * 
      */
-    function convertAliasToKeyString(alias) {
+    self.convertAliasToKeyString = function (alias) {
         if(alias.constructor === String) {
             return alias;
         }
@@ -154,17 +154,7 @@ function InputWritr(settings) {
     /**
      * 
      */
-    self.switchAlias = function (title, valueOld, valueNew) {
-        var alias = convertKeyStringToAlias(valueNew);
-        
-        // self.addAlias(title, valueNew);
-        // self.removeAlias(title, valueOld);
-    };
-    
-    /**
-     * 
-     */
-    function convertKeyStringToAlias(key) {
+    self.convertKeyStringToAlias = function (key) {
         if(key.constructor === Number) {
             return key;
         }
@@ -268,16 +258,21 @@ function InputWritr(settings) {
      * Adds a list of values by which an event may be triggered.
      * 
      * @param {String} name   The name of the event that is being given 
-     *                         aliases, such as "left".
+     *                        aliases, such as "left".
      * @param {Array} values   An array of aliases by which the event will also
      *                         be callable.
      */
-    self.addAlias = function (name, values) {
-        console.log("Adding", name, values);
+    self.addAliasValues = function (name, values) {
         var trigger_name, trigger_group, 
             i;
         
-        aliases[name] = values;
+        if(!aliases.hasOwnProperty(name)) {
+            aliases[name] = values;
+        } else {
+            aliases[name].push.apply(aliases[name], values);
+        }
+        
+        console.log(name, "is now", aliases[name]);
         
         // trigger_name = "onkeydown", "onkeyup", ...
         for(trigger_name in triggers) {
@@ -296,6 +291,52 @@ function InputWritr(settings) {
     };
     
     /**
+     * Removes a list of values by which an event may be triggered.
+     * 
+     * @param {String} name   The name of the event that is having aliases
+     *                        removed, such as "left".
+     * @param {Array} values   An array of aliases by which the event will no
+     *                         longer be callable.
+     */
+    self.removeAliasValues = function (name, values) {
+        var trigger_name, trigger_group, 
+            i;
+        
+        if(!aliases.hasOwnProperty(name)) {
+            return;
+        }
+        
+        for(i = 0; i < values.length; i += 1) {
+            aliases[name].splice(aliases[name].indexOf(values[i], 1));
+        }
+        
+        // trigger_name = "onkeydown", "onkeyup", ...
+        for(trigger_name in triggers) {
+            if(triggers.hasOwnProperty(trigger_name)) {
+                // trigger_group = { "left": function, ... }, ...
+                trigger_group = triggers[trigger_name];
+                
+                if(trigger_group.hasOwnProperty(name)) {
+                    // values[i] = 37, 65, ...
+                    for(i = 0; i < values.length; i += 1) {
+                        if(trigger_group.hasOwnProperty(values[i])) {
+                            delete trigger_group[values[i]];
+                        }
+                    }
+                }
+            }
+        }
+    };
+    
+    /**
+     * 
+     */
+    self.switchAliasValues = function (name, valuesOld, valuesNew) {
+        self.removeAliasValues(name, valuesOld);
+        self.addAliasValues(name, valuesNew);
+    };
+    
+    /**
      * Adds a set of alises from an Object containing "name" => [values] pairs.
      * 
      * @param {Object} aliases_raw
@@ -304,7 +345,7 @@ function InputWritr(settings) {
         var alias_name;
         for (alias_name in aliases_raw) {
             if (aliases_raw.hasOwnProperty(alias_name)) {
-                self.addAlias(alias_name, aliases_raw[alias_name]);
+                self.addAliasValues(alias_name, aliases_raw[alias_name]);
             }
         }
     }

@@ -143,7 +143,11 @@
                         return FSM.InputWriter.getAliasAsKeyStrings(title);
                     },
                     "callback": function (valueOld, valueNew) {
-                       FSM.InputWriter.switchAlias(title, valueOld, valueNew);
+                        FSM.InputWriter.switchAliasValues(
+                            title,
+                            [FSM.InputWriter.convertKeyStringToAlias(valueOld)],
+                            [FSM.InputWriter.convertKeyStringToAlias(valueNew)]
+                        );
                     }
                 };
             });
