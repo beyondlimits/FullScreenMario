@@ -272,8 +272,6 @@ function InputWritr(settings) {
             aliases[name].push.apply(aliases[name], values);
         }
         
-        console.log(name, "is now", aliases[name]);
-        
         // trigger_name = "onkeydown", "onkeyup", ...
         for(trigger_name in triggers) {
             if(triggers.hasOwnProperty(trigger_name)) {
@@ -376,7 +374,6 @@ function InputWritr(settings) {
      */
     self.clearEvent = function (trigger, label) {
         self.addEvent(trigger, label, false);
-        console.log("clearEvent called. There used to be \"debugger;\" here, not sure why.");
     };
     
     
