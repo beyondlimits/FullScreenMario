@@ -180,7 +180,6 @@
             "Map Generator!": "Random"
         },
         "callback": function (schema, button, event) {
-            console.log("Setting map");
             FSM.setMap(button.getAttribute("value") || button.textContent);
         }
     },

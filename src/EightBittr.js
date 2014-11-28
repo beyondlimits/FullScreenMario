@@ -491,7 +491,7 @@ var EightBittr = (function() {
                 }
 
                 // If it's an object, recurse on a new version of it
-                if(typeof(setting = donor[i]) == "object") {
+                if(typeof(setting = donor[i]) === "object") {
                     if(!recipient.hasOwnProperty(i)) {
                         recipient[i] = new setting.constructor();
                     }
@@ -510,7 +510,7 @@ var EightBittr = (function() {
      * Identical to proliferate, but instead of checking whether the recipient
      * hasOwnProperty on properties, it just checks if they're truthy
      * 
-     * @remarks this may not be good with JSLint, but it works for prototypal
+     * @remarks This may not be good with JSLint, but it works for prototypal
      *          inheritance, since hasOwnProperty only is for the current class
      */
     function proliferateHard(recipient, donor, no_override) {

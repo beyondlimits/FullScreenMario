@@ -1360,7 +1360,6 @@ var FullScreenMario = (function(GameStartr) {
                     command.x += left;
                 }
                 
-                console.log("After", command.x);
                 MapsCreator.analyzePreSwitch(command, prethings, area, map);
             }
         }
@@ -4476,7 +4475,7 @@ var FullScreenMario = (function(GameStartr) {
             };
             
             if(command.arguments) {
-                EightBitter.proliferate(output, command.arguments);
+                EightBitter.proliferateHard(output, command.arguments, true);
             }
             
             MapsCreator.analyzePreSwitch(output, prethings, area, map);
