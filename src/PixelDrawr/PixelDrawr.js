@@ -33,7 +33,13 @@ function PixelDrawr(settings) {
         no_refill,
         
         // For refillQuadrant, an Array of string names to refill (bottom-to-top)
-        group_names;
+        group_names,
+        
+        // How often the screen redraws. 1 is always, 2 is every other call, etc.
+        framerateSkip,
+        
+        // How many frames have been drawn so far
+        framesDrawn;
     
     self.reset = function(settings) {
         PixelRender = settings.PixelRender;
@@ -42,6 +48,8 @@ function PixelDrawr(settings) {
         unitsize = settings.unitsize || 4;
         no_refill = settings.no_refill;
         group_names = settings.group_names;
+        framerateSkip = settings.framerateSkip || 1;
+        framesDrawn = 0;
         
         generateObjectKey = settings.generateObjectKey || function (object) {
             return object.toString();
@@ -50,8 +58,22 @@ function PixelDrawr(settings) {
     
     
     
-    /* Simple sets
+    /* Simple gets & sets
     */
+    
+    /**
+     * 
+     */
+    self.getFramerateSkip = function () {
+        return framerateSkip;
+    };
+    
+    /**
+     * 
+     */
+    self.setFramerateSkip = function (skip) {
+        framerateSkip = skip;
+    };
     
     /**
      * 
@@ -187,6 +209,11 @@ function PixelDrawr(settings) {
      * @return {Self}
      */
     self.refillGlobalCanvas = function (background) {
+        framesDrawn += 1;
+        if(framesDrawn % framerateSkip !== 0) {
+            return;
+        }
+        
         if(!no_refill) {
             context.fillStyle = background;
             context.fillRect(0, 0, canvas.width, canvas.height);
@@ -210,7 +237,14 @@ function PixelDrawr(settings) {
      * 
      */
     self.refillQuadrantGroups = function (groups, background) {
-        for(var i = 0; i < groups.length; i += 1) {
+        var i;
+        
+        framesDrawn += 1;
+        if(framesDrawn % framerateSkip !== 0) {
+            return;
+        }
+        
+        for(i = 0; i < groups.length; i += 1) {
             self.refillQuadrants(groups[i].quadrants, background);
         }
     };
