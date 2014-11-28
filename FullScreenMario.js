@@ -204,6 +204,9 @@ var FullScreenMario = (function(GameStartr) {
         var thing = prething.thing,
             position = prething.position || thing.position;
         
+        if(prething.title === "Goomba" || prething.title === "Beetle") {
+            console.log("Adding prething", prething);
+        }
         thing.EightBitter.addThing(
             thing, 
             prething.left * thing.EightBitter.unitsize - thing.EightBitter.MapScreener.left,

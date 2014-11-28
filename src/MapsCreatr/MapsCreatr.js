@@ -444,8 +444,8 @@ function MapsCreatr(settings) {
         this.reference = reference;
         this.spawned = false;
         
-        this.left = (reference.x || reference.left) | 0;
-        this.top = (reference.y || reference.top) | 0;
+        this.left = (reference.x || reference.left) || 0;
+        this.top = (reference.y || reference.top) || 0;
         
         this.right = this.left + ObjectMaker.getPropertiesFull(this.title).width;
         this.bottom = this.top + ObjectMaker.getPropertiesFull(this.title).height;
