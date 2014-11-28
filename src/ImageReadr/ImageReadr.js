@@ -1,20 +1,30 @@
 document.onreadystatechange = (function (settings) {
     "use strict";
     
-    var PixelRender = new PixelRendr({
-        "palette": settings.palettes[settings.paletteDefault]
-    });
+    var PixelRender;
+    
+    var currentPalette;
+    
+    /* Palettes
+    */
     
     /**
      * 
      */
-    var initializePalettes = function (palettes, backgroundImage) {
+    var initializePalettes = function (palettes, backgroundImage, defaultPalette) {
         var section = document.getElementById("palettes"),
-            name;
+            name, element, chosen;
         
         for(name in palettes) {
-            section.appendChild(initializePalette(name, palettes[name], backgroundImage));
+            element = initializePalette(name, palettes[name], backgroundImage);
+            section.appendChild(element);
+            
+            if(name === defaultPalette) {
+                chosen = element;
+            }
         }
+        
+        chosen.onclick();
     }
     
     /**
@@ -29,6 +39,8 @@ document.onreadystatechange = (function (settings) {
         surround.className = "palette";
         label.className = "palette-label";
         container.className = "palette-container";
+        
+        surround.onclick = choosePalette.bind(undefined, surround, name, palette);
         
         label.textContent = "Palette: " + name;
         
@@ -52,6 +64,26 @@ document.onreadystatechange = (function (settings) {
         return surround;
     }
     
+    /**
+     * 
+     */
+    var choosePalette = function (element, name, palette, event) {
+        var elements = element.parentNode.children,
+            i;
+        
+        for(i = 0; i < elements.length; i += 1) {
+            elements[i].className = "palette"
+        }
+        
+        element.className = "palette palette-selected";
+        
+        PixelRender = new PixelRendr({
+            "palette": palette
+        });
+        
+        currentPalette = name;
+    };
+    
     
     /* Input
     */
@@ -64,7 +96,7 @@ document.onreadystatechange = (function (settings) {
         
         input.ondragenter = handleFileDragEnter.bind(undefined, input);
         input.ondragover = handleFileDragOver.bind(undefined, input);
-        input.ondragleave = handleFileDragLeave.bind(undefined, input);
+        input.ondragleave = input.ondragend = handleFileDragLeave.bind(undefined, input);
         input.ondrop = handleFileDrop.bind(undefined, input);
     };
     
@@ -99,6 +131,8 @@ document.onreadystatechange = (function (settings) {
         var files = event.dataTransfer.files,
             elements = [],
             file, type, element, i;
+        
+        handleFileDragLeave(input, event);
         
         event.preventDefault();
         event.stopPropagation();
@@ -140,6 +174,7 @@ document.onreadystatechange = (function (settings) {
             reader = new FileReader();
         
         element.className = "output output-uploading";
+        element.setAttribute("palette", currentPalette);
         element.innerText = "Uploading '" + file.name + "'...";
         
         reader.onprogress = workerUpdateProgress.bind(undefined, file, element);
@@ -201,7 +236,8 @@ document.onreadystatechange = (function (settings) {
         
         element.className = "output output-working";
         element.innerText = "Working on " + file.name + "...";
-        
+    
+        displayBase64.spellcheck = false;
         displayBase64.className = "selectable";
         displayBase64.type = "text";
         displayBase64.setAttribute("value", result);
@@ -227,11 +263,12 @@ document.onreadystatechange = (function (settings) {
     var workerFinishRender = function (file, element, result) {
         var displayResult = document.createElement("input");
         
+        displayResult.spellcheck = false;
         displayResult.className = "selectable";
         displayResult.type = "text";
         displayResult.setAttribute("value", result);
         
-        element.firstChild.textContent = "Finished '" + file.name + "'.";
+        element.firstChild.textContent = "Finished '" + file.name + "' ('" + element.getAttribute("palette") + "' palette).";
         element.className = "output output-complete";
         
         element.appendChild(displayResult);
@@ -243,7 +280,11 @@ document.onreadystatechange = (function (settings) {
             return;
         }
         
-        initializePalettes(settings.palettes, settings.paletteBackgroundImage);
+        initializePalettes(
+            settings.palettes,
+            settings.paletteBackgroundImage,
+            settings.paletteDefault
+        );
         initializeInput(settings.inputSelector);
     };
 })({

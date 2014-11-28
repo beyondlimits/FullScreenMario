@@ -13,6 +13,7 @@ body {
 /* General styles */
 
 aside {
+    padding: 14px;
     color: #777777;
     font-size: 1.4em;
     font-style: italic;
@@ -30,7 +31,7 @@ section aside:first-child:last-child {
 
 /* General interactivity */
 
-.unselectable {
+body {
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
@@ -55,14 +56,19 @@ section aside:first-child:last-child {
 
 .palette {
     margin: 7px 0 7px 7px;
-    padding: 3px 7px;
+    padding: 3px 7px 0 7px;
     border: 1px solid gray;
     cursor: pointer;
-    transition: 140ms padding-left;
+    opacity: .49;
 }
 
-.palette:hover {
-    padding-left: 14px;
+.palette:hover,
+.palette.palette-selected {
+    opacity: 1;
+}
+
+.palette:not(.palette-selected) .palette-container {
+    display: none;
 }
 
 .palette-label {
@@ -90,6 +96,7 @@ section aside:first-child:last-child {
     border-width: 3px 0;
     background: #eeeeee;
     transition: 140ms all;
+    cursor: pointer;
 }
 
 #input.hovering {
@@ -105,6 +112,10 @@ section aside:first-child:last-child {
     padding-top: 7px;
 }
 
+#output aside {
+    margin-top: 21px;
+}
+
 .output {
     position: relative;
     margin: 14px 0;
@@ -114,10 +125,6 @@ section aside:first-child:last-child {
     background: #e5d6ff;
     text-align: center;
     overflow-x: hidden;
-}
-
-.output:last-of-type {
-    margin-bottom: 0;
 }
 
 .output.output-failed {
