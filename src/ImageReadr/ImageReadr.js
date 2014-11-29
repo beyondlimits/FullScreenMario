@@ -311,6 +311,9 @@ document.onreadystatechange = (function (settings) {
     };
     
 
+    /**
+     * 
+     */
     return function (event) {
         if(event.target.readyState != "complete") {
             return;

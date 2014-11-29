@@ -167,7 +167,7 @@ section#game {
 #controls .select-option.select-option-large {
     padding: 7px 0;
     font-size: 15px;
-    line-height: 105%;
+    line-height: 140%;
 }
 
 #controls .disabled {
@@ -241,6 +241,18 @@ section#game {
     display: block;
     margin: 0 2px 0 1px;
     padding: 3px 0;
+}
+
+
+/* Controls - uploader */
+
+#controls .select-upload {
+    cursor: pointer;
+    overflow: hidden;
+}
+
+#controls .select-upload-input {
+    display: none;
 }
 
 

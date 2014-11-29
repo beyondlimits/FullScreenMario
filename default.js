@@ -377,37 +377,87 @@
         };
     
     })(),
-    "LevelEditor": function (schema) {
-        var output = document.createElement("div"),
-            title = document.createElement("div"),
-            button = document.createElement("div"),
-            between = document.createElement("div"),
-            uploader = document.createElement("div");
-        
-        output.className = "select-options select-options-level-editor";
-        
-        title.className = "select-option-title";
-        title.textContent = "Create your own custom levels:";
-        
-        button.className = "select-option select-option-large options-button-option";
-        button.innerHTML = "Start the <br /> Level Editor!";
-        button.onclick = function () {
-            FSM.LevelEditor.enable();
+    "LevelEditor": (function () {
+        function createUploaderDiv() {
+            var uploader = document.createElement("div"),
+                input = document.createElement("input");
+            
+            uploader.className = "select-option select-option-large options-button-option";
+            uploader.textContent = "Continue your editor files!";
+            
+            uploader.onclick = function () {
+                input.click();
+            };
+            
+            uploader.ondragenter = handleFileDragEnter.bind(undefined, uploader);
+            uploader.ondragover = handleFileDragOver.bind(undefined, uploader);
+            uploader.ondragleave = input.ondragend = handleFileDragLeave.bind(undefined, uploader);
+            uploader.ondrop = handleFileDrop.bind(undefined, uploader);
+            
+            input.type = "file";
+            input.className = "select-upload-input";
+            uploader.appendChild(input);
+            
+            return uploader;
         };
         
-        between.className = "select-option-title";
-        between.innerHTML = "<em>- or -</em><br /><br />Continue your editor files:";
+        function handleFileDragEnter(uploader, event) {
+            if(event.dataTransfer) {
+                event.dataTransfer.dropEFfect = "copy";
+            }
+            uploader.className += " hovering";
+        }
         
-        uploader.className = "disabled select-option select-option-large select-option-inset options-button-option";
-        uploader.textContent = "Click here, or drag a file";
+        function handleFileDragOver(uploader, event) {
+            event.preventDefault();
+            return false;
+        }
         
-        output.appendChild(title);
-        output.appendChild(button);
-        output.appendChild(between);
-        output.appendChild(uploader);
+        function handleFileDragLeave(uploader, event) {
+            if(event.dataTransfer) {
+                event.dataTransfer.dropEffect = "none"
+            }
+            uploader.className = uploader.className.replace(" hovering", "");
+        }
         
-        return output;
-    },
+        function handleFileDrop(uploader, event) {
+            handleFileDragLeave(input, event);
+            
+            event.preventDefault();
+            event.stopPropagation();
+            
+            console.log("gotcha");
+        }
+        
+        return function (schema) {
+            var output = document.createElement("div"),
+                title = document.createElement("div"),
+                button = document.createElement("div"),
+                between = document.createElement("div"),
+                uploader = createUploaderDiv();
+            
+            output.className = "select-options select-options-level-editor";
+            
+            title.className = "select-option-title";
+            title.textContent = "Create your own custom levels:";
+            
+            button.className = "select-option select-option-large options-button-option";
+            button.innerHTML = "Start the <br /> Level Editor!";
+            button.onclick = function () {
+                FSM.LevelEditor.enable();
+            };
+            
+            between.className = "select-option-title";
+            between.innerHTML = "<em>- or -</em><br />";
+            
+            output.appendChild(title);
+            output.appendChild(button);
+            output.appendChild(between);
+            output.appendChild(uploader);
+            
+            return output;
+        }
+    })(),
     "MapsGrid": function (schema) {
         var output = document.createElement("div"),
             rangeX = schema.rangeX,
@@ -437,12 +487,12 @@
                     element = document.createElement("td");
                     element.className = "select-option maps-grid-option maps-grid-option-range";
                     element.textContent = i + "-" + j;
-                    element.onclick = function () {
+                    element.onclick = (function (callback) {
                         if(getParentControlDiv(element).getAttribute("active") !== "on") {
                             return;
                         }
-                        schema.callback.bind(schema, schema, element);
-                    };
+                        callback();
+                    }).bind(undefined, schema.callback.bind(schema, schema, element));
                     row.appendChild(element);
                 }
                 
