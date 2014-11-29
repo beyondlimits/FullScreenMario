@@ -44,6 +44,11 @@ FullScreenMario.prototype.settings.statistics = {
             "digits": 3,
             "has_element": true,
             "minimum": 0,
+            "triggers": {
+                100: function (EightBitter) {
+                    EightBitter.AudioPlayer.playThemePrefix("Hurry");
+                }
+            },
             "on_minimum": function (EightBitter) {
                 EightBitter.killPlayer(FSM.player, true);
             }
@@ -57,7 +62,7 @@ FullScreenMario.prototype.settings.statistics = {
             "has_element": true,
             "modularity": 100,
             "on_modular": function (EightBitter) {
-                EightBitter.gainLife();
+                EightBitter.player.gainLife();
             }
         },
         "lives": {

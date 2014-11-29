@@ -17,7 +17,7 @@ function StatsHoldr(settings) {
 
         // Default attributes for value, as "name"=>{setting}
         defaults,
-
+        
         // A reference to localStorage, or a replacement object
         localStorage,
 
@@ -33,8 +33,8 @@ function StatsHoldr(settings) {
         // A bit of text between an element's label and value
         separator,
 
-        // An object to be passed to triggered events
-        scope,
+        // An Array of objects to be passed to triggered events
+        callbackArgs,
         
         // Helper function to copy Object attributes, such as given by an EightBittr
         proliferate,
@@ -51,7 +51,7 @@ function StatsHoldr(settings) {
         localStorage = settings.localStorage || window.localStorage || {};
         prefix = settings.prefix || "";
         separator = settings.separator || "";
-        scope = settings.scope;
+        callbackArgs = settings.callbackArgs;
 
         defaults = {};
         if (settings.defaults) {
@@ -93,6 +93,10 @@ function StatsHoldr(settings) {
         if (!this.hasOwnProperty("value")) {
             this.value = this.value_default;
         }
+        
+        if (this.triggers) {
+            this.checkTriggers = checkTriggers;
+        }
 
         if (this.has_element) {
             this.element = createElement(this.element || "div", {
@@ -103,7 +107,7 @@ function StatsHoldr(settings) {
         }
 
         if (this.modularity) {
-            this.check_modularity = checkModularity;
+            this.checkModularity = checkModularity;
         }
 
         if (this.store_locally) {
@@ -215,12 +219,21 @@ function StatsHoldr(settings) {
     /**
      * 
      */
-    function checkModularity() {
-        while (this.value > this.modularity) {
-            this.value = this.value % this.modularity;
+    function checkModularity(callbackArgs) {
+        while (this.value >= this.modularity) {
+            this.value = Math.max(0, this.value - this.modularity);
             if (this.on_modular) {
-                this.on_modular();
+                this.on_modular.apply(this, callbackArgs);
             }
+        }
+    }
+    
+    /**
+     * 
+     */
+    function checkTriggers(callbackArgs) {
+        if (this.triggers.hasOwnProperty(this.value)) {
+            this.triggers[this.value].apply(this, callbackArgs);
         }
     }
 
@@ -237,23 +250,26 @@ function StatsHoldr(settings) {
         if (this.hasOwnProperty("minimum") && Number(this.value) <= Number(this.minimum)) {
             this.value = this.minimum;
             if (this.on_minimum) {
-                this.on_minimum(scope);
+                this.on_minimum.apply(this, callbackArgs);
             }
         } else if (this.hasOwnProperty("maximum") && Number(this.value) <= Number(this.maximum)) {
             this.value = this.maximum;
             if (this.on_maximum) {
-                this.on_maximum(scope);
+                this.on_maximum.apply(this, callbackArgs);
             }
         }
 
         if (this.modularity) {
-            this.check_modularity(scope);
+            this.checkModularity(callbackArgs);
+        }
+        if (this.triggers) {
+            this.checkTriggers(callbackArgs);
         }
         if (this.has_element) {
-            this.updateElement(scope);
+            this.updateElement();
         }
         if (this.store_locally) {
-            this.updateLocalStorage(scope);
+            this.updateLocalStorage();
         }
     }
 

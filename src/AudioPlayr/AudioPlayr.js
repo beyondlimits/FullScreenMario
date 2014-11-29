@@ -56,7 +56,7 @@ function AudioPlayr(settings) {
         
         self.setVolume(StatsHolder.get("volume"));
         self.setMuted(StatsHolder.get("muted"));
-    }
+    };
     
     
     /* Simple getters
@@ -119,7 +119,7 @@ function AudioPlayr(settings) {
         }
         
         StatsHolder.set("volume", volume);
-    }
+    };
     
     /**
      * 
@@ -289,12 +289,14 @@ function AudioPlayr(settings) {
         }
 
         return sound;
-    }
+    };
     
     /**
      * 
      */
     self.playTheme = function (name, loop) {
+        self.pauseTheme();
+        
         // Loop defaults to true
         loop = typeof loop !== 'undefined' ? loop : true;
 
@@ -319,7 +321,29 @@ function AudioPlayr(settings) {
         }
 
         return theme;
-    }
+    };
+    
+    /**
+     * 
+     */
+    self.playThemePrefix = function (prefix, name, loop) {
+        self.pauseTheme();
+        self.play("Hurry");
+        
+        // If name isn't given, use the default getter
+        if (typeof(name) === "undefined") {
+            switch (getThemeDefault.constructor) {
+                case Function:
+                    name = getThemeDefault();
+                    break
+                case String:
+                    name = getThemeDefault;
+                    break;
+            }
+        }
+        
+        self.addEventListener("Hurry", "ended", self.playTheme.bind(self, "Hurry " + name, loop));
+    };
 
 
     /* Public utilities
@@ -329,7 +353,7 @@ function AudioPlayr(settings) {
      * Adds an event listener to a currently playing sound.
      * 
      * @param {String} name   The name of the sound.
-     * @param {String} event   The name of the event, such as "onended".
+     * @param {String} event   The name of the event, such as "ended".
      * @param {Function} callback   The Function to be called by the event.
      */
     self.addEventListener = function(name, event, callback) {
@@ -337,12 +361,9 @@ function AudioPlayr(settings) {
             throw new Error("Unknown name given to AudioPlayr.addEventListener: '" + name + "'.");
         }
         
-        sounds[name].addEventListenever(event, callback);
-    }
+        sounds[name].addEventListener(event, callback);
+    };
 
-    // Public: addEventImmediate
-    // Calls a function when a sound calls a trigger, or immediately if it's not playing
-    
     /**
      * Adds an event listener to a sound. If the sound doesn't exist or has 
      * finished playing, it's called immediately.
@@ -358,7 +379,7 @@ function AudioPlayr(settings) {
         }
         
         sounds[name].addEventListener(event, callback);
-    }
+    };
     
 
     /* Private utilities

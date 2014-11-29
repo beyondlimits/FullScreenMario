@@ -4036,11 +4036,12 @@ var FullScreenMario = (function(GameStartr) {
      *                score -> scoreOn -> scoreAnimateOn -> scoreAnimate          
      */
     function score(value, continuation) {
-        console.warn("Score still using global player");
+        var EightBitter = EightBittr.ensureCorrectCaller(this);
+        
         if(!value) {
             return;
         }
-        scoreOn(value, player, true);
+        scoreOn(value, EightBitter.player, true);
         
         if(!continuation) {
             this.StatsHolder.increase("score", value);
