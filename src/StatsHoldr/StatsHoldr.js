@@ -74,6 +74,37 @@ function StatsHoldr(settings) {
             container = makeContainer(settings);
         }
     }
+
+    /* Retrieval
+     */
+     
+    /**
+     * 
+     */
+    self.getKeyNames = function () {
+        return Object.keys(values);
+    };
+
+    /**
+     * 
+     */
+    self.get = function(key) {
+        if (!checkExistence(key)) {
+            return;
+        }
+        return values[key].value;
+    }
+    
+    /**
+     * 
+     */
+    self.getObject = function(key) {
+        return values[key];
+    }
+    
+    
+    /* Values
+    */
     
     /**
      * 
@@ -94,25 +125,14 @@ function StatsHoldr(settings) {
             this.value = this.value_default;
         }
         
-        if (this.triggers) {
-            this.checkTriggers = checkTriggers;
-        }
-
         if (this.has_element) {
             this.element = createElement(this.element || "div", {
                 className: prefix + "_value " + key,
                 innerHTML: this.key + separator + this.value
             });
-            this.updateElement = updateElement;
-        }
-
-        if (this.modularity) {
-            this.checkModularity = checkModularity;
         }
 
         if (this.store_locally) {
-            this.updateLocalStorage = updateLocalStorage;
-
             // If there exists an old version of this property, get it 
             if (localStorage.hasOwnProperty([prefix + key])) {
                 var reference = localStorage[prefix + key],
@@ -141,9 +161,73 @@ function StatsHoldr(settings) {
                 this.updateLocalStorage();
             }
         }
-
-        this.update = update;
     }
+    
+    /**
+     * 
+     */
+    Value.prototype.checkTriggers = function () {
+        if (this.triggers.hasOwnProperty(this.value)) {
+            this.triggers[this.value].apply(this, callbackArgs);
+        }
+    };
+    
+    /**
+     * 
+     */
+    Value.prototype.checkModularity = function (callbackArgs) {
+        while (this.value >= this.modularity) {
+            this.value = Math.max(0, this.value - this.modularity);
+            if (this.on_modular) {
+                this.on_modular.apply(this, callbackArgs);
+            }
+        }
+    };
+    
+    /**
+     * 
+     */
+    Value.prototype.update = function () {
+        // Mins and maxes must be obeyed before any other considerations
+        if (this.hasOwnProperty("minimum") && Number(this.value) <= Number(this.minimum)) {
+            this.value = this.minimum;
+            if (this.on_minimum) {
+                this.on_minimum.apply(this, callbackArgs);
+            }
+        } else if (this.hasOwnProperty("maximum") && Number(this.value) <= Number(this.maximum)) {
+            this.value = this.maximum;
+            if (this.on_maximum) {
+                this.on_maximum.apply(this, callbackArgs);
+            }
+        }
+
+        if (this.modularity) {
+            this.checkModularity();
+        }
+        if (this.triggers) {
+            this.checkTriggers();
+        }
+        if (this.has_element) {
+            this.updateElement();
+        }
+        if (this.store_locally) {
+            this.updateLocalStorage();
+        }
+    };
+    
+    /**
+     * 
+     */
+    Value.prototype.updateElement = function () {
+        this.element.innerHTML = this.key + separator + this.value;
+    };
+    
+    /**
+     * 
+     */
+    Value.prototype.updateLocalStorage = function () {
+        localStorage[prefix + this.key] = this.value;
+    };
 
 
     /* Updating values
@@ -215,77 +299,7 @@ function StatsHoldr(settings) {
         }
         return true;
     }
-
-    /**
-     * 
-     */
-    function checkModularity(callbackArgs) {
-        while (this.value >= this.modularity) {
-            this.value = Math.max(0, this.value - this.modularity);
-            if (this.on_modular) {
-                this.on_modular.apply(this, callbackArgs);
-            }
-        }
-    }
     
-    /**
-     * 
-     */
-    function checkTriggers(callbackArgs) {
-        if (this.triggers.hasOwnProperty(this.value)) {
-            this.triggers[this.value].apply(this, callbackArgs);
-        }
-    }
-
-
-    /* Updating components
-     */
-
-    /**
-     * 
-     */
-    // Updates whatever's needed from the visual element and localStorage
-    function update() {
-        // Mins and maxes must be obeyed before any other considerations
-        if (this.hasOwnProperty("minimum") && Number(this.value) <= Number(this.minimum)) {
-            this.value = this.minimum;
-            if (this.on_minimum) {
-                this.on_minimum.apply(this, callbackArgs);
-            }
-        } else if (this.hasOwnProperty("maximum") && Number(this.value) <= Number(this.maximum)) {
-            this.value = this.maximum;
-            if (this.on_maximum) {
-                this.on_maximum.apply(this, callbackArgs);
-            }
-        }
-
-        if (this.modularity) {
-            this.checkModularity(callbackArgs);
-        }
-        if (this.triggers) {
-            this.checkTriggers(callbackArgs);
-        }
-        if (this.has_element) {
-            this.updateElement();
-        }
-        if (this.store_locally) {
-            this.updateLocalStorage();
-        }
-    }
-
-    /**
-     * 
-     */
-    function updateElement() {
-        this.element.innerHTML = this.key + separator + this.value;
-    }
-
-    /**
-     * 
-     */
-    function updateLocalStorage() {
-        localStorage[prefix + this.key] = this.value;
-    }
 
     /* HTML
      */
@@ -315,7 +329,7 @@ function StatsHoldr(settings) {
      * 
      */
     function makeContainer(settings) {
-        var output = createElement.apply(this, containers[0]),
+        var output = createElement.apply(undefined, containers[0]),
             current = output,
             child;
 
@@ -324,7 +338,7 @@ function StatsHoldr(settings) {
         }
 
         for (var i = 1, len = containers.length; i < len; ++i) {
-            child = createElement.apply(this, containers[i]);
+            child = createElement.apply(undefined, containers[i]);
             current.appendChild(child);
             current = child;
         }
@@ -335,34 +349,7 @@ function StatsHoldr(settings) {
         }
         return output;
     }
-
-
-    /* Retrieval
-     */
-     
-    /**
-     * 
-     */
-    self.getKeyNames = function () {
-        return Object.keys(values);
-    };
-
-    /**
-     * 
-     */
-    self.get = function(key) {
-        if (!checkExistence(key)) {
-            return;
-        }
-        return values[key].value;
-    }
     
-    /**
-     * 
-     */
-    self.getObject = function(key) {
-        return values[key];
-    }
 
     self.reset(settings || {});
 }
