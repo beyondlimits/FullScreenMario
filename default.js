@@ -90,7 +90,7 @@
                 "minimum": 0,
                 "maximum": 100,
                 "source": function () {
-                    return FSM.AudioPlayer.getVolume() * 100;
+                    return Math.round(FSM.AudioPlayer.getVolume()) * 100;
                 },
                 "update": function (value) {
                     FSM.AudioPlayer.setVolume(value / 100);

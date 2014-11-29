@@ -300,6 +300,138 @@ var FullScreenMario = (function(GameStartr) {
         EightBitter.AudioPlayer.resumeAll();
     }
     
+    
+    /* Input
+    */
+    
+    /**
+     * 
+     */
+    function keyDownLeft(player) {
+        player.keys.run = -1;
+        player.keys.left_down = true; // independent of changes to keys.run
+    }
+    
+    /**
+     * 
+     */
+    function keyDownRight(player) {
+        player.keys.run = 1;
+        player.keys.right_down = true; // independent of changes to keys.run
+    }
+    
+    /**
+     * 
+     */
+    function keyDownUp(player) {
+        player.keys.up = true;
+        if(player.canjump && (player.resting || player.EightBitter.MapScreener.underwater)) {
+            player.keys.jump = 1;
+            player.canjump = player.keys.jumplev = 0;
+            
+            if(player.power > 1) {
+                player.EightBitter.AudioPlayer.play("Jump Super");
+            } else {
+                player.EightBitter.AudioPlayer.play("Jump Small");
+            }
+            
+            if(player.EightBitter.MapScreener.underwater) {
+                player.EightBitter.TimeHandler.addEvent(function () {
+                    player.jumping = player.keys.jump = false;
+                }, 14);
+            }
+        }
+    }
+    
+    /**
+     * 
+     */
+    function keyDownDown(player) {
+        player.keys.crouch = true;
+    }
+    
+    /**
+     * 
+     */
+    function keyDownSprint(player) {
+        if(player.power == 3 && player.keys.sprint == 0 && !player.crouch) {
+            player.fire(player);
+        }
+        player.keys.sprint = 1;
+    }
+    
+    /**
+     * 
+     */
+    function keyDownPause(player) {
+        var FSM = player.EightBitter;
+        if(!FSM.GamesRunner.getPaused()) {
+            FSM.TimeHandler.addEvent(FSM.GamesRunner.pause, 7, true);
+        }
+    }
+    
+    /**
+     * 
+     */
+    function keyDownMute(player) {
+        player.EightBitter.AudioPlayer.toggleMuted();
+    }
+    
+    /**
+     * 
+     */
+    function keyUpLeft(player) {
+        player.keys.run = player.keys.left_down = 0;
+    }
+    
+    /**
+     * 
+     */
+    function keyUpRight(player) {
+        player.keys.run = player.keys.right_down = 0;
+    }
+    
+    /**
+     * 
+     */
+    function keyUpUp(player) {
+        if(!player.EightBitter.MapScreener.underwater) {
+            player.keys.jump = player.keys.up = 0;
+        }
+        player.canjump = true;
+    }
+    
+    /**
+     * 
+     */
+    function keyUpDown(player) {
+        player.keys.crouch = 0;
+        player.EightBitter.animatePlayerRemoveCrouch();
+    }
+    
+    /**
+     * 
+     */
+    function keyUpSprint(player) {
+        player.keys.sprint = 0;
+    }
+    
+    /**
+     * 
+     */
+    function keyUpPause(player) {
+        if(player.EightBitter.GamesRunner.getPaused()) {
+            player.EightBitter.GamesRunner.unpause(true);
+        }
+    }
+    
+    /**
+     * 
+     */
+    function mouseDownRight(player) {
+        player.EightBitter.GamesRunner.togglePause();
+    }
+    
     /**
      * 
      */
@@ -5265,6 +5397,21 @@ var FullScreenMario = (function(GameStartr) {
         "scrollPlayer": scrollPlayer,
         "onGamePause": onGamePause,
         "onGameUnpause": onGameUnpause,
+        // Inputs
+        "keyDownLeft": keyDownLeft,
+        "keyDownRight": keyDownRight,
+        "keyDownUp": keyDownUp,
+        "keyDownDown": keyDownDown,
+        "keyDownSprint": keyDownSprint,
+        "keyDownPause": keyDownPause,
+        "keyDownMute": keyDownMute,
+        "keyUpLeft": keyUpLeft,
+        "keyUpRight": keyUpRight,
+        "keyUpUp": keyUpUp,
+        "keyUpDown": keyUpDown,
+        "keyUpSprint": keyUpSprint,
+        "keyUpPause": keyUpPause,
+        "mouseDownRight": mouseDownRight,
         "canInputsTrigger": canInputsTrigger,
         // Upkeep maintenence
         "maintainSolids": maintainSolids,
