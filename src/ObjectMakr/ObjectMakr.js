@@ -119,7 +119,7 @@ function ObjectMakr(settings) {
      */
     self.getPropertiesFull = function (title) {
         if(do_properties_full) {
-            return title ? properties_full[title] : properties;
+            return title ? properties_full[title] : properties_full;
         }
     };
     
