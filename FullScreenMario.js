@@ -3993,6 +3993,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.nocollide = thing.nomove = 1;
         thing.EightBitter.MapScreener.nokeys = true;
         thing.EightBitter.AudioPlayer.pauseAll();
+        thing.EightBitter.AudioPlayer.play("Player Dies");
         thing.EightBitter.StatsHolder.decrease("lives");
         
         if(thing.EightBitter.StatsHolder.get("lives") > 0) {
