@@ -976,7 +976,7 @@ var FullScreenMario = (function(GameStartr) {
             thing.EightBitter.gainLife(1);
         }
         
-        EightBitter.ModAttacher.fireEvent("onPlayerShroom1Up", thing, other);
+        thing.EightBitter.ModAttacher.fireEvent("onPlayerShroom1Up", thing, other);
     }
     
     /**
@@ -1634,9 +1634,12 @@ var FullScreenMario = (function(GameStartr) {
             if(other.hidden && !other.collide_hidden) {
                 return;
             }
-            thing.resting = other;
-            if(thing.onResting) {
-                thing.onResting(thing, other);
+            
+            if(thing.resting !== other) {
+                thing.resting = other;
+                if(thing.onResting) {
+                    thing.onResting(thing, other);
+                }
             }
         }
         // Solid on top of character
@@ -1752,7 +1755,7 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         thing.EightBitter.playerStarUp(thing);
-        EightBitter.ModAttacher.fireEvent("onCollideStar", thing, other);
+        thing.EightBitter.ModAttacher.fireEvent("onCollideStar", thing, other);
     }
     
     /**
@@ -3805,9 +3808,15 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function animatePlayerLanding(thing) {
+        if(thing.EightBitter.hasClass(thing, "hopping")) {
+            thing.EightBitter.switchClass(thing, "hopping", "jumping");
+        }
+        
         if(thing.EightBitter.MapScreener.underwater) {
             thing.EightBitter.removeClass(thing, "paddling");
         }
+        
+        thing.EightBitter.ModAttacher.fireEvent("onPlayerLanding", thing, thing.resting);
     }
     
     /**

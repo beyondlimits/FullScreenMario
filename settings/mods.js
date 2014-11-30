@@ -3,19 +3,79 @@ FullScreenMario.prototype.settings.mods = {
     "prefix": "FullScreenMarioMods",
     "mods": [
         {
-            "name": "High Speed",
-            "description": "Mario's maximum speed is quadrupled.",
+            "name": "Bouncy Bounce",
+            "description": "Mario landing causes him to jump.",
             "enabled": false,
             "events": {
-                "onModEnable": function (mod) {
-                    var stats = this.ObjectMaker.getFunction("Player").prototype;
-                    mod.value_old = stats.maxspeedsave;
-                    stats.maxspeedsave = stats.maxspeed = stats.scrollspeed = mod.value_old * 4;
-                },
-                "onModDisable": function (mod) {
-                    var stats = this.ObjectMaker.getFunction("Player").prototype;
-                    stats.maxspeedsave = stats.maxspeed = stats.scrollspeed = mod.value_old;
+                "onPlayerLanding": function (mod) {
+                    var player = this.player;
+                    
+                    if(Math.abs(player.yvel) < player.EightBitter.unitsize / 4) {
+                        return;
+                    }
+                    
+                    player.jumpcount = 0;
+                    player.resting = undefined;
+                    player.yvel = -3 * player.EightBitter.unitsize;
                 }
+            }
+        },
+        {
+            "name": "Earthquake!",
+            "description": "Mario landing causes everything else to jump.",
+            "enabled": false,
+            "events": {
+                "onPlayerLanding": (function () {
+                    var shiftLevels = [2, 1.5, 1, .5, 0, -.5, -1, -1.5, -2],
+                        shiftCount = 0,
+                        shiftAll = function (EightBitter, solids, scenery, characters) {
+                            var dy = shiftLevels[shiftCount];
+                            
+                            EightBitter.shiftVert(EightBitter.player, dy);
+                            EightBitter.shiftThings(solids, 0, dy);
+                            EightBitter.shiftThings(scenery, 0, dy);
+                            EightBitter.shiftThings(characters, 0, dy);
+                            
+                            shiftCount += 1;
+                            if(shiftCount >= shiftLevels.length) {
+                                shiftCount = 0;
+                                return true;
+                            }
+                        };
+                    
+                    return function (mod) {
+                        var characters = this.GroupHolder.getCharacterGroup(),
+                            player = this.player,
+                            character, i;
+                        
+                        if(Math.abs(player.yvel) < player.EightBitter.unitsize) {
+                            return;
+                        }
+                        
+                        this.AudioPlayer.play("Bump");
+                        
+                        for(i = 0; i < characters.length; i += 1) {
+                            character = characters[i];
+                            if(character.player || character.nofall) {
+                                continue;
+                            }
+                            
+                            character.resting = undefined;
+                            character.yvel = player.EightBitter.unitsize * -1.4;
+                        }
+                        
+                        // A copy of each group is made because new Things 
+                        // added in shouldn't start being moved in the middle
+                        if(shiftCount === 0) {
+                            this.TimeHandler.addEventInterval(
+                                shiftAll, 1, Infinity, this,
+                                this.GroupHolder.getSolidGroup().slice(),
+                                this.GroupHolder.getSceneryGroup().slice(),
+                                this.GroupHolder.getCharacterGroup().slice()
+                            );
+                        }
+                    }
+                })()
             }
         },
         {
@@ -93,6 +153,22 @@ FullScreenMario.prototype.settings.mods = {
                 })
             },
             "settings": {}
+        },
+        {
+            "name": "High Speed",
+            "description": "Mario's maximum speed is quadrupled.",
+            "enabled": false,
+            "events": {
+                "onModEnable": function (mod) {
+                    var stats = this.ObjectMaker.getFunction("Player").prototype;
+                    mod.value_old = stats.maxspeedsave;
+                    stats.maxspeedsave = stats.maxspeed = stats.scrollspeed = mod.value_old * 4;
+                },
+                "onModDisable": function (mod) {
+                    var stats = this.ObjectMaker.getFunction("Player").prototype;
+                    stats.maxspeedsave = stats.maxspeed = stats.scrollspeed = mod.value_old;
+                }
+            }
         },
         {
             "name": "Invincibility",

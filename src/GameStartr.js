@@ -661,6 +661,9 @@ var GameStartr = (function (EightBittr) {
      * 
      */
     function shiftBoth(thing, dx, dy, notChanged) {
+        dx = dx || 0;
+        dy = dy || 0;
+        
         if(!thing.noshiftx) {
             if(thing.parallax) {
                 thing.EightBitter.shiftHoriz(thing, thing.parallax * dx, notChanged);
@@ -933,6 +936,13 @@ var GameStartr = (function (EightBittr) {
     /**
      * 
      */
+    function hasClass(thing, string) {
+        return thing.className.indexOf(string) !== -1;
+    }
+    
+    /**
+     * 
+     */
     function switchClass(thing, string_out, string_in) {
         thing.EightBitter.removeClass(thing, string_out);
         thing.EightBitter.addClass(thing, string_in);
@@ -1042,6 +1052,7 @@ var GameStartr = (function (EightBittr) {
         "addClasses": addClasses,
         "removeClass": removeClass,
         "removeClasses": removeClasses,
+        "hasClass": hasClass,
         "switchClass": switchClass,
         "flipHoriz": flipHoriz,
         "flipVert": flipVert,

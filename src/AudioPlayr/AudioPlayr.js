@@ -197,7 +197,8 @@ function AudioPlayr(settings) {
         if(self.getMuted()) {
             sound.volume = 0;
         } else {
-            sound.volume = sound.volume_real * self.getVolume();
+            sound.volume_real = 1;
+            sound.volume = self.getVolume();
         }
         
         sound.play();
