@@ -175,7 +175,7 @@ function StatsHoldr(settings) {
     /**
      * 
      */
-    Value.prototype.checkModularity = function (callbackArgs) {
+    Value.prototype.checkModularity = function () {
         while (this.value >= this.modularity) {
             this.value = Math.max(0, this.value - this.modularity);
             if (this.on_modular) {
