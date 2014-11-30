@@ -839,7 +839,7 @@
             "CustomText": {
                 "hidden": true,
                 "spacingHorizontal": .5,
-                "spacingVertical": 7,
+                "spacingVertical": 8,
                 "spacingVerticalBlank": 6,
                 "onThingAdd": FullScreenMario.prototype.spawnCustomText
             }

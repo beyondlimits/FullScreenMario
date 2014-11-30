@@ -325,6 +325,11 @@ function PixelDrawr(settings) {
             return;
         }
         
+        // If Thing hasn't had a sprite yet (previously hidden), do that first
+        if(typeof(thing.num_sprites) === "undefined") {
+            self.setThingSprite(thing);
+        }
+        
         // If there's just one sprite, it's pretty simple
         if(thing.num_sprites === 1) {
             return drawThingOnContextSingle(context, thing.canvas, thing, thing.left, thing.top);

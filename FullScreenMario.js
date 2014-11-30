@@ -1322,12 +1322,13 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Thing} thing
      */
     function spawnCustomText(thing) {
-        console.log("Doing", thing, thing.texts);
         var top = thing.top,
             texts = thing.texts,
+            attributes = thing.textAttributes,
             spacingHorizontal = thing.spacingHorizontal * thing.EightBitter.unitsize,
             spacingVertical = thing.spacingVertical * thing.EightBitter.unitsize,
             spacingVerticalBlank = thing.spacingVerticalBlank * thing.EightBitter.unitsize,
+            children = thing.children = [],
             left, text, letter, textThing, i, j;
         
         for(i = 0; i < texts.length; i += 1) {
@@ -1346,18 +1347,19 @@ var FullScreenMario = (function(GameStartr) {
             
             for(j = 0; j < text.length; j += 1) {
                 letter = text[j];
+                
                 if(thing.EightBitter.customTextMappings.hasOwnProperty(letter)) {
                     letter = thing.EightBitter.customTextMappings[letter];
                 }
                 letter = "text" + letter;
                 
-                textThing = thing.EightBitter.ObjectMaker.make(letter);
+                textThing = thing.EightBitter.ObjectMaker.make(letter, attributes);
                 textThing.EightBitter.addThing(textThing, left, top);
+                children.push(textThing);
                 
                 left += textThing.width * thing.EightBitter.unitsize;
                 left += spacingHorizontal;
             }
-            
             top += spacingVertical;
         }
         
@@ -2377,21 +2379,28 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function collideCastleNPC(thing, other) {
-        var texts = other.texts,
-            interval = 21,
-            i = 0;
+        var keys = other.collection.npc.collectionKeys,
+            interval = 140,
+            i = 0,
+            letters, j;
         
         thing.keys.run = 0;
         thing.EightBitter.killNormal(other);
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
-            console.log("Placing text", i, texts[i]);
+            // here it is not in letlers
+            letters = other.collection[keys[i]].children;
+            
+            for(j = 0; j < letters.length; j += 1) {
+                letters[j].hidden = false;
+            }
+            
             i += 1;
-        }, interval, texts.length);
+        }, interval, keys.length);
         
         thing.EightBitter.TimeHandler.addEvent(function () {
             thing.EightBitter.nextLevel();
-        }, (interval * texts.length) + 280)
+        }, (interval * keys.length) + 280)
     }
     
     /**
@@ -5062,7 +5071,7 @@ var FullScreenMario = (function(GameStartr) {
                 "y": y - 4, 
                 "height": dropLeft - 4,
                 "onThingMake": onThingMake,
-                "collectionName": "stringLeft"
+                "collectionName": "stringLeft",
             },
             stringRight = {
                 "thing": "String",
@@ -5380,40 +5389,98 @@ var FullScreenMario = (function(GameStartr) {
         var x = reference.x || 0,
             y = reference.y || 0,
             npc = reference.npc || "Toad",
-            texts = reference.texts || [],
-            style = reference.style || {};
+            style = reference.style || {},
+            output, texts, keys;
 
-        if(!texts.length) {
-            if(npc === "Toad") {
-                texts = [{
+        if(npc === "Toad") {
+            keys = ["1", "2"];
+            texts = [{
+                "thing": "CustomText",
+                "x": x + 164,
+                "y": y + 64,
+                "texts": [{
                     "text": "THANK YOU MARIO!",
-                    "offset": 12
-                }, undefined, {
+                }],
+                "textAttributes": {
+                    "hidden": true
+                },
+                "collectionName": "endInsideCastleText",
+                "collectionKey": "1"
+            }, {
+                "thing": "CustomText",
+                "x": x + 152,
+                "y": y + 48,
+                "texts": [{
                     "text": "BUT OUR PRINCESS IS IN"
                 }, {
-                    "text": "ANOTHER CASTLE!",
-                }];
-            } else if(npc === "Peach") {
-                texts = [{
-                    "text": "THANK YOU MARIO!",
-                    "offset": 20
-                }, undefined, {
-                    "text": "YOUR QUEST IS OVER.",
-                    "offset": 16
-                }, {
-                    "text": "WE PRESENT YOU A NEW QUEST.",
-                    "offset": 0
-                }, undefined, {
-                    "text": "PRESS BUTTON B",
-                    "offset": 28,
-                }, {
-                    "text": "TO SELECT A WORLD",
-                    "offset": 20
-                }]
-            }
+                    "text": "ANOTHER CASTLE!"
+                }],
+                "textAttributes": {
+                    "hidden": true
+                },
+                "collectionName": "endInsideCastleText",
+                "collectionKey": "2"
+            }];
+        // } else if(npc === "Peach") {
+            // keys = ["1", "2", "3", "4", "5"];
+            // texts = [{
+                // "thing": "CustomText",
+                // "x": ,
+                // "y": ,
+                // "texts": [{
+                    // "text": "THANK YOU MARIO!"
+                    // // "offset": 20,
+                // }],
+                // "hidden": true,
+                // "collectionName": "endInsideCastleText",
+                // "collectionKey": "1"
+            // }, {
+                // "thing": "CustomText",
+                // "x": ,
+                // "y": ,
+                // "texts": [{
+                    // "text": "YOUR QUEST IS OVER."
+                // }],
+                // "offset": 16,
+                // "hidden": true,
+                // "collectionName": "endInsideCastleText",
+                // "collectionKey": "2"
+            // }, {
+                // "thing": "CustomText",
+                // "x": ,
+                // "y": ,
+                // "texts": [{
+                    // "text": "WE PRESENT YOU A NEW QUEST."
+                // }],
+                // "hidden": true,
+                // "collectionName": "endInsideCastleText",
+                // "collectionKey": "3"
+            // }, {
+                // "thing": "CustomText",
+                // "x": ,
+                // "y": ,
+                // "texts": [{
+                    // "text": "PRESS BUTTON B"
+                    // // "offset": 28,
+                // }],
+                // "hidden": true,
+                // "collectionName": "endInsideCastleText",
+                // "collectionKey": "4"
+            // }, {
+                // "thing": "CustomText",
+                // "x": ,
+                // "y": ,
+                // "texts": [{
+                    // "text": "TO SELECT A WORLD"
+                    // // "offset": 20,
+                // }],
+                // "hidden": true,
+                // "collectionName": "endInsideCastleText",
+                // "collectionKey": "5"
+            // }]
         }
         
-        return [
+        output = [
             { "thing": "Stone", "x": x, "y": y + 88, "width": 256 },
             { "macro": "Water", "x": x, "y": y, "width": 104 },
             // Bridge & Bowser area
@@ -5427,10 +5494,16 @@ var FullScreenMario = (function(GameStartr) {
             { "thing": "Stone", "x": x + 104, "y": y + 32, "width": 24, "height": 32 },
             { "thing": "Stone", "x": x + 112, "y": y + 80, "width": 16, "height": 24 },
             // Peach's Magical Happy Chamber of Fantastic Love
-            { "thing": "DetectCollision", "x": x + 180, "activate": scope.collideCastleNPC, "texts": texts },
-            { "thing": npc, "x": x + 194, "y": 13 },
+            { 
+                "thing": "DetectCollision", "x": x + 180, "activate": scope.collideCastleNPC, 
+                "collectionName": "endInsideCastleText", "collectionKey": "npc", "collectionKeys": keys
+            },
+            { "thing": npc, "x": x + 200, "y": 13 },
             { "thing": "ScrollBlocker", "x": x + 256 }
-        ];
+        ]
+        
+        output.push.apply(output, texts);
+        return output;
     }
     
     /**

@@ -11,7 +11,7 @@ FullScreenMario.prototype.settings.input = {
         // "mute":   [77],         // m (mute)
         // "l":      [76],         // l (luigi)
         // Mouse aliases
-        "rightclick": [3]
+        "rightclick": [3],
     },
     "triggers": {
         "onkeydown": {
@@ -33,6 +33,7 @@ FullScreenMario.prototype.settings.input = {
         },
         "onmousedown": {
             "rightclick": FullScreenMario.prototype.mouseDownRight
-        }
+        },
+        "oncontextmenu": {}
     }
 };

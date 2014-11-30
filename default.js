@@ -20,6 +20,7 @@
         
         FSM.proliferate(section, {
             "onmousedown": FSM.InputWriter.makePipe("onmousedown", "which"),
+            "oncontextmenu": FSM.InputWriter.makePipe("oncontextmenu", null, true)
         });
 
         FSM.gameStart();
