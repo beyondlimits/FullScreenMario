@@ -2261,15 +2261,16 @@ var FullScreenMario = (function(GameStartr) {
      * 
      * @notes thing is Player; other is the flag detector
      */
-    function collideFlagTop(thing, other) {
+    function collideFlagpole(thing, other) {
         thing.star = true;
         thing.nocollidechar = true;
         thing.EightBitter.MapScreener.nokeys = true;
         thing.EightBitter.MapScreener.notime = true;
+        thing.EightBitter.MapScreener.canscroll = false;
         
         thing.EightBitter.killNPCs();
         thing.EightBitter.thingStoreVelocity(thing);
-        thing.EightBitter.setRight(thing, other.left + thing.EightBitter.unitsize * 2);
+        thing.EightBitter.setRight(thing, other.left + thing.EightBitter.unitsize * 3);
         
         thing.EightBitter.removeClasses(thing, "running jumping skidding");
         thing.EightBitter.addClass(thing, "climbing animated");
@@ -5303,7 +5304,7 @@ var FullScreenMario = (function(GameStartr) {
         if(reference.transport) {
             output.push({
                 "thing": "DetectCollision",
-                "x": x + 56,
+                "x": x + 48,
                 "y": y + 20,
                 "height": 16,
                 "activate": FullScreenMario.prototype.collideCastleDoor,
@@ -5349,16 +5350,15 @@ var FullScreenMario = (function(GameStartr) {
             output;
 
         // Output starts off with the general flag & collision detection
-        console.warn("macroEndOutsideCastle: thing.active, etc. should give strings");
         output = [
             // Initial collision detector
             {
-                thing: "DetectCollision", x: x + 8, y: y + 108, height: 100, 
-                activate: FullScreenMario.prototype.collideFlagTop,
+                thing: "DetectCollision", x: x, y: y + 108, height: 100, 
+                activate: FullScreenMario.prototype.collideFlagpole,
                 activate_fail: FullScreenMario.prototype.killNormal 
             },
             // Flag (scenery)
-            { thing: "Flag", x: x - 4.5, y: y + 79.5, "id": "endflag" },
+            { thing: "Flag", x: x - 4.5, y: y + 79.5 },
             { thing: "FlagTop", x: x + 1.5, y: y + 84 },
             { thing: "FlagPole", x: x + 3, y: y + 80 },
             // Bottom stone
@@ -5371,14 +5371,6 @@ var FullScreenMario = (function(GameStartr) {
             "y": y,
             "transport": "setNextLevel"
         });
-
-        // If this is a big castle (*-3), a large ending castle is used
-        // if(reference.big) {
-            //    
-        // }
-        // else {
-            // output.push({ thing: "DetectCollision", x: x + 60, y: y + 16, height: 16, activate: endLevelPoints });
-        // }
 
         return output;
     }
@@ -5683,7 +5675,7 @@ var FullScreenMario = (function(GameStartr) {
         "collideVine": collideVine,
         "collideSpringboard": collideSpringboard,
         "collideWaterBlocker": collideWaterBlocker,
-        "collideFlagTop": collideFlagTop,
+        "collideFlagpole": collideFlagpole,
         "collideFlagBottom": collideFlagBottom,
         "collideCastleAxe": collideCastleAxe,
         "collideCastleDoor": collideCastleDoor,
