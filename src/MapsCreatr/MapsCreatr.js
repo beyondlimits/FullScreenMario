@@ -280,6 +280,8 @@ function MapsCreatr(settings) {
         xloc = 0;
         yloc = 0;
         
+        area.collections = {};
+        
         for(i = 0, len = creation.length; i < len; i += 1) {
             self.analyzePreSwitch(creation[i], prethings, area, map);
         }
@@ -432,6 +434,10 @@ function MapsCreatr(settings) {
             map.locations[thing[key_entrance]].entrance = prething.thing;
         }
         
+        if(reference.collectionName) {
+            ensureThingCollection(prething, reference.collectionName, reference.collectionKey, area);
+        }
+        
         return prething;
     }
     
@@ -454,6 +460,24 @@ function MapsCreatr(settings) {
             this.position = reference.position;
         }
     }
+    
+    /**
+     * Adds a Thing to the specified collection in the Map's Area.
+     * 
+     * @param {PreThing} prething
+     * @param {String} collectionName
+     */
+    function ensureThingCollection(prething, collectionName, collectionKey, area) {
+        var thing = prething.thing,
+            collection = area.collections[collectionName];
+        
+        if(!collection) {
+            collection = area.collections[collectionName] = {};
+        }
+        
+        thing.collection = collection;
+        collection[collectionKey] = thing;
+    }   
     
     /**
      * Creates an Object wrapper around a PreThings Object with versions of
