@@ -79,7 +79,7 @@ FullScreenMario.prototype.settings.mods = {
                         
                         for(i = 0; i < characters.length; i += 1) {
                             character = characters[i];
-                            if(character.player || character.nofall) {
+                            if(character.player || character.nofall || !character.resting) {
                                 continue;
                             }
                             

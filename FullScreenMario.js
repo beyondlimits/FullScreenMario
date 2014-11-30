@@ -5333,23 +5333,10 @@ var FullScreenMario = (function(GameStartr) {
             "y": y + 48   
         });
         
-        // Base filling left
+        // CastleWalls left
         for(i = 0; i < 2; i += 1) { // x
-            for(j = 1; j < 6; j += 1) { // y
-                output.push({
-                    "thing": "BrickPlain",
-                    "x": x + i * 8,
-                    "y": y + j * 8,
-                    "position": "end"
-                });
-            }
             output.push({
-                "thing": "BrickHalf",
-                "x": x + i * 8,
-                "y": y + 44
-            });
-            output.push({
-                "thing": "CastleRailing",
+                "thing": "CastleWall",
                 "x": x + i * 8,
                 "y": y + 48
             });
@@ -5402,23 +5389,11 @@ var FullScreenMario = (function(GameStartr) {
             });
         }
         
-        // Base filling right
-        for(i = 0; i < 2; i += 1) { // x
-            for(j = 1; j < 6; j += 1) { // y
-                output.push({
-                    "thing": "BrickPlain",
-                    "x": x + 56 + i * 8,
-                    "y": y + j * 8,
-                    "position": "end"
-                });
-            }
+        // CastleWalls right
+        var j = reference.hasOwnProperty("walls") ? reference.walls : 2;
+        for(i = 0; i < j; i += 1) { // x
             output.push({
-                "thing": "BrickHalf",
-                "x": x + 56 + i * 8,
-                "y": y + 44
-            });
-            output.push({
-                "thing": "CastleRailing",
+                "thing": "CastleWall",
                 "x": x + 56 + i * 8,
                 "y": y + 48
             });
@@ -5480,14 +5455,15 @@ var FullScreenMario = (function(GameStartr) {
         if(reference.large) {
             output.push({
                 "macro": "CastleLarge",
-                "x": x + 32,
+                "x": x + (reference.castleDistance || 28),
                 "y": y,
-                "transport": "setNextLevel"
+                "transport": "setNextLevel",
+                "walls": reference.walls
             });
         } else {
             output.push({
                 "macro": "CastleSmall",
-                "x": x + 32,
+                "x": x + (reference.castleDistance || 32),
                 "y": y,
                 "transport": "setNextLevel"
             });

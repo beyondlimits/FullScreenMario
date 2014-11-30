@@ -359,7 +359,6 @@ function MapsCreatr(settings) {
         if(!macro) {
             console.warn("A non-existent macro is referenced. It will be "
                     + "ignored: " + macro, reference, prethings, area, map);
-            debugger;
             return;
         }
         
