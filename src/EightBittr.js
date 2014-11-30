@@ -230,7 +230,7 @@ var EightBittr = (function() {
      */
     function setRight(thing, right) {
         thing.right = right;
-        thing.left = thing.left - thing.width * thing.EightBitter.unitsize;
+        thing.left = thing.right - thing.width * thing.EightBitter.unitsize;
     }
     
     /**
