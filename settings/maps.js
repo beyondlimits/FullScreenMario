@@ -47,6 +47,7 @@ FullScreenMario.prototype.settings.maps = {
         "Shroom": FullScreenMario.prototype.macroShroom,
         "Water": FullScreenMario.prototype.macroWater,
         "CastleSmall": FullScreenMario.prototype.macroCastleSmall,
+        "CastleLarge": FullScreenMario.prototype.macroCastleLarge,
         "Ceiling": FullScreenMario.prototype.macroCeiling,
         "Bridge": FullScreenMario.prototype.macroBridge,
         "Scale": FullScreenMario.prototype.macroScale,
@@ -2362,7 +2363,7 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld Night Alt2",
                     "creation": [
                         { "location": 0 },
-                        { "macro": "Castle" },
+                        { "macro": "CastleSmall" },
                         { "macro": "Pattern", "pattern": "BackCloud", "y": 4, "repeat": 4 },
                         { "macro": "Floor", "width": 128 },
                         { "macro": "Tree", "x": 144, "width": 24 },
@@ -2565,7 +2566,7 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "creation": [
                         { "location": 0 },
-                        { "macro": "Castle" },
+                        { "macro": "CastleSmall" },
                         { "macro": "Pattern", "pattern": "BackCloud", "y": 4, "repeat": 2 },
                         { "macro": "Floor", "width": 192 },
                         { "thing": "PipeHorizontal", "x": 80, "y": 16, "transport": 1 },
@@ -2870,7 +2871,7 @@ FullScreenMario.prototype.settings.maps = {
                     "creation": [
                         { "location": 0 },
                         { "macro": "Pattern", "pattern": "BackFence", "repeat": 10 },
-                        { "macro": "Castle" },
+                        { "macro": "CastleSmall" },
                         { "macro": "Floor", "width": 368 },
                         { "thing": "Beetle", "x": 144, "y": 8.5 },
                         { "macro": "Fill", "thing": "Goomba", "x": 184, "y": 8, "xnum": 3, "xwidth": 12 },
@@ -2995,7 +2996,7 @@ FullScreenMario.prototype.settings.maps = {
                     "creation": [
                         { "location": 0 },
                         { "macro": "Pattern", "pattern": "BackFenceMin2", "repeat": 5 },
-                        { "macro": "Castle" },
+                        { "macro": "CastleSmall" },
                         { "macro": "Floor", "width": 120 },
                         { "macro": "Floor", "x": 128, "width": 40 },
                         { "thing": "Lakitu", "x": 128, "y": 84 },
@@ -3113,7 +3114,7 @@ FullScreenMario.prototype.settings.maps = {
                     "creation": [
                         { "location": 0 },
                         { "macro": "Pattern", "pattern": "BackFenceMin3", "x": -384, "repeat": 7 },
-                        { "macro": "Castle" },
+                        { "macro": "CastleSmall" },
                         { "macro": "Floor", "width": 552 },
                         { "thing": "Fence", "x": 120, "y": 8, "width": 24 },
                         { "thing": "Cannon", "x": 144, "y": 16, "height": 16 },
@@ -3165,7 +3166,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Stone", "x": 1616, "y": 48 },
                         { "thing": "Stone", "x": 1632, "y": 64, "width": 16 },
                         { "macro": "Floor", "x": 1664, "width": 256 },
-                        { "macro": "EndOutsideCastle", "x": 1708 }
+                        // { "macro": "EndOutsideCastle", "x": 1708, "large": true }
                     ]
                 }
             ]

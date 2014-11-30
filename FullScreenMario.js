@@ -5214,6 +5214,25 @@ var FullScreenMario = (function(GameStartr) {
         for(i = 0; i < 2; i += 1) { // x
             output.push({ 
                 "thing": "BrickHalf", 
+                "x": x + i * 8,
+                "y": y + 4,
+                "position": "end"
+            });
+            
+            for(j = 1; j < 3; j += 1) { // y
+                output.push({
+                    "thing": "BrickPlain",
+                    "x": x + i * 8,
+                    "y": y + 4 + j * 8,
+                    "position": "end"
+                });
+            }
+        }
+        
+        // Base filling right
+        for(i = 0; i < 2; i += 1) { // x
+            output.push({ 
+                "thing": "BrickHalf", 
                 "x": x + 24 + i * 8,
                 "y": y + 4,
                 "position": "end"
@@ -5229,29 +5248,10 @@ var FullScreenMario = (function(GameStartr) {
             }
         }
         
-        // Base filling right
-        for(i = 0; i < 2; i += 1) { // x
-            output.push({ 
-                "thing": "BrickHalf", 
-                "x": x + 48 + i * 8,
-                "y": y + 4,
-                "position": "end"
-            });
-            
-            for(j = 1; j < 3; j += 1) { // y
-                output.push({
-                    "thing": "BrickPlain",
-                    "x": x + 48 + i * 8,
-                    "y": y + 4 + j * 8,
-                    "position": "end"
-                });
-            }
-        }
-        
         // Medium railing left
         output.push({
             "thing": "CastleRailing",
-            "x": x + 24,
+            "x": x,
             "y": y + 24,
             "position": "end"
         });
@@ -5260,7 +5260,7 @@ var FullScreenMario = (function(GameStartr) {
         for(i = 0; i < 3; i += 1) {
             output.push({
                 "thing": "CastleRailingFilled",
-                "x": x + 32 + i * 8,
+                "x": x + (i + 1) * 8,
                 "y": y + 24,
                 "position": "end"
             });
@@ -5269,7 +5269,7 @@ var FullScreenMario = (function(GameStartr) {
         // Medium railing right
         output.push({
             "thing": "CastleRailing",
-            "x": x + 56,
+            "x": x + 32,
             "y": y + 24,
             "position": "end"
         });
@@ -5278,7 +5278,7 @@ var FullScreenMario = (function(GameStartr) {
         for(i = 0; i < 3; i += 1) {
             output.push({
                 "thing": "CastleRailing",
-                "x": x + 32 + i * 8,
+                "x": x + (i + 1) * 8,
                 "y": y + 40,
                 "position": "end"
             });
@@ -5288,7 +5288,7 @@ var FullScreenMario = (function(GameStartr) {
         for(i = 0; i < 2; i += 1) {
             output.push({
                 "thing": "CastleTop",
-                "x": x + 32 + i * 12,
+                "x": x + 8 + i * 12,
                 "y": y + 36,
                 "position": "end"
             });
@@ -5297,18 +5297,130 @@ var FullScreenMario = (function(GameStartr) {
         // Door, and detector if required
         output.push({
             "thing": "CastleDoor",
-            "x": x + 40,
+            "x": x + 16,
             "y": y + 20,
             "position": "end"
         });
         if(reference.transport) {
             output.push({
                 "thing": "DetectCollision",
-                "x": x + 48,
+                "x": x + 24,
                 "y": y + 20,
                 "height": 16,
                 "activate": FullScreenMario.prototype.collideCastleDoor,
                 "position": "end"
+            });
+        }
+        
+        return output;
+    }
+    
+    /**
+     * 
+     * 
+     * @param {Object} reference   A listing of the settings for this macro,
+     *                             from an Area's .creation Object.
+     */
+    function macroCastleLarge(reference) {
+        var output = [],
+            x = reference.x || 0,
+            y = reference.y || 0,
+            i, j;
+        
+        output.push({
+            "macro": "CastleSmall",
+            "x": x + 16,
+            "y": y + 48   
+        });
+        
+        // Base filling left
+        for(i = 0; i < 2; i += 1) { // x
+            for(j = 1; j < 6; j += 1) { // y
+                output.push({
+                    "thing": "BrickPlain",
+                    "x": x + i * 8,
+                    "y": y + j * 8,
+                    "position": "end"
+                });
+            }
+            output.push({
+                "thing": "BrickHalf",
+                "x": x + i * 8,
+                "y": y + 44
+            });
+            output.push({
+                "thing": "CastleRailing",
+                "x": x + i * 8,
+                "y": y + 48
+            });
+        }
+        
+        // Bottom doors with bricks on top
+        for(i = 0; i < 3; i += 1) { // x
+            output.push({
+                "thing": "CastleDoor",
+                "x": x + 16 + i * 16,
+                "y": y + 20,
+                "position": "end"
+            });
+            for(j = 0; j < 2; j += 1) {
+                output.push({
+                    "thing": "BrickPlain",
+                    "x": x + 16 + i * 16,
+                    "y": y + 28 + j * 8
+                });
+                output.push({
+                    "thing": "BrickHalf",
+                    "x": x + 16 + i * 16,
+                    "y": y + 40 + j * 4
+                });
+            }
+        }
+        
+        // Bottom bricks with doors on top
+        for(i = 0; i < 2; i += 1) { // x
+            for(j = 0; j < 3; j += 1) { // y
+                output.push({
+                    "thing": "BrickPlain",
+                    "x": x + 24 + i * 16,
+                    "y": y + 8 + j * 8
+                });
+            }
+            output.push({
+                "thing": "CastleDoor",
+                "x": x + 24 + i * 16,
+                "y": y + 44
+            });
+        }
+        
+        // Railing (filled)
+        for(i = 0; i < 5; i += 1) { // x
+            output.push({
+                "thing": "CastleRailingFilled",
+                "x": x + 16 + i * 8,
+                "y": y + 48
+            });
+        }
+        
+        // Base filling right
+        for(i = 0; i < 2; i += 1) { // x
+            for(j = 1; j < 6; j += 1) { // y
+                output.push({
+                    "thing": "BrickPlain",
+                    "x": x + 56 + i * 8,
+                    "y": y + j * 8,
+                    "position": "end"
+                });
+            }
+            output.push({
+                "thing": "BrickHalf",
+                "x": x + 56 + i * 8,
+                "y": y + 44
+            });
+            output.push({
+                "thing": "CastleRailing",
+                "x": x + 56 + i * 8,
+                "y": y + 48
             });
         }
         
@@ -5365,12 +5477,21 @@ var FullScreenMario = (function(GameStartr) {
             { thing: "Stone", x: x, y: y + 8 },
         ];
         
-        output.push({
-            "macro": "CastleSmall",
-            "x": x + 8,
-            "y": y,
-            "transport": "setNextLevel"
-        });
+        if(reference.large) {
+            output.push({
+                "macro": "CastleLarge",
+                "x": x + 32,
+                "y": y,
+                "transport": "setNextLevel"
+            });
+        } else {
+            output.push({
+                "macro": "CastleSmall",
+                "x": x + 32,
+                "y": y,
+                "transport": "setNextLevel"
+            });
+        }
 
         return output;
     }
@@ -5800,6 +5921,7 @@ var FullScreenMario = (function(GameStartr) {
         "macroShroom": macroShroom,
         "macroWater": macroWater,
         "macroCastleSmall": macroCastleSmall,
+        "macroCastleLarge": macroCastleLarge,
         "macroCeiling": macroCeiling,
         "macroBridge": macroBridge,
         "macroScale": macroScale,

@@ -106,7 +106,6 @@ function MapScreenr(settings) {
     self.shiftY = function(dy) {
         self.top += dy;
         self.bottom += dy;
-        setBottomDeath();
     };
     
     self.reset(settings || {});

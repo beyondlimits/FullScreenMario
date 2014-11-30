@@ -359,6 +359,7 @@ function MapsCreatr(settings) {
         if(!macro) {
             console.warn("A non-existent macro is referenced. It will be "
                     + "ignored: " + macro, reference, prethings, area, map);
+            debugger;
             return;
         }
         
@@ -417,7 +418,6 @@ function MapsCreatr(settings) {
         }
         
         if(group_types.indexOf(prething.thing[key_group_type]) === -1) {
-            console.log("Group types are", group_types, "\n");
             console.warn("A Thing contains an unknown " + key_group_type
                     + ". It will be ignored: " + thing[key_group_type],
                     prething, reference, prethings, area, map);
