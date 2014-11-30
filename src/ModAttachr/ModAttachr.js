@@ -267,15 +267,13 @@ function ModAttachr(settings) {
     
     /**
      * Fires an event, which calls all functions listed undder mods for that 
-     * event. A scope may be given, as well as any number of arguments after the
-     * scope.
+     * event. Any number of arguments may be given.
      * 
      * @param {String} event   The name of the event to fire.
-     * @param {Mixed} [scope]   An optional scope to bind the event to.
      */
-    self.fireEvent = function (event, scope) {
+    self.fireEvent = function (event) {
         var fires = events[event],
-            args = Array.prototype.splice.call(arguments, 1),
+            args = Array.prototype.splice.call(arguments, 0),
             mod, i;
         
         if(!fires) {

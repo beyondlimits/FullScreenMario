@@ -1770,6 +1770,7 @@ var FullScreenMario = (function(GameStartr) {
             }
             // Players trigger other actions (e.g. Pipe -> mapExitPipeHorizontal)
             else if(other.actionLeft) {
+                thing.EightBitter.ModAttacher.fireEvent("onPlayerActionLeft", thing, other);
                 other.actionLeft(thing, other, other.transport);
             }
         }
@@ -3046,6 +3047,7 @@ var FullScreenMario = (function(GameStartr) {
             }
             // Pipe movement
             if(thing.resting.actionTop) {
+                thing.EightBitter.ModAttacher.fireEvent("onPlayerActionTop", thing, other);
                 thing.resting.actionTop(thing, thing.resting);
             }
         }
@@ -4590,7 +4592,7 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      * 
-     * @notes thing is player, other is pipe
+     * @notes Thing is a Player, other is a Pipe.
      */
     function mapExitPipeVertical(thing, other) {
         if(!thing.resting || typeof(other.transport) === "undefined"
@@ -4620,10 +4622,12 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      * 
-     * @notes thing is player, other is pipe
+     * @notes Thing is a Player, other is a Pipe. The third argument was added
+     *        because the "Bouncy Bounce!" mod rendered some areas unescapable
+     *        without it.
      */
-    function mapExitPipeHorizontal(thing, other) {
-        if(!thing.resting && !thing.paddling) {
+    function mapExitPipeHorizontal(thing, other, shouldTransport) {
+        if(!shouldTransport && !thing.resting && !thing.paddling) {
             return;
         }
         

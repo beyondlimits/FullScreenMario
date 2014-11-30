@@ -22,9 +22,16 @@ FullScreenMario.prototype.settings.mods = {
                         return;
                     }
                     
+                    if(player.resting.actionTop) {
+                        player.resting.actionTop(player, player.resting);
+                    }
+                    
                     player.jumpcount = 0;
                     player.resting = undefined;
                     player.yvel = -3 * player.EightBitter.unitsize;
+                },
+                "onPlayerActionLeft": function (mod, player, other) {
+                    other.actionLeft(player, other, true);
                 }
             },
         },
