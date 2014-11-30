@@ -473,9 +473,9 @@ function InputWritr(settings) {
      * @example   Creating a function that calls an onKeyUp event, with a given
      *            input's keyCode being used as the code_label.
      *            InputWriter.makePipe("onkeyup", "keyCode");
-     * @example   Creating a function that calls an onContextMenu event, and
+     * @example   Creating a function that calls an onMouseDown event, and
      *            preventDefault of the argument.
-     *            InputWriter.makePipe("oncontextmenu", null, true);
+     *            InputWriter.makePipe("onmousedown", null, true);
      */
     self.makePipe = function (trigger, code_label, prevent_defaults) {
         if (!triggers.hasOwnProperty(trigger)) {

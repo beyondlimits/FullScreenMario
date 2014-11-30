@@ -20,7 +20,6 @@
         
         FSM.proliferate(section, {
             "onmousedown": FSM.InputWriter.makePipe("onmousedown", "which"),
-            "oncontextmenu": FSM.InputWriter.makePipe("oncontextmenu", null, true)
         });
 
         FSM.gameStart();
@@ -394,9 +393,7 @@
             uploader.ondragover = handleFileDragOver.bind(undefined, uploader);
             uploader.ondragleave = input.ondragend = handleFileDragLeave.bind(undefined, uploader);
             uploader.ondrop = handleFileDrop.bind(undefined, input, uploader);
-            uploader.onclick = function () {
-                input.click();
-            };
+            uploader.onclick = input.click.bind(input);
             
             uploader.appendChild(input);
             
@@ -454,10 +451,7 @@
         }
         
         function handleFileUploadCompletion(file, uploader, event) {
-            FSM.LevelEditor.enable();
-            FSM.LevelEditor.setCurrentJSON(event.currentTarget.result);
-            FSM.LevelEditor.setSectionJSON();
-            
+            FSM.LevelEditor.handleUploadCompletion(event);
             uploader.innerText = uploader.getAttribute("textOld");
         }
         

@@ -183,8 +183,57 @@ function LevelEditr(settings) {
      * 
      */
     self.loadCurrentJSON = function () {
-        console.log("Still loading.");
+        display.sections.inputDummy.click()
     };
+    
+    /**
+     * 
+     */
+    self.handleUploadStart = function (event) {
+        var file, reader;
+        
+        if(event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        if(event && event.dataTransfer) {
+            file = event.dataTransfer.files[0];
+        } else {
+            file = display.sections.inputDummy.files[0],
+            reader = new FileReader();
+        }
+        
+        if(!file) {
+            return;
+        }
+        
+        reader = new FileReader();
+        reader.onloadend = self.handleUploadCompletion;
+        reader.readAsText(file);
+    };
+    
+    function handleDragEnter(event) {
+        self.setSectionJSON();
+    }
+    
+    function handleDragOver(event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    
+    function handleDragDrop(event) {
+        self.handleUploadStart(event);
+    }
+    
+    /**
+     * 
+     */
+    self.handleUploadCompletion = function (event) {
+        self.enable();
+        self.setCurrentJSON(event.currentTarget.result);
+        self.setSectionJSON();
+    }
     
     /**
      * 
@@ -870,6 +919,9 @@ function LevelEditr(settings) {
         display["container"] = GameStarter.createElement("div", {
             "className": "LevelEditor",
             "onclick": cancelEvent,
+            "ondragenter": handleDragEnter,
+            "ondragover": handleDragOver,
+            "ondrop": handleDragDrop,
             "children": [
                 display["scrollers"]["container"] = GameStarter.createElement("div", {
                     "className": "EditorScrollers",
@@ -1221,15 +1273,25 @@ function LevelEditr(settings) {
                                     return GameStarter.createElement("div", {
                                         "className": "EditorMenuOption EditorMenuOptionFifth EditorMenuOption-" + key,
                                         "textContent": key,
-                                        "onclick": actions[key]
+                                        "onclick": actions[key][0],
+                                        "children": actions[key][1]
                                     });
                                 });
                             })({
-                                "Build": self.startBuilding,
-                                "Play": self.startPlaying,
-                                "Save": self.downloadCurrentJSON,
-                                "Load": self.loadCurrentJSON,
-                                "Reset": resetDisplayMap
+                                "Build": [self.startBuilding],
+                                "Play": [self.startPlaying],
+                                "Save": [self.downloadCurrentJSON],
+                                "Load": [
+                                    self.loadCurrentJSON,
+                                    display["sections"]["inputDummy"] = GameStarter.createElement("input", {
+                                        "type": "file",
+                                        "style": {
+                                            "display": "none"
+                                        },
+                                        "onchange": self.handleUploadStart
+                                    })
+                                ],
+                                "Reset": [resetDisplayMap]
                             })
                         })
                     ]
@@ -1312,8 +1374,6 @@ function LevelEditr(settings) {
      * 
      */
     function setTextareaValue(value, doBeautify) {
-        var test = JSON.parse(value);
-        
         if(doBeautify) {
             display.stringer.textarea.value = beautifier(value);
         } else {

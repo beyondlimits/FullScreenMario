@@ -586,8 +586,10 @@ var EightBittr = (function() {
                 switch(i) {
                     // Children: just append all of them directly
                     case "children":
-                        for(var j = 0; j < setting.length; j += 1) {
-                            recipient.appendChild(setting[j]);
+                        if(typeof(setting) !== "undefined") {
+                            for(var j = 0; j < setting.length; j += 1) {
+                                recipient.appendChild(setting[j]);
+                            }
                         }
                         break;
                     
