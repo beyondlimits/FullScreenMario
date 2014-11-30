@@ -119,18 +119,52 @@
                     "TreeTrunk": {},
                     "Water": {}
                 },
-                "text": {
-                    "Text100": {},
-                    "Text200": {},
-                    "Text400": {},
-                    "Text500": {},
-                    "Text800": {},
-                    "Text1000": {},
-                    "Text2000": {},
-                    "Text4000": {},
-                    "Text5000": {},
-                    "Text8000": {},
-                    "Text1Up": {}
+                "Text": {
+                    "textA": {},
+                    "textB": {},
+                    "textC": {},
+                    "textD": {},
+                    "textE": {},
+                    "textF": {},
+                    "textG": {},
+                    "textH": {},
+                    "textI": {},
+                    "textJ": {},
+                    "textK": {},
+                    "textL": {},
+                    "textM": {},
+                    "textN": {},
+                    "textO": {},
+                    "textP": {},
+                    "textQ": {},
+                    "textR": {},
+                    "textS": {},
+                    "textT": {},
+                    "textU": {},
+                    "textV": {},
+                    "textW": {},
+                    "textX": {},
+                    "textY": {},
+                    "textZ": {},
+                    "textSpace": {},
+                    "textCharacters": {
+                        "textPeriod": {},
+                        "textExclamationMark": {},
+                    },
+                    "ScoreText": {
+                        "Text100": {},
+                        "Text200": {},
+                        "Text400": {},
+                        "Text500": {},
+                        "Text800": {},
+                        "Text1000": {},
+                        "Text2000": {},
+                        "Text4000": {},
+                        "Text5000": {},
+                        "Text8000": {},
+                        "Text1Up": {},
+                    },
+                    "CustomText": {}
                 }
             }
         },
@@ -780,10 +814,17 @@
                     // ["one", "two", "three", "four"]
                 // ]
             },
-            "text": {
+            "Text": {
+                "width": 3.5,
+                "height": 3.5,
+                "libtype": "Text",
+                "grouptype": "Text"
+            },
+            "ScoreText": {
                 "libtype": "Text",
                 "grouptype": "Text",
             },
+            "textCharacters": [2.5, 4],
             "Text100": [6, 4],
             "Text200": [6, 4],
             "Text400": [6, 4],
@@ -795,6 +836,13 @@
             "Text5000": [8, 4],
             "Text8000": [8, 4],
             "Text1Up": [8, 4],
+            "CustomText": {
+                "hidden": true,
+                "spacingHorizontal": .5,
+                "spacingVertical": 7,
+                "spacingVerticalBlank": 6,
+                "onThingAdd": FullScreenMario.prototype.spawnCustomText
+            }
         }
     };
 })();

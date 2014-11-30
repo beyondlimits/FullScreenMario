@@ -93,7 +93,8 @@ var FullScreenMario = (function(GameStartr) {
                 "unitsize",
                 "scale",
                 "point_levels",
-                "gravity"
+                "gravity",
+                "customTextMappings"
             ]        });
         
         if(customs.resetTimed) {
@@ -116,7 +117,14 @@ var FullScreenMario = (function(GameStartr) {
     // Levels of points to award for hopping on / shelling enemies
     FullScreenMario.point_levels = [
         100, 200, 400, 500, 800, 1000, 2000, 4000, 5000, 8000
-    ];            /* Resets    */
+    ];
+    
+    // Useful for custom text, where "text!" cannot be a Function name
+    FullScreenMario.customTextMappings = {
+        " ": "Space",
+        ".": "Period",
+        "!": "ExclamationMark"
+    };            /* Resets    */
     
     /**
      * 
@@ -542,7 +550,7 @@ var FullScreenMario = (function(GameStartr) {
             if (character.alive) {
                 if (!character.player &&
                     (character.numquads == 0 || character.left > delx) &&
-                    (!character.outerok || character.right < -deldx)) {
+                    (!character.outerok || character.right < -delx)) {
                     EightBitter.arrayDeleteMember(character, characters, i);
                 } else {
                     if (!character.nomove && character.movement) {
@@ -1304,6 +1312,56 @@ var FullScreenMario = (function(GameStartr) {
     function spawnMoveSliding(thing) {
         // Make sure thing.begin <= thing.end
         thing.EightBitter.setMovementEndpoints(thing);
+    }
+    
+    /**
+     * Spawns a custom text Thing by killing it and placing the contents of its
+     * texts member variable. These are written with a determined amount of
+     * spacing between them, as if by a typewriter.
+     * 
+     * @param {Thing} thing
+     */
+    function spawnCustomText(thing) {
+        console.log("Doing", thing, thing.texts);
+        var top = thing.top,
+            texts = thing.texts,
+            spacingHorizontal = thing.spacingHorizontal * thing.EightBitter.unitsize,
+            spacingVertical = thing.spacingVertical * thing.EightBitter.unitsize,
+            spacingVerticalBlank = thing.spacingVerticalBlank * thing.EightBitter.unitsize,
+            left, text, letter, textThing, i, j;
+        
+        for(i = 0; i < texts.length; i += 1) {
+            if(!texts[i]) {
+                top += spacingVerticalBlank;
+                continue;
+            }
+            
+            text = texts[i].text;
+            
+            if(texts[i].offset) {
+                left = thing.left + texts[i].offset * thing.EightBitter.unitsize;
+            } else {
+                left = thing.left;
+            }
+            
+            for(j = 0; j < text.length; j += 1) {
+                letter = text[j];
+                if(thing.EightBitter.customTextMappings.hasOwnProperty(letter)) {
+                    letter = thing.EightBitter.customTextMappings[letter];
+                }
+                letter = "text" + letter;
+                
+                textThing = thing.EightBitter.ObjectMaker.make(letter);
+                textThing.EightBitter.addThing(textThing, left, top);
+                
+                left += textThing.width * thing.EightBitter.unitsize;
+                left += spacingHorizontal;
+            }
+            
+            top += spacingVertical;
+        }
+        
+        thing.EightBitter.killNormal(thing);
     }
     
     /**
@@ -2319,7 +2377,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function collideCastleNPC(thing, other) {
-        var text = other.text,
+        var texts = other.texts,
             interval = 21,
             i = 0;
         
@@ -2327,14 +2385,13 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.killNormal(other);
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
-            console.log("Placing text", i, text[i]);
-            
+            console.log("Placing text", i, texts[i]);
             i += 1;
-        }, interval, text.length);
+        }, interval, texts.length);
         
         thing.EightBitter.TimeHandler.addEvent(function () {
             thing.EightBitter.nextLevel();
-        }, (interval * text.length) + 280)
+        }, (interval * texts.length) + 280)
     }
     
     /**
@@ -5323,32 +5380,36 @@ var FullScreenMario = (function(GameStartr) {
         var x = reference.x || 0,
             y = reference.y || 0,
             npc = reference.npc || "Toad",
-            text = reference.text || "",
+            texts = reference.texts || [],
             style = reference.style || {};
 
-        if(!text) {
+        if(!texts.length) {
             if(npc === "Toad") {
-                text = [
-                    "THANK YOU MARIO!",
-                    "",
-                    "BUT OUR PRINCESS IS IN ANOTHER CASTLE!"
-                ];
-                style = {
-                    "textAlign": "left"
-                };
+                texts = [{
+                    "text": "THANK YOU MARIO!",
+                    "offset": 12
+                }, undefined, {
+                    "text": "BUT OUR PRINCESS IS IN"
+                }, {
+                    "text": "ANOTHER CASTLE!",
+                }];
             } else if(npc === "Peach") {
-                text = [
-                    "THANK YOU MARIO!",
-                    "",
-                    "YOUR QUEST IS OVER.",
-                    "WE PRESENT YOU A NEW QUEST.",
-                    "",
-                    "PRESS BUTTON B",
-                    "TO SELECT A WORLD"
-                ];
-                style = {
-                    "textAlign": "center"
-                };
+                texts = [{
+                    "text": "THANK YOU MARIO!",
+                    "offset": 20
+                }, undefined, {
+                    "text": "YOUR QUEST IS OVER.",
+                    "offset": 16
+                }, {
+                    "text": "WE PRESENT YOU A NEW QUEST.",
+                    "offset": 0
+                }, undefined, {
+                    "text": "PRESS BUTTON B",
+                    "offset": 28,
+                }, {
+                    "text": "TO SELECT A WORLD",
+                    "offset": 20
+                }]
             }
         }
         
@@ -5366,7 +5427,7 @@ var FullScreenMario = (function(GameStartr) {
             { "thing": "Stone", "x": x + 104, "y": y + 32, "width": 24, "height": 32 },
             { "thing": "Stone", "x": x + 112, "y": y + 80, "width": 16, "height": 24 },
             // Peach's Magical Happy Chamber of Fantastic Love
-            { "thing": "DetectCollision", "x": x + 180, "activate": scope.collideCastleNPC, "text": text },
+            { "thing": "DetectCollision", "x": x + 180, "activate": scope.collideCastleNPC, "texts": texts },
             { "thing": npc, "x": x + 194, "y": 13 },
             { "thing": "ScrollBlocker", "x": x + 256 }
         ];
@@ -5514,7 +5575,7 @@ var FullScreenMario = (function(GameStartr) {
         "spawnCastleBlock": spawnCastleBlock,
         "spawnMoveFloating": spawnMoveFloating,
         "spawnMoveSliding": spawnMoveSliding,
-        "setMovementEndpoints": setMovementEndpoints,
+        "spawnCustomText": spawnCustomText,
         "spawnDetector": spawnDetector,
         "spawnCollectionComponent": spawnCollectionComponent,
         "spawnCollectionPartner": spawnCollectionPartner,
@@ -5564,6 +5625,7 @@ var FullScreenMario = (function(GameStartr) {
         "moveFloating": moveFloating,
         "moveSliding": moveSliding,
         "movePlatform": movePlatform,
+        "setMovementEndpoints": setMovementEndpoints,
         "movePlatformSpawn": movePlatformSpawn,
         "movePlatformScale": movePlatformScale,
         "moveVine": moveVine,
