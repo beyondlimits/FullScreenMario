@@ -383,19 +383,21 @@
                 input = document.createElement("input");
             
             uploader.className = "select-option select-option-large options-button-option";
-            uploader.textContent = "Continue your editor files!";
+            uploader.textContent = "Click to upload and continue your editor files!";
+            uploader.setAttribute("textOld", uploader.textContent);
             
-            uploader.onclick = function () {
-                input.click();
-            };
+            input.type = "file";
+            input.className = "select-upload-input";
+            input.onchange = handleFileDrop.bind(undefined, input, uploader);
             
             uploader.ondragenter = handleFileDragEnter.bind(undefined, uploader);
             uploader.ondragover = handleFileDragOver.bind(undefined, uploader);
             uploader.ondragleave = input.ondragend = handleFileDragLeave.bind(undefined, uploader);
-            uploader.ondrop = handleFileDrop.bind(undefined, uploader);
+            uploader.ondrop = handleFileDrop.bind(undefined, input, uploader);
+            uploader.onclick = function () {
+                input.click();
+            };
             
-            input.type = "file";
-            input.className = "select-upload-input";
             uploader.appendChild(input);
             
             return uploader;
@@ -420,13 +422,43 @@
             uploader.className = uploader.className.replace(" hovering", "");
         }
         
-        function handleFileDrop(uploader, event) {
-            handleFileDragLeave(input, event);
+        function handleFileDrop(input, uploader, event) {
+            var files = input.files || event.dataTransfer.files,
+                file = files[0],
+                reader = new FileReader();
             
+            handleFileDragLeave(input, event);
             event.preventDefault();
             event.stopPropagation();
             
-            console.log("gotcha");
+            reader.onprogress = handleFileUploadProgress.bind(undefined, file, uploader);
+            reader.onloadend = handleFileUploadCompletion.bind(undefined, file, uploader);
+            
+            reader.readAsText(file);
+        }
+        
+        function handleFileUploadProgress(file, uploader, event) {
+            var percent;
+            
+            if(!event.lengthComputable) {
+                return;
+            }
+            
+            percent = Math.round((event.loaded / event.total) * 100);
+            
+            if(percent > 100) {
+                percent = 100;
+            }
+            
+            uploader.innerText = "Uploading '" + file.name + "' (" + percent + "%)...";
+        }
+        
+        function handleFileUploadCompletion(file, uploader, event) {
+            FSM.LevelEditor.enable();
+            FSM.LevelEditor.setCurrentJSON(event.currentTarget.result);
+            FSM.LevelEditor.setSectionJSON();
+            
+            uploader.innerText = uploader.getAttribute("textOld");
         }
         
         return function (schema) {

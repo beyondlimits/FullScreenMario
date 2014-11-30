@@ -105,17 +105,14 @@ function LevelEditr(settings) {
         
         clearAllThings();
         resetDisplay();
-        setTimeout(function () {
-            setTextareaValue(stringifySmart(map_default), true);
-            resetDisplayMap();
-            disableThing(GameStarter.player);
-        }, 7);
         
         GameStarter.InputWriter.setCanTrigger(false);
         
         setCurrentMode("Build");
         
-        window.durp = display;
+        setTextareaValue(stringifySmart(map_default), true);
+        resetDisplayMap();
+        disableThing(GameStarter.player);
     };
     
     /**
@@ -150,6 +147,9 @@ function LevelEditr(settings) {
         }
     };
     
+    /**
+     * 
+     */
     self.startBuilding = function () {
         beautifyTextareaValue();
         setDisplayMap(true);
@@ -158,6 +158,9 @@ function LevelEditr(settings) {
         self.maximize();
     };
     
+    /**
+     * 
+     */
     self.startPlaying = function () {
         beautifyTextareaValue();
         setDisplayMap(false);
@@ -166,10 +169,42 @@ function LevelEditr(settings) {
         self.minimize();
     };
     
+    /**
+     * 
+     */
+    self.downloadCurrentJSON = function () {
+        downloadFile(
+            getMapName() + ".json",
+            display.stringer.textarea.value || ""
+        );
+    };
+    
+    /**
+     * 
+     */
+    self.loadCurrentJSON = function () {
+        console.log("Still loading.");
+    };
+    
+    /**
+     * 
+     */
+    self.setCurrentJSON = function (json) {
+        self.startBuilding();
+        setTextareaValue(json, true);
+        getMapObjectAndTry();
+    };
+    
+    /**
+     * 
+     */
     function setCurrentMode(mode) {
         current_mode = mode;
     }
     
+    /**
+     * 
+     */
     function setCurrentClickMode(mode) {
         current_click_mode = mode;
     }
@@ -400,6 +435,9 @@ function LevelEditr(settings) {
         setCurrentMacroThings();
     }
     
+    /**
+     * 
+     */
     function createPrethingsHolder(object) {
         var output = {};
         
@@ -448,6 +486,9 @@ function LevelEditr(settings) {
     /* Map manipulations
     */
     
+    /**
+     * 
+     */
     function setMapName() {
         var name = getMapName(),
             map = getMapObject();
@@ -524,6 +565,9 @@ function LevelEditr(settings) {
         setDisplayMap(true);
     }
     
+    /**
+     * 
+     */
     function setLocationArea() {
         var map = getMapObject();
         
@@ -611,6 +655,9 @@ function LevelEditr(settings) {
         setDisplayMap(true);
     }
     
+    /**
+     * 
+     */
     function addLocationToMap() {
         var name = display["sections"]["MapSettings"]["Location"].options.length,
             map = getMapObject();
@@ -681,7 +728,7 @@ function LevelEditr(settings) {
             return map;
         }
         catch (error) {
-            setSectionJSON();
+            self.setSectionJSON();
             display.stringer.messenger.textContent = error.message;
             return undefined;
         }
@@ -896,7 +943,7 @@ function LevelEditr(settings) {
                                         "background": "white"
                                     },
                                     "textContent": "Visual",
-                                    "onclick": setSectionClickToPlace,
+                                    "onclick": self.setSectionClickToPlace,
                                 }),
                                 display["sections"]["buttons"]["MapSettings"] = GameStarter.createElement("div", {
                                     "className": "EditorMenuOption EditorSectionChooser EditorMenuOptionThird",
@@ -904,7 +951,7 @@ function LevelEditr(settings) {
                                         "background": "gray"
                                     },
                                     "textContent": "Map",
-                                    "onclick": setSectionMapSettings,
+                                    "onclick": self.setSectionMapSettings,
                                 }),
                                 display["sections"]["buttons"]["JSON"] = GameStarter.createElement("div", {
                                     "className": "EditorMenuOption EditorSectionChooser EditorMenuOptionThird",
@@ -912,7 +959,7 @@ function LevelEditr(settings) {
                                         "background": "gray"
                                     },
                                     "textContent": "JSON",
-                                    "onclick": setSectionJSON
+                                    "onclick": self.setSectionJSON
                                 })
                             ]
                         }),
@@ -928,7 +975,7 @@ function LevelEditr(settings) {
                                         display["sections"]["buttons"]["ClickToPlace"]["Things"] = GameStarter.createElement("div", {
                                             "className": "EditorMenuOption EditorSubOptionsListChooser EditorMenuOptionHalf",
                                             "textContent": "Things",
-                                            "onclick": setSectionClickToPlaceThings,
+                                            "onclick": self.setSectionClickToPlaceThings,
                                             "style": {
                                                 "background": "#CCC"
                                             }
@@ -936,7 +983,7 @@ function LevelEditr(settings) {
                                         display["sections"]["buttons"]["ClickToPlace"]["Macros"] = GameStarter.createElement("div", {
                                             "className": "EditorMenuOption EditorSubOptionsListChooser EditorMenuOptionHalf",
                                             "textContent": "Macros",
-                                            "onclick": setSectionClickToPlaceMacros,
+                                            "onclick": self.setSectionClickToPlaceMacros,
                                             "style": {
                                                 "background": "#777"
                                             }
@@ -1180,8 +1227,8 @@ function LevelEditr(settings) {
                             })({
                                 "Build": self.startBuilding,
                                 "Play": self.startPlaying,
-                                "Save": downloadCurrentJSON,
-                                "Load": alert.bind(window, "Loading!"),
+                                "Save": self.downloadCurrentJSON,
+                                "Load": self.loadCurrentJSON,
                                 "Reset": resetDisplayMap
                             })
                         })
@@ -1199,7 +1246,7 @@ function LevelEditr(settings) {
     /**
      * 
      */
-    function setSectionClickToPlace() {
+    self.setSectionClickToPlace = function () {
         display.sections.ClickToPlace.VisualOptions.style.display = "block";
         display.sections.ClickToPlace.container.style.display = "block";
         display.sections.MapSettings.container.style.display = "none";
@@ -1212,7 +1259,7 @@ function LevelEditr(settings) {
     /**
      * 
      */
-    function setSectionMapSettings() {
+    self.setSectionMapSettings = function () {
         display.sections.ClickToPlace.VisualOptions.style.display = "none";
         display.sections.ClickToPlace.container.style.display = "none";
         display.sections.MapSettings.container.style.display = "block";
@@ -1225,7 +1272,7 @@ function LevelEditr(settings) {
     /**
      * 
      */
-    function setSectionJSON(event) {
+    self.setSectionJSON = function () {
         display.sections.ClickToPlace.VisualOptions.style.display = "none";
         display.sections.ClickToPlace.container.style.display = "none";
         display.sections.MapSettings.container.style.display = "none";
@@ -1238,7 +1285,7 @@ function LevelEditr(settings) {
     /**
      * 
      */
-    function setSectionClickToPlaceThings(event) {
+    self.setSectionClickToPlaceThings = function (event) {
         setCurrentClickMode("Thing")
         display.gui.onclick = onClickEditingThing;
         display.sections.ClickToPlace.VisualOptions.style.display = "block";
@@ -1251,7 +1298,7 @@ function LevelEditr(settings) {
     /**
      * 
      */
-    function setSectionClickToPlaceMacros(event) {
+    self.setSectionClickToPlaceMacros = function (event) {
         setCurrentClickMode("Macro");
         display.gui.onclick = onClickEditingMacro;
         display.sections.ClickToPlace.VisualOptions.style.display = "block";
@@ -1265,6 +1312,8 @@ function LevelEditr(settings) {
      * 
      */
     function setTextareaValue(value, doBeautify) {
+        var test = JSON.parse(value);
+        
         if(doBeautify) {
             display.stringer.textarea.value = beautifier(value);
         } else {
@@ -1490,7 +1539,7 @@ function LevelEditr(settings) {
             testObject = parseSmart(value);
             setTextareaValue(display.stringer.textarea.value);
         } catch (error) {
-            setSectionJSON();
+            self.setSectionJSON();
             display.stringer.messenger.textContent = error.message;
             return;
         }
@@ -1499,7 +1548,7 @@ function LevelEditr(settings) {
             GameStarter.MapsCreator.storeMap(mapName, testObject);
             map = GameStarter.MapsCreator.getMap(mapName);
         } catch (error) {
-            setSectionJSON();
+            self.setSectionJSON();
             display.stringer.messenger.textContent = error.message;
             return;
         }
@@ -1606,14 +1655,23 @@ function LevelEditr(settings) {
         }
     }
     
+    /**
+     * 
+     */
     function getNormalizedX(raw) {
         return raw / GameStarter.unitsize;
     }
     
+    /**
+     * 
+     */
     function getNormalizedY(raw) {
         return GameStarter.MapScreener.floor - (raw / GameStarter.unitsize) + GameStarter.unitsize * 3; // Why +3?
     }
     
+    /**
+     * 
+     */
     function getNormalizedThingArguments(args) {
         var argsNormal = GameStarter.proliferate({}, args);
         
@@ -1627,6 +1685,9 @@ function LevelEditr(settings) {
         return argsNormal;
     }
     
+    /**
+     * 
+     */
     function createSelect(options, attributes) {
         var select = GameStarter.createElement("select", attributes),
             i;
@@ -1641,13 +1702,9 @@ function LevelEditr(settings) {
         return select;
     }
     
-    function downloadCurrentJSON() {
-        downloadFile(
-            getMapName() + ".json",
-            display.stringer.textarea.value || ""
-        );
-    }
-    
+    /**
+     * 
+     */
     function downloadFile(name, content) {
         var link = document.createElement('a');
         link.setAttribute('download', name);
@@ -1658,6 +1715,9 @@ function LevelEditr(settings) {
         return link;
     }
     
+    /**
+     * 
+     */
     function cancelEvent(event) {
         event.stopPropagation();
         event.cancelBubble = true;
