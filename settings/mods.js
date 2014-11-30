@@ -14,7 +14,11 @@ FullScreenMario.prototype.settings.mods = {
                 "onPlayerLanding": function (mod) {
                     var player = this.player;
                     
-                    if(Math.abs(player.yvel) < player.EightBitter.unitsize / 4) {
+                    // Don't trigger during cutscenes or small landings
+                    if(
+                        player.EightBitter.MapScreener.nokeys
+                        || Math.abs(player.yvel) < player.EightBitter.unitsize / 4
+                    ) {
                         return;
                     }
                     
@@ -55,8 +59,12 @@ FullScreenMario.prototype.settings.mods = {
                         var characters = this.GroupHolder.getCharacterGroup(),
                             player = this.player,
                             character, i;
-                        
-                        if(Math.abs(player.yvel) < player.EightBitter.unitsize) {
+                    
+                        // Don't trigger during cutscenes or small landings
+                        if(
+                            player.EightBitter.MapScreener.nokeys
+                            || Math.abs(player.yvel) < player.EightBitter.unitsize / 4
+                        ) {
                             return;
                         }
                         
