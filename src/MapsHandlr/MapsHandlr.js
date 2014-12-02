@@ -68,7 +68,7 @@ function MapsHandlr(settings) {
     /**
      * 
      */
-    self.reset = function reset(settings) {
+    self.reset = function (settings) {
         // Maps themselves should have been created in the MapsCreator object
         if(!settings.MapsCreator) {
             throw new Error("No MapsCreator provided to MapsHandlr.");
@@ -99,7 +99,7 @@ function MapsHandlr(settings) {
      * 
      * @return {MapsCreatr}
      */
-    self.getMapsCreator = function getMapsCreator() {
+    self.getMapsCreator = function () {
         return MapsCreator;
     };
     
@@ -108,14 +108,14 @@ function MapsHandlr(settings) {
      * 
      * @return {MapScreenr}
      */
-    self.getMapScreener = function getMapScreener() {
+    self.getMapScreener = function () {
         return MapScreener;
     };
     
     /**
      * Simple getter for the Array of attribute names copied to the MapScreener.
      */
-    self.getScreenAttributes = function getScreenAttributes() {
+    self.getScreenAttributes = function () {
         return screen_attributes;
     };
     
@@ -125,7 +125,7 @@ function MapsHandlr(settings) {
      *
      * @return {Mixed}
      */
-    self.getMapName = function getMapName() {
+    self.getMapName = function () {
         return map_name;
     };
     
@@ -137,7 +137,7 @@ function MapsHandlr(settings) {
      *                         typically be a String.
      * @return {Map}
      */
-    self.getMap = function getMap(name) {
+    self.getMap = function (name) {
         if(arguments.length) {
             return MapsCreator.getMap(name);
         } else {
@@ -150,7 +150,7 @@ function MapsHandlr(settings) {
      * 
      * @return {Object}   An associative array of maps, keyed by their names.
      */
-    self.getMaps = function getMaps() {
+    self.getMaps = function () {
         return MapsCreator.getMaps();
     };
     
@@ -159,7 +159,7 @@ function MapsHandlr(settings) {
      * 
      * @return {Object} The current area object, included area attributes.
      */
-    self.getArea = function getArea() {
+    self.getArea = function () {
         return area_current;
     };
     
@@ -198,19 +198,21 @@ function MapsHandlr(settings) {
      *                              immediately start the map in. 
      *                          
      */
-    self.setMap = function setMap(name, location) {
+    self.setMap = function (name, location) {
         // Get the newly current map from self.getMap normally
         map_current = self.getMap(name);
         if(!map_current) {
             throw new Error("No map found under: " + name);
         }
-        // If self.getMap threw an error (map not found), this won't be called
+        
         map_name = name;
         
         // Most of the work is done by setLocation (by default, the map's first)
         if(arguments.length > 1) {
             self.setLocation(location);
         }
+        
+        return map_current;
     };
     
     /**
@@ -219,7 +221,7 @@ function MapsHandlr(settings) {
      * 
      * @param [mixed] location_number   The number of the location to start in.
      */
-    self.setLocation = function setLocation(name) {
+    self.setLocation = function (name) {
         var location, attribute, len, i;
 
         // Query the location from the current map and ensure it exists

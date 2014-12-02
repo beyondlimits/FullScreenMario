@@ -4450,18 +4450,18 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Mixed} [location]
      */
     function setMap(name, location) {
-        var EightBitter = EightBittr.ensureCorrectCaller(this);
+        var EightBitter = EightBittr.ensureCorrectCaller(this),
+            map;
         
         if(typeof(name) === "undefined") {
             name = EightBitter.MapsHandler.getMapName();
         }
         
-        EightBitter.MapsHandler.setMap(name);
+        map = EightBitter.MapsHandler.setMap(name);
         
+        EightBitter.NumberMaker.resetFromSeed(map.seed);
         EightBitter.StatsHolder.set("world", name);
-        
         EightBitter.InputWriter.restartHistory();
-        
         EightBitter.ModAttacher.fireEvent("onSetMap");
         
         EightBitter.setLocation(location || 0);

@@ -418,80 +418,6 @@ var EightBittr = (function() {
     }
     
     
-    /* Randomization
-     * 
-     * Right now it uses a really bad old random() function I made once... eventually 
-     * I'll switch to xorshift.
-     * 
-     * Seriously, this is terrible code. 0/10 would not make again.
-     */
-    
-    /**
-     * 
-     */
-    var randomFunctions = (function () {
-        var seedlast = .007,
-            seed, seeder;
-        
-        var setSeed = function (number) {
-            seed = number;
-            seeder = 1777771 / seed;
-        };
-        
-        var random = function () {
-            seedlast = "0." + String(seeder / seedlast).substring(4).replace('.', '');
-            return Number(seedlast);
-        };
-        
-        setSeed(Math.floor(Math.random() * 10000000));
-        
-        return {
-            "setSeed": setSeed,
-            "random": random
-        }
-    })();
-    
-    /**
-     * 
-     */
-    function randomInteger() {
-        EightBittr.ensureCorrectCaller(this);
-        
-        // 1 argument: return [0, Number1]
-        if(arguments.length === 1) {
-            return Math.round(this.random() * arguments[0]);
-        } 
-        // 2 arguments: return (Number1, Number2]
-        else if(arguments.length === 2) {
-            return Math.round(this.random() * (arguments[1] - arguments[0])) + arguments[0];
-        } 
-        // ? arguments: error!
-        else {
-            throw new Error("randomInteger expects 1 or 2 arguments.");
-        }
-    }
-    
-    /**
-     * 
-     */
-    function randomDouble() {
-        EightBittr.ensureCorrectCaller(this);
-        
-        // 1 argument: return [0, Number1]
-        if(arguments.length === 1) {
-            return this.random() * arguments[0];
-        } 
-        // 2 arguments: return (Number1, Number2]
-        else if(arguments.length === 2) {
-            return this.random() * (arguments[1] - arguments[0]) + arguments[0];
-        } 
-        // ? arguments: error!
-        else {
-            throw new Error("randomDouble expects 1 or 2 arguments.");
-        }
-        
-    }
-    
     /* General utilities
     */
     
@@ -731,10 +657,6 @@ var EightBittr = (function() {
         "slideToX": slideToX,
         // EightBittr utilities
         "ensureCorrectCaller": ensureCorrectCaller,
-        // Randomization
-        "random": randomFunctions.random,
-        "randomInteger": randomInteger,
-        "randomDouble": randomDouble,
         // General utilities
         "proliferate": proliferate,
         "proliferateHard": proliferateHard,

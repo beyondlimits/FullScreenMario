@@ -34,6 +34,7 @@ var GameStartr = (function (EightBittr) {
                     "GroupHoldr": "src/GroupHoldr/GroupHoldr.js",
                     "InputWritr": "src/InputWritr/InputWritr.js",
                     "LevelEditr": "src/LevelEditr/LevelEditr.js",
+                    "NumberMakr": "src/NumberMakr/NumberMakr.js",
                     "MapScreenr": "src/MapScreenr/MapScreenr.js",
                     "MapsHandlr": "src/MapsHandlr/MapsHandlr.js",
                     "ModAttachr": "src/ModAttachr/ModAttachr.js",
@@ -65,6 +66,7 @@ var GameStartr = (function (EightBittr) {
         "resetThingHitter",
         "resetMapScreener",
         "resetPixelDrawer",
+        "resetNumberMaker",
         "resetMapsCreator",
         "resetMapsHandler",
         "resetInputWriter",
@@ -93,12 +95,13 @@ var GameStartr = (function (EightBittr) {
     };
     
     /**
-     * Sets self.ObjectMaker
+     * Sets self.ObjectMaker.
      * 
      * Because many Thing functions require access to other FSM modules, each is
      * given a reference to this container FSM via properties.Thing.EightBitter. 
      * 
      * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
      * @remarks Requirement(s): ObjectMakr (src/ObjectMakr/ObjectMakr.js)
      *                          objects.js (settings/objects.js)
      */
@@ -116,8 +119,10 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
-     * Sets self.QuadsKeeper
+     * Sets self.QuadsKeeper.
+     * 
      * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
      * @remarks Requirement(s): QuadsKeepr (src/QuadsKeepr/QuadsKeepr.js)
      *                          quadrants.js (settings/quadrants.js)
      */
@@ -138,9 +143,10 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
-     * Sets self.PixelRender
+     * Sets self.PixelRender.
      * 
      * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
      * @remarks Requirement(s): PixelRendr (src/PixelRendr/PixelRendr.js)
      *                          sprites.js (settings/sprites.js)
      */
@@ -153,9 +159,10 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
-     * Sets self.PixelDrawer
+     * Sets self.PixelDrawer.
      * 
      * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
      * @remarks Requirement(s): PixelDrawr (src/PixelDrawr/PixelDrawr.js)
      *                          renderer.js (settings/renderer.js)
      */
@@ -171,9 +178,10 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
-     * Sets EightBitter.TimeHandler
+     * Sets EightBitter.TimeHandler.
      * 
      * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
      * @remarks Requirement(s): TimeHandlr (src/TimeHandlr/TimeHandlr.js)
      *                          events.js (settings/events.js)
      */
@@ -185,9 +193,10 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
-     * Sets self.AudioPlayer
+     * Sets self.AudioPlayer.
      * 
      * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
      * @remarks Requirement(s): AudioPlayr (src/AudioPlayr/AudioPlayr.js)
      *                          audio.js (settings/audio.js)
      */
@@ -202,8 +211,10 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
-     * Sets self.GamesRunner
+     * Sets self.GamesRunner.
+     * 
      * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
      * @remarks Requirement(s): GamesRunnr (src/GamesRunnr/GamesRunnr.js)
      *                          runner.js (settings/runner.js)
      */
@@ -216,8 +227,10 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
-     * Sets self.StatsHolder
+     * Sets self.StatsHolder.
+     * 
      * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
      * @remarks Requirement(s): StatsHoldr (src/StatsHoldr/StatsHoldr.js)
      *                          statistics.js (settings/statistics.js)
      */
@@ -231,8 +244,10 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
-     * Sets self.ThingHitter
+     * Sets self.ThingHitter.
+     * 
      * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
      * @remarks Requirement(s): ThingHittr (src/ThingHittr/ThingHittr.js)
      *                          collisions.js (settings/collisions.js)
      */
@@ -245,9 +260,10 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
-     * Sets self.MapScreener
+     * Sets self.MapScreener.
      * 
      * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
      * @remarks Requirement(s): MapScreenr (src/MapScreenr/MapScreenr.js)
      *                          maps.js (settings/maps.js)
      */
@@ -262,7 +278,19 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
-     * Sets self.MapCreator
+     * Sets self.NumberMaker.
+     * 
+     * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
+     * @remarks Requirement(s): NumberMaker (src/NumberMakr/NumberMakr.js)
+     *                          numbers.js (settings/numbers.js)    
+     */
+    function resetNumberMaker(EightBitter, customs) {
+        EightBitter.NumberMaker = new NumberMakr(EightBitter.settings.numbers);
+    }
+    
+    /**
+     * Sets self.MapCreator.
      * 
      * @param {EightBittr} EightBitter
      * @remarks Requirement(s): MapCreatr (src/MapCreatr/MapCreatr.js)
@@ -280,9 +308,10 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
-     * Sets self.MapsHandler
+     * Sets self.MapsHandler.
      * 
      * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
      * @remarks Requirement(s): MapsHandlr (src/MapsHandlr/MapsHandlr.js)
      *                          maps.js (settings/maps.js)
      */
@@ -298,9 +327,10 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
-     * Sets self.InputWriter
+     * Sets self.InputWriter.
      * 
      * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
      * @remarks Requirement(s): InputWritr (src/InputWritr/InputWritr.js)
      *                          input.js (settings/input.js)
      */
@@ -311,9 +341,10 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
-     * Sets self.LevelEditor
+     * Sets self.LevelEditor.
      * 
      * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
      * @remarks Requirement(s): LevelEditr (src/LevelEditr/LevelEditr.js)
      *                          editor.js (settings/editor.js)
      */
@@ -325,23 +356,25 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
-     * Sets self.WorldSeeder
+     * Sets self.WorldSeeder.
      * 
      * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
      * @remarks Requirement(s): WorldSeedr (src/WorldSeedr/WorldSeedr.js)
      *                          generator.js (settings/generator.js)
      */
     function resetWorldSeeder(EightBitter, customs) {
         EightBitter.WorldSeeder = new WorldSeedr(proliferate({
-            "random": EightBitter.random,
+            "random": EightBitter.NumberMaker.random,
             "on_placement": EightBitter.mapPlaceRandomCommands.bind(EightBitter, EightBitter)
         }, EightBitter.settings.generator));
     }
     
     /**
-     * Sets self.ModAttacher
+     * Sets self.ModAttacher.
      * 
      * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
      * @remarks Requirement(s): ModAttachr (src/ModAttachr/ModAttachr.js)
      *                          mods.js (settings/mods.js)
      */
@@ -1007,6 +1040,7 @@ var GameStartr = (function (EightBittr) {
         "resetThingHitter": resetThingHitter,
         "resetMapScreener": resetMapScreener,
         "resetPixelDrawer": resetPixelDrawer,
+        "resetNumberMaker": resetNumberMaker,
         "resetMapsCreator": resetMapsCreator,
         "resetMapsHandler": resetMapsHandler,
         "resetInputWriter": resetInputWriter,
