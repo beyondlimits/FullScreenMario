@@ -550,7 +550,9 @@ var FullScreenMario = (function(GameStartr) {
             if (character.alive) {
                 if (!character.player &&
                     (character.numquads == 0 || character.left > delx) &&
-                    (!character.outerok || character.right < -delx)) {
+                    (!character.outerok || (
+                        character.right < EightBitter.MapScreener.width - delx
+                    ))) {
                     EightBitter.arrayDeleteMember(character, characters, i);
                 } else {
                     if (!character.nomove && character.movement) {
@@ -1810,7 +1812,9 @@ var FullScreenMario = (function(GameStartr) {
             
             // Non-players flip horizontally
             if(!thing.player) {
-                thing.moveleft = !thing.moveleft;
+                if(!thing.noflip) {
+                    thing.moveleft = !thing.moveleft;
+                }
                 // Some items require fancy versions (e.g. Shell)
                 if(thing.group === "item") {
                     thing.collide(other, thing);
@@ -2515,9 +2519,6 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Thing} thing
      * @remarks thing.speed is the only required member attribute; .direction
      *          and .moveleft should be set by the game engine.
-     *          * thing.direction - what direction it should be moving
-     *          * thing.moveleft - what direction is actually is moving
-     *          * thing.speed - the Thing's typical speed
      */
     function moveSimple(thing) {
         // If the thing is looking away from the intended direction, flip it
@@ -2608,7 +2609,47 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function moveBowser(thing) {
-        thing.EightBitter.movePacing(thing);
+        // Facing to the right
+        if(thing.flipHoriz) {
+            // To the left of the player: walk to the right
+            if(thing.EightBitter.objectToLeft(thing, thing.EightBitter.player)) {
+                thing.EightBitter.moveSimple(thing);
+            }
+            // To the right of the player: look to the left and movePacing as normal
+            else {
+                thing.lookleft = thing.moveleft = true;
+                thing.EightBitter.unflipHoriz(thing);
+                thing.EightBitter.movePacing(thing);
+            }
+        } 
+        // Facing to the left
+        else {
+            // To the left of the player: look and walk to the right
+            if(thing.EightBitter.objectToLeft(thing, thing.EightBitter.player)) {
+                thing.lookleft = thing.moveleft = false;
+                thing.EightBitter.flipHoriz(thing);
+                thing.EightBitter.moveSimple(thing);
+            }
+            // To the right of the player: movePacing as normal
+            // todo: tell fire and jump to skip if !flipHoriz
+            else {
+                thing.EightBitter.movePacing(thing);
+            }
+        }
+        
+        // if(thing.flipHoriz) {
+            // if(thing.EightBitter.objectToLeft(thing, thing.EightBitter.player)) {
+                // thing.EightBitter.flipHoriz(thing);
+            // } else {
+                // thing.EightBitter.moveSimple(thing);
+            // }
+        // } else {
+            // if(thing.EightBitter.objectToLeft(thing.EightBitter.player, thing)) {
+                // thing.EightBitter.unflipHoriz(thing);
+                // thing.EightBitter.moveSimple(thing);
+            // }   
+        // }
+        
     }
     
     /**
@@ -3568,12 +3609,15 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function animateBowserJump(thing) {
-        if(!thing.EightBitter.isCharacterAlive(thing)) {
-            return true;
+        if(!thing.lookleft || !thing.lookleft || !thing.EightBitter.player) {
+            return;
         }
         
-        if(!thing.resting || !thing.lookleft) {
-            return;
+        if(
+            !thing.EightBitter.isCharacterAlive(thing)
+            || !thing.EightBitter.isCharacterAlive(thing.EightBitter.player)
+        ) {
+            return true;
         }
         
         thing.resting = undefined;
@@ -3593,7 +3637,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function animateBowserFire(thing) {
-        if(thing.lookleft === false || !thing.EightBitter.player) {
+        if(!thing.lookleft || !thing.lookleft || !thing.EightBitter.player) {
             return;
         }
         
@@ -3609,21 +3653,28 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.AudioPlayer.playLocal("Bowser Fires", thing.left);
         
         // After a bit, re-open and fire
-        thing.EightBitter.TimeHandler.addEvent(function () {
-            var unitsize = thing.EightBitter.unitsize,
-                ylev = Math.max(
-                    -thing.height * unitsize,
-                    Math.round(thing.EightBitter.player.bottom / (unitsize * 8)) * unitsize * 8
-                );
-            thing.EightBitter.removeClass(thing, "firing");
-            thing.EightBitter.addThing(
-                ["BowserFire", {
-                    "ylev": ylev
-                }],
-                thing.left - thing.EightBitter.unitsize * 8,
-                thing.top + thing.EightBitter.unitsize * 4
+        thing.EightBitter.TimeHandler.addEvent(animateBowserFireOpen, 14, thing);
+    }
+    
+    /**
+     * 
+     */
+    function animateBowserFireOpen(thing) {
+        var unitsize = thing.EightBitter.unitsize,
+            ylev = Math.max(
+                -thing.height * unitsize,
+                Math.round(thing.EightBitter.player.bottom / (unitsize * 8)) 
+                    * unitsize * 8
             );
-        }, 14);
+        
+        thing.EightBitter.removeClass(thing, "firing");
+        thing.EightBitter.addThing(
+            ["BowserFire", {
+                "ylev": ylev
+            }],
+            thing.left - thing.EightBitter.unitsize * 8,
+            thing.top + thing.EightBitter.unitsize * 4
+        );
     }
     
     /**
@@ -4766,6 +4817,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function mapAddStretched(raw) {
+        console.log("self in mapAddStretched?");
         var y = (self.MapScreener.floor - raw.y) * self.unitsize;
         return self.addThing(self.ObjectMaker.make(raw.thing, {
             "width": self.MapScreener.width,
@@ -5918,6 +5970,7 @@ var FullScreenMario = (function(GameStartr) {
         "animateThrowingHammer": animateThrowingHammer,
         "animateBowserJump": animateBowserJump,
         "animateBowserFire": animateBowserFire,
+        "animateBowserFireOpen": animateBowserFireOpen,
         "animateBowserFreeze": animateBowserFreeze,
         "animateBlooperUnsqueezing": animateBlooperUnsqueezing,
         "animatePodobooJumpUp": animatePodobooJumpUp,

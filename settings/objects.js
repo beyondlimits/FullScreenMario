@@ -322,10 +322,7 @@
                         scoreStomp: 400
                     },
                     "floating": {
-                        onThingMake: function (thing) {
-                            FullScreenMario.prototype.spawnMoveFloating(thing);
-                        },
-                        // onThingAdd: FullScreenMario.prototype.spawnMoveFloating,
+                        onThingAdded: FullScreenMario.prototype.spawnMoveFloating,
                         movement: FullScreenMario.prototype.moveFloating,
                         nofall: true,
                         yvel: FullScreenMario.unitsize / 8,
@@ -357,7 +354,7 @@
                 nocollidesolid: true,
                 death: FullScreenMario.prototype.killNormal,
                 movement: FullScreenMario.prototype.movePiranha,
-                onThingMake: FullScreenMario.prototype.spawnPiranha,
+                onThingAdded: FullScreenMario.prototype.spawnPiranha,
                 spriteCycleSynched: [
                     ["one", "two"]
                 ]
@@ -367,7 +364,7 @@
                 nofall: true,
                 nocollidesolid: true,
                 speed: FullScreenMario.unitsize / 2,
-                onThingMake: FullScreenMario.prototype.spawnBlooper,
+                onThingAdded: FullScreenMario.prototype.spawnBlooper,
                 movement: FullScreenMario.prototype.moveBlooper,
                 death: FullScreenMario.prototype.killFlip
             },
@@ -405,7 +402,7 @@
                 nocollidechar: true,
                 nocollidesolid: true,
                 movement: undefined,
-                onThingMake: FullScreenMario.prototype.spawnPodoboo
+                onThingAdded: FullScreenMario.prototype.spawnPodoboo
             },
             BulletBill: {
                 height: 7,
@@ -421,7 +418,7 @@
                 nofall: true,
                 noshiftx: true,
                 nocollidesolid: true,
-                onThingMake: FullScreenMario.prototype.spawnLakitu,
+                onThingAdded: FullScreenMario.prototype.spawnLakitu,
                 movement: FullScreenMario.prototype.moveLakituInitial
             },
             SpinyEgg: {
@@ -443,7 +440,7 @@
             },
             HammerBro: {
                 height: 12,
-                onThingMake: FullScreenMario.prototype.spawnHammerBro,
+                onThingAdded: FullScreenMario.prototype.spawnHammerBro,
                 movement: FullScreenMario.prototype.moveHammerBro,
                 spriteCycle: [
                     ["one", "two"]
@@ -452,16 +449,17 @@
             Bowser: {
                 width: 16,
                 height: 16,
-                speed: FullScreenMario.unitsize * .28,
+                speed: FullScreenMario.unitsize * .14,
                 gravity: FullScreenMario.gravity / 2.8,
                 spawntype: "Goomba",
                 deadly: true,
+                noflip: true,
                 nokillend: true,
                 skipoverlaps: true,
+                movement: FullScreenMario.prototype.moveBowser,
                 killonend: FullScreenMario.prototype.animateBowserFreeze,
                 death: FullScreenMario.prototype.killBowser,
-                onThingMake: FullScreenMario.prototype.spawnBowser,
-                movement: FullScreenMario.prototype.movePacing,
+                onThingAdded: FullScreenMario.prototype.spawnBowser,
                 spriteCycle: [
                     ["one", "two"]
                 ]
@@ -654,7 +652,7 @@
             DeadGoomba: {
                 height: 4,
                 nocollide: true,
-                onThingMake: function (thing) {
+                onThingAdded: function (thing) {
                     thing.EightBitter.TimeHandler.addEvent(FullScreenMario.prototype.killNormal, 21, thing);
                 }
             },
@@ -689,12 +687,12 @@
                 maxvel: FullScreenMario.unitsize / 4 * 1.5,
                 attributes: {
                     "floating": {
-                        onThingAdd: FullScreenMario.prototype.spawnMoveFloating,
+                        onThingAdded: FullScreenMario.prototype.spawnMoveFloating,
                         movement: FullScreenMario.prototype.moveFloating,
                         yvel: FullScreenMario.unitsize / 4 * 1.5
                     },
                     "sliding": {
-                        onThingAdd: FullScreenMario.prototype.spawnMoveSliding,
+                        onThingAdded: FullScreenMario.prototype.spawnMoveSliding,
                         movement: FullScreenMario.prototype.moveSliding,
                         xvel: FullScreenMario.unitsize / 4 * 1.5
                     },
@@ -712,7 +710,7 @@
             },
             Cannon: {
                 frequency: 280,
-                onThingAdd: FullScreenMario.prototype.spawnCannon
+                onThingAdded: FullScreenMario.prototype.spawnCannon
             },
             Springboard: {
                 height: 14.5,
@@ -723,7 +721,7 @@
                 collide: FullScreenMario.prototype.collideCastleAxe
             },
             CastleBlock: {
-                onThingAdd: FullScreenMario.prototype.spawnCastleBlock,
+                onThingAdded: FullScreenMario.prototype.spawnCastleBlock,
                 attributes: {
                     "fireballs": {
                         speed: 1
@@ -845,7 +843,7 @@
                 "spacingHorizontal": .5,
                 "spacingVertical": 8,
                 "spacingVerticalBlank": 6,
-                "onThingAdd": FullScreenMario.prototype.spawnCustomText
+                "onThingAdded": FullScreenMario.prototype.spawnCustomText
             }
         }
     };

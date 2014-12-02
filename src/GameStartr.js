@@ -510,11 +510,17 @@ var GameStartr = (function (EightBittr) {
         thing.EightBitter.GroupHolder.getFunctions().add[thing.grouptype](thing);
         thing.placed = true;
         
+        // This will typically be a TimeHandler.cycleClass call
         if(thing.onThingAdd) {
             thing.onThingAdd(thing);
         }
         
         thing.EightBitter.PixelDrawer.setThingSprite(thing);
+        
+        // This will typically be a spawn* call
+        if(thing.onThingAdded) {
+            thing.onThingAdded(thing);
+        }
         
         return thing;
     }
