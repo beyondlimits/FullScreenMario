@@ -145,6 +145,14 @@
                     FSM.PixelDrawer.setFramerateSkip(1 / numeric * 60);
                 }
             }
+        ],
+        "actions": [
+            {
+                "title": "Screenshot",
+                "action": function () {
+                    FSM.takeScreenshot();
+                }
+            }
         ]
     },
     {
@@ -352,26 +360,42 @@
             
             output.className = "select-options select-options-table";
             
-            for(i = 0; i < schema.options.length; i += 1) {
-                row = document.createElement("tr");
-                label = document.createElement("td");
-                input = document.createElement("td");
-                
-                details = schema.options[i],
-                
-                label.className = "options-label-" + details.type;
-                label.textContent = details.title;
-                
-                input.className = "options-cell-" + details.type;
-                
-                row.appendChild(label);
-                row.appendChild(input);
-                
-                optionTypes[schema.options[i].type](input, details);
-                table.appendChild(row);
+            if(schema.options) {
+                for(i = 0; i < schema.options.length; i += 1) {
+                    row = document.createElement("tr");
+                    label = document.createElement("td");
+                    input = document.createElement("td");
+                    
+                    details = schema.options[i],
+                    
+                    label.className = "options-label-" + details.type;
+                    label.textContent = details.title;
+                    
+                    input.className = "options-cell-" + details.type;
+                    
+                    row.appendChild(label);
+                    row.appendChild(input);
+                    
+                    optionTypes[schema.options[i].type](input, details);
+                    table.appendChild(row);
+                }
             }
             
             output.appendChild(table);
+            
+            if(schema.actions) {
+                for(i = 0; i < schema.actions.length; i += 1) {
+                    row = document.createElement("div");
+                    
+                    details = schema.actions[i];
+                    
+                    row.className = "select-option options-button-option";
+                    row.textContent = details.title;
+                    row.onclick = details.action;
+                    
+                    output.appendChild(row);
+                }
+            }
             
             return output;
         };

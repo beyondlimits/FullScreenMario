@@ -3156,7 +3156,7 @@ var FullScreenMario = (function(GameStartr) {
             }
             // Pipe movement
             if(thing.resting.actionTop) {
-                thing.EightBitter.ModAttacher.fireEvent("onPlayerActionTop", thing, other);
+                thing.EightBitter.ModAttacher.fireEvent("onPlayerActionTop", thing, thing.resting);
                 thing.resting.actionTop(thing, thing.resting);
             }
         }

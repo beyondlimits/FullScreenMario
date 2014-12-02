@@ -1031,6 +1031,25 @@ var GameStartr = (function (EightBittr) {
     }
     
     
+    /* Miscellaneous utilities
+    */
+    
+    /**
+     * 
+     */
+    function takeScreenshot(name) {
+        var EightBitter = EightBittr.ensureCorrectCaller(this),
+            format = "image/png",
+            link = EightBitter.createElement("a", {
+                "download": (name || "FullScreenMario Screenshot")+ ".png",
+                "href": EightBitter.canvas.toDataURL(format)
+                    .replace(format, "image/octet-stream")
+            });
+            
+        link.click();
+    }
+    
+    
     // Add all registered functions from above to the GameStartr prototype
     proliferateHard(EightBitterProto, {
         // Resets
@@ -1098,7 +1117,9 @@ var GameStartr = (function (EightBittr) {
         "flipVert": flipVert,
         "unflipHoriz": unflipHoriz,
         "unflipVert": unflipVert,
-        "setOpacity": setOpacity
+        "setOpacity": setOpacity,
+        // Miscellaneous utilities
+        "takeScreenshot": takeScreenshot
     });
     
     return GameStartr;
