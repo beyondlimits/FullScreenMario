@@ -100,7 +100,7 @@ function NumberMakr(settings) {
         mti,
         
         // The starting seed used to initialize. This may be a Number or Array.
-        seed;
+        seed = 0;
     
     /**
      * 
@@ -115,16 +115,27 @@ function NumberMakr(settings) {
         mt = new Array(N);
         mti = N + 1;
         
-        self.resetFromSeed(settings.seed || 0);
+        self.resetFromSeed(settings.seed || new Date().getTime());
+    };
+    
+    /**
+     * 
+     */
+    self.getSeed = function () {
+        return seed;
     };
     
     /**
      * Initializes state from a Number.
      * 
-     * @param {Number} [seedNew]   Defaults to 0.
+     * @param {Number} [seedNew]   Defaults to the previously set seed.
      */
     self.resetFromSeed = function (seedNew) {
         var s;
+        
+        if(typeof(seedNew) === "undefined") {
+            seedNew = seed;
+        }
         
         mt[0] = seedNew >>> 0;
         
@@ -292,6 +303,48 @@ function NumberMakr(settings) {
             b = self.randomInt32() >>> 6; 
         return (a * 67108864.0 + b) * (1.0 / 9007199254740992.0); 
     };
+    
+    
+    /* Ranged Number generators
+    */
+    
+    /**
+     * @param {Number} max
+     * @return {Number} Random Number in [0,max).
+     */
+    self.randomUnder = function (max) {
+        return self.random() * max;
+    };
+    
+    /**
+     * @param {Number} min
+     * @param {Number} max
+     * @return {Number} Random Number in [min,max).
+     */
+    self.randomWithin = function (min, max) {
+        return self.random(max - min) + min;
+    };
+    
+    
+    /* Ranged integer generators
+    */
+    
+    /**
+     * @param {Number} max
+     * @return {Number} Random integer in [0,max).
+     */
+    self.randomInt = function (max) {
+        return self.randomUnder(max) | 0;
+    };
+    
+    /**
+     * @param {Number} min
+     * @param {Number} max
+     * @return {Number} Random integer in [min,max).
+     */
+    self.randomIntWithin = function (min, max) {
+        return self.randomWithin(max - min) + min;
+    }
     
     
     self.reset(settings || {});
