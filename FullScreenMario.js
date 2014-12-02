@@ -2547,25 +2547,35 @@ var FullScreenMario = (function(GameStartr) {
      */
     function moveSmart(thing) {
         // Start off by calling moveSimple for normal movement
-        moveSimple(thing);
+        thing.EightBitter.moveSimple(thing);
         
         // If this isn't resting, it's the same as moveSimple
-        if(!thing.resting) {
+        if(thing.yvel !== 0) {
             return;
         }
-        
-        // Check for being over the edge in the direction of movement
-        if(thing.moveleft) {
-            if(thing.left + thing.EightBitter.unitsize <= thing.resting.left) {
-                thing.EightBitter.shiftHoriz(thing, thing.EightBitter.unitsize);
-                thing.moveleft = false;
+
+        if(!thing.resting || !thing.EightBitter.isCharacterOnResting(thing, thing.resting)) {
+            if(thing.moveleft) {
+                thing.EightBitter.shiftHoriz(thing, thing.EightBitter.unitsize, true);
+            } else {
+                thing.EightBitter.shiftHoriz(thing, -thing.EightBitter.unitsize, true);
             }
-        } else {
-            if(thing.right - thing.EightBitter.unitsize >= thing.resting.right) {
-                thing.EightBitter.shiftHoriz(thing, -thing.EightBitter.unitsize);
-                thing.moveleft = true;
-            }
+            thing.moveleft = !thing.moveleft;
         }
+
+        
+        // // Check for being over the edge in the direction of movement
+        // if(thing.moveleft) {
+            // if(thing.left + thing.EightBitter.unitsize <= thing.resting.left) {
+                // thing.EightBitter.shiftHoriz(thing, thing.EightBitter.unitsize);
+                // thing.moveleft = false;
+            // }
+        // } else {
+            // if(thing.right - thing.EightBitter.unitsize >= thing.resting.right) {
+                // thing.EightBitter.shiftHoriz(thing, -thing.EightBitter.unitsize);
+                // thing.moveleft = true;
+            // }
+        // }
     }
     
     /**
