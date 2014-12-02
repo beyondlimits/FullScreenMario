@@ -735,7 +735,8 @@
                 killonend: FullScreenMario.prototype.animateCastleBridgeOpen
             },
             CastleChain: {
-                width: 8,
+                width: 7.5,
+                spritewidth: 7.5,
                 height: 8,
                 nocollide: true,
                 killonend: FullScreenMario.prototype.animateCastleChainOpen
