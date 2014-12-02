@@ -7,14 +7,14 @@ FullScreenMario.prototype.settings.statistics = {
                 "position": "absolute",
                 "top": 0,
                 "width": "100%",
-                "font-size": "21px",
-                "text-transform": "uppercase"
+                "fontSize": "21px",
+                "textTransform": "uppercase"
             }
         }],
         ["tr", {
             "style": {
                 "padding": "7px 14px 0 14px",
-                "text-align": "center"
+                "textAlign": "center"
             }
         }]
     ],

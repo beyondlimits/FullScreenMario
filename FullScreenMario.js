@@ -539,8 +539,7 @@ var FullScreenMario = (function(GameStartr) {
                 if (!EightBitter.isCharacterOnResting(character, character.resting)) {
                     character.resting = undefined; // Necessary for moving platforms :(
                 } else {
-                    /*character.jumping = */
-                    character.yvel = false;
+                    character.yvel = 0;
                     EightBitter.setBottom(character, character.resting.top);
                 }
             }
