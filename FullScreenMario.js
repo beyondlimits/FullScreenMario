@@ -1315,6 +1315,37 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * 
+     */
+    function spawnRandomCheep(EightBitter) {
+        var spawn;
+        
+        if(!EightBitter.MapScreener.spawningCheeps) {
+            return true;
+        }
+        
+        spawn = EightBitter.ObjectMaker.make("CheepCheep", {
+            "flying": true,
+            "xvel": EightBitter.NumberMaker.random() 
+                * EightBitter.unitsize * 1.4,
+            "yvel": EightBitter.unitsize * -1.4
+        });
+        
+        EightBitter.addThing(
+            spawn,
+            EightBitter.NumberMaker.random()
+                * EightBitter.MapScreener.width,
+            EightBitter.MapScreener.height
+        );
+        
+        if(spawn.left < EightBitter.MapScreener.width / 2) {
+            EightBitter.flipHoriz(spawn);
+        } else {
+            spawn.xvel *= -1;
+        }
+    }
+    
+    /**
      * Spawns a custom text Thing by killing it and placing the contents of its
      * texts member variable. These are written with a determined amount of
      * spacing between them, as if by a typewriter.
@@ -1430,6 +1461,23 @@ var FullScreenMario = (function(GameStartr) {
             EightBitter.MapScreener.bottom / EightBitter.unitsize,
             left
         );
+    }
+    
+    /**
+     * 
+     */
+    function activateCheepsStart(thing) {
+        thing.EightBitter.MapScreener.spawningCheeps = true;
+        thing.EightBitter.TimeHandler.addEventInterval(
+            spawnRandomCheep, 21, Infinity, thing.EightBitter
+        );
+    }
+    
+    /**
+     * 
+     */
+    function activateCheepsStop(thing) {
+        thing.EightBitter.MapScreener.spawningCheeps = false;
     }
     
     /**
@@ -2834,6 +2882,16 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      */
+    function moveCheepFlying(thing) {
+        if(thing.top < thing.EightBitter.unitsize * 28) {
+            thing.movement = undefined;
+            thing.nofall = false;
+        }
+    }
+    
+    /**
+     * 
+     */
     function movePiranhaLatent(thing) {
         var playerx = thing.EightBitter.getMidX(thing.EightBitter.player);
 
@@ -4047,7 +4105,7 @@ var FullScreenMario = (function(GameStartr) {
         
         thing.nocollide = thing.dead = true;
         thing.resting = thing.movement = thing.speed = thing.xvel = thing.nofall = false;
-        thing.yvel -= thing.EightBitter.unitsize;
+        thing.yvel = -thing.EightBitter.unitsize;
         thing.EightBitter.TimeHandler.addEvent(thing.EightBitter.killNormal, 70 + extra, thing);
     }
     
@@ -5200,6 +5258,38 @@ var FullScreenMario = (function(GameStartr) {
     
     /**
      * 
+     */
+    function macroCheepsStart(reference, prethings, area, map, scope) {
+        return [
+            { 
+                "thing": "DetectCollision", 
+                "x": reference.x || 0,
+                "y": scope.MapScreener.floor,
+                "width": reference.width || 8,
+                "height": scope.MapScreener.height / scope.unitsize,
+                "activate": scope.activateCheepsStart
+            }
+        ];
+    }
+    
+    /**
+     * 
+     */
+    function macroCheepsStop(reference, prethings, area, map, scope) {
+        return [
+            { 
+                "thing": "DetectCollision", 
+                "x": reference.x || 0,
+                "y": scope.MapScreener.floor,
+                "width": reference.width || 8,
+                "height": scope.MapScreener.height / scope.unitsize,
+                "activate": scope.activateCheepsStop
+            }
+        ];
+    }
+    
+    /**
+     * 
      * 
      * @param {Object} reference   A listing of the settings for this macro,
      *                             from an Area's .creation Object.
@@ -5606,7 +5696,8 @@ var FullScreenMario = (function(GameStartr) {
         return [
             { 
                 "thing": "DetectSpawn", 
-                "x": reference.x, "y": reference.y, 
+                "x": reference.x, 
+                "y": reference.y, 
                 "activate": scope.activateSectionBefore,
                 "section": reference.section || 0 
             }
@@ -5620,7 +5711,8 @@ var FullScreenMario = (function(GameStartr) {
         return [
             { 
                 "thing": "DetectCollision", 
-                "x": reference.x, "y": reference.y, 
+                "x": reference.x,
+                "y": reference.y, 
                 "width": reference.width || 8, "height": reference.height || 8, 
                 "activate": function (thing) {
                     thing.EightBitter.MapScreener.sectionPassed = true;
@@ -5636,7 +5728,8 @@ var FullScreenMario = (function(GameStartr) {
         return [
             { 
                 "thing": "DetectCollision", 
-                "x": reference.x, "y": reference.y, 
+                "x": reference.x,
+                "y": reference.y, 
                 "width": reference.width || 8, "height": reference.height || 8, 
                 "activate": function (thing) {
                     thing.EightBitter.MapScreener.sectionPassed = false;
@@ -5741,11 +5834,14 @@ var FullScreenMario = (function(GameStartr) {
         "spawnCastleBlock": spawnCastleBlock,
         "spawnMoveFloating": spawnMoveFloating,
         "spawnMoveSliding": spawnMoveSliding,
+        "spawnRandomCheep": spawnRandomCheep,
         "spawnCustomText": spawnCustomText,
         "spawnDetector": spawnDetector,
         "spawnCollectionComponent": spawnCollectionComponent,
         "spawnCollectionPartner": spawnCollectionPartner,
         "spawnRandomSpawner": spawnRandomSpawner,
+        "activateCheepsStart": activateCheepsStart,
+        "activateCheepsStop": activateCheepsStop,
         "activateWindowDetector": activateWindowDetector,
         "activateScrollBlocker": activateScrollBlocker,
         "activateScrollEnabler": activateScrollEnabler,
@@ -5799,6 +5895,7 @@ var FullScreenMario = (function(GameStartr) {
         "moveShell": moveShell,
         "movePiranha": movePiranha,
         "moveBubble": moveBubble,
+        "moveCheepFlying": moveCheepFlying,
         "moveBlooper": moveBlooper,
         "moveBlooperSqueezing": moveBlooperSqueezing,
         "movePodobooFalling": movePodobooFalling,
@@ -5903,6 +6000,8 @@ var FullScreenMario = (function(GameStartr) {
         "macroScale": macroScale,
         "macroPlatformGenerator": macroPlatformGenerator,
         "macroWarpWorld": macroWarpWorld,
+        "macroCheepsStart": macroCheepsStart,
+        "macroCheepsStop": macroCheepsStop,
         "macroStartInsideCastle": macroStartInsideCastle,
         "macroEndOutsideCastle": macroEndOutsideCastle,
         "macroEndInsideCastle": macroEndInsideCastle,

@@ -386,6 +386,10 @@
                     "red": {
                         xvel: FullScreenMario.unitsize / -4,
                         yvel: FullScreenMario.unitsize / -24
+                    },
+                    "flying": {
+                        "movement": FullScreenMario.prototype.moveCheepFlying,
+                        "gravity": FullScreenMario.gravity / 3.5
                     }
                 }
             },
