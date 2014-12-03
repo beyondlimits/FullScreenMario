@@ -118,15 +118,6 @@ document.onreadystatechange = (function (settings) {
     /**
      * 
      */
-    var handleFileUpload = function (input, event) {
-         var files = dummy.files;
-         
-         console.log("handleFileUpload", input, event, files);
-    };
-    
-    /**
-     * 
-     */
     var initializeDragInput = function (input) {
         input.ondragenter = handleFileDragEnter.bind(undefined, input);
         input.ondragover = handleFileDragOver.bind(undefined, input);
