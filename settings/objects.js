@@ -715,6 +715,7 @@
             Springboard: {
                 height: 14.5,
                 heightNormal: 14.5,
+                spriteheight: 10,
                 collide: FullScreenMario.prototype.collideSpringboard
             },
             CastleAxe: {

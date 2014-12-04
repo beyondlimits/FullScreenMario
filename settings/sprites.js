@@ -605,9 +605,9 @@ FullScreenMario.prototype.settings.sprites = {
                     "top": "p[8]x032,",
                     "topheight": 1,
                     "middle": "p[0,1,6]x05,110011x010,210012x010,200002x010,200002x09,2x06,2x08,2x06,2x08,2x06,2x07,2x08,2x05,12x08,21000011x08,11000011x08,11000012x08,21x05,2x08,2x07,2x06,2x08,2x06,2x08,2x06,2x09,200002x010,200002x010,210012x010,110011x05,",
-                    "middleheight": 9,
+                    "middleStretch": true,
                     "bottom": "p[2,8,9]x132,x27,0x27,0x27,0x27,x017,2220x27,0x27,0x27,0x27,0x27,02222x016,",
-                    "bottomheight": 4
+                    "bottomheight": 4,
                 }]
             },
             Stone: {

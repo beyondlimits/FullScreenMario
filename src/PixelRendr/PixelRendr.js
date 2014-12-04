@@ -336,6 +336,8 @@ function PixelRendr(settings) {
         output.bottomheight = sections.bottomheight | 0;
         output.leftwidth = sections.leftwidth | 0;
         
+        output.middleStretch = sections.middleStretch || false;
+        
         return output;
     }
 

@@ -450,7 +450,13 @@ function PixelDrawr(settings) {
         
         // If there's still room/*, and it exists*/, draw the actual canvas
         if((canvasref = canvases.middle) && topreal < bottomreal && leftreal < rightreal) {
-            drawPatternOnCanvas(context, canvasref.canvas, leftreal, topreal, widthreal, heightreal, opacity);
+            if(sprite.middleStretch) {
+                context.globalAlpha = opacity;
+                context.drawImage(canvasref.canvas, leftreal, topreal, widthreal, heightreal);
+                context.globalAlpha = 1;
+            } else {
+                drawPatternOnCanvas(context, canvasref.canvas, leftreal, topreal, widthreal, heightreal, opacity);
+            }
         }
         
         return self;
