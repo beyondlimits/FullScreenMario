@@ -267,24 +267,6 @@ function MapsHandlr(settings) {
      * 
      * 
      */
-    self.addPrethings = function (extras) {
-        var extra, i;
-        for(i = 0; i < extras.length; i += 1) {
-            extra = extras[i];
-            
-            console.log("Adding", extra);
-            
-            // for example
-            // analyzePreMacro(reference, prethings, area_current, map_current)
-            // analyzePreThing(reference, prethings, area_current, map_current)
-        }
-    }
-    
-    /**
-     * 
-     * 
-     * 
-     */
     self.spawnMap = function (direction, top, right, bottom, left) {
         applySpawnAction(on_spawn, true, direction, top, right, bottom, left);
     };
@@ -384,9 +366,10 @@ function MapsHandlr(settings) {
     function findPreThingsSpawnEnd(direction, group, i, top, right, bottom, left) {
         var directionKey = directionKeys[direction],
             directionKeyOpposite = directionKeys[directionOpposites[direction]],
-            directionEnd = getDirectionEnd(directionKeyOpposite, top, right, bottom, left);
+            directionEnd = getDirectionEnd(directionKeyOpposite, top, right, bottom, left),
+            i;
         
-        for(var i = group.length - 1; i >= 0; i -= 1) {
+        for(i = group.length - 1; i >= 0; i -= 1) {
             if(group[i][directionKey] <= directionEnd) {
                 return i;
             }

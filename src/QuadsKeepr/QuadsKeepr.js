@@ -417,7 +417,7 @@ function QuadsKeepr(settings) {
         
         if(callUpdate && on_remove) {
             on_remove(
-                "yDec",
+                "yInc",
                 self.bottom, 
                 self.right, 
                 self.bottom - quadrant_height, 
@@ -535,7 +535,7 @@ function QuadsKeepr(settings) {
         
         if(callUpdate && on_remove) {
             on_remove(
-                "yDec",
+                "yInc",
                 self.top,
                 self.right, 
                 self.top + quadrant_height, 
@@ -562,11 +562,11 @@ function QuadsKeepr(settings) {
         
         if(callUpdate && on_remove) {
             on_remove(
-                "xDec",
+                "xInc",
                 self.top,
-                self.left,
-                self.bottom, 
-                self.left + quadrant_width
+                self.left + quadrant_width,
+                self.bottom,
+                self.left
             );
         }
         

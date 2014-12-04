@@ -746,11 +746,6 @@ var GameStartr = (function (EightBittr) {
         
         if(update_size) {
             thing.EightBitter.updateSize(thing);
-            // PixelDrawer.setThingSprite(thing);
-            if(!window.warned_update_set_width) {
-                console.log("Should update thing canvas on setWidth", thing.title);
-                window.warned_update_set_width = true;
-            }
         }
         
         thing.EightBitter.markChanged(thing);
@@ -770,11 +765,6 @@ var GameStartr = (function (EightBittr) {
         
         if(update_size) {
             thing.EightBitter.updateSize(thing);
-            // setThingSprite(thing);
-            if(!window.warned_update_set_height) {
-                console.log("Should update thing canvas on setHeight", thing.title);
-                window.warned_update_set_height = true;
-            }
         }
         
         thing.EightBitter.markChanged(thing);

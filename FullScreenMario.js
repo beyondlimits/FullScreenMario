@@ -164,7 +164,7 @@ var FullScreenMario = (function(GameStartr) {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
         EightBitter.StatsHolder.set("lives", 3);
-        EightBitter.setMap("1-1");
+        EightBitter.setMap("4-4");
         
         EightBitter.ModAttacher.fireEvent("onGameStart");
     }
@@ -1548,19 +1548,15 @@ var FullScreenMario = (function(GameStartr) {
             "activate": EightBitter.activateSectionStretch,
             "section": thing.section || 0
         };
+        
         MapsCreator.analyzePreSwitch(command, prethings, area, map);
         
         // Spawn the map, so new Things that should be placed will be spawned if nearby
-        // EightBitter.MapsHandler.spawnMap(MapScreener.right + MapScreener.width);
-        // var diff_right = MapScreener.right + EightBitter.QuadsKeeper.getOutDifference();
-        // MapsHandler.spawnMap(diff_right / EightBitter.unitsize);
-        // console.warn("spawnMap in activateSectionBefore is broken.");
-        
-        EightBitter.MapsHandler.spawnMap(
+        MapsHandler.spawnMap(
             "xInc",
-            EightBitter.MapScreener.top / EightBitter.unitsize,
-            EightBitter.MapScreener.right / EightBitter.unitsize,
-            EightBitter.MapScreener.bottom / EightBitter.unitsize,
+            MapScreener.top / EightBitter.unitsize,
+            MapScreener.right / EightBitter.unitsize + command.x,
+            MapScreener.bottom / EightBitter.unitsize,
             left
         );
     }
@@ -1587,8 +1583,6 @@ var FullScreenMario = (function(GameStartr) {
             for(i = 0; i < stretch.length; i += 1) {
                 // A copy of the command must be used, so the original isn't modified
                 command = EightBitter.proliferate({}, stretch[i]);
-                
-                // The command's x-location must be shifted by the thing's placement
                 command.x = left;
                 
                 // "stretch" the command by making its width equal to the screen
@@ -1607,16 +1601,11 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         // Spawn the map, so new Things that should be placed will be spawned if nearby
-        // EightBitter.MapsHandler.spawnMap(MapScreener.right + MapScreener.width);
-        // var diff_right = MapScreener.right + EightBitter.QuadsKeeper.getOutDifference();
-        // MapsHandler.spawnMap(diff_right / EightBitter.unitsize);
-        // console.warn("spawnMap in activateSectionBefore is broken.");
-        
-        EightBitter.MapsHandler.spawnMap(
+        MapsHandler.spawnMap(
             "xInc",
-            EightBitter.MapScreener.top / EightBitter.unitsize,
-            EightBitter.MapScreener.right / EightBitter.unitsize,
-            EightBitter.MapScreener.bottom / EightBitter.unitsize,
+            MapScreener.top / EightBitter.unitsize,
+            MapScreener.right / EightBitter.unitsize,
+            MapScreener.bottom / EightBitter.unitsize,
             left
         );
     }
@@ -1656,16 +1645,11 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         // Spawn the map, so new Things that should be placed will be spawned if nearby
-        // EightBitter.MapsHandler.spawnMap(MapScreener.right + MapScreener.width);
-        // var diff_right = MapScreener.right + EightBitter.QuadsKeeper.getOutDifference();
-        // MapsHandler.spawnMap(diff_right / EightBitter.unitsize);
-        // console.warn("spawnMap in activateSectionBefore is broken.");
-        
-        EightBitter.MapsHandler.spawnMap(
+        MapsHandler.spawnMap(
             "xInc",
-            EightBitter.MapScreener.top / EightBitter.unitsize,
-            EightBitter.MapScreener.right / EightBitter.unitsize,
-            EightBitter.MapScreener.bottom / EightBitter.unitsize,
+            MapScreener.top / EightBitter.unitsize,
+            MapScreener.right / EightBitter.unitsize + (section.after ? section.after.width : 0),
+            MapScreener.bottom / EightBitter.unitsize,
             left
         );
     }
@@ -4064,7 +4048,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.addClass(thing, "jumping");
         
         thing.xvel = 1.4;
-        thing.yvel = -1.4;
+        thing.yvel = -.7;
         thing.nocollide = thing.nofall = false;
         thing.gravity = thing.EightBitter.MapScreener.gravity / 14;
         
@@ -4826,7 +4810,6 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function mapAddStretched(raw) {
-        console.log("self in mapAddStretched?");
         var y = (self.MapScreener.floor - raw.y) * self.unitsize;
         return self.addThing(self.ObjectMaker.make(raw.thing, {
             "width": self.MapScreener.width,
