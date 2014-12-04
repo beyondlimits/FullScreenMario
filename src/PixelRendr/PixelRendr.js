@@ -153,7 +153,7 @@ function PixelRendr(settings) {
         }
         // Single (actual) sprites process for size (row) scaling, and flipping
         else {
-            if(!(sprite instanceof Uint8ClampedArray)) {
+            if (!(sprite instanceof Uint8ClampedArray)) {
                 throw new Error("No single raw sprite found for: '" + key + "'");
             }
             sprite = ProcessorDims.process(sprite, key, attributes);
@@ -609,11 +609,11 @@ function PixelRendr(settings) {
             pixel,
             i, j;
         
-        for(i = 0, j = 0; i < data.length; i += 4, j += 1) {
+        for (i = 0, j = 0; i < data.length; i += 4, j += 1) {
             pixel = getClosestInPalette(data.subarray(i, i + 4));
             pixels[j] = pixel;
             
-            if(occurences.hasOwnProperty(pixel)) {
+            if (occurences.hasOwnProperty(pixel)) {
                 occurences[pixel] += 1;
             } else {
                 occurences[pixel] = 1;
@@ -664,7 +664,7 @@ function PixelRendr(settings) {
                 j += 1;
             }
             
-            if(j - i > threshold) {
+            if (j - i > threshold) {
                 output += "x" + digit + String(j - i) + ",";
                 i = j;
             } else {
@@ -727,7 +727,7 @@ function PixelRendr(settings) {
         
         for (i = palette_default.length - 1; i >= 0; i -= 1) {
             difference = arrayDifference(palette_default[i], rgba);
-            if(difference < best_difference) {
+            if (difference < best_difference) {
                 best_difference = difference;
                 best_i = i;
             }
@@ -767,7 +767,7 @@ function PixelRendr(settings) {
     function arrayDifference(a, b) {
         var sum = 0,
             i;
-        for(i = a.length - 1; i >= 0; i -= 1) {
+        for (i = a.length - 1; i >= 0; i -= 1) {
             sum += Math.abs(a[i] - b[i]);
         }
         return sum;
@@ -780,7 +780,7 @@ function PixelRendr(settings) {
         var output = {},
             i;
         
-        for(i = 0; i < array.length; i += 1) {
+        for (i = 0; i < array.length; i += 1) {
             output[array[i]] = i;
         }
         
@@ -806,8 +806,8 @@ function PixelRendr(settings) {
     // http://www.html5rocks.com/en/tutorials/webgl/typed_arrays/
     // http://www.javascripture.com/Uint8ClampedArray
     // function memcpyU8(source, destination, readloc, writeloc, length) {
-    // if(readloc == null) readloc = 0;
-    // if(length == null) length = source.length - readloc;
+    // if (readloc == null) readloc = 0;
+    // if (length == null) length = source.length - readloc;
     // destination.set(source.subarray(readloc || 0, length), writeloc || 0);
     // }
     self.memcpyU8 = function (source, destination, readloc, writeloc, writelength) {

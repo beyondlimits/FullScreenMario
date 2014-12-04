@@ -58,7 +58,7 @@ function GamesRunnr(settings) {
         scope           = settings.scope           || self;
         paused = true;
         
-        for(i = 0; i < games.length; i += 1) {
+        for (i = 0; i < games.length; i += 1) {
             games[i] = games[i].bind(scope);
         }
         
@@ -76,7 +76,7 @@ function GamesRunnr(settings) {
      * @return {this}
      */
     self.upkeep = function () {
-        if(paused) {
+        if (paused) {
             return;
         }
         upkeep_next = upkeep_schedule(self.upkeep, speed_real);
@@ -98,7 +98,7 @@ function GamesRunnr(settings) {
         self.unpause();
         self.upkeep();
         self.pause();
-        if(num > 0) {
+        if (num > 0) {
             self.step(num - 1);
         }
         return self;
@@ -111,10 +111,10 @@ function GamesRunnr(settings) {
      * @return {this}
      */
     self.pause = function () {
-        if(paused) return;
+        if (paused) return;
         paused = true;
         
-        if(on_pause) {
+        if (on_pause) {
             on_pause(self);
         }
         
@@ -131,12 +131,12 @@ function GamesRunnr(settings) {
      * @return {this}
      */
     self.unpause = function () {
-        if(!paused) {
+        if (!paused) {
             return;
         }
         paused = false;
         
-        if(on_unpause) {
+        if (on_unpause) {
             on_unpause(self);
         }
         
@@ -165,7 +165,7 @@ function GamesRunnr(settings) {
      * @return {this}
      */
     self.addGame = function(game, position) {
-        if(!game instanceof Function) {
+        if (!game instanceof Function) {
             console.error("This is not a function:", game);
             return self;
         }
@@ -192,7 +192,7 @@ function GamesRunnr(settings) {
      */
     self.setInterval = function(num) {
         var realint = Number(num);
-        if(isNaN(realnum)) {
+        if (isNaN(realnum)) {
             console.error("Improper number given to setInterval:", num);
             return self;
         }
@@ -210,7 +210,7 @@ function GamesRunnr(settings) {
      */
     self.setSpeed = function(num) {
         var realnum = Number(num);
-        if(isNaN(realnum)) {
+        if (isNaN(realnum)) {
             console.error("Improper number given to setSpeed:", num);
             return self;
         }

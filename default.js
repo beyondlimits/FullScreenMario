@@ -34,7 +34,7 @@
         section.textContent = "";
         section.className = "length-" + length;
         
-        for(i = 0; i < length; i += 1) {
+        for (i = 0; i < length; i += 1) {
             section.appendChild(LoadControlDiv(schemas[i], generators));
         }
     };
@@ -68,7 +68,7 @@
     }
     
     document.onreadystatechange = function (event) {
-        if(event.target.readyState != "complete") {
+        if (event.target.readyState != "complete") {
             return;
         }
         
@@ -215,9 +215,9 @@
             option, element, i;
     
         function getParentControlDiv(element) {
-            if(element.className === "control") {
+            if (element.className === "control") {
                 return element;
-            } else if(!element.parentNode) {
+            } else if (!element.parentNode) {
                 return undefined;
             } 
             return getParentControlDiv(element.parentNode);
@@ -225,7 +225,7 @@
         
         output.className = "select-options select-options-buttons";
         
-        for(i = 0; i < optionKeys.length; i += 1) {
+        for (i = 0; i < optionKeys.length; i += 1) {
             option = options[optionKeys[i]];
             
             element = document.createElement("div");
@@ -233,12 +233,12 @@
             element.textContent = optionKeys[i];
             
             element.onclick = function (schema, element) {
-                if(getParentControlDiv(element).getAttribute("active") !== "on") {
+                if (getParentControlDiv(element).getAttribute("active") !== "on") {
                     return;
                 }
                 schema.callback.call(schema, schema, element);
                 
-                if(element.getAttribute("option-enabled") == "true") {
+                if (element.getAttribute("option-enabled") == "true") {
                     element.setAttribute("option-enabled", false);
                     element.className = classNameStart + " option-disabled";
                 } else {
@@ -247,10 +247,10 @@
                }
             }.bind(undefined, schema, element);
             
-            if(option[keyActive]) {
+            if (option[keyActive]) {
                 element.className += " option-enabled";
                 element.setAttribute("option-enabled", true);
-            } else if(schema.assumeInactive) {
+            } else if (schema.assumeInactive) {
                 element.className += " option-disabled";
                 element.setAttribute("option-enabled", false);
             } else {
@@ -271,7 +271,7 @@
             input.textContent = status;
             
             input.onclick = function () {
-                if(input.textContent === "on") {
+                if (input.textContent === "on") {
                     details.disable();
                     input.textContent = "off";
                     input.className = input.className.replace("enabled", "disabled");
@@ -293,11 +293,11 @@
             var values = details.source(),
                 child, i, j;
             
-            for(i = 0; i < values.length; i += 1) {
+            for (i = 0; i < values.length; i += 1) {
                 child = document.createElement("select");
                 child.className = "options-key-option";
                 
-                for(j = 0; j < allPossibleKeys.length; j += 1) {
+                for (j = 0; j < allPossibleKeys.length; j += 1) {
                     child.appendChild(new Option(allPossibleKeys[j]));
                 }
                 child.value = child.valueOld = values[i].toLowerCase();
@@ -319,7 +319,7 @@
             child.max = details.maximum || Math.max(details.minimum + 10, 10);
             
             child.onchange = child.oninput = function () {
-                if(child.checkValidity()) {
+                if (child.checkValidity()) {
                     details.update(child.value);
                 }
             };
@@ -332,7 +332,7 @@
                 options = details.options(),
                 i;
             
-            for(i = 0; i < options.length; i += 1) {
+            for (i = 0; i < options.length; i += 1) {
                 child.appendChild(new Option(options[i]));
             }
             
@@ -360,8 +360,8 @@
             
             output.className = "select-options select-options-table";
             
-            if(schema.options) {
-                for(i = 0; i < schema.options.length; i += 1) {
+            if (schema.options) {
+                for (i = 0; i < schema.options.length; i += 1) {
                     row = document.createElement("tr");
                     label = document.createElement("td");
                     input = document.createElement("td");
@@ -383,8 +383,8 @@
             
             output.appendChild(table);
             
-            if(schema.actions) {
-                for(i = 0; i < schema.actions.length; i += 1) {
+            if (schema.actions) {
+                for (i = 0; i < schema.actions.length; i += 1) {
                     row = document.createElement("div");
                     
                     details = schema.actions[i];
@@ -426,7 +426,7 @@
         };
         
         function handleFileDragEnter(uploader, event) {
-            if(event.dataTransfer) {
+            if (event.dataTransfer) {
                 event.dataTransfer.dropEFfect = "copy";
             }
             uploader.className += " hovering";
@@ -438,7 +438,7 @@
         }
         
         function handleFileDragLeave(uploader, event) {
-            if(event.dataTransfer) {
+            if (event.dataTransfer) {
                 event.dataTransfer.dropEffect = "none"
             }
             uploader.className = uploader.className.replace(" hovering", "");
@@ -462,13 +462,13 @@
         function handleFileUploadProgress(file, uploader, event) {
             var percent;
             
-            if(!event.lengthComputable) {
+            if (!event.lengthComputable) {
                 return;
             }
             
             percent = Math.round((event.loaded / event.total) * 100);
             
-            if(percent > 100) {
+            if (percent > 100) {
                 percent = 100;
             }
             
@@ -517,30 +517,30 @@
         
         output.className = "select-options select-options-maps-grid";
         
-        if(rangeX && rangeY) {
+        if (rangeX && rangeY) {
             var table = document.createElement("table"),
                 row,
                 i, j;
                 
             function getParentControlDiv(element) {
-                if(element.className === "control") {
+                if (element.className === "control") {
                     return element;
-                } else if(!element.parentNode) {
+                } else if (!element.parentNode) {
                     return undefined;
                 } 
                 return getParentControlDiv(element.parentNode);
             }    
             
-            for(i = rangeY[0]; i <= rangeY[1]; i += 1) {
+            for (i = rangeY[0]; i <= rangeY[1]; i += 1) {
                 row = document.createElement("tr");
                 row.className = "maps-grid-row";
                 
-                for(j = rangeX[0]; j <= rangeX[1]; j += 1) {
+                for (j = rangeX[0]; j <= rangeX[1]; j += 1) {
                     element = document.createElement("td");
                     element.className = "select-option maps-grid-option maps-grid-option-range";
                     element.textContent = i + "-" + j;
                     element.onclick = (function (callback) {
-                        if(getParentControlDiv(element).getAttribute("active") !== "on") {
+                        if (getParentControlDiv(element).getAttribute("active") !== "on") {
                             return;
                         }
                         callback();
@@ -554,8 +554,8 @@
             output.appendChild(table);
         }
         
-        if(schema.extras) {
-            for(var i in schema.extras) {
+        if (schema.extras) {
+            for (var i in schema.extras) {
                 element = document.createElement("div");
                 element.className = "select-option maps-grid-option maps-grid-option-extra";
                 element.textContent = i;

@@ -9,7 +9,7 @@
 
 function TimeHandlr(settings) {
   "use strict";
-  if(!this || this === window) {
+  if (!this || this === window) {
     return new TimeHandlr(settings);
   }
   var self = this,
@@ -76,7 +76,7 @@ function TimeHandlr(settings) {
   // Adds a function to execute at a particular time, with arguments
   var addEvent = self.addEvent = function(func, time_exec) {
     // Make sure func is actually a function
-    if(!(func instanceof Function)) {
+    if (!(func instanceof Function)) {
       console.warn("Attempting to add an event that isn't a function.");
       console.log(arguments);
       return false;
@@ -108,7 +108,7 @@ function TimeHandlr(settings) {
   // Functions that return true will stop execution
   var addEventInterval = self.addEventInterval = function(func, time_exec, num_repeats) {
     // Make sure func is actually a function
-    if(!(func instanceof Function)) {
+    if (!(func instanceof Function)) {
       console.warn("Attempting to add an event that isn't a function.");
       console.log(arguments);
       return false;
@@ -152,7 +152,7 @@ function TimeHandlr(settings) {
     num_repeats = num_repeats || 1;
     
     // If there's no difference in times, you're good to go
-    if(entry == time) {
+    if (entry == time) {
       return addfunc(scope, arguments, me);
     }
     // Otherwise it should be delayed until the time is right
@@ -166,7 +166,7 @@ function TimeHandlr(settings) {
   // An array must exist so multiple events can be at the same time
   function insertEvent(event, time) {
     // If it doesn't yet have an array, event will be the only contents
-    if(!events[time]) return events[time] = [event];
+    if (!events[time]) return events[time] = [event];
     // Otherwise push it to there
     events[time].push(event);
     return events[time];
@@ -179,7 +179,7 @@ function TimeHandlr(settings) {
   // Public: clearEvent
   // Makes an event not happen again
   var clearEvent = self.clearEvent = function(event) {
-    if(!event) return;
+    if (!event) return;
     // Telling it not to repeat anymore is enough
     event.repeat = 0;
   };
@@ -192,7 +192,7 @@ function TimeHandlr(settings) {
   
   // Given an object, clear its class cycle under a given name
   var clearClassCycle = self.clearClassCycle = function(me, name) {
-    if(!me[cycles] || !me[cycles][name]) return;
+    if (!me[cycles] || !me[cycles][name]) return;
     var cycle = me[cycles][name];
     cycle[0] = false;
     cycle.length = false;
@@ -203,7 +203,7 @@ function TimeHandlr(settings) {
   var clearAllCycles = self.clearAllCycles = function(me) {
     var cycles = me[cycles],
         name, cycle;
-    for(name in cycles) {
+    for (name in cycles) {
       cycle = cycles[name];
       cycle[0] = false;
       cycle.length = 1;
@@ -227,18 +227,18 @@ function TimeHandlr(settings) {
   // Sets a sprite cycle (settings) for an object under name
   var addClassCycle = self.addClassCycle = function(me, settings, name, timing) {
     // Make sure the object has a holder for cycles...
-    if(!me[cycles]) me[cycles] = {};
+    if (!me[cycles]) me[cycles] = {};
     // ...and nothing previously existing for that name
     clearClassCycle(me, name);
     
-    var timingIsFunc = typeof(timing) == "function";
+    var timingIsFunc = typeof timing === "function";
     name = name || 0;
     
     // Set the cycle under me[cycles][name]
     var cycle = me[cycles][name] = setSpriteCycle(me, settings, timingIsFunc ? 0 : timing);
     
     // If there is a timing function, make it the count changer
-    if(cycle.event && timingIsFunc)
+    if (cycle.event && timingIsFunc)
       cycle.event.count_changer = timing;
       
     // Immediately run the first class cycle, then return
@@ -251,7 +251,7 @@ function TimeHandlr(settings) {
   // (Note: very similar to addClassCycle, and could probably be combined)
   var addClassCycleSynched = self.addClassCycleSynched = function(me, settings, name, timing) {
     // Make sure the object has a holder for cycles...
-    if(!me[cycles]) me[cycles] = {};
+    if (!me[cycles]) me[cycles] = {};
     // ...and nothing previously existing for that name
     clearClassCycle(me, name);
     
@@ -268,7 +268,7 @@ function TimeHandlr(settings) {
   function setSpriteCycle(me, settings, timing, synched) {
     // If required, make a copy of settings so if multiple objects are made with
     // the same settings, object, they don't override each other's settings.loc
-    if(allow_cycle_copies) {
+    if (allow_cycle_copies) {
         settings = makeSettingsCopy(settings);
     }
     
@@ -280,7 +280,7 @@ function TimeHandlr(settings) {
     me[onSpriteCycleStart] = function () { func(cycleClass, timing || timingDefault, Infinity, me, settings); };
     
     // If it should already start, do that
-    if(me[doSpriteCycleStart])
+    if (me[doSpriteCycleStart])
       me[onSpriteCycleStart]();
     
     return settings;
@@ -290,11 +290,11 @@ function TimeHandlr(settings) {
   // Functions that return true will cause it to stop
   function cycleClass(me, settings) {
     // If anything has been invalidated, return true to stop
-    if(!me || !settings || !settings.length) return true;
-    if(cycleCheckValidity != null && !me[cycleCheckValidity]) return true;
+    if (!me || !settings || !settings.length) return true;
+    if (cycleCheckValidity != null && !me[cycleCheckValidity]) return true;
     
     // Get rid of the previous class, from settings (-1 by default)
-    if(settings.oldclass != -1 && settings.oldclass !== "") {
+    if (settings.oldclass != -1 && settings.oldclass !== "") {
       removeClass(me, settings.oldclass);
     }
     
@@ -304,11 +304,11 @@ function TimeHandlr(settings) {
     // Current is the sprite, bool, or function currently being added and/or run
     var current = settings[settings.loc];
     // If it isn't falsy, (run if needed and) set it as the next name
-    if(current) {
+    if (current) {
       var name = current instanceof Function ? current(me, settings) : current;
       
       // If the next name is a string, set that as the old class, and add it
-      if(typeof(name) == "string") {
+      if (typeof name == "string") {
         settings.oldclass = name;
         addClass(me, name);
         return false;
@@ -328,31 +328,31 @@ function TimeHandlr(settings) {
   self.handleEvents = function () {
     ++time;
     var events_current = events[time];
-    if(!events_current) return; // If there isn't anything to run, don't even bother
+    if (!events_current) return; // If there isn't anything to run, don't even bother
     
     var event, len, i;
         
     // For each event currently scheduled:
-    for(i = 0, len = events_current.length; i < len; ++i) {
+    for (i = 0, len = events_current.length; i < len; ++i) {
       event = events_current[i];
       
       // Call the function, using apply to pass in arguments dynamically
       // If running it returns true, it's done; otherwise check if it should go again
-      if(event.repeat > 0 && !event.func.apply(this, event.args)) {
+      if (event.repeat > 0 && !event.func.apply(this, event.args)) {
         
         // If it has a count changer (and needs to modify itself), do that
-        if(event.count_changer) event.count_changer(event);
+        if (event.count_changer) event.count_changer(event);
         
         // If repeat is a function, running it determines whether to repeat
-        if(event.repeat instanceof Function) {
+        if (event.repeat instanceof Function) {
           // Binding then calling is what actually runs the function
-          if((event.repeat.bind(event))()) {
+          if ((event.repeat.bind(event))()) {
             event.count += event.time_repeat;
             insertEvent(event, event.time_exec);
           }
         }
         // Otherwise it's a number: decrement it, and if it's > 0, repeat.
-        else if(--event.repeat > 0) {
+        else if (--event.repeat > 0) {
           event.time_exec += event.time_repeat;
           insertEvent(event, event.time_exec);
         }
@@ -375,7 +375,7 @@ function TimeHandlr(settings) {
   function makeSettingsCopy(settings) {
     var output = new settings.constructor(),
         i;
-    for(i in settings) {
+    for (i in settings) {
       output[i] = settings[i];
     }
     return output;

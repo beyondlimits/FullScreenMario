@@ -20,7 +20,7 @@ FullScreenMario.prototype.settings.maps = {
             var area = EightBitter.MapsHandler.getArea(),
                 diff = EightBitter.MapScreener.bottom_death_difference;
                 
-            if(!area) {
+            if (!area) {
                 return -1;
             }
                 
@@ -29,7 +29,7 @@ FullScreenMario.prototype.settings.maps = {
         "gravity": function (EightBitter) {
             var area = EightBitter.MapsHandler.getArea();
             
-            if(area && area.underwater) {
+            if (area && area.underwater) {
                 return EightBitter.gravity / 2.8;
             }
             
@@ -74,10 +74,10 @@ FullScreenMario.prototype.settings.maps = {
     "patterns": (function (patterns) {
         var pattern,
             i;
-        for(i in patterns) {
-            if(patterns.hasOwnProperty(i)) {
+        for (i in patterns) {
+            if (patterns.hasOwnProperty(i)) {
                 pattern = patterns[i];
-                if(!pattern.length) {
+                if (!pattern.length) {
                     continue;
                 }
                 
@@ -183,7 +183,7 @@ FullScreenMario.prototype.settings.maps = {
         var library = {},
             i;
         
-        for(i = 0; i < maps.length; i += 1) {
+        for (i = 0; i < maps.length; i += 1) {
             library[maps[i].name] = maps[i];
         }
         

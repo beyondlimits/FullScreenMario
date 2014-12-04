@@ -1,6 +1,6 @@
 function PixelDrawr(settings) {
     "use strict";
-    if(this === window) {
+    if (this === window) {
         return new PixelDrawr(settings);
     }
     var self = this,
@@ -111,7 +111,7 @@ function PixelDrawr(settings) {
      */
     self.setThingSprite = function(thing) {
         // If it's set as hidden, or doesn't have a title, don't bother updating it
-        if(thing.hidden || !thing.title) {
+        if (thing.hidden || !thing.title) {
             return;
         }
         
@@ -119,7 +119,7 @@ function PixelDrawr(settings) {
         thing.sprite = PixelRender.decode(generateObjectKey(thing), thing);
         
         // To do: remove dependency on .num_sprites and sprite_type
-        if(thing.sprite.multiple) {
+        if (thing.sprite.multiple) {
           thing.sprite_type = thing.sprite.type;
           refillThingCanvasMultiple(thing, thing.sprite);
         }
@@ -141,7 +141,7 @@ function PixelDrawr(settings) {
      * @private
      */
     function refillThingCanvasSingle(thing) {
-        if(thing.width < 1 || thing.height < 1) {
+        if (thing.width < 1 || thing.height < 1) {
             return;
         }
         
@@ -173,7 +173,7 @@ function PixelDrawr(settings) {
 
         thing.num_sprites = 1;
 
-        for(i in sprites_raw.sprites) {
+        for (i in sprites_raw.sprites) {
             // Make a new sprite for this individual component
             canvas = getCanvas(thing.spritewidth * unitsize, thing.spriteheight * unitsize);
             context = canvas.getContext("2d");
@@ -210,11 +210,11 @@ function PixelDrawr(settings) {
      */
     self.refillGlobalCanvas = function (background) {
         framesDrawn += 1;
-        if(framesDrawn % framerateSkip !== 0) {
+        if (framesDrawn % framerateSkip !== 0) {
             return;
         }
         
-        if(!no_refill) {
+        if (!no_refill) {
             context.fillStyle = background;
             context.fillRect(0, 0, canvas.width, canvas.height);
         }
@@ -240,11 +240,11 @@ function PixelDrawr(settings) {
         var i;
         
         framesDrawn += 1;
-        if(framesDrawn % framerateSkip !== 0) {
+        if (framesDrawn % framerateSkip !== 0) {
             return;
         }
         
-        for(i = 0; i < groups.length; i += 1) {
+        for (i = 0; i < groups.length; i += 1) {
             self.refillQuadrants(groups[i].quadrants, background);
         }
     };
@@ -255,9 +255,9 @@ function PixelDrawr(settings) {
     self.refillQuadrants = function (quadrants, background) {
         var quadrant, i;
         
-        for(i = 0; i < quadrants.length; i += 1) {
+        for (i = 0; i < quadrants.length; i += 1) {
             quadrant = quadrants[i];
-            if(
+            if (
                 quadrant.changed
                 && quadrant.top < MapScreener.height
                 && quadrant.right > 0
@@ -289,17 +289,17 @@ function PixelDrawr(settings) {
     self.refillQuadrant = function (quadrant, background) {
         var group, i, j;
         
-        if(!no_refill) {
+        if (!no_refill) {
             quadrant.context.fillStyle = background;
             quadrant.context.fillRect(0, 0, quadrant.canvas.width, quadrant.canvas.height);
         }
         // quadrant.context.fillStyle = getRandomColor();
         // quadrant.context.fillRect(0, 0, quadrant.canvas.width, quadrant.canvas.height);
         
-        for(i = group_names.length - 1; i >= 0; i -= 1) {
+        for (i = group_names.length - 1; i >= 0; i -= 1) {
             group = quadrant.things[group_names[i]];
             
-            for(j = 0; j < group.length; j += 1) {
+            for (j = 0; j < group.length; j += 1) {
                 self.drawThingOnQuadrant(group[j], quadrant);
             }
         }
@@ -315,7 +315,7 @@ function PixelDrawr(settings) {
      */
     // self.drawThingOnContext = function(context, thing) {
     self.drawThingOnContext = function(context, thing) {
-        if(
+        if (
             thing.hidden
             // || thing.top > MapScreener.bottom
             // || thing.right < MapScreener.left
@@ -326,12 +326,12 @@ function PixelDrawr(settings) {
         }
         
         // If Thing hasn't had a sprite yet (previously hidden), do that first
-        if(typeof(thing.num_sprites) === "undefined") {
+        if (typeof(thing.num_sprites) === "undefined") {
             self.setThingSprite(thing);
         }
         
         // If there's just one sprite, it's pretty simple
-        if(thing.num_sprites === 1) {
+        if (thing.num_sprites === 1) {
             return drawThingOnContextSingle(context, thing.canvas, thing, thing.left, thing.top);
         }
         // For multiple sprites, some calculations will be needed
@@ -344,7 +344,7 @@ function PixelDrawr(settings) {
      * 
      */
     self.drawThingOnQuadrant = function (thing, quadrant) {
-        if(
+        if (
             thing.hidden
             || thing.top > quadrant.bottom
             || thing.right < quadrant.left
@@ -355,7 +355,7 @@ function PixelDrawr(settings) {
         }
         
         // If there's just one sprite, it's pretty simple
-        if(thing.num_sprites === 1) {
+        if (thing.num_sprites === 1) {
             return drawThingOnContextSingle(quadrant.context, thing.canvas, thing, thing.left - quadrant.left, thing.top - quadrant.top);
         }
         // For multiple sprites, some calculations will be needed
@@ -377,11 +377,11 @@ function PixelDrawr(settings) {
      */
     function drawThingOnContextSingle(context, canvas, thing, leftc, topc) {
         // If the sprite should repeat, use the pattern equivalent
-        if(thing.repeat) {
+        if (thing.repeat) {
             drawPatternOnCanvas(context, canvas, leftc, topc, thing.unitwidth, thing.unitheight, thing.opacity || 1);
         }
         // Opacities not equal to one must reset the context afterwards
-        else if(thing.opacity != 1) {
+        else if (thing.opacity != 1) {
             context.globalAlpha = thing.opacity;
             context.drawImage(canvas, leftc, topc);
             context.globalAlpha = 1;
@@ -412,17 +412,17 @@ function PixelDrawr(settings) {
             sdiff, canvasref;
         
         // Vertical sprites may have 'top', 'bottom', 'middle'
-        switch(canvases.direction) {
+        switch (canvases.direction) {
             case "vertical":
                 // If there's a bottom, draw that and push up bottomreal
-                if((canvasref = canvases.bottom)) {
+                if ((canvasref = canvases.bottom)) {
                     sdiff = sprite.bottomheight ? sprite.bottomheight * unitsize : spriteheightpixels;
                     drawPatternOnCanvas(context, canvasref.canvas, leftreal, bottomreal - sdiff, widthreal, Math.min(heightreal, spriteheightpixels), opacity);
                     bottomreal -= sdiff;
                     heightreal -= sdiff;
                 }
                 // If there's a top, draw that and push down topreal
-                if((canvasref = canvases.top)) {
+                if ((canvasref = canvases.top)) {
                     sdiff = sprite.topheight ? sprite.topheight * unitsize : spriteheightpixels;
                     drawPatternOnCanvas(context, canvasref.canvas, leftreal, topreal, widthreal, Math.min(heightreal, spriteheightpixels), opacity);
                     topreal += sdiff;
@@ -432,14 +432,14 @@ function PixelDrawr(settings) {
             // Horizontal sprites may have 'left', 'right', 'middle'
             case "horizontal":
                 // If there's a left, draw that and push up leftreal
-                if((canvasref = canvases.left)) {
+                if ((canvasref = canvases.left)) {
                     sdiff = sprite.leftwidth ? sprite.leftwidth * unitsize : spritewidthpixels;
                     drawPatternOnCanvas(context, canvasref.canvas, leftreal, topreal, Math.min(widthreal, spritewidthpixels), heightreal, opacity);
                     leftreal += sdiff;
                     widthreal -= sdiff;
                 }
                 // If there's a right, draw that and push back rightreal
-                if((canvasref = canvases.right)) {
+                if ((canvasref = canvases.right)) {
                     sdiff = sprite.rightwidth ? sprite.rightwidth * unitsize : spritewidthpixels;
                     drawPatternOnCanvas(context, canvasref.canvas, rightreal - sdiff, topreal, Math.min(widthreal, spritewidthpixels), heightreal, opacity);
                     rightreal -= sdiff;
@@ -449,8 +449,8 @@ function PixelDrawr(settings) {
         }
         
         // If there's still room/*, and it exists*/, draw the actual canvas
-        if((canvasref = canvases.middle) && topreal < bottomreal && leftreal < rightreal) {
-            if(sprite.middleStretch) {
+        if ((canvasref = canvases.middle) && topreal < bottomreal && leftreal < rightreal) {
+            if (sprite.middleStretch) {
                 context.globalAlpha = opacity;
                 context.drawImage(canvasref.canvas, leftreal, topreal, widthreal, heightreal);
                 context.globalAlpha = 1;

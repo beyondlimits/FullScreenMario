@@ -3,7 +3,7 @@
  */
 function GroupHoldr(settings) {
     "use strict";
-    if(!this || this === window) {
+    if (!this || this === window) {
         return new GroupHoldr(settings);
     }
     var self = this,
@@ -34,10 +34,10 @@ function GroupHoldr(settings) {
      */
     self.reset = function(settings) {
         // The group_names and group_types arguments must be provided
-        if(!settings.hasOwnProperty("group_names")) {
+        if (!settings.hasOwnProperty("group_names")) {
             throw new Error("No group_names array provided to GroupHoldr");
         }
-        if(!settings.hasOwnProperty("group_types")) {
+        if (!settings.hasOwnProperty("group_types")) {
             throw new Error("No group_types object provided to GroupHoldr");
         }
         
@@ -62,12 +62,12 @@ function GroupHoldr(settings) {
      *                         as a string, to be converted to an Object.
      */
     function setGroupNames(names, types) {
-        if(!(names instanceof Array)) {
+        if (!(names instanceof Array)) {
             throw new Error("No array of names given to setGroupNames");
         }
         
         // If there already were group names, clear them
-        if(group_names) {
+        if (group_names) {
             clearFunctions();
         }
         
@@ -80,7 +80,7 @@ function GroupHoldr(settings) {
         group_names.sort();
         
         // If group_types is an object, set custom group types for everything
-        if(typeof(types) == "object") {
+        if (typeof(types) == "object") {
             group_names.forEach(function(name) {
                 group_types[name] = getTypeFunction(types[name]);
                 group_type_names[name] = getTypeName(types[name]);
@@ -163,7 +163,7 @@ function GroupHoldr(settings) {
          * @return {self}   The containing GroupHoldr
          */
         functions.set[name] = self["set" + name + "Group"] = function(value) {
-            if(value.constructor != group_types[name]) {
+            if (value.constructor != group_types[name]) {
                 throw new Error(name + " must be of type "
                         + group_type_names[name]);
             }
@@ -190,7 +190,7 @@ function GroupHoldr(settings) {
          */
         functions.get[name] = self["get" + name + "Group"] = function(key) {
             var group = groups[name];
-            if(arguments.length < 1) {
+            if (arguments.length < 1) {
                 return group;
             }
             return group[key];
@@ -204,7 +204,7 @@ function GroupHoldr(settings) {
      */
     function createFunctionAdd(name) {
         var group = groups[name];
-        if(group_types[name] == Object) {
+        if (group_types[name] == Object) {
             /**
              * Get function for a group of type Object and name <name> 
              * holding objects of type <type>
@@ -245,7 +245,7 @@ function GroupHoldr(settings) {
      */
     function createFunctionDel(name) {
         var group = groups[name];
-        if(group_types[name] == Object) {
+        if (group_types[name] == Object) {
             /**
              * Delete function for a group of type Object and name <name> 
              * holding objects of type <type>
@@ -338,17 +338,17 @@ function GroupHoldr(settings) {
     self.applyAll = function(scope, func, args) {
         var i;
         
-        if(!args) {
+        if (!args) {
             args = [ undefined ];
         } else {
             args.unshift(undefined);
         }
        
-        if(!scope) {
+        if (!scope) {
             scope = self;
         }
         
-        for(i = group_names.length - 1; i >= 0; i -= 1) {
+        for (i = group_names.length - 1; i >= 0; i -= 1) {
             args[0] = groups[group_names[i]];
             func.apply(scope, args);
         }
@@ -367,11 +367,11 @@ function GroupHoldr(settings) {
         var args = Array.prototype.slice.call(arguments, 1),
             group, i, i;
         
-        if(!scope) {
+        if (!scope) {
             scope = self;
         }
         
-        for(i = group_names.length - 1; i >= 0; i -= 1) {
+        for (i = group_names.length - 1; i >= 0; i -= 1) {
             args[0] = groups[group_names[i]];
             func.apply(scope, args);
         }
@@ -383,10 +383,10 @@ function GroupHoldr(settings) {
     self.clearArrays = function () {
         var group, name, i;
         
-        for(i = 0; i < group_names.length; i += 1) {
+        for (i = 0; i < group_names.length; i += 1) {
             group = groups[group_names[i]];
             
-            if(group instanceof Array) {
+            if (group instanceof Array) {
                 group.length = 0;
             }
         }
@@ -424,7 +424,7 @@ function GroupHoldr(settings) {
      *          the outcome is "Object", otherwise it's "Array".
      */
     function getTypeName(str) {
-        if(str && str.charAt && str.charAt(0).toLowerCase() == 'o') {
+        if (str && str.charAt && str.charAt(0).toLowerCase() == 'o') {
             return "Object";
         }
         return "Array";
@@ -439,7 +439,7 @@ function GroupHoldr(settings) {
      *          the outcome is Object, otherwise it's Array.
      */
     function getTypeFunction(str) {
-        if(str && str.charAt && str.charAt(0).toLowerCase() == 'o') {
+        if (str && str.charAt && str.charAt(0).toLowerCase() == 'o') {
             return Object;
         }
         return Array;

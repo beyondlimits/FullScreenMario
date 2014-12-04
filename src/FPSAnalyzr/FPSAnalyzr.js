@@ -59,7 +59,7 @@ function FPSAnalyzr(settings) {
      *                                     get_timestamp() is used instead.
      */
     self.measure = function (time) {
-        if(!time_current) {
+        if (!time_current) {
             measureFirst(time);
             return;
         }
@@ -119,14 +119,14 @@ function FPSAnalyzr(settings) {
     self.getMeasurements = function () {
         var fps_kept_real = Math.min(num_to_keep, num_recorded),
             copy, i;
-        if(isFinite(num_to_keep)) {
+        if (isFinite(num_to_keep)) {
             copy = new Array(fps_kept_real);
         } else {
             copy = {};
             copy.length = fps_kept_real;
         }
         
-        for(i = fps_kept_real - 1; i >= 0; --i) {
+        for (i = fps_kept_real - 1; i >= 0; --i) {
             copy[i] = measurements[i];
         }
         
@@ -143,7 +143,7 @@ function FPSAnalyzr(settings) {
     self.getDifferences = function () {
         var copy = self.getMeasurements(),
             i;
-        for(i = copy.length - 1; i >= 0; --i) {
+        for (i = copy.length - 1; i >= 0; --i) {
             copy[i] = 1000 / copy[i];
         }
         return copy;
@@ -158,7 +158,7 @@ function FPSAnalyzr(settings) {
         var total = 0,
             max = Math.min(num_to_keep, num_recorded),
             i;
-        for(i = max - 1; i >= 0; --i) {
+        for (i = max - 1; i >= 0; --i) {
             total += measurements[i];
         }
         return total / max;
@@ -177,7 +177,7 @@ function FPSAnalyzr(settings) {
             fps_kept_half = Math.floor(fps_kept_real / 2),
             i;
          
-        if(copy.length % 2 == 0) {
+        if (copy.length % 2 == 0) {
             return copy[fps_kept_half];
         } else {
             return (copy[fps_kept_half - 2] + copy[fps_kept_half]) / 2;
@@ -196,10 +196,10 @@ function FPSAnalyzr(settings) {
             max = Math.min(num_to_keep, num_recorded),
             fps,
             i;
-        for(i = max - 1; i >= 0; --i) {
+        for (i = max - 1; i >= 0; --i) {
             fps = measurements[i];
-            if(fps > highest) highest = fps;
-            else if(fps < lowest) lowest = fps;
+            if (fps > highest) highest = fps;
+            else if (fps < lowest) lowest = fps;
         }
         return [lowest, highest];
     }

@@ -17,7 +17,7 @@ var GameStartr = (function (EightBittr) {
      * 
      */
     function GameStartr(customs) {
-        if(typeof(customs) === "undefined") {
+        if (typeof(customs) === "undefined") {
             customs = {};
         }
         
@@ -394,9 +394,9 @@ var GameStartr = (function (EightBittr) {
         var mods = customs.mods,
             i;
         
-        if(mods) {
-            for(i in mods) {
-                if(mods[i]) {
+        if (mods) {
+            for (i in mods) {
+                if (mods[i]) {
                     EightBitter.ModAttacher.enableMod(i);
                 }
             }
@@ -438,7 +438,7 @@ var GameStartr = (function (EightBittr) {
         dx = dx | 0;
         dy = dy | 0;
         
-        if(!dx && !dy) {
+        if (!dx && !dy) {
             return;
         }
         
@@ -492,16 +492,16 @@ var GameStartr = (function (EightBittr) {
      * 
      */
     function addThing(thing, left, top) {
-        if(typeof(thing) === "string" || thing instanceof String) {
+        if (typeof(thing) === "string" || thing instanceof String) {
             thing = this.ObjectMaker.make(thing);
-        } else if(thing.constructor === Array) {
+        } else if (thing.constructor === Array) {
             thing = this.ObjectMaker.make.apply(this.ObjectMaker, thing);
         }
         
-        if(arguments.length > 2) {
+        if (arguments.length > 2) {
             thing.EightBitter.setLeft(thing, left);
             thing.EightBitter.setTop(thing, top);
-        } else if(arguments.length > 1) {
+        } else if (arguments.length > 1) {
             thing.EightBitter.setLeft(thing, left);
         }
         
@@ -511,14 +511,14 @@ var GameStartr = (function (EightBittr) {
         thing.placed = true;
         
         // This will typically be a TimeHandler.cycleClass call
-        if(thing.onThingAdd) {
+        if (thing.onThingAdd) {
             thing.onThingAdd(thing);
         }
         
         thing.EightBitter.PixelDrawer.setThingSprite(thing);
         
         // This will typically be a spawn* call
-        if(thing.onThingAdded) {
+        if (thing.onThingAdded) {
             thing.onThingAdded(thing);
         }
         
@@ -534,15 +534,15 @@ var GameStartr = (function (EightBittr) {
         
         // If a width/height is provided but no spritewidth/height,
         // use the default spritewidth/height
-        if(thing.width && !thing.spritewidth) {
+        if (thing.width && !thing.spritewidth) {
             thing.spritewidth = defaults.spritewidth || defaults.width;
         }
-        if(thing.height && !thing.spriteheight) {
+        if (thing.height && !thing.spriteheight) {
             thing.spriteheight = defaults.spriteheight || defaults.height;
         }
         
         // "Infinity" height refers to objects that reach exactly to the bottom
-        if(thing.height === "Infinity") {
+        if (thing.height === "Infinity") {
             thing.height = thing.EightBitter.getAbsoluteHeight(thing.y) / thing.EightBitter.unitsize;
         }
         
@@ -551,12 +551,12 @@ var GameStartr = (function (EightBittr) {
             num;
         num = Math.floor(thing.width 
             * (FullScreenMario.unitsize / thing.EightBitter.QuadsKeeper.getQuadrantWidth()));
-        if(num > 0) {
+        if (num > 0) {
             maxquads += ((num + 1) * maxquads / 2);
         }
         num = Math.floor(thing.height 
             * (FullScreenMario.unitsize / thing.EightBitter.QuadsKeeper.getQuadrantHeight()));
-        if(num > 0) {
+        if (num > 0) {
             maxquads += ((num + 1) * maxquads / 2);
         }
         thing.maxquads = maxquads;
@@ -574,17 +574,17 @@ var GameStartr = (function (EightBittr) {
             context = thing.context = canvas.getContext("2d"),
             imageData = thing.imageData = context.getImageData(0, 0, spritewidthpixels, spriteheightpixels);
         
-        if(thing.opacity !== 1) {
+        if (thing.opacity !== 1) {
             thing.EightBitter.setOpacity(thing, thing.opacity);
         }
         
         // Attributes, such as Koopa.smart
-        if(thing.attributes) {
+        if (thing.attributes) {
             thingProcessAttributes(thing, thing.attributes, settings);
         }
         
         // Important custom functions
-        if(thing.onThingMake) {
+        if (thing.onThingMake) {
             thing.onThingMake(thing, settings);
         }
         
@@ -594,10 +594,10 @@ var GameStartr = (function (EightBittr) {
         
         // Sprite cycles
         var cycle;
-        if(cycle = thing.spriteCycle) {
+        if (cycle = thing.spriteCycle) {
             thing.EightBitter.TimeHandler.addClassCycle(thing, cycle[0], cycle[1] || null, cycle[2] || null);
         }
-        if(cycle = thing.spriteCycleSynched) {
+        if (cycle = thing.spriteCycleSynched) {
             thing.EightBitter.TimeHandler.addClassCycleSynched(thing, cycle[0], cycle[1] || null, cycle[2] || null);
         }
         
@@ -612,13 +612,13 @@ var GameStartr = (function (EightBittr) {
         var attribute, i;
 
         // For each listing in the attributes...
-        for(attribute in attributes) {
+        for (attribute in attributes) {
             // If the thing has that attribute as true:
-            if(thing[attribute]) {
+            if (thing[attribute]) {
                 // Add the extra options
                 proliferate(thing, attributes[attribute]);
                 // Also add a marking to the name, which will go into the className
-                if(thing.name) {
+                if (thing.name) {
                     thing.name += ' ' + attribute;
                 } else {
                     thing.name = thing.title + ' ' + attribute;
@@ -647,7 +647,7 @@ var GameStartr = (function (EightBittr) {
     function shiftVert(thing, dy, notChanged) {
         EightBittr.prototype.shiftVert(thing, dy);
         
-        if(!notChanged) {
+        if (!notChanged) {
             thing.EightBitter.markChanged(thing);
         }
     }
@@ -658,7 +658,7 @@ var GameStartr = (function (EightBittr) {
     function shiftHoriz(thing, dx, notChanged) {
         EightBittr.prototype.shiftHoriz(thing, dx);
         
-        if(!notChanged) {
+        if (!notChanged) {
             thing.EightBitter.markChanged(thing);
         }
     }
@@ -703,14 +703,14 @@ var GameStartr = (function (EightBittr) {
         dx = dx || 0;
         dy = dy || 0;
         
-        if(!thing.noshiftx) {
-            if(thing.parallax) {
+        if (!thing.noshiftx) {
+            if (thing.parallax) {
                 thing.EightBitter.shiftHoriz(thing, thing.parallax * dx, notChanged);
             } else {
                 thing.EightBitter.shiftHoriz(thing, dx, notChanged);
             }
         }
-        if(!thing.noshifty) {
+        if (!thing.noshifty) {
             thing.EightBitter.shiftVert(thing, dy, notChanged);
         }
     }
@@ -719,7 +719,7 @@ var GameStartr = (function (EightBittr) {
      * 
      */
     function shiftThings(things, dx, dy, notChanged) {
-        for(var i = things.length - 1; i >= 0; i -= 1) {
+        for (var i = things.length - 1; i >= 0; i -= 1) {
             things[i].EightBitter.shiftBoth(things[i], dx, dy, notChanged);
         }
     }
@@ -739,12 +739,12 @@ var GameStartr = (function (EightBittr) {
         thing.width = width;
         thing.unitwidth = width * thing.EightBitter.unitsize;
         
-        if(update_sprite) {
+        if (update_sprite) {
             thing.spritewidth = width;
             thing.spritewidthpixels = width * thing.EightBitter.unitsize;
         }
         
-        if(update_size) {
+        if (update_size) {
             thing.EightBitter.updateSize(thing);
         }
         
@@ -758,12 +758,12 @@ var GameStartr = (function (EightBittr) {
         thing.height = height;
         thing.unitheight = height * thing.EightBitter.unitsize;
         
-        if(update_sprite) {
+        if (update_sprite) {
             thing.spriteheight = height;
             thing.spriteheightpixels = height * thing.EightBitter.unitsize;
         }
         
-        if(update_size) {
+        if (update_size) {
             thing.EightBitter.updateSize(thing);
         }
         
@@ -782,11 +782,11 @@ var GameStartr = (function (EightBittr) {
      * 
      */
     function updatePosition(thing, hard) {
-        if(!thing.nomove || hard) {
+        if (!thing.nomove || hard) {
             thing.EightBitter.shiftHoriz(thing, thing.xvel);
         }
         
-        // if(!thing.nofall || hard) {
+        // if (!thing.nofall || hard) {
             thing.EightBitter.shiftVert(thing, thing.yvel);
         // }
     }
@@ -800,7 +800,7 @@ var GameStartr = (function (EightBittr) {
         thing.spritewidthpixels = thing.spritewidth * thing.EightBitter.unitsize;
         thing.spriteheightpixels = thing.spriteheight * thing.EightBitter.unitsize;
         
-        if(thing.canvas !== undefined) {
+        if (thing.canvas !== undefined) {
             thing.canvas.width = thing.spritewidthpixels;
             thing.canvas.height = thing.spriteheightpixels;
             thing.EightBitter.PixelDrawer.setThingSprite(thing);
@@ -816,7 +816,7 @@ var GameStartr = (function (EightBittr) {
         thing.top += dy;
         thing.height -= dy / thing.EightBitter.unitsize;
         
-        if(see) {
+        if (see) {
             thing.EightBitter.updateSize(thing);
         } else {
             thing.EightBitter.markChanged(thing);
@@ -847,7 +847,7 @@ var GameStartr = (function (EightBittr) {
         thing.nofall = thing.nocollide = true;
         thing.xvel = thing.yvel = false;
         
-        if(!keep_movement) {
+        if (!keep_movement) {
             thing.movement = false;
         }
     }
@@ -856,7 +856,7 @@ var GameStartr = (function (EightBittr) {
      * 
      */
     function thingRetrieveVelocity(thing, no_velocity) {
-        if(!no_velocity) {
+        if (!no_velocity) {
             thing.xvel = thing.xvel_old || 0;
             thing.yvel = thing.yvel_old || 0;
         }
@@ -918,14 +918,14 @@ var GameStartr = (function (EightBittr) {
      */
     function addClasses(thing) {
         var strings, arr, i, j;
-        for(i = 1; i < arguments.length; i += 1) {
+        for (i = 1; i < arguments.length; i += 1) {
             arr = arguments[i];
             
-            if(!(arr instanceof Array)) {
+            if (!(arr instanceof Array)) {
                 arr = arr.split(' ');
             }
             
-            for(j = arr.length - 1; j >= 0; j -= 1) {
+            for (j = arr.length - 1; j >= 0; j -= 1) {
                 thing.EightBitter.addClass(thing, arr[j]);
             }
         }
@@ -935,10 +935,10 @@ var GameStartr = (function (EightBittr) {
      * 
      */
     function removeClass(thing, string) {
-        if(!string) {
+        if (!string) {
             return;
         }
-        if(string.indexOf(" ") !== -1) {
+        if (string.indexOf(" ") !== -1) {
             thing.EightBitter.removeClasses(thing, string);
         }
         thing.className = thing.className.replace(new RegExp(" " + string, "gm"), "");
@@ -950,13 +950,13 @@ var GameStartr = (function (EightBittr) {
      */
     function removeClasses(thing) {
         var strings, arr, i, j;
-        for(i = 1; i < arguments.length; ++i) {
+        for (i = 1; i < arguments.length; ++i) {
             arr = arguments[i];
-            if(!(arr instanceof Array)) {
+            if (!(arr instanceof Array)) {
                 arr = arr.split(" ");
             }
             
-            for(j = arr.length - 1; j >= 0; --j) {
+            for (j = arr.length - 1; j >= 0; --j) {
                 thing.EightBitter.removeClass(thing, arr[j]);
             }
         }

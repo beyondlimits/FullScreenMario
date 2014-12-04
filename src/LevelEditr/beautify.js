@@ -56,7 +56,7 @@
     brace_style (default "collapse") - "collapse" | "expand" | "end-expand"
             put braces on the same line as control statements (default), or put braces on own line (Allman / ANSI style), or just put end braces on own line.
 
-    space_before_conditional (default true) - should the space before conditional statement be added, "if(true)" vs "if (true)",
+    space_before_conditional (default true) - should the space before conditional statement be added, "if (true)" vs "if (true)",
 
     unescape_strings (default false) - should printable characters in strings encoded in \xNN notation be unescaped, "example" vs "\x65\x78\x61\x6d\x70\x6c\x65"
 
@@ -219,7 +219,7 @@
                 else_block: false,
                 do_block: false,
                 do_while: false,
-                in_case_statement: false, // switch(..){ INSIDE HERE }
+                in_case_statement: false, // switch (..){ INSIDE HERE }
                 in_case: false, // we're on the exact line with "case 0:"
                 case_body: false, // the indented case-action block
                 indentation_level: next_indent_level,
@@ -272,7 +272,7 @@
         opt.wrap_line_length = (options.wrap_line_length === undefined) ? 0 : parseInt(options.wrap_line_length, 10);
         opt.e4x = (options.e4x === undefined) ? false : options.e4x;
 
-        if(options.indent_with_tabs){
+        if (options.indent_with_tabs){
             opt.indent_char = '\t';
             opt.indent_size = 1;
         }
@@ -635,7 +635,7 @@
 
                 // Issue #276:
                 // If starting a new statement with [if, for, while, do], push to a new line.
-                // if (a) if (b) if(c) d(); else e(); else f();
+                // if (a) if (b) if (c) d(); else e(); else f();
                 if (!start_of_object_property()) {
                     allow_wrap_or_preserved_newline(
                         token_type === 'TK_RESERVED' && in_array(token_text, ['do', 'for', 'if', 'while']));
@@ -1511,7 +1511,7 @@
         function handle_comma() {
             if (flags.declaration_statement) {
                 if (is_expression(flags.parent.mode)) {
-                    // do not break on comma, for(var a = 1, b = 2)
+                    // do not break on comma, for (var a = 1, b = 2)
                     flags.declaration_assignment = false;
                 }
 

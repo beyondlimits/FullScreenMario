@@ -110,11 +110,11 @@ function WorldSeedr(settings) {
     self.generate = function (name, position) {
         var schema = all_possibilities[name];
         
-        if(!schema) {
+        if (!schema) {
             throw new Error("No possibility exists under '" + name + "'");
         }
         
-        if(!schema.contents) {
+        if (!schema.contents) {
             throw new Error("The schema for '" + name + "' has no possibile outcomes");
         }
         
@@ -129,10 +129,10 @@ function WorldSeedr(settings) {
         var generated = self.generate(schema.title, schema),
             child, contents, i;
         
-        for(i in generated.children) {
+        for (i in generated.children) {
             child = generated.children[i];
                     
-            switch(child.type) {
+            switch (child.type) {
                 case "Known":
                     generated_commands.push(child);
                     break;
@@ -169,7 +169,7 @@ function WorldSeedr(settings) {
         
         direction = contents.direction || direction;
         
-        switch(contents.mode) {
+        switch (contents.mode) {
             case "Random":
                 children = generateContentChildrenRandom(contents, positionMerged, direction, spacing);
                 break;
@@ -207,13 +207,13 @@ function WorldSeedr(settings) {
         var child;
         
         return contents.children.map(function (choice) {
-            if(choice.type === "Final") {
+            if (choice.type === "Final") {
                 return parseChoiceFinal(contents, choice, position, direction);
             }
             
             child = parseChoice(choice, position, direction);
-            if(child) {
-                if(child.type !== "Known") {
+            if (child) {
+                if (child.type !== "Known") {
                     child.contents = self.generate(child.title, position);
                 }
                 shrinkPositionByChild(position, child, direction, spacing);
@@ -248,13 +248,13 @@ function WorldSeedr(settings) {
         while(positionIsNotEmpty(position, direction)) {
             choice = choices[i];
             
-            if(choice.type === "Final") {
+            if (choice.type === "Final") {
                 child = parseChoiceFinal(contents, choice, position, direction);
             } else {
                 
                 child = parseChoice(choice, position, direction);
-                if(child) {
-                    if(child.type !== "Known") {
+                if (child) {
+                    if (child.type !== "Known") {
                         child.contents = self.generate(child.title, position);
                     }
                     shrinkPositionByChild(position, child, direction, spacing);
@@ -264,7 +264,7 @@ function WorldSeedr(settings) {
             children.push(child);
             
             i += 1;
-            if(i >= choices.length) {
+            if (i >= choices.length) {
                 i = 0;
             }
         }
@@ -293,14 +293,14 @@ function WorldSeedr(settings) {
         
         while(positionIsNotEmpty(position, direction)) {
             child = generateChild(contents, position, direction);
-            if(!child) {
+            if (!child) {
                 break;
             }
             
             shrinkPositionByChild(position, child, direction, spacing);
             children.push(child);
             
-            if(contents.limit && children.length > contents.limit) {
+            if (contents.limit && children.length > contents.limit) {
                 return;
             }
         }
@@ -328,7 +328,7 @@ function WorldSeedr(settings) {
         return contents.children.map(function (choice) {
             var output = parseChoice(choice, positionCopy(position), direction);
             
-            if(direction) {
+            if (direction) {
                 movePositionByChild(position, direction, spacing);
             }
             
@@ -357,7 +357,7 @@ function WorldSeedr(settings) {
     function generateChild(contents, position, direction) {
         var choice = chooseAmongPosition(contents.children, position);
         
-        if(!choice) {
+        if (!choice) {
             return undefined;
         }
         
@@ -392,7 +392,7 @@ function WorldSeedr(settings) {
             },
             name, i;
         
-        for(i in sizingNames) {
+        for (i in sizingNames) {
             name = sizingNames[i];
             
             output[name] = (sizing && sizing[name])
@@ -400,14 +400,14 @@ function WorldSeedr(settings) {
                 : schema[name];
         }
         
-        for(i in directionNames) {
+        for (i in directionNames) {
             name = directionNames[i];
             output[name] = position[name];
         }
         output[direction] = output[directionOpposites[direction]]
             + output[directionSizing[direction]];
         
-        switch(schema.contents.snap) {
+        switch (schema.contents.snap) {
             case "top":
                 output["bottom"] = output["top"] - output["height"];
                 break;
@@ -422,12 +422,12 @@ function WorldSeedr(settings) {
                 break;
         }
         
-        if(stretch) {
-            if(stretch.width) {
+        if (stretch) {
+            if (stretch.width) {
                 output.left = position.left;
                 output.right = position.right;
                 output.width = output.right - output.left;
-                if(!output.arguments) {
+                if (!output.arguments) {
                     output.arguments = {
                         "width": output.width
                     };
@@ -435,11 +435,11 @@ function WorldSeedr(settings) {
                     output.arguments.width = output.width;
                 }
             }
-            if(stretch.height) {
+            if (stretch.height) {
                 output.top = position.top;
                 output.bottom = position.bottom;
                 output.height = output.top - output.bottom;
-                if(!output.arguments) {
+                if (!output.arguments) {
                     output.arguments = {
                         "height": output.height
                     };
@@ -487,10 +487,10 @@ function WorldSeedr(settings) {
      * @return {Boolean}
      */
     function chooseAmong(choices) {
-        if(!choices.length) {
+        if (!choices.length) {
             return undefined;
         }
-        if(choices.length === 1) {
+        if (choices.length === 1) {
             return choices[0];
         }
         
@@ -498,9 +498,9 @@ function WorldSeedr(settings) {
             sum = 0,
             i;
         
-        for(i = 0; i < choices.length; i += 1) {
+        for (i = 0; i < choices.length; i += 1) {
             sum += choices[i].percent;
-            if(sum >= choice) {
+            if (sum >= choice) {
                 return choices[i];
             }
         }
@@ -594,8 +594,8 @@ function WorldSeedr(settings) {
         var output = {},
             i;
         
-        for(i in position) {
-            if(position.hasOwnProperty(i)) {
+        for (i in position) {
+            if (position.hasOwnProperty(i)) {
                 output[i] = position[i];
             }
         }
@@ -615,8 +615,8 @@ function WorldSeedr(settings) {
         var output = positionCopy(primary),
             i;
         
-        for(i in secondary) {
-            if(!output.hasOwnProperty(i)) {
+        for (i in secondary) {
+            if (!output.hasOwnProperty(i)) {
                 output[i] = secondary[i];
             }
         }
@@ -634,7 +634,7 @@ function WorldSeedr(settings) {
      *                             "top", "right", "bottom", or "left".
      */
     function positionIsNotEmpty(position, direction) {
-        if(direction === "right" || direction === "left") {
+        if (direction === "right" || direction === "left") {
             return position.left < position.right;
         } else {
             return position.top > position.bottom;
@@ -654,7 +654,7 @@ function WorldSeedr(settings) {
      *                            child (defaults to 0).
      */
     function shrinkPositionByChild(position, child, direction, spacing) {
-        switch(direction) {
+        switch (direction) {
             case "top":
                 position.bottom = child.top + parseSpacing(spacing);
                 return;
@@ -676,7 +676,7 @@ function WorldSeedr(settings) {
     function movePositionByChild(position, direction, spacing) {
         var space = parseSpacing(spacing);
         
-        switch(direction) {
+        switch (direction) {
             case "top":
                 position.top += space;
                 position.bottom += space;
@@ -700,13 +700,13 @@ function WorldSeedr(settings) {
      * 
      */
     function parseSpacing(spacing) {
-        if(!spacing) {
+        if (!spacing) {
             return 0;
         }
         
-        switch(spacing.constructor) {
+        switch (spacing.constructor) {
             case Array:
-                if(spacing[0].constructor === Number) {
+                if (spacing[0].constructor === Number) {
                     return parseSpacingObject(
                         randomBetween(spacing[0], spacing[1])
                     );
@@ -745,7 +745,7 @@ function WorldSeedr(settings) {
     function getPositionExtremes(children) {
         var position, child, i;
         
-        if(!children || !children.length) {
+        if (!children || !children.length) {
             return {};
         }
         
@@ -758,14 +758,14 @@ function WorldSeedr(settings) {
             "children": children
         };
         
-        if(children.length === 1) {
+        if (children.length === 1) {
             return position;
         }
         
-        for(i = 1; i < children.length; i += 1) {
+        for (i = 1; i < children.length; i += 1) {
             child = children[i];
             
-            if(!Object.keys(child).length) {
+            if (!Object.keys(child).length) {
                 return position;
             }
             
@@ -785,15 +785,15 @@ function WorldSeedr(settings) {
         var map = schema.contents.argumentMap,
             i;
         
-        if(!map) {
+        if (!map) {
             return;
         }
         
-        if(!output.arguments) {
+        if (!output.arguments) {
             output.arguments = {};
         }
         
-        for(i in map) {
+        for (i in map) {
             output.arguments[map[i]] = choice[i];
         }
     }

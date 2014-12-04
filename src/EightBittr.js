@@ -21,21 +21,21 @@ var EightBittr = (function () {
         
         // Constants, such as unitsize and scale, are always copied first
         constants = settings.constants;
-        if(constants) {
-            for(i = 0; i < constants.length; i += 1) {
+        if (constants) {
+            for (i = 0; i < constants.length; i += 1) {
                 // self[constants[i]] = self.constructor[constants[i]];
                 self[constants[i]] = self.constructor[constants[i]];
             }
         }
         
-        if(settings.requirements) {
-            if(settings.requirements.global) {
+        if (settings.requirements) {
+            if (settings.requirements.global) {
                 checkRequirements(window, settings.requirements.global, "global");
             }
-            if(settings.requirements.self) {
+            if (settings.requirements.self) {
                 checkRequirements(self, settings.requirements.self, "self");
             }
-            if(settings.requirements.settings) {
+            if (settings.requirements.settings) {
                 checkRequirements(self.settings, settings.requirements.settings, "settings");
             }
         }
@@ -61,15 +61,15 @@ var EightBittr = (function () {
         
         // For each requirement in the given object, if it isn't visible as a
         // member of self (evaluates to falsy), complain
-        for(requirement in requirements) {
-            if(requirements.hasOwnProperty(requirement) && !self[requirement]) {
+        for (requirement in requirements) {
+            if (requirements.hasOwnProperty(requirement) && !self[requirement]) {
                 fails.push(requirement);
             }
         }
         
         // If there was at least one failure added to the fails array, throw
         // an error with each fail split by endlines
-        if(fails.length) {
+        if (fails.length) {
             throw new Error("Missing " + fails.length + " requirement(s) "
                 + "in " + name + ".\n"
                 + fails.map(function (requirement, i) {
@@ -87,7 +87,7 @@ var EightBittr = (function () {
     function reset(self, resets, customs) {
         var i;
         
-        for(i = 0; i < resets.length; i += 1) {
+        for (i = 0; i < resets.length; i += 1) {
             self[resets[i]](self, customs)
         }
     }
@@ -100,7 +100,7 @@ var EightBittr = (function () {
             times = new Array(resets.length + 1),
             timeEach, i;
         
-        for(i = 0; i < resets.length; i += 1) {
+        for (i = 0; i < resets.length; i += 1) {
             timeEach = performance.now();
             self[resets[i]](self, customs);
             
@@ -138,11 +138,11 @@ var EightBittr = (function () {
         var func;
         
         // If name is a string, turn it into a function path, and follow it
-        if(name instanceof String || typeof(name) == "string") {
+        if (name instanceof String || typeof(name) == "string") {
             func = followPathHard(this, name.split('.'), 0);
         }
         // If it's already a path (array), follow it
-        else if(name instanceof Array) {
+        else if (name instanceof Array) {
             func = followPathHard(this, name, 0);
         }
         // Otherwise func is just name
@@ -151,7 +151,7 @@ var EightBittr = (function () {
         }
         
         // Don't allow func to be undefined or some non-function object
-        if(typeof(func) !== "function") {
+        if (typeof(func) !== "function") {
             throw new Error(name + " is not defined in this EightBitter", self);
         }
         
@@ -368,7 +368,7 @@ var EightBittr = (function () {
         maxspeed = maxspeed || Infinity;
         
         // 
-        if(midx < x) {
+        if (midx < x) {
             thing.EightBitter.shiftHoriz(thing, Math.min(maxspeed, (x - midx)));
         }
         // 
@@ -387,7 +387,7 @@ var EightBittr = (function () {
         maxspeed = maxspeed || Infinity;
         
         //
-        if(midy < y) {
+        if (midy < y) {
             thing.EightBitter.shiftVert(thing, Math.min(maxspeed, (y - midy)));
         }
         //
@@ -409,7 +409,7 @@ var EightBittr = (function () {
      * @param {any} current   
      */
     function ensureCorrectCaller(current) {
-        if(!current instanceof EightBittr) {
+        if (!current instanceof EightBittr) {
             throw new Error("A function requires the caller ('this') to be the "
                 + "manipulated EightBittr object. Unfortunately, 'this' is a "
                 + typeof(this) + ".");
@@ -428,16 +428,16 @@ var EightBittr = (function () {
         var setting, i;
       
         // For each attribute of the donor:
-        for(i in donor) {
-            if(donor.hasOwnProperty(i)) {
+        for (i in donor) {
+            if (donor.hasOwnProperty(i)) {
                 // If no_override, don't override already existing properties
-                if(no_override && recipient.hasOwnProperty(i)) {
+                if (no_override && recipient.hasOwnProperty(i)) {
                     continue;
                 }
 
                 // If it's an object, recurse on a new version of it
-                if(typeof(setting = donor[i]) === "object") {
-                    if(!recipient.hasOwnProperty(i)) {
+                if (typeof(setting = donor[i]) === "object") {
+                    if (!recipient.hasOwnProperty(i)) {
                         recipient[i] = new setting.constructor();
                     }
                     proliferate(recipient[i], setting, no_override);
@@ -462,16 +462,16 @@ var EightBittr = (function () {
         var setting, i;
       
         // For each attribute of the donor:
-        for(i in donor) {
-            if(donor.hasOwnProperty(i)) {
+        for (i in donor) {
+            if (donor.hasOwnProperty(i)) {
                 // If no_override, don't override already existing properties
-                if(no_override && recipient[i]) {
+                if (no_override && recipient[i]) {
                     continue;
                 }
 
                 // If it's an object, recurse on a new version of it
-                if(typeof(setting = donor[i]) === "object") {
-                    if(!recipient[i]) {
+                if (typeof(setting = donor[i]) === "object") {
+                    if (!recipient[i]) {
                         recipient[i] = new setting.constructor();
                     }
                     proliferate(recipient[i], setting, no_override);
@@ -499,21 +499,21 @@ var EightBittr = (function () {
         var setting, i, j;
       
         // For each attribute of the donor:
-        for(i in donor) {
-            if(donor.hasOwnProperty(i)) {
+        for (i in donor) {
+            if (donor.hasOwnProperty(i)) {
                 // If no_override, don't override already existing properties
-                if(no_override && recipient.hasOwnProperty(i)) {
+                if (no_override && recipient.hasOwnProperty(i)) {
                     continue;
                 }
                 
                 setting = donor[i];
                 
                 // Special cases for HTML elements
-                switch(i) {
+                switch (i) {
                     // Children: just append all of them directly
                     case "children":
-                        if(typeof(setting) !== "undefined") {
-                            for(var j = 0; j < setting.length; j += 1) {
+                        if (typeof(setting) !== "undefined") {
+                            for (var j = 0; j < setting.length; j += 1) {
                                 recipient.appendChild(setting[j]);
                             }
                         }
@@ -522,8 +522,8 @@ var EightBittr = (function () {
                     // By default, use the normal proliferate logic
                     default:
                         // If it's an object, recurse on a new version of it
-                        if(typeof(setting) === "object") {
-                            if(!recipient.hasOwnProperty(i)) {
+                        if (typeof(setting) === "object") {
+                            if (!recipient.hasOwnProperty(i)) {
                                 recipient[i] = new setting.constructor();
                             }
                             proliferate(recipient[i], setting, no_override);
@@ -547,7 +547,7 @@ var EightBittr = (function () {
             i;// = arguments.length;
         
         // For each provided object, add those settings to the element
-        for(i = 1; i < arguments.length; i += 1) {
+        for (i = 1; i < arguments.length; i += 1) {
             proliferateElement(element, arguments[i]);
         }
         
@@ -562,8 +562,8 @@ var EightBittr = (function () {
      *          inheritance, since hasOwnProperty only is for the current class
      */
     function followPathHard(obj, path, num) {
-        for(var num = num || 0, len = path.length; num < len; ++num) {
-            if(!obj[path[num]]) {
+        for (var num = num || 0, len = path.length; num < len; ++num) {
+            if (!obj[path[num]]) {
                 return undefined;
             }
             else {
@@ -607,16 +607,16 @@ var EightBittr = (function () {
      * 
      */
     function arrayDeleteMember(thing, array, location) {
-        if(typeof location === "undefined") {
+        if (typeof location === "undefined") {
             location = array.indexOf(thing);
-            if(location === -1) {
+            if (location === -1) {
                 return;
             }
         }
         
         array.splice(location, 1);
         
-        if(typeof(thing.onDelete) === "function") {
+        if (typeof(thing.onDelete) === "function") {
             thing.onDelete(thing);
         }
     }

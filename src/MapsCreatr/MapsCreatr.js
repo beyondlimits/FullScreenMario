@@ -3,7 +3,7 @@
  */
 function MapsCreatr(settings) {
     "use strict";
-    if(!this || this === window) {
+    if (!this || this === window) {
         return new MapsCreatr(settings);
     }
     var self = this,
@@ -45,13 +45,13 @@ function MapsCreatr(settings) {
      */
     self.reset = function reset(settings) {
         // Maps and Things are created using an ObjectMaker factory
-        if(!settings.ObjectMaker) {
+        if (!settings.ObjectMaker) {
             throw new Error("No ObjectMaker provided to MapsManger.");
         }
         ObjectMaker = settings.ObjectMaker;
         
         // At least one group type name should be defined for PreThing output
-        if(!settings.group_types) {
+        if (!settings.group_types) {
             throw new Error("No group type names provided to MapsCreatr.");
         }
         group_types = settings.group_types;
@@ -65,7 +65,7 @@ function MapsCreatr(settings) {
         scope = settings.scope || self;
         
         maps = {};
-        if(settings.maps) {
+        if (settings.maps) {
             self.storeMaps(settings.maps);
         }
     };
@@ -94,11 +94,11 @@ function MapsCreatr(settings) {
      */
     self.getMap = function getMap(name) {
         var map = maps[name];
-        if(!map) {
+        if (!map) {
             throw new Error("No map found under: " + name);
         }
         
-        if(!map.initialized) {
+        if (!map.initialized) {
             // Set the one-to-many Map->Area relationships within the Map
             setMapAreas(map);
             
@@ -121,8 +121,8 @@ function MapsCreatr(settings) {
      * @return {Object}   The newly created maps object.
      */
     self.storeMaps = function(maps) {
-        for(var i in maps) {
-            if(maps.hasOwnProperty(i)) {
+        for (var i in maps) {
+            if (maps.hasOwnProperty(i)) {
                 self.storeMap(i, maps[i]);
             }
         }
@@ -142,15 +142,15 @@ function MapsCreatr(settings) {
     self.storeMap = function(name, settings) {
         var map = ObjectMaker.make("Map", settings);
         
-        if(!name) {
+        if (!name) {
             throw new Error("Maps cannot be created with no name.");
         }
         
-        if(!map.areas) {
+        if (!map.areas) {
             throw new Error("Maps cannot be used with no areas: " + name);
         }
         
-        if(!map.locations) {
+        if (!map.locations) {
             throw new Error("Maps cannot be used with no locations: " + name);
         }
         
@@ -177,8 +177,8 @@ function MapsCreatr(settings) {
             obj, i;
         
         // Parse all the Area objects (works for both Arrays and Objects)
-        for(i in areas_raw) {
-            if(areas_raw.hasOwnProperty(i)) {
+        for (i in areas_raw) {
+            if (areas_raw.hasOwnProperty(i)) {
                 obj = areas_parsed[i] = ObjectMaker.make("Area", areas_raw[i]);
                 obj.map = map;
                 obj.name = i;
@@ -186,12 +186,12 @@ function MapsCreatr(settings) {
         }
         
         // Parse all the Location objects (works for both Arrays and Objects)
-        for(i in locations_raw) {
-            if(locations_raw.hasOwnProperty(i)) {
+        for (i in locations_raw) {
+            if (locations_raw.hasOwnProperty(i)) {
                 obj = locations_parsed[i] = ObjectMaker.make("Location", locations_raw[i]);
                 
                 // Location entrances should actually be the keyed functions
-                if(!entrances.hasOwnProperty(obj.entry)) {
+                if (!entrances.hasOwnProperty(obj.entry)) {
                     throw new Error("Location " + i + " has unknown entry string: " + obj.entry);
                 }
                 obj.entry_raw = obj.entry;
@@ -224,13 +224,13 @@ function MapsCreatr(settings) {
             location, i;
             
         // Parse all the keys in locas_raw (works for both Arrays and Objects)
-        for(i in locs_raw) {
-            if(locs_raw.hasOwnProperty(i)) {
+        for (i in locs_raw) {
+            if (locs_raw.hasOwnProperty(i)) {
                 locs_parsed[i] = ObjectMaker.make("Location", locs_raw[i]);
                 
                 // The area should be an object reference, under the Map's areas
                 locs_parsed[i].area = map.areas[locs_parsed[i].area || 0];
-                if(!locs_parsed[i].area) {
+                if (!locs_parsed[i].area) {
                     throw new Error("Location " + i
                             + " references an invalid area: "
                             + locs_raw[i].area);
@@ -282,7 +282,7 @@ function MapsCreatr(settings) {
         
         area.collections = {};
         
-        for(i = 0, len = creation.length; i < len; i += 1) {
+        for (i = 0, len = creation.length; i < len; i += 1) {
             self.analyzePreSwitch(creation[i], prethings, area, map);
         }
         
@@ -305,11 +305,11 @@ function MapsCreatr(settings) {
      */
     self.analyzePreSwitch = function (reference, prethings, area, map) {
         // Case: location setter
-        if(reference.hasOwnProperty("location")) {
+        if (reference.hasOwnProperty("location")) {
             analyzePreLocation(reference, prethings, area, map);
         }
         // Case: macro (unless it's undefined)
-        else if(reference.macro) {
+        else if (reference.macro) {
             self.analyzePreMacro(reference, prethings, area, map);
         }
         // Case: default (a regular PreThing)
@@ -331,7 +331,7 @@ function MapsCreatr(settings) {
     function analyzePreLocation(reference, prethings, area, map) {
         var location = reference.location;
         
-        if(!map.locations.hasOwnProperty(location)) {
+        if (!map.locations.hasOwnProperty(location)) {
             console.warn("A non-existent location is referenced. It will be "
                     + "ignored: " + location, reference, prethings, area, map);
             return;
@@ -356,7 +356,7 @@ function MapsCreatr(settings) {
         var macro = macros[reference.macro],
             outputs, len, i;
         
-        if(!macro) {
+        if (!macro) {
             console.warn("A non-existent macro is referenced. It will be "
                     + "ignored: " + macro, reference, prethings, area, map);
             return;
@@ -365,16 +365,16 @@ function MapsCreatr(settings) {
         // Avoid modifying the original macro by creating a new object in its
         // place, while submissively proliferating any default macro settings
         outputs = macro(reference, prethings, area, map, scope);
-        for(i in macro_defaults) {
-            if(macro_defaults.hasOwnProperty(i) && !outputs.hasOwnProperty(i)) {
+        for (i in macro_defaults) {
+            if (macro_defaults.hasOwnProperty(i) && !outputs.hasOwnProperty(i)) {
                 outputs[i] = macro_defaults[i];
             }
         }
         
         // If there is any output, recurse on all components of it, Array or not
-        if(outputs) {
-            if(outputs instanceof Array) {
-                for(i = 0, len = outputs.length; i < len; i += 1) {
+        if (outputs) {
+            if (outputs instanceof Array) {
+                for (i = 0, len = outputs.length; i < len; i += 1) {
                     self.analyzePreSwitch(outputs[i], prethings, area, map);
                 }
             } else {
@@ -400,7 +400,7 @@ function MapsCreatr(settings) {
         var thing = reference.thing,
             prething;
         
-        if(!ObjectMaker.hasFunction(thing)) {
+        if (!ObjectMaker.hasFunction(thing)) {
             console.warn("A non-existent Thing type is referenced. It will be "
                     + "ignored: " + thing, reference, prethings, area, map);
             return; 
@@ -409,14 +409,14 @@ function MapsCreatr(settings) {
         prething = new PreThing(ObjectMaker.make(thing, reference), reference);
         thing = prething.thing;
         
-        if(!prething.thing[key_group_type]) {
+        if (!prething.thing[key_group_type]) {
             console.warn("A Thing does not contain a " + key_group_type + ". "
                     + "It will be ignored: ",
                     prething, "\n", arguments);
             return;
         }
         
-        if(group_types.indexOf(prething.thing[key_group_type]) === -1) {
+        if (group_types.indexOf(prething.thing[key_group_type]) === -1) {
             console.warn("A Thing contains an unknown " + key_group_type
                     + ". It will be ignored: " + thing[key_group_type],
                     prething, reference, prethings, area, map);
@@ -428,12 +428,12 @@ function MapsCreatr(settings) {
         // If a Thing is an entrance, then the location it is an entrance to 
         // must it and its position. Note that this will have to be changed
         // for Pokemon/Zelda style games.
-        if(thing[key_entrance] !== undefined && typeof thing[key_entrance] != "object") {
+        if (thing[key_entrance] !== undefined && typeof thing[key_entrance] != "object") {
             map.locations[thing[key_entrance]].xloc = prething.left;
             map.locations[thing[key_entrance]].entrance = prething.thing;
         }
         
-        if(reference.collectionName) {
+        if (reference.collectionName) {
             ensureThingCollection(prething, reference.collectionName, reference.collectionKey, area);
         }
         
@@ -455,7 +455,7 @@ function MapsCreatr(settings) {
         this.right = this.left + ObjectMaker.getPropertiesFull(this.title).width;
         this.bottom = this.top + ObjectMaker.getPropertiesFull(this.title).height;
         
-        if(reference.position) {
+        if (reference.position) {
             this.position = reference.position;
         }
     }
@@ -470,7 +470,7 @@ function MapsCreatr(settings) {
         var thing = prething.thing,
             collection = area.collections[collectionName];
         
-        if(!collection) {
+        if (!collection) {
             collection = area.collections[collectionName] = {};
         }
         
@@ -491,8 +491,8 @@ function MapsCreatr(settings) {
         var output = {},
             children, i;
         
-        for(i in prethings) {
-            if(prethings.hasOwnProperty(i)) {
+        for (i in prethings) {
+            if (prethings.hasOwnProperty(i)) {
                 children = prethings[i];
                 output[i] = {
                     "xInc": getArraySorted(children, sortPreThingsXInc),
@@ -531,7 +531,7 @@ function MapsCreatr(settings) {
     function fromKeys(arr) {
         var output = {},
             i;
-        for(i = arr.length - 1; i >= 0; i -= 1) {
+        for (i = arr.length - 1; i >= 0; i -= 1) {
             output[arr[i]] = [];
         }
         return output;
@@ -552,8 +552,8 @@ function MapsCreatr(settings) {
      * @remarks This should eventually be O(logN), instead of O(N).
      */
     function addArraySorted(arr, object, sorter) {
-        for(var i = 0; i < arr.length; i += 1) {
-            if(sorter(object, arr[i]) < 0) {
+        for (var i = 0; i < arr.length; i += 1) {
+            if (sorter(object, arr[i]) < 0) {
                 arr.splice(i, 0, object);
                 return;
             }

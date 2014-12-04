@@ -142,7 +142,7 @@ function LevelEditr(settings) {
         display.minimizer.innerText = "-";
         display.minimizer.onclick = self.minimize;
         
-        if(display.container.className.indexOf("minimized") !== -1) {
+        if (display.container.className.indexOf("minimized") !== -1) {
             display.container.className = display.container.className.replace(/ minimized/g, '');
         }
     };
@@ -192,19 +192,19 @@ function LevelEditr(settings) {
     self.handleUploadStart = function (event) {
         var file, reader;
         
-        if(event) {
+        if (event) {
             event.preventDefault();
             event.stopPropagation();
         }
 
-        if(event && event.dataTransfer) {
+        if (event && event.dataTransfer) {
             file = event.dataTransfer.files[0];
         } else {
             file = display.sections.inputDummy.files[0],
             reader = new FileReader();
         }
         
-        if(!file) {
+        if (!file) {
             return;
         }
         
@@ -285,7 +285,7 @@ function LevelEditr(settings) {
     function setCurrentMacroThings() {
         var current_thing, i;
         
-        for(i = 0; i < current_things.length; i += 1) {
+        for (i = 0; i < current_things.length; i += 1) {
             current_thing = current_things[i];
             current_thing.outerok = true;
             
@@ -302,7 +302,7 @@ function LevelEditr(settings) {
      * 
      */
     function setCurrentArgs() {
-        if(current_click_mode === "Thing") {
+        if (current_click_mode === "Thing") {
             setCurrentThing(current_type, getCurrentArgs());
         } else {
             onMacroIconClick(current_type, false, getCurrentArgs());
@@ -321,11 +321,11 @@ function LevelEditr(settings) {
         target.setAttribute("scrolling", 1);
         
         GameStarter.TimeHandler.addEventInterval(function () {
-            if(target.getAttribute("scrolling") != 1) {
+            if (target.getAttribute("scrolling") != 1) {
                 return true;
             }
             
-            if(direction < 0 && GameStarter.MapScreener.left <= 0) {
+            if (direction < 0 && GameStarter.MapScreener.left <= 0) {
                 display["scrollers"]["left"].style.opacity = 0;
                 return;
             }
@@ -351,10 +351,10 @@ function LevelEditr(settings) {
             y = event.y || event.clientY || 0,
             current_thing, i;
         
-        for(i = 0; i < current_things.length; i += 1) {
+        for (i = 0; i < current_things.length; i += 1) {
             current_thing = current_things[i];
             
-            if(!current_thing["thing"]) {
+            if (!current_thing["thing"]) {
                 continue;
             }
             
@@ -375,7 +375,7 @@ function LevelEditr(settings) {
      * 
      */
     function onClickEditingThing(event) {
-        if(current_mode !== "Build") {
+        if (current_mode !== "Build") {
             return;
         }
         
@@ -383,7 +383,7 @@ function LevelEditr(settings) {
             y = roundTo(event.y || event.clientY || 0, blocksize),
             thing;
         
-        if(!current_things.length || !addMapCreationThing(x, y)) {
+        if (!current_things.length || !addMapCreationThing(x, y)) {
             return;
         }
         
@@ -394,7 +394,7 @@ function LevelEditr(settings) {
      * 
      */
     function onClickEditingMacro(event) {
-        if(current_mode !== "Build") {
+        if (current_mode !== "Build") {
             return;
         }
         
@@ -402,11 +402,11 @@ function LevelEditr(settings) {
             y = roundTo(event.y || event.clientY || 0, blocksize),
             current_thing, i;
         
-        if(!current_things.length || !addMapCreationMacro(x, y)) {
+        if (!current_things.length || !addMapCreationMacro(x, y)) {
             return;
         }
         
-        for(i = 0; i < current_things.length; i += 1) {
+        for (i = 0; i < current_things.length; i += 1) {
             current_thing = current_things[i];
             onClickEditingGenericAdd(
                 x + (current_thing["xloc"] || 0) * GameStarter.unitsize,
@@ -426,7 +426,7 @@ function LevelEditr(settings) {
             "onThingMake": undefined
         }, getNormalizedThingArguments(args)));
         
-        if(current_mode === "Build") {
+        if (current_mode === "Build") {
             disableThing(thing, .7);
         }
         
@@ -460,13 +460,13 @@ function LevelEditr(settings) {
      * 
      */
     function onMacroIconClick(title, description, options) {
-        if(description) {
+        if (description) {
             setVisualOptions(title, description, options);
         }
         
         var map = getMapObject();
         
-        if(!map) {
+        if (!map) {
             return;
         }
         
@@ -506,15 +506,15 @@ function LevelEditr(settings) {
             children = container.getElementsByClassName("VisualOptionsList"),
             child, labeler, valuer, i;
             
-        if(children.length != 0) {
+        if (children.length != 0) {
             children = children[0].children;
             
-            for(i = 0; i < children.length; i += 1) {
+            for (i = 0; i < children.length; i += 1) {
                 child = children[i];
                 labeler = child.getElementsByClassName("VisualOptionLabel")[0];
                 valuer = child.getElementsByClassName("VisualOptionValue")[0];
                 
-                switch(valuer["data:type"]) {
+                switch (valuer["data:type"]) {
                     case "Boolean":
                         args[labeler.textContent] = valuer.value === "true" ? true : false;
                         break;
@@ -542,7 +542,7 @@ function LevelEditr(settings) {
         var name = getMapName(),
             map = getMapObject();
         
-        if(map && map.name != name) {
+        if (map && map.name != name) {
             map.name = name;
             display["namer"].value = name;
             setTextareaValue(stringifySmart(map), true);
@@ -561,11 +561,11 @@ function LevelEditr(settings) {
         var map = getMapObject(),
             time;
         
-        if(!map) {
+        if (!map) {
             return;
         }
         
-        if(fromGui) {
+        if (fromGui) {
             time = display["sections"]["MapSettings"]["Time"].value;
             map.time = time;
         } else {
@@ -589,17 +589,17 @@ function LevelEditr(settings) {
         var map = getMapObject(),
             area, setting;
         
-        if(!map) {
+        if (!map) {
             return;
         }
         
         area = getCurrentAreaObject(map);
-        if(fromGui) {
+        if (fromGui) {
             setting = display["sections"]["MapSettings"]["Setting"]["Primary"].value;
-            if(display["sections"]["MapSettings"]["Setting"]["Secondary"].value) {
+            if (display["sections"]["MapSettings"]["Setting"]["Secondary"].value) {
                 setting += " " + display["sections"]["MapSettings"]["Setting"]["Secondary"].value;
             }
-            if(display["sections"]["MapSettings"]["Setting"]["Tertiary"].value) {
+            if (display["sections"]["MapSettings"]["Setting"]["Tertiary"].value) {
                 setting += " " + display["sections"]["MapSettings"]["Setting"]["Tertiary"].value;
             }
             area.setting = setting;
@@ -620,7 +620,7 @@ function LevelEditr(settings) {
     function setLocationArea() {
         var map = getMapObject();
         
-        if(!map) {
+        if (!map) {
             return;
         }
         
@@ -642,7 +642,7 @@ function LevelEditr(settings) {
     function setMapLocation(fromGui) {
         var map = getMapObject();
         
-        if(!map) {
+        if (!map) {
             return;
         }
         
@@ -661,12 +661,12 @@ function LevelEditr(settings) {
         var map = getMapObject(),
             location, entry;
         
-        if(!map) {
+        if (!map) {
             return;
         }
         
         location = getCurrentLocationObject(map);
-        if(fromGui) {
+        if (fromGui) {
             entry = display["sections"]["MapSettings"]["Entry"].value;
             location.entry = entry;
         } else {
@@ -689,12 +689,12 @@ function LevelEditr(settings) {
         var map = getMapObject(),
             location;
         
-        if(!map) {
+        if (!map) {
             return;
         }
         
         location = getCurrentLocationObject(map);
-        if(fromGui) {
+        if (fromGui) {
             display["sections"]["MapSettings"]["Area"].value = location.area || 0;
         } else {
             
@@ -711,7 +711,7 @@ function LevelEditr(settings) {
         var name = display["sections"]["MapSettings"]["Location"].options.length,
             map = getMapObject();
         
-        if(!map) {
+        if (!map) {
             console.log("No map");
             return;
         }
@@ -730,7 +730,7 @@ function LevelEditr(settings) {
         var name = display["sections"]["MapSettings"]["Area"].options.length,
             map = getMapObject();
         
-        if(!map) {
+        if (!map) {
             return;
         }
         
@@ -755,11 +755,11 @@ function LevelEditr(settings) {
             },
             elements, element, value, i;
         
-        if(!map) {
+        if (!map) {
             return;
         }
         
-        for(i = 0; i < elements.length; i += 1) {
+        for (i = 0; i < elements.length; i += 1) {
             element = elements[i];
             value = element.value;
             
@@ -787,7 +787,7 @@ function LevelEditr(settings) {
         var mapName = getMapName() + "::Temporary",
             mapRaw = getMapObject();
         
-        if(!mapRaw) {
+        if (!mapRaw) {
             return false;
         }
         
@@ -806,7 +806,7 @@ function LevelEditr(settings) {
     }
     
     function getCurrentAreaObject(map) {
-        if(typeof(map) === "undefined") {
+        if (typeof(map) === "undefined") {
             map = getMapObject();
         }
         
@@ -831,7 +831,7 @@ function LevelEditr(settings) {
                 "y": getNormalizedY(y)
             }, current_args);
         
-        if(!mapObject) {
+        if (!mapObject) {
             return false;
         }
         
@@ -850,7 +850,7 @@ function LevelEditr(settings) {
                 "y": getNormalizedY(y)
             }, getCurrentArgs());
         
-        if(!mapObject) {
+        if (!mapObject) {
             return false;
         }
         
@@ -866,7 +866,7 @@ function LevelEditr(settings) {
     */
     
     function resetDisplay() {
-        if(display) {
+        if (display) {
             GameStarter.container.removeChild(display.container);
         }
         
@@ -1374,7 +1374,7 @@ function LevelEditr(settings) {
      * 
      */
     function setTextareaValue(value, doBeautify) {
-        if(doBeautify) {
+        if (doBeautify) {
             display.stringer.textarea.value = beautifier(value);
         } else {
             display.stringer.textarea.value = value;
@@ -1401,14 +1401,14 @@ function LevelEditr(settings) {
             "textContent": name
         }));
         
-        if(description) {
+        if (description) {
             visual.appendChild(GameStarter.createElement("div", {
                 "className": "VisualOptionDescription",
                 "textContent": description
             }));
         }
         
-        if(options) {
+        if (options) {
             visual.appendChild(GameStarter.createElement("div", {
                 "className": "VisualOptionsList",
                 "children": Object.keys(options).map(function (key) {
@@ -1433,7 +1433,7 @@ function LevelEditr(settings) {
      * 
      */
     function createVisualOption(option) {
-        switch(option.constructor) {
+        switch (option.constructor) {
             case Number:
                 option = {
                     "type": "Number",
@@ -1455,7 +1455,7 @@ function LevelEditr(settings) {
                 break;
         }
         
-        switch(option.type) {
+        switch (option.type) {
             case "Boolean":
                 return createSelect([
                     "false", "true"
@@ -1482,12 +1482,12 @@ function LevelEditr(settings) {
                         
                         input.setAttribute("data:mod", modReal);
                         
-                        if(option["Infinite"]) {
+                        if (option["Infinite"]) {
                             var valueOld,
                                 infinite = createSelect(["Number", "Infinite"], {
                                     "className": "VisualOptionInfiniter",
                                     "onchange": function () {
-                                        if(infinite.value === "Number") {
+                                        if (infinite.value === "Number") {
                                             input.type = "Number";
                                             input.disabled = false;
                                             
@@ -1504,7 +1504,7 @@ function LevelEditr(settings) {
                                     }
                                 });
                             
-                            if(option["value"] === Infinity) {
+                            if (option["value"] === Infinity) {
                                 infinite.value = "Infinite";
                                 infinite.onchange();
                             }
@@ -1512,7 +1512,7 @@ function LevelEditr(settings) {
                             children.push(infinite);
                         }
                         
-                        if(modReal > 1) {
+                        if (modReal > 1) {
                             children.push(GameStarter.createElement("div", {
                                 "className": "VisualOptionRecommendation",
                                 "textContent": "x" + option["mod"]
@@ -1533,7 +1533,7 @@ function LevelEditr(settings) {
             case "Location":
                 var map = getMapObject();
                 
-                if(!map) {
+                if (!map) {
                     return GameStarter.createElement("div", {
                         "className": "VisualOptionValue VisualOptionLocation EditorComplaint",
                         "text": "Fix map compilation to get locations!"
@@ -1548,7 +1548,7 @@ function LevelEditr(settings) {
             case "Area":
                 var map = getMapObject();
                 
-                if(!map) {
+                if (!map) {
                     return GameStarter.createElement("div", {
                         "className": "VisualOptionValue VisualOptionArea EditorComplaint",
                         "text": "Fix map compilation to get areas!"
@@ -1617,7 +1617,7 @@ function LevelEditr(settings) {
         setTextareaValue(display.stringer.textarea.value);
         GameStarter.setMap(mapName, getCurrentLocation());
         
-        if(doDisableThings) {
+        if (doDisableThings) {
             disableAllThings();
         }
     }
@@ -1648,11 +1648,11 @@ function LevelEditr(settings) {
             return JSON.stringify(text, replacer);
         }
     })(function (key, value) {
-        if(value !== value) {
+        if (value !== value) {
             return "NaN";
-        } else if(value === Infinity) {
+        } else if (value === Infinity) {
             return "Infinity";
-        } else if(value === -Infinity) {
+        } else if (value === -Infinity) {
             return "-Infinity";
         } else {
             return value;
@@ -1667,11 +1667,11 @@ function LevelEditr(settings) {
             return JSON.parse(text, replacer);
         }
     })(function (key, value) {
-        if(value === "NaN") {
+        if (value === "NaN") {
             return NaN;
-        } else if(value === "Infinity") {
+        } else if (value === "Infinity") {
             return Infinity;
-        } else if(value === "-Infinity") {
+        } else if (value === "-Infinity") {
             return -Infinity;
         } else {
             return value;
@@ -1708,8 +1708,8 @@ function LevelEditr(settings) {
         var groups = GameStarter.GroupHolder.getGroups(),
             group, i, j;
         
-        for(i in groups) {
-            for(j in groups[i]) {
+        for (i in groups) {
+            for (j in groups[i]) {
                 GameStarter.killNormal(groups[i][j]);
             }
         }
@@ -1735,10 +1735,10 @@ function LevelEditr(settings) {
     function getNormalizedThingArguments(args) {
         var argsNormal = GameStarter.proliferate({}, args);
         
-        if(argsNormal["height"] === Infinity) {
+        if (argsNormal["height"] === Infinity) {
             argsNormal["height"] = GameStarter.MapScreener.height;
         }
-        if(argsNormal["width"] === Infinity) {
+        if (argsNormal["width"] === Infinity) {
             argsNormal["width"] = GameStarter.MapScreener.width;
         }
         
@@ -1752,7 +1752,7 @@ function LevelEditr(settings) {
         var select = GameStarter.createElement("select", attributes),
             i;
         
-        for(i = 0; i < options.length; i += 1) {
+        for (i = 0; i < options.length; i += 1) {
             select.appendChild(GameStarter.createElement("option", {
                 "value": options[i],
                 "textContent": options[i]

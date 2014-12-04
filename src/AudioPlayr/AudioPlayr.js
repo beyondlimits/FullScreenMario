@@ -112,8 +112,8 @@ function AudioPlayr(settings) {
      * 
      */
     self.setVolume = function (volume) {
-        if(!self.getMuted()) {
-            for(var i in sounds) {
+        if (!self.getMuted()) {
+            for (var i in sounds) {
                 sounds[i].volume = sounds[i].volume_real * volume;
             }
         }
@@ -139,8 +139,8 @@ function AudioPlayr(settings) {
      * 
      */
     self.setMutedOn = function () {
-        for(var i in sounds) {
-            if(sounds.hasOwnProperty(i)) {
+        for (var i in sounds) {
+            if (sounds.hasOwnProperty(i)) {
                 sounds[i].volume = 0;
             }
         }
@@ -154,8 +154,8 @@ function AudioPlayr(settings) {
         var volume = self.getVolume(),
             sound, i;
         
-        for(i in sounds) {
-            if(sounds.hasOwnProperty(i)) {
+        for (i in sounds) {
+            if (sounds.hasOwnProperty(i)) {
                 sound = sounds[i];
                 sound.volume = sound.volume_real * volume;
             }
@@ -182,9 +182,9 @@ function AudioPlayr(settings) {
         var sound;
         
         // If the sound isn't yet being played, see if it's in the library
-        if(!sounds.hasOwnProperty(name)) {
+        if (!sounds.hasOwnProperty(name)) {
             // If the sound also isn't in the library, it's unknown
-            if(!library.hasOwnProperty(name)) {
+            if (!library.hasOwnProperty(name)) {
                 throw new Error("Unknown name given to AudioPlayr.play: '" + name + "'."); 
             }
             sounds[name] = sound = library[name];
@@ -194,7 +194,7 @@ function AudioPlayr(settings) {
         
         soundStop(sound);
         
-        if(self.getMuted()) {
+        if (self.getMuted()) {
             sound.volume = 0;
         } else {
             sound.volume_real = 1;
@@ -204,7 +204,7 @@ function AudioPlayr(settings) {
         sound.play();
         
         // If this is the song's first play, let it know how to stop
-        if(!sound.used) {
+        if (!sound.used) {
             sound.used += 1;
             sound.addEventListener("ended", soundFinish.bind(undefined, name));
         }
@@ -216,8 +216,8 @@ function AudioPlayr(settings) {
      * 
      */
     self.pauseAll = function () {
-        for(var i in sounds) {
-            if(!sounds.hasOwnProperty(i)) {
+        for (var i in sounds) {
+            if (!sounds.hasOwnProperty(i)) {
                 continue;
             }
             
@@ -229,8 +229,8 @@ function AudioPlayr(settings) {
      * 
      */
     self.resumeAll = function () {
-        for(var i in sounds) {
-            if(!sounds.hasOwnProperty(i)) {
+        for (var i in sounds) {
+            if (!sounds.hasOwnProperty(i)) {
                 continue;
             }
             
@@ -242,7 +242,7 @@ function AudioPlayr(settings) {
      * 
      */
     self.pauseTheme = function () {
-        if(theme) {
+        if (theme) {
             theme.pause();
         }
     };
@@ -251,7 +251,7 @@ function AudioPlayr(settings) {
      * 
      */
     self.resumeTheme = function () {
-        if(theme) {
+        if (theme) {
             theme.play();
         }
     };
@@ -283,7 +283,7 @@ function AudioPlayr(settings) {
                 break;
         }
         
-        if(self.getMuted()) {
+        if (self.getMuted()) {
             sound.volume = 0;
         } else {
             sound.volume = sound.volume_real * self.getVolume();
@@ -358,7 +358,7 @@ function AudioPlayr(settings) {
      * @param {Function} callback   The Function to be called by the event.
      */
     self.addEventListener = function(name, event, callback) {
-        if(!sounds.hasOwnProperty(name)) {
+        if (!sounds.hasOwnProperty(name)) {
             throw new Error("Unknown name given to AudioPlayr.addEventListener: '" + name + "'.");
         }
         
@@ -374,7 +374,7 @@ function AudioPlayr(settings) {
      * @param {Function} callback   The Function to be called by the event.
      */
     self.addEventImmediate = function(name, event, callback) {
-        if(!sounds.hasOwnProperty(name) || sounds[name].paused) {
+        if (!sounds.hasOwnProperty(name) || sounds[name].paused) {
             callback();
             return;
         }
@@ -390,7 +390,7 @@ function AudioPlayr(settings) {
      * Called when a sound has completed to get it out of sounds.
      */
     function soundFinish(name) {
-        if(sounds.hasOwnProperty(name)) {
+        if (sounds.hasOwnProperty(name)) {
             delete sounds[name];
         }
     }

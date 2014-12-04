@@ -3,7 +3,7 @@
  */
 function MapScreenr(settings) {
     "use strict";
-    if(!this || this === window) {
+    if (!this || this === window) {
         return new MapScreenr(settings);
     }
     var self = this,
@@ -18,8 +18,8 @@ function MapScreenr(settings) {
      * 
      */
     self.reset = function(settings) {
-        for(var name in settings) {
-            if(settings.hasOwnProperty(name)) {
+        for (var name in settings) {
+            if (settings.hasOwnProperty(name)) {
                 self[name] = settings[name];
             }
         }
@@ -70,7 +70,7 @@ function MapScreenr(settings) {
      * 
      */
     self.setVariables = function () {
-        for(var i in variables) {
+        for (var i in variables) {
             self[i] = variables[i].apply(self, variable_args);
         }
     }
@@ -83,11 +83,11 @@ function MapScreenr(settings) {
      * 
      */
     self.shift = function(dx, dy) {
-        if(dx) {
+        if (dx) {
             self.shiftX(dx);
         }
         
-        if(dy) {
+        if (dy) {
             self.shiftY(dy);
         }
     };

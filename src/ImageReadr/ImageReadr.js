@@ -15,11 +15,11 @@ document.onreadystatechange = (function (settings) {
         var section = document.getElementById("palettes"),
             name, element, chosen;
         
-        for(name in palettes) {
+        for (name in palettes) {
             element = initializePalette(name, palettes[name], backgroundImage);
             section.appendChild(element);
             
-            if(name === defaultPalette) {
+            if (name === defaultPalette) {
                 chosen = element;
             }
         }
@@ -44,7 +44,7 @@ document.onreadystatechange = (function (settings) {
         
         label.textContent = "Palette: " + name;
         
-        for(i = 0; i < palette.length; i += 1) {
+        for (i = 0; i < palette.length; i += 1) {
             color = palette[i];
             
             boxOut = document.createElement("div");
@@ -71,7 +71,7 @@ document.onreadystatechange = (function (settings) {
         var elements = element.parentNode.children,
             i;
         
-        for(i = 0; i < elements.length; i += 1) {
+        for (i = 0; i < elements.length; i += 1) {
             elements[i].className = "palette"
         }
         
@@ -129,7 +129,7 @@ document.onreadystatechange = (function (settings) {
      * 
      */
     var handleFileDragEnter = function (input, event) {
-        if(event.dataTransfer) {
+        if (event.dataTransfer) {
             event.dataTransfer.dropEffect = "copy"
         }
         input.className += " hovering";
@@ -147,7 +147,7 @@ document.onreadystatechange = (function (settings) {
      * 
      */
     var handleFileDragLeave = function (input, event) {
-        if(event.dataTransfer) {
+        if (event.dataTransfer) {
             event.dataTransfer.dropEffect = "none"
         }
         input.className = input.className.replace(" hovering", "");
@@ -169,11 +169,11 @@ document.onreadystatechange = (function (settings) {
         event.preventDefault();
         event.stopPropagation();
         
-        for(i = 0; i < files.length; i += 1) {
+        for (i = 0; i < files.length; i += 1) {
             file = files[i];
             type = file.type.split("/")[1];
             
-            if(!allowedFiles.hasOwnProperty(type)) {
+            if (!allowedFiles.hasOwnProperty(type)) {
                 element = document.createElement("div");
                 element.className = "output output-failed";
                 element.textContent = "'" + file.name + "' is either a folder or has a non-image type...";
@@ -184,7 +184,7 @@ document.onreadystatechange = (function (settings) {
             elements.push(createWorkerElement(files[i]));
         }
         
-        for(i = 0; i < elements.length; i += 1) {
+        for (i = 0; i < elements.length; i += 1) {
             output.insertBefore(elements[i], output.firstElementChild);
         }
     }).bind(
@@ -217,13 +217,13 @@ document.onreadystatechange = (function (settings) {
     var workerUpdateProgress = function (file, element, event) {
         var percent;
         
-        if(!event.lengthComputable) {
+        if (!event.lengthComputable) {
             return;
         }
         
         percent = Math.round((event.loaded / event.total) * 100);
         
-        if(percent > 100) {
+        if (percent > 100) {
             percent = 100;
         }
         
@@ -240,7 +240,7 @@ document.onreadystatechange = (function (settings) {
     var workerTryStartWorking = function (file, element, event) {
         var result = event.currentTarget.result;
         
-        if(result.length > 100000) {
+        if (result.length > 100000) {
             workerCannotStartWorking(result, file, element, event);
         } else {
             workerStartWorking(result, file, element, event);
@@ -306,7 +306,7 @@ document.onreadystatechange = (function (settings) {
      * 
      */
     return function (event) {
-        if(event.target.readyState != "complete") {
+        if (event.target.readyState != "complete") {
             return;
         }
         

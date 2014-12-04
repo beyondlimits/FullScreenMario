@@ -3,7 +3,7 @@
  */
 function MapsHandlr(settings) {
     "use strict";
-    if(!this || this === window) {
+    if (!this || this === window) {
         return new MapsCreatr(settings);
     }
     var self = this,
@@ -70,13 +70,13 @@ function MapsHandlr(settings) {
      */
     self.reset = function (settings) {
         // Maps themselves should have been created in the MapsCreator object
-        if(!settings.MapsCreator) {
+        if (!settings.MapsCreator) {
             throw new Error("No MapsCreator provided to MapsHandlr.");
         }
         MapsCreator = settings.MapsCreator;
         
         // Map/Area attributes will need to be stored in a MapScreenr object
-        if(!settings.MapScreener) {
+        if (!settings.MapScreener) {
             throw new Error("No MapScreener provided to MapsHandlr.");
         }
         MapScreener = settings.MapScreener;
@@ -138,7 +138,7 @@ function MapsHandlr(settings) {
      * @return {Map}
      */
     self.getMap = function (name) {
-        if(arguments.length) {
+        if (arguments.length) {
             return MapsCreator.getMap(name);
         } else {
             return map_current;
@@ -201,14 +201,14 @@ function MapsHandlr(settings) {
     self.setMap = function (name, location) {
         // Get the newly current map from self.getMap normally
         map_current = self.getMap(name);
-        if(!map_current) {
+        if (!map_current) {
             throw new Error("No map found under: " + name);
         }
         
         map_name = name;
         
         // Most of the work is done by setLocation (by default, the map's first)
-        if(arguments.length > 1) {
+        if (arguments.length > 1) {
             self.setLocation(location);
         }
         
@@ -226,7 +226,7 @@ function MapsHandlr(settings) {
 
         // Query the location from the current map and ensure it exists
         location = map_current.locations[name];
-        if(!location) {
+        if (!location) {
             throw new Error("Unknown location given: " + name);
         }
         
@@ -235,7 +235,7 @@ function MapsHandlr(settings) {
         area_current = location.area;
         
         // Copy all the settings from that area into the MapScreenr container
-        for(i = 0, len = screen_attributes.length; i < len; i += 1) {
+        for (i = 0, len = screen_attributes.length; i < len; i += 1) {
             attribute = screen_attributes[i];
             MapScreener[attribute] = area_current[attribute];
         }
@@ -244,7 +244,7 @@ function MapsHandlr(settings) {
         // for the new Area/Location placements
         prethings = MapsCreator.getPreThings(location);
         
-        if(area_current.stretches) {
+        if (area_current.stretches) {
             setStretches(area_current.stretches);
         } else {
             stretches = undefined;
@@ -255,7 +255,7 @@ function MapsHandlr(settings) {
      * 
      */
     function setStretches(stretches_raw) {
-        if(!stretches) {
+        if (!stretches) {
             stretches = [];
         }
         
@@ -300,14 +300,14 @@ function MapsHandlr(settings) {
         var name, group, mid, start, end, i, prething;
         
         // For each group of PreThings currently able to spawn...
-        for(name in prethings) {
-            if(!prethings.hasOwnProperty(name)) {
+        for (name in prethings) {
+            if (!prethings.hasOwnProperty(name)) {
                 continue;
             }
             
             // Don't bother trying to spawn the group if it has no members
             group = prethings[name][direction];
-            if(group.length === 0) {
+            if (group.length === 0) {
                 continue;
             }
             
@@ -319,11 +319,11 @@ function MapsHandlr(settings) {
             
             // Loop through all the directionally valid PreThings, spawning if they're
             // within the bounding box
-            for(i = start; i <= end; i += 1) {
+            for (i = start; i <= end; i += 1) {
                 prething = group[i];
                 
                 // This will have to be made relative to work for Pokemon/Zelda games...
-                // if(
+                // if (
                     // prething.top > bottom
                     // || prething.right < left
                     // || prething.bottom < top
@@ -333,9 +333,9 @@ function MapsHandlr(settings) {
                 // }
                 
                 // For example: if status is true (spawned), don't spawn again
-                if(prething.spawned !== status) {
+                if (prething.spawned !== status) {
                     prething.spawned = status;
-                    if(callback) {
+                    if (callback) {
                         callback(prething);
                     }
                 }
@@ -351,8 +351,8 @@ function MapsHandlr(settings) {
         var directionKey = directionKeys[direction],
             directionEnd = getDirectionEnd(directionKey, top, right, bottom, left);
         
-        for(var i = 0; i < group.length; i += 1) {
-            if(group[i][directionKey] >= directionEnd) {
+        for (var i = 0; i < group.length; i += 1) {
+            if (group[i][directionKey] >= directionEnd) {
                 return i;
             }
         }
@@ -369,8 +369,8 @@ function MapsHandlr(settings) {
             directionEnd = getDirectionEnd(directionKeyOpposite, top, right, bottom, left),
             i;
         
-        for(i = group.length - 1; i >= 0; i -= 1) {
-            if(group[i][directionKey] <= directionEnd) {
+        for (i = group.length - 1; i >= 0; i -= 1) {
+            if (group[i][directionKey] <= directionEnd) {
                 return i;
             }
         }
@@ -382,7 +382,7 @@ function MapsHandlr(settings) {
      * 
      */
     function getDirectionEnd(directionKey, top, right, bottom, left) {
-        switch(directionKey) {
+        switch (directionKey) {
             case "top": 
                 return top;
             case "right":

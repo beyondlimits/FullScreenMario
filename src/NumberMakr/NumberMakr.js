@@ -73,7 +73,7 @@
 */
 function NumberMakr(settings) {
     "use strict";
-    if(!this || this === window) {
+    if (!this || this === window) {
         return new NumbrMakr(settings);
     }
     var self = this,
@@ -133,13 +133,13 @@ function NumberMakr(settings) {
     self.resetFromSeed = function (seedNew) {
         var s;
         
-        if(typeof(seedNew) === "undefined") {
+        if (typeof(seedNew) === "undefined") {
             seedNew = seed;
         }
         
         mt[0] = seedNew >>> 0;
         
-        for(mti = 1; mti < N; mti += 1) {
+        for (mti = 1; mti < N; mti += 1) {
             s = mt[mti - 1] ^ (mt[mti - 1] >>> 30);
             // mt[this.mti] = ((
                 // ((((s & 0xffff0000) >>> 16) * 1812433253) << 16)
@@ -172,7 +172,7 @@ function NumberMakr(settings) {
         
         self.resetFromSeed(19650218);
         
-        if(typeof(key_length) === "undefined") {
+        if (typeof(key_length) === "undefined") {
             key_length = init_key.length;
         }
         k = N > key_length ? N : key_length;
@@ -188,17 +188,17 @@ function NumberMakr(settings) {
             i += 1;
             j += 1;
             
-            if(i >= N) {
+            if (i >= N) {
                 mt[0] = mt[N - 1];
                 i = 1;
             }
             
-            if(j >= key_length) {
+            if (j >= key_length) {
                 j = 0;
             }
         }
         
-        for(k = N - 1; k; k -= 1) {
+        for (k = N - 1; k; k -= 1) {
             s = mt[i-1] ^ (mt[i-1] >>> 30);
             mt[i] = ((mt[i] ^ (
                     ((((s & 0xffff0000) >>> 16) * 1566083941) << 16) 
@@ -208,7 +208,7 @@ function NumberMakr(settings) {
             
             i += 1;
             
-            if(i >= N) {
+            if (i >= N) {
                 mt[0] = mt[N - 1];
                 i = 1;
             }
@@ -229,17 +229,17 @@ function NumberMakr(settings) {
         var mag01 = new Array(0x0, MATRIX_A),
             y, kk;
         
-        if(mti >= N) {
+        if (mti >= N) {
             if (mti === N + 1) {
                 self.resetFromSeed(5489);
             }
             
-            for(kk = 0; kk < N - M; kk += 1) {
+            for (kk = 0; kk < N - M; kk += 1) {
                 y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
                 mt[kk] = mt[kk + M] ^ (y >>> 1) ^ mag01[y & 0x1];
             }
             
-            for(; kk < N - 1; kk += 1) {
+            for (; kk < N - 1; kk += 1) {
                 y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
                 mt[kk] = mt[kk + (M - N)] ^ (y >>> 1) ^ mag01[y & 0x1];
             }

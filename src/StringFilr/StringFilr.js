@@ -89,12 +89,12 @@ function StringFilr(settings) {
      * 
      */
     self.clear = function(className) {
-        if(typeof(className) === "undefined") {
+        if (typeof className === "undefined") {
             cache = {};
             return;
         }
         
-        if(normalize) {
+        if (normalize) {
             className = className.replace(normal, '');
         }
         
@@ -161,7 +161,7 @@ function StringFilr(settings) {
         var has_norm = false;
         for (var i in current) {
             if (i == normal) has_norm = true;
-            if (typeof(current[i]) == "object") {
+            if (typeof current[i] == "object") {
                 console.warn("No normal specified:", path);
                 checkNumNoNorm(current[i], path + "->" + i);
             }
@@ -173,8 +173,11 @@ function StringFilr(settings) {
      * 
      */
     function results_final(results) {
-        return typeof(results[2]) === "object" 
-            ? results_final(results[2]) : results;
+        if (typeof results[2] === "object") {
+            return results_final(results[2]);
+        }
+        
+        return results;
     }
     
 

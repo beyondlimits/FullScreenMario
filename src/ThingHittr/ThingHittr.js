@@ -1,6 +1,6 @@
 function ThingHittr(settings) {
     "use strict";
-    if(!this || this === window) {
+    if (!this || this === window) {
         return new ThingHittr(settings);
     }
     var self = this,
@@ -43,10 +43,10 @@ function ThingHittr(settings) {
         
         
         // Collision checking information should be given in the settings
-        if(!settings.group_names) {
+        if (!settings.group_names) {
             throw new Error("No group_names given to ThingHittr");
         }
-        if(!settings.hit_checks) {
+        if (!settings.hit_checks) {
             throw new Error("No hit_checks given to ThingHittr");
         }
         group_names = settings.group_names;
@@ -54,7 +54,7 @@ function ThingHittr(settings) {
         hit_check_keys = Object.keys(hit_checks);
         
         // Collision functions should be given in the settings
-        if(!settings.hit_functions) {
+        if (!settings.hit_functions) {
             throw new Error("No hit_functions given to ThingHittr");
         }
         hit_functions = settings.hit_functions;
@@ -63,14 +63,14 @@ function ThingHittr(settings) {
         overlap_functions = settings.overlap_functions || {};
         
         // Global checks should be given in the settings
-        if(!settings.global_checks) {
+        if (!settings.global_checks) {
             throw new Error("No global_checks given to ThingHittr");
         }
         global_checks = settings.global_checks;
         
         // If a scope is provided, make external hit checks and functions use it
         // as their "this" variable (very good for EightBittr objects)
-        if(settings.scope) {
+        if (settings.scope) {
             setScopeAll(hit_checks, settings.scope);
             setScopeAll(hit_functions, settings.scope);
             setScopeAll(overlap_functions, settings.scope);
@@ -100,7 +100,7 @@ function ThingHittr(settings) {
      * 
      */
     self.getHitChecks = function(a, b) {
-        switch(arguments.length) {
+        switch (arguments.length) {
             case 0:
                 return hit_checks;
             case 1:
@@ -136,26 +136,26 @@ function ThingHittr(settings) {
             i, j, k;
          
         // Don't do anything if the thing shouldn't be checking
-        if(!global_checks[thing.grouptype].can_collide(thing)) {
+        if (!global_checks[thing.grouptype].can_collide(thing)) {
             return;
         }
         
         // For each quadrant this is in, find each other thing in that quadrant
-        for(i = 0; i < thing.numquads; i += 1) {
-            for(j = 0; j < group_names.length; j += 1) {
+        for (i = 0; i < thing.numquads; i += 1) {
+            for (j = 0; j < group_names.length; j += 1) {
                 others = thing.quadrants[i].things[group_names[j]];
                 hit_check = hit_checks[thing.grouptype][group_names[j]];
                 
                 // If no hit check exists for this combo, don't bother
-                if(!hit_check) {
+                if (!hit_check) {
                     continue;
                 }
                 
-                for(k = 0; k < others.length; k += 1) {
+                for (k = 0; k < others.length; k += 1) {
                     other = others[k];
                     
                     // If the two are the same, breaking prevents double hits
-                    if(thing === other) {
+                    if (thing === other) {
                         break;
                     }
                     
@@ -171,12 +171,12 @@ function ThingHittr(settings) {
      */
     function tryCollision(hit_check, thing, other) {
         // Do nothing if these two shouldn't be colliding
-        if(!global_checks[other.grouptype].can_collide(other)) {
+        if (!global_checks[other.grouptype].can_collide(other)) {
             return;
         }
         
         // If they do hit, great! Do the corresponding hit_function
-        if(hit_check(thing, other)) {
+        if (hit_check(thing, other)) {
             hit_functions[thing.grouptype][other.grouptype](thing, other);
         }
     }
@@ -186,9 +186,9 @@ function ThingHittr(settings) {
      */
     function setScopeAll(functions, scope) {
         var i;
-        for(i in functions) {
-            if(functions.hasOwnProperty(i)) {
-                switch(typeof(functions[i])) {
+        for (i in functions) {
+            if (functions.hasOwnProperty(i)) {
+                switch (typeof functions[i]) {
                     case "function":
                         functions[i] = functions[i].bind(scope);
                         break;

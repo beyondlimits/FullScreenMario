@@ -102,7 +102,7 @@ function InputWritr(settings) {
         var output = {},
             alias;
         
-        for(alias in aliases) {
+        for (alias in aliases) {
             output[alias] = self.getAliasAsKeyStrings(alias);
         }
         
@@ -120,19 +120,19 @@ function InputWritr(settings) {
      * 
      */
     self.convertAliasToKeyString = function (alias) {
-        if(alias.constructor === String) {
+        if (alias.constructor === String) {
             return alias;
         }
         
-        if(alias > 96 && alias < 105) {
+        if (alias > 96 && alias < 105) {
             return String.fromCharCode(alias - 48);
         }
         
-        if(alias > 64 && alias < 97) {
+        if (alias > 64 && alias < 97) {
             return String.fromCharCode(alias);
         }
         
-        switch(alias) {
+        switch (alias) {
             case 16:
                 return "shift";
             case 17:
@@ -155,15 +155,15 @@ function InputWritr(settings) {
      * 
      */
     self.convertKeyStringToAlias = function (key) {
-        if(key.constructor === Number) {
+        if (key.constructor === Number) {
             return key;
         }
         
-        if(key.length === 1) {
+        if (key.length === 1) {
             return key.charCodeAt(0) - 32;
         }
         
-        switch(key) {
+        switch (key) {
             case "shift":
                 return 16;
             case "ctrl":
@@ -223,7 +223,7 @@ function InputWritr(settings) {
      * @param {Function}
      */
     self.setCanTrigger = function (status) {
-        if(status.constructor === Boolean) {
+        if (status.constructor === Boolean) {
             can_trigger = function () {
                 return status;
             };
@@ -266,21 +266,21 @@ function InputWritr(settings) {
         var trigger_name, trigger_group, 
             i;
         
-        if(!aliases.hasOwnProperty(name)) {
+        if (!aliases.hasOwnProperty(name)) {
             aliases[name] = values;
         } else {
             aliases[name].push.apply(aliases[name], values);
         }
         
         // trigger_name = "onkeydown", "onkeyup", ...
-        for(trigger_name in triggers) {
-            if(triggers.hasOwnProperty(trigger_name)) {
+        for (trigger_name in triggers) {
+            if (triggers.hasOwnProperty(trigger_name)) {
                 // trigger_group = { "left": function, ... }, ...
                 trigger_group = triggers[trigger_name];
                 
-                if(trigger_group.hasOwnProperty(name)) {
+                if (trigger_group.hasOwnProperty(name)) {
                     // values[i] = 37, 65, ...
-                    for(i = 0; i < values.length; i += 1) {
+                    for (i = 0; i < values.length; i += 1) {
                         trigger_group[values[i]] = trigger_group[name];
                     }
                 }
@@ -300,24 +300,24 @@ function InputWritr(settings) {
         var trigger_name, trigger_group, 
             i;
         
-        if(!aliases.hasOwnProperty(name)) {
+        if (!aliases.hasOwnProperty(name)) {
             return;
         }
         
-        for(i = 0; i < values.length; i += 1) {
+        for (i = 0; i < values.length; i += 1) {
             aliases[name].splice(aliases[name].indexOf(values[i], 1));
         }
         
         // trigger_name = "onkeydown", "onkeyup", ...
-        for(trigger_name in triggers) {
-            if(triggers.hasOwnProperty(trigger_name)) {
+        for (trigger_name in triggers) {
+            if (triggers.hasOwnProperty(trigger_name)) {
                 // trigger_group = { "left": function, ... }, ...
                 trigger_group = triggers[trigger_name];
                 
-                if(trigger_group.hasOwnProperty(name)) {
+                if (trigger_group.hasOwnProperty(name)) {
                     // values[i] = 37, 65, ...
-                    for(i = 0; i < values.length; i += 1) {
-                        if(trigger_group.hasOwnProperty(values[i])) {
+                    for (i = 0; i < values.length; i += 1) {
+                        if (trigger_group.hasOwnProperty(values[i])) {
                             delete trigger_group[values[i]];
                         }
                     }
@@ -354,15 +354,15 @@ function InputWritr(settings) {
      * 
      */
     self.addEvent = function (trigger, label, callback) {
-        if(!triggers.hasOwnProperty(trigger)) {
+        if (!triggers.hasOwnProperty(trigger)) {
             throw new Error("Unknown trigger requested: '" + trigger + "'");
         }
         
         triggers[trigger][label] = callback;
         
-        if(aliases.hasOwnProperty(label)) {
-            for(var i = 0; i < aliases[label].length; i += 1) {
-                if(triggers[trigger][label]) {
+        if (aliases.hasOwnProperty(label)) {
+            for (var i = 0; i < aliases[label].length; i += 1) {
+                if (triggers[trigger][label]) {
                     triggers[trigger][label][aliases[i]] = callback;
                 }
             }
@@ -440,7 +440,7 @@ function InputWritr(settings) {
      * @return {Mixed}
      */
     function callEvent(event, keycode) {
-        if(can_trigger && !can_trigger(event, keycode)) {
+        if (can_trigger && !can_trigger(event, keycode)) {
             return;
         }
         

@@ -48,7 +48,7 @@ function ObjectMakr(settings) {
 
         functions = {};
         
-        if(do_properties_full) {
+        if (do_properties_full) {
             properties_full = {};
         }
 
@@ -84,7 +84,7 @@ function ObjectMakr(settings) {
         }
 
         if (on_make && output[on_make]) {
-            if(do_properties_full) {
+            if (do_properties_full) {
                 output[on_make](output, type, properties[type], properties_full[type]);
             } else {
                 output[on_make](output, type, properties[type], functions[type].prototype);
@@ -118,7 +118,7 @@ function ObjectMakr(settings) {
      * @return {Object}
      */
     self.getPropertiesFull = function (title) {
-        if(do_properties_full) {
+        if (do_properties_full) {
             return title ? properties_full[title] : properties_full;
         }
     };
@@ -234,10 +234,10 @@ function ObjectMakr(settings) {
                 
                 // If the entire property tree is being mapped, copy everything
                 // from both this and its parent to its equivalent
-                if(do_properties_full) {
+                if (do_properties_full) {
                     properties_full[name] = {};
                     
-                    if(parentName) {
+                    if (parentName) {
                         for (ref in properties_full[parentName]) {
                             if (properties_full[parentName].hasOwnProperty(ref)) {
                                 properties_full[name][ref] = properties_full[parentName][ref];

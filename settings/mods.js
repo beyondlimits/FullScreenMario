@@ -15,14 +15,14 @@ FullScreenMario.prototype.settings.mods = {
                     var player = this.player;
                     
                     // Don't trigger during cutscenes or small landings
-                    if(
+                    if (
                         player.EightBitter.MapScreener.nokeys
                         || Math.abs(player.yvel) < player.EightBitter.unitsize / 4
                     ) {
                         return;
                     }
                     
-                    if(player.resting.actionTop) {
+                    if (player.resting.actionTop) {
                         player.resting.actionTop(player, player.resting);
                     }
                     
@@ -56,7 +56,7 @@ FullScreenMario.prototype.settings.mods = {
                             EightBitter.shiftThings(characters, 0, dy);
                             
                             shiftCount += 1;
-                            if(shiftCount >= shiftLevels.length) {
+                            if (shiftCount >= shiftLevels.length) {
                                 shiftCount = 0;
                                 return true;
                             }
@@ -68,7 +68,7 @@ FullScreenMario.prototype.settings.mods = {
                             character, i;
                     
                         // Don't trigger during cutscenes or small landings
-                        if(
+                        if (
                             player.EightBitter.MapScreener.nokeys
                             || Math.abs(player.yvel) < player.EightBitter.unitsize / 4
                         ) {
@@ -77,9 +77,9 @@ FullScreenMario.prototype.settings.mods = {
                         
                         this.AudioPlayer.play("Bump");
                         
-                        for(i = 0; i < characters.length; i += 1) {
+                        for (i = 0; i < characters.length; i += 1) {
                             character = characters[i];
-                            if(character.player || character.nofall || !character.resting) {
+                            if (character.player || character.nofall || !character.resting) {
                                 continue;
                             }
                             
@@ -89,7 +89,7 @@ FullScreenMario.prototype.settings.mods = {
                         
                         // A copy of each group is made because new Things 
                         // added in shouldn't start being moved in the middle
-                        if(shiftCount === 0) {
+                        if (shiftCount === 0) {
                             this.TimeHandler.addEventInterval(
                                 shiftAll, 1, Infinity, this,
                                 this.GroupHolder.getSolidGroup().slice(),
@@ -111,7 +111,7 @@ FullScreenMario.prototype.settings.mods = {
             "enabled": false,
             "events": {
                 "onModEnable": function (mod) {
-                    if(this.MapsHandler.getMap()) {
+                    if (this.MapsHandler.getMap()) {
                         mod.events.onSetLocation.call(this, mod);
                     }
                 },
@@ -129,18 +129,18 @@ FullScreenMario.prototype.settings.mods = {
                                 this.MapScreener.height
                             ), gradient, i;
                         
-                        for(i in gradients) {
-                            if(setting.indexOf(i) !== -1) {
+                        for (i in gradients) {
+                            if (setting.indexOf(i) !== -1) {
                                 gradient = gradients[i]
                                 break;
                             }
                         }
                         
-                        if(!gradient) {
+                        if (!gradient) {
                             gradient = gradients["default"];
                         }
                         
-                        for(i in gradient) {
+                        for (i in gradient) {
                             background.addColorStop(i, gradient[i]);
                         }
                         
@@ -211,7 +211,7 @@ FullScreenMario.prototype.settings.mods = {
             "enabled": false,
             "events": {
                 "onModEnable": function () {
-                    if(this.player) {
+                    if (this.player) {
                         FSM.playerStarUp(this.player, Infinity);
                     }
                 },
@@ -272,7 +272,7 @@ FullScreenMario.prototype.settings.mods = {
                     this.StatsHolder.set("luigi", true);
                     this.ObjectMaker.getFunction("Player").prototype.title = "Luigi";
                     
-                    if(this.player) {
+                    if (this.player) {
                         this.player.title = "Luigi";
                         this.PixelDrawer.setThingSprite(this.player);
                     }
@@ -281,7 +281,7 @@ FullScreenMario.prototype.settings.mods = {
                     this.StatsHolder.set("luigi", false);
                     this.ObjectMaker.getFunction("Player").prototype.title = "Player";
                     
-                    if(this.player) {
+                    if (this.player) {
                         this.player.title = "Player";
                         this.PixelDrawer.setThingSprite(this.player);
                     }
@@ -306,16 +306,16 @@ FullScreenMario.prototype.settings.mods = {
                     this.InputWriter.addEvent("onkeydown", "q", function () {
                         mod.settings.qcount += 1;
                         
-                        if(mod.settings.levels[mod.settings.qcount]) {
+                        if (mod.settings.levels[mod.settings.qcount]) {
                             var level = mod.settings.levels[mod.settings.qcount];
                             mod.settings.event = FSM.TimeHandler.addEventInterval(function () {
-                                if(charactersFSM.length < 210) {
+                                if (charactersFSM.length < 210) {
                                     var num = Math.floor(Math.random() * level.length),
                                         lul = FSM.ObjectMaker.make.apply(FSM, level[num]);
                                     
                                     lul.yvel = Math.random() * FSM.unitsize / 4;
                                     lul.xvel = lul.speed = Math.random() * FSM.unitsize * 2;
-                                    if(Math.floor(Math.random() * 2)) {
+                                    if (Math.floor(Math.random() * 2)) {
                                         lul.xvel *= -1;
                                     }
                                     

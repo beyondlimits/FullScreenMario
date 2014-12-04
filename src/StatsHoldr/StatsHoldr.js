@@ -65,7 +65,7 @@ function StatsHoldr(settings) {
             }
         }
 
-        if(!settings.no_container) {
+        if (!settings.no_container) {
             containers = settings.containers || [
                 ["div", {
                     "className": prefix + "_container"
@@ -140,7 +140,7 @@ function StatsHoldr(settings) {
 
                 // If possible, use the same type as value_default (e.g. #7 is not "7")
                 if (this.hasOwnProperty("value")) {
-                    if(this.value === null || this.value === undefined) {
+                    if (this.value === null || this.value === undefined) {
                         constructor = false;
                     } else {
                         constructor = this.value.constructor;

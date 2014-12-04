@@ -153,18 +153,18 @@ function QuadsKeepr(settings) {
         self.bottom += y;
         self.left += x;
         
-        for(row = 0; row < num_rows; row += 1) {
+        for (row = 0; row < num_rows; row += 1) {
             quadrant_rows[row].top += y;
             quadrant_rows[row].left += x;
         }
         
-        for(col = 0; col< num_cols; col += 1) {
+        for (col = 0; col< num_cols; col += 1) {
             quadrant_cols[col].top += y;
             quadrant_cols[col].left += x;
         }
         
-        for(row = 0; row < num_rows; row += 1) {
-            for(col = 0; col < num_cols; col += 1) {
+        for (row = 0; row < num_rows; row += 1) {
+            for (col = 0; col < num_cols; col += 1) {
                 shiftQuadrant(quadrant_rows[row].quadrants[col], x, y);
             }
         }
@@ -240,7 +240,7 @@ function QuadsKeepr(settings) {
         offset_x = 0;
         offset_y = 0;
         
-        for(i = 0; i < num_rows; i += 1) {
+        for (i = 0; i < num_rows; i += 1) {
             quadrant_rows.push({
                 "left": start_left,
                 "top": top,
@@ -249,7 +249,7 @@ function QuadsKeepr(settings) {
             top += quadrant_height;
         }
         
-        for(j = 0; j < num_cols; j += 1) {
+        for (j = 0; j < num_cols; j += 1) {
             quadrant_cols.push({
                 "left": left,
                 "top": start_top,
@@ -259,9 +259,9 @@ function QuadsKeepr(settings) {
         }
         
         top = start_top;
-        for(i = 0; i < num_rows; i += 1) {
+        for (i = 0; i < num_rows; i += 1) {
             left = start_left;
-            for(j = 0; j < num_cols; j += 1) {
+            for (j = 0; j < num_cols; j += 1) {
                 quadrant = createQuadrant(left, top);
                 quadrant_rows[i].quadrants.push(quadrant);
                 quadrant_cols[j].quadrants.push(quadrant);
@@ -285,7 +285,7 @@ function QuadsKeepr(settings) {
         quadrant.things = {};
         quadrant.numthings = {};
         
-        for(i = 0; i < group_names.length; i += 1) {
+        for (i = 0; i < group_names.length; i += 1) {
             quadrant.things[group_names[i]] = [];
             quadrant.numthings[group_names[i]] = 0;
         }
@@ -311,7 +311,7 @@ function QuadsKeepr(settings) {
             },
             i;
         
-        for(i = 0; i < num_cols; i += 1) {
+        for (i = 0; i < num_cols; i += 1) {
             row.quadrants.push(createQuadrant(left, top));
             left += quadrant_width;
         }
@@ -329,7 +329,7 @@ function QuadsKeepr(settings) {
             },
             i;
         
-        for(i = 0; i < num_rows; i += 1) {
+        for (i = 0; i < num_rows; i += 1) {
             col.quadrants.push(createQuadrant(left, top));
             top += quadrant_height;
         }
@@ -350,13 +350,13 @@ function QuadsKeepr(settings) {
         num_rows += 1;
         quadrant_rows.push(row);
         
-        for(i = 0; i < quadrant_cols.length; i += 1) {
+        for (i = 0; i < quadrant_cols.length; i += 1) {
             quadrant_cols[i].quadrants.push(row.quadrants[i]);
         }
         
         self.bottom += quadrant_height;
         
-        if(callUpdate && on_add) {
+        if (callUpdate && on_add) {
             on_add(
                 "yInc",
                 self.bottom, 
@@ -382,13 +382,13 @@ function QuadsKeepr(settings) {
         num_cols += 1;
         quadrant_cols.push(col);
     
-        for(i = 0; i < quadrant_rows.length; i += 1) {
+        for (i = 0; i < quadrant_rows.length; i += 1) {
             quadrant_rows[i].quadrants.push(col.quadrants[i]);
         }
         
         self.right += quadrant_width;
         
-        if(callUpdate && on_add) {
+        if (callUpdate && on_add) {
             on_add(
                 "xInc", 
                 self.top,
@@ -408,14 +408,14 @@ function QuadsKeepr(settings) {
      *                               trigger with the new row's bounding box.
      */
     self.popQuadrantRow = function (callUpdate) {
-        for(var i = 0; i < quadrant_cols.length; i += 1) {
+        for (var i = 0; i < quadrant_cols.length; i += 1) {
             quadrant_cols[i].quadrants.pop();
         }
         
         num_rows -= 1;
         quadrant_rows.pop();
         
-        if(callUpdate && on_remove) {
+        if (callUpdate && on_remove) {
             on_remove(
                 "yInc",
                 self.bottom, 
@@ -435,14 +435,14 @@ function QuadsKeepr(settings) {
      *                               trigger with the new row's bounding box.
      */
     self.popQuadrantCol = function (callUpdate) {
-        for(var i = 0; i < quadrant_rows.length; i += 1) {
+        for (var i = 0; i < quadrant_rows.length; i += 1) {
             quadrant_rows[i].quadrants.pop();
         }
         
         num_cols -= 1;
         quadrant_cols.pop();
         
-        if(callUpdate && on_remove) {
+        if (callUpdate && on_remove) {
             on_remove(
                 "xDec", 
                 self.top,
@@ -468,13 +468,13 @@ function QuadsKeepr(settings) {
         num_rows += 1;
         quadrant_rows.unshift(row);
         
-        for(i = 0; i < quadrant_cols.length; i += 1) {
+        for (i = 0; i < quadrant_cols.length; i += 1) {
             quadrant_cols[i].quadrants.unshift(row.quadrants[i]);
         }
         
         self.top -= quadrant_height;
         
-        if(callUpdate && on_add) {
+        if (callUpdate && on_add) {
             on_add(
                 "yInc",
                 self.top,
@@ -500,13 +500,13 @@ function QuadsKeepr(settings) {
         num_cols += 1;
         quadrant_cols.unshift(col);
         
-        for(i = 0; i < quadrant_rows.length; i += 1) {
+        for (i = 0; i < quadrant_rows.length; i += 1) {
             quadrant_rows[i].quadrants.unshift(col.quadrants[i]);
         }
         
         self.left -= quadrant_width;
         
-        if(callUpdate && on_add) {
+        if (callUpdate && on_add) {
             on_add(
                 "xInc",
                 self.top,
@@ -526,14 +526,14 @@ function QuadsKeepr(settings) {
      *                               trigger with the new row's bounding box.
      */
     self.shiftQuadrantRow = function (callUpdate) {
-        for(var i = 0; i < quadrant_cols.length; i += 1) {
+        for (var i = 0; i < quadrant_cols.length; i += 1) {
             quadrant_cols[i].quadrants.shift();
         }
         
         num_rows -= 1;
         quadrant_rows.pop();
         
-        if(callUpdate && on_remove) {
+        if (callUpdate && on_remove) {
             on_remove(
                 "yInc",
                 self.top,
@@ -553,14 +553,14 @@ function QuadsKeepr(settings) {
      *                               trigger with the new row's bounding box.
      */
     self.shiftQuadrantCol = function (callUpdate) {
-        for(var i = 0; i < quadrant_rows.length; i += 1) {
+        for (var i = 0; i < quadrant_rows.length; i += 1) {
             quadrant_rows[i].quadrants.shift();
         }
         
         num_cols -= 1;
         quadrant_cols.pop();
         
-        if(callUpdate && on_remove) {
+        if (callUpdate && on_remove) {
             on_remove(
                 "xInc",
                 self.top,
@@ -588,8 +588,8 @@ function QuadsKeepr(settings) {
     self.determineAllQuadrants = function (group, things) {
         var row, col, k;
         
-        for(row = 0; row < num_rows; row += 1) {
-            for(col = 0; col < num_cols; col += 1) {
+        for (row = 0; row < num_rows; row += 1) {
+            for (col = 0; col < num_cols; col += 1) {
                 quadrant_rows[row].quadrants[col].numthings[group] = 0;
             }
         }
@@ -610,21 +610,21 @@ function QuadsKeepr(settings) {
         
         // Mark each of the Thing's Quadrants as changed
         // This is done first because the old Quadrants are changed
-        if(thing[thing_changed]) {
+        if (thing[thing_changed]) {
             markThingQuadrantsChanged(thing);
         }
         
         // The Thing no longer has any Quadrants: rebuild them!
         thing[thing_num_quads] = 0;
         
-        for(row = rowStart; row <= rowEnd; row += 1) {
-            for(col = colStart; col <= colEnd; col += 1) {
+        for (row = rowStart; row <= rowEnd; row += 1) {
+            for (col = colStart; col <= colEnd; col += 1) {
                 self.setThingInQuadrant(group, thing, quadrant_rows[row].quadrants[col]);
             }
         }
         
         // Mark the Thing's new Quadrants as changed
-        if(thing[thing_changed]) {
+        if (thing[thing_changed]) {
             markThingQuadrantsChanged(thing);
         }
         
@@ -649,7 +649,7 @@ function QuadsKeepr(settings) {
      * 
      */
     function markThingQuadrantsChanged(thing) {
-        for(var i = 0; i < thing[thing_num_quads]; i += 1) {
+        for (var i = 0; i < thing[thing_num_quads]; i += 1) {
             thing[thing_quadrants][i].changed = true;
         }
     }

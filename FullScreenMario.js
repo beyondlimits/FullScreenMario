@@ -97,7 +97,7 @@ var FullScreenMario = (function(GameStartr) {
                 "customTextMappings"
             ]        });
         
-        if(customs.resetTimed) {
+        if (customs.resetTimed) {
             this.resetTimes = this.resetTimed(this, customs);
         } else {
             this.reset(this, customs);
@@ -132,7 +132,7 @@ var FullScreenMario = (function(GameStartr) {
     function resetStatsHolder(self, customs) {
         GameStartr.prototype.resetStatsHolder(self, customs);
         
-        if(customs.width < 560) {
+        if (customs.width < 560) {
             self.StatsHolder.getContainer().children[0].cells[4].style.display = "none";
         }
     }
@@ -199,7 +199,7 @@ var FullScreenMario = (function(GameStartr) {
         var EightBitter = EightBittr.ensureCorrectCaller(this),
             ints = EightBitter.MapsHandler.getMapName().split("-").map(Number);
         
-        if(ints[1] > 3) {
+        if (ints[1] > 3) {
             ints[0] += 1;
             ints[1] = 1;
         } else {
@@ -226,7 +226,7 @@ var FullScreenMario = (function(GameStartr) {
         
         // Either the prething or thing, in that order, may request to be in the
         // front or back of the container
-        if(position) {
+        if (position) {
             thing.EightBitter.TimeHandler.addEvent(function () {
                 switch (prething.position || thing.position) {
                     case "beginning":
@@ -260,7 +260,7 @@ var FullScreenMario = (function(GameStartr) {
         
         EightBitter.InputWriter.setEventInformation(player);
         
-        if(EightBitter.MapScreener.underwater) {
+        if (EightBitter.MapScreener.underwater) {
             player.swimming = true;
             EightBitter.TimeHandler.addClassCycle(player, [
                 "swim1", "swim2"
@@ -274,9 +274,9 @@ var FullScreenMario = (function(GameStartr) {
         
         EightBitter.setPlayerSizeSmall(player);
         
-        if(player.power > 1) {
+        if (player.power > 1) {
             EightBitter.playerGetsBig(player, true);
-            if(player.power > 2) {
+            if (player.power > 2) {
                 EightBitter.playerGetsFire(player, true);
             }
         }
@@ -348,19 +348,19 @@ var FullScreenMario = (function(GameStartr) {
     function keyDownUp(player) {
         player.keys.up = true;
         
-        if(player.canjump && (
+        if (player.canjump && (
             player.resting || player.EightBitter.MapScreener.underwater)
         ) {
             player.keys.jump = 1;
             player.canjump = player.keys.jumplev = 0;
             
-            if(player.power > 1) {
+            if (player.power > 1) {
                 player.EightBitter.AudioPlayer.play("Jump Super");
             } else {
                 player.EightBitter.AudioPlayer.play("Jump Small");
             }
             
-            if(player.EightBitter.MapScreener.underwater) {
+            if (player.EightBitter.MapScreener.underwater) {
                 player.EightBitter.TimeHandler.addEvent(function () {
                     player.jumping = player.keys.jump = false;
                 }, 14);
@@ -382,7 +382,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function keyDownSprint(player) {
-        if(player.power == 3 && player.keys.sprint == 0 && !player.crouch) {
+        if (player.power == 3 && player.keys.sprint == 0 && !player.crouch) {
             player.fire(player);
         }
         player.keys.sprint = 1;
@@ -394,7 +394,7 @@ var FullScreenMario = (function(GameStartr) {
      */
     function keyDownPause(player) {
         var FSM = player.EightBitter;
-        if(!FSM.GamesRunner.getPaused()) {
+        if (!FSM.GamesRunner.getPaused()) {
             FSM.TimeHandler.addEvent(FSM.GamesRunner.pause, 7, true);
         }
         player.EightBitter.ModAttacher.fireEvent("onKeyDownPause");
@@ -428,7 +428,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function keyUpUp(player) {
-        if(!player.EightBitter.MapScreener.underwater) {
+        if (!player.EightBitter.MapScreener.underwater) {
             player.keys.jump = player.keys.up = 0;
         }
         player.canjump = true;
@@ -456,7 +456,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function keyUpPause(player) {
-        if(player.EightBitter.GamesRunner.getPaused()) {
+        if (player.EightBitter.GamesRunner.getPaused()) {
             player.EightBitter.GamesRunner.unpause(true);
         }
         player.EightBitter.ModAttacher.fireEvent("onKeyUpPause");
@@ -495,7 +495,7 @@ var FullScreenMario = (function(GameStartr) {
         for (i = 0; i < solids.length; ++i) {
             solid = solids[i];
             
-            if(solid.alive && solid.right > delx) {
+            if (solid.alive && solid.right > delx) {
                 if (solid.movement) {
                     solid.movement(solid);
                 }
@@ -519,7 +519,7 @@ var FullScreenMario = (function(GameStartr) {
             character = characters[i];
             
             // Gravity
-            if(character.resting) {
+            if (character.resting) {
                 character.yvel = 0;
             } else {
                 if (!character.nofall) {
@@ -630,7 +630,7 @@ var FullScreenMario = (function(GameStartr) {
         }
 
         // Scrolloffset is how far over the middle player's right is
-        if(EightBitter.MapScreener.canscroll) {
+        if (EightBitter.MapScreener.canscroll) {
             var scrolloffset = player.right - EightBitter.MapScreener.middlex;
             if (scrolloffset > 0) {
                 EightBitter.scrollWindow(Math.round(Math.min(player.scrollspeed, scrolloffset)));
@@ -677,41 +677,41 @@ var FullScreenMario = (function(GameStartr) {
      */
     function isThingOnThing(thing, other) {
         // If thing is a solid and other is falling, thing can't be above other
-        if(thing.grouptype === "Solid" && other.yvel > 0) {
+        if (thing.grouptype === "Solid" && other.yvel > 0) {
             return false;
         }
         
         // If other is falling faster than thing, and isn't a solid,
         // thing can't be on top (if anything, the opposite is true)
-        if(thing.yvel < other.yvel && other.grouptype !== "Solid") {
+        if (thing.yvel < other.yvel && other.grouptype !== "Solid") {
             return false;
         }
         
         // If thing is the player, and it's on top of an enemy, that's true
-        if(thing.player && thing.bottom < other.bottom 
+        if (thing.player && thing.bottom < other.bottom 
                 && other.type === "enemy") {
             return true;
         }
         
         // If thing is too far to the right, it can't be touching other
-        if(thing.left + thing.EightBitter.unitsize >= other.right) {
+        if (thing.left + thing.EightBitter.unitsize >= other.right) {
             return false;
         }
         
         // If thing is too far to the left, it can't be touching other
-        if(thing.right - thing.EightBitter.unitsize <= other.left) {
+        if (thing.right - thing.EightBitter.unitsize <= other.left) {
             return false;
         }
         
         // If thing's bottom is below other's top, factoring tolerance and
         // other's vertical velocity, they're touching
-        if(thing.bottom <= other.top + other.toly + other.yvel) {
+        if (thing.bottom <= other.top + other.toly + other.yvel) {
             return true;
         }
         
         // Same as before, but with velocity as the absolute difference between
         // their two velocities
-        if(thing.bottom <= other.top + other.toly
+        if (thing.bottom <= other.top + other.toly
                 + Math.abs(thing.yvel - other.yvel)) {
             return true;
         }
@@ -729,24 +729,24 @@ var FullScreenMario = (function(GameStartr) {
      */
     function isThingOnSolid(thing, other) {
         // If thing is too far to the right, they're not touching
-        if(thing.left + thing.EightBitter.unitsize >= other.right) {
+        if (thing.left + thing.EightBitter.unitsize >= other.right) {
             return false;
         }
         
         // If thing is too far to the left, they're not touching
-        if(thing.right - thing.EightBitter.unitsize <= other.left) {
+        if (thing.right - thing.EightBitter.unitsize <= other.left) {
             return false;
         }
         
         // If thing's bottom is below other's top, factoring thing's velocity
         // and other's tolerance, they're touching
-        if(thing.bottom - thing.yvel <= other.top + other.toly + thing.yvel) {
+        if (thing.bottom - thing.yvel <= other.top + other.toly + thing.yvel) {
             return true;
         }
         
         // Same as before, but with velocity as the absolute difference between
         // their two velocities
-        if(thing.bottom <= other.top + other.toly
+        if (thing.bottom <= other.top + other.toly
                 + Math.abs(thing.yvel - other.yvel)) {
             return true;
         }
@@ -761,22 +761,22 @@ var FullScreenMario = (function(GameStartr) {
      */
     function isCharacterOnSolid(thing, other) {
         // If character is resting on solid, this is automatically true
-        if(thing.resting === other) {
+        if (thing.resting === other) {
             return true;
-        }                // If the character is jumping upwards, it's not on a solid        // (removing this check would cause Mario to have "sticky" behavior when        // jumping at the corners of solids)        if(thing.yvel < 0) {            return false;        }
+        }                // If the character is jumping upwards, it's not on a solid        // (removing this check would cause Mario to have "sticky" behavior when        // jumping at the corners of solids)        if (thing.yvel < 0) {            return false;        }
         
         // The character and solid must be touching appropriately
-        if(!thing.EightBitter.isThingOnSolid(thing, other)) {
+        if (!thing.EightBitter.isThingOnSolid(thing, other)) {
             return false;
         }
         
         // Corner case: when character is exactly falling off the right (false)
-        if(thing.left + thing.xvel + thing.EightBitter.unitsize === other.right) {
+        if (thing.left + thing.xvel + thing.EightBitter.unitsize === other.right) {
             return false;
         }
         
         // Corner case: when character is exactly falling off the left (false)
-        if(thing.right - thing.xvel - thing.EightBitter.unitsize === other.left) {
+        if (thing.right - thing.xvel - thing.EightBitter.unitsize === other.left) {
             return false;
         }
         
@@ -788,17 +788,17 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function isCharacterOnResting(thing, other) {
-        if(!thing.EightBitter.isThingOnSolid(thing, other)) {
+        if (!thing.EightBitter.isThingOnSolid(thing, other)) {
             return false;
         }
         
         // Corner case: when character is exactly falling off the right (false)
-        if(thing.left + thing.xvel + thing.EightBitter.unitsize === other.right) {
+        if (thing.left + thing.xvel + thing.EightBitter.unitsize === other.right) {
             return false;
         }
         
         // Corner case: when character is exactly falling off the left (false)
-        if(thing.right - thing.xvel - thing.EightBitter.unitsize === other.left) {
+        if (thing.right - thing.xvel - thing.EightBitter.unitsize === other.left) {
             return false;
         }
         
@@ -810,11 +810,11 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function isCharacterTouchingCharacter(thing, other) {
-        if(thing.nocollidechar && !other.player) {
+        if (thing.nocollidechar && !other.player) {
             return false;
         }
         
-        if(other.nocollidechar && !thing.player) {
+        if (other.nocollidechar && !thing.player) {
             return false;
         }
         
@@ -828,10 +828,10 @@ var FullScreenMario = (function(GameStartr) {
      */
     function isCharacterTouchingSolid(thing, other) {        // Hidden solids can only be touched by the player bottom-bumping them,
         // or by specifying collide_hidden
-        if(other.hidden && !other.collide_hidden) {            if(!thing.player || !thing.EightBitter.isSolidOnCharacter(other, thing)) {                return false;            }
+        if (other.hidden && !other.collide_hidden) {            if (!thing.player || !thing.EightBitter.isSolidOnCharacter(other, thing)) {                return false;            }
         }
         
-        if(thing.nocollidesolid) {
+        if (thing.nocollidesolid) {
             return false;
         }
         
@@ -860,21 +860,21 @@ var FullScreenMario = (function(GameStartr) {
      * @remarks This sets the character's .midx property
      */    function isSolidOnCharacter(thing, other) {
         // This can never be true if other is falling
-        if(other.yvel >= 0) {
+        if (other.yvel >= 0) {
             return false;
         }
         
         // Horizontally, all that's required is for the other's midpoint to
         // be within the thing's left and right
         other.midx = thing.EightBitter.getMidX(other);
-        if(other.midx <= thing.left || other.midx >= thing.right) {
+        if (other.midx <= thing.left || other.midx >= thing.right) {
             return false;
         }
         
         // If the thing's bottom is below the other's top, factoring
         // tolerance and velocity, that's false (this function assumes they're
         // already touching)
-        if(thing.bottom - thing.yvel > other.top + other.toly - other.yvel) {
+        if (thing.bottom - thing.yvel > other.top + other.toly - other.yvel) {
             return false;
         }
         
@@ -903,7 +903,7 @@ var FullScreenMario = (function(GameStartr) {
         
         EightBitter.StatsHolder.increase("lives", amount);
         
-        if(!nosound) {
+        if (!nosound) {
             this.AudioPlayer.play("Gain Life");
         }
         
@@ -927,7 +927,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function jumpEnemy(thing, other) {
-        if(thing.keys.up) {
+        if (thing.keys.up) {
             thing.yvel = thing.EightBitter.unitsize * -1.4;
         } else {
             thing.yvel = thing.EightBitter.unitsize * -.7;
@@ -936,7 +936,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.xvel *= .91;
         thing.EightBitter.AudioPlayer.play("Kick");
         
-        if(other.group !== "item" || other.shell) {
+        if (other.group !== "item" || other.shell) {
             thing.jumpcount += 1;
             thing.EightBitter.scoreOn(
                 thing.EightBitter.findScore(thing.jumpcount + thing.jumpers),
@@ -954,7 +954,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function playerShroom(thing, other) {
-        if(thing.shrooming) {
+        if (thing.shrooming) {
             return;
         }
         
@@ -963,11 +963,11 @@ var FullScreenMario = (function(GameStartr) {
         
         thing.EightBitter.scoreOn(1000, thing.EightBitter.player);
         
-        if(thing.power < 3) {
+        if (thing.power < 3) {
             thing.shrooming = true;
             thing.power += 1;
             
-            if(thing.power === 3) {
+            if (thing.power === 3) {
                 thing.EightBitter.playerGetsFire(thing.EightBitter.player);
             } else {
                 thing.EightBitter.playerGetsBig(thing.EightBitter.player);
@@ -981,7 +981,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function playerShroom1Up(thing, other) {
-        if(thing.player) {
+        if (thing.player) {
             thing.EightBitter.gainLife(1);
         }
         
@@ -1016,12 +1016,12 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function playerStarDown(thing, other) {
-        if(!thing.player) {
+        if (!thing.player) {
             return;
         }
         
         thing.star -= 1;
-        if(thing.star) {
+        if (thing.star) {
             return;
         }
         
@@ -1045,7 +1045,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.updateBottom(thing, 0);
         thing.EightBitter.updateSize(thing);
         
-        if(no_animation) {
+        if (no_animation) {
             thing.EightBitter.addClass(thing, "large");
         } else {
             thing.EightBitter.playerGetsBigAnimation(thing);
@@ -1106,7 +1106,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.TimeHandler.addEvent(function (thing) {
             thing.EightBitter.thingRetrieveVelocity(thing, false);
             thing.EightBitter.removeClass(thing, "paddling");
-            if(thing.running || thing.xvel) {
+            if (thing.running || thing.xvel) {
                 thing.EightBitter.addClass(thing, "running");
             }
             thing.EightBitter.PixelDrawer.setThingSprite(thing);
@@ -1155,7 +1155,7 @@ var FullScreenMario = (function(GameStartr) {
         EightBitter.player.crouching = false;
         EightBitter.player.toly = EightBitter.player.toly_old || 0;
         
-        if(EightBitter.player.power !== 1) {
+        if (EightBitter.player.power !== 1) {
             EightBitter.setHeight(EightBitter.player, 16, true, true);
             EightBitter.player.EightBitter.removeClass(EightBitter.player, "crouching");
             EightBitter.player.EightBitter.updateBottom(EightBitter.player, 0);
@@ -1241,7 +1241,7 @@ var FullScreenMario = (function(GameStartr) {
      */
     function spawnLakitu(thing) {
         thing.EightBitter.TimeHandler.addEventInterval(function () {
-            if(thing.alive) {
+            if (thing.alive) {
                 thing.EightBitter.animateLakituThrowingSpiny(thing);
             } else {
                 return true;
@@ -1253,7 +1253,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function spawnCannon(thing) {
-        if(!thing.nofire) {
+        if (!thing.nofire) {
             thing.EightBitter.TimeHandler.addEventInterval(
                 thing.EightBitter.animateCannonFiring,
                 thing.frequency,
@@ -1267,18 +1267,18 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function spawnCastleBlock(thing) {
-        if(!thing.fireballs) {
+        if (!thing.fireballs) {
             return;
         }
         
         var balls = new Array(thing.fireballs);
         
-        for(var i = 0; i < thing.fireballs; i += 1) {
+        for (var i = 0; i < thing.fireballs; i += 1) {
             balls[i] = thing.EightBitter.addThing("CastleFireball");
             thing.EightBitter.setMidObj(balls[i], thing);
         }
         
-        if(thing.speed >= 0) {
+        if (thing.speed >= 0) {
             thing.dt = .07;
             thing.angle = .25;
         } else {
@@ -1321,7 +1321,7 @@ var FullScreenMario = (function(GameStartr) {
     function spawnRandomCheep(EightBitter) {
         var spawn;
         
-        if(!EightBitter.MapScreener.spawningCheeps) {
+        if (!EightBitter.MapScreener.spawningCheeps) {
             return true;
         }
         
@@ -1339,7 +1339,7 @@ var FullScreenMario = (function(GameStartr) {
             EightBitter.MapScreener.height
         );
         
-        if(spawn.left < EightBitter.MapScreener.width / 2) {
+        if (spawn.left < EightBitter.MapScreener.width / 2) {
             EightBitter.flipHoriz(spawn);
         } else {
             spawn.xvel *= -1;
@@ -1363,24 +1363,24 @@ var FullScreenMario = (function(GameStartr) {
             children = thing.children = [],
             left, text, letter, textThing, i, j;
         
-        for(i = 0; i < texts.length; i += 1) {
-            if(!texts[i]) {
+        for (i = 0; i < texts.length; i += 1) {
+            if (!texts[i]) {
                 top += spacingVerticalBlank;
                 continue;
             }
             
             text = texts[i].text;
             
-            if(texts[i].offset) {
+            if (texts[i].offset) {
                 left = thing.left + texts[i].offset * thing.EightBitter.unitsize;
             } else {
                 left = thing.left;
             }
             
-            for(j = 0; j < text.length; j += 1) {
+            for (j = 0; j < text.length; j += 1) {
                 letter = text[j];
                 
-                if(thing.EightBitter.customTextMappings.hasOwnProperty(letter)) {
+                if (thing.EightBitter.customTextMappings.hasOwnProperty(letter)) {
                     letter = thing.EightBitter.customTextMappings[letter];
                 }
                 letter = "text" + letter;
@@ -1431,8 +1431,8 @@ var FullScreenMario = (function(GameStartr) {
             collection = thing.collection,
             name;
         
-        for(name in partnerNames) {
-            if(partnerNames.hasOwnProperty(name)) {
+        for (name in partnerNames) {
+            if (partnerNames.hasOwnProperty(name)) {
                 thing.partners[name] = collection[partnerNames[name]];
             }
         }
@@ -1485,7 +1485,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function activateWindowDetector(thing) {
-        if(thing.EightBitter.MapScreener.right - thing.EightBitter.MapScreener.left < thing.left) {
+        if (thing.EightBitter.MapScreener.right - thing.EightBitter.MapScreener.left < thing.left) {
             return;
         }
         
@@ -1525,13 +1525,13 @@ var FullScreenMario = (function(GameStartr) {
             command, i;
         
         // If there is a before, parse each command into the current prethings array
-        if(before) {
-            for(i = 0; i < before.length; i += 1) {
+        if (before) {
+            for (i = 0; i < before.length; i += 1) {
                 // A copy of the command must be used, so the original isn't modified
                 command = EightBitter.proliferate({}, before[i]);
                 
                 // The command's x-location must be shifted by the thing's placement
-                if(!command.x) {
+                if (!command.x) {
                     command.x = left;
                 } else {
                     command.x += left;
@@ -1579,8 +1579,8 @@ var FullScreenMario = (function(GameStartr) {
             command, i;
         
         // If there is a stretch, parse each command into the current prethings array
-        if(stretch) {
-            for(i = 0; i < stretch.length; i += 1) {
+        if (stretch) {
+            for (i = 0; i < stretch.length; i += 1) {
                 // A copy of the command must be used, so the original isn't modified
                 command = EightBitter.proliferate({}, stretch[i]);
                 command.x = left;
@@ -1628,13 +1628,13 @@ var FullScreenMario = (function(GameStartr) {
             command, i;
         
         // If there is an after, parse each command into the current prethings array
-        if(after) {
-            for(i = 0; i < after.length; i += 1) {
+        if (after) {
+            for (i = 0; i < after.length; i += 1) {
                 // A copy of the command must be used, so the original isn't modified
                 command = EightBitter.proliferate({}, after[i]);
                 
                 // The command's x-location must be shifted by the thing's placement
-                if(!command.x) {
+                if (!command.x) {
                     command.x = left;
                 } else {
                     command.x += left;
@@ -1667,19 +1667,19 @@ var FullScreenMario = (function(GameStartr) {
      */
     function hitCharacterSolid(thing, other) {
         // "Up" solids are special (they kill things that aren't their .up)
-        if(other.up && thing !== other.up) {
+        if (other.up && thing !== other.up) {
             return thing.EightBitter.collideCharacterSolidUp(thing, other);
         }
         
         other.collide(thing, other);
         
         // If a character is bumping into the bottom, call that
-        if(thing.undermid) {
-            if(thing.undermid.bottomBump) {
+        if (thing.undermid) {
+            if (thing.undermid.bottomBump) {
                 thing.undermid.bottomBump(thing.undermid, thing);
             }
         }
-        else if(thing.under && thing.under.bottomBump) {
+        else if (thing.under && thing.under.bottomBump) {
             thing.under.bottomBump(thing.under, thing);
         }
     }
@@ -1691,13 +1691,13 @@ var FullScreenMario = (function(GameStartr) {
      */
     function hitCharacterCharacter(thing, other) {
         // The player calls the other's collide function, such as playerStar
-        if(thing.player) {
-            if(other.collide) {
+        if (thing.player) {
+            if (other.collide) {
                 return other.collide(thing, other);
             }
         }
         // Otherwise just use thing's collide function
-        else if(thing.collide) {
+        else if (thing.collide) {
             thing.collide(other, thing);
         }
     }
@@ -1706,8 +1706,8 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function collideFriendly(thing, other) {
-        if(thing.player) {
-            if(other.action) {
+        if (thing.player) {
+            if (other.action) {
                 other.action(thing, other);
             }
             other.death(other);
@@ -1718,40 +1718,40 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function collideCharacterSolid(thing, other) {
-        if(other.up === thing) {
+        if (other.up === thing) {
             return;
         }
         
         // Character on top of solid
-        if(thing.EightBitter.isCharacterOnSolid(thing, other)) {
-            if(other.hidden && !other.collide_hidden) {
+        if (thing.EightBitter.isCharacterOnSolid(thing, other)) {
+            if (other.hidden && !other.collide_hidden) {
                 return;
             }
             
-            if(thing.resting !== other) {
+            if (thing.resting !== other) {
                 thing.resting = other;
-                if(thing.onResting) {
+                if (thing.onResting) {
                     thing.onResting(thing, other);
                 }
             }
         }
         // Solid on top of character
-        else if(thing.EightBitter.isSolidOnCharacter(other, thing)) {
+        else if (thing.EightBitter.isSolidOnCharacter(other, thing)) {
             var midx = thing.EightBitter.getMidX(thing);
             
-            if(midx > other.left && midx < other.right) {
+            if (midx > other.left && midx < other.right) {
                 thing.undermid = other;
-            } else if(other.hidden && !other.collide_hidden) {
+            } else if (other.hidden && !other.collide_hidden) {
                 return;
             }
             
-            if(!thing.under) {
+            if (!thing.under) {
                 thing.under = [other];
             } else {
                 thing.under.push(other);
             }
             
-            if(thing.player) {
+            if (thing.player) {
                 thing.keys.jump = 0;
                 thing.EightBitter.setTop(thing, other.bottom - thing.toly + other.yvel);
             }
@@ -1759,19 +1759,19 @@ var FullScreenMario = (function(GameStartr) {
             thing.yvel = other.yvel;
         }
         
-        if(other.hidden && !other.collide_hidden) {
+        if (other.hidden && !other.collide_hidden) {
             return;
         }
         
         // Character bumping into the side of the solid
-        if(
+        if (
             !thing.EightBitter.isCharacterBumpingSolid(thing, other)
             && !thing.EightBitter.isThingOnThing(thing, other)
             && !thing.EightBitter.isThingOnThing(other, thing) 
             && !thing.under
         ) {
             // Character to the left of the solid
-            if(thing.right <= other.right) {
+            if (thing.right <= other.right) {
                 thing.xvel = Math.min(thing.xvel, 0);
                 thing.EightBitter.shiftHoriz(
                     thing,
@@ -1794,17 +1794,17 @@ var FullScreenMario = (function(GameStartr) {
             }
             
             // Non-players flip horizontally
-            if(!thing.player) {
-                if(!thing.noflip) {
+            if (!thing.player) {
+                if (!thing.noflip) {
                     thing.moveleft = !thing.moveleft;
                 }
                 // Some items require fancy versions (e.g. Shell)
-                if(thing.group === "item") {
+                if (thing.group === "item") {
                     thing.collide(other, thing);
                 }
             }
             // Players trigger other actions (e.g. Pipe -> mapExitPipeHorizontal)
-            else if(other.actionLeft) {
+            else if (other.actionLeft) {
                 thing.EightBitter.ModAttacher.fireEvent("onPlayerActionLeft", thing, other);
                 other.actionLeft(thing, other, other.transport);
             }
@@ -1815,7 +1815,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function collideCharacterSolidUp(thing, other) {
-        switch(thing.group) {
+        switch (thing.group) {
             case "item":
                 thing.EightBitter.animateCharacterHop(thing);
                 thing.moveleft = thing.EightBitter.objectToLeft(thing, other);
@@ -1834,7 +1834,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function collideCoin(thing, other) {
-        if(thing.player) {
+        if (thing.player) {
             thing.EightBitter.AudioPlayer.play("Coin");
             thing.EightBitter.StatsHolder.increase("score", 200);
             thing.EightBitter.StatsHolder.increase("coins", 1);
@@ -1846,7 +1846,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function collideStar(thing, other) {
-        if(!thing.player || thing.star) {
+        if (!thing.player || thing.star) {
             return;
         }
         
@@ -1860,19 +1860,19 @@ var FullScreenMario = (function(GameStartr) {
      * @remarks thing is character, other is fireball
      */
     function collideFireball(thing, other) {
-        if(!thing.EightBitter.isCharacterAlive(thing) 
+        if (!thing.EightBitter.isCharacterAlive(thing) 
                 || thing.height < thing.EightBitter.unitsize) {
             return;
         }
         
-        if(thing.nofire) {
-            if(thing.nofire > 1) {
+        if (thing.nofire) {
+            if (thing.nofire > 1) {
                 other.death(other);
             }
             return;
         }
         
-        if(!thing.firedeath) {
+        if (!thing.firedeath) {
             thing.EightBitter.AudioPlayer.playLocal("Bump", thing.EightBitter.getMidX(other));
         } else {
             thing.EightBitter.AudioPlayer.playLocal("Kick", thing.EightBitter.getMidX(other));
@@ -1894,27 +1894,27 @@ var FullScreenMario = (function(GameStartr) {
      */
     function collideShell(thing, other) {
         // If only one is a shell, it should be other, not thing
-        if(thing.shell) {
-            if(other.shell) {
+        if (thing.shell) {
+            if (other.shell) {
                 return thing.EightBitter.collideShellShell(thing, other);
             }
             return thing.EightBitter.collideShell(thing, other);
         }
         
         // Hitting a solid (e.g. wall) 
-        if(thing.grouptype === "Solid") {
+        if (thing.grouptype === "Solid") {
             return thing.EightBitter.collideShellSolid(thing, other);
         }
         
         // Hitting the player
-        if(thing.player) {
+        if (thing.player) {
             return thing.EightBitter.collideShellPlayer(thing, other);
         }
         
         // Assume anything else to be an enemy, which only moving shells kill
-        if(other.xvel) {
+        if (other.xvel) {
             thing.EightBitter.killFlip(thing);
-            if(thing.shellspawn) {
+            if (thing.shellspawn) {
                 thing = thing.EightBitter.killSpawn(thing);
             }
             
@@ -1930,7 +1930,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function collideShellSolid(thing, other) {
-        if(other.right < thing.right) {
+        if (other.right < thing.right) {
             thing.EightBitter.AudioPlayer.playLocal("Bump", thing.left);
             thing.EightBitter.setRight(other, thing.left);
             other.xvel = -other.speed;
@@ -1953,7 +1953,7 @@ var FullScreenMario = (function(GameStartr) {
             );
         
         // Star players kill the shell no matter what
-        if(thing.star) {
+        if (thing.star) {
             thing.EightBitter.scorePlayerShell(thing, other);
             other.death(other, 2);
             return;
@@ -1961,13 +1961,13 @@ var FullScreenMario = (function(GameStartr) {
         
         // If the shell is already being landed on by the player, see if it's
         // still being pushed to the side, or has reversed direction (is deadly)
-        if(other.landing) {
+        if (other.landing) {
             // Equal shelltoleft measurements: it's still being pushed
-            if(other.shelltoleft === shelltoleft) {
+            if (other.shelltoleft === shelltoleft) {
                 // Tepmorarily increase the landing count of the shell; if it is 
                 // just being started, that counts as the score hit
                 other.landing += 1;
-                if(other.landing === 1) {
+                if (other.landing === 1) {
                     thing.EightBitter.scorePlayerShell(thing, other);
                 }
                 thing.EightBitter.TimeHandler.addEvent(function (other) {
@@ -1983,12 +1983,12 @@ var FullScreenMario = (function(GameStartr) {
         
         // If the shell is being kicked by the player, either by hitting a still
         // shell or jumping onto an already moving one
-        if(other.xvel === 0 || playerjump) {
+        if (other.xvel === 0 || playerjump) {
             // thing.EightBitter.scorePlayerShell(thing, other);
             
             // Reset any signs of peeking from the shell
             other.counting = 0;
-            if(other.peeking) {
+            if (other.peeking) {
                 other.peeking = false;
                 thing.EightBitter.removeClass(other, "peeking");
                 other.height -= thing.EightBitter.unitsize / 8;
@@ -1996,8 +1996,8 @@ var FullScreenMario = (function(GameStartr) {
             }
             
             // If the shell is standing still, make it move
-            if(other.xvel === 0) {
-                if(shelltoleft) {
+            if (other.xvel === 0) {
+                if (shelltoleft) {
                     other.moveleft = true;
                     other.xvel = -other.speed;
                 } else {
@@ -2016,10 +2016,10 @@ var FullScreenMario = (function(GameStartr) {
             
             // If the player is landing on the shell (with movements and xvels
             // already set), the player should then jump up a bit
-            if(playerjump) {
+            if (playerjump) {
                 thing.EightBitter.AudioPlayer.play("Kick");
                 
-                if(!other.xvel) {
+                if (!other.xvel) {
                     thing.EightBitter.jumpEnemy(thing, other);
                     thing.yvel *= 2;
                     // thing.EightBitter.scorePlayerShell(thing, other);
@@ -2038,7 +2038,7 @@ var FullScreenMario = (function(GameStartr) {
         // Since the player is touching the shell normally, that's a death if
         // the shell isn't moving away
         else {
-            if(!other.hitcount && (
+            if (!other.hitcount && (
                 (shelltoleft && other.xvel > 0) 
                 || (!shelltoleft && other.xvel < 0)
             )) {
@@ -2051,8 +2051,8 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function collideShellShell(thing, other) {
-        if(thing.xvel !== 0) {
-            if(other.xvel !== 0) {
+        if (thing.xvel !== 0) {
+            if (other.xvel !== 0) {
                 var temp = thing.xvel;
                 thing.xvel = other.xvel;
                 other.xvel = temp;
@@ -2074,38 +2074,38 @@ var FullScreenMario = (function(GameStartr) {
      */
     function collideEnemy(thing, other) {
         // If either is a player, make it thing (not other)
-        if(!thing.player && other.player) {
+        if (!thing.player && other.player) {
             return thing.EightBitter.collideEnemy(thing, other);
         }
         
         // Death: nothing happens
-        if(!thing.EightBitter.isCharacterAlive(thing)
+        if (!thing.EightBitter.isCharacterAlive(thing)
             || !thing.EightBitter.isCharacterAlive(other)) {
             return;
         }
         
         // Items
-        if(thing.group === "item") {
-            if(thing.collide_primary) {
+        if (thing.group === "item") {
+            if (thing.collide_primary) {
                 return thing.collide(other, thing);
             }
             return;
         }
         
         // Player interacting with enemies
-        if(thing.player) {
+        if (thing.player) {
             // Player landing on top of an enemy
-            if(!thing.EightBitter.MapScreener.underwater 
+            if (!thing.EightBitter.MapScreener.underwater 
                 && ((thing.star && !other.nostar)
                     || (!other.deadly && isThingOnThing(thing, other)))) {
                 
                 // Enforces toly (not touching means stop)
-                if(thing.EightBitter.isCharacterAboveEnemy(thing, other)) {
+                if (thing.EightBitter.isCharacterAboveEnemy(thing, other)) {
                     return;
                 }
                 
                 // A star player just kills the enemy, no matter what
-                if(thing.star) {
+                if (thing.star) {
                     other.nocollide = true;
                     other.death(other, 2);
                     thing.EightBitter.scoreOn(other.scoreStar, other);
@@ -2124,13 +2124,13 @@ var FullScreenMario = (function(GameStartr) {
                     thing.EightBitter.removeClasses(thing, "running skidding jumping one two three");
                     thing.hopping = true;
                     
-                    if(thing.power === 1) {
+                    if (thing.power === 1) {
                         thing.EightBitter.setPlayerSizeSmall(thing); 
                     }
                 }
             }
             // Player being landed on by an enemy
-            else if(!thing.EightBitter.isCharacterAboveEnemy(thing, other)) {
+            else if (!thing.EightBitter.isCharacterAboveEnemy(thing, other)) {
                 thing.death(thing);
             }
         }
@@ -2148,22 +2148,22 @@ var FullScreenMario = (function(GameStartr) {
      * @remarks thing is solid, other is character
      */
     function collideBottomBrick(thing, other) {
-        if(other.solid && !thing.solid) {
+        if (other.solid && !thing.solid) {
             return thing.EightBitter.collideBottomBrick(other, thing);
         }
         
-        if(thing.up || !other.player) {
+        if (thing.up || !other.player) {
             return;
         }
         
         thing.EightBitter.AudioPlayer.play("Bump");
         
-        if(thing.used) {
+        if (thing.used) {
             return;
         }
         
         thing.up = other;
-        if(other.power > 1 && thing.breakable && !thing.contents) {
+        if (other.power > 1 && thing.breakable && !thing.contents) {
             thing.EightBitter.TimeHandler.addEvent(
                 thing.EightBitter.killBrick, 2, thing, other
             );
@@ -2172,14 +2172,14 @@ var FullScreenMario = (function(GameStartr) {
         
         thing.EightBitter.animateSolidBump(thing);
         
-        if(thing.contents) {
+        if (thing.contents) {
             thing.EightBitter.TimeHandler.addEvent(function () {
                 var output = thing.EightBitter.animateSolidContents(thing, other);
                 
-                if(thing.contents !== "Coin") {
+                if (thing.contents !== "Coin") {
                     thing.EightBitter.animateBlockBecomesUsed(thing);
                 } else {
-                    if(thing.lastcoin) {
+                    if (thing.lastcoin) {
                         thing.EightBitter.animateBlockBecomesUsed(thing);
                     } else {
                         thing.EightBitter.TimeHandler.addEvent(function () {
@@ -2195,15 +2195,15 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function collideBottomBlock(thing, other) {
-        if(other.solid && !thing.solid) {
+        if (other.solid && !thing.solid) {
             return thing.EightBitter.collideBottomBlock(other, thing);
         }
         
-        if(thing.up || !other.player) {
+        if (thing.up || !other.player) {
             return;
         }
         
-        if(thing.used) {
+        if (thing.used) {
             thing.EightBitter.AudioPlayer.play("Bump");
             return;
         }
@@ -2222,11 +2222,11 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function collideVine(thing, other) {
-        if(!thing.player || thing.attachedSolid || thing.climbing) {
+        if (!thing.player || thing.attachedSolid || thing.climbing) {
             return;
         }
         
-        if(thing.bottom > other.bottom + thing.EightBitter.unitsize * 2) {
+        if (thing.bottom > other.bottom + thing.EightBitter.unitsize * 2) {
             return;
         }
         
@@ -2238,7 +2238,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.resting = undefined;
         
         // To the left of the vine
-        if(thing.right < other.right) {
+        if (thing.right < other.right) {
             thing.lookleft = false;
             thing.moveleft = false;
             thing.attachedDirection = -1;
@@ -2268,7 +2268,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function collideSpringboard(thing, other) {
-        if(
+        if (
             thing.player && thing.yvel >= 0 && !other.tension
             && thing.EightBitter.isCharacterOnSolid(thing, other)
         ) {
@@ -2317,7 +2317,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.TimeHandler.addEventInterval(function () {
             thing.EightBitter.shiftVert(thing, thing.EightBitter.unitsize);
             
-            if(thing.bottom > other.bottom) {
+            if (thing.bottom > other.bottom) {
                 thing.movement = false;
                 thing.EightBitter.setBottom(thing, other.bottom);
                 thing.EightBitter.TimeHandler.clearClassCycle(thing, "climbing");
@@ -2352,11 +2352,11 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Thing} other   axe
      */
     function collideCastleAxe(thing, other) {
-        if(!thing.EightBitter.isCharacterAlive(thing)) {
+        if (!thing.EightBitter.isCharacterAlive(thing)) {
             return;
         }
         
-        if(
+        if (
             thing.right < other.left + other.EightBitter.unitsize
             || thing.bottom > other.bottom - other.EightBitter.unitsize
         ) {
@@ -2390,11 +2390,11 @@ var FullScreenMario = (function(GameStartr) {
             numFireworks = Number(timeStr[timeStr.length - 1]);
         
         thing.EightBitter.killNormal(thing);
-        if(!thing.player) {
+        if (!thing.player) {
             return;
         }
         
-        if(!(numFireworks === 1 || numFireworks === 3 || numFireworks === 6)) {
+        if (!(numFireworks === 1 || numFireworks === 3 || numFireworks === 6)) {
             numFireworks = 0;
         }
         
@@ -2403,7 +2403,7 @@ var FullScreenMario = (function(GameStartr) {
             thing.EightBitter.StatsHolder.increase("score", 50);
             thing.EightBitter.AudioPlayer.play("Coin");
             
-            if(thing.EightBitter.StatsHolder.get("time") <= 0) {
+            if (thing.EightBitter.StatsHolder.get("time") <= 0) {
                 thing.EightBitter.TimeHandler.addEvent(function () {
                     thing.EightBitter.animateEndLevelFireworks(thing, numFireworks);
                 }, 35);
@@ -2428,7 +2428,7 @@ var FullScreenMario = (function(GameStartr) {
             // here it is not in letlers
             letters = other.collection[keys[i]].children;
             
-            for(j = 0; j < letters.length; j += 1) {
+            for (j = 0; j < letters.length; j += 1) {
                 letters[j].hidden = false;
             }
             
@@ -2445,7 +2445,7 @@ var FullScreenMario = (function(GameStartr) {
      */
     function collideTransport(thing, other) {
         thing.EightBitter.collideCharacterSolid(me, other);
-        if(thing.resting !== other) {
+        if (thing.resting !== other) {
             return;
         }
 
@@ -2460,8 +2460,8 @@ var FullScreenMario = (function(GameStartr) {
      * thing is character; other is detector
      */
     function collideDetector(thing, other) {
-        if(!thing.player) {
-            if(other.activate_fail) {
+        if (!thing.player) {
+            if (other.activate_fail) {
                 other.activate_fail(thing);
             }
             return;
@@ -2474,8 +2474,8 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function collideLevelTransport(thing, other) {
-        if(other.transport) {
-            switch(other.transport.type) {
+        if (other.transport) {
+            switch (other.transport.type) {
                 case "location":
                     thing.EightBitter.setLocation(other.transport.value);
                     break;
@@ -2505,18 +2505,18 @@ var FullScreenMario = (function(GameStartr) {
      */
     function moveSimple(thing) {
         // If the thing is looking away from the intended direction, flip it
-        if(thing.direction != thing.moveleft) {
+        if (thing.direction != thing.moveleft) {
             // thing.moveleft is truthy: it should now be looking to the right
-            if(thing.moveleft) {
+            if (thing.moveleft) {
                 thing.xvel = -thing.speed;
-                if(!thing.noflip) {
+                if (!thing.noflip) {
                     thing.EightBitter.unflipHoriz(thing);
                 }
             }
             // thing.moveleft is falsy: it should now be looking to the left
             else {
                 thing.xvel = thing.speed;
-                if(!thing.noflip) {
+                if (!thing.noflip) {
                     thing.EightBitter.flipHoriz(thing);
                 }
             }
@@ -2534,12 +2534,12 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.moveSimple(thing);
         
         // If this isn't resting, it's the same as moveSimple
-        if(thing.yvel !== 0) {
+        if (thing.yvel !== 0) {
             return;
         }
 
-        if(!thing.resting || !thing.EightBitter.isCharacterOnResting(thing, thing.resting)) {
-            if(thing.moveleft) {
+        if (!thing.resting || !thing.EightBitter.isCharacterOnResting(thing, thing.resting)) {
+            if (thing.moveleft) {
                 thing.EightBitter.shiftHoriz(thing, thing.EightBitter.unitsize, true);
             } else {
                 thing.EightBitter.shiftHoriz(thing, -thing.EightBitter.unitsize, true);
@@ -2549,13 +2549,13 @@ var FullScreenMario = (function(GameStartr) {
 
         
         // // Check for being over the edge in the direction of movement
-        // if(thing.moveleft) {
-            // if(thing.left + thing.EightBitter.unitsize <= thing.resting.left) {
+        // if (thing.moveleft) {
+            // if (thing.left + thing.EightBitter.unitsize <= thing.resting.left) {
                 // thing.EightBitter.shiftHoriz(thing, thing.EightBitter.unitsize);
                 // thing.moveleft = false;
             // }
         // } else {
-            // if(thing.right - thing.EightBitter.unitsize >= thing.resting.right) {
+            // if (thing.right - thing.EightBitter.unitsize >= thing.resting.right) {
                 // thing.EightBitter.shiftHoriz(thing, -thing.EightBitter.unitsize);
                 // thing.moveleft = true;
             // }
@@ -2573,7 +2573,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.moveSimple(thing);
         
         // If .resting, jump!
-        if(thing.resting) {
+        if (thing.resting) {
             thing.yvel = -Math.abs(thing.jumpheight);
             thing.resting = undefined;
         }
@@ -2603,9 +2603,9 @@ var FullScreenMario = (function(GameStartr) {
      */
     function moveBowser(thing) {
         // Facing to the right
-        if(thing.flipHoriz) {
+        if (thing.flipHoriz) {
             // To the left of the player: walk to the right
-            if(thing.EightBitter.objectToLeft(thing, thing.EightBitter.player)) {
+            if (thing.EightBitter.objectToLeft(thing, thing.EightBitter.player)) {
                 thing.EightBitter.moveSimple(thing);
             }
             // To the right of the player: look to the left and movePacing as normal
@@ -2618,7 +2618,7 @@ var FullScreenMario = (function(GameStartr) {
         // Facing to the left
         else {
             // To the left of the player: look and walk to the right
-            if(thing.EightBitter.objectToLeft(thing, thing.EightBitter.player)) {
+            if (thing.EightBitter.objectToLeft(thing, thing.EightBitter.player)) {
                 thing.lookleft = thing.moveleft = false;
                 thing.EightBitter.flipHoriz(thing);
                 thing.EightBitter.moveSimple(thing);
@@ -2630,14 +2630,14 @@ var FullScreenMario = (function(GameStartr) {
             }
         }
         
-        // if(thing.flipHoriz) {
-            // if(thing.EightBitter.objectToLeft(thing, thing.EightBitter.player)) {
+        // if (thing.flipHoriz) {
+            // if (thing.EightBitter.objectToLeft(thing, thing.EightBitter.player)) {
                 // thing.EightBitter.flipHoriz(thing);
             // } else {
                 // thing.EightBitter.moveSimple(thing);
             // }
         // } else {
-            // if(thing.EightBitter.objectToLeft(thing.EightBitter.player, thing)) {
+            // if (thing.EightBitter.objectToLeft(thing.EightBitter.player, thing)) {
                 // thing.EightBitter.unflipHoriz(thing);
                 // thing.EightBitter.moveSimple(thing);
             // }   
@@ -2649,7 +2649,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function moveBowserFire(thing) {
-        if(Math.round(thing.bottom) === Math.round(thing.ylev)) {
+        if (Math.round(thing.bottom) === Math.round(thing.ylev)) {
             thing.movement = undefined;
             return;
         }
@@ -2671,11 +2671,11 @@ var FullScreenMario = (function(GameStartr) {
      */
     function moveFloating(thing) {
         // If above the endpoint:
-        if(thing.top <= thing.end) {
+        if (thing.top <= thing.end) {
             thing.yvel = Math.min(thing.yvel + thing.EightBitter.unitsize / 64, thing.maxvel);
         }
         // If below the endpoint:
-        else if(thing.bottom >= thing.begin) {
+        else if (thing.bottom >= thing.begin) {
             thing.yvel = Math.max(thing.yvel - thing.EightBitter.unitsize / 64, -thing.maxvel);
         }
         
@@ -2695,11 +2695,11 @@ var FullScreenMario = (function(GameStartr) {
      */
     function moveSliding(thing) {
         // If to the left of the endpoint:
-        if(thing.EightBitter.MapScreener.left + thing.left <= thing.begin) {
+        if (thing.EightBitter.MapScreener.left + thing.left <= thing.begin) {
             thing.xvel = Math.min(thing.xvel + thing.EightBitter.unitsize / 64, thing.maxvel);
         }
         // If to the right of the endpoint:
-        else if(thing.EightBitter.MapScreener.left + thing.right > thing.end) {
+        else if (thing.EightBitter.MapScreener.left + thing.right > thing.end) {
             thing.xvel = Math.max(thing.xvel - thing.EightBitter.unitsize / 64, -thing.maxvel);
         }
         
@@ -2714,7 +2714,7 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Thing} thing
      */
     function setMovementEndpoints(thing) {
-        if(thing.begin > thing.end) {
+        if (thing.begin > thing.end) {
             var temp = thing.begin;
             thing.begin = thing.end;
             thing.end = temp;
@@ -2735,17 +2735,17 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.shiftVert(thing, thing.yvel);
         
         // If the player is resting on this and this is alive, move the player
-        if(thing === thing.EightBitter.player.resting && thing.EightBitter.player.alive) {
+        if (thing === thing.EightBitter.player.resting && thing.EightBitter.player.alive) {
             thing.EightBitter.setBottom(thing.EightBitter.player, thing.top);
             thing.EightBitter.shiftHoriz(thing.EightBitter.player, thing.xvel);
             
             // If the player is too far to the right or left, stop that overlap
-            if(thing.EightBitter.player.right > thing.EightBitter.MapScreener.innerWidth) {
+            if (thing.EightBitter.player.right > thing.EightBitter.MapScreener.innerWidth) {
                 thing.EightBitter.setRight(
                     thing.EightBitter.player, 
                     thing.EightBitter.MapScreener.innerWidth
                 );
-            } else if(thing.EightBitter.player.left < 0) {
+            } else if (thing.EightBitter.player.left < 0) {
                 thing.EightBitter.setLeft(thing.EightBitter.player, 0);
             }
         }
@@ -2755,16 +2755,16 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function movePlatformSpawn(thing) {
-        if(thing.bottom < 0) {
+        if (thing.bottom < 0) {
             thing.EightBitter.setTop(thing, thing.EightBitter.MapScreener.bottom_platform_max);
-        } else if(thing.top > thing.EightBitter.MapScreener.bottom_platform_max) {
+        } else if (thing.top > thing.EightBitter.MapScreener.bottom_platform_max) {
             thing.EightBitter.setBottom(thing, 0);
         } else {
             thing.EightBitter.movePlatform(thing);
             return;
         }
         
-        if(thing.EightBitter.player && thing.EightBitter.player.resting === thing) {
+        if (thing.EightBitter.player && thing.EightBitter.player.resting === thing) {
             thing.EightBitter.player.resting = undefined;
         }
     }
@@ -2774,11 +2774,11 @@ var FullScreenMario = (function(GameStartr) {
      */
     function movePlatformScale(thing) {
         // If the Player is resting on this, fall hard
-        if(thing.EightBitter.player.resting === thing) {
+        if (thing.EightBitter.player.resting === thing) {
             thing.yvel += thing.EightBitter.unitsize / 16;
         }
         // If this still has velocity from a player, fall less
-        else if(this.yvel > 0) {
+        else if (this.yvel > 0) {
             thing.yvel -= thing.EightBitter.unitsize / 16;
         }
         // Not being rested upon or having a yvel means nothing happens
@@ -2790,7 +2790,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.partners.platformOther.tension -= thing.yvel;
         
         // If the partner has fallen off, everybody falls!
-        if(thing.partners.platformOther.tension <= 0) {
+        if (thing.partners.platformOther.tension <= 0) {
             thing.partners.platformOther.yvel = thing.EightBitter.unitsize / 2;
             thing.collide = thing.partners.platformOther.collide = thing.EightBitter.collideCharacterSolid;
             thing.movement = thing.partners.platformOther.movement = thing.EightBitter.moveFreeFalling;
@@ -2809,11 +2809,11 @@ var FullScreenMario = (function(GameStartr) {
     function moveVine(thing) {
         thing.EightBitter.increaseHeight(thing, thing.speed);
         
-        if(thing.attachedSolid) {
+        if (thing.attachedSolid) {
             thing.EightBitter.setBottom(thing, thing.attachedSolid.top);
         }
         
-        if(thing.attachedCharacter) {
+        if (thing.attachedCharacter) {
             thing.EightBitter.shiftVert(thing.attachedCharacter, -thing.speed); 
         }
     }
@@ -2828,12 +2828,12 @@ var FullScreenMario = (function(GameStartr) {
         thing.tension *= 2;
             
         // If the spring height is past the normal, it's done moving
-        if(thing.height > thing.heightNormal) {
+        if (thing.height > thing.heightNormal) {
             thing.EightBitter.reduceHeight(
                 thing, 
                 (thing.height - thing.heightNormal) * thing.EightBitter.unitsize
             );
-            if(thing === player.spring) {
+            if (thing === player.spring) {
                 player.yvel = Math.max(
                     thing.EightBitter.unitsize * -2,
                     thing.tensionSave * -.98
@@ -2847,31 +2847,31 @@ var FullScreenMario = (function(GameStartr) {
             thing.EightBitter.setBottom(player, thing.top);
         }
         
-        if(thing === player.spring) {
-            if(!thing.EightBitter.isThingTouchingThing(player, thing)) {
+        if (thing === player.spring) {
+            if (!thing.EightBitter.isThingTouchingThing(player, thing)) {
                 player.spring = undefined;
                 player.movement = FullScreenMario.prototype.movePlayer;
             }
         }
-    }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if(thing.EightBitter.player.resting !== thing) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        thing.EightBitter.shiftVert(thing, thing.yvel += thing.EightBitter.unitsize / 8);        thing.EightBitter.setBottom(thing.EightBitter.player, thing.top);                // After a velocity threshold, start always falling        if(thing.yvel >= (thing.fall_threshold_start || thing.EightBitter.unitsize * 2.8)) {            thing.freefall = true;            thing.movement = thing.EightBitter.moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || thing.EightBitter.unitsize / 16;        thing.EightBitter.shiftVert(thing, thing.yvel);
-                // After a velocity threshold, stop accelerating        if(thing.yvel >= (thing.fall_threshold_end || thing.EightBitter.unitsize * 2)) {
+    }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if (thing.EightBitter.player.resting !== thing) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        thing.EightBitter.shiftVert(thing, thing.yvel += thing.EightBitter.unitsize / 8);        thing.EightBitter.setBottom(thing.EightBitter.player, thing.top);                // After a velocity threshold, start always falling        if (thing.yvel >= (thing.fall_threshold_start || thing.EightBitter.unitsize * 2.8)) {            thing.freefall = true;            thing.movement = thing.EightBitter.moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || thing.EightBitter.unitsize / 16;        thing.EightBitter.shiftVert(thing, thing.yvel);
+                // After a velocity threshold, stop accelerating        if (thing.yvel >= (thing.fall_threshold_end || thing.EightBitter.unitsize * 2)) {
             thing.movement = movePlatform;        }    }
     
     /**
      * 
      */
     function moveShell(thing) {
-        if(thing.xvel !== 0) {
+        if (thing.xvel !== 0) {
             return;
         }
         thing.counting += 1;
         
-        if(thing.counting === 350) {
+        if (thing.counting === 350) {
             thing.peeking = true;
             thing.height += thing.EightBitter.unitsize / 8;
             thing.EightBitter.addClass(thing, "peeking");
             thing.EightBitter.updateSize(thing);
-        } else if(thing.counting === 490) {
+        } else if (thing.counting === 490) {
             thing.spawnsettings = {
                 "smart": thing.smart
             };
@@ -2887,10 +2887,10 @@ var FullScreenMario = (function(GameStartr) {
             height = thing.height + thing.direction,
             at_end = false;
         
-        if(height <= 0) {
+        if (height <= 0) {
             height = thing.height = 0;
             at_end = true;
-        } else if(height >= thing.constructor.prototype.height) {
+        } else if (height >= thing.constructor.prototype.height) {
             height = thing.height = thing.constructor.prototype.height;
             at_end = true;
         }
@@ -2898,7 +2898,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.setHeight(thing, height, true, true);
         thing.EightBitter.setBottom(thing, bottom);
         
-        if(at_end) {
+        if (at_end) {
             thing.counter = 0;
             thing.movement = movePiranhaLatent;
         }
@@ -2908,7 +2908,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function moveBubble(thing) {
-        if(thing.top < thing.EightBitter.MapScreener.top + thing.EightBitter.unitsize * 16) {
+        if (thing.top < thing.EightBitter.MapScreener.top + thing.EightBitter.unitsize * 16) {
             thing.EightBitter.killNormal(thing);
         }
     }
@@ -2917,7 +2917,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function moveCheepFlying(thing) {
-        if(thing.top < thing.EightBitter.unitsize * 28) {
+        if (thing.top < thing.EightBitter.unitsize * 28) {
             thing.movement = undefined;
             thing.nofall = false;
         }
@@ -2948,7 +2948,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function moveBlooper(thing) {
-        switch(thing.counter) {
+        switch (thing.counter) {
             case 56: 
                 thing.squeeze = true; 
                 thing.counter += 1;
@@ -2958,13 +2958,13 @@ var FullScreenMario = (function(GameStartr) {
                 break;
             default: 
                 thing.counter += 1;
-                if(thing.top < thing.EightBitter.unitsize * 18) {
+                if (thing.top < thing.EightBitter.unitsize * 18) {
                     thing.EightBitter.moveBlooperSqueezing(thing);
                 }
                 break;
         }
 
-        if(thing.squeeze) {
+        if (thing.squeeze) {
             thing.yvel = Math.max(thing.yvel + .021, .7); // going down
         } else {
             thing.yvel = Math.min(thing.yvel - .035, -.7); // going up
@@ -2972,12 +2972,12 @@ var FullScreenMario = (function(GameStartr) {
         
         thing.EightBitter.shiftVert(thing, thing.yvel, true);
 
-        if(!thing.squeeze) {
-            if(thing.EightBitter.player.left > thing.right + thing.EightBitter.unitsize * 8) {
+        if (!thing.squeeze) {
+            if (thing.EightBitter.player.left > thing.right + thing.EightBitter.unitsize * 8) {
                 // Go to the right
                 thing.xvel = Math.min(thing.speed, thing.xvel + thing.EightBitter.unitsize / 32);
             }
-            else if(thing.EightBitter.player.right < thing.left - thing.EightBitter.unitsize * 8) {
+            else if (thing.EightBitter.player.right < thing.left - thing.EightBitter.unitsize * 8) {
                 // Go to the left
                 thing.xvel = Math.max(-thing.speed, thing.xvel - thing.EightBitter.unitsize / 32);
             }
@@ -3011,7 +3011,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function movePodobooFalling(thing) {
-        if(thing.top >= thing.starty) {
+        if (thing.top >= thing.starty) {
             thing.yvel = 0;
             thing.movement = undefined;
             thing.EightBitter.unflipVert(thing);
@@ -3019,12 +3019,12 @@ var FullScreenMario = (function(GameStartr) {
             return;
         }
         
-        if(thing.yvel >= thing.speed) {
+        if (thing.yvel >= thing.speed) {
             thing.yvel = thing.speed;
             return;
         }
         
-        if(!thing.flipVert && thing.yvel > 0) {
+        if (!thing.flipVert && thing.yvel > 0) {
             thing.EightBitter.flipVert(thing);
         }
         
@@ -3037,11 +3037,11 @@ var FullScreenMario = (function(GameStartr) {
     function moveLakitu(thing) {
         var player = thing.EightBitter.player;
         // If the player is moving quickly to the right, move in front and stay there
-        if(
+        if (
             player.xvel > thing.EightBitter.unitsize / 8
             && player.left > thing.EightBitter.MapScreener.width / 2
         ) {
-            if(thing.left < player.right + thing.EightBitter.unitsize * 16) {
+            if (thing.left < player.right + thing.EightBitter.unitsize * 16) {
                 // slide to xloc
                 thing.EightBitter.slideToX(
                     thing,
@@ -3064,7 +3064,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function moveLakituInitial(thing) {
-        if(thing.right < thing.EightBitter.player.left) {
+        if (thing.right < thing.EightBitter.player.left) {
             thing.counter = 0;
             thing.movement = thing.EightBitter.moveLakitu;
             thing.movement(thing);
@@ -3079,7 +3079,7 @@ var FullScreenMario = (function(GameStartr) {
      */
     function moveCoinEmerge(thing, parent) {
         thing.EightBitter.shiftVert(thing, thing.yvel);
-        if(parent && thing.bottom >= thing.blockparent.bottom) {
+        if (parent && thing.bottom >= thing.blockparent.bottom) {
             thing.EightBitter.killNormal(thing);
         }
     }
@@ -3091,33 +3091,33 @@ var FullScreenMario = (function(GameStartr) {
      */
     function movePlayer(thing) {
         // Not jumping
-        if(!thing.keys.up) {
+        if (!thing.keys.up) {
             thing.keys.jump = 0;
         }
         // Jumping
-        else if(
+        else if (
             thing.keys.jump > 0 
             && (thing.yvel <= 0 || thing.EightBitter.MapScreener.underwater)
         ) {
-            if(thing.EightBitter.MapScreener.underwater) {
+            if (thing.EightBitter.MapScreener.underwater) {
                 thing.EightBitter.animatePlayerPaddling(thing);
                 thing.EightBitter.removeClass(thing, "running");
             }
             
-            if(thing.resting) {
-                if(thing.resting.xvel) {
+            if (thing.resting) {
+                if (thing.resting.xvel) {
                     thing.xvel += thing.resting.xvel;
                 }
                 thing.resting = undefined;
             }
             // Jumping, not resting
             else {
-                if(!thing.jumping && !thing.EightBitter.MapScreener.underwater) {
+                if (!thing.jumping && !thing.EightBitter.MapScreener.underwater) {
                     thing.EightBitter.switchClass(thing, "running skidding", "jumping");
                 }
                 thing.jumping = true;
             }
-            if(!thing.EightBitter.MapScreener.underwater) {
+            if (!thing.EightBitter.MapScreener.underwater) {
                 thing.keys.jumplev += 1;
                 var dy = FullScreenMario.unitsize 
                     / (Math.pow(thing.keys.jumplev, thing.EightBitter.MapScreener.jumpmod - .0014 * thing.xvel));
@@ -3126,8 +3126,8 @@ var FullScreenMario = (function(GameStartr) {
         }
       
         // Crouching
-        if(thing.keys.crouch && !thing.crouching && thing.resting) {
-            if(thing.power != 1) {
+        if (thing.keys.crouch && !thing.crouching && thing.resting) {
+            if (thing.power != 1) {
                 thing.crouching = true;
                 thing.EightBitter.removeClass(thing, "running");
                 thing.EightBitter.addClass(thing, "crouching");
@@ -3139,7 +3139,7 @@ var FullScreenMario = (function(GameStartr) {
                 thing.EightBitter.updateSize(thing);
             }
             // Pipe movement
-            if(thing.resting.actionTop) {
+            if (thing.resting.actionTop) {
                 thing.EightBitter.ModAttacher.fireEvent("onPlayerActionTop", thing, thing.resting);
                 thing.resting.actionTop(thing, thing.resting);
             }
@@ -3148,7 +3148,7 @@ var FullScreenMario = (function(GameStartr) {
         // Running
         var decel = 0 ; // (how much extra to decrease)
         // If a button is pressed, hold/increase speed
-        if(thing.keys.run != 0 && !thing.crouching) {
+        if (thing.keys.run != 0 && !thing.crouching) {
             var dir = thing.keys.run,
                 // No sprinting underwater
                 sprinting = (thing.keys.sprint && !thing.EightBitter.MapScreener.underwater) || 0,
@@ -3160,14 +3160,14 @@ var FullScreenMario = (function(GameStartr) {
             decel = .0007;
             
             // If you're accelerating in the opposite direction from your current velocity, that's a skid
-            if((thing.keys.run > 0) == thing.moveleft) {
-                if(!thing.skidding) {
+            if ((thing.keys.run > 0) == thing.moveleft) {
+                if (!thing.skidding) {
                     thing.EightBitter.addClass(thing, "skidding");
                     thing.skidding = true;
                 }
             }
             // Not accelerating: make sure you're not skidding
-            else if(thing.skidding) {
+            else if (thing.skidding) {
                 thing.EightBitter.removeClass(thing, "skidding");
                 thing.skidding = false;
             }
@@ -3178,16 +3178,16 @@ var FullScreenMario = (function(GameStartr) {
             decel = .035;
         }
 
-        if(thing.xvel > decel) {
+        if (thing.xvel > decel) {
             thing.xvel -= decel;
-        } else if(thing.xvel < -decel) {
+        } else if (thing.xvel < -decel) {
             thing.xvel += decel;
-        } else if(thing.xvel != 0) {
+        } else if (thing.xvel != 0) {
             thing.xvel = 0;
-            if(!thing.EightBitter.MapScreener.nokeys && thing.keys.run == 0) {
-                if(thing.keys.left_down) {
+            if (!thing.EightBitter.MapScreener.nokeys && thing.keys.run == 0) {
+                if (thing.keys.left_down) {
                     thing.keys.run = -1;
-                } else if(thing.keys.right_down) {
+                } else if (thing.keys.right_down) {
                     thing.keys.run = 1;
                 }
             }  
@@ -3195,10 +3195,10 @@ var FullScreenMario = (function(GameStartr) {
       
         // Movement mods
         // Slowing down
-        if(Math.abs(thing.xvel) < .14) {
-            if(thing.running) {
+        if (Math.abs(thing.xvel) < .14) {
+            if (thing.running) {
                 thing.running = false;
-                if(thing.power == 1) {
+                if (thing.power == 1) {
                     thing.EightBitter.setPlayerSizeSmall(thing);
                 }
                 thing.EightBitter.removeClasses(thing, "running skidding one two three");
@@ -3207,51 +3207,51 @@ var FullScreenMario = (function(GameStartr) {
             }
         }
         // Not moving slowly
-        else if(!thing.running) {
+        else if (!thing.running) {
             thing.running = true;
             thing.EightBitter.switchClass(thing, "still", "running");
             thing.EightBitter.animatePlayerRunningCycle(thing);
-            if(thing.power == 1) {
+            if (thing.power == 1) {
                 thing.EightBitter.setPlayerSizeSmall(thing);
             }
         }
-        if(thing.xvel > 0) {
+        if (thing.xvel > 0) {
             thing.xvel = Math.min(thing.xvel, thing.maxspeed);
-            if(thing.moveleft && (thing.resting || thing.EightBitter.MapScreener.underwater)) {
+            if (thing.moveleft && (thing.resting || thing.EightBitter.MapScreener.underwater)) {
                 thing.EightBitter.unflipHoriz(thing);
                 thing.moveleft = false;
             }
         }
-        else if(thing.xvel < 0) {
+        else if (thing.xvel < 0) {
             thing.xvel = Math.max(thing.xvel, thing.maxspeed * -1);
-            if(!thing.moveleft && (thing.resting || thing.EightBitter.MapScreener.underwater)) {
+            if (!thing.moveleft && (thing.resting || thing.EightBitter.MapScreener.underwater)) {
                 thing.moveleft = true;
                 thing.EightBitter.flipHoriz(thing);
             }
         }
       
         // Resting stops a bunch of other stuff
-        if(thing.resting) {
+        if (thing.resting) {
             // Hopping
-            if(thing.hopping) {
+            if (thing.hopping) {
                 thing.hopping = false;
                 thing.EightBitter.removeClass(thing, "hopping");
-                if(thing.xvel) {
+                if (thing.xvel) {
                     thing.EightBitter.addClass(thing, "running");
                 }
             }
             // Jumping
             thing.keys.jumplev = thing.yvel = thing.jumpcount = 0;
-            if(thing.jumping) {
+            if (thing.jumping) {
                 thing.jumping = false;
                 thing.EightBitter.removeClass(thing, "jumping");
-                if(thing.power == 1) {
+                if (thing.power == 1) {
                     thing.EightBitter.setPlayerSizeSmall(thing);
                 }
                 thing.EightBitter.addClass(thing, Math.abs(thing.xvel) < .14 ? "still" : "running");
             }
             // Paddling
-            if(thing.paddling) {
+            if (thing.paddling) {
                 thing.paddling = thing.swimming = false;
                 thing.EightBitter.TimeHandler.clearClassCycle(thing, "paddling");
                 thing.EightBitter.removeClasses(thing, "paddling swim1 swim2");
@@ -3267,24 +3267,24 @@ var FullScreenMario = (function(GameStartr) {
         var attachedSolid = thing.attachedSolid,
             animatedClimbing;
         
-        if(!attachedSolid) {
+        if (!attachedSolid) {
             thing.movement = thing.EightBitter.movePlayer;
             return;
         }
         
-        if(thing.bottom < thing.attachedSolid.top) {
+        if (thing.bottom < thing.attachedSolid.top) {
             thing.EightBitter.unattachPlayer(thing, thing.attachedSolid);
             return;
         }
         
         // Running away from the vine means dropping off
-        if(thing.keys.run !== 0 && thing.keys.run === thing.attachedDirection) {
+        if (thing.keys.run !== 0 && thing.keys.run === thing.attachedDirection) {
             // Leaving to the left
-            if(thing.attachedDirection === -1) {
+            if (thing.attachedDirection === -1) {
                 thing.EightBitter.setRight(thing, attachedSolid.left - thing.EightBitter.unitsize);
             }
             // Leaving to the right
-            else if(thing.attachedDirection === 1) {
+            else if (thing.attachedDirection === 1) {
                 thing.EightBitter.setLeft(thing, attachedSolid.right + thing.EightBitter.unitsize);
             }
             
@@ -3293,15 +3293,15 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         // If the player is moving up, simply move up
-        if(thing.keys.up) {
+        if (thing.keys.up) {
             animatedClimbing = true;
             thing.EightBitter.shiftVert(thing, thing.EightBitter.unitsize / -4);
         }
         // If the thing is moving down, move down and check for unattachment
-        else if(thing.keys.crouch) {
+        else if (thing.keys.crouch) {
             animatedClimbing = true;
             thing.EightBitter.shiftVert(thing, thing.EightBitter.unitsize / 2);
-            if(thing.top > attachedSolid.bottom) {
+            if (thing.top > attachedSolid.bottom) {
                 thing.EightBitter.unattachPlayer(thing, thing.attachedSolid);
             }
             return;
@@ -3309,15 +3309,15 @@ var FullScreenMario = (function(GameStartr) {
             animatedClimbing = false;
         }
         
-        if(animatedClimbing && !thing.animatedClimbing) {
+        if (animatedClimbing && !thing.animatedClimbing) {
             thing.EightBitter.addClass(thing, "animated");
-        } else if(!animatedClimbing && thing.animatedClimbing) {
+        } else if (!animatedClimbing && thing.animatedClimbing) {
             thing.EightBitter.removeClass(thing, "animated");
         }
         
         thing.animatedClimbing = animatedClimbing;
         
-        if(thing.bottom < thing.EightBitter.MapScreener.top - thing.EightBitter.unitsize * 4) {
+        if (thing.bottom < thing.EightBitter.MapScreener.top - thing.EightBitter.unitsize * 4) {
             thing.EightBitter.setLocation(thing.attachedSolid.entrance);
         }
     }
@@ -3329,7 +3329,7 @@ var FullScreenMario = (function(GameStartr) {
         var other = thing.spring;
         
         // If the player has moved off the spring, get outta here
-        if(!thing.EightBitter.isThingTouchingThing(thing, other)) {
+        if (!thing.EightBitter.isThingTouchingThing(thing, other)) {
             thing.movement = thing.EightBitter.movePlayer;
             other.movement = thing.EightBitter.moveSpringboardUp;
             thing.spring = false;
@@ -3337,7 +3337,7 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         // If the spring is fully contracted, go back up
-        if(
+        if (
             other.height < thing.EightBitter.unitsize * 2.5
             || other.tension < thing.EightBitter.unitsize / 32
         ) {
@@ -3347,7 +3347,7 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         // Make sure it's hard to slide off
-        if(
+        if (
             thing.left < other.left + thing.EightBitter.unitsize * 2
             || thing.right > other.right - thing.EightBitter.unitsize * 2
         ) {
@@ -3372,7 +3372,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.TimeHandler.addEventInterval(function (thing) {
             thing.EightBitter.shiftVert(thing, direction);
             direction += .5;
-            if(direction === 3.5) {
+            if (direction === 3.5) {
                 thing.up = false;
                 return true;
             }
@@ -3393,7 +3393,7 @@ var FullScreenMario = (function(GameStartr) {
     function animateSolidContents(thing, other) {
         var output;
 
-        if(other && other.player && other.power > 1 && thing.contents === "Mushroom") {
+        if (other && other.player && other.power > 1 && thing.contents === "Mushroom") {
             thing.contents = "FireFlower";
         }
         
@@ -3415,7 +3415,7 @@ var FullScreenMario = (function(GameStartr) {
             left, top,
             i;
         
-        for(i = 0; i < 4; i += 1) {
+        for (i = 0; i < 4; i += 1) {
             left = thing.left + (i < 2) * thing.width * unitsize - unitsize * 2;
             top = thing.top + (i % 2) * thing.height * unitsize - unitsize * 2;
             
@@ -3444,7 +3444,7 @@ var FullScreenMario = (function(GameStartr) {
             thing.EightBitter.shiftVert(thing, thing.EightBitter.unitsize / -8);
             
             // Only stop once the bottom has reached the solid's top
-            if(thing.bottom > other.top) {
+            if (thing.bottom > other.top) {
                 return;
             }
             
@@ -3452,17 +3452,17 @@ var FullScreenMario = (function(GameStartr) {
             thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Scenery", "Character");
             thing.nomove = thing.nocollide = thing.nofall = thing.moveleft = false;
             
-            if(thing.emergeOut) {
+            if (thing.emergeOut) {
                 thing.emergeOut(thing, other);
             }
             
             // Wait for movement until moveSimple moves this off the solid
-            if(thing.movement) {
+            if (thing.movement) {
                 thing.movementSave = thing.movement;
                 thing.movement = thing.EightBitter.moveSimple;
                 
                 thing.EightBitter.TimeHandler.addEventInterval(function () {
-                    if(thing.resting !== other) {
+                    if (thing.resting !== other) {
                         thing.EightBitter.TimeHandler.addEvent(function () {
                             thing.movement = thing.movementSave;
                         }, 1);
@@ -3550,24 +3550,24 @@ var FullScreenMario = (function(GameStartr) {
      * @remarks This could probably be re-written.
      */
     function animateThrowingHammer(thing, count) {
-        if( 
+        if ( 
             !thing.EightBitter.isCharacterAlive(thing)
             || thing.right < thing.EightBitter.unitsize * -32
         ) {
             return true;
         }
         
-        if(count !== 3) {
+        if (count !== 3) {
             thing.EightBitter.switchClass(thing, "thrown", "throwing");
         }
         
         thing.EightBitter.TimeHandler.addEvent(function () {
-            if(!thing.EightBitter.isCharacterAlive(thing)) {
+            if (!thing.EightBitter.isCharacterAlive(thing)) {
                 return;
             }
             
             // Throw the hammer...
-            if(count !== 3) {
+            if (count !== 3) {
                 thing.EightBitter.switchClass(thing, "throwing", "thrown");
                 thing.EightBitter.addThing(
                     ["Hammer", {
@@ -3583,7 +3583,7 @@ var FullScreenMario = (function(GameStartr) {
             }
             
             // ...and go again
-            if(count > 0) {
+            if (count > 0) {
                 thing.EightBitter.TimeHandler.addEvent(
                     thing.EightBitter.animateThrowingHammer,
                     7, thing, count - 1
@@ -3602,11 +3602,11 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function animateBowserJump(thing) {
-        if(!thing.lookleft || !thing.lookleft || !thing.EightBitter.player) {
+        if (!thing.lookleft || !thing.lookleft || !thing.EightBitter.player) {
             return;
         }
         
-        if(
+        if (
             !thing.EightBitter.isCharacterAlive(thing)
             || !thing.EightBitter.isCharacterAlive(thing.EightBitter.player)
         ) {
@@ -3619,7 +3619,7 @@ var FullScreenMario = (function(GameStartr) {
         // If there is a platform, don't bump into it
         thing.nocollidesolid = true;
         thing.EightBitter.TimeHandler.addEventInterval(function () {
-            if(thing.dead || thing.yvel > thing.EightBitter.unitsize) {
+            if (thing.dead || thing.yvel > thing.EightBitter.unitsize) {
                 thing.nocollidesolid = false;
                 return true;
             }
@@ -3630,11 +3630,11 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function animateBowserFire(thing) {
-        if(!thing.lookleft || !thing.lookleft || !thing.EightBitter.player) {
+        if (!thing.lookleft || !thing.lookleft || !thing.EightBitter.player) {
             return;
         }
         
-        if(
+        if (
             !thing.EightBitter.isCharacterAlive(thing)
             || !thing.EightBitter.isCharacterAlive(thing.EightBitter.player)
         ) {
@@ -3689,17 +3689,17 @@ var FullScreenMario = (function(GameStartr) {
      */
     function animateJump(thing) {
         // Finish
-        if(!thing.EightBitter.isCharacterAlive(thing)) {
+        if (!thing.EightBitter.isCharacterAlive(thing)) {
             return true;
         }
         
         // Skip
-        if(!thing.resting) {
+        if (!thing.resting) {
             return;
         }
         
         // Jump up?
-        if(
+        if (
             thing.EightBitter.MapScreener.floor - (thing.bottom / thing.EightBitter.unitsize) >= 30
             && thing.resting.title !== "Floor"
             && Math.floor(thing.EightBitter.random() * 2)
@@ -3760,7 +3760,7 @@ var FullScreenMario = (function(GameStartr) {
     function animateLakituThrowingSpiny(thing) {
         thing.EightBitter.switchClass(thing, "out", "hiding");
         thing.EightBitter.TimeHandler.addEvent(function () {
-            if(thing.dead) {
+            if (thing.dead) {
                 return;
             }
             var spawn = thing.EightBitter.addThing("SpinyEgg", thing.left, thing.top);
@@ -3790,7 +3790,7 @@ var FullScreenMario = (function(GameStartr) {
      */
     function animateFireballExplode(thing, level) {
         thing.EightBitter.killNormal(thing);
-        if(level === 2) {
+        if (level === 2) {
             return;
         }
         
@@ -3807,7 +3807,7 @@ var FullScreenMario = (function(GameStartr) {
         var name = thing.className + " n",
             i;
         
-        for(i = 0; i < 3; i += 1) {
+        for (i = 0; i < 3; i += 1) {
             thing.EightBitter.TimeHandler.addEvent(function (i) {
                 thing.EightBitter.setClass(thing, name + String(i + 1));
             }, i * 7, i);
@@ -3862,7 +3862,7 @@ var FullScreenMario = (function(GameStartr) {
      */
     function animateCannonFiring(thing) {
         // Don't fire if Player is too close
-        if(
+        if (
             thing.EightBitter.player.right > thing.left - thing.EightBitter.unitsize * 8
             && thing.EightBitter.player.left < thing.right + thing.EightBitter.unitsize * 8
         ) {
@@ -3870,7 +3870,7 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         var spawn = thing.EightBitter.ObjectMaker.make("BulletBill");
-        if(thing.EightBitter.objectToLeft(thing.EightBitter.player, thing)) {
+        if (thing.EightBitter.objectToLeft(thing.EightBitter.player, thing)) {
             spawn.direction = spawn.moveleft = true;
             spawn.xvel *= -1;
             thing.EightBitter.flipHoriz(spawn);
@@ -3886,7 +3886,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function animatePlayerFire(thing) {
-        if(thing.numballs >= 2) {
+        if (thing.numballs >= 2) {
             return;
         }
         
@@ -3925,7 +3925,7 @@ var FullScreenMario = (function(GameStartr) {
             ay = Math.sin(thing.angle * Math.PI) * thing.EightBitter.unitsize * 4,
             i;
         
-        for(i = 1; i < balls.length; i += 1) {
+        for (i = 1; i < balls.length; i += 1) {
             thing.EightBitter.setMidX(balls[i], thing.left + ax * i);
             thing.EightBitter.setMidY(balls[i], thing.top + ay * i);
         }
@@ -3942,7 +3942,7 @@ var FullScreenMario = (function(GameStartr) {
                 thing.right -= thing.EightBitter.unitsize * 2;
                 thing.EightBitter.setWidth(thing, thing.width - 2);
                 
-                if(thing.width <= 0) {
+                if (thing.width <= 0) {
                     return true;
                 }
             }, 1, Infinity);
@@ -3960,7 +3960,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function animatePlayerPaddling(thing) {
-        if(!thing.paddling) {
+        if (!thing.paddling) {
             thing.EightBitter.removeClass(thing, "skidding paddle1 paddle2 paddle3 paddle4 paddle5");
             thing.EightBitter.addClass(thing, "paddling");
             thing.EightBitter.TimeHandler.clearClassCycle(thing, "paddling_cycle");
@@ -3979,11 +3979,11 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function animatePlayerLanding(thing) {
-        if(thing.EightBitter.hasClass(thing, "hopping")) {
+        if (thing.EightBitter.hasClass(thing, "hopping")) {
             thing.EightBitter.switchClass(thing, "hopping", "jumping");
         }
         
-        if(thing.EightBitter.MapScreener.underwater) {
+        if (thing.EightBitter.MapScreener.underwater) {
             thing.EightBitter.removeClass(thing, "paddling");
         }
         
@@ -4058,7 +4058,7 @@ var FullScreenMario = (function(GameStartr) {
             
             thing.EightBitter.unflipHoriz(thing);
             
-            if(doRun) {
+            if (doRun) {
                 thing.EightBitter.addClass(thing, "running");
                 thing.EightBitter.animatePlayerRunningCycle(thing);
             }
@@ -4074,13 +4074,13 @@ var FullScreenMario = (function(GameStartr) {
      */
     function lookTowardsThing(thing, other) {
         // Case: other is to the left
-        if(other.right <= thing.left) {
+        if (other.right <= thing.left) {
             thing.lookleft = true;
             thing.moveleft = true;
             thing.EightBitter.unflipHoriz(thing);
         }
         // Case: other is to the right
-        else if(other.left >= thing.right) {
+        else if (other.left >= thing.right) {
             thing.lookleft = false;
             thing.moveleft = false;
             thing.EightBitter.flipHoriz(thing);
@@ -4092,16 +4092,16 @@ var FullScreenMario = (function(GameStartr) {
      */
     function lookTowardsPlayer(thing, big) {
         // Case: Player is to the left
-        if(thing.EightBitter.player.right <= thing.left) {
-            if(!thing.lookleft || big) {
+        if (thing.EightBitter.player.right <= thing.left) {
+            if (!thing.lookleft || big) {
                 thing.lookleft = true;
                 thing.moveleft = false;
                 thing.EightBitter.unflipHoriz(thing);
             }
         }
         // Case: Player is to the right
-        else if(thing.EightBitter.player.left >= thing.right) {
-            if(thing.lookleft || big) {
+        else if (thing.EightBitter.player.left >= thing.right) {
+            if (thing.lookleft || big) {
                 thing.lookleft = false;
                 thing.moveleft = true;
                 thing.EightBitter.flipHoriz(thing);
@@ -4117,7 +4117,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function killNormal(thing) {
-        if(!thing) {
+        if (!thing) {
             return;
         }
         
@@ -4126,7 +4126,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.numquads = 0;
         thing.resting = thing.movement = undefined;
         
-        if(thing.EightBitter) {
+        if (thing.EightBitter) {
             thing.EightBitter.TimeHandler.clearAllCycles(thing);
         }
         
@@ -4139,11 +4139,11 @@ var FullScreenMario = (function(GameStartr) {
     function killFlip(thing, extra) {
         thing.EightBitter.flipVert(thing);
         
-        if(!extra) {
+        if (!extra) {
             extra = 0;
         }
         
-        if(thing.bottomBump) {
+        if (thing.bottomBump) {
             thing.bottomBump = undefined;
         }
         
@@ -4157,12 +4157,12 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function killSpawn(thing, big) {
-        if(big) {
+        if (big) {
             thing.EightBitter.killNormal(thing);
             return;
         }
         
-        if(thing.spawntype) {
+        if (thing.spawntype) {
             var spawn = thing.EightBitter.ObjectMaker.make(
                 thing.spawntype, thing.spawnsettings || {}
             );
@@ -4182,7 +4182,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function killGoomba(thing, big) {
-        if(big) {
+        if (big) {
             thing.EightBitter.killFlip(thing);
             return;
         }
@@ -4204,7 +4204,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function killBowser(thing, big) {
-        if(big) {
+        if (big) {
             thing.nofall = false;
             thing.movement = undefined;
             thing.EightBitter.killFlip(thing);
@@ -4212,7 +4212,7 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         thing.deathcount += 1;
-        if(thing.deathcount === 5) {
+        if (thing.deathcount === 5) {
             thing.yvel = 0;
             thing.speed = 0;
             thing.movement = 0;
@@ -4231,7 +4231,7 @@ var FullScreenMario = (function(GameStartr) {
             "smart": thing.smart
         };
             
-        if(thing.winged || (big && big !== 2)) {
+        if (thing.winged || (big && big !== 2)) {
             thing.spawntype = thing.title;
         } else {
             thing.spawntype = thing.shelltype || "Shell";
@@ -4240,7 +4240,7 @@ var FullScreenMario = (function(GameStartr) {
         
         thing.EightBitter.killNormal(thing);
         
-        if(big === 2) {
+        if (big === 2) {
             thing.EightBitter.killFlip(spawn);
         }
     }
@@ -4262,23 +4262,23 @@ var FullScreenMario = (function(GameStartr) {
         // Characters: they must opt out of being killed with .nokillonend, and
         // may opt into having a function called instead (such as Lakitus).
         group = EightBitter.GroupHolder.getCharacterGroup();
-        for(i = group.length - 1; i >= 0; --i) {
+        for (i = group.length - 1; i >= 0; --i) {
             thing = group[i];
             
-            if(!thing.nokillend) {
+            if (!thing.nokillend) {
                 thing.EightBitter.arrayDeleteMember(thing, group, i);
-            } else if(thing.killonend) {
+            } else if (thing.killonend) {
                 thing.killonend(thing);
             }
         }
         
         // Solids: they may opt into being deleted
         group = EightBitter.GroupHolder.getSolidGroup();
-        for(i = group.length - 1; i >= 0; --i) {
+        for (i = group.length - 1; i >= 0; --i) {
             thing = group[i];
             
-            if(thing.killonend) {
-                if(thing.killonend instanceof Function) {
+            if (thing.killonend) {
+                if (thing.killonend instanceof Function) {
                     thing.killonend(thing, group, i);
                 } else {
                     thing.EightBitter.arrayDeleteMember(thing, group, i);
@@ -4295,7 +4295,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.TimeHandler.addEvent(thing.EightBitter.animateBrickShards, 1, thing);
         thing.EightBitter.killNormal(thing);
         
-        if(other instanceof thing.EightBitter.ObjectMaker.getFunction("Thing")) {
+        if (other instanceof thing.EightBitter.ObjectMaker.getFunction("Thing")) {
             thing.up = other;
         } else {
             thing.up = undefined;
@@ -4306,19 +4306,19 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function killPlayer(thing, big) {
-        if(!thing.alive || thing.flickering || thing.dying) {
+        if (!thing.alive || thing.flickering || thing.dying) {
             return;
         }
         
         // Large big: real, no-animation death
-        if(big == 2) {
+        if (big == 2) {
             thing.EightBitter.MapScreener.notime = true;
             thing.dead = thing.dying = true;
         }
         // Regular big: regular (enemy, time, etc.) kill
         else {
             // If the player can survive this, just power down
-            if(!big && thing.power > 1) {
+            if (!big && thing.power > 1) {
                 thing.power = 1;
                 thing.EightBitter.AudioPlayer.play("Power Down");
                 thing.EightBitter.playerGetsSmall(thing);
@@ -4354,7 +4354,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.AudioPlayer.play("Player Dies");
         thing.EightBitter.StatsHolder.decrease("lives");
         
-        if(thing.EightBitter.StatsHolder.get("lives") > 0) {
+        if (thing.EightBitter.StatsHolder.get("lives") > 0) {
             thing.EightBitter.TimeHandler.addEvent(function () {
                 thing.EightBitter.setMap();
             }, 280);
@@ -4373,7 +4373,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function findScore(level) {
-        if(level < this.point_levels.length) {
+        if (level < this.point_levels.length) {
             return this.point_levels[level];
         } else {
             this.gainLife(1);
@@ -4396,12 +4396,12 @@ var FullScreenMario = (function(GameStartr) {
     function score(value, continuation) {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
-        if(!value) {
+        if (!value) {
             return;
         }
         EightBitter.scoreOn(value, EightBitter.player, true);
         
-        if(!continuation) {
+        if (!continuation) {
             this.StatsHolder.increase("score", value);
         }
     }
@@ -4420,7 +4420,7 @@ var FullScreenMario = (function(GameStartr) {
      *                scoreOn -> scoreAnimateOn -> scoreAnimate     
      */
     function scoreOn(value, thing, continuation) {
-        if(!value) {
+        if (!value) {
             return;
         }
         var text = thing.EightBitter.ObjectMaker.make("Text" + value, {
@@ -4434,7 +4434,7 @@ var FullScreenMario = (function(GameStartr) {
         
         thing.EightBitter.scoreAnimateOn(text, thing);
         
-        if(!continuation) {
+        if (!continuation) {
             this.StatsHolder.increase("score", value);
         }
         
@@ -4483,19 +4483,19 @@ var FullScreenMario = (function(GameStartr) {
      */
     function scorePlayerShell(thing, other) {
         // Star player: 200 points
-        if(thing.star) {
+        if (thing.star) {
             thing.EightBitter.scoreOn(200, other);
             return;
         }
         
         // Shells in the air: 8000 points (see guide, this may be wrong)
-        if(!other.resting) {
+        if (!other.resting) {
             thing.EightBitter.scoreOn(8000, other);
             return;
         }
         
         // Peeking shells: 1000 points
-        if(other.peeking) {
+        if (other.peeking) {
             thing.EightBitter.scoreOn(1000, other);
             return;
         }
@@ -4512,9 +4512,9 @@ var FullScreenMario = (function(GameStartr) {
     function scorePlayerFlag(player, difference) {
         var amount;
         
-        if(difference < 28) {
+        if (difference < 28) {
             amount = difference < 8 ? 100 : 400;
-        } else if(difference < 40) {
+        } else if (difference < 40) {
             amount = 800;
         } else {
             amount = difference < 62 ? 2000 : 5000;
@@ -4555,7 +4555,7 @@ var FullScreenMario = (function(GameStartr) {
         var EightBitter = EightBittr.ensureCorrectCaller(this),
             map;
         
-        if(typeof(name) === "undefined") {
+        if (typeof(name) === "undefined") {
             name = EightBitter.MapsHandler.getMapName();
         }
         
@@ -4591,7 +4591,7 @@ var FullScreenMario = (function(GameStartr) {
         location = EightBitter.MapsHandler.getLocation(name || 0);
         
         EightBitter.TimeHandler.addEventInterval(function () {
-            if(!EightBitter.MapScreener.notime) {
+            if (!EightBitter.MapScreener.notime) {
                 EightBitter.StatsHolder.decrease("time", 1);
             }
         }, 25, Infinity);
@@ -4673,7 +4673,7 @@ var FullScreenMario = (function(GameStartr) {
         EightBitter.TimeHandler.addEventInterval(function () {
             EightBitter.shiftVert(EightBitter.player, EightBitter.unitsize / -4);
             
-            if(EightBitter.player.bottom <= location.entrance.top) {
+            if (EightBitter.player.bottom <= location.entrance.top) {
                 EightBitter.animatePlayerPipingEnd(EightBitter.player);
                 return true;
             }
@@ -4698,7 +4698,7 @@ var FullScreenMario = (function(GameStartr) {
      * @notes Thing is a Player, other is a Pipe.
      */
     function mapExitPipeVertical(thing, other) {
-        if(!thing.resting || typeof(other.transport) === "undefined"
+        if (!thing.resting || typeof(other.transport) === "undefined"
                 || thing.right + thing.EightBitter.unitsize * 2 > other.right 
                 || thing.left - thing.EightBitter.unitsize * 2 < other.left) {
             return;
@@ -4709,9 +4709,9 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.TimeHandler.addEventInterval(function () {
             thing.EightBitter.shiftVert(thing, thing.EightBitter.unitsize / 4);
             
-            if(thing.top > other.top) { 
+            if (thing.top > other.top) { 
                 thing.EightBitter.TimeHandler.addEvent(function () {
-                    if(other.transport.constructor === Object) {
+                    if (other.transport.constructor === Object) {
                         thing.EightBitter.setMap(other.transport.map);
                     } else {
                         thing.EightBitter.setLocation(other.transport);
@@ -4730,7 +4730,7 @@ var FullScreenMario = (function(GameStartr) {
      *        without it.
      */
     function mapExitPipeHorizontal(thing, other, shouldTransport) {
-        if(!shouldTransport && !thing.resting && !thing.paddling) {
+        if (!shouldTransport && !thing.resting && !thing.paddling) {
             return;
         }
         
@@ -4739,7 +4739,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.TimeHandler.addEventInterval(function () {
             thing.EightBitter.shiftHoriz(thing, thing.EightBitter.unitsize / 4);
             
-            if(thing.left > other.left) { 
+            if (thing.left > other.left) { 
                 thing.EightBitter.TimeHandler.addEvent(function () {
                     thing.EightBitter.setLocation(other.transport);
                 }, 42);
@@ -4761,9 +4761,9 @@ var FullScreenMario = (function(GameStartr) {
         var setting = this.setting;
         
         // Copy all attributes, if they exist
-        if(this.attributes) {
-            for(var i in this.attributes) {
-                if(this[i]) {
+        if (this.attributes) {
+            for (var i in this.attributes) {
+                if (this[i]) {
                     // Add the extra options
                     proliferate(this, this.attributes[i]);
                 }
@@ -4771,7 +4771,7 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         // Underworld, Castle, and all Nights: background is black
-        if(
+        if (
             this.setting.indexOf("Underworld") !== -1
             || this.setting.indexOf("Castle") !== -1
             || this.setting.indexOf("Night") !== -1
@@ -4832,7 +4832,7 @@ var FullScreenMario = (function(GameStartr) {
             return a.left - b.left;
         });
         
-        for(i = 0; i < generated_commands.length; i += 1) {
+        for (i = 0; i < generated_commands.length; i += 1) {
             command = generated_commands[i];
             
             output = {
@@ -4841,7 +4841,7 @@ var FullScreenMario = (function(GameStartr) {
                 "y": command.top
             };
             
-            if(command.arguments) {
+            if (command.arguments) {
                 EightBitter.proliferateHard(output, command.arguments, true);
             }
             
@@ -4914,9 +4914,9 @@ var FullScreenMario = (function(GameStartr) {
             output,
             o = 0, y, i, j;
         
-        for(i = 0; i < xnum; ++i) {
+        for (i = 0; i < xnum; ++i) {
             y = yref;
-            for(j = 0; j < ynum; ++j) {
+            for (j = 0; j < ynum; ++j) {
                 output = {
                     "x": x,
                     "y": y,
@@ -4943,7 +4943,7 @@ var FullScreenMario = (function(GameStartr) {
      */
     function macroFillPrePattern(reference, prethings, area, map, scope) {
         // Make sure the pattern exists before doing anything
-        if(!FullScreenMario.prototype.settings.maps.patterns[reference.pattern]) {
+        if (!FullScreenMario.prototype.settings.maps.patterns[reference.pattern]) {
             console.warn("An unknown pattern is referenced: " + reference);
             return;
         }
@@ -4958,9 +4958,9 @@ var FullScreenMario = (function(GameStartr) {
             output, prething, i, j;
         
         // For each time the pattern should be repeated:
-        for(i = 0; i < repeats; i += 1) {
+        for (i = 0; i < repeats; i += 1) {
             // For each Thing listing in the pattern:
-            for(j = 0; j < length; j += 1) {
+            for (j = 0; j < length; j += 1) {
                 prething = pattern[j];
                 output = {
                     "thing": prething[0],
@@ -5019,13 +5019,13 @@ var FullScreenMario = (function(GameStartr) {
             
         pipe.macro = undefined;
         
-        if(height == "Infinity") {
+        if (height == "Infinity") {
             pipe.height = scope.MapScreener.height;
         } else {
             pipe.y += height;
         }
         
-        if(reference.piranha) {
+        if (reference.piranha) {
             output.push({
                 "thing": "Piranha",
                 "x": reference.x + 4,
@@ -5052,7 +5052,7 @@ var FullScreenMario = (function(GameStartr) {
                 { "thing": "TreeTop", "x": x, "y": y, "width": width }
             ];
         
-        if(width > 16) {
+        if (width > 16) {
             output.push({
                 "thing": "TreeTrunk", "x": x + 8, "y": y - 8, "width": width - 16, "height": "Infinity"
             });
@@ -5075,7 +5075,7 @@ var FullScreenMario = (function(GameStartr) {
                 { "thing": "ShroomTop", "x": x, "y": y, "width": width }
             ];
         
-        if(width > 16) {
+        if (width > 16) {
             output.push({
                 "thing": "ShroomTrunk", "x": x + (width - 8) / 2, "y": y - 8, "height": "Infinity" 
             });
@@ -5134,14 +5134,14 @@ var FullScreenMario = (function(GameStartr) {
             output = [];
 
         // A beginning column reduces the width and pushes it forward
-        if(reference.begin) {
+        if (reference.begin) {
             width -= 8;
             output.push({ "thing": "Stone", "x": x, "y": y, "height": "Infinity" });
             x += 8;
         }
 
         // An ending column just reduces the width 
-        if(reference.end) {
+        if (reference.end) {
             width -= 8;
             output.push({ "thing": "Stone", "x": x + width, "y": y, "height": "Infinity" });
         }
@@ -5265,7 +5265,7 @@ var FullScreenMario = (function(GameStartr) {
             yvel = direction * scope.unitsize * .42,
             i;
         
-        for(i = 0; i < levels.length; i += 1) {
+        for (i = 0; i < levels.length; i += 1) {
             output.push({
                 "thing": "Platform",
                 "width": width,
@@ -5289,11 +5289,11 @@ var FullScreenMario = (function(GameStartr) {
             warps = reference.warps,
             i;
         
-        for(i = 0; i < warps.length; i += 1) {
+        for (i = 0; i < warps.length; i += 1) {
             output.push({ "macro": "Pipe", "x": x + 10 + i * 32, "height": 24, "piranha": true, "transport": { "map": warps[i] + "-1" } });
         }
         
-        if(warps.length === 1) {
+        if (warps.length === 1) {
             output[0].x += 32;
         }
         
@@ -5345,7 +5345,7 @@ var FullScreenMario = (function(GameStartr) {
             i, j;
         
         // Base filling left
-        for(i = 0; i < 2; i += 1) { // x
+        for (i = 0; i < 2; i += 1) { // x
             output.push({ 
                 "thing": "BrickHalf", 
                 "x": x + i * 8,
@@ -5353,7 +5353,7 @@ var FullScreenMario = (function(GameStartr) {
                 "position": "end"
             });
             
-            for(j = 1; j < 3; j += 1) { // y
+            for (j = 1; j < 3; j += 1) { // y
                 output.push({
                     "thing": "BrickPlain",
                     "x": x + i * 8,
@@ -5364,7 +5364,7 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         // Base filling right
-        for(i = 0; i < 2; i += 1) { // x
+        for (i = 0; i < 2; i += 1) { // x
             output.push({ 
                 "thing": "BrickHalf", 
                 "x": x + 24 + i * 8,
@@ -5372,7 +5372,7 @@ var FullScreenMario = (function(GameStartr) {
                 "position": "end"
             });
             
-            for(j = 1; j < 3; j += 1) { // y
+            for (j = 1; j < 3; j += 1) { // y
                 output.push({
                     "thing": "BrickPlain",
                     "x": x + 24 + i * 8,
@@ -5391,7 +5391,7 @@ var FullScreenMario = (function(GameStartr) {
         });
         
         // Medium railing center
-        for(i = 0; i < 3; i += 1) {
+        for (i = 0; i < 3; i += 1) {
             output.push({
                 "thing": "CastleRailingFilled",
                 "x": x + (i + 1) * 8,
@@ -5409,7 +5409,7 @@ var FullScreenMario = (function(GameStartr) {
         });
         
         // Top railing
-        for(i = 0; i < 3; i += 1) {
+        for (i = 0; i < 3; i += 1) {
             output.push({
                 "thing": "CastleRailing",
                 "x": x + (i + 1) * 8,
@@ -5419,7 +5419,7 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         // Top bricking
-        for(i = 0; i < 2; i += 1) {
+        for (i = 0; i < 2; i += 1) {
             output.push({
                 "thing": "CastleTop",
                 "x": x + 8 + i * 12,
@@ -5435,7 +5435,7 @@ var FullScreenMario = (function(GameStartr) {
             "y": y + 20,
             "position": "end"
         });
-        if(reference.transport) {
+        if (reference.transport) {
             output.push({
                 "thing": "DetectCollision",
                 "x": x + 24,
@@ -5468,7 +5468,7 @@ var FullScreenMario = (function(GameStartr) {
         });
         
         // CastleWalls left
-        for(i = 0; i < 2; i += 1) { // x
+        for (i = 0; i < 2; i += 1) { // x
             output.push({
                 "thing": "CastleWall",
                 "x": x + i * 8,
@@ -5477,14 +5477,14 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         // Bottom doors with bricks on top
-        for(i = 0; i < 3; i += 1) { // x
+        for (i = 0; i < 3; i += 1) { // x
             output.push({
                 "thing": "CastleDoor",
                 "x": x + 16 + i * 16,
                 "y": y + 20,
                 "position": "end"
             });
-            for(j = 0; j < 2; j += 1) {
+            for (j = 0; j < 2; j += 1) {
                 output.push({
                     "thing": "BrickPlain",
                     "x": x + 16 + i * 16,
@@ -5499,8 +5499,8 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         // Bottom bricks with doors on top
-        for(i = 0; i < 2; i += 1) { // x
-            for(j = 0; j < 3; j += 1) { // y
+        for (i = 0; i < 2; i += 1) { // x
+            for (j = 0; j < 3; j += 1) { // y
                 output.push({
                     "thing": "BrickPlain",
                     "x": x + 24 + i * 16,
@@ -5515,7 +5515,7 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         // Railing (filled)
-        for(i = 0; i < 5; i += 1) { // x
+        for (i = 0; i < 5; i += 1) { // x
             output.push({
                 "thing": "CastleRailingFilled",
                 "x": x + 16 + i * 8,
@@ -5525,7 +5525,7 @@ var FullScreenMario = (function(GameStartr) {
         
         // CastleWalls right
         var j = reference.hasOwnProperty("walls") ? reference.walls : 2;
-        for(i = 0; i < j; i += 1) { // x
+        for (i = 0; i < j; i += 1) { // x
             output.push({
                 "thing": "CastleWall",
                 "x": x + 56 + i * 8,
@@ -5552,7 +5552,7 @@ var FullScreenMario = (function(GameStartr) {
                 { "thing": "Stone", "x": x + 32, "y": y + 32, "width": 8, "height": "Infinity" }
             ];
         
-        if(width > 0) {
+        if (width > 0) {
             output.push({ "macro": "Floor", "x": x + 40, "y": y + 24, "width": width });
         }
         
@@ -5586,7 +5586,7 @@ var FullScreenMario = (function(GameStartr) {
             { thing: "Stone", x: x, y: y + 8 },
         ];
         
-        if(reference.large) {
+        if (reference.large) {
             output.push({
                 "macro": "CastleLarge",
                 "x": x + (reference.castleDistance || 28),
@@ -5619,7 +5619,7 @@ var FullScreenMario = (function(GameStartr) {
             style = reference.style || {},
             output, texts, keys;
 
-        if(npc === "Toad") {
+        if (npc === "Toad") {
             keys = ["1", "2"];
             texts = [{
                 "thing": "CustomText",
@@ -5648,7 +5648,7 @@ var FullScreenMario = (function(GameStartr) {
                 "collectionName": "endInsideCastleText",
                 "collectionKey": "2"
             }];
-        // } else if(npc === "Peach") {
+        // } else if (npc === "Peach") {
             // keys = ["1", "2", "3", "4", "5"];
             // texts = [{
                 // "thing": "CustomText",
@@ -5792,7 +5792,7 @@ var FullScreenMario = (function(GameStartr) {
                 "x": reference.x, "y": reference.y,
                 "width": reference.width || 8, "height": reference.height || 8,
                 "activate": function (thing) {
-                    if(thing.EightBitter.MapScreener.sectionPassed) {
+                    if (thing.EightBitter.MapScreener.sectionPassed) {
                         thing.section = reference.pass || 0;
                     } else {
                         thing.section = reference.fail || 0;
