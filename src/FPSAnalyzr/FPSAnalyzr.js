@@ -105,7 +105,7 @@ function FPSAnalyzr(settings) {
      * 
      * @return {Number}
      */
-    self.getNumRecorded = function() {
+    self.getNumRecorded = function () {
         return num_recorded;
     };
     
@@ -116,7 +116,7 @@ function FPSAnalyzr(settings) {
      * @return {Object}   An object (normally an Array) of the most recent FPS
      *                    measurements
      */
-    self.getMeasurements = function() {
+    self.getMeasurements = function () {
         var fps_kept_real = Math.min(num_to_keep, num_recorded),
             copy, i;
         if(isFinite(num_to_keep)) {
@@ -140,7 +140,7 @@ function FPSAnalyzr(settings) {
      * @return {Object}   An object (normally an Array) of the most recent FPS
      *                    time differences
      */
-    self.getDifferences = function() {
+    self.getDifferences = function () {
         var copy = self.getMeasurements(),
             i;
         for(i = copy.length - 1; i >= 0; --i) {
@@ -154,7 +154,7 @@ function FPSAnalyzr(settings) {
      * 
      * @return {Number}
      */
-    self.getAverage = function() {
+    self.getAverage = function () {
         var total = 0,
             max = Math.min(num_to_keep, num_recorded),
             i;
@@ -171,7 +171,7 @@ function FPSAnalyzr(settings) {
      *          as it creates a copy of the history and sorts it.
      * @return {Number}
      */
-    self.getMedian = function() {
+    self.getMedian = function () {
         var copy = self.getMeasurements().sort(),
             fps_kept_real = copy.length,
             fps_kept_half = Math.floor(fps_kept_real / 2),
@@ -190,7 +190,7 @@ function FPSAnalyzr(settings) {
      * 
      * @return {Number[]}
      */
-    self.getExtremes = function() {
+    self.getExtremes = function () {
         var lowest = measurements[0],
             highest = lowest,
             max = Math.min(num_to_keep, num_recorded),
@@ -209,7 +209,7 @@ function FPSAnalyzr(settings) {
      * 
      * @return {Number}
      */
-    self.getRange = function() {
+    self.getRange = function () {
         var extremes = self.getExtremes();
         return extremes[1] - extremes[0];
     }

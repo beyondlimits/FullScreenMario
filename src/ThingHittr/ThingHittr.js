@@ -85,14 +85,14 @@ function ThingHittr(settings) {
     /**
      * 
      */
-    self.getGroupHolder = function() {
+    self.getGroupHolder = function () {
         return GroupHolder;
     }
     
     /**
      * 
      */
-    self.getQuadsKeeper = function() {
+    self.getQuadsKeeper = function () {
         return QuadsKeeper;
     }
     
@@ -117,7 +117,7 @@ function ThingHittr(settings) {
     /**
      * 
      */
-    self.checkHits = function() {
+    self.checkHits = function () {
         hit_check_keys.forEach(self.checkHitsOfGroup);
     };
     

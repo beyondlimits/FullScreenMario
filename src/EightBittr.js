@@ -3,7 +3,7 @@
  * 
  * Contains a set of useful default functions for the FullScreenMario engine.
  */
-var EightBittr = (function() {
+var EightBittr = (function () {
     "use strict";
     
     /**

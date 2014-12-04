@@ -395,11 +395,11 @@ function GroupHoldr(settings) {
     /* Simple gets
     */
     
-    self.getFunctions = function() {
+    self.getFunctions = function () {
         return functions;
     };
     
-    self.getGroups = function() {
+    self.getGroups = function () {
         return groups;
     };
     
@@ -407,7 +407,7 @@ function GroupHoldr(settings) {
         return groups[name];
     };
     
-    self.getGroupNames = function() {
+    self.getGroupNames = function () {
         return group_names;
     };
     

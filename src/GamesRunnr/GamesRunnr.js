@@ -75,7 +75,7 @@ function GamesRunnr(settings) {
      * 
      * @return {this}
      */
-    self.upkeep = function() {
+    self.upkeep = function () {
         if(paused) {
             return;
         }
@@ -110,7 +110,7 @@ function GamesRunnr(settings) {
      * 
      * @return {this}
      */
-    self.pause = function() {
+    self.pause = function () {
         if(paused) return;
         paused = true;
         
@@ -130,7 +130,7 @@ function GamesRunnr(settings) {
      * 
      * @return {this}
      */
-    self.unpause = function() {
+    self.unpause = function () {
         if(!paused) {
             return;
         }
@@ -150,7 +150,7 @@ function GamesRunnr(settings) {
      * 
      * @return {this}
      */
-    self.togglePause = function() {
+    self.togglePause = function () {
         paused ? self.unpause() : self.pause();
         return self;
     };
@@ -235,7 +235,7 @@ function GamesRunnr(settings) {
      * 
      * @return {Boolean}
      */
-    self.getPaused = function() {
+    self.getPaused = function () {
         return paused;
     };
     
@@ -244,14 +244,14 @@ function GamesRunnr(settings) {
      * 
      * @return {Function[]}
      */
-    self.getGames = function() {
+    self.getGames = function () {
         return games;
     };
     
     /**
      * Simple get function for the interval between upkeeps
      */
-    self.getInterval = function() {
+    self.getInterval = function () {
         return interval;
     };
     
@@ -260,7 +260,7 @@ function GamesRunnr(settings) {
      * 
      * @return {Number}
      */
-    self.getSpeed = function() {
+    self.getSpeed = function () {
         return speed;
     };
     

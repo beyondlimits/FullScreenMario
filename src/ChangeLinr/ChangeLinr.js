@@ -56,7 +56,7 @@
  *         "sum": function (string) {
  *             var total = 0,
  *                 i;
- *             for(i = 0; i < string.length; i += 1) {
+ *             for (i = 0; i < string.length; i += 1) {
  *                 total += string.charCodeAt(i);
  *             }
  *             return total;
@@ -113,7 +113,7 @@ function ChangeLinr(settings) {
     self.reset = function reset(settings) {
         var i;
         
-        if (typeof(settings.pipeline) === "undefined") {
+        if (typeof settings.pipeline === "undefined") {
             throw new Error("No pipeline given to ChangeLinr.");
         }
         
@@ -124,10 +124,10 @@ function ChangeLinr(settings) {
         pipeline = settings.pipeline || [];
         transforms = settings.transforms || {};
         
-        doMakeCache = (typeof(settings.doMakeCache) === "undefined") 
+        doMakeCache = (typeof settings.doMakeCache === "undefined") 
             ? true : settings.doMakeCache;
         
-        doUseCache = (typeof(settings.doUseCache) == "undefined")
+        doUseCache = (typeof settings.doUseCache === "undefined")
             ? true : settings.doUseCache;
         
         doUseGlobals = settings.hasOwnProperty("doUseGlobals")
@@ -249,7 +249,7 @@ function ChangeLinr(settings) {
     self.process = function (data, key, attributes) {
         var i;
         
-        if ((doMakeCache || doUseCache) && typeof(key) === "undefined") {
+        if ((doMakeCache || doUseCache) && typeof key === "undefined") {
             key = data;
         }
 
@@ -262,7 +262,7 @@ function ChangeLinr(settings) {
         for (i = 0; i < pipelineLength; ++i) {
             data = transforms[pipeline[i]](data, key, attributes, self);
             
-            if(doMakeCache) {
+            if (doMakeCache) {
                 cacheFull[pipeline[i]][key] = data;
             }
         }

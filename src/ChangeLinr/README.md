@@ -76,7 +76,7 @@ var ChangeLiner = new ChangeLinr({
         "sum": function (string) {
             var total = 0,
                 i;
-            for(i = 0; i < string.length; i += 1) {
+            for (i = 0; i < string.length; i += 1) {
                 total += string.charCodeAt(i);
             }
             return total;

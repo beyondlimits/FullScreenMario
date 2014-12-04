@@ -51,7 +51,7 @@
 
             jslint_happy       !jslint_happy
             ---------------------------------
-            function ()        function()
+            function ()        function ()
 
     brace_style (default "collapse") - "collapse" | "expand" | "end-expand"
             put braces on the same line as control statements (default), or put braces on own line (Allman / ANSI style), or just put end braces on own line.
@@ -73,7 +73,7 @@
 
 */
 
-(function() {
+(function () {
 
     var acorn = {};
     (function (exports) {
@@ -313,7 +313,7 @@
 
         parser_pos = 0;
 
-        this.beautify = function() {
+        this.beautify = function () {
             /*jshint onevar:true */
             var t, i, keep_whitespace, sweet_code;
 
@@ -1145,7 +1145,7 @@
                 output_space_before_token = true;
             } else if ((last_type === 'TK_RESERVED' && (flags.last_word === 'function' || flags.last_word === 'typeof')) ||
                 (flags.last_text === '*' && last_last_text === 'function')) {
-                // function() vs function ()
+                // function () vs function ()
                 if (opt.jslint_happy) {
                     output_space_before_token = true;
                 }
@@ -1719,7 +1719,7 @@
 
     if (typeof define === "function" && define.amd) {
         // Add support for AMD ( https://github.com/amdjs/amdjs-api/wiki/AMD#defineamd-property- )
-        define([], function() {
+        define([], function () {
             return { js_beautify: js_beautify };
         });
     } else if (typeof exports !== "undefined") {

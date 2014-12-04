@@ -59,8 +59,8 @@ function TimeHandlr(settings) {
   
   /* Simple gets
   */
-  self.getTime   = function() { return time; };
-  self.getEvents = function() { return events; };
+  self.getTime   = function () { return time; };
+  self.getEvents = function () { return events; };
   
   /* Event Adding (simple)
    * Sample usage:
@@ -186,7 +186,7 @@ function TimeHandlr(settings) {
   
   // Public: clearAllEvents
   // Completely cancels all events
-  var clearAllEvents = self.clearAllEvents = function() {
+  var clearAllEvents = self.clearAllEvents = function () {
     events = {};
   };
   
@@ -277,7 +277,7 @@ function TimeHandlr(settings) {
     
     // Let the object know to start the cycle when needed
     var func = synched ? addEventIntervalSynched : addEventInterval;
-    me[onSpriteCycleStart] = function() { func(cycleClass, timing || timingDefault, Infinity, me, settings); };
+    me[onSpriteCycleStart] = function () { func(cycleClass, timing || timingDefault, Infinity, me, settings); };
     
     // If it should already start, do that
     if(me[doSpriteCycleStart])
@@ -325,7 +325,7 @@ function TimeHandlr(settings) {
   
   // Public: handleEvents
   // Increments time and runs all events at the new events[time]
-  self.handleEvents = function() {
+  self.handleEvents = function () {
     ++time;
     var events_current = events[time];
     if(!events_current) return; // If there isn't anything to run, don't even bother
