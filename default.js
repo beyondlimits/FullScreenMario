@@ -512,7 +512,8 @@
     "MapsGrid": function (schema) {
         var output = document.createElement("div"),
             rangeX = schema.rangeX,
-            rangeY = schema.rangeY;
+            rangeY = schema.rangeY,
+            element;
         
         output.className = "select-options select-options-maps-grid";
         

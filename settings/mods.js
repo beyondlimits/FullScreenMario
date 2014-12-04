@@ -6,7 +6,7 @@ FullScreenMario.prototype.settings.mods = {
             "name": "Bouncy Bounce",
             "description": "Mario landing causes him to jump.",
             "author": {
-                "name": "Josh Golderg",
+                "name": "Josh Goldberg",
                 "email": "josh@fullscreenmario.com"
             },
             "enabled": false,
@@ -39,7 +39,7 @@ FullScreenMario.prototype.settings.mods = {
             "name": "Earthquake!",
             "description": "Mario landing causes everything else to jump.",
             "author": {
-                "name": "Josh Golderg",
+                "name": "Josh Goldberg",
                 "email": "josh@fullscreenmario.com"
             },
             "enabled": false,
@@ -105,7 +105,7 @@ FullScreenMario.prototype.settings.mods = {
             "name": "Gradient Skies",
             "description": "Skies fade out to black in the heavens above.",
             "author": {
-                "name": "Josh Golderg",
+                "name": "Josh Goldberg",
                 "email": "josh@fullscreenmario.com"
             },
             "enabled": false,
@@ -185,7 +185,7 @@ FullScreenMario.prototype.settings.mods = {
             "name": "High Speed",
             "description": "Mario's maximum speed is quadrupled.",
             "author": {
-                "name": "Josh Golderg",
+                "name": "Josh Goldberg",
                 "email": "josh@fullscreenmario.com"
             },
             "enabled": false,
@@ -205,7 +205,7 @@ FullScreenMario.prototype.settings.mods = {
             "name": "Invincibility",
             "description": "Mario is constantly given star power.",
             "author": {
-                "name": "Josh Golderg",
+                "name": "Josh Goldberg",
                 "email": "josh@fullscreenmario.com"
             },
             "enabled": false,
@@ -227,7 +227,7 @@ FullScreenMario.prototype.settings.mods = {
             "name": "Parallax Clouds",
             "description": "Clouds in the sky scroll at about 63% the normal rate.",
             "author": {
-                "name": "Josh Golderg",
+                "name": "Josh Goldberg",
                 "email": "josh@fullscreenmario.com"
             },
             "enabled": false,
@@ -244,7 +244,7 @@ FullScreenMario.prototype.settings.mods = {
             "name": "Low Gravity",
             "description": "I believe I can fly!",
             "author": {
-                "name": "Josh Golderg",
+                "name": "Josh Goldberg",
                 "email": "josh@fullscreenmario.com"
             },
             "enabled": false,
@@ -263,7 +263,7 @@ FullScreenMario.prototype.settings.mods = {
             "name": "Luigi",
             "description": "The little brother who could!",
             "author": {
-                "name": "Josh Golderg",
+                "name": "Josh Goldberg",
                 "email": "josh@fullscreenmario.com"
             },
             "enabled": false,
@@ -292,7 +292,7 @@ FullScreenMario.prototype.settings.mods = {
             "name": "QCount",
             "description": "QQQQQQQ",
             "author": {
-                "name": "Josh Golderg",
+                "name": "Josh Goldberg",
                 "email": "josh@fullscreenmario.com"
             },
             "enabled": false,
@@ -364,7 +364,7 @@ FullScreenMario.prototype.settings.mods = {
             "name": "Super Fireballs",
             "description": "Fireballs blow up solids, and Mario has unlimited.",
             "author": {
-                "name": "Josh Golderg",
+                "name": "Josh Goldberg",
                 "email": "josh@fullscreenmario.com"
             },
             "enabled": false,
@@ -383,7 +383,7 @@ FullScreenMario.prototype.settings.mods = {
             "name": "Trip of Acid",
             "description": "Sprites aren't cleared from the screen each game tick.",
             "author": {
-                "name": "Josh Golderg",
+                "name": "Josh Goldberg",
                 "email": "josh@fullscreenmario.com"
             },
             "enabled": false,
@@ -408,7 +408,7 @@ FullScreenMario.prototype.settings.mods = {
             "name": "Wasted",
             "description": "Should add in some form of filters option to enable B/W (it should be like GTAV",
             "author": {
-                "name": "Josh Golderg",
+                "name": "Josh Goldberg",
                 "email": "josh@fullscreenmario.com"
             },
             "enabled": false,
