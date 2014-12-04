@@ -28,57 +28,62 @@ A ChangeLinr stores a set of "transform" functions that may be applied to input,
 
 1.  Creating and using a ChangeLinr to square numbers.
 
-        var ChangeLiner = new ChangeLinr({
-                "transforms": {
-                 "square": function (number) {
-                     return number * number;
-                 }    
-             },
-            "pipeline": ["square"]
-        });
-        console.log(ChangeLiner.process(7), "Test"); // 49
-        console.log(ChangeLiner.getCached("Test")); // 49
-
+```javascript
+var ChangeLiner = new ChangeLinr({
+        "transforms": {
+         "square": function (number) {
+             return number * number;
+         }    
+     },
+    "pipeline": ["square"]
+});
+console.log(ChangeLiner.process(7), "Test"); // 49
+console.log(ChangeLiner.getCached("Test")); // 49
+```
 
 2. Creating and using a ChangeLinr to calculate Fibonacci numbers.
 
-        var ChangeLiner = new ChangeLinr({
-            "transforms": {
-                "fibonacci": function (number, key, attributes, ChangeLiner) {
-                    if (!number) {
-                        return 0;
-                    }
-                    else if (number === 1) {
-                        return 1;
-                    }
-                    return ChangeLiner.process(number - 1) + ChangeLiner.process(number - 2);
-                }
-            },
-            "pipeline": ["fibonacci"]
-        });
-        console.log(ChangeLiner.process(7)); // 13
-        console.log(ChangeLiner.getCache()); // {0: 0, 1: 1, ... 6: 8, 7: 13}
+```javascript
+var ChangeLiner = new ChangeLinr({
+    "transforms": {
+        "fibonacci": function (number, key, attributes, ChangeLiner) {
+            if (!number) {
+                return 0;
+            }
+            else if (number === 1) {
+                return 1;
+            }
+            return ChangeLiner.process(number - 1) + ChangeLiner.process(number - 2);
+        }
+    },
+    "pipeline": ["fibonacci"]
+});
+console.log(ChangeLiner.process(7)); // 13
+console.log(ChangeLiner.getCache()); // {0: 0, 1: 1, ... 6: 8, 7: 13}
+```
 
 3. Creating and using a ChangeLinr to lowercase a string, remove whitespace, and sum the character codes of the result. 
 
-        var ChangeLiner = new ChangeLinr({
-            "transforms": {
-                "toLowerCase": function (string) {
-                    return string.toLowerCase();
-                },
-                "removeWhitespace": function (string) {
-                    return string.replace(/\s/g, '');
-                },
-                "sum": function (string) {
-                    var total = 0,
-                        i;
-                    for(i = 0; i < string.length; i += 1) {
-                        total += string.charCodeAt(i);
-                    }
-                    return total;
-                }
-            },
-            "pipeline": ["toLowerCase", "removeWhitespace", "sum"]
-        });
-        console.log(ChangeLiner.process("Hello world!", "Test")); // 1117
-        console.log(ChangeLiner.getCached("Test")); // 1117
+```javascript
+var ChangeLiner = new ChangeLinr({
+    "transforms": {
+        "toLowerCase": function (string) {
+            return string.toLowerCase();
+        },
+        "removeWhitespace": function (string) {
+            return string.replace(/\s/g, '');
+        },
+        "sum": function (string) {
+            var total = 0,
+                i;
+            for(i = 0; i < string.length; i += 1) {
+                total += string.charCodeAt(i);
+            }
+            return total;
+        }
+    },
+    "pipeline": ["toLowerCase", "removeWhitespace", "sum"]
+});
+console.log(ChangeLiner.process("Hello world!", "Test")); // 1117
+console.log(ChangeLiner.getCached("Test")); // 1117
+```
