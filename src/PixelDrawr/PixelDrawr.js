@@ -416,14 +416,14 @@ function PixelDrawr(settings) {
             case "vertical":
                 // If there's a bottom, draw that and push up bottomreal
                 if((canvasref = canvases.bottom)) {
-                    sdiff = sprite.bottomheight || spriteheightpixels;
+                    sdiff = sprite.bottomheight ? sprite.bottomheight * unitsize : spriteheightpixels;
                     drawPatternOnCanvas(context, canvasref.canvas, leftreal, bottomreal - sdiff, widthreal, Math.min(heightreal, spriteheightpixels), opacity);
                     bottomreal -= sdiff;
                     heightreal -= sdiff;
                 }
                 // If there's a top, draw that and push down topreal
                 if((canvasref = canvases.top)) {
-                    sdiff = sprite.topheight || spriteheightpixels;
+                    sdiff = sprite.topheight ? sprite.topheight * unitsize : spriteheightpixels;
                     drawPatternOnCanvas(context, canvasref.canvas, leftreal, topreal, widthreal, Math.min(heightreal, spriteheightpixels), opacity);
                     topreal += sdiff;
                     heightreal -= sdiff;
@@ -433,14 +433,14 @@ function PixelDrawr(settings) {
             case "horizontal":
                 // If there's a left, draw that and push up leftreal
                 if((canvasref = canvases.left)) {
-                    sdiff = sprite.leftwidth || spritewidthpixels;
+                    sdiff = sprite.leftwidth ? sprite.leftwidth * unitsize : spritewidthpixels;
                     drawPatternOnCanvas(context, canvasref.canvas, leftreal, topreal, Math.min(widthreal, spritewidthpixels), heightreal, opacity);
                     leftreal += sdiff;
                     widthreal -= sdiff;
                 }
                 // If there's a right, draw that and push back rightreal
                 if((canvasref = canvases.right)) {
-                    sdiff = sprite.rightwidth || spritewidthpixels;
+                    sdiff = sprite.rightwidth ? sprite.rightwidth * unitsize : spritewidthpixels;
                     drawPatternOnCanvas(context, canvasref.canvas, rightreal - sdiff, topreal, Math.min(widthreal, spritewidthpixels), heightreal, opacity);
                     rightreal -= sdiff;
                     widthreal -= sdiff;

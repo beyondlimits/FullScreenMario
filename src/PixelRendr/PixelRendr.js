@@ -326,9 +326,16 @@ function PixelRendr(settings) {
             sections = command[2],
             output = new self.SpriteMultiple(command[1], direction),
             i;
+        
         for (i in sections) {
             output.sprites[i] = ProcessorBase.process(sections[i], path + direction + i);
         }
+        
+        output.topheight = sections.topheight | 0;
+        output.rightwidth = sections.rightwidth | 0;
+        output.bottomheight = sections.bottomheight | 0;
+        output.leftwidth = sections.leftwidth | 0;
+        
         return output;
     }
 
@@ -341,6 +348,7 @@ function PixelRendr(settings) {
         this.multiple = true;
         this.sprites = {};
     }
+    
 
     /* Actual pipeline functions
      */
