@@ -4312,8 +4312,8 @@ var FullScreenMario = (function(GameStartr) {
         
         // Large big: real, no-animation death
         if (big == 2) {
-            thing.EightBitter.MapScreener.notime = true;
             thing.dead = thing.dying = true;
+            thing.EightBitter.MapScreener.notime = true;
         }
         // Regular big: regular (enemy, time, etc.) kill
         else {
@@ -4353,6 +4353,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.AudioPlayer.pauseAll();
         thing.EightBitter.AudioPlayer.play("Player Dies");
         thing.EightBitter.StatsHolder.decrease("lives");
+        thing.EightBitter.StatsHolder.set("power", 1);
         
         if (thing.EightBitter.StatsHolder.get("lives") > 0) {
             thing.EightBitter.TimeHandler.addEvent(function () {
