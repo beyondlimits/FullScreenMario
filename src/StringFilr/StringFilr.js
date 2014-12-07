@@ -1,8 +1,3 @@
-/* StringFilr
- * Simple data structure for storing strings based on nested class names
- * This uses a tree structure
- */
- 
 /**
  * StringFilr.js
  * 
@@ -15,7 +10,67 @@
  * @this {StringFilr}
  * @param {Object} settings   See self.reset for arguments.
  * 
+ * @example
+ * // Creating and using a StringFilr to store simple measurements.
+ * var StringFiler = new StringFilr({
+ *     "library": {
+ *         "cup": "8oz",
+ *         "gallon": "128oz",
+ *         "half": {
+ *             "cup": "4oz",
+ *             "gallon": "64oz",
+ *         }
+ *     }
+ * });
+ * console.log(StringFiler.get("cup")); // "8oz"
+ * console.log(StringFiler.get("half cup")); // "4oz"
  * 
+ * @example 
+ * // Creating and using a StringFilr to store order-sensitive information.
+ * var StringFiler = new StringFilr({
+ *     "library": {
+ *         "milk": {
+ *             "chocolate": "A lighter chocolate"
+ *         },
+ *         "chocolate": {
+ *             "milk": "Milk mixed with syrup" 
+ *         }
+ *     }
+ * });
+ * console.log(StringFiler.get("milk chocolate")); // "A lighter chocolate"
+ * console.log(StringFiler.get("chocolate milk")); // "Milk mixed with syrup"
+ * 
+ * @example 
+ * // Creating and using a StringFilr to store a few people's measurements.
+ * var StringFiler = new StringFilr({
+ *     "normal": "color",
+ *     "library": {
+ *         "my": {
+ *             "color": {
+ *                 "eye": "blue-green",
+ *                 "hair": "dirty blonde"
+ *             },
+ *             "major": "Computer Science"
+ *         },
+ *         "Mariah's": {
+ *             "color": {
+ *                 "eye": "brown",
+ *                 "hair": "blonde"
+ *             },
+ *             "major": "Biomedical Engineering"
+ *         },
+ *         "Brandon's": {
+ *             "color": {
+ *                 "eye": "black",
+ *                 "hair": "black"
+ *             },
+ *             "major": "Computer Science"
+ *         }
+ *     }
+ * });
+ * console.log(StringFiler.get("my major")); // "Computer Science"
+ * console.log(StringFiler.get("Mariah's eye color")); // "brown"
+ * console.log(StringFiler.get("Brandon's hair")); // "black"
  */
 function StringFilr(settings) {
     "use strict";
@@ -24,157 +79,184 @@ function StringFilr(settings) {
     }
     var self = this,
 
-        // A library of sprite strings
+        // The library of data.
         library,
 
-        // Listing of previously found lookups, for speed's sake
+        // Listing of previously found lookups, for speed's sake.
         cache,
 
-        // Optional default class to use when no suitable option is found
+        // Optional default class to use when no suitable option is found.
         normal,
 
-        // Whether to remove instances of the normal class in this.get()
-        normalize,
-
-        // Whether this should warn when a sub-object in reset has no normal child
-        warnNoNormal,
-
-        // Whether this always gives an array for results, instead of strings
-        // That array is [parent, index] (which is more efficient)
-        giveResultParent;
+        // Whether to crash when a sub-object in reset has no normal child.
+        requireNormalKey;
 
     /**
+     * Resets the StringFilr.
      * 
+     * @param {Object} library   An Object containing data stored as children
+     *                           of sub-Objects.
+     * @param {String} [normal]   A String to use as a default key to recurse 
+     *                            on. Defaults to undefined, so falsy.
+     * @param {Boolean} [requireNormalKey]   Whether it's ok for the library to 
+     *                                   have Objects that don't contain the
+     *                                   normal key. Defaults to false.
      */
     self.reset = function (settings) {
         library = settings.library;
-        normal = settings.normal || "normal";
-        normalize = settings.normalize;
-        warnNoNormal = settings.warnNoNormal;
-        giveResultParent = settings.giveResultParent;
+        normal = settings.normal;
+        requireNormalKey = settings.requireNormalKey;
         
         cache = {};
 
-        if (warnNoNormal) {
+        if (requireNormalKey) {
             if (!normal) {
-                throw new Error("warnNoNormal is given to StringFilr, but a normal class was not.");
+                throw new Error("StringFilr is given requireNormalKey, but no normal class.");
             }
-            checkNumNoNorm(library, "");
+            
+            var caught = findLackingNormal(library, "base", []);
+            if (caught.length) {
+                throw new Error("Found " + caught.length + " library "
+                    + "sub-directories missing the normal: " 
+                    + "\r\n  " + caught.join("\r\n  "));
+            }
         }
     };
 
     /**
-     * 
+     * @return {Object} The base library of stored information.
      */
     self.getLibrary = function () {
         return library;
-    }
+    };
 
     /**
-     * 
+     * @return {Object} The complete cache of cached output.
      */
     self.getCache = function () {
         return cache;
-    }
+    };
 
     /**
-     * 
+     * Completely clears the cache Object.  
      */
-    self.setGiveParent = function(give_new) {
-        giveResultParent = give_new;
-    }
+    self.clearCache = function () {
+        cache = {};
+    };
 
-    // Either clears the entire cache or a specific item
     /**
+     * Clears the cached entry for a key.
      * 
+     * @param {String} key
      */
-    self.clear = function(className) {
-        if (typeof className === "undefined") {
-            cache = {};
-            return;
+    self.clearCached = function(key) {
+        if (normal) {
+            key = key.replace(normal, '');
         }
         
-        if (normalize) {
-            className = className.replace(normal, '');
-        }
-        
-        delete cache[className];
+        delete cache[key];
     }
 
-    // Typical retrieval function
-    // Takes in a className and returns the deepest matching part in the library
-    // If giveResultParent is true, it returns the parent of whatever matches
     /**
+     * Retrieves the deepest matching data in the library for a key. 
      * 
+     * @param {String} key
+     * @return {Mixed}
      */
-    self.get = function(className) {
-        // Normalizing removes all instances of the normal keyword, since they don't matter
-        if (normalize) className = className.replace(normal, '');
+    self.get = function(key) {
+        var result;
+        
+        if (normal) {
+            key = key.replace(normal, "");
+        }
 
         // Quickly return a cached result if it exists
-        if (cache.hasOwnProperty(className)) return cache[className];
+        if (cache.hasOwnProperty(key)) {
+            return cache[key]
+        };
 
-        var result = followClass(className.split(/\s+/g), library);
+        result = followClass(key.split(/\s+/g), library);
 
-        // If giveResultParent is true, the results will be in reverse order
-        if (giveResultParent) result = results_final(result);
-        return cache[className] = result;
+        cache[key] = result;
+        return result;
     }
 
-    // rename current to something different from library?
-    // Fancy version of followPath that accounts for normal and giveResultParent
     /**
+     * Utility helper to recursively check for tree branches in the library 
+     * that don't have a key equal to the normal. For each sub-directory that
+     * is caught, the path to it is added to output.
      * 
+     * @param {Object} current   The current location being searched within
+     *                           the library.
+     * @param {String} path   The current path within the library.
+     * @param {String[] output   An Array of the String paths to parts that
+     *                           don't have a matching key.
+     * @returns {String[]} output
      */
-    function followClass(names, current) {
-        // If names runs out, we're done
-        if (!names || !names.length) {
+    self.findLackingNormal = function (current, path, output) {
+        var i;
+        
+        if (!current.hasOwnProperty(normal)) {
+            output.push(path);
+        }
+        
+        if (typeof current[i] === "object") {
+            for (i in current) {
+                findLackingNormal(current[i], path + " " + i, output);
+            }
+        }
+        
+        return output;
+    };
+
+    /**
+     * Utility function to follow a path into the library (this is the driver 
+     * for searching into the library). For each available key, if it matches
+     * a key in current, it is removed from keys and recursion happens on the
+     * sub-directory in current.
+     * 
+     * @param {String[]} keys   The currently available keys to search within.
+     * @param {Object} current   The current location being searched within
+     *                           the library.
+     * @return {Mixed} The most deeply matched part of the library.
+     */
+    function followClass(keys, current) {
+        var key, i;
+        
+        // If keys runs out, we're done
+        if (!keys || !keys.length) {
             return current;
         }
 
-        var name, i;
-        // For each name in the current array...
-        for (i in names) {
-            name = names[i];
-            // ...if it matches, recurse on the other names
-            if (current.hasOwnProperty(name)) {
-                names.splice(i, 1);
-                i = followClass(names, current[name], giveResultParent);
-                return (giveResultParent && i.constructor != Object) ? [current, name, i] : i;
+        // For each key in the current array...
+        for (i in keys) {
+            key = keys[i];
+            
+            // ...if it matches, recurse on the other keys
+            if (current.hasOwnProperty(key)) {
+                keys.splice(i, 1);
+                return followClass(keys, current[key]);
             }
         }
 
-        // If no name matched, try the normal (default)
+        // If no key matched, try the normal (default)
         if (normal && current.hasOwnProperty(normal)) {
-            i = followClass(names, current[normal], giveResultParent);
-            return (giveResultParent && i.constructor != Object) ? [current, normal, i] : i;
+            return followClass(keys, current[normal]);
         }
-        // Nothing matches anymore, we're done.
+        
+        // Nothing matches anything; we're done.
         return current;
     }
 
-    // Recursively checks the library for tree branches that have no [normal]
     /**
+     * Simple utility function to get the last (deepest) parts of self.get 
+     * results. This is useful because they're normally in reverse-order.
      * 
+     * @param {Mixed} results 
      */
-    function checkNumNoNorm(current, path) {
-        var has_norm = false;
-        for (var i in current) {
-            if (i == normal) has_norm = true;
-            if (typeof current[i] == "object") {
-                console.warn("No normal specified:", path);
-                checkNumNoNorm(current[i], path + "->" + i);
-            }
-        }
-    }
-
-    // Simple utility to get the last (deepest) parts of reverse-order results
-    /**
-     * 
-     */
-    function results_final(results) {
+    function getResultsFinal(results) {
         if (typeof results[2] === "object") {
-            return results_final(results[2]);
+            return getResultsFinal(results[2]);
         }
         
         return results;

@@ -7,13 +7,13 @@ A ChangeLinr stores a set of "transform" functions that may be applied to input,
 
 ## Basic architecture
 
-#### Important APIs
+### Important APIs
 
 * **process(***`data[, key[, attributes]]`***)** - Applies the pipeline of transforms to the input data. If doMakeCache is on, the outputs of this are stored in cache and cacheFull.
 
 * **processFull(***`data[, key[, attributes]]`***)** - Calls process on the same inputs, then returns an object containing the cached outputs of each pipeline function.
 
-#### Important Member Variables
+### Important Member Variables
 
 * **transforms** *`Object<String, Function>`* - A table mapping string keys to functions, so they can be used in the pipeline.
 
@@ -22,6 +22,20 @@ A ChangeLinr stores a set of "transform" functions that may be applied to input,
 * **cache** *`Object<String, Mixed>`* - Previously generated outputs of processing.
 
 * **cacheFull** *`Object<String, Mixed>`* - Previously generated outputs of each function in the pipeline functions.
+
+### Constructor arguments
+
+* **pipeline** *`String[]`*
+
+* **transforms** *`Object<String, Function>`*
+
+* **[doMakeCache]** *`Boolean`* - Whether this should keep a cache. Defaults to true.
+
+* **[doUseCache]** *`Boolean`* - Whether this should use the cache. Defaults to true.
+
+* **[doUseGlobals]** *`Boolean`* - Whether the pipeline is allowed to reference 
+global variables (rather than just those in transforms). Defaults to false.
+
 
 
 ## Sample usage
@@ -49,8 +63,7 @@ A ChangeLinr stores a set of "transform" functions that may be applied to input,
           "fibonacci": function (number, key, attributes, ChangeLiner) {
               if (!number) {
                   return 0;
-              }
-              else if (number === 1) {
+              } else if (number === 1) {
                   return 1;
               }
               return ChangeLiner.process(number - 1) + ChangeLiner.process(number - 2);

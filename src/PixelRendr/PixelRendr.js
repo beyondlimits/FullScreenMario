@@ -129,7 +129,8 @@ function PixelRendr(settings) {
 
         // The BaseFiler provides a searchable 'view' on the library of sprites
         BaseFiler = new StringFilr({
-            "library": library.sprites
+            "library": library.sprites,
+            "normal": "normal", // to do: put this somewhere more official?,
         });
     };
 

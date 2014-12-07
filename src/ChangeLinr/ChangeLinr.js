@@ -30,8 +30,7 @@
  *         "fibonacci": function (number, key, attributes, ChangeLiner) {
  *             if (!number) {
  *                 return 0;
- *             }
- *             else if (number === 1) {
+ *             } else if (number === 1) {
  *                 return 1;
  *             }
  *             return ChangeLiner.process(number - 1) + ChangeLiner.process(number - 2);
