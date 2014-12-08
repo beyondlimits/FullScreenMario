@@ -1,6 +1,6 @@
 # StringFilr
 
-A general utility for retrieving data from an Object based on nested class
+A general utility for retrieving data from an Object based on nested class 
 names. You can think of the internal "library" Object as a tree structure,
 such that you can pass in a listing (in any order) of the path to data for 
 retrieval.
@@ -8,12 +8,12 @@ retrieval.
 
 ## Basic architecture
 
-### Important APIs
+#### Important APIs
 
 * **get(***`key`***)** - Retrieves the deepest matching data in the library for
 the key. 
 
-### Important Member Variables
+#### Important Member Variables
 
 * **library** *`Object<String, Mixed>`* - The stored library of data, set up 
 as a tree structure.
@@ -27,7 +27,7 @@ recurse on during searches if no provided keys matched.
 the beginning to ensure there are no directories that don't have the normal
 as a key.
 
-### Constructor arguments
+#### Constructor Arguments
 
 * **library** *`Object`*
 
@@ -36,7 +36,7 @@ as a key.
 * **[requireNormalKey]** *`Boolean`*
 
 
-## Sample usage
+## Sample Usage
 
 1. Creating and using a StringFilr to store simple measurements.
 

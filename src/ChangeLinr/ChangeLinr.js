@@ -5,10 +5,6 @@
  * done by keeping an Array of transform Functions to process input on.  
  * Outcomes for inputs are cached so repeat runs are O(1).
  * 
- * @constructor
- * @this {ChangeLinr}
- * @param {Object} settings   See self.reset for arguments.
- * 
  * @example 
  * // Creating and using a ChangeLinr to square numbers.
  * var ChangeLiner = new ChangeLinr({
@@ -96,6 +92,7 @@ function ChangeLinr(settings) {
     /**
      * Resets the ChangeLinr.
      * 
+     * @constructor
      * @param {String[]} pipeline   The ordered pipeline of String names of the
      *                              transforms to call.
      * @param {Object} [transforms]   An Object containing Functions keyed by

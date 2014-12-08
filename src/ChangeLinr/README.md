@@ -1,44 +1,57 @@
 # ChangeLinr
 
-A general utility for transforming raw input to processed output. Outcomes may be cached so repeat runs are O(1).
+A general utility for transforming raw input to processed output. Outcomes may 
+be cached so repeat runs are O(1).
 
-A ChangeLinr stores a set of "transform" functions that may be applied to input, along with a listing of what functions to apply in which order. It's then able to take inputs, apply the transform functions to the inputs, and return the (now  cached) output.
+A ChangeLinr stores a set of "transform" functions that may be applied to input,
+along with a listing of what functions to apply in which order. It's then able 
+to take inputs, apply the transform functions to the inputs, and return the 
+(now cached) output.
 
 
 ## Basic architecture
 
-### Important APIs
+#### Important APIs
 
-* **process(***`data[, key[, attributes]]`***)** - Applies the pipeline of transforms to the input data. If doMakeCache is on, the outputs of this are stored in cache and cacheFull.
+* **process(***`data[, key[, attributes]]`***)** - Applies the pipeline of
+transforms to the input data. If doMakeCache is on, the outputs of this are
+stored in cache and cacheFull.
 
-* **processFull(***`data[, key[, attributes]]`***)** - Calls process on the same inputs, then returns an object containing the cached outputs of each pipeline function.
+* **processFull(***`data[, key[, attributes]]`***)** - Calls process on the
+same inputs, then returns an object containing the cached outputs of each
+pipeline function.
 
-### Important Member Variables
+#### Important Member Variables
 
-* **transforms** *`Object<String, Function>`* - A table mapping string keys to functions, so they can be used in the pipeline.
+* **transforms** *`Object<String, Function>`* - A table mapping string keys to
+functions, so they can be used in the pipeline.
 
-* **pipeline** *`Array<String>`*- The ordered list of transforms to be applied to inputs in the process call.
+* **pipeline** *`Array<String>`*- The ordered list of transforms to be applied
+to inputs in the process call.
 
-* **cache** *`Object<String, Mixed>`* - Previously generated outputs of processing.
+* **cache** *`Object<String, Mixed>`* - Previously generated outputs of
+processing.
 
-* **cacheFull** *`Object<String, Mixed>`* - Previously generated outputs of each function in the pipeline functions.
+* **cacheFull** *`Object<String, Mixed>`* - Previously generated outputs of
+each function in the pipeline functions.
 
-### Constructor arguments
+#### Constructor Arguments
 
 * **pipeline** *`String[]`*
 
 * **transforms** *`Object<String, Function>`*
 
-* **[doMakeCache]** *`Boolean`* - Whether this should keep a cache. Defaults to true.
+* **[doMakeCache]** *`Boolean`* - Whether this should keep a cache. Defaults to
+true.
 
-* **[doUseCache]** *`Boolean`* - Whether this should use the cache. Defaults to true.
+* **[doUseCache]** *`Boolean`* - Whether this should use the cache. Defaults to
+true.
 
-* **[doUseGlobals]** *`Boolean`* - Whether the pipeline is allowed to reference 
+* **[doUseGlobals]** *`Boolean`* - Whether the pipeline is allowed to reference
 global variables (rather than just those in transforms). Defaults to false.
 
 
-
-## Sample usage
+## Sample Usage
 
 1.  Creating and using a ChangeLinr to square numbers.
 
@@ -75,7 +88,8 @@ global variables (rather than just those in transforms). Defaults to false.
   console.log(ChangeLiner.getCache()); // {0: 0, 1: 1, ... 6: 8, 7: 13}
   ```
 
-3. Creating and using a ChangeLinr to lowercase a string, remove whitespace, and sum the character codes of the result. 
+3. Creating and using a ChangeLinr to lowercase a string, remove whitespace,
+   and sum the character codes of the result. 
 
   ```javascript
   var ChangeLiner = new ChangeLinr({

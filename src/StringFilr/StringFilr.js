@@ -6,10 +6,6 @@
  * such that you can pass in a listing (in any order) of the path to data for 
  * retrieval.
  * 
- * @constructor
- * @this {StringFilr}
- * @param {Object} settings   See self.reset for arguments.
- * 
  * @example
  * // Creating and using a StringFilr to store simple measurements.
  * var StringFiler = new StringFilr({
@@ -94,6 +90,7 @@ function StringFilr(settings) {
     /**
      * Resets the StringFilr.
      * 
+     * @constructor
      * @param {Object} library   An Object containing data stored as children
      *                           of sub-Objects.
      * @param {String} [normal]   A String to use as a default key to recurse 

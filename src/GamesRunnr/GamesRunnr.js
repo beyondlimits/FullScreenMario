@@ -1,6 +1,10 @@
 /**
  * GamesRunnr.js
  * 
+ * A class that continuously runs a series of "game" Functions. Each game is
+ * run in a set order at a particular interval, with a 
+ * configurable speed.
+ * 
  * 
  */
 function GamesRunnr(settings) {
