@@ -1,29 +1,45 @@
 /**
+ * NumberMakr.js
+ * 
  * An updated version of the traditional MersenneTwister JavaScript class by 
  * Sean McCullough (2010), based on code by Takuji Nishimura and Makoto 
  * Matsumoto (1997 - 2002).
  * 
  * For the 2010 code, see https://gist.github.com/banksean/300494.
+ * 
+ * @example
+ * // Creating and using a NumberMaker as a substute for Math.random().
+ * var NumberMaker = new NumberMakr();
+ * console.log(NumberMaker.random()); // some random Number in [0, 1)
+ * console.log(NumberMaker.random()); // some random Number in [0, 1)
+ * 
+ * @example
+ * // Creating and using a NumberMaker with a seed.
+ * var NumberMaker = new NumberMakr({
+ *     "seed": 7777777
+ * });
+ * console.log(NumberMaker.random()); // 0.337172580184415
+ * console.log(NumberMaker.random()); // 0.4261356364004314
  *
  * @author "Josh Goldberg" <josh@fullscreenmario.com>
  */
 /*
   I've wrapped Makoto Matsumoto and Takuji Nishimura's code in a namespace
   so it's better encapsulated. Now you can have multiple random number generators
-  and they won't stomp all over eachother's state.
+  and they won't stomp all over each other's state.
   
   If you want to use this as a substitute for Math.random(), use the random()
   method like so:
   
-  var m = new MersenneTwister();
-  var randomNumber = m.random();
+  var statePeriod = new MersenneTwister();
+  var randomNumber = statePeriod.random();
   
   You can also call the other genrand_{foo}() methods on the instance.
 
   If you want to use a specific seed in order to get a repeatable random
   sequence, pass an integer into the constructor:
 
-  var m = new MersenneTwister(123);
+  var statePeriod = new MersenneTwister(123);
 
   and that will always produce the same random sequence.
 
@@ -34,7 +50,7 @@
    Coded by Takuji Nishimura and Makoto Matsumoto.
  
    Before using, initialize the state by using init_genrand(seed)  
-   or init_by_array(init_key, key_length).
+   or init_by_array(keyInitial, keyLength).
  
    Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura,
    All rights reserved.                          
@@ -68,8 +84,8 @@
  
  
    Any feedback is very welcome.
-   http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html
-   email: m-mat @ math.sci.hiroshima-u.ac.jp (remove space)
+   http://www.math.sci.hiroshima-u.ac.jp/~statePeriod-mat/stateVector/emt.html
+   email: statePeriod-mat @ math.sci.hiroshima-u.ac.jp (remove space)
 */
 function NumberMakr(settings) {
     "use strict";
@@ -79,41 +95,58 @@ function NumberMakr(settings) {
     var self = this,
         
         // Number length of the state vector
-        N,
+        stateLength,
         
         // Number period
-        M,
+        statePeriod,
         
         // Constant vector a
-        MATRIX_A, 
+        matrixA,
+
+        // Constant magic array from matrixA
+        matrixAMagic,
         
         // Most significant w-r bits
-        UPPER_MASK,
+        maskUpper,
         
         // Least significant r bits
-        LOWER_MASK,
+        maskLower,
         
         // Array for the state vector
-        mt,
+        stateVector,
         
-        // Number for place in state vector (if === N + 1, not initialized yet)
-        mti,
+        // Number for place in state vector (if out of range, uninitialised)
+        stateIndex,
         
         // The starting seed used to initialize. This may be a Number or Array.
         seed = 0;
     
     /**
+     * Resets the NumberMakr.
      * 
+     * @constructor
+     * @param {Number/Array} [seed]   A starting seed used to initialize. This 
+     *                                can be a Number or Array; the appropriate
+     *                                resetFrom Function will be called.
+     * @param {Number} [stateLength]   How long the state vector will be.
+     * @param {Number} [statePeriod]   How long the state period will be.
+     * @param {Number} [matrixA]   A constant mask to generate the matrixAMagic
+     *                             Array of [0, some number]
+     * @param {Number} [maskUpper]   An upper mask to binary-and on (the most 
+     *                               significant w-r bits).
+     * @param {Number} [maskLower]   A lower mask to binary-and on (the least
+     *                               significant r bits).
      */
     self.reset = function (settings) {
-        N = settings.N || 624;
-        M = settings.M || 397;
-        MATRIX_A = settings.MATRIX_A || 0x9908b0df;
-        UPPER_MASK = settings.UPPER_MASK || 0x80000000;
-        LOWER_MASK = settings.LOWER_MASK || 0x7fffffff;
+        stateLength = settings.stateLength || 624;
+        statePeriod = settings.statePeriod || 397;
+        matrixA = settings.matrixA || 0x9908b0df;
+        maskUpper = settings.maskUpper || 0x80000000;
+        maskLower = settings.maskLower || 0x7fffffff;
         
-        mt = new Array(N);
-        mti = N + 1;
+        stateVector = new Array(stateLength);
+        stateIndex = stateLength + 1;
+        matrixAMagic = new Array(0x0, matrixA);
         
         self.resetFromSeed(settings.seed || new Date().getTime());
     };
@@ -137,19 +170,14 @@ function NumberMakr(settings) {
             seedNew = seed;
         }
         
-        mt[0] = seedNew >>> 0;
+        stateVector[0] = seedNew >>> 0;
         
-        for (mti = 1; mti < N; mti += 1) {
-            s = mt[mti - 1] ^ (mt[mti - 1] >>> 30);
-            // mt[this.mti] = ((
-                // ((((s & 0xffff0000) >>> 16) * 1812433253) << 16)
-                // + (s & 0x0000ffff) * 1812433253)
-                // + this.mti
-            // ) >> 0;
-            mt[mti] = (
+        for (stateIndex = 1; stateIndex < stateLength; stateIndex += 1) {
+            s = stateVector[stateIndex - 1] ^ (stateVector[stateIndex - 1] >>> 30);
+            stateVector[stateIndex] = (
                 (((((s & 0xffff0000) >>> 16) * 1812433253) << 16) 
-                    + (s & 0x0000ffff) * 1812433253)
-                    + mti
+                    + (s & 0x0000ffff) * 1812433253
+                ) + stateIndex
             ) >>> 0;
         }
         
@@ -159,12 +187,12 @@ function NumberMakr(settings) {
     /**
      * Initializes state from an Array.
      * 
-     * @param {Number[]} init_key
-     * @param {Number} [key_length]   The length of init_key (defaults to the
-     *                                actual init_key.length).
+     * @param {Number[]} keyInitial
+     * @param {Number} [keyLength]   The length of keyInitial (defaults to the
+     *                                actual keyInitial.length).
      * @remarks   There was a slight change for C++, 2004/2/26.
      */
-    self.resetFromArray = function (init_key, key_length) {
+    self.resetFromArray = function (keyInitial, keyLength) {
         var i = 1,
             j = 0, 
             k,
@@ -172,35 +200,35 @@ function NumberMakr(settings) {
         
         self.resetFromSeed(19650218);
         
-        if (typeof(key_length) === "undefined") {
-            key_length = init_key.length;
+        if (typeof(keyLength) === "undefined") {
+            keyLength = keyInitial.length;
         }
-        k = N > key_length ? N : key_length;
+        k = stateLength > keyLength ? stateLength : keyLength;
         
         while(k > 0) {
-            s = mt[i - 1] ^ (mt[i - 1] >>> 30);
-            mt[i] = (this.mt[i] ^ (
+            s = stateVector[i - 1] ^ (stateVector[i - 1] >>> 30);
+            stateVector[i] = (this.stateVector[i] ^ (
                     ((((s & 0xffff0000) >>> 16) * 1664525) << 16)
                     + ((s & 0x0000ffff) * 1664525)
-                ) + init_key[j] + j
+                ) + keyInitial[j] + j
             ) >>> 0;
             
             i += 1;
             j += 1;
             
-            if (i >= N) {
-                mt[0] = mt[N - 1];
+            if (i >= stateLength) {
+                stateVector[0] = stateVector[stateLength - 1];
                 i = 1;
             }
             
-            if (j >= key_length) {
+            if (j >= keyLength) {
                 j = 0;
             }
         }
         
-        for (k = N - 1; k; k -= 1) {
-            s = mt[i-1] ^ (mt[i-1] >>> 30);
-            mt[i] = ((mt[i] ^ (
+        for (k = stateLength - 1; k; k -= 1) {
+            s = stateVector[i-1] ^ (stateVector[i-1] >>> 30);
+            stateVector[i] = ((stateVector[i] ^ (
                     ((((s & 0xffff0000) >>> 16) * 1566083941) << 16) 
                     + (s & 0x0000ffff) * 1566083941)
                 ) - i
@@ -208,14 +236,14 @@ function NumberMakr(settings) {
             
             i += 1;
             
-            if (i >= N) {
-                mt[0] = mt[N - 1];
+            if (i >= stateLength) {
+                stateVector[0] = stateVector[stateLength - 1];
                 i = 1;
             }
         }
         
-        mt[0] = 0x80000000;
-        seed = init_key;
+        stateVector[0] = 0x80000000;
+        seed = keyInitial;
     };
     
     
@@ -226,31 +254,42 @@ function NumberMakr(settings) {
      * @return {Number} Random Number in [0,0xffffffff].
      */
     self.randomInt32 = function () {
-        var mag01 = new Array(0x0, MATRIX_A),
-            y, kk;
+        var y, kk;
         
-        if (mti >= N) {
-            if (mti === N + 1) {
+        if (stateIndex >= stateLength) {
+            if (stateIndex === stateLength + 1) {
                 self.resetFromSeed(5489);
             }
             
-            for (kk = 0; kk < N - M; kk += 1) {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + M] ^ (y >>> 1) ^ mag01[y & 0x1];
+            for (kk = 0; kk < stateLength - statePeriod; kk += 1) {
+                y = (stateVector[kk] & maskUpper)
+                    | (stateVector[kk + 1] & maskLower);
+                
+                stateVector[kk] = stateVector[kk + statePeriod]
+                    ^ (y >>> 1)
+                    ^ matrixAMagic[y & 0x1];
             }
             
-            for (; kk < N - 1; kk += 1) {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + (M - N)] ^ (y >>> 1) ^ mag01[y & 0x1];
+            for (; kk < stateLength - 1; kk += 1) {
+                y = (stateVector[kk] & maskUpper)
+                    | (stateVector[kk + 1] & maskLower);
+                
+                stateVector[kk] = stateVector[kk + (statePeriod - stateLength)]
+                    ^ (y >>> 1) 
+                    ^ matrixAMagic[y & 0x1];
             }
             
-            y = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-            mt[N - 1] = mt[M - 1] ^ (y >>> 1) ^ mag01[y & 0x1];
-            mti = 0;
+            y = (stateVector[stateLength - 1] & maskUpper) 
+                | (stateVector[0] & maskLower);
+            
+            stateVector[stateLength - 1] = stateVector[statePeriod - 1]
+                ^ (y >>> 1) ^ matrixAMagic[y & 0x1];
+            
+            stateIndex = 0;
         }
         
-        y = mt[mti];
-        mti += 1;
+        y = stateVector[stateIndex];
+        stateIndex += 1;
         
         y ^= (y >>> 11);
         y ^= (y << 7) & 0x9d2c5680;
@@ -343,7 +382,7 @@ function NumberMakr(settings) {
      * @return {Number} Random integer in [min,max).
      */
     self.randomIntWithin = function (min, max) {
-        return self.randomWithin(max - min) + min;
+        return (self.randomUnder(max - min) + min) | 0;
     }
     
     

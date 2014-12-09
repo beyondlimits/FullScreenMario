@@ -39,6 +39,8 @@
  *     },
  *     numKept * i * target
  * );
+ * 
+ * @author "Josh Goldberg" <josh@fullscreenmario.com>
  */
 function FPSAnalyzr(settings) {
     "use strict";

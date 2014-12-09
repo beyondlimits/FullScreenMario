@@ -6,7 +6,7 @@ such that you can pass in a listing (in any order) of the path to data for
 retrieval.
 
 
-## Basic architecture
+## Basic Architecture
 
 #### Important APIs
 

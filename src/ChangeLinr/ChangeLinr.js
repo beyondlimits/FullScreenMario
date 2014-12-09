@@ -61,6 +61,8 @@
  * });
  * console.log(ChangeLiner.process("Hello world!", "Test")); // 1117
  * console.log(ChangeLiner.getCached("Test")); // 1117
+ * 
+ * @author "Josh Goldberg" <josh@fullscreenmario.com>
  */
 function ChangeLinr(settings) {
     "use strict";

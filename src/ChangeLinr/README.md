@@ -9,7 +9,7 @@ to take inputs, apply the transform functions to the inputs, and return the
 (now cached) output.
 
 
-## Basic architecture
+## Basic Architecture
 
 #### Important APIs
 

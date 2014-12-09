@@ -67,6 +67,8 @@
  * console.log(StringFiler.get("my major")); // "Computer Science"
  * console.log(StringFiler.get("Mariah's eye color")); // "brown"
  * console.log(StringFiler.get("Brandon's hair")); // "black"
+ * 
+ * @author "Josh Goldberg" <josh@fullscreenmario.com>
  */
 function StringFilr(settings) {
     "use strict";

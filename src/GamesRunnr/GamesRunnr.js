@@ -2,10 +2,11 @@
  * GamesRunnr.js
  * 
  * A class that continuously runs a series of "game" Functions. Each game is
- * run in a set order at a particular interval, with a 
- * configurable speed.
+ * run in a set order at a particular interval, with a configurable speed.
  * 
  * 
+ * 
+ * @author "Josh Goldberg" <josh@fullscreenmario.com>
  */
 function GamesRunnr(settings) {
     "use strict";
@@ -83,6 +84,7 @@ function GamesRunnr(settings) {
         if (paused) {
             return;
         }
+        
         upkeep_next = upkeep_schedule(self.upkeep, speed_real);
         
         FPSAnalyzer.measure();

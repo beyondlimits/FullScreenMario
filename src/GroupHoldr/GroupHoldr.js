@@ -1,4 +1,13 @@
 /**
+ * GroupHoldr.js
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
  * 
  */
 function GroupHoldr(settings) {
@@ -35,13 +44,13 @@ function GroupHoldr(settings) {
     self.reset = function(settings) {
         // The group_names and group_types arguments must be provided
         if (!settings.hasOwnProperty("group_names")) {
-            throw new Error("No group_names array provided to GroupHoldr");
+            throw new Error("No group_names array provided to GroupHoldr.");
         }
         if (!settings.hasOwnProperty("group_types")) {
-            throw new Error("No group_types object provided to GroupHoldr");
+            throw new Error("No group_types object provided to GroupHoldr.");
         }
         
-        // The functions containers start blank, but are filled in setGroupNames 
+        // These functions containers are filled in setGroupNames 
         functions = {
             "set": {},
             "get": {},
