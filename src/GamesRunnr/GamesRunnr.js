@@ -1,10 +1,47 @@
 /**
  * GamesRunnr.js
  * 
- * A class that continuously runs a series of "game" Functions. Each game is
- * run in a set order at a particular interval, with a configurable speed.
+ * A class to continuously series of "game" Functions. Each game is run in a 
+ * set order and the group is run as a whole at a particular interval, with a
+ * configurable speed. Playback can be triggered manually, or driven by a timer
+ * with pause and play hooks. For automated playback, statistics are 
+ * available via an internal FPSAnalyzer.
  * 
+ * @example
+ * // Creating and using a GamesRunnr to print the screen size every second.
+ * var GamesRunner = new GamesRunnr({
+ *     "interval": 1000,
+ *     "games": [
+ *         function () {
+ *             console.log("Screen size: " + innerWidth + "x" + innerHeight);
+ *         }
+ *     ]
+ * });
+ * GamesRunner.play();
  * 
+ * @example
+ * // Creating and using a GamesRunnr to remove the first member of an Array 
+ * // and output the remaining members every second until only one is left.
+ * var numbers = ['a', 'b', 'c', 'd'],
+ *     GamesRunner = new GamesRunnr({
+ *         "interval": 1000,
+ *         "games": [
+ *             numbers.pop.bind(numbers),
+ *             console.log.bind(console, numbers),
+ *             function () {
+ *                 if (numbers.length === 1) {
+ *                     GamesRunner.pause();
+ *                     console.log("All done!");
+ *                 }
+ *             }
+ *         ]
+ *         
+ *     });
+ * GamesRunner.play();
+ * // After 1 second:  ['a', 'b', 'c']
+ * // After 2 seconds: ['a', 'b']
+ * // After 3 seconds: ['a']
+ * //                  "All done!"
  * 
  * @author "Josh Goldberg" <josh@fullscreenmario.com>
  */
@@ -19,17 +56,17 @@ function GamesRunnr(settings) {
         games,
         
         // Optional trigger functions triggered on...
-        on_pause,   // self.pause()
-        on_unpause, // self.unpause()
+        onPause,   // self.pause()
+        onPlay, // self.play()
         
         // Reference to the next upkeep, such as setTimeout's returned int
-        upkeep_next,
+        upkeepNext,
         
         // Function used to schedule the next upkeep, such as setTimeout
-        upkeep_schedule,
+        upkeepScheduler,
         
         // Function used to cancel the next upkeep, such as clearTimeout
-        upkeep_cancel,
+        upkeepCanceller,
         
         // Boolean: whether the game is paused
         paused,
@@ -41,7 +78,7 @@ function GamesRunnr(settings) {
         speed,
         
         // The actual speed, as (1 / speed) * interval
-        speed_real,
+        speedReal,
         
         // An FPSAnalyzr object that measures on each upkeep
         FPSAnalyzer,
@@ -49,18 +86,39 @@ function GamesRunnr(settings) {
         // An object to set as the scope for games (if not self)
         scope;
     
+    /**
+     * Resets the GamesRunnr.
+     * 
+     * @constructor
+     * @param {Function[]} games   The Array of Functions to run on each 
+     *                             upkeep.
+     * @param {Number} [interval]   How often, in milliseconds, to call upkeep
+     *                              when playing (defaults to 1000 / 60).
+     * @param {Number} [speed]   A multiplier for interval that can be set
+     *                           independently.
+     * @param {FPSAnalyzr} [FPSAnalyzer]   An FPSAnalyzer to provide statistics
+     *                                     on automated playback. If not
+     *                                     provided, a new one will be made.
+     * @param {Function} [onPause]   A callback to run when upkeep is paused.
+     * @param {Function} [onPlay]   A callback to run when upkeep is played.
+     * @param {Function} [upkeepScheduler]   A Function to replace setTimeout.
+     * @param {Function} [upkeepCanceller]   A Function to replace 
+     *                                       clearTimeout.
+     * @param {Mixed} scope   A scope for games to be run on (defaults to the 
+     *                        window).
+     */
     self.reset = function(settings) {
         var i;
         
-        games           = settings.games           || [];
-        on_pause        = settings.on_pause;
-        on_unpause      = settings.on_unpause;
-        upkeep_schedule = settings.upkeep_schedule || window.setTimeout;
-        upkeep_cancel   = settings.upkeep_cancel   || window.clearTimeout;
-        interval        = settings.interval        || 1000 / 60;
-        speed           = settings.speed           || 1;
-        FPSAnalyzer     = settings.FPSAnalyzer     || new FPSAnalyzr();
-        scope           = settings.scope           || self;
+        games = settings.games || [];
+        interval = settings.interval || 1000 / 60;
+        speed = settings.speed || 1;
+        onPause = settings.onPause;
+        onPlay = settings.onPlay;
+        upkeepScheduler = settings.upkeepScheduler || window.setTimeout;
+        upkeepCanceller = settings.upkeepCanceller || window.clearTimeout;
+        FPSAnalyzer = settings.FPSAnalyzer || new FPSAnalyzr();
+        scope = settings.scope || window;
         paused = true;
         
         for (i = 0; i < games.length; i += 1) {
@@ -71,94 +129,115 @@ function GamesRunnr(settings) {
     };
     
     
+    /* Gets
+    */
+    
+    /** 
+     * @return {FPSAnalyzer} The FPSAnalyzer used in the GamesRunnr.
+     */
+    self.getFPSAnalyzer = function () {
+        return FPSAnalyzer;
+    };
+    
+    /**
+     * @return {Boolean} Whether this is paused.
+     */
+    self.getPaused = function () {
+        return paused;
+    };
+    
+    /**
+     * @return {Function[]} The Array of game Functions.
+     */
+    self.getGames = function () {
+        return games;
+    };
+    
+    /**
+     * @return {Number} The interval between upkeeps.
+     */
+    self.getInterval = function () {
+        return interval;
+    };
+    
+    /**
+     * @return {Number} The speed multiplier being applied to the interval.
+     */
+    self.getSpeed = function () {
+        return speed;
+    };
+    
+    
     /* Runtime
     */
     
     /**
-     * Meaty function, run every <interval> milliseconds
-     * This marks an FPS measurement and runs every game once
-     * 
-     * @return {this}
+     * Meaty function, run every <interval*speed> milliseconds, to mark an FPS
+     * measurement and run every game once.
      */
     self.upkeep = function () {
         if (paused) {
             return;
         }
         
-        upkeep_next = upkeep_schedule(self.upkeep, speed_real);
-        
+        upkeepNext = upkeepScheduler(self.upkeep, speedReal);
         FPSAnalyzer.measure();
-        
         games.forEach(run);
-        
-        return self;
-    };
-    
-    /**
-     * Calls upkeep a <num or 1> number of times, immediately
-     * 
-     * @param {Number} num   An optional number of times to upkeep
-     * @return {this}
-     */
-    self.step = function(num) {
-        self.unpause();
-        self.upkeep();
-        self.pause();
-        if (num > 0) {
-            self.step(num - 1);
-        }
-        return self;
-    }
-    
-    /**
-     * Stops execution of self.upkeep, and cancels the next call.
-     * If an on_pause has been defined, it's called after.
-     * 
-     * @return {this}
-     */
-    self.pause = function () {
-        if (paused) return;
-        paused = true;
-        
-        if (on_pause) {
-            on_pause(self);
-        }
-        
-        upkeep_cancel(self.upkeep);
-        
-        return self;
     };
     
     
     /**
-     * Continuous execution of self.upkeep by calling it.
-     * If an on_unpause has been defined, it's called before.
-     * 
-     * @return {this}
+     * Continues execution of self.upkeep by calling it. If an onPlay has been
+     * defined, it's called before.
      */
-    self.unpause = function () {
+    self.play = function () {
         if (!paused) {
             return;
         }
         paused = false;
         
-        if (on_unpause) {
-            on_unpause(self);
+        if (onPlay) {
+            onPlay(self);
         }
         
         self.upkeep();
-        
-        return self;
     };
     
     /**
-     * Toggles whether this is paused, and calls the appropriate function.
+     * Stops execution of self.upkeep, and cancels the next call. If an onPause
+     * has been defined, it's called after.
+     */
+    self.pause = function () {
+        if (paused) {
+            return;
+        }
+        paused = true;
+        
+        if (onPause) {
+            onPause(self);
+        }
+        
+        upkeepCanceller(self.upkeep);
+    };
+    
+    /**
+     * Calls upkeep a <num or 1> number of times, immediately.
      * 
-     * @return {this}
+     * @param {Number} [num]   How many times to upkeep, if not 1.
+     */
+    self.step = function(num) {
+        self.play();
+        self.pause();
+        if (num > 0) {
+            self.step(num - 1);
+        }
+    };
+    
+    /**
+     * Toggles whether this is paused, and calls the appropriate Function.
      */
     self.togglePause = function () {
-        paused ? self.unpause() : self.pause();
-        return self;
+        paused ? self.play() : self.pause();
     };
     
     
@@ -166,108 +245,38 @@ function GamesRunnr(settings) {
     */
     
     /**
-     * Adds an extra function to the end of games, or at a position if given
+     * Sets the interval between between upkeeps.
      * 
-     * @return {this}
-     */
-    self.addGame = function(game, position) {
-        if (!game instanceof Function) {
-            console.error("This is not a function:", game);
-            return self;
-        }
-        games.push(game);
-        return self;
-    };
-    
-    /**
-     * Removes a given game function from the games array
-     * 
-     * @param {Function} game   The game function to be removed
-     * @return {Function[]}   An array containing the function if it was found,
-     *                        or an empty array if it wasn't.
-     */
-    self.removeGame = function(game) {
-        return games.splice(games.indexOf(game), 1);
-    };
-    
-    /**
-     * Sets the interval between between upkeeps, in milliseconds
-     * 
-     * @param {Number} The new time interval in milliseconds
-     * @return {this}
+     * @param {Number} The new time interval in milliseconds.
      */
     self.setInterval = function(num) {
         var realint = Number(num);
-        if (isNaN(realnum)) {
-            console.error("Improper number given to setInterval:", num);
+        
+        if (isNaN(realint)) {
+            throw new Error("Invalid Number given to setInterval:", num);
             return self;
         }
+        
         interval = realint;
         setSpeedReal();
-        return self;
     };
     
     /**
-     * Sets the speed multiplier for the interval, such as 2 (twice as fast)
-     * or 0.5 (half as fast).
+     * Sets the speed multiplier for the interval.
      * 
-     * @param {Number} The new speed multiplier
-     * @return {this}
+     * @param {Number} The new speed multiplier. 2 will cause interval to be
+     *                 twice as fast, and 0.5 will be half as fast.
      */
     self.setSpeed = function(num) {
-        var realnum = Number(num);
-        if (isNaN(realnum)) {
-            console.error("Improper number given to setSpeed:", num);
+        var numReal = Number(num);
+        
+        if (isNaN(numReal)) {
+            throw new Error("Invalid Number given to setSpeed:", num);
             return self;
         }
-        speed = realnum;
+        
+        speed = numReal;
         setSpeedReal();
-        return self;
-    };
-    
-    
-    /* Gets
-    */
-    
-    /** 
-     * 
-     */
-    self.getFPSAnalyzer = function () {
-        return FPSAnalyzer;
-    };
-    
-    /**
-     * Simple get function for the true/false paused status
-     * 
-     * @return {Boolean}
-     */
-    self.getPaused = function () {
-        return paused;
-    };
-    
-    /**
-     * Simple get function for the array of game functions
-     * 
-     * @return {Function[]}
-     */
-    self.getGames = function () {
-        return games;
-    };
-    
-    /**
-     * Simple get function for the interval between upkeeps
-     */
-    self.getInterval = function () {
-        return interval;
-    };
-    
-    /**
-     * Simple get function for the speed multiplier
-     * 
-     * @return {Number}
-     */
-    self.getSpeed = function () {
-        return speed;
     };
     
     
@@ -275,20 +284,21 @@ function GamesRunnr(settings) {
     */
     
     /**
-     * Sets the private speed_real variable, which is interval * (speed inverse)
+     * Sets the speedReal variable, which is interval * (inverse of speed).
      */
     function setSpeedReal() {
-        speed_real = (1 / speed) * interval;
+        speedReal = (1 / speed) * interval;
     }
     
     /**
-     * Curry function to fun a given function. Used in games.forEach(game);
+     * Curry function to fun a given function. Used in games.forEach(game).
      * 
-     @param {Function} game
+     * @param {Function} game
      */
     function run(game) {
         game();
     }
+    
     
     self.reset(settings || {});
 }

@@ -1,8 +1,7 @@
 FullScreenMario.prototype.settings.runner = {
-    "upkeep_schedule": setTimeout,
-    "upkeep_cancel": clearTimeout,
+    "upkeepScheduler": setTimeout,
+    "upkeepCanceller": clearTimeout,
     "interval": 1000 / 60,
-    "FPSAnalyzer": new FPSAnalyzr(),
     "games": [
         function () {
             this.QuadsKeeper.determineAllQuadrants("Scenery", this.GroupHolder.getSceneryGroup());

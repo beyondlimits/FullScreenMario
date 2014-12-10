@@ -457,7 +457,7 @@ var FullScreenMario = (function(GameStartr) {
      */
     function keyUpPause(player) {
         if (player.EightBitter.GamesRunner.getPaused()) {
-            player.EightBitter.GamesRunner.unpause(true);
+            player.EightBitter.GamesRunner.play();
         }
         player.EightBitter.ModAttacher.fireEvent("onKeyUpPause");
     }
@@ -4607,7 +4607,7 @@ var FullScreenMario = (function(GameStartr) {
         
         EightBitter.ModAttacher.fireEvent("onSetLocation");
         
-        EightBitter.GamesRunner.unpause();
+        EightBitter.GamesRunner.play();
     }
     
     /* Map entrances

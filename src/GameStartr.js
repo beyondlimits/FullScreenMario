@@ -221,8 +221,8 @@ var GameStartr = (function (EightBittr) {
     function resetGamesRunner(EightBitter, customs) {
         EightBitter.GamesRunner = new GamesRunnr(proliferate({
             "scope": EightBitter,
-            "on_pause": EightBitter.onGamePause.bind(EightBitter, EightBitter),
-            "on_unpause": EightBitter.onGameUnpause.bind(EightBitter, EightBitter)
+            "onPause": EightBitter.onGamePause.bind(EightBitter, EightBitter),
+            "onUnpause": EightBitter.onGameUnpause.bind(EightBitter, EightBitter)
         }, EightBitter.settings.runner));
     }
     
