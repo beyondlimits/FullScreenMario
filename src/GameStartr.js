@@ -299,7 +299,7 @@ var GameStartr = (function (EightBittr) {
     function resetMapsCreator(EightBitter, customs) {
         EightBitter.MapsCreator = new MapsCreatr({
             "ObjectMaker": EightBitter.ObjectMaker,
-            "group_types": ["Character", "Scenery", "Solid", "Text"],
+            "groupTypes": ["Character", "Scenery", "Solid", "Text"],
             "macros": EightBitter.settings.maps.macros,
             "entrances": EightBitter.settings.maps.entrances,
             "maps": EightBitter.settings.maps.library,

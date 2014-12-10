@@ -33,7 +33,7 @@ function PixelDrawr(settings) {
         no_refill,
         
         // For refillQuadrant, an Array of string names to refill (bottom-to-top)
-        group_names,
+        groupNames,
         
         // How often the screen redraws. 1 is always, 2 is every other call, etc.
         framerateSkip,
@@ -47,7 +47,7 @@ function PixelDrawr(settings) {
         getCanvas = settings.getCanvas;
         unitsize = settings.unitsize || 4;
         no_refill = settings.no_refill;
-        group_names = settings.group_names;
+        groupNames = settings.groupNames;
         framerateSkip = settings.framerateSkip || 1;
         framesDrawn = 0;
         
@@ -296,8 +296,8 @@ function PixelDrawr(settings) {
         // quadrant.context.fillStyle = getRandomColor();
         // quadrant.context.fillRect(0, 0, quadrant.canvas.width, quadrant.canvas.height);
         
-        for (i = group_names.length - 1; i >= 0; i -= 1) {
-            group = quadrant.things[group_names[i]];
+        for (i = groupNames.length - 1; i >= 0; i -= 1) {
+            group = quadrant.things[groupNames[i]];
             
             for (j = 0; j < group.length; j += 1) {
                 self.drawThingOnQuadrant(group[j], quadrant);

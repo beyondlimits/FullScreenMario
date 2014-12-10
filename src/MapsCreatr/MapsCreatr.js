@@ -25,7 +25,7 @@ function MapsCreatr(settings) {
         
         // An Array of Strings that represents all the possible group types
         // processed PreThings may be placed in
-        group_types,
+        groupTypes,
         
         // Scratch xloc and yloc to be used for location offsets with PreThings
         xloc,
@@ -51,10 +51,10 @@ function MapsCreatr(settings) {
         ObjectMaker = settings.ObjectMaker;
         
         // At least one group type name should be defined for PreThing output
-        if (!settings.group_types) {
+        if (!settings.groupTypes) {
             throw new Error("No group type names provided to MapsCreatr.");
         }
-        group_types = settings.group_types;
+        groupTypes = settings.groupTypes;
         
         key_group_type = settings.key_group_type || "grouptype";
         key_entrance = settings.key_entrance || "entrance";
@@ -274,7 +274,7 @@ function MapsCreatr(settings) {
         var area = location.area,
             map = area.map,
             creation = area.creation,
-            prethings = fromKeys(group_types),
+            prethings = fromKeys(groupTypes),
             i, len;
         
         xloc = 0;
@@ -416,7 +416,7 @@ function MapsCreatr(settings) {
             return;
         }
         
-        if (group_types.indexOf(prething.thing[key_group_type]) === -1) {
+        if (groupTypes.indexOf(prething.thing[key_group_type]) === -1) {
             console.warn("A Thing contains an unknown " + key_group_type
                     + ". It will be ignored: " + thing[key_group_type],
                     prething, reference, prethings, area, map);

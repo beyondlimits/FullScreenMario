@@ -12,7 +12,7 @@ function ThingHittr(settings) {
         QuadsKeeper,
         
         // Names of groups to check collisions within
-        group_names,
+        groupNames,
         
         // Container for functions to collision check between specific types
         // E.x. ["character"] = { "solid": function(a,b) {...} }
@@ -43,13 +43,13 @@ function ThingHittr(settings) {
         
         
         // Collision checking information should be given in the settings
-        if (!settings.group_names) {
-            throw new Error("No group_names given to ThingHittr");
+        if (!settings.groupNames) {
+            throw new Error("No groupNames given to ThingHittr");
         }
         if (!settings.hit_checks) {
             throw new Error("No hit_checks given to ThingHittr");
         }
-        group_names = settings.group_names;
+        groupNames = settings.groupNames;
         hit_checks = settings.hit_checks;
         hit_check_keys = Object.keys(hit_checks);
         
@@ -142,9 +142,9 @@ function ThingHittr(settings) {
         
         // For each quadrant this is in, find each other thing in that quadrant
         for (i = 0; i < thing.numquads; i += 1) {
-            for (j = 0; j < group_names.length; j += 1) {
-                others = thing.quadrants[i].things[group_names[j]];
-                hit_check = hit_checks[thing.grouptype][group_names[j]];
+            for (j = 0; j < groupNames.length; j += 1) {
+                others = thing.quadrants[i].things[groupNames[j]];
+                hit_check = hit_checks[thing.grouptype][groupNames[j]];
                 
                 // If no hit check exists for this combo, don't bother
                 if (!hit_check) {

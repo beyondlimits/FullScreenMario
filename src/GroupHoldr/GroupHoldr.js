@@ -1,14 +1,40 @@
 /**
  * GroupHoldr.js
  * 
+ * A general utility to keep Arrays and/or Objects by key names within a
+ * container so they can be referenced automatically by those keys. Automation
+ * is made easier by more abstraction, such as by automatically generated add,
+ * remove, etc. methods.
+ * 
+ * @example
+ * // Creating and using a GroupHoldr to store populations of locations.
+ * var GroupHolder = new GroupHoldr({
+ *     "groupNames": ["Country", "State"],
+ *     "groupTypes": "Object"
+ * });
+ * 
+ * GroupHolder.addCountry("United States", 316130000);
+ * GroupHolder.addCountry("Canada", 35160000);
+ * GroupHolder.addState("New York", 19650000);
+ * 
+ * console.log(GroupHolder.getCountry("United States")); // 316,130,000
+ * 
+ * @example
+ * // Creating and using a GroupHoldr to hold people by their age group.
+ * var GroupHolder = new GroupHoldr({
+ *     "groupNames": ["Child", "Adult"],
+ *     "groupTypes": "Array"
+ * });
+ * 
+ * GroupHolder.addChild("Alex");
+ * GroupHolder.addChild("Bob");
+ * GroupHolder.getGroup("Adult").push("Carol");
+ * GroupHolder.getGroups().Adult.push("Devin");
+ * 
+ * console.log(GroupHolder.getAdultGroup()); // ["Carol", "Devin"]
  * 
  * 
- * 
- * 
- * 
- * 
- * 
- * 
+ * @author "Josh Goldberg" <josh@fullscreenmario.com>
  */
 function GroupHoldr(settings) {
     "use strict";
@@ -27,81 +53,93 @@ function GroupHoldr(settings) {
         functions,
         
         // Array of string names, each of which is tied to a group.
-        group_names,
+        groupNames,
         
         // Associative array keying each group to the function it uses: Array
         // for regular arrays, and Object for associative arrays.
-        group_types,
+        groupTypes,
         
         // Associative array keying each group to the string name of the
         // function it uses: "Array" for regular arrays, and "Object" for
         // associative arrays.
-        group_type_names;
+        groupTypeNames;
     
     /**
+     * Resets the GroupHoldr.
+     * 
      * @constructor
+     * @param {String[]} groupNames   An Array of Strings to be used for the 
+     *                                group names.
+     * @param {Mixed} groupTypes   The types of groups. This can either be a 
+     *                             String ("Array" or "Object") to set each one,
+     *                             or an Object mapping each groupName to a
+     *                             different one.
      */
-    self.reset = function(settings) {
-        // The group_names and group_types arguments must be provided
-        if (!settings.hasOwnProperty("group_names")) {
-            throw new Error("No group_names array provided to GroupHoldr.");
+    self.reset = function (settings) {
+        if (typeof settings.groupNames === "undefined") {
+            throw new Error("No groupNames Array provided to GroupHoldr.");
         }
-        if (!settings.hasOwnProperty("group_types")) {
-            throw new Error("No group_types object provided to GroupHoldr.");
+        if (settings.groupNames.constructor !== Array) {
+            throw new Error("A GroupHoldr's groupNames must be an Array.");
+        }
+        if (typeof settings.groupTypes === "undefined") {
+            throw new Error("No groupTypes provided to GroupHoldr.");
         }
         
         // These functions containers are filled in setGroupNames 
         functions = {
+            "setGroup": {},
+            "getGroup": {},
             "set": {},
             "get": {},
             "add": {},
             "del": {}
         };
-        setGroupNames(settings.group_names, settings.group_types);
+        setGroupNames(settings.groupNames, settings.groupTypes);
     };
     
     /** 
      * Meaty function to reset, given an array of names an object of types
      * Any pre-existing functions are cleared, and new ones are added as
-     * member objects and to {functions}
+     * member objects and to {functions}.
      * 
      * @param {String[]} names   An array of names of groupings to be made
-     * @param {Object} types   An associative array of the function types of the
-     *                         names given in names. This may also be taken in
-     *                         as a string, to be converted to an Object.
+     * @param {Object} types   An associative array of the function types of
+     *                         the names given in names. This may also be taken
+     *                         in as a string, to be converted to an Object.
      */
     function setGroupNames(names, types) {
         if (!(names instanceof Array)) {
-            throw new Error("No array of names given to setGroupNames");
+            throw new Error("groupNames is not an ");
         }
         
         // If there already were group names, clear them
-        if (group_names) {
+        if (groupNames) {
             clearFunctions();
         }
         
         // Reset the group types and type names, to be filled next
-        group_types = {}
-        group_type_names = {};
+        groupTypes = {}
+        groupTypeNames = {};
         
-        // Set the new group_names, as ucFirst
-        group_names = names.map(ucFirst);
-        group_names.sort();
+        // Set the new groupNames, as ucFirst
+        groupNames = names.map(ucFirst);
+        groupNames.sort();
         
-        // If group_types is an object, set custom group types for everything
+        // If groupTypes is an object, set custom group types for everything
         if (typeof(types) == "object") {
-            group_names.forEach(function(name) {
-                group_types[name] = getTypeFunction(types[name]);
-                group_type_names[name] = getTypeName(types[name]);
+            groupNames.forEach(function (name) {
+                groupTypes[name] = getTypeFunction(types[name]);
+                groupTypeNames[name] = getTypeName(types[name]);
             });
         }
-        // Otherwise assume everything uses the same one, such as from a string
+        // Otherwise assume everything uses the same one, such as from a String
         else {
             var type_func = getTypeFunction(types),
                 type_name = getTypeName(types);
-            group_names.forEach(function(name) {
-                group_types[name] = type_func;
-                group_type_names[name] = type_name;
+            groupNames.forEach(function (name) {
+                groupTypes[name] = type_func;
+                groupTypeNames[name] = type_name;
             });
         }
         
@@ -111,17 +149,21 @@ function GroupHoldr(settings) {
     }
     
     /**
-     * Removes any pre-existing "set", "get", etc. functions
+     * Removes any pre-existing "set", "get", etc. functions.
      */
     function clearFunctions() {
-        group_names.forEach(function(name) {
+        groupNames.forEach(function (name) {
             // Delete member variable functions
             delete self["set" + name + "Group"];
             delete self["get" + name + "Group"];
+            delete self["set" + name];
+            delete self["get" + name];
             delete self["add" + name];
             delete self["del" + name];
             
             // Delete functions under .functions by making each type a new {}
+            functions.setGroup = {};
+            functions.getGroup = {};
             functions.set = {};
             functions.get = {};
             functions.add = {};
@@ -131,21 +173,23 @@ function GroupHoldr(settings) {
     
     /**
      * Resets groups to an empty object, and fills it with a new group_type for
-     * each name in group_names
+     * each name in groupNames
      */
     function setGroups() {
         groups = {};
-        group_names.forEach(function(name) {
-            groups[name] = new group_types[name]();
+        groupNames.forEach(function (name) {
+            groups[name] = new groupTypes[name]();
         });
     }
     
     /**
-     * Calls the function setters for each name in group_names
+     * Calls the function setters for each name in groupNames
      * @remarks Those are: createFunction<XYZ>: "Set", "Get", "Add", "Del"
      */
     function setFunctions() {
-        group_names.forEach(function(name) {
+        groupNames.forEach(function (name) {
+            createFunctionSetGroup(name);
+            createFunctionGetGroup(name);
             createFunctionSet(name);
             createFunctionGet(name);
             createFunctionAdd(name);
@@ -158,89 +202,122 @@ function GroupHoldr(settings) {
     */
     
     /**
-     * Creates the set<type> function under self and functions.set
+     * Creates a getGroup function under self and functions.getGroup.
      * 
-     * @param {String} name   The name of the group, from group_names
+     * @param {String} name   The name of the group, from groupNames.
      */
-    function createFunctionSet(name) {
+    function createFunctionGetGroup(name) {
         /**
-         * Set function for a group of type <container> and name <name> 
-         * holding objects of type <type>
-         * 
-         * @alias {setName}
-         * @param {<container>} value   A new <container> for the group
-         * @return {self}   The containing GroupHoldr
+         * @param {String} key   The String key that references the group.
+         * @return {Mixed}   The group referenced by the given key.
          */
-        functions.set[name] = self["set" + name + "Group"] = function(value) {
-            if (value.constructor != group_types[name]) {
-                throw new Error(name + " must be of type "
-                        + group_type_names[name]);
-            }
-            groups[name] = value;
-            return self;
+        functions.getGroup[name] = self["get" + name + "Group"] = function () {
+            return groups[name];
         };
     }
     
     /**
-     * Creates the get<type> function under self and functions.get
+     * Creates a setGroup function under self and functions.setGroup.
      * 
-     * @param {String} name   The name of the group, from group_names
+     * @param {String} name   The name of the group, from groupNames.
+     */
+    function createFunctionSetGroup(name) {
+        /**
+         * Sets the value of the group referenced by the name.
+         * 
+         * @param {Mixed} value   The new value for the group, which should be 
+         *                        the same type as the group (Array or Object).
+         */
+        
+        functions.setGroup[name] = self["set" + name + "Group"] = function (value) {
+            ensureCorrectGroupType(value, name);
+            groups[name] = value;
+        };
+    }
+    
+    /**
+     * Creates a get function under self and functions.get.
+     * 
+     * @param {String} name   The name of the group, from groupNames.
      */
     function createFunctionGet(name) {
         /**
-         * Get function for a group of type <container> and name <name> 
-         * holding objects of type <type>
-         * Returns the container group itself or an object within, based on key
-         * 
-         * @alias {setName}
-         * @param {<type>} key   The key of an item to be retrieved from the
-         *                       group. If not given, the group is returned
-         * @return {self}   The containing GroupHoldr
+         * @param {Mixed} key   The key referencing the value to obtain. This 
+         *                      should be a Number if the group is an Array, or
+         *                      a String if the group is an Object.
+         * @return {Mixed} The corresponding value in the group.
          */
-        functions.get[name] = self["get" + name + "Group"] = function(key) {
-            var group = groups[name];
-            if (arguments.length < 1) {
-                return group;
-            }
-            return group[key];
+        functions.get[name] = self["get" + name] = function (key) {
+            return groups[name][key];
         };
     }
     
     /**
-     * Creates the add<type> function under self and functions.add
+     * Creates a set function under self and functions.set.
      * 
-     * @param {String} name   The name of the group, from group_names
+     * @param {String} name   The name of the group, from groupNames.
+     */
+    function createFunctionSet(name) {
+        /**
+         * Sets a value contained within the group.
+         * 
+         * @param {Mixed} key   The key referencing the value to obtain. This 
+         *                      should be a Number if the group is an Array, or
+         *                      a String if the group is an Object.
+         * @param {Mixed} value
+         */
+        functions.set[name] = self["set" + name] = function (key, value) {
+            groups[name][key] = value;
+        };
+    }
+    
+    /**
+     * Creates a get<type> function under self and functions.get
+     * 
+     * @param {String} name   The name of the group, from groupNames
+     */
+    function createFunctionGet(name) {
+        /**
+         * Gets the value within a group referenced by the given key.
+         * 
+         * @param {Mixed} key   The key referencing the value to obtain. This 
+         *                      should be a Number if the group is an Array, or
+         *                      a String if the group is an Object.
+         * @return {Mixed} value
+         */
+        functions.get[name] = self["get" + name] = function (key) {
+            return groups[name][key];
+        };
+    }
+    
+    /**
+     * Creates an add function under self and functions.add.
+     * 
+     * @param {String} name   The name of the group, from groupNames
      */
     function createFunctionAdd(name) {
         var group = groups[name];
-        if (group_types[name] == Object) {
+        if (groupTypes[name] == Object) {
             /**
-             * Get function for a group of type Object and name <name> 
-             * holding objects of type <type>
-             * Adds the value object to the group under key
+             * Adds a value to the group, referenced by the given key.
              * 
-             * @alias {setName}
-             * @param {<type>} key   The key of an item to be retrieved from the
-             *                       group. If not given, the group is returned
-             * @param value   The value, of any object type, to be added
-             * @return {self}   The containing GroupHoldr
+             * @param {String} key   The String key to reference the value to be
+             *                       added.
+             * @param value
              */
-            functions.add[name] = self["add" + name] = function(key, value) {
+            functions.add[name] = self["add" + name] = function (key, value) {
                 group[key] = value;
-                return self;
             };
         }
         else {
             /**
-             * Get function for a group of type Array and name <name> 
-             * holding objects of type <type>
-             * Pushes the value object to the group
+             * Adds a value to the group, referenced by the given key.
              * 
-             * @alias {setName}
-             * @param value   The value, of any object type, to be added
-             * @return {self}   The containing GroupHoldr
+             * @param {Number} key   The String key to reference the value to be
+             *                       added.
+             * @param value
              */
-            functions.add[name] = self["add" + name] = function(value) {
+            functions.add[name] = self["add" + name] = function (value) {
                 group.push(value);
                 return self;
             };
@@ -248,40 +325,32 @@ function GroupHoldr(settings) {
     }
     
     /**
-     * Creates the del<type> (delete) function under self and functions.del
+     * Creates a del (delete) function under self and functions.del.
      * 
-     * @param {String} name   The name of the group, from group_names
+     * @param {String} name   The name of the group, from groupNames
      */
     function createFunctionDel(name) {
         var group = groups[name];
-        if (group_types[name] == Object) {
+        if (groupTypes[name] == Object) {
             /**
-             * Delete function for a group of type Object and name <name> 
-             * holding objects of type <type>
-             * Removes the object in the group keyed by the key
+             * Deletes a value from the group, referenced by the given key.
              * 
-             * @alias {setName}
-             * @param {<type>} key   The item key to be deleted from the group
-             * @return {self}   The containing GroupHoldr
+             * @param {String} key   The String key to reference the value to be
+             *                       deleted.
              */
-            functions.del[name] = self["del" + name] = function(key) {
+            functions.del[name] = self["del" + name] = function (key) {
                 delete group[key];
-                return self;
             };
         }
         else {
             /**
-             * Delete function for a group of type Array and name <name> 
-             * holding objects of type <type>
-             * Removes the keyed object from the group
+             * Deletes a value from the group, referenced by the given key.
              * 
-             * @alias {setName}
-             * @param {<type>} key   The item key to be deleted from the group
-             * @return {self}   The containing GroupHoldr
+             * @param {Number} key   The String key to reference the value to be
+             *                       deleted.
              */
-            functions.del[name] = self["del" + name] = function(key) {
+            functions.del[name] = self["del" + name] = function (key) {
                 group = group.splice(group.indexOf(key), 1);
-                return self;
             };
         }
     }
@@ -298,7 +367,7 @@ function GroupHoldr(settings) {
      *                              object from.
      * @param {Number} object   The object to be deleted from the group.
      */
-    self.deleteObject = function(group_name, object) {
+    self.deleteObject = function (group_name, object) {
         groups[group_name].splice(groups[group_name].indexOf(object), 1);
     };
     
@@ -311,7 +380,7 @@ function GroupHoldr(settings) {
      * @param {Number} [max]   How many elements to delete after that index (if
      *                         falsy, just the first 1).
      */
-    self.deleteIndex = function(group_name, index, max) {
+    self.deleteIndex = function (group_name, index, max) {
         groups[group_name].splice(index, max || 1);
     };
     
@@ -327,7 +396,7 @@ function GroupHoldr(settings) {
      *                             group, required only if the group contains an
      *                             associative array.
      */
-    self.switchObjectGroup = function(object, group_old, group_new, key_new) {
+    self.switchObjectGroup = function (object, group_old, group_new, key_new) {
         self.deleteObject(group_old, object);
         functions.add[group_new](object, key_new);
     };
@@ -344,7 +413,7 @@ function GroupHoldr(settings) {
      * @param {Array} [args]   An optional array of arguments to pass to the 
      *                         function after each group.
      */
-    self.applyAll = function(scope, func, args) {
+    self.applyAll = function (scope, func, args) {
         var i;
         
         if (!args) {
@@ -357,8 +426,8 @@ function GroupHoldr(settings) {
             scope = self;
         }
         
-        for (i = group_names.length - 1; i >= 0; i -= 1) {
-            args[0] = groups[group_names[i]];
+        for (i = groupNames.length - 1; i >= 0; i -= 1) {
+            args[0] = groups[groupNames[i]];
             func.apply(scope, args);
         }
     };
@@ -372,7 +441,7 @@ function GroupHoldr(settings) {
      *                          defaults to self).
      * @param {Function} func   A function to apply to each group.
      */
-    self.callAll = function(scope, func) {
+    self.callAll = function (scope, func) {
         var args = Array.prototype.slice.call(arguments, 1),
             group, i, i;
         
@@ -380,8 +449,8 @@ function GroupHoldr(settings) {
             scope = self;
         }
         
-        for (i = group_names.length - 1; i >= 0; i -= 1) {
-            args[0] = groups[group_names[i]];
+        for (i = groupNames.length - 1; i >= 0; i -= 1) {
+            args[0] = groups[groupNames[i]];
             func.apply(scope, args);
         }
     };
@@ -392,8 +461,8 @@ function GroupHoldr(settings) {
     self.clearArrays = function () {
         var group, name, i;
         
-        for (i = 0; i < group_names.length; i += 1) {
-            group = groups[group_names[i]];
+        for (i = 0; i < groupNames.length; i += 1) {
+            group = groups[groupNames[i]];
             
             if (group instanceof Array) {
                 group.length = 0;
@@ -412,12 +481,12 @@ function GroupHoldr(settings) {
         return groups;
     };
     
-    self.getGroup = function(name) {
+    self.getGroup = function (name) {
         return groups[name];
     };
     
     self.getGroupNames = function () {
-        return group_names;
+        return groupNames;
     };
     
     
@@ -425,7 +494,7 @@ function GroupHoldr(settings) {
     */
     
     /**
-     * Returns the name of a type specified by a string ("Array" or "Object")
+     * Returns the name of a type specified by a string ("Array" or "Object").
      * 
      * @param {String} str   The name of the type. If falsy, defaults to Array
      * @return {String}
@@ -440,7 +509,7 @@ function GroupHoldr(settings) {
     }
     
     /**
-     * Returns function specified by a string (Array or Object)
+     * Returns function specified by a string (Array or Object).
      * 
      * @param {String} str   The name of the type. If falsy, defaults to Array
      * @return {Function}
@@ -455,7 +524,18 @@ function GroupHoldr(settings) {
     }
     
     /**
-     * Uppercases the first character in a string
+     * 
+     */
+    function ensureCorrectGroupType(value, name) {
+        if (groupTypes.constructor === String) {
+            return value === groupTypes;
+        }
+        
+        return groupTypes[name] === value.constructor;
+    }
+    
+    /**
+     * Uppercases the first character in a string.
      * 
      * @param {String} str
      * @return {String}

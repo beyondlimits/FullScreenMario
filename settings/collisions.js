@@ -1,6 +1,6 @@
 FullScreenMario.prototype.settings.collisions = {
-    "group_names": ["Solid", "Character", "Scenery", "Text"],
-    "group_types": "Array",
+    "groupNames": ["Solid", "Character", "Scenery", "Text"],
+    "groupTypes": "Array",
     "hit_checks": {
         "Character": {
             "Character": FullScreenMario.prototype.isCharacterTouchingCharacter,

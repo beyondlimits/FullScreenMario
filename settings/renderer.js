@@ -1,3 +1,3 @@
 FullScreenMario.prototype.settings.renderer = {
-    "group_names": ["Text", "Character", "Solid", "Scenery"]
+    "groupNames": ["Text", "Character", "Solid", "Scenery"]
 };

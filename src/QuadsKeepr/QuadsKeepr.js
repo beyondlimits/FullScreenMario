@@ -45,7 +45,7 @@ function QuadsKeepr(settings) {
         thing_group_name,
         
         // An Array of string names a Thing may be placed into 
-        group_names,
+        groupNames,
 
         // Callback for when Quadrants are added or removed, respectively
         on_add,
@@ -68,7 +68,7 @@ function QuadsKeepr(settings) {
         quadrant_width = settings.quadrant_width | 0;
         quadrant_height = settings.quadrant_height | 0;
         
-        group_names = settings.group_names;
+        groupNames = settings.groupNames;
 
         on_add = settings.on_add;
         on_remove = settings.on_remove;
@@ -285,9 +285,9 @@ function QuadsKeepr(settings) {
         quadrant.things = {};
         quadrant.numthings = {};
         
-        for (i = 0; i < group_names.length; i += 1) {
-            quadrant.things[group_names[i]] = [];
-            quadrant.numthings[group_names[i]] = 0;
+        for (i = 0; i < groupNames.length; i += 1) {
+            quadrant.things[groupNames[i]] = [];
+            quadrant.numthings[groupNames[i]] = 0;
         }
         
         quadrant.left = left;
