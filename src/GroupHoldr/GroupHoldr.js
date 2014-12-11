@@ -110,7 +110,7 @@ function GroupHoldr(settings) {
      */
     function setGroupNames(names, types) {
         if (!(names instanceof Array)) {
-            throw new Error("groupNames is not an ");
+            throw new Error("groupNames is not an Array");
         }
         
         // If there already were group names, clear them
