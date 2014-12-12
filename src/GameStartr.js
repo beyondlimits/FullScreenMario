@@ -595,10 +595,14 @@ var GameStartr = (function (EightBittr) {
         // Sprite cycles
         var cycle;
         if (cycle = thing.spriteCycle) {
-            thing.EightBitter.TimeHandler.addClassCycle(thing, cycle[0], cycle[1] || null, cycle[2] || null);
+            thing.EightBitter.TimeHandler.addClassCycle(
+                thing, cycle[0], cycle[1] || null, cycle[2] || null
+            );
         }
         if (cycle = thing.spriteCycleSynched) {
-            thing.EightBitter.TimeHandler.addClassCycleSynched(thing, cycle[0], cycle[1] || null, cycle[2] || null);
+            thing.EightBitter.TimeHandler.addClassCycleSynched(
+                thing, cycle[0], cycle[1] || null, cycle[2] || null
+            );
         }
         
         // Mods!

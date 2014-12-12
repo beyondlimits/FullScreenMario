@@ -372,7 +372,7 @@ function InputWritr(settings) {
     /**
      * 
      */
-    self.clearEvent = function (trigger, label) {
+    self.cancelEvent = function (trigger, label) {
         self.addEvent(trigger, label, false);
     };
     

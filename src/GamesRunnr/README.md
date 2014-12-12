@@ -48,8 +48,7 @@ upkeep.
 
 * **upkeepCanceller** *`Function`* - A Function to replace clearTimeout.
 
-* **scope** *`Mixed`* - A scope for games to be run on (defaults to the 
-window).
+* **scope** *`Mixed`* - A scope for games to be run on (defaults to the window).
 
 
 ## Sample usage
