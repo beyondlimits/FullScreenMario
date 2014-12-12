@@ -123,7 +123,9 @@ var FullScreenMario = (function(GameStartr) {
     FullScreenMario.customTextMappings = {
         " ": "Space",
         ".": "Period",
-        "!": "ExclamationMark"
+        "!": "ExclamationMark",
+        ":": "Colon",
+        "/": "Slash"
     };            /* Resets    */
     
     /**
@@ -1383,7 +1385,7 @@ var FullScreenMario = (function(GameStartr) {
                 if (thing.EightBitter.customTextMappings.hasOwnProperty(letter)) {
                     letter = thing.EightBitter.customTextMappings[letter];
                 }
-                letter = "text" + letter;
+                letter = "Text" + letter;
                 
                 textThing = thing.EightBitter.ObjectMaker.make(letter, attributes);
                 textThing.EightBitter.addThing(textThing, left, top);
@@ -4424,14 +4426,7 @@ var FullScreenMario = (function(GameStartr) {
         if (!value) {
             return;
         }
-        var text = thing.EightBitter.ObjectMaker.make("Text" + value, {
-            "value": value,
-            "style": {
-                "position": "absolute",
-                "text-align": "left"
-            }
-        });
-        thing.EightBitter.addThing(text);
+        var text = thing.EightBitter.addThing("Text" + value);
         
         thing.EightBitter.scoreAnimateOn(text, thing);
         

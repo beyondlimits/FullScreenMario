@@ -267,7 +267,7 @@ function ObjectMakr(settings) {
      *
      * @param {String} str   A potentially unsafe function name to be made safe
      * @remarks The goal of this function is to make names safe for eval (yes,
-     *          eval), not to allow full semantic compatability. Function names
+     *          eval), not to allow full semantic compatibility. Function names
      *          are kept as indices in the functions object.
      */
     function cleanFunctionName(str) {
