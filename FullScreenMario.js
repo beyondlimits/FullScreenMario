@@ -1457,10 +1457,10 @@ var FullScreenMario = (function(GameStartr) {
         
         EightBitter.MapsHandler.spawnMap(
             "xInc",
-            EightBitter.MapScreener.top / EightBitter.unitsize,
-            EightBitter.MapScreener.right / EightBitter.unitsize,
-            EightBitter.MapScreener.bottom / EightBitter.unitsize,
-            left
+            EightBitter.QuadsKeeper.top / EightBitter.unitsize,
+            EightBitter.QuadsKeeper.right / EightBitter.unitsize,
+            EightBitter.QuadsKeeper.bottom / EightBitter.unitsize,
+            EightBitter.QuadsKeeper.left / EightBitter.unitsize
         );
     }
     

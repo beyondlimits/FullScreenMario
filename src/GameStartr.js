@@ -466,9 +466,9 @@ var GameStartr = (function (EightBittr) {
     function onAreaSpawn(EightBitter, direction, top, right, bottom, left) {
         EightBitter.MapsHandler.spawnMap(
             direction,
-            top / EightBitter.unitsize,
+            (top + EightBitter.MapScreener.top) / EightBitter.unitsize,
             (right + EightBitter.MapScreener.left) / EightBitter.unitsize,
-            bottom / EightBitter.unitsize,
+            (bottom + EightBitter.MapScreener.top) / EightBitter.unitsize,
             (left + EightBitter.MapScreener.left) / EightBitter.unitsize
         );
     }
