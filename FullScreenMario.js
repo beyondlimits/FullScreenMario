@@ -812,11 +812,11 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function isCharacterTouchingCharacter(thing, other) {
-        if (thing.nocollidechar && !other.player) {
+        if (thing.nocollidechar && (!other.player || thing.nocollideplayer)) {
             return false;
         }
         
-        if (other.nocollidechar && !thing.player) {
+        if (other.nocollidechar && (!thing.player || other.nocollideplayer)) {
             return false;
         }
         
@@ -4227,7 +4227,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function killToShell(thing, big) {
-        var spawn;
+        var spawn, nocollidecharold, nocollideplayerold;
         
         thing.spawnsettings = {
             "smart": thing.smart
@@ -4239,6 +4239,14 @@ var FullScreenMario = (function(GameStartr) {
             thing.spawntype = thing.shelltype || "Shell";
         }
         spawn = thing.EightBitter.killSpawn(thing);
+        nocollidecharold = spawn.nocollidechar;
+        nocollideplayerold = spawn.nocollideplayer;
+        spawn.nocollidechar = true;
+        spawn.nocollideplayer = true;
+        thing.EightBitter.TimeHandler.addEvent(function () {
+            spawn.nocollidechar = nocollidecharold;
+            spawn.nocollideplayer = nocollideplayerold;
+        }, 7);
         
         thing.EightBitter.killNormal(thing);
         
@@ -4560,7 +4568,7 @@ var FullScreenMario = (function(GameStartr) {
         EightBitter.NumberMaker.resetFromSeed(map.seed);
         EightBitter.StatsHolder.set("world", name);
         EightBitter.InputWriter.restartHistory();
-        EightBitter.ModAttacher.fireEvent("onSetMap");
+        EightBitter.ModAttacher.fireEvent("onSetMap", map);
         
         EightBitter.setLocation(location || 0);
     }

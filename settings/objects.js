@@ -356,7 +356,7 @@
             Beetle: {
                 speed: FullScreenMario.unitsize * .21,
                 xvel: FullScreenMario.unitsize * .21,
-                height: 8.5,
+                height: 8,
                 nofire: 2,
                 shellspawn: true,
                 movement: FullScreenMario.prototype.moveSmart,
