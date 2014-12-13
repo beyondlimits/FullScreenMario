@@ -155,6 +155,20 @@
                         "TextExclamationMark": {},
                         "TextColon": {},
                     },
+                    "TextColored": {
+                        "TextColoredD": {},
+                        "TextColoredE": {},
+                        "TextColoredI": {},
+                        "TextColoredN": {},
+                        "TextColoredO": {},
+                        "TextColoredT": {},
+                        "TextColored1": {},
+                        "TextColored5": {},
+                        "TextColored8": {},
+                        "TextColored9": {},
+                        "TextColoredSpace": {},
+                        "TextColoredCopyright": {}
+                    },
                     "TextLarge": {
                         "TextLargeE": {},
                         "TextLargeP": {},
@@ -860,6 +874,11 @@
             "TextSpace": {
                 "hidden": true
             },
+            "TextColored1": [3, 3.5],
+            "TextColoredSpace": {
+                "hidden": true
+            },
+            "TextColoredCopyright": [4, 4],
             "TextLarge": {
                 "width": 7.5,
                 "height": 14,

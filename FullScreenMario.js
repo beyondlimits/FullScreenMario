@@ -125,7 +125,8 @@ var FullScreenMario = (function(GameStartr) {
         ".": "Period",
         "!": "ExclamationMark",
         ":": "Colon",
-        "/": "Slash"
+        "/": "Slash",
+        "©": "Copyright"
     };            /* Resets    */
     
     /**

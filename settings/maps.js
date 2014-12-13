@@ -233,6 +233,9 @@ FullScreenMario.prototype.settings.maps = {
                         ]},
                         { "thing": "DecorativeDot", "x": 105.5, "y": 46.5 },
                         { "thing": "DecorativeDot", "x": 105.5, "y": 86.5 },
+                        { "thing": "CustomText", "x": 52, "y": 44, "size": "Colored", "texts": [
+                            { "text": "©1985 NINTENDO" }
+                        ]},
                         { "thing": "Block", "x": 128, "y": 32 },
                         { "thing": "Brick", "x": 160, "y": 32 },
                         { "thing": "Block", "x": 168, "y": 32, "contents": "Mushroom" },
