@@ -182,6 +182,81 @@ FullScreenMario.prototype.settings.mods = {
             "settings": {}
         },
         {
+            // http://www.themushroomkingdom.net/smb_breakdown.shtml#hard
+            "name": "Hard Mode",
+            "description": "Like in Super Mario Bros Deluxe!",
+            "author": {
+                "name": "Josh Goldberg",
+                "email": "josh@fullscreenmario.com"
+            },
+            "enabled": false,
+            "events": {
+                "onAddThing": function (mod, thing) {
+                    var spawn;
+                    if (thing.title === "Goomba") {
+                        spawn = thing.EightBitter.killReplace(thing, "Beetle", [
+                            "direction", "moveleft", "lookleft", "xvel", "yvel", "speed"
+                        ]);
+                        spawn.mod = "Hard Mode";
+                    }
+                    else if (thing.title === "Platform") {
+                        thing.EightBitter.reduceWidth(thing, thing.EightBitter.unitsize * 8, true);
+                        thing.EightBitter.shiftHoriz(thing, thing.EightBitter.unitsize * 4);
+                    }
+                },
+                "onModEnable": function (mod) {
+                    var EightBitter = EightBittr.ensureCorrectCaller(this),
+                        characters = EightBitter.GroupHolder.getCharacterGroup(),
+                        solids = EightBitter.GroupHolder.getSolidGroup(),
+                        attributes = ["direction", "moveleft", "lookleft", "xvel", "yvel", "speed"],
+                        spawn, thing, i;
+                    
+                    for (i = 0; i < characters.length; i += 1) {
+                        thing = characters[i];
+                        if (thing.title === "Goomba") {
+                            spawn = thing.EightBitter.killReplace(thing, "Beetle", attributes);
+                            spawn.mod = "Hard Mode";
+                            if (thing.xvel > 0) {
+                                spawn.EightBitter.flipHoriz(spawn);
+                            } else {
+                                spawn.EightBitter.unflipHoriz(spawn);
+                            }
+                        }
+                    }
+                    
+                    for(i = 0; i < solids.length; i += 1) {
+                        thing = solids[i];
+                        if(thing.title === "Platform") {
+                            thing.EightBitter.reduceWidth(thing, thing.EightBitter.unitsize * 8, true);
+                            thing.EightBitter.shiftHoriz(thing, thing.EightBitter.unitsize * 4);
+                        }
+                    }
+                },
+                "onModDisable": function (mod) {
+                    var EightBitter = EightBittr.ensureCorrectCaller(this),
+                        characters = EightBitter.GroupHolder.getCharacterGroup(),
+                        solids = EightBitter.GroupHolder.getSolidGroup(),
+                        attributes = ["direction", "moveleft", "lookleft", "xvel", "yvel", "speed"],
+                        thing, i;
+                    
+                    for (i = 0; i < characters.length; i += 1) {
+                        thing = characters[i];
+                        if (thing.title === "Beetle" && thing.mod === "Hard Mode") {
+                            thing.EightBitter.killReplace(thing, "Goomba", attributes);
+                        }
+                    }
+                    
+                    for (i = 0; i < solids.length; i += 1) {
+                        thing = solids[i];
+                        if (thing.title === "Platform") {
+                            thing.EightBitter.increaseWidth(thing, thing.EightBitter.unitsize * 8);
+                            thing.EightBitter.shiftHoriz(thing, thing.EightBitter.unitsize * -4);
+                        }
+                    }
+                }
+            }
+        },
+        {
             "name": "High Speed",
             "description": "Mario's maximum speed is quadrupled.",
             "author": {

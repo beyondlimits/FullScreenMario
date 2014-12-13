@@ -522,6 +522,8 @@ var GameStartr = (function (EightBittr) {
             thing.onThingAdded(thing);
         }
         
+        thing.EightBitter.ModAttacher.fireEvent("onAddThing", thing, left, top);
+        
         return thing;
     }
     
@@ -603,6 +605,14 @@ var GameStartr = (function (EightBittr) {
             thing.EightBitter.TimeHandler.addClassCycleSynched(
                 thing, cycle[0], cycle[1] || null, cycle[2] || null
             );
+        }
+        
+        // flipHoriz and flipVert initially 
+        if (thing.flipHoriz) {
+            thing.EightBitter.flipHoriz(thing);
+        }
+        if (thing.flipVert) {
+            thing.EightBitter.flipVert(thing);
         }
         
         // Mods!
@@ -830,10 +840,34 @@ var GameStartr = (function (EightBittr) {
     /**
      * 
      */
+    function reduceWidth(thing, dx, see) {
+        thing.right -= dx;
+        thing.width -= dx / thing.EightBitter.unitsize;
+        
+        if (see) {
+            thing.EightBitter.updateSize(thing);
+        } else {
+            thing.EightBitter.markChanged(thing);
+        }
+    }
+    
+    /**
+     * 
+     */
     function increaseHeight(thing, dy) {
         thing.top -= dy;
         thing.height += dy / thing.EightBitter.unitsize;
         thing.unitheight = thing.height * thing.EightBitter.unitsize;
+        thing.EightBitter.markChanged(thing);
+    }
+    
+    /**
+     * 
+     */
+    function increaseWidth(thing, dx) {
+        thing.right += dx;
+        thing.width += dx / thing.EightBitter.unitsize;
+        thing.unitwidth = thing.width * thing.EightBitter.unitsize;
         thing.EightBitter.markChanged(thing);
     }
     
@@ -1093,7 +1127,9 @@ var GameStartr = (function (EightBittr) {
         "updatePosition": updatePosition,
         "updateSize": updateSize,
         "reduceHeight": reduceHeight,
+        "reduceWidth": reduceWidth,
         "increaseHeight": increaseHeight,
+        "increaseWidth": increaseWidth,
         "thingStoreVelocity": thingStoreVelocity,
         "thingRetrieveVelocity": thingRetrieveVelocity,
         // Appearance utilities

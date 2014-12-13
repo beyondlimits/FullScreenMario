@@ -2427,7 +2427,6 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.killNormal(other);
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
-            // here it is not in letlers
             letters = other.collection[keys[i]].children;
             
             for (j = 0; j < letters.length; j += 1) {
@@ -2437,9 +2436,19 @@ var FullScreenMario = (function(GameStartr) {
             i += 1;
         }, interval, keys.length);
         
-        thing.EightBitter.TimeHandler.addEvent(function () {
-            thing.EightBitter.nextLevel();
-        }, (interval * keys.length) + 280)
+        if (thing.EightBitter.MapsHandler.getMapName() === "8-4") {
+            try {
+                thing.EightBitter.ModAttacher.enableMod("Hard Mode");
+            } catch (err) {
+                console.warn("No 'Hard Mode' mod found in FullScreenMario.");
+            }
+            
+            thing.EightBitter.setMap("1-1");
+        } else {
+            thing.EightBitter.TimeHandler.addEvent(function () {
+                thing.EightBitter.nextLevel();
+            }, (interval * keys.length) + 280)
+        }
     }
     
     /**
@@ -4183,6 +4192,31 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      */
+    function killReplace(thing, type, attributes) {
+        var spawn = thing.EightBitter.ObjectMaker.make(type),
+            i;
+        
+        for (i = 0; i < attributes.length; i += 1) {
+            spawn[attributes[i]] = thing[attributes[i]];
+        }
+        
+        if (thing.flipHoriz) {
+            thing.EightBitter.flipHoriz(spawn);
+        }
+        
+        if (thing.flipVert) {
+            thing.EightBitter.flipVert(spawn);
+        }
+        
+        thing.EightBitter.addThing(spawn, thing.left, thing.top);
+        thing.EightBitter.killNormal(thing);
+        
+        return spawn;
+    }
+    
+    /**
+     * 
+     */
     function killGoomba(thing, big) {
         if (big) {
             thing.EightBitter.killFlip(thing);
@@ -5645,7 +5679,7 @@ var FullScreenMario = (function(GameStartr) {
                 "x": x + 164,
                 "y": y + 64,
                 "texts": [{
-                    "text": "THANK YOU MARIO!",
+                    "text": "THANK YOU MARIO!"
                 }],
                 "textAttributes": {
                     "hidden": true
@@ -5667,63 +5701,51 @@ var FullScreenMario = (function(GameStartr) {
                 "collectionName": "endInsideCastleText",
                 "collectionKey": "2"
             }];
-        // } else if (npc === "Peach") {
-            // keys = ["1", "2", "3", "4", "5"];
-            // texts = [{
-                // "thing": "CustomText",
-                // "x": ,
-                // "y": ,
-                // "texts": [{
-                    // "text": "THANK YOU MARIO!"
-                    // // "offset": 20,
-                // }],
-                // "hidden": true,
-                // "collectionName": "endInsideCastleText",
-                // "collectionKey": "1"
-            // }, {
-                // "thing": "CustomText",
-                // "x": ,
-                // "y": ,
-                // "texts": [{
-                    // "text": "YOUR QUEST IS OVER."
-                // }],
-                // "offset": 16,
-                // "hidden": true,
-                // "collectionName": "endInsideCastleText",
-                // "collectionKey": "2"
-            // }, {
-                // "thing": "CustomText",
-                // "x": ,
-                // "y": ,
-                // "texts": [{
-                    // "text": "WE PRESENT YOU A NEW QUEST."
-                // }],
-                // "hidden": true,
-                // "collectionName": "endInsideCastleText",
-                // "collectionKey": "3"
-            // }, {
-                // "thing": "CustomText",
-                // "x": ,
-                // "y": ,
-                // "texts": [{
-                    // "text": "PRESS BUTTON B"
-                    // // "offset": 28,
-                // }],
-                // "hidden": true,
-                // "collectionName": "endInsideCastleText",
-                // "collectionKey": "4"
-            // }, {
-                // "thing": "CustomText",
-                // "x": ,
-                // "y": ,
-                // "texts": [{
-                    // "text": "TO SELECT A WORLD"
-                    // // "offset": 20,
-                // }],
-                // "hidden": true,
-                // "collectionName": "endInsideCastleText",
-                // "collectionKey": "5"
-            // }]
+        } else if (npc === "Peach") {
+            keys = ["1", "2", "3"];
+            texts = [{
+                "thing": "CustomText",
+                "x": x + 164,
+                "y": y + 64,
+                "texts": [{
+                    "text": "THANK YOU MARIO!"
+                }],
+                "textAttributes": {
+                    "hidden": true
+                },
+                "collectionName": "endInsideCastleText",
+                "collectionKey": "1"
+            }, {
+                "thing": "CustomText",
+                "x": x + 152,
+                "y": y + 48,
+                "texts": [{
+                    "text": "YOUR QUEST IS OVER.",
+                    "offset": 12
+                }, {
+                    "text": "WE PRESENT YOU A NEW QUEST."
+                }],
+                "textAttributes": {
+                    "hidden": true
+                },
+                "collectionName": "endInsideCastleText",
+                "collectionKey": "2"
+            }, {
+                "thing": "CustomText", 
+                "x": x + 152,
+                "y": 32,
+                "texts": [{
+                    "text": "PRESS BUTTON B",
+                    "offset": 8
+                }, {
+                    "text": "TO SELECT A WORLD"
+                }],
+                "textAttributes": {
+                    "hidden": true
+                },
+                "collectionName": "endInsideCastleText",
+                "collectionKey": "3"
+            }];
         }
         
         output = [
@@ -6012,6 +6034,7 @@ var FullScreenMario = (function(GameStartr) {
         "killNormal": killNormal,
         "killFlip": killFlip,
         "killSpawn": killSpawn,
+        "killReplace": killReplace,
         "killGoomba": killGoomba,
         "killKoopa": killKoopa,
         "killBowser": killBowser,
