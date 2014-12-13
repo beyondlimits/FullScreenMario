@@ -4934,16 +4934,18 @@ var FullScreenMario = (function(GameStartr) {
      * 
      * @alias Pattern
      * @param {String} pattern   The name of the pattern to print, from the
-     *                           listing in this.patterns.
-     * @param {Number} repeat   How many times to repeat the overall pattern.
+     *                           listing in scope.settings.maps.patterns.
+     * @param {Number} [repeat]   How many times to repeat the overall pattern 
+     *                            (by default, 1).
+     * @param {Number[]} [skips]   Which numbered items to skip, if any.
      */
     function macroFillPrePattern(reference, prethings, area, map, scope) {
         // Make sure the pattern exists before doing anything
-        if (!FullScreenMario.prototype.settings.maps.patterns[reference.pattern]) {
+        if (!scope.settings.maps.patterns[reference.pattern]) {
             console.warn("An unknown pattern is referenced: " + reference);
             return;
         }
-        var pattern = FullScreenMario.prototype.settings.maps.patterns[reference.pattern],
+        var pattern = scope.settings.maps.patterns[reference.pattern],
             length = pattern.length,
             defaults = scope.ObjectMaker.getPropertiesFull(),
             repeats = reference.repeat || 1,
@@ -4951,12 +4953,25 @@ var FullScreenMario = (function(GameStartr) {
             ypos = reference.y || 0,
             outputs = new Array(length * repeats),
             o = 0,
+            skips = {},
             output, prething, i, j;
+        
+        // If skips are given, record them in an Object for quick access
+        if (typeof reference.skips !== "undefined") {
+            for (i = 0; i < reference.skips.length; i += 1) {
+                skips[reference.skips[i]] = true;
+            }
+        }
         
         // For each time the pattern should be repeated:
         for (i = 0; i < repeats; i += 1) {
             // For each Thing listing in the pattern:
             for (j = 0; j < length; j += 1) {
+                // Don't place if marked in skips
+                if (skips[j]) {
+                    continue;
+                }
+                
                 prething = pattern[j];
                 output = {
                     "thing": prething[0],
