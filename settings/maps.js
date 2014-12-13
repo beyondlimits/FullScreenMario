@@ -217,6 +217,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "location": 0 },
                         { "macro": "Pattern", "pattern": "BackRegular", "repeat": 5 },
                         { "macro": "Floor", "width": 552 },
+                        { "thing": "DecorativeBack", "x": 20, "y": 90, "width": 88, "height": 44 },
                         { "thing": "CustomText", "x": 20, "y": 36, "texts": [
                             { "text": "MOVE: ARROWS/WASD", "offset": 12 },
                             { "text": "FIRE/SPRINT: SHIFT/CTRL" },

@@ -408,43 +408,74 @@ function PixelDrawr(settings) {
             heightreal = thing.unitheight,
             spritewidthpixels = thing.spritewidthpixels,
             spriteheightpixels = thing.spriteheightpixels,
+            widthdrawn = Math.min(widthreal, spritewidthpixels),
+            heightdrawn = Math.min(heightreal, spriteheightpixels),
             opacity = thing.opacity,
-            sdiff, canvasref;
+            diffhoriz, diffvert, canvasref;
         
-        // Vertical sprites may have 'top', 'bottom', 'middle'
         switch (canvases.direction) {
+            // Vertical sprites may have 'top', 'bottom', 'middle'
             case "vertical":
                 // If there's a bottom, draw that and push up bottomreal
                 if ((canvasref = canvases.bottom)) {
-                    sdiff = sprite.bottomheight ? sprite.bottomheight * unitsize : spriteheightpixels;
-                    drawPatternOnCanvas(context, canvasref.canvas, leftreal, bottomreal - sdiff, widthreal, Math.min(heightreal, spriteheightpixels), opacity);
-                    bottomreal -= sdiff;
-                    heightreal -= sdiff;
+                    diffvert = sprite.bottomheight ? sprite.bottomheight * unitsize : spriteheightpixels;
+                    drawPatternOnCanvas(context, canvasref.canvas, leftreal, bottomreal - diffvert, widthreal, heightdrawn, opacity);
+                    bottomreal -= diffvert;
+                    heightreal -= diffvert;
                 }
                 // If there's a top, draw that and push down topreal
                 if ((canvasref = canvases.top)) {
-                    sdiff = sprite.topheight ? sprite.topheight * unitsize : spriteheightpixels;
-                    drawPatternOnCanvas(context, canvasref.canvas, leftreal, topreal, widthreal, Math.min(heightreal, spriteheightpixels), opacity);
-                    topreal += sdiff;
-                    heightreal -= sdiff;
+                    diffvert = sprite.topheight ? sprite.topheight * unitsize : spriteheightpixels;
+                    drawPatternOnCanvas(context, canvasref.canvas, leftreal, topreal, widthreal, heightdrawn, opacity);
+                    topreal += diffvert;
+                    heightreal -= diffvert;
                 }
             break;
             // Horizontal sprites may have 'left', 'right', 'middle'
             case "horizontal":
-                // If there's a left, draw that and push up leftreal
+                // If there's a left, draw that and push forward leftreal
                 if ((canvasref = canvases.left)) {
-                    sdiff = sprite.leftwidth ? sprite.leftwidth * unitsize : spritewidthpixels;
-                    drawPatternOnCanvas(context, canvasref.canvas, leftreal, topreal, Math.min(widthreal, spritewidthpixels), heightreal, opacity);
-                    leftreal += sdiff;
-                    widthreal -= sdiff;
+                    diffhoriz = sprite.leftwidth ? sprite.leftwidth * unitsize : spritewidthpixels;
+                    drawPatternOnCanvas(context, canvasref.canvas, leftreal, topreal, widthdrawn, heightreal, opacity);
+                    leftreal += diffhoriz;
+                    widthreal -= diffhoriz;
                 }
                 // If there's a right, draw that and push back rightreal
                 if ((canvasref = canvases.right)) {
-                    sdiff = sprite.rightwidth ? sprite.rightwidth * unitsize : spritewidthpixels;
-                    drawPatternOnCanvas(context, canvasref.canvas, rightreal - sdiff, topreal, Math.min(widthreal, spritewidthpixels), heightreal, opacity);
-                    rightreal -= sdiff;
-                    widthreal -= sdiff;
+                    diffhoriz = sprite.rightwidth ? sprite.rightwidth * unitsize : spritewidthpixels;
+                    drawPatternOnCanvas(context, canvasref.canvas, rightreal - diffhoriz, topreal, widthdrawn, heightreal, opacity);
+                    rightreal -= diffhoriz;
+                    widthreal -= diffhoriz;
                 }
+            break;
+            // Corner (vertical + horizontal + corner) sprites must have corners
+            // in 'topRight', 'bottomRight', 'bottomLeft', and 'topLeft'.
+            case "corners":
+                // topLeft, left, bottomLeft
+                diffvert = sprite.topheight ? sprite.topheight * unitsize : spriteheightpixels;
+                diffhoriz = sprite.leftwidth ? sprite.leftwidth * unitsize : spritewidthpixels;
+                drawPatternOnCanvas(context, canvases.topLeft.canvas, leftreal, topreal, widthdrawn, heightdrawn, opacity);
+                drawPatternOnCanvas(context, canvases.left.canvas, leftreal, topreal + diffvert, widthdrawn, heightreal - diffvert * 2, opacity);
+                drawPatternOnCanvas(context, canvases.bottomLeft.canvas, leftreal, bottomreal - diffvert, widthdrawn, heightdrawn, opacity);
+                leftreal += diffhoriz;
+                widthreal -= diffhoriz;
+                
+                // top, topRight
+                diffhoriz = sprite.rightwidth ? sprite.rightwidth * unitsize : spritewidthpixels;
+                drawPatternOnCanvas(context, canvases.top.canvas, leftreal, topreal, widthreal - diffhoriz, heightdrawn, opacity);
+                drawPatternOnCanvas(context, canvases.topRight.canvas, rightreal - diffhoriz, topreal, widthdrawn, heightdrawn, opacity);
+                topreal += diffvert;
+                heightreal -= diffvert;
+                
+                // right, bottomLeft, bottom
+                diffvert = sprite.bottomheight ? sprite.bottomheight * unitsize : spriteheightpixels;
+                drawPatternOnCanvas(context, canvases.right.canvas, rightreal - diffhoriz, topreal, widthdrawn, heightreal - diffvert, opacity);
+                drawPatternOnCanvas(context, canvases.bottomRight.canvas, rightreal - diffhoriz, bottomreal - diffvert, widthdrawn, heightdrawn, opacity);
+                drawPatternOnCanvas(context, canvases.bottom.canvas, leftreal, bottomreal - diffvert, widthreal - diffhoriz, heightdrawn, opacity);
+                rightreal -= diffhoriz;
+                widthreal -= diffhoriz;
+                bottomreal -= diffvert;
+                heightreal -= diffvert;
             break;
         }
         

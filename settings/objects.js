@@ -55,6 +55,7 @@
                     "BridgeBase": {},
                     "Brick": {},
                     "DeadGoomba": {},
+                    "DecorativeBack": {},
                     "Pipe": {},
                     "PipeHorizontal": {},
                     "PipeVertical": {},
@@ -167,9 +168,6 @@
                         "Text1Up": {},
                     },
                     "CustomText": {}
-                },
-                "decoration": {
-                    "DecorativeBack": {},
                 }
             }
         },
@@ -660,6 +658,14 @@
                 onThingAdded: function (thing) {
                     thing.EightBitter.TimeHandler.addEvent(FullScreenMario.prototype.killNormal, 21, thing);
                 }
+            },
+            DecorativeBack: {
+                "nocollide": true,
+                "width": .5,
+                "height": .5,
+                "spritewidth": .5,
+                "spriteheight": .5,
+                "repeat": true
             },
             Pipe: {
                 width: 16,
