@@ -368,7 +368,9 @@ document.onreadystatechange = (function (settings) {
             [60,188,252,255],
             [92,148,252,255],
             // Green (21) for Luigi
-            [0,130,0,255]
+            [0,130,0,255],
+            // Pinkish tan (22) for large decorative text
+            [252, 188, 176,255]
         ]
     }
 });

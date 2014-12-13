@@ -55,7 +55,6 @@
                     "BridgeBase": {},
                     "Brick": {},
                     "DeadGoomba": {},
-                    "DecorativeBack": {},
                     "Pipe": {},
                     "PipeHorizontal": {},
                     "PipeVertical": {},
@@ -121,6 +120,8 @@
                     "Water": {}
                 },
                 "Text": {
+                    "DecorativeBack": {},
+                    "DecorativeDot": {},
                     "TextA": {},
                     "TextB": {},
                     "TextC": {},
@@ -153,6 +154,24 @@
                         "TextPeriod": {},
                         "TextExclamationMark": {},
                         "TextColon": {},
+                    },
+                    "TextLarge": {
+                        "TextLargeE": {},
+                        "TextLargeP": {},
+                        "TextLargeR": {},
+                        "TextLargeS": {},
+                        "TextLargeU": {}
+                    },
+                    "TextHuge": {
+                        "TextHugeA": {},
+                        "TextHugeB": {},
+                        "TextHugeI": {},
+                        "TextHugeM": {},
+                        "TextHugeO": {},
+                        "TextHugeR": {},
+                        "TextHugeS": {},
+                        "TextHugeSpace": {},
+                        "TextHugePeriod": {}
                     },
                     "ScoreText": {
                         "Text100": {},
@@ -659,14 +678,6 @@
                     thing.EightBitter.TimeHandler.addEvent(FullScreenMario.prototype.killNormal, 21, thing);
                 }
             },
-            DecorativeBack: {
-                "nocollide": true,
-                "width": .5,
-                "height": .5,
-                "spritewidth": .5,
-                "spriteheight": .5,
-                "repeat": true
-            },
             Pipe: {
                 width: 16,
                 spritewidth: 16,
@@ -833,13 +844,50 @@
                 "width": 3.5,
                 "height": 3.5,
                 "libtype": "Text",
-                "grouptype": "Text"
+                "grouptype": "Text",
+                "size": ""
+            },
+            "DecorativeBack": {
+                "width": 88,
+                "height": 44,
+                "spritewidth": .5,
+                "spriteheight": .5,
+            },
+            "DecorativeDot": {
+                "width": 1.5,
+                "height": 1.5
+            },
+            "TextSpace": {
+                "hidden": true
+            },
+            "TextLarge": {
+                "width": 7.5,
+                "height": 14,
+                "size": "Large"
+            },
+            "TextHuge": {
+                "width": 7.5,
+                "height": 22
+            },
+            "TextHugeI": {
+                "width": 3.5
+            },
+            "TextHugeM": {
+                "width": 11.5
+            },
+            "TextHugeSpace": {
+                "width": 3.5,
+                "hidden": true
+            },
+            "TextHugePeriod": {
+                "width": 3.5
             },
             "ScoreText": {
                 "libtype": "Text",
                 "grouptype": "Text",
             },
             "TextCharacters": [2.5, 4],
+            "TextCharagersHuge": [1, 1],
             "Text100": [6, 4],
             "Text200": [6, 4],
             "Text400": [6, 4],

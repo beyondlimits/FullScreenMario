@@ -161,7 +161,7 @@ function PixelRendr(settings) {
         }
 
         return sprite;
-    }
+    };
 
     /**
      * 
@@ -172,7 +172,7 @@ function PixelRendr(settings) {
         if (callback) {
             callback(result, image, source);
         }
-    }
+    };
     
     /**
      * 
@@ -181,20 +181,39 @@ function PixelRendr(settings) {
         var image = document.createElement("img");
         image.onload = self.encode.bind(self, image, callback);
         image.src = source;
-    }
+    };
     
+    /**
+     * 
+     */
     self.getBaseFiler = function () {
         return BaseFiler;
-    }
+    };
+    
+    /**
+     * 
+     */
     self.getBaseLibrary = function () {
         return BaseFiler.getLibrary();
-    }
+    };
+    
+    /**
+     * 
+     */
     self.getProcessorBase = function () {
         return ProcessorBase;
-    }
+    };
+    
+    /**
+     * 
+     */
     self.getProcessorDims = function () {
         return ProcessorDims;
-    }
+    };
+    
+    /**
+     * 
+     */
     self.getProcessorEncode = function () {
         return ProcessorEncode;
     };
@@ -474,17 +493,18 @@ function PixelRendr(settings) {
     // Repeats each row of a sprite based on the container attributes
     function spriteRepeatRows(sprite, key, attributes) {
         // With the rows set, repeat them by unitsize to create the final, parsed product
-        var parsed = new Uint8ClampedArray(sprite.length * scale),
+        var scaleReal = attributes.scale ? scale * attributes.scale : scale,
+            parsed = new Uint8ClampedArray(sprite.length * scaleReal),
             rowsize = attributes[sprite_width] * 4,
-            heightscale = attributes[sprite_height] * scale,
+            heightscale = attributes[sprite_height] * scaleReal,
             readloc = 0,
             writeloc = 0,
             si, sj;
-
+        
         // For each row:
         for (si = 0; si < heightscale; ++si) {
-            // Add it to parsed x scale
-            for (sj = 0; sj < scale; ++sj) {
+            // Add it to parsed x scaleReal
+            for (sj = 0; sj < scaleReal; ++sj) {
                 self.memcpyU8(sprite, parsed, readloc, writeloc, rowsize);
                 writeloc += rowsize;
             }

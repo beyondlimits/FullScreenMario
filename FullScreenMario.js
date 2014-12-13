@@ -1385,7 +1385,7 @@ var FullScreenMario = (function(GameStartr) {
                 if (thing.EightBitter.customTextMappings.hasOwnProperty(letter)) {
                     letter = thing.EightBitter.customTextMappings[letter];
                 }
-                letter = "Text" + letter;
+                letter = "Text" + thing.size + letter;
                 
                 textThing = thing.EightBitter.ObjectMaker.make(letter, attributes);
                 textThing.EightBitter.addThing(textThing, left, top);

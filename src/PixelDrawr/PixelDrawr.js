@@ -110,8 +110,8 @@ function PixelDrawr(settings) {
      * @return {Self}
      */
     self.setThingSprite = function(thing) {
-        // If it's set as hidden, or doesn't have a title, don't bother updating it
-        if (thing.hidden || !thing.title) {
+        // If it's set as hidden, don't bother updating it
+        if (thing.hidden) {
             return;
         }
         
@@ -317,16 +317,16 @@ function PixelDrawr(settings) {
     self.drawThingOnContext = function(context, thing) {
         if (
             thing.hidden
-            // || thing.top > MapScreener.bottom
-            // || thing.right < MapScreener.left
-            // || thing.bottom < MapScreener.top
-            // || thing.left > MapScreener.right
+            // || thing.top > MapScreener.height
+            // || thing.right < 0
+            // || thing.bottom < 0
+            // || thing.left > MapScreener.width
         ) {
             return;
         }
         
         // If Thing hasn't had a sprite yet (previously hidden), do that first
-        if (typeof(thing.num_sprites) === "undefined") {
+        if (typeof thing.num_sprites === "undefined") {
             self.setThingSprite(thing);
         }
         
