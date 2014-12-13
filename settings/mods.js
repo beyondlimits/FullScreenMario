@@ -203,6 +203,10 @@ FullScreenMario.prototype.settings.mods = {
                         thing.EightBitter.reduceWidth(thing, thing.EightBitter.unitsize * 8, true);
                         thing.EightBitter.shiftHoriz(thing, thing.EightBitter.unitsize * 4);
                     }
+                    
+                    if (thing.grouptype === "Character") {
+                        thing.speed *= 1.4;
+                    }
                 },
                 "onModEnable": function (mod) {
                     var EightBitter = EightBittr.ensureCorrectCaller(this),
@@ -222,6 +226,7 @@ FullScreenMario.prototype.settings.mods = {
                                 spawn.EightBitter.unflipHoriz(spawn);
                             }
                         }
+                        thing.speed *= 1.4;
                     }
                     
                     for(i = 0; i < solids.length; i += 1) {
@@ -243,6 +248,8 @@ FullScreenMario.prototype.settings.mods = {
                         thing = characters[i];
                         if (thing.title === "Beetle" && thing.mod === "Hard Mode") {
                             thing.EightBitter.killReplace(thing, "Goomba", attributes);
+                        } else {
+                            thing.speed /= 1.4;
                         }
                     }
                     
