@@ -244,7 +244,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Block", "x": 176, "y": 64 },
                         { "thing": "Block", "x": 184, "y": 32 },
                         { "thing": "Brick", "x": 192, "y": 32 },
-                        { "macro": "Pipe", "x": 224, "height": 16, "piranha": true },
+                        { "macro": "Pipe", "x": 224, "height": 16 },
                         { "macro": "Pipe", "x": 304, "height": 24 },
                         { "thing": "Goomba", "x": 340, "y": 8 },
                         { "macro": "Pipe", "x": 368, "height": 32 },
@@ -443,18 +443,18 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Koopa", "x": 1152, "y": 12, "smart": true },
                         { "thing": "Brick", "x": 1184, "y": 40, "contents": "Mushroom" },
                         { "macro": "PlatformGenerator", "x": 1224, "width": 24, "direction": -1 },
-                        { "macro": "Floor", "x": 1266,  "width": 256 },
-                        { "macro": "Fill", "thing": "Brick", "x": 1266, "y": 8, "xnum": 17, "ynum": 3 },
-                        { "thing": "PipeHorizontal", "x": 1314, "y": 40, "transport": 4 },
-                        { "thing": "PipeVertical", "x": 1330, "y": 88, "height": 64 },
-                        { "thing": "ScrollEnabler", "x": 1330, "y": 120, "height": 48 },
-                        { "macro": "Ceiling", "x": 1274, "width": 56 },
-                        { "macro": "Fill", "thing": "Brick", "x": 1346, "y": 32, "xnum": 7, "ynum": 7 },
-                        { "macro": "Ceiling", "x": 1346, "width": 136 },
-                        { "thing": "ScrollBlocker", "x": 1346 },
+                        { "macro": "Floor", "x": 1264,  "width": 256 },
+                        { "macro": "Fill", "thing": "Brick", "x": 1264, "y": 8, "xnum": 17, "ynum": 3 },
+                        { "thing": "PipeHorizontal", "x": 1312, "y": 40, "transport": 4 },
+                        { "thing": "PipeVertical", "x": 1328, "y": 88, "height": 64 },
+                        { "thing": "ScrollEnabler", "x": 1328, "y": 120, "height": 48 },
+                        { "macro": "Ceiling", "x": 1272, "width": 56 },
+                        { "macro": "Fill", "thing": "Brick", "x": 1344, "y": 32, "xnum": 7, "ynum": 7 },
+                        { "macro": "Ceiling", "x": 1344, "width": 136 },
+                        { "thing": "ScrollBlocker", "x": 1344 },
                         { "macro": "WarpWorld", "x": 1400, "warps": [4, 3, 2] },
-                        { "macro": "Fill", "thing": "Brick", "x": 1506, "y": 8, "xnum": 2, "ynum": 11 },
-                        { "thing": "ScrollBlocker", "x": 1522, "y": 8 }
+                        { "macro": "Fill", "thing": "Brick", "x": 1504, "y": 8, "xnum": 2, "ynum": 11 },
+                        { "thing": "ScrollBlocker", "x": 1518, "y": 8 }
                     ]
                 },
                 {
@@ -1499,7 +1499,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "macro": "Fill", "thing": "Brick", "x": 1616, "y": 32, "xnum": 7, "ynum": 7 },
                         { "macro": "ScrollEnabler", "x": 1610 },
                         { "macro": "Ceiling", "x": 1616, "width": 136 },
-                        { "macro": "WarpWorld", "x": 1670, "warps": [5] },
+                        { "macro": "WarpWorld", "x": 1672, "warps": [5] },
                         { "macro": "Fill", "thing": "Brick", "x": 1776, "y": 8, "xnum": 2, "ynum": 11 }
                     ]
                 },
@@ -1569,7 +1569,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Stone", "x": 376, "y": 64, "height": 64 },
                         { "thing": "Stone", "x": 384, "y": 72, "height": 72 },
                         { "thing": "Stone", "x": 392, "y": 72, "width": 88 },
-                        { "macro": "WarpWorld", "x": 390, "warps": [8, 7, 1] },
+                        { "macro": "WarpWorld", "x": 392, "warps": [8, 7, 6], "textHeight": 0 },
                         { "thing": "Stone", "x": 496, "y": 88, "width": 16, "height": 88 },
                         { "thing": "ScrollBlocker", "x": 512, "y": 88 }
                     ]

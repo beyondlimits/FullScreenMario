@@ -1219,8 +1219,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.direction = thing.EightBitter.unitsize / -40;
         
         if (thing.onPipe) {
-            // thing.direction *= -1;
-            thing.EightBitter.setHeight(thing, 4, true, true);
+            thing.EightBitter.setHeight(thing, 6, true, true);
         }
     }
     
@@ -1487,6 +1486,40 @@ var FullScreenMario = (function(GameStartr) {
      */
     function activateCheepsStop(thing) {
         thing.EightBitter.MapScreener.spawningCheeps = false;
+    }
+    
+    /**
+     * 
+     */
+    function activateWarpWorld(thing, other) {
+        var collection = other.collection,
+            key = 0, 
+            keyString, scenery, texts, j;
+        
+        texts = collection["Welcomer"].children;
+        for (j = 0; j < texts.length; j += 1) {
+            if (texts[j].title !== "TextSpace") {
+                texts[j].hidden = false;
+            }
+        }
+        
+        while (true) {
+            keyString = key + "-Text";
+            if (!collection.hasOwnProperty(keyString)) {
+                break;
+            }
+            
+            texts = collection[keyString].children;
+            for (j = 0; j < texts.length; j += 1) {
+                if (texts[j].title !== "TextSpace") {
+                    texts[j].hidden = false;
+                }
+            }
+            
+            thing.EightBitter.killNormal(collection[key + "-Piranha"]);
+            
+            key += 1;
+        }
     }
     
     /**
@@ -5342,15 +5375,73 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      */
-    function macroWarpWorld(reference) {
+    function macroWarpWorld(reference, prethings, area, map, scope) {
         var output = [],
             x = reference.x || 0,
             y = reference.y || 0,
+            textHeight = reference.hasOwnProperty("textHeight")
+                ? reference.textHeight : 8,
             warps = reference.warps,
+            collectionName = "WarpWorldCollection-" + warps.join("."),
+            keys = [],
             i;
         
+        output.push({
+            "thing": "CustomText",
+            "x": x + 8,
+            "y": y + textHeight + 56,
+            "texts": [{
+                "text": "WELCOME TO WARP WORLD!"
+            }],
+            "textAttributes": {
+                "hidden": true
+            },
+            "collectionName": collectionName,
+            "collectionKey": "Welcomer"
+        });
+        
+        output.push({
+            "thing": "DetectCollision",
+            "x": x + 64,
+            "y": y + 174,
+            "width": 40,
+            "height": 102,
+            "activate": scope.activateWarpWorld,
+            "collectionName": collectionName,
+            "collectionKey": "Detector"
+        });
+        
         for (i = 0; i < warps.length; i += 1) {
-            output.push({ "macro": "Pipe", "x": x + 10 + i * 32, "height": 24, "piranha": true, "transport": { "map": warps[i] + "-1" } });
+            keys.push(i);
+            output.push({
+                "macro": "Pipe",
+                "x": x + 8 + i * 32,
+                "height": 24,
+                "transport": { "map": warps[i] + "-1" },
+                "collectionName": collectionName,
+                "collectionKey": i + "-Pipe"
+            });
+            output.push({
+                "thing": "Piranha",
+                "x": x + 12 + i * 32,
+                "y": y + 36,
+                "collectionName": collectionName,
+                "collectionKey": i + "-Piranha"
+            });
+            output.push({
+                "thing": "CustomText",
+                "x": x + 14 + i * 32,
+                "y": y + 32 + textHeight,
+                "texts": [{
+                    "text": String(warps[i])
+                }],
+                "textAttributes": {
+                    "hidden": true
+                },
+                "collectionName": collectionName,
+                "collectionKey": i + "-Text"
+            });
+            console.log("Adding text", warps[i]);
         }
         
         if (warps.length === 1) {
@@ -5934,6 +6025,7 @@ var FullScreenMario = (function(GameStartr) {
         "spawnRandomSpawner": spawnRandomSpawner,
         "activateCheepsStart": activateCheepsStart,
         "activateCheepsStop": activateCheepsStop,
+        "activateWarpWorld": activateWarpWorld,
         "activateWindowDetector": activateWindowDetector,
         "activateScrollBlocker": activateScrollBlocker,
         "activateScrollEnabler": activateScrollEnabler,
