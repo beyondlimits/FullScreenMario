@@ -19,7 +19,7 @@ The onModDisable event is called for the mod.
 * **toggleMod(***`name`***)** - Toggles whether a mod is enabled or disabled by
 choosing the appropriate function between the previous two.
 
-* **fireEvent(***`name`[, ...]***)** - Triggers the named event under every mod 
+* **fireEvent(***`name[, ...]`***)** - Triggers the named event under every mod 
 that is currently enabled. Any additional arguments are passed to the mod.
 
 * **fireModEvent(***`eventName`, `modName`***)** - Triggers the named event 
@@ -39,61 +39,67 @@ one isn't provided by the mod.
 ## Sample Usage
 
 1. Creating and using a ModAttachr to log event activity.
-var ModAttacher = new ModAttachr({
-    "mods": [{
-        "name": "Testing Mod",
-        "description": "A mod used for testing a ModAttachr.",
-        "author": {
-            "name": "Josh Goldberg",
-            "email": "josh@fullscreenmario.com"
-        },
-        "enabled": false,
-        "events": {
-            "onModEnable": function () {
-                console.log("I am enabled!");
+
+    ```javascript
+    var ModAttacher = new ModAttachr({
+        "mods": [{
+            "name": "Testing Mod",
+            "description": "A mod used for testing a ModAttachr.",
+            "author": {
+                "name": "Josh Goldberg",
+                "email": "josh@fullscreenmario.com"
             },
-            "onModDisable": function () {
-                console.log("I am disabled...");
-            },
-            "log": function () {
-                console.log("You have logged me.");
+            "enabled": false,
+            "events": {
+                "onModEnable": function () {
+                    console.log("I am enabled!");
+                },
+                "onModDisable": function () {
+                    console.log("I am disabled...");
+                },
+                "log": function () {
+                    console.log("You have logged me.");
+                }
             }
-        }
-    }]
-});
-ModAttacher.enableMod("Testing Mod"); // log: "I am enabled!"
-ModAttacher.fireEvent("log"); // log: "You have logged me."
-ModAttacher.disableMod("Testing Mod"); // log: "I am disabled..."
+        }]
+    });
+    ModAttacher.enableMod("Testing Mod"); // log: "I am enabled!"
+    ModAttacher.fireEvent("log"); // log: "You have logged me."
+    ModAttacher.disableMod("Testing Mod"); // log: "I am disabled..."
+    ```
 
 2. Creating and using a ModAttachr to log event activity, with timestamps and 
 numbered logs.
-var ModAttacher = new ModAttachr({
-    "mods": [{
-        "name": "Testing Mod",
-        "description": "A mod used for testing a ModAttachr.",
-        "author": {
-            "name": "Josh Goldberg",
-            "email": "josh@fullscreenmario.com"
-        },
-        "enabled": false,
-        "events": {
-            "onModEnable": function () {
-                console.log("I am enabled!");
+
+    ```javascript
+    var ModAttacher = new ModAttachr({
+        "mods": [{
+            "name": "Testing Mod",
+            "description": "A mod used for testing a ModAttachr.",
+            "author": {
+                "name": "Josh Goldberg",
+                "email": "josh@fullscreenmario.com"
             },
-            "onModDisable": function () {
-                console.log("I am disabled...");
+            "enabled": false,
+            "events": {
+                "onModEnable": function () {
+                    console.log("I am enabled!");
+                },
+                "onModDisable": function () {
+                    console.log("I am disabled...");
+                },
+                "log": function (mod) {
+                    var numLog = (mod.settings.numLogs += 1);
+                    console.log("Log " + numLog + ": " + Date());
+                }
             },
-            "log": function (mod) {
-                var numLog = (mod.settings.numLogs += 1);
-                console.log("Log " + numLog + ": " + Date());
+            "settings": {
+                "numLogs": 0
             }
-        },
-        "settings": {
-            "numLogs": 0
-        }
-    }]
-});
-ModAttacher.enableMod("Testing Mod"); // log: "I am enabled!"
-ModAttacher.fireEvent("log"); // log: "Log 1: Sat Dec 13 2014 21:00:14 ..."
-ModAttacher.fireEvent("log"); // log: "Log 2: Sat Dec 13 2014 21:00:14 ..."
-ModAttacher.disableMod("Testing Mod"); // log: "I am disabled..."
+        }]
+    });
+    ModAttacher.enableMod("Testing Mod"); // log: "I am enabled!"
+    ModAttacher.fireEvent("log"); // log: "Log 1: Sat Dec 13 2014 21:00:14 ..."
+    ModAttacher.fireEvent("log"); // log: "Log 2: Sat Dec 13 2014 21:00:14 ..."
+    ModAttacher.disableMod("Testing Mod"); // log: "I am disabled..."
+    ```
