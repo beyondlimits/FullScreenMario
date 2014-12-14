@@ -73,7 +73,12 @@ function PixelRendr(settings) {
         flip_horiz = settings.flip_horiz || "flipped";
         sprite_width = settings.sprite_width || "sprite_width";
         sprite_height = settings.sprite_height || "sprite_height";
-        Uint8ClampedArray = settings.Uint8ClampedArray || window.Uint8Array || Array;
+        Uint8ClampedArray = (
+            settings.Uint8ClampedArray 
+            || window.Uint8ClampedArray
+            || window.Uint8Array 
+            || Array
+        );
 
         // The first ChangeLinr does the raw processing, of strings to sprites
         ProcessorBase = new ChangeLinr({
@@ -150,7 +155,7 @@ function PixelRendr(settings) {
             console.warn("No raw sprite found.", key, attributes);
             return;
         }
-
+        
         // Multiple sprites have their sizings taken from attributes
         if (sprite.multiple) {
             processSpriteMultiple(sprite, key, attributes);

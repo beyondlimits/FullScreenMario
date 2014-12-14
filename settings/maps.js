@@ -244,7 +244,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Block", "x": 176, "y": 64 },
                         { "thing": "Block", "x": 184, "y": 32 },
                         { "thing": "Brick", "x": 192, "y": 32 },
-                        { "macro": "Pipe", "x": 224, "height": 16 },
+                        { "macro": "Pipe", "x": 224, "height": 16, "piranha": true },
                         { "macro": "Pipe", "x": 304, "height": 24 },
                         { "thing": "Goomba", "x": 340, "y": 8 },
                         { "macro": "Pipe", "x": 368, "height": 32 },
@@ -487,7 +487,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Stone", "x": 48, "y": 40, "height": 40 },
                         { "thing": "Stone", "x": 56, "y": 48, "height": 48 },
                         { "thing": "Stone", "x": 64, "y": 56, "height": 56 },
-                        { "thing": "Stone", "x": 72, "y": 64, "height": 64 },
+                        { "thing": "Stone", "x": 72, "y": 64, "height": 64, "width": 16 },
                         { "macro": "EndOutsideCastle", "x": 148 }
                     ]
                 }

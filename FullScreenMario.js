@@ -1216,7 +1216,12 @@ var FullScreenMario = (function(GameStartr) {
      */
     function spawnPiranha(thing) {
         thing.counter = 0;
-        thing.direction = -.1;
+        thing.direction = thing.EightBitter.unitsize / -40;
+        
+        if (thing.onPipe) {
+            // thing.direction *= -1;
+            thing.EightBitter.setHeight(thing, 4, true, true);
+        }
     }
     
     /**
@@ -5082,8 +5087,9 @@ var FullScreenMario = (function(GameStartr) {
         if (reference.piranha) {
             output.push({
                 "thing": "Piranha",
-                "x": reference.x + 4,
-                "y": pipe.y + 12
+                "x": x + 4,
+                "y": pipe.y + 12,
+                "onPipe": true
             });
         }
         
