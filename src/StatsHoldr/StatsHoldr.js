@@ -132,7 +132,7 @@ function StatsHoldr(settings) {
             });
         }
 
-        if (this.store_locally) {
+        if (this.storeLocally) {
             // If there exists an old version of this property, get it 
             if (localStorage.hasOwnProperty([prefix + key])) {
                 var reference = localStorage[prefix + key],
@@ -210,7 +210,7 @@ function StatsHoldr(settings) {
         if (this.has_element) {
             this.updateElement();
         }
-        if (this.store_locally) {
+        if (this.storeLocally) {
             this.updateLocalStorage();
         }
     };

@@ -55,6 +55,9 @@ function PixelRendr(settings) {
         // 
         Uint8ClampedArray;
     
+    /**
+     * 
+     */
     self.reset = function (settings) {
         if (!settings.palette) {
             throw new Error("No palette given to PixelRendr.");

@@ -1,5 +1,71 @@
 /**
+ * ModAttachr.js
  * 
+ * An addon for for extensible modding functionality. "Mods" register triggers
+ * such as "onModEnable" or "onReset" that can be triggered.
+ * 
+ * @example
+ * // Creating and using a ModAttachr to log event activity.
+ * var ModAttacher = new ModAttachr({
+ *     "mods": [{
+ *         "name": "Testing Mod",
+ *         "description": "A mod used for testing a ModAttachr.",
+ *         "author": {
+ *             "name": "Josh Goldberg",
+ *             "email": "josh@fullscreenmario.com"
+ *         },
+ *         "enabled": false,
+ *         "events": {
+ *             "onModEnable": function () {
+ *                 console.log("I am enabled!");
+ *             },
+ *             "onModDisable": function () {
+ *                 console.log("I am disabled...");
+ *             },
+ *             "log": function () {
+ *                 console.log("You have logged me.");
+ *             }
+ *         }
+ *     }]
+ * });
+ * ModAttacher.enableMod("Testing Mod"); // log: "I am enabled!"
+ * ModAttacher.fireEvent("log"); // log: "You have logged me."
+ * ModAttacher.disableMod("Testing Mod"); // log: "I am disabled..."
+ * 
+ * // Creating and using a ModAttachr to log event activity, with timestamps
+ * // and numbered logs.
+ * var ModAttacher = new ModAttachr({
+ *     "mods": [{
+ *         "name": "Testing Mod",
+ *         "description": "A mod used for testing a ModAttachr.",
+ *         "author": {
+ *             "name": "Josh Goldberg",
+ *             "email": "josh@fullscreenmario.com"
+ *         },
+ *         "enabled": false,
+ *         "events": {
+ *             "onModEnable": function () {
+ *                 console.log("I am enabled!");
+ *             },
+ *             "onModDisable": function () {
+ *                 console.log("I am disabled...");
+ *             },
+ *             "log": function (mod) {
+ *                 var numLog = (mod.settings.numLogs += 1);
+ *                 console.log("Log " + numLog + ": " + Date());
+ *             }
+ *         },
+ *         "settings": {
+ *             "numLogs": 0
+ *         }
+ *     }]
+ * });
+ * ModAttacher.enableMod("Testing Mod"); // log: "I am enabled!"
+ * ModAttacher.fireEvent("log"); // log: "Log 1: Sat Dec 13 2014 21:00:14 ..."
+ * ModAttacher.fireEvent("log"); // log: "Log 2: Sat Dec 13 2014 21:00:14 ..."
+ * ModAttacher.disableMod("Testing Mod"); // log: "I am disabled..."
+ * 
+ * @author "Josh Goldberg" <josh@fullscreenmario.com>
  */
 function ModAttachr(settings) {
     "use strict";
@@ -16,24 +82,30 @@ function ModAttachr(settings) {
         // (e.g. { "MyMod": { "Name": "Mymod", "enabled": 1, ...} ...})
         mods,
         
-        // The StatsHoldr constructor for the StatsHolder (optional)
-        
         // A new StatsHolder object to be created to store whether each
         // mod is stored locally (optional)
         StatsHolder,
         
         // A default scope to apply mod events from (optional)
-        scope_default;
+        scopeDefault;
     
     /**
+     * Resets the ModAttachr.
      * 
+     * @constructor
+     * @param {Object[]} mods   Objects representing the new mods to be added.
+     * @param {Boolean} storeLocally   Whether this should store which mods have
+     *                                 been enabled in local storage via a 
+     *                                 StatsHoldr (by default, false).
+     * @param {Mixed} scopeDefault   An optional default scope to use for each
+     *                               mod, if one isn't provided by the mod.
      */
     self.reset = function (settings) {
         mods = {};
         events = {};
-        scope_default = settings.scope_default;
+        scopeDefault = settings.scopeDefault;
         
-        if (settings.store_locally) {
+        if (settings.storeLocally) {
             StatsHolder = new settings.StatsHoldr({
                 "prefix": settings.prefix,
                 "proliferate": settings.proliferate,
@@ -52,25 +124,22 @@ function ModAttachr(settings) {
     */
     
     /**
-     * Returns an Array containing each mod, keyed by their name.
-     * 
-     * @return {Object}
+     * @return {Object} An Object keying each mod by their name.
      */
     self.getMods = function () {
         return mods;
     };
     
     /**
-     * Returns an Object containing each event, keyed by their name.
-     * 
-     * @return {Object}
+     * @return {Object} An Object keying each event by their name.
      */
     self.getEvents = function () {
         return events;
     };
     
     /**
-     * 
+     * @return {StatsHoldr} The StatsHoldr if storeLocally is true, or undefined
+     *                      otherwise.
      */
     self.getStatsHolder = function () {
         return StatsHolder;
@@ -86,9 +155,8 @@ function ModAttachr(settings) {
      * 
      * @param {Object} mod   A summary Object for a mod, containing at the very
      *                       least a name and Object of events.
-     * @param {Object} [scope]   An optional scope for the mod's events.
      */
-    self.addMod = function (mod, scope) {
+    self.addMod = function (mod) {
         var mod_events = mod.events,
             event, i;
         
@@ -104,7 +172,7 @@ function ModAttachr(settings) {
             }
         }
         
-        mod.scope = scope || scope_default;
+        mod.scope = mod.scope || scopeDefault;
         
         mods[mod.name] = mod;
         if (mod.enabled && mod.events["onModEnable"]) {
@@ -114,12 +182,11 @@ function ModAttachr(settings) {
         if (StatsHolder) {
             StatsHolder.addStatistic(mod.name, {
                 "value_default": 0,
-                "store_locally": true
+                "storeLocally": true
             });
             
-            var name = mod.name;
-            if (StatsHolder.get(name)) {
-                self.enableMod(name);
+            if (StatsHolder.get(mod.name)) {
+                self.enableMod(mod.name);
             }
         }
     };
@@ -130,14 +197,14 @@ function ModAttachr(settings) {
      * @param {Array} mods
      */
     self.addMods = function (mods) {
-        var i;
-        for (i = 0; i < mods.length; i += 1) {
+        for (var i = 0; i < mods.length; i += 1) {
             self.addMod(mods[i]);
         }
     };
     
     /**
-     * Enables a mod of the given name, if it exists.
+     * Enables a mod of the given name, if it exists. The onModEnable event is
+     * called for the mod.
      * 
      * @param {String} name   The name of the mod to enable.
      */
@@ -170,8 +237,7 @@ function ModAttachr(settings) {
      * @param {Array} [mods]
      */
     self.enableMods = function () {
-        var i;
-        for (i = 0; i < arguments.length; i += 1) {
+        for (var i = 0; i < arguments.length; i += 1) {
             if (arguments[i] instanceof Array) {
                 self.enableMods(arguments[i]);
             } else {
@@ -181,7 +247,8 @@ function ModAttachr(settings) {
     };
     
     /**
-     * Disables a mod of the given name, if it exists.
+     * Disables a mod of the given name, if it exists. The onModDisable event is
+     * called for the mod.
      * 
      * @param {String} name   The name of the mod to disable.
      */
@@ -214,8 +281,7 @@ function ModAttachr(settings) {
      * @param {Array} [mods]
      */
     self.disableMods = function () {
-        var i;
-        for (i = 0; i < arguments.length; i += 1) {
+        for (var i = 0; i < arguments.length; i += 1) {
             if (arguments[i] instanceof Array) {
                 self.disableMods(arguments[i]);
             } else {
@@ -251,8 +317,7 @@ function ModAttachr(settings) {
      * @param {Array} [mods]
      */
     self.toggleMods = function () {
-        var i;
-        for (i = 0; i < arguments.length; i += 1) {
+        for (var i = 0; i < arguments.length; i += 1) {
             if (arguments[i] instanceof Array) {
                 self.toggleMods(arguments[i]);
             } else {
@@ -294,23 +359,23 @@ function ModAttachr(settings) {
      * Fires an event specifically for one mod, rather than all mods containing
      * that event.
      * 
-     * @param {String} event   The name of the event to fire.
-     * @param {String} mod   The name of the mod to fire the event.
+     * @param {String} eventName   The name of the event to fire.
+     * @param {String} modName   The name of the mod to fire the event.
      */
-    self.fireModEvent = function (event, mod) {
-        var mod = mods[mod],
+    self.fireModEvent = function (eventName, modName) {
+        var mod = mods[modName],
             args = Array.prototype.slice.call(arguments, 2),
             fires;
         
         if (!mod) {
-            throw new Error("Unknown mod requested: '" + mod + "'");
+            throw new Error("Unknown mod requested: '" + modName + "'");
         }
         
         args[0] = mod;
-        fires = mod.events[event];
+        fires = mod.events[eventName];
         
         if (!fires) {
-            throw new Error("Mod does not contain event: '" + event + "'");
+            throw new Error("Mod does not contain event: '" + eventName + "'");
         }
         
         fires.apply(mod.scope, args);

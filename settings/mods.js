@@ -1,5 +1,5 @@
 FullScreenMario.prototype.settings.mods = {
-    "store_locally": true,
+    "storeLocally": true,
     "prefix": "FullScreenMarioMods",
     "mods": [
         {

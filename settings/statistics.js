@@ -25,7 +25,7 @@ FullScreenMario.prototype.settings.statistics = {
     "values": {
         "power": {
             "value_default": 1,
-            "store_locally": false
+            "storeLocally": false
         },
         "traveled": {
             "value_default": 0
@@ -67,12 +67,12 @@ FullScreenMario.prototype.settings.statistics = {
         },
         "lives": {
             "value_default": 3,
-            "store_locally": true,
+            "storeLocally": true,
             "has_element": true
         },
         "luigi": {
             "value_default": 0,
-            "store_locally": true
+            "storeLocally": true
         }
     }
 };

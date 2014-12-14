@@ -6,11 +6,11 @@ FullScreenMario.prototype.settings.audio = {
         "values": {
             "volume": {
                 "value_default": 0.5,
-                "store_locally": true
+                "storeLocally": true
             },
             "muted": {
                 "value_default": 0,
-                "store_locally": true
+                "storeLocally": true
             }
         }
     },

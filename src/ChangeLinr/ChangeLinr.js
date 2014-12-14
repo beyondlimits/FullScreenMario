@@ -18,7 +18,6 @@
  * console.log(ChangeLiner.process(7), "Test"); // 49
  * console.log(ChangeLiner.getCached("Test")); // 49
  * 
- * 
  * @example
  * // Creating and using a ChangeLinr to calculate Fibonacci numbers.
  * var ChangeLiner = new ChangeLinr({
