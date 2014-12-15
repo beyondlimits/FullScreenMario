@@ -317,8 +317,8 @@ function MapsHandlr(settings) {
             start = findPreThingsSpawnStart(direction, group, mid, top, right, bottom, left);
             end = findPreThingsSpawnEnd(direction, group, mid, top, right, bottom, left);
             
-            // Loop through all the directionally valid PreThings, spawning if they're
-            // within the bounding box
+            // Loop through all the directionally valid PreThings, spawning if 
+            // they're within the bounding box
             for (i = start; i <= end; i += 1) {
                 prething = group[i];
                 

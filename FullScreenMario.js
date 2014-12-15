@@ -167,7 +167,9 @@ var FullScreenMario = (function(GameStartr) {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
         EightBitter.StatsHolder.set("lives", 3);
-        EightBitter.setMap("1-1");
+        // EightBitter.setMap("1-1");
+        EightBitter.setMap("7-4");
+        // FSM.scrollPlayer(1050);
         
         EightBitter.ModAttacher.fireEvent("onGameStart");
     }
@@ -1596,7 +1598,7 @@ var FullScreenMario = (function(GameStartr) {
         MapsHandler.spawnMap(
             "xInc",
             MapScreener.top / EightBitter.unitsize,
-            MapScreener.right / EightBitter.unitsize + command.x,
+            command.x,
             MapScreener.bottom / EightBitter.unitsize,
             left
         );
@@ -1689,7 +1691,7 @@ var FullScreenMario = (function(GameStartr) {
         MapsHandler.spawnMap(
             "xInc",
             MapScreener.top / EightBitter.unitsize,
-            MapScreener.right / EightBitter.unitsize + (section.after ? section.after.width : 0),
+            left + (MapScreener.right / EightBitter.unitsize),
             MapScreener.bottom / EightBitter.unitsize,
             left
         );
@@ -2469,7 +2471,9 @@ var FullScreenMario = (function(GameStartr) {
             letters = other.collection[keys[i]].children;
             
             for (j = 0; j < letters.length; j += 1) {
-                letters[j].hidden = false;
+                if (letters[j].title !== "TextSpace") {
+                    letters[j].hidden = false;
+                }
             }
             
             i += 1;
@@ -5441,7 +5445,6 @@ var FullScreenMario = (function(GameStartr) {
                 "collectionName": collectionName,
                 "collectionKey": i + "-Text"
             });
-            console.log("Adding text", warps[i]);
         }
         
         if (warps.length === 1) {
