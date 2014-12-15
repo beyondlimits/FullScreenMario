@@ -78,13 +78,16 @@ function GamesRunnr(settings) {
         speed,
         
         // The actual speed, as (1 / speed) * interval
-        speedReal,
+        intervalReal,
         
         // An FPSAnalyzr object that measures on each upkeep
         FPSAnalyzer,
         
         // An object to set as the scope for games (if not self)
-        scope;
+        scope,
+        
+        // Whether scheduling timeouts should adjust to actual average FPS
+        adjustFramerate;
     
     /**
      * Resets the GamesRunnr.
@@ -118,6 +121,7 @@ function GamesRunnr(settings) {
         upkeepScheduler = settings.upkeepScheduler || window.setTimeout;
         upkeepCanceller = settings.upkeepCanceller || window.clearTimeout;
         FPSAnalyzer = settings.FPSAnalyzer || new FPSAnalyzr();
+        adjustFramerate = settings.adjustFramerate;
         scope = settings.scope || window;
         paused = true;
         
@@ -125,7 +129,7 @@ function GamesRunnr(settings) {
             games[i] = games[i].bind(scope);
         }
         
-        setSpeedReal();
+        setintervalReal();
     };
     
     
@@ -180,7 +184,15 @@ function GamesRunnr(settings) {
             return;
         }
         
-        upkeepNext = upkeepScheduler(self.upkeep, speedReal);
+        if (adjustFramerate) {
+            upkeepNext = upkeepScheduler(
+                self.upkeep,
+                intervalReal - (1000 / FPSAnalyzer.getAverage() - intervalReal)
+            );
+        } else {
+            upkeepNext = upkeepScheduler(self.upkeep, intervalReal);
+        }
+        
         FPSAnalyzer.measure();
         games.forEach(run);
     };
@@ -258,7 +270,7 @@ function GamesRunnr(settings) {
         }
         
         interval = realint;
-        setSpeedReal();
+        setintervalReal();
     };
     
     /**
@@ -276,7 +288,7 @@ function GamesRunnr(settings) {
         }
         
         speed = numReal;
-        setSpeedReal();
+        setintervalReal();
     };
     
     
@@ -284,10 +296,10 @@ function GamesRunnr(settings) {
     */
     
     /**
-     * Sets the speedReal variable, which is interval * (inverse of speed).
+     * Sets the intervalReal variable, which is interval * (inverse of speed).
      */
-    function setSpeedReal() {
-        speedReal = (1 / speed) * interval;
+    function setintervalReal() {
+        intervalReal = (1 / speed) * interval;
     }
     
     /**

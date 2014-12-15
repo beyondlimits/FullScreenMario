@@ -38,17 +38,23 @@ upkeep.
 
 * **speed** *`Number`*
 
-* **FPSAnalyzer** *`FPSAnalyzr`*
-
-* **onPause** *`Function`* - A callback to run when upkeep is paused.
-
-* **onPlay** *`Function`* - A callback to run when upkeep is played.
-
 * **upkeepScheduler** *`Function`* - A Function to replace setTimeout.
 
 * **upkeepCanceller** *`Function`* - A Function to replace clearTimeout.
 
-* **scope** *`Mixed`* - A scope for games to be run on (defaults to the window).
+* **[FPSAnalyzer]** *`FPSAnalyzr`* - An externally declared FPSAnalyzer (if not
+provided, a new one is made with default everything).
+
+* **[adjustFramerate]** *`Boolean`* - Whether scheduling timeouts should adjust
+to actual average FPS (by default, false).
+
+* **[onPause]** *`Function`* - An optional callback to run when upkeep is 
+paused.
+
+* **[onPlay]** *`Function`* - An optional callback to run when upkeep is played.
+
+* **[scope]** *`Mixed`* - A scope for games to be run on (defaults to the 
+window).
 
 
 ## Sample usage

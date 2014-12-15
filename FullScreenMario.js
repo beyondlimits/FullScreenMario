@@ -167,9 +167,7 @@ var FullScreenMario = (function(GameStartr) {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
         EightBitter.StatsHolder.set("lives", 3);
-        // EightBitter.setMap("1-1");
-        EightBitter.setMap("7-4");
-        // FSM.scrollPlayer(1050);
+        EightBitter.setMap("1-1");
         
         EightBitter.ModAttacher.fireEvent("onGameStart");
     }
