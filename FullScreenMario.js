@@ -4646,6 +4646,9 @@ var FullScreenMario = (function(GameStartr) {
         EightBitter.ModAttacher.fireEvent("onSetMap", map);
         
         EightBitter.setLocation(location || 0);
+        EightBitter.PixelDrawer.setBackground(
+            EightBitter.MapsHandler.getArea().background
+        );
     }
     
     /**

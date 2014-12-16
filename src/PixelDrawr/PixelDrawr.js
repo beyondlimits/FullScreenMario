@@ -11,13 +11,19 @@ function PixelDrawr(settings) {
         // A MapScreenr variable to be used for bounds checking
         MapScreener,
         
-        // The canvas object each refillGlobalCanvas call goes to
+        // The canvas object each Thing is to be drawn on
         canvas,
         
-        // The 2D canvas context each refillGlobalCanvas call goes to
+        // The 2D canvas context associated with the canvas
         context,
         
-        // Arrays of Array[Thing]s that are to be drawn in each refillGlobalCanvas
+        // A separate canvas that keeps the background of the scene
+        backgroundCanvas,
+        
+        // The 2D canvas context associated with the background canvas
+        backgroundContext,
+        
+        // Arrays of Thing[]s that are to be drawn in each refillGlobalCanvas
         thing_arrays,
         
         // Utility function to create a canvas (typically taken from EightBittr)
@@ -41,6 +47,9 @@ function PixelDrawr(settings) {
         // How many frames have been drawn so far
         framesDrawn;
     
+    /**
+     * 
+     */
     self.reset = function(settings) {
         PixelRender = settings.PixelRender;
         MapScreener = settings.MapScreener;
@@ -54,6 +63,8 @@ function PixelDrawr(settings) {
         generateObjectKey = settings.generateObjectKey || function (object) {
             return object.toString();
         };
+        
+        self.resetBackground();
     }
     
     
@@ -97,6 +108,33 @@ function PixelDrawr(settings) {
     self.setNoRefill = function (enabled) {
         no_refill = enabled;
     };
+    
+    
+    /* Background manipulations
+    */
+    
+    /**
+     * 
+     */
+    self.resetBackground = function () {
+        backgroundCanvas = getCanvas(MapScreener.width, MapScreener.height);
+        backgroundContext = backgroundCanvas.getContext("2d");
+    };
+    
+    /**
+     * 
+     */
+    self.setBackground = function (fill) {
+        backgroundContext.fillStyle = fill;
+        backgroundContext.fillRect(0, 0, MapScreener.width, MapScreener.height);
+    };
+    
+    /**
+     * 
+     */
+    function drawBackground() {
+        context.drawImage(backgroundCanvas, 0, 0);
+    }
     
     
     /* Core rendering
@@ -208,15 +246,14 @@ function PixelDrawr(settings) {
      * 
      * @return {Self}
      */
-    self.refillGlobalCanvas = function (background) {
+    self.refillGlobalCanvas = function () {
         framesDrawn += 1;
         if (framesDrawn % framerateSkip !== 0) {
             return;
         }
         
         if (!no_refill) {
-            context.fillStyle = background;
-            context.fillRect(0, 0, canvas.width, canvas.height);
+            drawBackground();
         }
         
         thing_arrays.forEach(self.refillThingArray);
@@ -236,7 +273,7 @@ function PixelDrawr(settings) {
     /**
      * 
      */
-    self.refillQuadrantGroups = function (groups, background) {
+    self.refillQuadrantGroups = function (groups) {
         var i;
         
         framesDrawn += 1;
@@ -245,14 +282,14 @@ function PixelDrawr(settings) {
         }
         
         for (i = 0; i < groups.length; i += 1) {
-            self.refillQuadrants(groups[i].quadrants, background);
+            self.refillQuadrants(groups[i].quadrants);
         }
     };
     
     /**
      * 
      */
-    self.refillQuadrants = function (quadrants, background) {
+    self.refillQuadrants = function (quadrants) {
         var quadrant, i;
         
         for (i = 0; i < quadrants.length; i += 1) {
@@ -264,7 +301,7 @@ function PixelDrawr(settings) {
                 && quadrant.bottom > 0
                 && quadrant.left < MapScreener.width
             ) {
-                self.refillQuadrant(quadrant, background);
+                self.refillQuadrant(quadrant);
                 context.drawImage(
                     quadrant.canvas,
                     quadrant.left,
@@ -286,15 +323,25 @@ function PixelDrawr(settings) {
     /**
      * 
      */
-    self.refillQuadrant = function (quadrant, background) {
+    self.refillQuadrant = function (quadrant) {
         var group, i, j;
         
-        if (!no_refill) {
-            quadrant.context.fillStyle = background;
-            quadrant.context.fillRect(0, 0, quadrant.canvas.width, quadrant.canvas.height);
-        }
         // quadrant.context.fillStyle = getRandomColor();
         // quadrant.context.fillRect(0, 0, quadrant.canvas.width, quadrant.canvas.height);
+        
+        if (!no_refill) {
+            quadrant.context.drawImage(
+                backgroundCanvas,
+                quadrant.left,
+                quadrant.top,
+                quadrant.canvas.width,
+                quadrant.canvas.height,
+                0,
+                0,
+                quadrant.canvas.width,
+                quadrant.canvas.height
+            );
+        }
         
         for (i = groupNames.length - 1; i >= 0; i -= 1) {
             group = quadrant.things[groupNames[i]];

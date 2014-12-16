@@ -116,7 +116,10 @@ FullScreenMario.prototype.settings.mods = {
                     }
                 },
                 "onModDisable": function (mod) {
-                    this.MapsHandler.getArea().background = mod.settings.backgroundOld;
+                    var area = this.MapsHandler.getArea();
+                    
+                    area.background = mod.settings.backgroundOld;
+                    this.PixelDrawer.setBackground(area.background);
                 },
                 "onSetLocation": (function (gradients) {
                     return function (mod) { 
@@ -147,6 +150,8 @@ FullScreenMario.prototype.settings.mods = {
                         mod.settings.backgroundOld = area.background;
                         
                         area.background = background;
+                        
+                        this.PixelDrawer.setBackground(area.background);
                     };
                 })({
                     "Underwater": {
