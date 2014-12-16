@@ -1035,7 +1035,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "macro": "Fill", "thing": "Brick", "x": 1032, "y": 64, "xnum": 2 },
                         { "thing": "Brick", "thing": "Brick", "x": 1048, "y": 64, "contents": ["Vine", { "entrance": 4 }] },
                         { "macro": "Floor", "x": 1056, "width": 80 },
-                        { "thing": "Stone", "x": 1088 },
+                        { "thing": "Stone", "x": 1088, "y": 8 },
                         { "thing": "Stone", "x": 1096, "y": 16, "height": 16 },
                         { "thing": "Stone", "x": 1104, "y": 24, "height": 24 },
                         { "thing": "Stone", "x": 1112, "y": 32, "height": 32 },
@@ -1813,7 +1813,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Stone", "x": 1472, "y": 24, "height": 24 },
                         { "thing": "Stone", "x": 1480, "y": 32, "height": 32 },
                         { "thing": "Stone", "x": 1488, "y": 40, "height": 40 },
-                        { "thing": "Stone", "x": 1512, "y": 56, "width": 16, "height": 56 },
+                        { "thing": "Stone", "x": 1512, "y": 64, "width": 16, "height": 48 },
                         { "macro": "EndOutsideCastle", "x": 1588 }
                     ]
                 },
