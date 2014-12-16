@@ -321,7 +321,7 @@ var GameStartr = (function (EightBittr) {
             "MapScreener": EightBitter.MapScreener,
             "screen_attributes": EightBitter.settings.maps.screen_attributes,
             "on_spawn": EightBitter.settings.maps.on_spawn,
-            "stretch_add": EightBitter.mapAddStretched,
+            "stretch_add": EightBitter.mapAddStretched.bind(EightBitter),
             "on_stretch": EightBitter.mapStretchThing
         });
     }

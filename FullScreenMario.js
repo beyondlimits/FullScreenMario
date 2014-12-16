@@ -2496,7 +2496,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function collideTransport(thing, other) {
-        thing.EightBitter.collideCharacterSolid(me, other);
+        thing.EightBitter.collideCharacterSolid(thing, other);
         if (thing.resting !== other) {
             return;
         }
@@ -4892,10 +4892,11 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function mapAddStretched(raw) {
-        var y = (self.MapScreener.floor - raw.y) * self.unitsize;
-        return self.addThing(self.ObjectMaker.make(raw.thing, {
-            "width": self.MapScreener.width,
-            "height": raw.height || self.getAbsoluteHeight(raw.y)
+        var EightBitter = EightBittr.ensureCorrectCaller(this),
+            y = (EightBitter.MapScreener.floor - raw.y) * EightBitter.unitsize;
+        return EightBitter.addThing(EightBitter.ObjectMaker.make(raw.thing, {
+            "width": EightBitter.MapScreener.width,
+            "height": raw.height || EightBitter.getAbsoluteHeight(raw.y)
         }), 0, y);
     }
     

@@ -699,12 +699,12 @@ FullScreenMario.prototype.settings.maps = {
                         { "location": 3 },
                         { "thing": "Stone", "width": 32 },
                         { "thing": "Stone", "x": 40, "width": 456 },
-                        { "macro": "Fill", "thing": "Coin", "x": 121, "y": 55, "xnum": 16 },
+                        { "macro": "Fill", "thing": "Coin", "x": 121, "y": 55, "xnum": 16, "xwidth": 8 },
                         { "thing": "Platform", "x": 128, "y": 24, "width": 24, "transport": true },
-                        { "macro": "Fill", "thing": "Coin", "x": 257, "y": 71, "xnum": 3 },
-                        { "macro": "Fill", "thing": "Coin", "x": 289, "y": 63, "xnum": 16 },
-                        { "macro": "Fill", "thing": "Coin", "x": 425, "y": 71, "xnum": 3 },
-                        { "macro": "Fill", "thing": "Coin", "x": 553, "y": 7, "xnum": 3 }
+                        { "macro": "Fill", "thing": "Coin", "x": 257, "y": 71, "xnum": 3, "xwidth": 8 },
+                        { "macro": "Fill", "thing": "Coin", "x": 289, "y": 63, "xnum": 16, "xwidth": 8 },
+                        { "macro": "Fill", "thing": "Coin", "x": 425, "y": 71, "xnum": 3, "xwidth": 8 },
+                        { "macro": "Fill", "thing": "Coin", "x": 553, "y": 7, "xnum": 3, "xwidth": 8 }
                     ]
                 },
                 {
@@ -715,8 +715,8 @@ FullScreenMario.prototype.settings.maps = {
                         { "macro": "Floor", "width": 136 },
                         { "macro": "Fill", "thing": "Brick", "y": 8, "ynum": 11 },
                         { "macro": "Fill", "thing": "Brick", "x": 32, "y": 8, "xnum": 7, "ynum": 3 },
-                        { "macro": "Fill", "thing": "Coin", "x": 33, "y": 31, "xnum": 7, "ynum": 2, "yheight": 16 },
-                        { "macro": "Fill", "thing": "Coin", "x": 41, "y": 63, "xnum": 5 },
+                        { "macro": "Fill", "thing": "Coin", "x": 33, "y": 31, "xnum": 7, "ynum": 2, "yheight": 16, "xwidth": 8 },
+                        { "macro": "Fill", "thing": "Coin", "x": 41, "y": 63, "xnum": 5, "xwidth": 8 },
                         { "thing": "PipeHorizontal", "x": 104, "y": 16, "entrance": 2 },
                         { "thing": "PipeVertical", "x": 120, "y": 88, "height": 88 }
                     ]
