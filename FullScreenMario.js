@@ -4233,13 +4233,20 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      */
-    function killReplace(thing, type, attributes) {
-        var spawn = thing.EightBitter.ObjectMaker.make(type),
-            i;
+    function killReplace(thing, type, attributes, attributesCopied) {
+        var spawn, i;
         
-        for (i = 0; i < attributes.length; i += 1) {
-            spawn[attributes[i]] = thing[attributes[i]];
+        if (typeof attributes === "undefined") {
+            attributes = {};
         }
+        
+        if (typeof attributesCopied !== "undefined") {
+            for (i = 0; i < attributesCopied.length; i += 1) {
+                attributes[attributesCopied[i]] = thing[attributesCopied[i]];
+            }
+        }
+        
+        spawn = thing.EightBitter.ObjectMaker.make(type, attributes);
         
         if (thing.flipHoriz) {
             thing.EightBitter.flipHoriz(spawn);
@@ -4274,7 +4281,13 @@ var FullScreenMario = (function(GameStartr) {
      * be reduced to jumping; otherwise it should be reduced to walking.
      */
     function killKoopa(thing, big) {
-        return thing.EightBitter.killToShell(thing, big);
+        if (thing.jumping || thing.floating) {
+            thing.EightBitter.killReplace(
+                thing, "Koopa", undefined, [ "smart" ]
+            );
+        } else {
+            return thing.EightBitter.killToShell(thing, big);
+        }
     }
     
     /**
@@ -4308,7 +4321,7 @@ var FullScreenMario = (function(GameStartr) {
             "smart": thing.smart
         };
             
-        if (thing.winged || (big && big !== 2)) {
+        if (big && big !== 2) {
             thing.spawntype = thing.title;
         } else {
             thing.spawntype = thing.shelltype || "Shell";

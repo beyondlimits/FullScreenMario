@@ -199,9 +199,12 @@ FullScreenMario.prototype.settings.mods = {
                 "onAddThing": function (mod, thing) {
                     var spawn;
                     if (thing.title === "Goomba") {
-                        spawn = thing.EightBitter.killReplace(thing, "Beetle", [
-                            "direction", "moveleft", "lookleft", "xvel", "yvel", "speed"
-                        ]);
+                        spawn = thing.EightBitter.killReplace(
+                            thing,
+                            "Beetle", 
+                            undefined,
+                            [ "direction", "moveleft", "lookleft", "xvel", "yvel", "speed" ]
+                        );
                         spawn.mod = "Hard Mode";
                     }
                     else if (thing.title === "Platform") {
@@ -223,7 +226,12 @@ FullScreenMario.prototype.settings.mods = {
                     for (i = 0; i < characters.length; i += 1) {
                         thing = characters[i];
                         if (thing.title === "Goomba") {
-                            spawn = thing.EightBitter.killReplace(thing, "Beetle", attributes);
+                            spawn = thing.EightBitter.killReplace(
+                                thing, 
+                                "Beetle", 
+                                undefined,
+                                attributes
+                            );
                             spawn.mod = "Hard Mode";
                             if (thing.xvel > 0) {
                                 spawn.EightBitter.flipHoriz(spawn);
@@ -252,7 +260,12 @@ FullScreenMario.prototype.settings.mods = {
                     for (i = 0; i < characters.length; i += 1) {
                         thing = characters[i];
                         if (thing.title === "Beetle" && thing.mod === "Hard Mode") {
-                            thing.EightBitter.killReplace(thing, "Goomba", attributes);
+                            thing.EightBitter.killReplace(
+                                thing, 
+                                "Goomba", 
+                                undefined,
+                                attributes
+                            );
                         } else {
                             thing.speed /= 1.4;
                         }
