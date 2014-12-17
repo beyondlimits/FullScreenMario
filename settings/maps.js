@@ -68,6 +68,7 @@ FullScreenMario.prototype.settings.maps = {
         "Plain": FullScreenMario.prototype.mapEntrancePlain,
         "Castle": FullScreenMario.prototype.mapEntranceCastle,
         "Walking": FullScreenMario.prototype.mapEntranceWalking,
+        "Vine": FullScreenMario.prototype.mapEntranceVine,
         "PipeVertical": FullScreenMario.prototype.mapEntrancePipeVertical,
         "PipeHorizontal": FullScreenMario.prototype.mapEntrancePipeHorizontal,
     },
@@ -1390,7 +1391,7 @@ FullScreenMario.prototype.settings.maps = {
                 { "area": 1, "entry": "PipeVertical" },
                 { "area": 2 },
                 { "area": 3, "entry": "PipeVertical" },
-                { "area": 4, "entry": "Plain" }
+                { "area": 4, "entry": "Vine" }
             ],
             "areas": [
                 {

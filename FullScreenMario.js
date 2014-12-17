@@ -2378,7 +2378,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.maxspeed = thing.walkspeed;
         
         thing.EightBitter.flipHoriz(thing);
-        thing.EightBitter.shiftHoriz(thing, (thing.width + 1) * thing.EightBitter.unitsize);
+        thing.EightBitter.shiftHoriz(thing, (thing.width - 4) * thing.EightBitter.unitsize);
         
         thing.EightBitter.TimeHandler.addEvent(function () {
             thing.EightBitter.AudioPlayer.play("Stage Clear");
@@ -4117,6 +4117,23 @@ var FullScreenMario = (function(GameStartr) {
         }, 21);
     }
     
+    /**
+     * 
+     */
+    function animatePlayerOffVine(thing) {
+        thing.EightBitter.flipHoriz(thing);
+        thing.EightBitter.shiftHoriz(
+            thing, 
+            (thing.width - 1) * thing.EightBitter.unitsize
+        );
+        
+        thing.EightBitter.TimeHandler.addEvent(
+            thing.EightBitter.animatePlayerOffPole,
+            14,
+            thing
+        );
+    }
+    
     
     /* Appearance utilities
     */
@@ -4749,6 +4766,52 @@ var FullScreenMario = (function(GameStartr) {
             EightBitter.unitsize * 2,
             EightBitter.unitsize * 56
         );
+    }
+    
+    /**
+     * 
+     */
+    function mapEntranceVine(EightBitter) {
+        var vine = EightBitter.addThing(
+                "Vine", 
+                EightBitter.unitsize * 32,
+                EightBitter.MapScreener.bottom + EightBitter.unitsize * 8
+            ),
+            threshold = EightBitter.MapScreener.bottom - EightBitter.unitsize * 40;
+        
+        EightBitter.TimeHandler.addEventInterval(function () {
+            if (vine.top < threshold) {
+                vine.movement = undefined;
+                EightBitter.mapEntranceVinePlayer(EightBitter, vine);
+                return true;
+            }
+        }, 1, Infinity);
+    }
+    
+    /**
+     * 
+     */
+     function mapEntranceVinePlayer(EightBitter, vine) {
+        var threshold = EightBitter.MapScreener.bottom - EightBitter.unitsize * 24,
+            speed = EightBitter.unitsize / -4,
+            player = EightBitter.addPlayer(
+                EightBitter.unitsize * 29,
+                EightBitter.MapScreener.bottom - EightBitter.unitsize * 4
+            );
+        
+        EightBitter.shiftVert(player, player.height * EightBitter.unitsize);
+        
+        EightBitter.collideVine(player, vine);
+        
+        EightBitter.TimeHandler.addEventInterval(function () {
+            EightBitter.shiftVert(player, speed);
+            if (player.top < threshold) {
+                EightBitter.TimeHandler.addEvent(
+                    EightBitter.animatePlayerOffVine, 49, player
+                );
+                return true;
+            }
+        }, 1, Infinity);
     }
     
     
@@ -6143,6 +6206,7 @@ var FullScreenMario = (function(GameStartr) {
         "animatePlayerPipingStart": animatePlayerPipingStart,
         "animatePlayerPipingEnd": animatePlayerPipingEnd,
         "animatePlayerOffPole": animatePlayerOffPole,
+        "animatePlayerOffVine": animatePlayerOffVine,
         "animateCharacterHop": animateCharacterHop,
         // Appearance utilities
         "lookTowardsThing": lookTowardsThing,
@@ -6178,6 +6242,8 @@ var FullScreenMario = (function(GameStartr) {
         "mapEntrancePlain": mapEntrancePlain,
         "mapEntranceWalking": mapEntranceWalking,
         "mapEntranceCastle": mapEntranceCastle,
+        "mapEntranceVine": mapEntranceVine,
+        "mapEntranceVinePlayer": mapEntranceVinePlayer,
         "mapEntrancePipeVertical": mapEntrancePipeVertical,
         "mapEntrancePipeHorizontal": mapEntrancePipeHorizontal,
         // Map exits

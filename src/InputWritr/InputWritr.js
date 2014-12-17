@@ -425,13 +425,13 @@ function InputWritr(settings) {
     // Returns a closure function that actives a trigger when called
     function makeEventCall(info) {
         return function () {
-            callEvent(info[0], info[1]);
+            self.callEvent(info[0], info[1]);
         };
     }
 
     /**
      * Primary driver function to run an event. The event is chosen from the
-     * triggers object, and calld with event_information as the input.
+     * triggers object, and called with event_information as the input.
      *
      * @param {Function, String} event   The event function (or string alias of
      *                                   it) that will be called.
@@ -439,7 +439,7 @@ function InputWritr(settings) {
      *                             triggers[event], if event is a String.
      * @return {Mixed}
      */
-    function callEvent(event, keycode) {
+    self.callEvent = function (event, keycode) {
         if (can_trigger && !can_trigger(event, keycode)) {
             return;
         }
@@ -449,8 +449,8 @@ function InputWritr(settings) {
             console.warn("Blank event given, ignoring it.");
             return;
         }
-
-        if (typeof (event) === "string" || event instanceof String) {
+        
+        if (event.constructor === String) {
             event = triggers[event][keycode];
         }
 
@@ -503,7 +503,7 @@ function InputWritr(settings) {
                     history[Math.round(get_timestamp())] = [trigger, alias];
                 }
                 
-                callEvent(functions[alias]);
+                self.callEvent(functions[alias]);
             }
         }
     }
