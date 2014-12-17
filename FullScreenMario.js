@@ -3370,7 +3370,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.animatedClimbing = animatedClimbing;
         
         if (thing.bottom < thing.EightBitter.MapScreener.top - thing.EightBitter.unitsize * 4) {
-            thing.EightBitter.setLocation(thing.attachedSolid.entrance);
+            thing.EightBitter.setLocation(thing.attachedSolid.transport);
         }
     }
     
