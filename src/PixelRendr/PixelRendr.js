@@ -138,7 +138,7 @@ function PixelRendr(settings) {
         // The BaseFiler provides a searchable 'view' on the library of sprites
         BaseFiler = new StringFilr({
             "library": library.sprites,
-            "normal": "normal", // to do: put this somewhere more official?,
+            "normal": "normal", // to do: put this somewhere more official?
         });
     };
 
@@ -152,13 +152,14 @@ function PixelRendr(settings) {
         // It does not actually require the extra attributes
         var sprite = BaseFiler.get(key);
         if (!sprite) {
-            console.warn("No raw sprite found.", key, attributes);
-            return;
+            throw new Error("No raw sprite found for " + key + ".");
         }
         
         // Multiple sprites have their sizings taken from attributes
         if (sprite.multiple) {
-            processSpriteMultiple(sprite, key, attributes);
+            if (!sprite.processed) {
+                processSpriteMultiple(sprite, key, attributes);
+            }
         }
         // Single (actual) sprites process for size (row) scaling, and flipping
         else {
@@ -168,6 +169,7 @@ function PixelRendr(settings) {
             sprite = ProcessorDims.process(sprite, key, attributes);
         }
 
+        sprite.processed = true;
         return sprite;
     };
 
@@ -377,6 +379,7 @@ function PixelRendr(settings) {
         this.direction = direction;
         this.multiple = true;
         this.sprites = {};
+        this.decoded = false;
     }
     
 
@@ -603,12 +606,14 @@ function PixelRendr(settings) {
     }
 
     // SpriteMultiple components need to be individually processed
-    function processSpriteMultiple(sprite_raw, key, attributes) {
-        for (var i in sprite_raw.sprites) {
-            if (sprite_raw.sprites[i] instanceof Uint8ClampedArray) {
-                sprite_raw.sprites[i] = ProcessorDims.process(sprite_raw.sprites[i], key + ' ' + i, attributes);
+    function processSpriteMultiple(sprite, key, attributes) {
+        for (var i in sprite.sprites) {
+            if (sprite.sprites[i] instanceof Uint8ClampedArray) {
+                sprite.sprites[i] = ProcessorDims.process(sprite.sprites[i], key + ' ' + i, attributes);
             }
         }
+        
+        sprite.processed = true;
     }
 
     

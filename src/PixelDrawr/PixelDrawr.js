@@ -158,13 +158,13 @@ function PixelDrawr(settings) {
         
         // To do: remove dependency on .num_sprites and sprite_type
         if (thing.sprite.multiple) {
-          thing.sprite_type = thing.sprite.type;
-          refillThingCanvasMultiple(thing, thing.sprite);
+            thing.sprite_type = thing.sprite.type;
+            refillThingCanvasMultiple(thing, thing.sprite);
         }
         else {
-          thing.num_sprites = 1;
-          thing.sprite_type = "normal";
-          refillThingCanvasSingle(thing, thing.sprite);
+            thing.num_sprites = 1;
+            thing.sprite_type = "normal";
+            refillThingCanvasSingle(thing, thing.sprite);
         }
         
         return self;
