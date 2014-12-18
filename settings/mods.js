@@ -50,7 +50,10 @@ FullScreenMario.prototype.settings.mods = {
                         shiftAll = function (EightBitter, solids, scenery, characters) {
                             var dy = shiftLevels[shiftCount];
                             
-                            EightBitter.shiftVert(EightBitter.player, dy);
+                            if (dy < 0) {
+                                EightBitter.shiftVert(EightBitter.player, dy);
+                            }
+                            
                             EightBitter.shiftThings(solids, 0, dy);
                             EightBitter.shiftThings(scenery, 0, dy);
                             EightBitter.shiftThings(characters, 0, dy);
