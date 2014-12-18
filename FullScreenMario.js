@@ -1597,6 +1597,13 @@ var FullScreenMario = (function(GameStartr) {
                     command.x += left;
                 }
                 
+                // For Platforms that slide around, start and end are dynamic
+                if (command.sliding) {
+                    command.begin += left;
+                    command.end += left;
+                }
+                console.log("Now", command.begin, command.end);
+                
                 MapsCreator.analyzePreSwitch(command, prethings, area, map);
             }
         }
@@ -1698,6 +1705,13 @@ var FullScreenMario = (function(GameStartr) {
                     command.x = left;
                 } else {
                     command.x += left;
+                }
+                
+                // For Platforms that slide around, start and end are dynamic
+                if (command.sliding) {
+                    command.begin += left;
+                    command.end += left;
+                    console.log("Now", left, command.begin, command.end, command);
                 }
                 
                 MapsCreator.analyzePreSwitch(command, prethings, area, map);
