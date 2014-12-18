@@ -2381,7 +2381,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.maxspeed = thing.walkspeed;
         
         thing.EightBitter.flipHoriz(thing);
-        thing.EightBitter.shiftHoriz(thing, (thing.width - 4) * thing.EightBitter.unitsize);
+        thing.EightBitter.shiftHoriz(thing, (thing.width + 1) * thing.EightBitter.unitsize);
         
         thing.EightBitter.TimeHandler.addEvent(function () {
             thing.EightBitter.AudioPlayer.play("Stage Clear");
@@ -5781,12 +5781,24 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         // CastleWalls right
-        var j = reference.hasOwnProperty("walls") ? reference.walls : 2;
+        j = reference.hasOwnProperty("walls") ? reference.walls : 2;
         for (i = 0; i < j; i += 1) { // x
             output.push({
                 "thing": "CastleWall",
                 "x": x + 56 + i * 8,
-                "y": y + 48
+                "y": y + 48,
+                "position": "end"
+            });
+        }
+        
+        if (reference.transport) {
+            output.push({
+                "thing": "DetectCollision",
+                "x": x + 24,
+                "y": y + 20,
+                "height": 16,
+                "activate": FullScreenMario.prototype.collideCastleDoor,
+                "position": "end"
             });
         }
         
