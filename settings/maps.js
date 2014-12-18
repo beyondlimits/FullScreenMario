@@ -611,7 +611,7 @@ FullScreenMario.prototype.settings.maps = {
                 { "entry": "Plain" },
                 { "xloc": 1260 },
                 { "entry": "PipeVertical" },
-                { "area": 1/*, "entry": "Cloud"*/ },
+                { "area": 1, "entry": "Vine" },
                 { "area": 2 }
             ],
             "areas": [
@@ -979,7 +979,7 @@ FullScreenMario.prototype.settings.maps = {
                 { "entry": "PipeVertical" },
                 { "xloc": 1272 },
                 { "area": 1 },
-                { "area": 2/*, "entry": "Cloud"*/ }
+                { "area": 2, "entry": "Vine" }
             ],
             "areas": [
                 {

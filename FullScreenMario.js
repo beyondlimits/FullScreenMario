@@ -600,8 +600,9 @@ var FullScreenMario = (function(GameStartr) {
             // Player has fallen too far
             if (!player.dying && player.top > EightBitter.MapScreener.bottom) {
                 // If the map has an exit loc (cloud world), transport there
-                if (EightBitter.MapScreener.exitloc) {
-                    EightBitter.setLocation(map.exitloc);
+                if (EightBitter.MapsHandler.getArea().exit) {
+                    console.log("Going to", EightBitter.MapsHandler.getArea().exit);
+                    EightBitter.setLocation(EightBitter.MapsHandler.getArea().exit);
                 }
                 // Otherwise, since Player is below the screen, kill him dead
                 else {
@@ -636,7 +637,9 @@ var FullScreenMario = (function(GameStartr) {
         if (EightBitter.MapScreener.canscroll) {
             var scrolloffset = player.right - EightBitter.MapScreener.middlex;
             if (scrolloffset > 0) {
-                EightBitter.scrollWindow(Math.round(Math.min(player.scrollspeed, scrolloffset)));
+                EightBitter.scrollWindow(
+                    Math.round(Math.min(player.scrollspeed, scrolloffset))
+                );
             }
         }
     }
@@ -4702,6 +4705,8 @@ var FullScreenMario = (function(GameStartr) {
         EightBitter.MapScreener.setVariables();
         location = EightBitter.MapsHandler.getLocation(name || 0);
         
+        // debugger;
+        
         EightBitter.TimeHandler.addEventInterval(function () {
             if (!EightBitter.MapScreener.notime) {
                 EightBitter.StatsHolder.decrease("time", 1);
@@ -4727,7 +4732,11 @@ var FullScreenMario = (function(GameStartr) {
      /**
       * 
       */
-     function mapEntranceNormal(EightBitter) {
+     function mapEntranceNormal(EightBitter, location) {
+        if (location.xloc) {
+            EightBitter.scrollWindow(location.xloc * EightBitter.unitsize);
+        }
+        
         EightBitter.addPlayer(
             EightBitter.unitsize * 16,
             EightBitter.unitsize * 16
@@ -4737,7 +4746,11 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      */
-     function mapEntrancePlain(EightBitter) {
+     function mapEntrancePlain(EightBitter, location) {
+        if (location.xloc) {
+            EightBitter.scrollWindow(location.xloc * EightBitter.unitsize);
+        }
+        
         EightBitter.addPlayer(
             EightBitter.unitsize * 16,
             EightBitter.MapScreener.floor * EightBitter.unitsize
@@ -4819,7 +4832,9 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function mapEntrancePipeVertical(EightBitter, location) {
-        EightBitter.scrollWindow(location.xloc * EightBitter.unitsize);
+        if (location.xloc) {
+            EightBitter.scrollWindow(location.xloc * EightBitter.unitsize);
+        }
         
         EightBitter.addPlayer(
             location.entrance.left + EightBitter.player.width * EightBitter.unitsize / 2,
