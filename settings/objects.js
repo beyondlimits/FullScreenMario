@@ -832,7 +832,6 @@
             Bush1: [16, 8],
             Bush2: [24, 8],
             Bush3: [32, 8],
-            Castle: [75, 88],
             CastleDoor: [8, 20],
             CastleFlag: [6.5, 10],
             CastleRailing: [8, 4],

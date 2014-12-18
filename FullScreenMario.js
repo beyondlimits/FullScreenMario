@@ -168,6 +168,8 @@ var FullScreenMario = (function(GameStartr) {
         
         EightBitter.StatsHolder.set("lives", 3);
         EightBitter.setMap("1-1");
+        EightBitter.scrollPlayer(6300);
+        EightBitter.StatsHolder.set("time", 49);
         
         EightBitter.ModAttacher.fireEvent("onGameStart");
     }
@@ -2445,9 +2447,8 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function collideCastleDoor(thing, other) {
-        var time = thing.EightBitter.StatsHolder.get("time"),
-            timeStr = String(time),
-            numFireworks = Number(timeStr[timeStr.length - 1]);
+        var time = String(thing.EightBitter.StatsHolder.get("time")),
+            numFireworks = Number(time[time.length - 1]);
         
         thing.EightBitter.killNormal(thing);
         if (!thing.player) {
@@ -2465,7 +2466,7 @@ var FullScreenMario = (function(GameStartr) {
             
             if (thing.EightBitter.StatsHolder.get("time") <= 0) {
                 thing.EightBitter.TimeHandler.addEvent(function () {
-                    thing.EightBitter.animateEndLevelFireworks(thing, numFireworks);
+                    thing.EightBitter.animateEndLevelFireworks(thing, other, numFireworks);
                 }, 35);
                 return true;
             }
@@ -3898,11 +3899,19 @@ var FullScreenMario = (function(GameStartr) {
     
     /**
      * 
+     * 
+     * @param {Collider} other 
+     * @remarks The left of other is the right of player, and is 4 units away 
+     *          from the center of the door.
      */
-    function animateEndLevelFireworks(thing, numFireworks) {
-        var flag = thing.EightBitter.addThing("CastleFlag", 
-                thing.left,
-                thing.top - thing.EightBitter.unitsize * 30),
+    function animateEndLevelFireworks(thing, other, numFireworks) {
+        var doorRight = other.left,
+            doorLeft = doorRight - thing.EightBitter.unitsize * 8,
+            doorBottom = other.bottom,
+            doorTop = doorBottom - thing.EightBitter.unitsize * 16,
+            flag = thing.EightBitter.ObjectMaker.make("CastleFlag", {
+                "position": "beginning"
+            }),
             flagMovements = 40,
             fireInterval = 42,
             fireworkPositions = [
@@ -3916,17 +3925,28 @@ var FullScreenMario = (function(GameStartr) {
             i = 0,
             firework;
         
+        thing.EightBitter.addThing(
+            flag,
+            doorLeft + thing.EightBitter.unitsize,
+            doorTop - thing.EightBitter.unitsize * 24
+        );
+        thing.EightBitter.arrayToBeginning(
+            flag, thing.EightBitter.GroupHolder.getGroup(flag.grouptype)
+        );
+        
         thing.EightBitter.TimeHandler.addEventInterval(function () {
             thing.EightBitter.shiftVert(flag, thing.EightBitter.unitsize * -.25);
         }, 1, flagMovements);
         
-        thing.EightBitter.TimeHandler.addEventInterval(function () {
-            firework = thing.EightBitter.addThing("Firework",
-                thing.left + fireworkPositions[i][0] * thing.EightBitter.unitsize,
-                thing.top + fireworkPositions[i][1] * thing.EightBitter.unitsize);
-            firework.animate(firework);
-            i += 1;
-        }, fireInterval, numFireworks);
+        if (numFireworks > 0 ) {
+            thing.EightBitter.TimeHandler.addEventInterval(function () {
+                firework = thing.EightBitter.addThing("Firework",
+                    thing.left + fireworkPositions[i][0] * thing.EightBitter.unitsize,
+                    thing.top + fireworkPositions[i][1] * thing.EightBitter.unitsize);
+                firework.animate(firework);
+                i += 1;
+            }, fireInterval, numFireworks);
+        }
         
         thing.EightBitter.TimeHandler.addEvent(function () {
             thing.EightBitter.AudioPlayer.addEventImmediate("Stage Clear", "ended", function () {
@@ -5734,7 +5754,7 @@ var FullScreenMario = (function(GameStartr) {
             output.push({
                 "thing": "DetectCollision",
                 "x": x + 24,
-                "y": y + 20,
+                "y": y + 16,
                 "height": 16,
                 "activate": FullScreenMario.prototype.collideCastleDoor,
                 "position": "end"
@@ -5833,7 +5853,7 @@ var FullScreenMario = (function(GameStartr) {
             output.push({
                 "thing": "DetectCollision",
                 "x": x + 24,
-                "y": y + 20,
+                "y": y + 16,
                 "height": 16,
                 "activate": FullScreenMario.prototype.collideCastleDoor,
                 "position": "end"
