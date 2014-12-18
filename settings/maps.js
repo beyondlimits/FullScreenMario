@@ -950,6 +950,8 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "CastleBlock", "x": 584, "y": 32, "fireballs": 6 },
                         { "thing": "Stone", "x": 640, "y": 24, "width": 32, "height": 32 },
                         { "thing": "CastleBlock", "x": 656, "y": 56, "fireballs": 6 },
+                        { "macro": "PlatformGenerator", "x": 686, "width": 12, "direction": -1 },
+                        { "macro": "PlatformGenerator", "x": 710, "width": 12 },
                         { "macro": "Floor", "x": 736, "y": 16 },
                         { "thing": "CastleBlock", "x": 736, "y": 24, "fireballs": 6, "direction": 1 },
                         { "macro": "Floor", "x": 744, "y": 24, "width": 48 },
