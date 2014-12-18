@@ -1498,7 +1498,8 @@ FullScreenMario.prototype.settings.maps = {
                         { "macro": "Fill", "thing": "Brick", "x": 1528, "y": 32, "xnum": 18, "ynum": 7 },
                         { "macro": "Ceiling", "x": 1528, "width": 184 },
                         { "macro": "Fill", "thing": "Brick", "x": 1616, "y": 32, "xnum": 7, "ynum": 7 },
-                        { "macro": "ScrollEnabler", "x": 1610 },
+                        { "thing": "ScrollEnabler", "x": 1512, "y": 184, "height": 96, "width": 16 },
+                        { "thing": "ScrollBlocker", "x": 1528 },
                         { "macro": "Ceiling", "x": 1616, "width": 136 },
                         { "macro": "WarpWorld", "x": 1672, "warps": [5] },
                         { "macro": "Fill", "thing": "Brick", "x": 1776, "y": 8, "xnum": 2, "ynum": 11 }
