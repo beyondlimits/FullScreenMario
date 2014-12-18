@@ -4733,7 +4733,7 @@ var FullScreenMario = (function(GameStartr) {
       * 
       */
      function mapEntranceNormal(EightBitter, location) {
-        if (location.xloc) {
+        if (location && location.xloc) {
             EightBitter.scrollWindow(location.xloc * EightBitter.unitsize);
         }
         
@@ -4747,7 +4747,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
      function mapEntrancePlain(EightBitter, location) {
-        if (location.xloc) {
+        if (location && location.xloc) {
             EightBitter.scrollWindow(location.xloc * EightBitter.unitsize);
         }
         
@@ -4832,7 +4832,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function mapEntrancePipeVertical(EightBitter, location) {
-        if (location.xloc) {
+        if (location && location.xloc) {
             EightBitter.scrollWindow(location.xloc * EightBitter.unitsize);
         }
         
@@ -5541,7 +5541,9 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         if (warps.length === 1) {
-            output[0].x += 32;
+            for (i = 2; i < output.length; i += 1) {
+                output[i].x += 32;
+            }
         }
         
         return output;
