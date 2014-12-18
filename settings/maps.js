@@ -55,6 +55,7 @@ FullScreenMario.prototype.settings.maps = {
         "WarpWorld": FullScreenMario.prototype.macroWarpWorld,
         "CheepsStart": FullScreenMario.prototype.macroCheepsStart,
         "CheepsStop": FullScreenMario.prototype.macroCheepsStop,
+        "LakituStop": FullScreenMario.prototype.macroLakituStop,
         "StartInsideCastle": FullScreenMario.prototype.macroStartInsideCastle,
         "EndOutsideCastle": FullScreenMario.prototype.macroEndOutsideCastle,
         "EndInsideCastle": FullScreenMario.prototype.macroEndInsideCastle,
@@ -1351,7 +1352,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "macro": "Floor", "x": 1456, "width": 64 },
                         { "thing": "Stone", "x": 1512, "y": 24, "height": 24 },
                         { "macro": "Floor", "x": 1536, "width": 384 },
-                        { "macro": "DisableLakitu", "x": 1664 },
+                        { "macro": "LakituStop", "x": 1664 },
                         { "thing": "Stone", "x": 1664, "y": 8 },
                         { "thing": "Stone", "x": 1672, "y": 16, "height": 16 },
                         { "thing": "Stone", "x": 1680, "y": 24, "height": 24 },
@@ -1371,6 +1372,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "macro": "Floor", "width": 136 },
                         { "macro": "Fill", "thing": "Brick", "y": 8, "ynum": 11 },
                         { "macro": "Fill", "thing": "Brick", "x": 24, "y": 16, "ynum": 3 },
+                        { "macro": "Fill", "thing": "Brick", "x": 24, "y": 80, "xnum": 12 },
                         { "macro": "Fill", "thing": "Coin", "x": 25, "y": 39, "xnum": 8, "xwidth": 8 },
                         { "macro": "Fill", "thing": "Coin", "x": 25, "y": 7, "xnum": 10, "xwidth": 8 },
                         { "macro": "Fill", "thing": "Brick", "x": 32, "y": 32, "xnum": 6 },
@@ -1381,9 +1383,7 @@ FullScreenMario.prototype.settings.maps = {
                     ]
                 }
             ]
-        },
-        /* Note: 4-1 entrance/exits still need to be fixed */
-        {
+        }, {
             "name": "4-2",
             "locations": [
                 { "entry": "Walking" },
@@ -2197,7 +2197,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Stone", "x": 1376, "y": 32, "height": 32 },
                         { "thing": "Stone", "x": 1384, "y": 40, "height": 40 },
                         { "macro": "Floor", "x": 1408, "width": 240 },
-                        { "thing": "ZoneDisableLakitu", "x": 1408 },
+                        { "macro": "LakituStop", "x": 1408 },
                         { "thing": "Stone", "x": 1408, "y": 64, "width": 16, "height": 64 },
                         { "macro": "EndOutsideCastle", "x": 1484 }
                     ]
@@ -3248,7 +3248,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Koopa", "x": 1624, "y": 72, "jumping": true },
                         { "thing": "SceneryBlocker", "x": 1640, "y": 24, "width": 8, "height": 24 },
                         { "macro": "Floor", "x": 1648, "width": 320 },
-                        { "macro": "DisableLakitu", "x": 1648 },
+                        { "macro": "LakituStop", "x": 1648 },
                         { "thing": "Stone", "x": 1648, "y": 64, "width": 16, "height": 80 },
                         { "thing": "PlantLarge", "x": 1704, "y": 32 },
                         { "macro": "EndOutsideCastle", "x": 1724 }

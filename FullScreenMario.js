@@ -1250,11 +1250,13 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function spawnLakitu(thing) {
+        thing.EightBitter.MapScreener.lakitu = thing;
+        
         thing.EightBitter.TimeHandler.addEventInterval(function () {
-            if (thing.alive) {
-                thing.EightBitter.animateLakituThrowingSpiny(thing);
-            } else {
+            if (thing.fleeing || !thing.EightBitter.isCharacterAlive(thing)) {
                 return true;
+            } else {
+                thing.EightBitter.animateLakituThrowingSpiny(thing);
             }
         }, 140, Infinity);
     }
@@ -1489,6 +1491,20 @@ var FullScreenMario = (function(GameStartr) {
      */
     function activateCheepsStop(thing) {
         thing.EightBitter.MapScreener.spawningCheeps = false;
+    }
+    
+    /**
+     * 
+     */
+    function activateLakituStop(thing) {
+        var lakitu = thing.EightBitter.MapScreener.lakitu;
+        
+        if (!lakitu) {
+            return;
+        }
+        
+        lakitu.fleeing = true;
+        lakitu.movement = thing.EightBitter.moveLakituFleeing;
     }
     
     /**
@@ -3132,6 +3148,13 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      */
+    function moveLakituFleeing(thing) {
+        thing.EightBitter.shiftHoriz(thing, -thing.EightBitter.unitsize);
+    }
+    
+    /**
+     * 
+     */
     function moveCoinEmerge(thing, parent) {
         thing.EightBitter.shiftVert(thing, thing.yvel);
         if (parent && thing.bottom >= thing.blockparent.bottom) {
@@ -4679,9 +4702,6 @@ var FullScreenMario = (function(GameStartr) {
         EightBitter.ModAttacher.fireEvent("onSetMap", map);
         
         EightBitter.setLocation(location || 0);
-        EightBitter.PixelDrawer.setBackground(
-            EightBitter.MapsHandler.getArea().background
-        );
     }
     
     /**
@@ -4705,7 +4725,9 @@ var FullScreenMario = (function(GameStartr) {
         EightBitter.MapScreener.setVariables();
         location = EightBitter.MapsHandler.getLocation(name || 0);
         
-        // debugger;
+        EightBitter.PixelDrawer.setBackground(
+            EightBitter.MapsHandler.getArea().background
+        );
         
         EightBitter.TimeHandler.addEventInterval(function () {
             if (!EightBitter.MapScreener.notime) {
@@ -5591,6 +5613,22 @@ var FullScreenMario = (function(GameStartr) {
     
     /**
      * 
+     */
+    function macroLakituStop(reference, prethings, area, map, scope) {
+        return [
+            {
+                "thing": "DetectCollision",
+                "x": reference.x || 0,
+                "y": scope.MapScreener.floor,
+                "width": reference.width || 8,
+                "height": scope.MapScreener.height / scope.unitsize,
+                "activate": scope.activateLakituStop
+            }
+        ];
+    }
+    
+    /**
+     * 
      * 
      * @param {Object} reference   A listing of the settings for this macro,
      *                             from an Area's .creation Object.
@@ -6143,6 +6181,7 @@ var FullScreenMario = (function(GameStartr) {
         "spawnRandomSpawner": spawnRandomSpawner,
         "activateCheepsStart": activateCheepsStart,
         "activateCheepsStop": activateCheepsStop,
+        "activateLakituStop": activateLakituStop,
         "activateWarpWorld": activateWarpWorld,
         "activateWindowDetector": activateWindowDetector,
         "activateScrollBlocker": activateScrollBlocker,
@@ -6203,6 +6242,7 @@ var FullScreenMario = (function(GameStartr) {
         "movePodobooFalling": movePodobooFalling,
         "moveLakitu": moveLakitu,
         "moveLakituInitial": moveLakituInitial,
+        "moveLakituFleeing": moveLakituFleeing,
         "moveCoinEmerge": moveCoinEmerge,
         "movePlayer": movePlayer,
         "movePlayerVine": movePlayerVine,
@@ -6309,6 +6349,7 @@ var FullScreenMario = (function(GameStartr) {
         "macroWarpWorld": macroWarpWorld,
         "macroCheepsStart": macroCheepsStart,
         "macroCheepsStop": macroCheepsStop,
+        "macroLakituStop": macroLakituStop,
         "macroStartInsideCastle": macroStartInsideCastle,
         "macroEndOutsideCastle": macroEndOutsideCastle,
         "macroEndInsideCastle": macroEndInsideCastle,
