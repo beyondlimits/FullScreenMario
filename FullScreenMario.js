@@ -5291,12 +5291,22 @@ var FullScreenMario = (function(GameStartr) {
             y = reference.y || 0,
             width = reference.width || 24,
             output = [
-                { "thing": "TreeTop", "x": x, "y": y, "width": width }
+                { 
+                    "thing": "TreeTop", 
+                    "x": x,
+                    "y": y,
+                    "width": width 
+                }
             ];
         
         if (width > 16) {
             output.push({
-                "thing": "TreeTrunk", "x": x + 8, "y": y - 8, "width": width - 16, "height": "Infinity"
+                "thing": "TreeTrunk", 
+                "x": x + 8, 
+                "y": y - 8,
+                "width": width - 16,
+                "height": "Infinity",
+                "grouptype": reference.solidTrunk ? "Solid": "Scenery"
             });
         };
         
