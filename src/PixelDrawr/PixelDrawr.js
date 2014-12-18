@@ -364,6 +364,8 @@ function PixelDrawr(settings) {
     self.drawThingOnContext = function(context, thing) {
         if (
             thing.hidden
+            || thing.height < 1
+            || thing.width < 1
             // || thing.top > MapScreener.height
             // || thing.right < 0
             // || thing.bottom < 0

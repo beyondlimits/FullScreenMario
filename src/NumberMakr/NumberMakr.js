@@ -383,7 +383,14 @@ function NumberMakr(settings) {
      */
     self.randomIntWithin = function (min, max) {
         return (self.randomUnder(max - min) + min) | 0;
-    }
+    };
+    
+    /**
+     * @return {Boolean} Either 1 or 2, with 50% probability of each.
+     */
+    self.randomBoolean = function () {
+        return self.randomInt(2) === 1;
+    };
     
     
     self.reset(settings || {});

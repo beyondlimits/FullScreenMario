@@ -3757,7 +3757,7 @@ var FullScreenMario = (function(GameStartr) {
         if (
             thing.EightBitter.MapScreener.floor - (thing.bottom / thing.EightBitter.unitsize) >= 30
             && thing.resting.title !== "Floor"
-            && Math.floor(thing.EightBitter.random() * 2)
+            && thing.EightBitter.NumberMaker.randomBoolean()
         ) {
             thing.falling = true;
             thing.yvel = thing.EightBitter.unitsize * -.7;
