@@ -5458,13 +5458,21 @@ var FullScreenMario = (function(GameStartr) {
         for (i = 0; i < levels.length; i += 1) {
             output.push({
                 "thing": "Platform",
-                "width": width,
                 "x": x,
                 "y": levels[i],
+                "width": width,
                 "yvel": yvel,
                 "movement": scope.movePlatformSpawn
             });
         }
+        
+        output.push({
+            "thing": "PlatformString",
+            "x": x + (width / 2) - .5,
+            "y": scope.MapScreener.floor,
+            "width": 1,
+            "height": scope.MapScreener.height / scope.unitsize
+        });
         
         return output;
     }
