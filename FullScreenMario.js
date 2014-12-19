@@ -3070,7 +3070,9 @@ var FullScreenMario = (function(GameStartr) {
             thing.yvel = Math.min(thing.yvel - .035, -.7); // going up
         }
         
-        thing.EightBitter.shiftVert(thing, thing.yvel, true);
+        if (thing.top > thing.EightBitter.unitsize * 32) {
+            thing.EightBitter.shiftVert(thing, thing.yvel, true);
+        }
 
         if (!thing.squeeze) {
             if (thing.EightBitter.player.left > thing.right + thing.EightBitter.unitsize * 8) {
