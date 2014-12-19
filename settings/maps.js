@@ -10,6 +10,7 @@ FullScreenMario.prototype.settings.maps = {
         "maxyvelinv",
         "notime",
         "nokeys",
+        "allowDeviceMotion",
         "canscroll"
     ],
     "screen_variables": {

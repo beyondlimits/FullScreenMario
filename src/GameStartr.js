@@ -338,7 +338,7 @@ var GameStartr = (function (EightBittr) {
     function resetInputWriter(EightBitter, customs) {
         EightBitter.InputWriter = new InputWritr(proliferate({
             "can_trigger": EightBitter.canInputsTrigger.bind(EightBitter, EightBitter)
-        }, EightBitter.settings.input));
+        }, EightBitter.settings.input.InputWritrArgs));
     }
     
     /**

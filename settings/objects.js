@@ -235,6 +235,7 @@
                 "underwater": false,
                 "notime": false,
                 "nokeys": false,
+                "allowDeviceMotion": false,
                 // Why are these not being applied?
                 // Will have to put into initializeARea
                 "attributes": {

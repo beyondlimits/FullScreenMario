@@ -437,9 +437,11 @@ function InputWritr(settings) {
      *                                   it) that will be called.
      * @param {Number} [keycode]   The alias of the event function under
      *                             triggers[event], if event is a String.
+     * @param {Event} [sourceEvent]   The raw event that caused the calling Pipe
+     *                                to be triggered, such as a MouseEvent.
      * @return {Mixed}
      */
-    self.callEvent = function (event, keycode) {
+    self.callEvent = function (event, keycode, sourceEvent) {
         if (can_trigger && !can_trigger(event, keycode)) {
             return;
         }
@@ -454,7 +456,7 @@ function InputWritr(settings) {
             event = triggers[event][keycode];
         }
 
-        return event(event_information);
+        return event(event_information, sourceEvent);
     }
 
     /**
@@ -503,7 +505,7 @@ function InputWritr(settings) {
                     history[Math.round(get_timestamp())] = [trigger, alias];
                 }
                 
-                self.callEvent(functions[alias]);
+                self.callEvent(functions[alias], undefined, arguments[0]);
             }
         }
     }

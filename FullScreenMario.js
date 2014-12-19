@@ -492,6 +492,60 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      */
+    var deviceMotion = (function () {
+        var motionDown = false,
+            motionLeft = false,
+            motionRight = false,
+            x, y,
+            dy;
+        
+        return function deviceMotion(player, event) {
+            player.EightBitter.ModAttacher.fireEvent("onDeviceMotion", event);
+            
+            if (!player.EightBitter.MapScreener.allowDeviceMotion) {
+                return;
+            }
+            
+            var acceleration = event.accelerationIncludingGravity;
+            
+            if (y !== undefined) {
+                dy = acceleration.y - y;
+                if (dy > .21) {
+                    player.EightBitter.keyDownUp(player);
+                } else if (dy < -.14) {
+                    player.EightBitter.keyUpUp(player);
+                }
+            }
+            
+            x = acceleration.x;
+            y = acceleration.y;
+            
+            if (x > 2.1) {
+                if (!motionLeft) {
+                    player.EightBitter.keyDownLeft(player);
+                    motionLeft = true;
+                }
+            } else if (x < -2.1) {
+                if (!motionRight) {
+                    player.EightBitter.keyDownRight(player);
+                    motionRight = true;
+                }
+            } else {
+                if (motionLeft) {
+                    player.EightBitter.keyUpLeft(player);
+                    motionLeft = false;
+                }
+                if (motionRight) {
+                    player.EightBitter.keyUpRight(player);
+                    motionRight = false;
+                }
+            }
+        };
+    })();
+    
+    /**
+     * 
+     */
     function canInputsTrigger(EightBitter) {
         return !EightBitter.MapScreener.nokeys;
     }
@@ -3226,7 +3280,7 @@ var FullScreenMario = (function(GameStartr) {
                 }
                 thing.jumping = true;
                 
-                if (thing.power > 1) {
+                if (thing.power > 1 && thing.crouching) {
                     thing.EightBitter.removeClass(thing, "jumping");
                 }
             }
@@ -4164,6 +4218,9 @@ var FullScreenMario = (function(GameStartr) {
         thing.xvel = thing.yvel = 0;
         thing.movementOld = thing.movement;
         thing.movement = undefined;
+        
+        thing.EightBitter.setPlayerSizeLarge(thing);
+        thing.EightBitter.removeClasses(thing, "jumping running crouching");
         
         thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Character", "Scenery");
         thing.EightBitter.TimeHandler.cancelAllCycles(thing);
@@ -6200,6 +6257,7 @@ var FullScreenMario = (function(GameStartr) {
         "keyUpSprint": keyUpSprint,
         "keyUpPause": keyUpPause,
         "mouseDownRight": mouseDownRight,
+        "deviceMotion": deviceMotion,
         "canInputsTrigger": canInputsTrigger,
         // Upkeep maintenence
         "maintainSolids": maintainSolids,

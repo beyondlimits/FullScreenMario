@@ -45,6 +45,7 @@
             inner = document.createElement("div");
         
         control.className = "control";
+        control.id = "control-" + schema.title;
         
         heading.textContent = schema.title;
         
@@ -143,6 +144,21 @@
                 "update": function (value) {
                     var numeric = Number(value.replace("fps", ""));
                     FSM.PixelDrawer.setFramerateSkip(1 / numeric * 60);
+                }
+            },
+            {
+                "title": "Tilt Controls",
+                "type": "Boolean",
+                "source": function () {
+                    return FSM.MapScreener.allowDeviceMotion;
+                },
+                "enable": function () {
+                    FSM.MapScreener.allowDeviceMotion = true;
+                    window.ondevicemotion = FSM.InputWriter.makePipe("ondevicemotion", "type");
+                },
+                "disable": function () {
+                    FSM.MapScreener.allowDeviceMotion = false;
+                    delete window.ondevicemotion;
                 }
             }
         ],

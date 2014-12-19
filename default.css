@@ -206,6 +206,14 @@ section#game {
 }
 
 
+/* Controls - options */
+
+#controls #control-Options .select-options td {
+    padding-top: 3px;
+    padding-bottom: 7px;
+}
+
+
 /* Controls - option keys */
 
 #controls .options-label-Keys {
@@ -225,7 +233,7 @@ section#game {
 }
 
 
-/* Controls - maps grid */
+/* Controls - tables */
 
 #controls table {
     width: 100%;
