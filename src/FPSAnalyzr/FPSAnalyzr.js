@@ -139,6 +139,16 @@ function FPSAnalyzr(settings) {
         numRecorded += 1;
     };
     
+    /**
+     * Returns the result of a call to the internal system-dependant 
+     * performance.now.
+     * 
+     * @return {Number}
+     */
+    self.getTimestamp = function () {
+        return getTimestamp();
+    };
+    
     
     /* Gets
     */

@@ -86,7 +86,7 @@ function GamesRunnr(settings) {
         // An object to set as the scope for games (if not self)
         scope,
         
-        // Whether scheduling timeouts should adjust to actual average FPS
+        // Whether scheduling timeouts should adjust to elapsed upkeep time
         adjustFramerate;
     
     /**
@@ -186,15 +186,23 @@ function GamesRunnr(settings) {
         
         if (adjustFramerate) {
             upkeepNext = upkeepScheduler(
-                self.upkeep,
-                intervalReal - (1000 / FPSAnalyzer.getAverage() - intervalReal)
+                self.upkeep, intervalReal - (self.upkeepTimed() | 0)
             );
         } else {
             upkeepNext = upkeepScheduler(self.upkeep, intervalReal);
+            games.forEach(run);
         }
         
         FPSAnalyzer.measure();
+    };
+    
+    /**
+     * 
+     */
+    self.upkeepTimed = function () {
+        var now = FPSAnalyzer.getTimestamp();
         games.forEach(run);
+        return FPSAnalyzer.getTimestamp() - now;
     };
     
     

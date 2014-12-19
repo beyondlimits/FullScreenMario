@@ -46,7 +46,7 @@ upkeep.
 provided, a new one is made with default everything).
 
 * **[adjustFramerate]** *`Boolean`* - Whether scheduling timeouts should adjust
-to actual average FPS (by default, false).
+to elapsed upkeep time (by default, false).
 
 * **[onPause]** *`Function`* - An optional callback to run when upkeep is 
 paused.
