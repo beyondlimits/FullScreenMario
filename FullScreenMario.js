@@ -3225,7 +3225,7 @@ var FullScreenMario = (function(GameStartr) {
                 thing.jumping = true;
                 
                 if (thing.power > 1) {
-                    thing.EightBitter.setPlayerSizeLarge(thing);
+                    thing.EightBitter.removeClass(thing, "jumping");
                 }
             }
             if (!thing.EightBitter.MapScreener.underwater) {
