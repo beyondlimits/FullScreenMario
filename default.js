@@ -13,6 +13,10 @@
         section.textContent = "";
         section.appendChild(FSM.container);
         
+        FSM.proliferate(window, {
+            "ondevicemotion": FSM.InputWriter.makePipe("ondevicemotion", "type")
+        });
+        
         FSM.proliferate(document.body, {
             "onkeydown": FSM.InputWriter.makePipe("onkeydown", "keyCode"),
             "onkeyup": FSM.InputWriter.makePipe("onkeyup", "keyCode")
@@ -154,11 +158,9 @@
                 },
                 "enable": function () {
                     FSM.MapScreener.allowDeviceMotion = true;
-                    window.ondevicemotion = FSM.InputWriter.makePipe("ondevicemotion", "type");
                 },
                 "disable": function () {
                     FSM.MapScreener.allowDeviceMotion = false;
-                    delete window.ondevicemotion;
                 }
             }
         ],

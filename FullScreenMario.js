@@ -1353,9 +1353,10 @@ var FullScreenMario = (function(GameStartr) {
             return;
         }
         
-        var balls = new Array(thing.fireballs);
+        var balls = new Array(thing.fireballs),
+            i;
         
-        for (var i = 0; i < thing.fireballs; i += 1) {
+        for (i = 0; i < thing.fireballs; i += 1) {
             balls[i] = thing.EightBitter.addThing("CastleFireball");
             thing.EightBitter.setMidObj(balls[i], thing);
         }
@@ -4110,7 +4111,7 @@ var FullScreenMario = (function(GameStartr) {
             ay = Math.sin(thing.angle * Math.PI) * thing.EightBitter.unitsize * 4,
             i;
         
-        for (i = 1; i < balls.length; i += 1) {
+        for (i = 0; i < balls.length; i += 1) {
             thing.EightBitter.setMidX(balls[i], thing.left + ax * i);
             thing.EightBitter.setMidY(balls[i], thing.top + ay * i);
         }

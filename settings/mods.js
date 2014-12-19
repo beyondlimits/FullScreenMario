@@ -34,8 +34,7 @@ FullScreenMario.prototype.settings.mods = {
                     other.actionLeft(player, other, true);
                 }
             },
-        },
-        {
+        }, {
             "name": "Earthquake!",
             "description": "Mario landing causes everything else to jump.",
             "author": {
@@ -103,8 +102,7 @@ FullScreenMario.prototype.settings.mods = {
                     }
                 })()
             }
-        },
-        {
+        }, {
             "name": "Gradient Skies",
             "description": "Skies fade out to black in the heavens above.",
             "author": {
@@ -188,8 +186,7 @@ FullScreenMario.prototype.settings.mods = {
                 })
             },
             "settings": {}
-        },
-        {
+        }, {
             // http://www.themushroomkingdom.net/smb_breakdown.shtml#hard
             "name": "Hard Mode",
             "description": "Like in Super Mario Bros Deluxe!",
@@ -283,8 +280,7 @@ FullScreenMario.prototype.settings.mods = {
                     }
                 }
             }
-        },
-        {
+        }, {
             "name": "High Speed",
             "description": "Mario's maximum speed is quadrupled.",
             "author": {
@@ -303,8 +299,7 @@ FullScreenMario.prototype.settings.mods = {
                     stats.maxspeedsave = stats.maxspeed = stats.scrollspeed = mod.value_old;
                 }
             }
-        },
-        {
+        }, {
             "name": "Invincibility",
             "description": "Mario is constantly given star power.",
             "author": {
@@ -325,8 +320,7 @@ FullScreenMario.prototype.settings.mods = {
                     FSM.playerStarUp(this.player, Infinity);
                 }
             }
-        },
-        {
+        }, {
             "name": "Parallax Clouds",
             "description": "Clouds in the sky scroll at about 63% the normal rate.",
             "author": {
@@ -342,8 +336,7 @@ FullScreenMario.prototype.settings.mods = {
                     this.ObjectMaker.getFunction("Cloud").prototype.parallax = undefined;
                 }
             }
-        },
-        {
+        }, {
             "name": "Low Gravity",
             "description": "I believe I can fly!",
             "author": {
@@ -361,8 +354,7 @@ FullScreenMario.prototype.settings.mods = {
                             = this.ObjectMaker.getFunction("Area").prototype.gravity;
                 }
             }
-        },
-        {
+        }, {
             "name": "Luigi",
             "description": "The little brother who could!",
             "author": {
@@ -390,8 +382,50 @@ FullScreenMario.prototype.settings.mods = {
                     }
                 }
             }
-        },
-        {
+        }, { 
+            "name": "Tilt Gravity",
+            "description": "Tilting your device pushes characters around",
+            "author": {
+                "name": "Josh Goldberg",
+                "email": "josh@fullscreenmario.com"
+            },
+            "enabled": false,
+            "events": {
+                "onDeviceMotion": function (mod, event) {
+                    var characters = this.GroupHolder.getCharacterGroup(),
+                        acceleration = event.accelerationIncludingGravity,
+                        diff = -acceleration.x * this.unitsize,
+                        y = acceleration.y,
+                        character, i;
+                    
+                    for (i = 0; i < characters.length; i += 1) {
+                        character = characters[i];
+                        if (!character.player && !character.grounded) {
+                            this.shiftHoriz(character, diff);
+                        }
+                    }
+                    
+                    if (typeof mod.settings.y !== "undefined") {
+                        diff = (y - mod.settings.y) * this.unitsize * 2;
+                        if (diff > 0) {
+                            for (i = 0; i < characters.length; i += 1) {
+                                character = characters[i];
+                                if (!character.grounded) {
+                                    this.shiftVert(character, -diff);
+                                    character.yvel = -diff;
+                                    character.resting = undefined;
+                                }
+                            }
+                        }
+                    }
+                    
+                    mod.settings.y = y;
+                }
+            },
+            "settings": {
+                "y": undefined
+            }
+        }, {
             "name": "QCount",
             "description": "QQQQQQQ",
             "author": {
@@ -462,8 +496,7 @@ FullScreenMario.prototype.settings.mods = {
                     "21": [ ["Bowser"] ]
                 }
             }
-        },
-        {
+        }, {
             "name": "Super Fireballs",
             "description": "Fireballs blow up solids, and Mario has unlimited.",
             "author": {
@@ -481,8 +514,7 @@ FullScreenMario.prototype.settings.mods = {
                     this.ObjectMaker.getFunction("solid").prototype.firedeath = 0;
                 }
             }
-        },
-        {
+        }, {
             "name": "Trip of Acid",
             "description": "Sprites aren't cleared from the screen each game tick.",
             "author": {

@@ -197,7 +197,10 @@ function GamesRunnr(settings) {
     };
     
     /**
+     * A utility for self.upkeep that calls the same games.forEach(run), timing
+     * the total execution time.
      * 
+     * @return {Number} The total time spent, in milliseconds.
      */
     self.upkeepTimed = function () {
         var now = FPSAnalyzer.getTimestamp();

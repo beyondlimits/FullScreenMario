@@ -400,6 +400,7 @@
                 nofall: true,
                 deadly: true,
                 nocollidesolid: true,
+                grounded: true,
                 death: FullScreenMario.prototype.killNormal,
                 movement: FullScreenMario.prototype.movePiranha,
                 onThingAdded: FullScreenMario.prototype.spawnPiranha,
@@ -449,6 +450,7 @@
                 nofire: true,
                 nocollidechar: true,
                 nocollidesolid: true,
+                grounded: true,
                 movement: undefined,
                 onThingAdded: FullScreenMario.prototype.spawnPodoboo
             },
@@ -458,6 +460,7 @@
                 nofire: true,
                 nocollidechar: true,
                 nocollidesolid: true,
+                grounded: true,
                 movement: undefined,
                 xvel: FullScreenMario.unitsize / 2,
             },
@@ -466,6 +469,7 @@
                 nofall: true,
                 noshiftx: true,
                 nocollidesolid: true,
+                grounded: true,
                 onThingAdded: FullScreenMario.prototype.spawnLakitu,
                 movement: FullScreenMario.prototype.moveLakituInitial
             },
@@ -568,6 +572,7 @@
                 nofire: true,
                 nostar: true,
                 collide_primary: true,
+                grounded: true,
                 animate: FullScreenMario.prototype.animateFireballEmerge,
                 collide: FullScreenMario.prototype.collideFireball,
                 death: FullScreenMario.prototype.animateFireballExplode,
@@ -591,6 +596,7 @@
             Star: {
                 name: "star item", // Item class so player's star isn't confused with this
                 width: 7,
+                grounded: true,
                 speed: FullScreenMario.unitsize * .56,
                 action: FullScreenMario.prototype.collideStar,
                 movement: FullScreenMario.prototype.moveJumping,
@@ -634,6 +640,7 @@
                 nofall: true,
                 nocollide: true,
                 nocollidesolid: true,
+                grounded: true,
                 speed: FullScreenMario.unitsize / 4,
                 movement: FullScreenMario.prototype.moveVine,
                 collide: FullScreenMario.prototype.collideVine,
@@ -643,7 +650,8 @@
                 width: 4,
                 height: 4,
                 nocollide: true,
-                movement: false,
+                grounded: true,
+                movement: undefined,
                 spriteCycle: [
                     [FullScreenMario.prototype.unflipHoriz, FullScreenMario.prototype.flipHoriz]
                 ]
