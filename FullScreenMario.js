@@ -177,17 +177,33 @@ var FullScreenMario = (function(GameStartr) {
      */
     function gameOver() {
         var EightBitter = EightBittr.ensureCorrectCaller(this),
-            backgroundOld = EightBitter.MapsHandler.getArea().background;
+            text = EightBitter.ObjectMaker.make("CustomText", {
+                "texts": [{
+                    "text": "GAME OVER"
+                }]
+            }),
+            texts, textWidth, dx, i;
         
         EightBitter.AudioPlayer.pauseTheme();
         EightBitter.AudioPlayer.play("Game Over");
         
         EightBitter.GroupHolder.clearArrays();
-        EightBitter.MapsHandler.getArea().background = "black";
         EightBitter.StatsHolder.hideContainer();
+        EightBitter.PixelDrawer.setBackground("black");
+        
+        EightBitter.addThing(
+            text,
+            EightBitter.MapScreener.width / 2,
+            EightBitter.MapScreener.height / 2
+        );
+        
+        texts = text.children;
+        textWidth = -(texts[texts.length - 1].right - texts[0].left) / 2;
+        for (i = 0; i < texts.length; i += 1) {
+            EightBitter.shiftHoriz(texts[i], textWidth);
+        }
         
         EightBitter.TimeHandler.addEvent(function () {
-            EightBitter.MapsHandler.getArea().background = backgroundOld;
             EightBitter.gameStart();
             EightBitter.StatsHolder.displayContainer();
         }, 420);

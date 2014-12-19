@@ -269,6 +269,7 @@ var GameStartr = (function (EightBittr) {
      */
     function resetMapScreener(EightBitter, customs) {
         EightBitter.MapScreener = new MapScreenr({
+            "EightBitter": EightBitter,
             "unitsize": FullScreenMario.unitsize,
             "width": customs.width,
             "height": customs.height,

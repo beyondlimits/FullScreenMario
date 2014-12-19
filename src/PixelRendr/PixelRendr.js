@@ -504,18 +504,17 @@ function PixelRendr(settings) {
     // Repeats each row of a sprite based on the container attributes
     function spriteRepeatRows(sprite, key, attributes) {
         // With the rows set, repeat them by unitsize to create the final, parsed product
-        var scaleReal = attributes.scale ? scale * attributes.scale : scale,
-            parsed = new Uint8ClampedArray(sprite.length * scaleReal),
+        var parsed = new Uint8ClampedArray(sprite.length * scale),
             rowsize = attributes[sprite_width] * 4,
-            heightscale = attributes[sprite_height] * scaleReal,
+            heightscale = attributes[sprite_height] * scale,
             readloc = 0,
             writeloc = 0,
             si, sj;
         
         // For each row:
         for (si = 0; si < heightscale; ++si) {
-            // Add it to parsed x scaleReal
-            for (sj = 0; sj < scaleReal; ++sj) {
+            // Add it to parsed x scale
+            for (sj = 0; sj < scale; ++sj) {
                 self.memcpyU8(sprite, parsed, readloc, writeloc, rowsize);
                 writeloc += rowsize;
             }
