@@ -461,7 +461,7 @@ function MapsCreatr(settings) {
         boundaries.top = Math.min(prething.top, boundaries.top);
         boundaries.right = Math.max(prething.right, boundaries.right);
         boundaries.bottom = Math.max(prething.bottom, boundaries.bottom);
-        boundaries.left = Math.max(prething.left, boundaries.left);
+        boundaries.left = Math.min(prething.left, boundaries.left);
     }
     
     /**

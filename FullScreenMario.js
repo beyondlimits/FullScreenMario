@@ -5133,12 +5133,13 @@ var FullScreenMario = (function(GameStartr) {
      */
     function mapAddStretched(raw) {
         var EightBitter = EightBittr.ensureCorrectCaller(this),
+            boundaries = EightBitter.MapsHandler.getArea().boundaries,
             y = (EightBitter.MapScreener.floor - raw.y) * EightBitter.unitsize;
         
         return EightBitter.addThing(EightBitter.ObjectMaker.make(raw.thing, {
-            "width": EightBitter.MapScreener.width,
+            "width": boundaries.right - boundaries.left,
             "height": raw.height || EightBitter.getAbsoluteHeight(raw.y)
-        }), 0, y);
+        }), boundaries.left, y);
     }
     
     /**
