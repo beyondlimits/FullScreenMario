@@ -2361,7 +2361,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Stone", "x": 488, "y": 32, "width": 16, "height": 32 },
                         { "thing": "Stone", "x": 488, "y": 88, "width": 16, "height": 32 },
                         { "thing": "PipeHorizontal", "x": 496, "y": 48, "width": 16 },
-                        { "thing": "Stone", "x": 504, "y": 88, "width": 16, "height": 88 }
+                        { "thing": "Stone", "x": 504, "y": 88, "width": 16, "height": 88, "width": 16 }
                     ]
                 },
                 {
