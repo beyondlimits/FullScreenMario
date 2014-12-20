@@ -2307,7 +2307,7 @@ var FullScreenMario = (function(GameStartr) {
                 (thing.star && !other.nostar)
                 || (
                     !thing.EightBitter.MapScreener.underwater
-                    || (!other.deadly && isThingOnThing(thing, other))
+                    && (!other.deadly && isThingOnThing(thing, other))
                 )
             ) {
                 
