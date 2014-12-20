@@ -550,6 +550,7 @@
             item: {
                 group: "item",
                 collide: FullScreenMario.prototype.collideFriendly,
+                onCollideUp: FullScreenMario.prototype.collideUpItem,
                 jump: FullScreenMario.prototype.itemJump,
                 nofire: true
             },
@@ -674,7 +675,9 @@
                 nofall: true,
                 nocollidechar: true,
                 nocollidesolid: true,
+                allowUpSolids: true,
                 animate: FullScreenMario.prototype.animateEmergeCoin,
+                onCollideUp: FullScreenMario.prototype.collideUpCoin,
                 collide: FullScreenMario.prototype.collideCoin,
                 spriteCycleSynched: [
                     ["one", "two", "three", "two", "one"]

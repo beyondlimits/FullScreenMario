@@ -906,7 +906,7 @@ var FullScreenMario = (function(GameStartr) {
         if (other.hidden && !other.collide_hidden) {            if (!thing.player || !thing.EightBitter.isSolidOnCharacter(other, thing)) {                return false;            }
         }
         
-        if (thing.nocollidesolid) {
+        if (thing.nocollidesolid && !(thing.allowUpSolids && other.up)) {
             return false;
         }
         
@@ -1964,19 +1964,28 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function collideCharacterSolidUp(thing, other) {
-        switch (thing.group) {
-            case "item":
-                thing.EightBitter.animateCharacterHop(thing);
-                thing.moveleft = thing.EightBitter.objectToLeft(thing, other);
-                break;
-            case "coin":
-                thing.animate(thing);
-                break;
-            default:
-                thing.EightBitter.scoreOn(thing.scoreBelow, thing);
-                thing.death(thing, 2);
-                break;
+        if (thing.onCollideUp) {
+            thing.onCollideUp(thing, other);
+        } else {
+            thing.EightBitter.scoreOn(thing.scoreBelow, thing);
+            thing.death(thing, 2);
         }
+    }
+    
+    /**
+     * 
+     */
+    function collideUpItem(thing, other) {
+        thing.EightBitter.animateCharacterHop(thing);
+        thing.moveleft = thing.EightBitter.objectToLeft(thing, other);
+    }
+    
+    /**
+     * 
+     */
+    function collideUpCoin(thing, other) {
+        other = thing.blockparent;
+        thing.animate(thing, other);
     }
     
     /**
@@ -6361,6 +6370,8 @@ var FullScreenMario = (function(GameStartr) {
         "collideFriendly": collideFriendly,
         "collideCharacterSolid": collideCharacterSolid,
         "collideCharacterSolidUp": collideCharacterSolidUp,
+        "collideUpItem": collideUpItem,
+        "collideUpCoin": collideUpCoin,
         "collideCoin": collideCoin,
         "collideStar": collideStar,
         "collideFireball": collideFireball,
