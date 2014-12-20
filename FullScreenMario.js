@@ -2160,6 +2160,7 @@ var FullScreenMario = (function(GameStartr) {
             
             // If the shell is standing still, make it move
             if (other.xvel === 0) {
+                thing.EightBitter.scoreOn(100, other);
                 if (shelltoleft) {
                     other.moveleft = true;
                     other.xvel = -other.speed;
@@ -4778,7 +4779,7 @@ var FullScreenMario = (function(GameStartr) {
             return;
         }
         
-        // Shells in the air: 8000 points (see guide, this may be wrong)
+        // Shells in the air: 8000 points (see guide)
         if (!other.resting) {
             thing.EightBitter.scoreOn(8000, other);
             return;
