@@ -61,7 +61,10 @@ function UserWrappr(settings) {
         
         GameStartrConstructor.prototype.proliferate(
             customs,
-            GameStartrConstructor.prototype.settings.ui.sizes[currentSize]
+            GameStartrConstructor.prototype.settings.ui.sizes[
+                customs.size || currentSize
+            ],
+            true
         );
         
         generators = {
@@ -329,7 +332,7 @@ function UserWrappr(settings) {
                 detailsSource = function () {
                     return currentSize;
                 },
-                detailsUpdate = function (value) {
+                detailsUpdate = function (GameStarter, value) {
                     if (value === currentSize) {
                         return;
                     }
@@ -605,7 +608,7 @@ function UserWrappr(settings) {
             customs.width = document.body.clientWidth;
         }
         if (!isFinite(customs.height)) {
-            if (sizing.full) {
+            if (customs.full) {
                 customs.height = screen.height;
             } else if(isFullScreen) {
                 // Guess for browser window...
