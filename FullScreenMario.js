@@ -4320,7 +4320,11 @@ var FullScreenMario = (function(GameStartr) {
         thing.movementOld = thing.movement;
         thing.movement = undefined;
         
-        thing.EightBitter.setPlayerSizeLarge(thing);
+        if (thing.power > 1) {
+            thing.EightBitter.setPlayerSizeLarge(thing);
+        } else {
+            thing.EightBitter.setPlayerSizeSmall(thing);
+        }
         thing.EightBitter.removeClasses(thing, "jumping running crouching");
         
         thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Character", "Scenery");
