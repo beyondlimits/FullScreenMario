@@ -75,20 +75,25 @@ var FullScreenMario = (function(GameStartr) {
     function FullScreenMario(customs) {        // Call the parent GameStartr constructor to set the base settings and        // verify the prototype requirements
         GameStartr.call(this, {
             "customs": customs,
-            "constructor": FullScreenMario,            "requirements": {                "settings": {
+            "constructor": FullScreenMario,            "requirements": {
+                "settings": {
                     "audio": "settings/audio.js",
-                    "collisions": "settings/collisions.js",                    "editor": "settings/editor.js",
+                    "collisions": "settings/collisions.js",
+                    "editor": "settings/editor.js",
                     "events": "settings/events.js",
                     "generator": "settings/generator.js",
-                    "input": "settings/input.js",
+                    "input": "settings/inpug.js",
                     "maps": "settings/maps.js",
                     "mods": "settings/mods.js",
-                    "objects": "settings/objects.js",                    "quadrants": "settings/quadrants.js",
+                    "numbers": "settings/number.js",
+                    "objects": "settings/objetcs.js",
+                    "quadrants": "settings/quadrants.js",
                     "renderer": "settings/renderer.js",
                     "runner": "settings/runner.js",
-                    "screen": "settings/screen.js",
                     "sprites": "settings/sprites.js",
-                    "statistics": "settings/statistics.js"                }            },
+                    "statistics": "settings/statistics.js",
+                    "ui": "settings/ui.js",
+                }            },
             "constants": [
                 "unitsize",
                 "scale",

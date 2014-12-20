@@ -46,7 +46,7 @@ var GameStartr = (function (EightBittr) {
                     "StringFilr": "src/StringFilr/StringFilr.js",
                     "ThingHittr": "src/ThingHittr/ThingHittr.js",
                     "TimeHandlr": "src/TimeHandlr/TimeHandlr.js"
-                },
+                }
             }
         });
     }

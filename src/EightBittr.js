@@ -35,9 +35,6 @@ var EightBittr = (function () {
             if (settings.requirements.self) {
                 checkRequirements(self, settings.requirements.self, "self");
             }
-            if (settings.requirements.settings) {
-                checkRequirements(self.settings, settings.requirements.settings, "settings");
-            }
         }
     }
     
@@ -46,7 +43,7 @@ var EightBittr = (function () {
      * include them, this makes sure each of those requirements is a property of
      * the given object. 
      * 
-     * @param {Object} self    Generally either the window (for global checks,
+     * @param {Mixed} self    Generally either the window (for global checks,
      *                         such as utility classes) or an EightBitter       
      * @param {Object} requirements   An associative array of properties to 
      *                                check for under self
