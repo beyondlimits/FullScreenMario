@@ -430,7 +430,9 @@ function MapsCreatr(settings) {
         }
         
         prethings[prething.thing[key_group_type]].push(prething);
-        stretchAreaBoundaries(prething, area);
+        if (!thing.noBoundaryStretch) {
+            stretchAreaBoundaries(prething, area);
+        }
         
         // If a Thing is an entrance, then the location it is an entrance to 
         // must it and its position. Note that this will have to be changed
@@ -476,8 +478,14 @@ function MapsCreatr(settings) {
         this.left = (reference.x || reference.left) || 0;
         this.top = (reference.y || reference.top) || 0;
         
-        this.right = this.left + ObjectMaker.getPropertiesFull(this.title).width;
-        this.bottom = this.top + ObjectMaker.getPropertiesFull(this.title).height;
+        this.right = this.left + (
+            reference.width
+            || ObjectMaker.getPropertiesFull(this.title).width
+        );
+        this.bottom = this.top + (
+            reference.height
+            || ObjectMaker.getPropertiesFull(this.title).height
+        );
         
         if (reference.position) {
             this.position = reference.position;

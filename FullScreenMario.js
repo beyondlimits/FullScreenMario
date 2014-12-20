@@ -1628,7 +1628,12 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function activateScrollBlocker(thing) {
+        var dx = thing.EightBitter.MapScreener.width - thing.left;
+        
         thing.EightBitter.MapScreener.canscroll = false;
+        if (dx > 0) {
+            thing.EightBitter.scrollWindow(-dx);
+        }
     }
     
     /**
@@ -5147,12 +5152,15 @@ var FullScreenMario = (function(GameStartr) {
      */
     function mapAddAfter(raw) {
         var EightBitter = EightBittr.ensureCorrectCaller(this),
+            MapsCreator = EightBitter.MapsCreator,
+            MapsHandler = EightBitter.MapsHandler,
+            prethings = MapsHandler.getPreThings(),
+            area = MapsHandler.getArea(),
+            map = MapsHandler.getMap(),
             boundaries = EightBitter.MapsHandler.getArea().boundaries;
         
-        return EightBitter.addThing(
-            raw.thing,
-            boundaries.right * EightBitter.unitsize, 
-            raw.y ? raw.y * EightBitter.unitsize : 0);
+        raw.x = boundaries.right;
+        MapsCreator.analyzePreSwitch(raw, prethings, area, map);
     }
     
     /**

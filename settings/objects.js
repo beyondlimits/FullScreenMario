@@ -837,7 +837,8 @@
                 libtype: "scenery",
                 grouptype: "Scenery",
                 repeat: true,
-                nocollide: true // for when placed in Solid group
+                nocollide: true, // for when placed in Solid group
+                noBoundaryStretch: true
             },
             // Blank: [0, 0],
             BrickHalf: [8, 4],
