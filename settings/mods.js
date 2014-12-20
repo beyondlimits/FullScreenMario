@@ -310,14 +310,14 @@ FullScreenMario.prototype.settings.mods = {
             "events": {
                 "onModEnable": function () {
                     if (this.player) {
-                        FSM.playerStarUp(this.player, Infinity);
+                        this.playerStarUp(this.player, Infinity);
                     }
                 },
                 "onModDisable": function () {
-                    FSM.playerStarDown(this.player);
+                    this.playerStarDown(this.player);
                 },
                 "onSetLocation": function () {
-                    FSM.playerStarUp(this.player, Infinity);
+                    this.playerStarUp(this.player, Infinity);
                 }
             }
         }, {
@@ -435,9 +435,9 @@ FullScreenMario.prototype.settings.mods = {
             "enabled": false,
             "events": {
                 "onModEnable": function (mod) {
-                    var FSM = this,
+                    var EightBitter = this,
                         characters = mod.settings.characters,
-                        charactersFSM = FSM.GroupHolder.getCharacterGroup(),
+                        charactersEightBitter = EightBitter.GroupHolder.getCharacterGroup(),
                         level;
                     
                     this.InputWriter.addEvent("onkeydown", "q", function () {
@@ -445,22 +445,22 @@ FullScreenMario.prototype.settings.mods = {
                         
                         if (mod.settings.levels[mod.settings.qcount]) {
                             var level = mod.settings.levels[mod.settings.qcount];
-                            mod.settings.event = FSM.TimeHandler.addEventInterval(function () {
-                                if (charactersFSM.length < 210) {
+                            mod.settings.event = EightBitter.TimeHandler.addEventInterval(function () {
+                                if (charactersEightBitter.length < 210) {
                                     var num = Math.floor(Math.random() * level.length),
-                                        lul = FSM.ObjectMaker.make.apply(FSM, level[num]);
+                                        lul = EightBitter.ObjectMaker.make.apply(EightBitter, level[num]);
                                     
-                                    lul.yvel = Math.random() * FSM.unitsize / 4;
-                                    lul.xvel = lul.speed = Math.random() * FSM.unitsize * 2;
+                                    lul.yvel = Math.random() * EightBitter.unitsize / 4;
+                                    lul.xvel = lul.speed = Math.random() * EightBitter.unitsize * 2;
                                     if (Math.floor(Math.random() * 2)) {
                                         lul.xvel *= -1;
                                     }
                                     
                                     characters.push(lul);
-                                    FSM.addThing(
+                                    EightBitter.addThing(
                                         lul, 
-                                        (32 * Math.random() + 128) * FSM.unitsize,
-                                        88 * Math.random() * FSM.unitsize
+                                        (32 * Math.random() + 128) * EightBitter.unitsize,
+                                        88 * Math.random() * EightBitter.unitsize
                                     );
                                 }
                             }, 7, Infinity);

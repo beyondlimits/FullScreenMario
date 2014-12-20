@@ -1,4 +1,27 @@
 FullScreenMario.prototype.settings.ui = {
+    "sizeDefault": "NES",
+    "sizes": {
+        "NES": {
+            "width": 512,
+            "height": 464,
+            "full": false
+        },
+        "Wide": {
+            "width": Infinity,
+            "height": 464,
+            "full": false
+        },
+        "Large": {
+            "width": Infinity,
+            "height": Infinity,
+            "full": false
+        },
+        "Full!": {
+            "width": Infinity,
+            "height": Infinity,
+            "full": true
+        }
+    },
     "schemas": [
         {
             "title": "Options",
@@ -9,37 +32,37 @@ FullScreenMario.prototype.settings.ui = {
                     "type": "Number",
                     "minimum": 0,
                     "maximum": 100,
-                    "source": function () {
-                        return Math.round(FSM.AudioPlayer.getVolume()) * 100;
+                    "source": function (GameStarter) {
+                        return Math.round(GameStarter.AudioPlayer.getVolume()) * 100;
                     },
-                    "update": function (value) {
-                        FSM.AudioPlayer.setVolume(value / 100);
+                    "update": function (GameStarter, value) {
+                        GameStarter.AudioPlayer.setVolume(value / 100);
                     }
                 },
                 {
                     "title": "Mute",
                     "type": "Boolean",
-                    "source": function () {
-                        return FSM.AudioPlayer.getMuted();
+                    "source": function (GameStarter) {
+                        return GameStarter.AudioPlayer.getMuted();
                     },
-                    "enable": function () {
-                        FSM.AudioPlayer.setMutedOn();
+                    "enable": function (GameStarter) {
+                        GameStarter.AudioPlayer.setMutedOn();
                     },
-                    "disable": function () {
-                        FSM.AudioPlayer.setMutedOff();
+                    "disable": function (GameStarter) {
+                        GameStarter.AudioPlayer.setMutedOff();
                     }
                 },
                 {
                     "title": "FastFwd",
                     "type": "Boolean",
-                    "source": function () {
-                        return FSM.GamesRunner.getSpeed() !== 1;
+                    "source": function (GameStarter) {
+                        return GameStarter.GamesRunner.getSpeed() !== 1;
                     },
-                    "enable": function () {
-                        FSM.GamesRunner.setSpeed(3);
+                    "enable": function (GameStarter) {
+                        GameStarter.GamesRunner.setSpeed(3);
                     },
-                    "disable": function () {
-                        FSM.GamesRunner.setSpeed(1);
+                    "disable": function (GameStarter) {
+                        GameStarter.GamesRunner.setSpeed(1);
                         
                     }
                 },
@@ -50,36 +73,36 @@ FullScreenMario.prototype.settings.ui = {
                 {
                     "title": "Framerate",
                     "type": "Select",
-                    "options": function () {
+                    "options": function (GameStarter) {
                         return ["60fps", "30fps"];
                     },
-                    "source": function () {
-                        return 1 / FSM.PixelDrawer.getFramerateSkip() * 60;
+                    "source": function (GameStarter) {
+                        return 1 / GameStarter.PixelDrawer.getFramerateSkip() * 60;
                     },
-                    "update": function (value) {
+                    "update": function (GameStarter, value) {
                         var numeric = Number(value.replace("fps", ""));
-                        FSM.PixelDrawer.setFramerateSkip(1 / numeric * 60);
+                        GameStarter.PixelDrawer.setFramerateSkip(1 / numeric * 60);
                     }
                 },
                 {
                     "title": "Tilt Controls",
                     "type": "Boolean",
-                    "source": function () {
-                        return FSM.MapScreener.allowDeviceMotion;
+                    "source": function (GameStarter) {
+                        return GameStarter.MapScreener.allowDeviceMotion;
                     },
-                    "enable": function () {
-                        FSM.MapScreener.allowDeviceMotion = true;
+                    "enable": function (GameStarter) {
+                        GameStarter.MapScreener.allowDeviceMotion = true;
                     },
-                    "disable": function () {
-                        FSM.MapScreener.allowDeviceMotion = false;
+                    "disable": function (GameStarter) {
+                        GameStarter.MapScreener.allowDeviceMotion = false;
                     }
                 }
             ],
             "actions": [
                 {
                     "title": "Screenshot",
-                    "action": function () {
-                        FSM.takeScreenshot();
+                    "action": function (GameStarter) {
+                        GameStarter.takeScreenshot();
                     }
                 }
             ]
@@ -91,14 +114,14 @@ FullScreenMario.prototype.settings.ui = {
                     return {
                         "title": title[0].toUpperCase() + title.substr(1),
                         "type": "Keys",
-                        "source": function () {
-                            return FSM.InputWriter.getAliasAsKeyStrings(title);
+                        "source": function (GameStarter) {
+                            return GameStarter.InputWriter.getAliasAsKeyStrings(title);
                         },
-                        "callback": function (valueOld, valueNew) {
-                            FSM.InputWriter.switchAliasValues(
+                        "callback": function (GameStarter, valueOld, valueNew) {
+                            GameStarter.InputWriter.switchAliasValues(
                                 title,
-                                [FSM.InputWriter.convertKeyStringToAlias(valueOld)],
-                                [FSM.InputWriter.convertKeyStringToAlias(valueNew)]
+                                [GameStarter.InputWriter.convertKeyStringToAlias(valueOld)],
+                                [GameStarter.InputWriter.convertKeyStringToAlias(valueNew)]
                             );
                         }
                     };
@@ -109,11 +132,11 @@ FullScreenMario.prototype.settings.ui = {
             "generator": "OptionsButtons",
             "keyActive": "enabled",
             "assumeInactive": true,
-            "options": function () {
-                return FSM.ModAttacher.getMods();
+            "options": function (GameStarter) {
+                return GameStarter.ModAttacher.getMods();
             },
-            "callback": function (schema, button) {
-                FSM.ModAttacher.toggleMod(button.getAttribute("value") || button.textContent);
+            "callback": function (GameStarter, schema, button) {
+                GameStarter.ModAttacher.toggleMod(button.getAttribute("value") || button.textContent);
             }
         }, {
             "title": "Editor",
@@ -126,8 +149,8 @@ FullScreenMario.prototype.settings.ui = {
             "extras": {
                 "Map Generator!": "Random"
             },
-            "callback": function (schema, button, event) {
-                FSM.setMap(button.getAttribute("value") || button.textContent);
+            "callback": function (GameStarter, schema, button, event) {
+                GameStarter.setMap(button.getAttribute("value") || button.textContent);
             }
         }
     ]

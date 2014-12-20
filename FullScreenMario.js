@@ -4682,6 +4682,7 @@ var FullScreenMario = (function(GameStartr) {
             // If the player can survive this, just power down
             if (!big && thing.power > 1) {
                 thing.power = 1;
+                thing.EightBitter.StatsHolder.set("power", 1);
                 thing.EightBitter.AudioPlayer.play("Power Down");
                 thing.EightBitter.playerGetsSmall(thing);
                 return;

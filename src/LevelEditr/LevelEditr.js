@@ -153,7 +153,7 @@ function LevelEditr(settings) {
     self.startBuilding = function () {
         beautifyTextareaValue();
         setDisplayMap(true);
-        FSM.InputWriter.setCanTrigger(false);
+        GameStarter.InputWriter.setCanTrigger(false);
         setCurrentMode("Build");
         self.maximize();
     };
@@ -164,7 +164,7 @@ function LevelEditr(settings) {
     self.startPlaying = function () {
         beautifyTextareaValue();
         setDisplayMap(false);
-        FSM.InputWriter.setCanTrigger(true);
+        GameStarter.InputWriter.setCanTrigger(true);
         setCurrentMode("Play");
         self.minimize();
     };
@@ -1582,7 +1582,7 @@ function LevelEditr(settings) {
     function resetDisplayMap() {
         setTextareaValue(stringifySmart(map_default), true);
         setDisplayMap(true);
-        FSM.InputWriter.setCanTrigger(false);
+        GameStarter.InputWriter.setCanTrigger(false);
     }
     
     /**

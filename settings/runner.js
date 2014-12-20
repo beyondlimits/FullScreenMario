@@ -29,5 +29,3 @@ FullScreenMario.prototype.settings.runner = {
         }
     ]
 }
-
-console.warn("The old refillGlobalCanvas is being used because quadrants aren't performant.");
