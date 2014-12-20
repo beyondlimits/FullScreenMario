@@ -194,14 +194,19 @@ function PixelDrawr(settings) {
     }
     
     /**
-     * For SpriteMultiples, this copies the sprite information for
-     * each sub-sprite into its own canvas, and sets thing.sprites
+     * For SpriteMultiples, this copies the sprite information for each 
+     * sub-sprite into its own canvas, sets thing.sprites, then draws the newly
+     * rendered information onto the thing's canvas.
      * 
      * @param {Thing} thing   A thing whose .canvas and .sprites must be updated
      * @return {Self}
      * @private
      */
     function refillThingCanvasMultiple(thing) {
+        if (thing.width < 1 || thing.height < 1) {
+            return;
+        }
+        
         var sprites_raw = thing.sprite,
             canvases = thing.canvases = {
                 "direction": sprites_raw.direction,
@@ -210,6 +215,8 @@ function PixelDrawr(settings) {
             canvas, context, imageData, i;
 
         thing.num_sprites = 1;
+        thing.canvas.width = thing.width * unitsize;
+        thing.canvas.height = thing.height * unitsize;
 
         for (i in sprites_raw.sprites) {
             // Make a new sprite for this individual component
@@ -223,13 +230,15 @@ function PixelDrawr(settings) {
 
             // Record the canvas and context in thing.sprites
             canvases[i] = {
-                canvas: canvas,
-                context: context
+                "canvas": canvas,
+                "context": context
             }
             thing.num_sprites += 1;
         }
+        
+        drawThingOnContextMultiple(thing.context, thing.canvases, thing, 0, 0);
       
-      return canvases;
+        return canvases;
     }
     
     
@@ -379,14 +388,9 @@ function PixelDrawr(settings) {
             self.setThingSprite(thing);
         }
         
-        // If there's just one sprite, it's pretty simple
-        if (thing.num_sprites === 1) {
-            return drawThingOnContextSingle(context, thing.canvas, thing, thing.left, thing.top);
-        }
-        // For multiple sprites, some calculations will be needed
-        else {
-            return drawThingOnContextMultiple(context, thing.canvases, thing, thing.left, thing.top);
-        }
+        // Whether or not the thing has a regular sprite or a SpriteMultiple, 
+        // that sprite has already been drawn to the thing's canvas.
+        return drawThingOnContextSingle(context, thing.canvas, thing, thing.left, thing.top);
     }
     
     /**
