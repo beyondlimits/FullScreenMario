@@ -151,7 +151,7 @@ var FullScreenMario = (function(GameStartr) {
     function resetContainer(self, customs) {
         GameStartr.prototype.resetContainer(self, customs);
         
-        self.container.style["fontFamily"] = "Press Start";
+        self.container.style.fontFamily = "Press Start";
         
         self.PixelDrawer.setThingArrays([
             self.GroupHolder.getSceneryGroup(),
@@ -406,7 +406,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function keyDownSprint(player) {
-        if (player.power == 3 && player.keys.sprint == 0 && !player.crouch) {
+        if (player.power === 3 && player.keys.sprint === 0 && !player.crouch) {
             player.fire(player);
         }
         player.keys.sprint = 1;
@@ -515,9 +515,9 @@ var FullScreenMario = (function(GameStartr) {
             
             if (y !== undefined) {
                 dy = acceleration.y - y;
-                if (dy > .21) {
+                if (dy > 0.21) {
                     player.EightBitter.keyDownUp(player);
-                } else if (dy < -.14) {
+                } else if (dy < -0.14) {
                     player.EightBitter.keyUpUp(player);
                 }
             }
@@ -631,7 +631,7 @@ var FullScreenMario = (function(GameStartr) {
             // To do: rethink this...
             if (character.alive) {
                 if (!character.player &&
-                    (character.numquads == 0 || character.left > delx) &&
+                    (character.numquads === 0 || character.left > delx) &&
                     (!character.outerok || (
                         character.right < EightBitter.MapScreener.width - delx
                     ))) {
@@ -747,11 +747,13 @@ var FullScreenMario = (function(GameStartr) {
      * @remarks Only the horizontal checks use unitsize
      */
     function isThingTouchingThing(thing, other) {
-        return !thing.nocollide && !other.nocollide
-                && thing.right - thing.EightBitter.unitsize > other.left
-                && thing.left + thing.EightBitter.unitsize < other.right
-                && thing.bottom >= other.top
-                && thing.top <= other.bottom;
+        return (
+            !thing.nocollide && !other.nocollide
+            && thing.right - thing.EightBitter.unitsize > other.left
+            && thing.left + thing.EightBitter.unitsize < other.right
+            && thing.bottom >= other.top
+            && thing.top <= other.bottom
+        );
     }
     
     /**
@@ -796,8 +798,10 @@ var FullScreenMario = (function(GameStartr) {
         
         // Same as before, but with velocity as the absolute difference between
         // their two velocities
-        if (thing.bottom <= other.top + other.toly
-                + Math.abs(thing.yvel - other.yvel)) {
+        if (
+            thing.bottom <= other.top + other.toly
+            + Math.abs(thing.yvel - other.yvel)
+        ) {
             return true;
         }
         
@@ -1015,10 +1019,10 @@ var FullScreenMario = (function(GameStartr) {
         if (thing.keys.up) {
             thing.yvel = thing.EightBitter.unitsize * -1.4;
         } else {
-            thing.yvel = thing.EightBitter.unitsize * -.7;
+            thing.yvel = thing.EightBitter.unitsize * -0.7;
         }
         
-        thing.xvel *= .91;
+        thing.xvel *= 0.91;
         thing.EightBitter.AudioPlayer.play("Kick");
         
         if (other.group !== "item" || other.shell) {
@@ -1410,11 +1414,11 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         if (thing.speed >= 0) {
-            thing.dt = .07;
-            thing.angle = .25;
+            thing.dt = 0.07;
+            thing.angle = 0.25;
         } else {
-            thing.dt = -.07;
-            thing.angle = -.25;
+            thing.dt = -0.07;
+            thing.angle = -0.25;
         }
         
         thing.EightBitter.TimeHandler.addEventInterval(
@@ -2486,7 +2490,7 @@ var FullScreenMario = (function(GameStartr) {
             && thing.EightBitter.isCharacterOnSolid(thing, other)
         ) {
             other.tension = other.tensionSave = Math.max(
-                thing.yvel * .77,
+                thing.yvel * 0.77,
                 thing.EightBitter.unitsize
             );
             thing.movement = thing.EightBitter.movePlayerSpringboardDown;

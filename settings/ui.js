@@ -33,7 +33,8 @@ FullScreenMario.prototype.settings.ui = {
                     "minimum": 0,
                     "maximum": 100,
                     "source": function (GameStarter) {
-                        return Math.round(GameStarter.AudioPlayer.getVolume()) * 100;
+                        console.log("Got", GameStarter.AudioPlayer.getVolume() * 100);
+                        return Math.round(GameStarter.AudioPlayer.getVolume() * 100);
                     },
                     "update": function (GameStarter, value) {
                         GameStarter.AudioPlayer.setVolume(value / 100);
