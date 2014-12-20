@@ -34,6 +34,9 @@ function PixelDrawr(settings) {
         // A utility function to generate a class key to get an object sprite
         generateObjectKey,
         
+        // The maximum size of a SpriteMultiple to pre-render
+        spriteCacheCutoff,
+        
         // Whether self.refillGlobalCanvas should skip redrawing the main canvas
         // every time.
         no_refill,
@@ -56,6 +59,7 @@ function PixelDrawr(settings) {
         getCanvas = settings.getCanvas;
         unitsize = settings.unitsize || 4;
         no_refill = settings.no_refill;
+        spriteCacheCutoff = settings.spriteCacheCutoff || 0;
         groupNames = settings.groupNames;
         framerateSkip = settings.framerateSkip || 1;
         framesDrawn = 0;
@@ -215,8 +219,6 @@ function PixelDrawr(settings) {
             canvas, context, imageData, i;
 
         thing.num_sprites = 1;
-        thing.canvas.width = thing.width * unitsize;
-        thing.canvas.height = thing.height * unitsize;
 
         for (i in sprites_raw.sprites) {
             // Make a new sprite for this individual component
@@ -236,7 +238,13 @@ function PixelDrawr(settings) {
             thing.num_sprites += 1;
         }
         
-        drawThingOnContextMultiple(thing.context, thing.canvases, thing, 0, 0);
+        if (thing.width * thing.height < spriteCacheCutoff) {
+            thing.canvas.width = thing.width * unitsize;
+            thing.canvas.height = thing.height * unitsize;
+            drawThingOnContextMultiple(thing.context, thing.canvases, thing, 0, 0);
+        } else {
+            thing.canvas.width = thing.canvas.height = 0;
+        }
       
         return canvases;
     }
@@ -390,7 +398,11 @@ function PixelDrawr(settings) {
         
         // Whether or not the thing has a regular sprite or a SpriteMultiple, 
         // that sprite has already been drawn to the thing's canvas.
-        return drawThingOnContextSingle(context, thing.canvas, thing, thing.left, thing.top);
+        if (thing.canvas.width > 0) {
+            drawThingOnContextSingle(context, thing.canvas, thing, thing.left, thing.top);
+        } else {
+            drawThingOnContextMultiple(context, thing.canvases, thing, thing.left, thing.top);
+        }
     }
     
     /**
