@@ -1,5 +1,5 @@
 FullScreenMario.prototype.settings.ui = {
-    "sizeDefault": "NES",
+    "sizeDefault": "Wide",
     "sizes": {
         "NES": {
             "width": 512,

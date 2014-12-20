@@ -24,7 +24,7 @@ function UserWrappr(settings) {
         
         currentSize,
         
-        isFullScreen = false,
+        isFullScreen,
         
         documentElement = document.documentElement,
         
@@ -77,7 +77,7 @@ function UserWrappr(settings) {
             'up', 'right', 'bottom', 'left', 'space', 'shift', 'ctrl'
         ];
         
-        loadGameStarter(customs || {});
+        loadGameStarter(fixCustoms(customs || {}));
         loadControls(GameStarter.settings.ui);
     };
     
@@ -335,25 +335,9 @@ function UserWrappr(settings) {
                     }
                     
                     var sizing = sizes[value],
-                        customs = GameStarter.proliferate({}, sizing);
+                        customs = fixCustoms(sizing);
                     
                     currentSize = value;
-                    
-                    if (!isFinite(customs.width)) {
-                        customs.width = document.body.clientWidth;
-                    }
-                    if (!isFinite(customs.height)) {
-                        if (sizing.full) {
-                            customs.height = screen.height;
-                        } else if(isFullScreen) {
-                            // Guess for browser window...
-                            customs.height = window.innerHeight - 140;
-                        } else {
-                            customs.height = window.innerHeight;
-                        }
-                        // 49px from header, 35px from menus
-                        customs.height -= 84;
-                    }
                     
                     if (sizing.full) {
                         requestFullScreen();
@@ -609,6 +593,33 @@ function UserWrappr(settings) {
         
         return output;
     };
+    
+    
+    /**
+     * 
+     */
+    function fixCustoms(customsRaw) {
+        var customs = GameStartrConstructor.prototype.proliferate({}, customsRaw);
+        
+        if (!isFinite(customs.width)) {
+            customs.width = document.body.clientWidth;
+        }
+        if (!isFinite(customs.height)) {
+            if (sizing.full) {
+                customs.height = screen.height;
+            } else if(isFullScreen) {
+                // Guess for browser window...
+                customs.height = window.innerHeight - 140;
+            } else {
+                customs.height = window.innerHeight;
+            }
+            // 49px from header, 35px from menus
+            customs.height -= 84;
+        }
+        
+        return customs;
+    }
+    
     
     self.reset(settings || {});
 }
