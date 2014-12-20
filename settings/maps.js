@@ -2217,7 +2217,7 @@ FullScreenMario.prototype.settings.maps = {
                 { "entry": "PipeVertical" },
                 { "area": 1 },
                 { "area": 2 },
-                { "area": 3 },
+                { "area": 3, "entry": "Vine" },
                 { "area": 4 }
             ],
             "areas": [
@@ -2252,7 +2252,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "macro": "Fill", "thing": "Brick", "x": 616, "y": 64, "xnum": 4 },
                         { "macro": "Pipe", "x": 640, "height": 24, "piranha": true },
                         { "thing": "Block", "x": 656, "y": 32, "hidden": true },
-                        { "thing": "Brick", "x": 648, "y": 64, "contents": [ "Vine", 7 ] },
+                        { "thing": "Brick", "x": 648, "y": 64, "contents": [ "Vine", { "transport": 7 } ] },
                         { "macro": "Pipe", "x": 672, "height": 16, "piranha": true },
                         { "macro": "Pipe", "x": 696, "height": 48, "piranha": true },
                         { "thing": "Beetle", "x": 736, "y": 8.5 },
@@ -2366,11 +2366,12 @@ FullScreenMario.prototype.settings.maps = {
                 },
                 {
                     "setting": "Sky Night",
+                    "exit": 3,
                     "creation": [
                         { "location": 7 },
                         { "thing": "Stone", "width": 32 },
                         { "thing": "Stone", "x": 40, "width": 624 },
-                        { "thing": "Platform", "x": 128, "y": 24, "width": 24 },
+                        { "thing": "Platform", "x": 128, "y": 24, "width": 24, "transport": true },
                         { "macro": "Fill", "thing": "Coin", "x": 121, "y": 55, "xnum": 16, "xwidth": 8 },
                         { "thing": "Stone", "x": 256, "y": 40 },
                         { "macro": "Fill", "thing": "Coin", "x": 273, "y": 55, "xnum": 16, "xwidth": 8 },

@@ -671,7 +671,6 @@ var FullScreenMario = (function(GameStartr) {
             if (!player.dying && player.top > EightBitter.MapScreener.bottom) {
                 // If the map has an exit loc (cloud world), transport there
                 if (EightBitter.MapsHandler.getArea().exit) {
-                    console.log("Going to", EightBitter.MapsHandler.getArea().exit);
                     EightBitter.setLocation(EightBitter.MapsHandler.getArea().exit);
                 }
                 // Otherwise, since Player is below the screen, kill him dead
@@ -4172,9 +4171,6 @@ var FullScreenMario = (function(GameStartr) {
      */
     function animatePlayerLanding(thing) {
         if (thing.crouching && thing.power > 1) {
-            // thing.EightBitter.removeClass(thing, "jumping");
-            // thing.EightBitter.addClass(thing, "crouching");
-            thing.EightBitter.setHeight(thing, 11);
             thing.EightBitter.setHeight(thing, 11, true, true);
         }
     
