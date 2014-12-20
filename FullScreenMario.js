@@ -2321,6 +2321,7 @@ var FullScreenMario = (function(GameStartr) {
                     other.nocollide = true;
                     other.death(other, 2);
                     thing.EightBitter.scoreOn(other.scoreStar, other);
+                    thing.EightBitter.AudioPlayer.play("Kick");
                 }
                 // A non-star player kills the enemy with spawn, and hops
                 else {
