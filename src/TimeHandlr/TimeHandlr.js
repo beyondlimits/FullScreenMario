@@ -457,22 +457,22 @@ function TimeHandlr(settings) {
      *     7
      * );
      */
-    self.addClassCycleSynched = function (me, settings, name, timing) {
+    self.addClassCycleSynched = function (thing, settings, name, timing) {
         var cycle;
         
         // Make sure the object has a holder for keyCycles...
-        if (!me[keyCycles]) {
-            me[keyCycles] = {};
+        if (!thing[keyCycles]) {
+            thing[keyCycles] = {};
         }
         // ...and nothing previously existing for that name
-        self.cancelClassCycle(me, name);
+        self.cancelClassCycle(thing, name);
 
-        // Set the cycle under me[keyCycles][name]
+        // Set the cycle under thing[keyCycles][name]
         name = name || 0;
-        cycle = me[keyCycles][name] = setSpriteCycle(me, settings, timing, true);
+        cycle = thing[keyCycles][name] = setSpriteCycle(thing, settings, timing, true);
 
         // Immediately run the first class cycle, then return
-        cycleClass(me, me[keyCycles][name]);
+        cycleClass(thing, thing[keyCycles][name]);
         return cycle;
     };
 
@@ -544,7 +544,7 @@ function TimeHandlr(settings) {
         }
 
         // Get rid of the previous class, from settings (-1 by default)
-        if (settings.oldclass != -1 && settings.oldclass !== "") {
+        if (settings.oldclass !== -1 && settings.oldclass !== "") {
             removeClass(thing, settings.oldclass);
         }
 

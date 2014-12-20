@@ -1081,7 +1081,7 @@ var FullScreenMario = (function(GameStartr) {
         
         thing.EightBitter.TimeHandler.addClassCycle(thing, [
             "star1", "star2", "star3", "star4"
-        ], "star", 5);
+        ], "star", 2);
         
         thing.EightBitter.TimeHandler.addEvent(
             thing.EightBitter.playerStarDown, 
@@ -1095,24 +1095,63 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      */
-    function playerStarDown(thing, other) {
+    function playerStarDown(thing) {
+        if (!thing.player) {
+            return;
+        }
+        
+        thing.EightBitter.TimeHandler.cancelClassCycle(thing, "star");
+        thing.EightBitter.TimeHandler.addClassCycle(thing, [
+            "star1", "star2", "star3", "star4"
+        ], "star", 5);
+        
+        thing.EightBitter.TimeHandler.addEvent(
+            thing.EightBitter.playerStarOffCycle,
+            140,
+            thing
+        );
+        
+        thing.EightBitter.ModAttacher.fireEvent("onPlayerStarDown", thing);
+    }
+    
+    /**
+     * 
+     */
+    function playerStarOffCycle(thing) {
+        if (!thing.player) {
+            return;
+        }
+        
+        if (thing.star > 1) {
+            thing.star -= 1;
+            return;
+        }
+        
+        thing.EightBitter.AudioPlayer.playTheme();
+        
+        thing.EightBitter.ModAttacher.fireEvent("onPlayerStarOffCycle", thing);
+        
+        thing.EightBitter.TimeHandler.addEvent(
+            thing.EightBitter.playerStarOffFinal,
+            117,
+            thing
+        );
+    }
+    
+    /**
+     * 
+     */
+    function playerStarOffFinal(thing) {
         if (!thing.player) {
             return;
         }
         
         thing.star -= 1;
-        if (thing.star) {
-            return;
-        }
-        
+        thing.EightBitter.TimeHandler.cancelClassCycle(thing, "star");
         thing.EightBitter.removeClasses(thing, "star star1 star2 star3 star4");
         thing.EightBitter.addClass(thing, "normal");
         
-        thing.EightBitter.TimeHandler.cancelClassCycle(thing, "star");
-        
-        thing.EightBitter.AudioPlayer.playTheme();
-        
-        thing.EightBitter.ModAttacher.fireEvent("onPlayerStarDown", thing, other);
+        thing.EightBitter.ModAttacher.fireEvent("onPlayerStarOffFinal", thing);
     }
     
     /**
@@ -6335,6 +6374,8 @@ var FullScreenMario = (function(GameStartr) {
         "playerShroom1Up": playerShroom1Up,
         "playerStarUp": playerStarUp,
         "playerStarDown": playerStarDown,
+        "playerStarOffCycle": playerStarOffCycle,
+        "playerStarOffFinal": playerStarOffFinal,
         "playerGetsBig": playerGetsBig,
         "playerGetsBigAnimation": playerGetsBigAnimation,
         "playerGetsSmall": playerGetsSmall,
