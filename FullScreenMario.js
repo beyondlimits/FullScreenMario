@@ -5134,6 +5134,7 @@ var FullScreenMario = (function(GameStartr) {
     function mapAddStretched(raw) {
         var EightBitter = EightBittr.ensureCorrectCaller(this),
             y = (EightBitter.MapScreener.floor - raw.y) * EightBitter.unitsize;
+        
         return EightBitter.addThing(EightBitter.ObjectMaker.make(raw.thing, {
             "width": EightBitter.MapScreener.width,
             "height": raw.height || EightBitter.getAbsoluteHeight(raw.y)
@@ -5150,10 +5151,6 @@ var FullScreenMario = (function(GameStartr) {
             area = MapsHandler.getArea(),
             map = MapsHandler.getMap(),
             command, output, i;
-        
-        generated_commands.sort(function (a, b) {
-            return a.left - b.left;
-        });
         
         for (i = 0; i < generated_commands.length; i += 1) {
             command = generated_commands[i];

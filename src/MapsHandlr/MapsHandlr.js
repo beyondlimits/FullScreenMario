@@ -254,12 +254,12 @@ function MapsHandlr(settings) {
     /**
      * 
      */
-    function setStretches(stretches_raw) {
+    function setStretches(stretchesRaw) {
         if (!stretches) {
             stretches = [];
         }
         
-        stretches = stretches_raw.map(stretch_add);
+        stretches = stretchesRaw.map(stretch_add);
     }
     
     /**

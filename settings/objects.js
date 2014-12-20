@@ -236,11 +236,8 @@
                 "notime": false,
                 "nokeys": false,
                 "allowDeviceMotion": false,
-                // Why are these not being applied?
-                // Will have to put into initializeARea
                 "attributes": {
                     "underwater": {
-                        // Bubbling?
                         "gravity": FullScreenMario.gravity / 2.8,
                         "stretches": [
                             { "thing": "WaterBlocker", "y": 104, "height": 16 },

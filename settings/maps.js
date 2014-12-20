@@ -807,7 +807,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "CheepCheep", "x": 1206, "y": 56, "smart": true },
                         { "thing": "Stone", "x": 1256, "y": 64, "height": 64 },
                         { "thing": "Stone", "x": 1264, "y": 64, "width": 16 },
-                        { "macro": "Fill", "thing": "Coin", "x": 1281, "y": 7, "xnum": 3, "ynum": 2, "yheight": 24 },
+                        { "macro": "Fill", "thing": "Coin", "x": 1281, "y": 7, "xnum": 3, "ynum": 2, "xwidth": 16, "yheight": 24 },
                         { "thing": "Stone", "x": 1304, "y": 64, "width": 16 },
                         { "thing": "Stone", "x": 1320, "y": 64, "height": 64 },
                         { "macro": "Floor", "x": 1320, "width": 320 },

@@ -183,6 +183,12 @@ function MapsCreatr(settings) {
                 obj.map = map;
                 obj.name = i;
             }
+            obj.boundaries = {
+                "top": 0,
+                "right": 0,
+                "bottom": 0,
+                "left": 0
+            };
         }
         
         // Parse all the Location objects (works for both Arrays and Objects)
@@ -424,6 +430,7 @@ function MapsCreatr(settings) {
         }
         
         prethings[prething.thing[key_group_type]].push(prething);
+        stretchAreaBoundaries(prething, area);
         
         // If a Thing is an entrance, then the location it is an entrance to 
         // must it and its position. Note that this will have to be changed
@@ -434,10 +441,27 @@ function MapsCreatr(settings) {
         }
         
         if (reference.collectionName) {
-            ensureThingCollection(prething, reference.collectionName, reference.collectionKey, area);
+            ensureThingCollection(
+                prething,
+                reference.collectionName, 
+                reference.collectionKey, 
+                area
+            );
         }
         
         return prething;
+    }
+    
+    /**
+     * 
+     */
+    function stretchAreaBoundaries(prething, area) {
+        var boundaries = area.boundaries;
+        
+        boundaries.top = Math.min(prething.top, boundaries.top);
+        boundaries.right = Math.max(prething.right, boundaries.right);
+        boundaries.bottom = Math.max(prething.bottom, boundaries.bottom);
+        boundaries.left = Math.max(prething.left, boundaries.left);
     }
     
     /**
