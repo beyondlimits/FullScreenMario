@@ -243,6 +243,11 @@
                             { "thing": "WaterBlocker", "y": 104, "height": 16 },
                             { "thing": "Water", "y": 88 }
                         ]
+                    },
+                    "blockBoundaries": {
+                        "afters": [
+                            { "thing": "ScrollBlocker" }
+                        ]
                     }
                 }
             },

@@ -216,6 +216,7 @@ FullScreenMario.prototype.settings.maps = {
             "areas": [
                 {
                     "setting": "Overworld",
+                    "blockBoundaries": true,
                     "creation": [
                         { "location": 0 },
                         { "macro": "Pattern", "pattern": "BackRegular", "repeat": 5 },

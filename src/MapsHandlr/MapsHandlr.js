@@ -49,6 +49,15 @@ function MapsHandlr(settings) {
         // If stretches exists, the function to call to stretch horizontally
         on_stretch,
         
+        // Optionally, an array of Things to place at the end of the map
+        afters,
+        
+        // If afters exists, the function to call to add one to the map
+        after_add,
+        
+        // If afters exists, the function to call to stretch horizontally
+        on_after,
+        
         // Directional equivalents for converting from directions to keys
         directionKeys = {
             "xInc": "left",
@@ -88,6 +97,9 @@ function MapsHandlr(settings) {
         
         stretch_add = settings.stretch_add;
         on_stretch = settings.on_stretch;
+        
+        after_add = settings.after_add;
+        on_after = settings.on_after;
     };
     
     
@@ -249,17 +261,34 @@ function MapsHandlr(settings) {
         } else {
             stretches = undefined;
         }
+        
+        if (area_current.afters) {
+            setAfters(area_current.afters);
+        } else {
+            afters = undefined;
+        }
     };
     
     /**
      * 
      */
     function setStretches(stretchesRaw) {
-        if (!stretches) {
+        if (stretchesRaw) {
+            stretches = stretchesRaw.map(stretch_add);
+        } else {
             stretches = [];
         }
-        
-        stretches = stretchesRaw.map(stretch_add);
+    }
+    
+    /**
+     * 
+     */
+    function setAfters(aftersRaw) {
+        if (aftersRaw) {
+            afters = aftersRaw.map(after_add);
+        } else {
+            afters = [];
+        }
     }
     
     /**

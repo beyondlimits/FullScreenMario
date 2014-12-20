@@ -5145,6 +5145,19 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      */
+    function mapAddAfter(raw) {
+        var EightBitter = EightBittr.ensureCorrectCaller(this),
+            boundaries = EightBitter.MapsHandler.getArea().boundaries;
+        
+        return EightBitter.addThing(
+            raw.thing,
+            boundaries.right * EightBitter.unitsize, 
+            raw.y ? raw.y * EightBitter.unitsize : 0);
+    }
+    
+    /**
+     * 
+     */
     function mapPlaceRandomCommands(EightBitter, generated_commands) {
         var MapsCreator = EightBitter.MapsCreator,
             MapsHandler = EightBitter.MapsHandler,
@@ -6466,6 +6479,7 @@ var FullScreenMario = (function(GameStartr) {
         "initializeArea": initializeArea,
         "getAbsoluteHeight": getAbsoluteHeight,
         "mapAddStretched": mapAddStretched,
+        "mapAddAfter": mapAddAfter,
         "mapPlaceRandomCommands": mapPlaceRandomCommands,
         "mapStretchThing": mapStretchThing,
         "macroExample": macroExample,
