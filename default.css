@@ -64,8 +64,13 @@ a {
 /* Game section */
 
 section#game {
-    height: 464px;
+    min-height: 464px;
 }
+
+section#game .EightBitter {
+    margin: auto;
+}
+
 
 
 /* Control section */

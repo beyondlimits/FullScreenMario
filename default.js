@@ -1,12 +1,9 @@
 (function (schemas, generators) {
     "use strict";
     
-    var LoadGame = function () {
+    var LoadFullScreenMario = function (customs) {
         var section = document.getElementById("game"),
-            FSM = new FullScreenMario({
-                "width": document.body.clientWidth, 
-                "height": 464
-            });
+            FSM = new FullScreenMario(customs);
         
         window["FSM"] = FSM;
         
@@ -73,16 +70,21 @@
     }
     
     document.onreadystatechange = function (event) {
-        if (event.target.readyState != "complete") {
+        if (event.target.readyState !== "complete") {
             return;
         }
         
         var time_start = Date.now();
         
-        LoadGame();
+        LoadFullScreenMario({
+            "width": document.body.clientWidth,
+            "height": 464
+        });
         LoadControls(schemas, generators);
         
         console.log("It took " + (Date.now() - time_start) + " milliseconds to start");
+        
+        window["LoadFullScreenMario"] = LoadFullScreenMario;
     };
 })([
     {
@@ -129,12 +131,8 @@
                 }
             },
             {
-                "title": "FullScreen",
-                "type": "Boolean",
-                "source": function () {
-                    return false;
-                },
-                "confirmation": true
+                "title": "View Mode",
+                "type": "ScreenSize"
             },
             {
                 "title": "Framerate",
@@ -361,13 +359,106 @@
             };
             
             input.appendChild(child);
+            
+            return child;
         }
+        
+        var setScreenSizeInput = (function () {
+            var currentSize = "Wide",
+                currentFull = false,
+                sizes = {
+                    "NES": {
+                        "width": 512,
+                        "height": 464,
+                        "full": false
+                    },
+                    "Wide": {
+                        "width": Infinity,
+                        "height": 464,
+                        "full": false
+                    },
+                    "Large": {
+                        "width": Infinity,
+                        "height": Infinity,
+                        "full": false
+                    },
+                    "Full!": {
+                        "width": Infinity,
+                        "height": Infinity,
+                        "full": true
+                    }
+                },
+                documentElement = document.documentElement,
+                requestFullScreen = (
+                    documentElement.requestFullScreen
+                    || documentElement.webkitRequestFullScreen
+                    || documentElement.mozRequestFullScreen
+                    || documentElement.msRequestFullScreen
+                ).bind(documentElement),
+                cancelFullScreen = (
+                    document.cancelFullScreen
+                    || document.webkitCancelFullScreen
+                    || document.mozCancelFullScreen
+                    || document.msCancelFullScreen
+                ).bind(document),
+                detailsOptions = Object.keys.bind(Object, sizes),
+                detailsSource = function () {
+                    return currentSize;
+                },
+                detailsUpdate = function (value) {
+                    if (value === currentSize) {
+                        return;
+                    }
+                    
+                    var sizing = sizes[value],
+                        customs = FSM.proliferate({}, sizing);
+                    
+                    currentSize = value;
+                    
+                    if (!isFinite(customs.width)) {
+                        customs.width = document.body.clientWidth;
+                    }
+                    if (!isFinite(customs.height)) {
+                        if (sizing.full) {
+                            customs.height = screen.height;
+                        } else if(currentFull) {
+                            // Guess for browser window :( known glitch
+                            customs.height = window.innerHeight - 140;
+                        } else {
+                            customs.height = window.innerHeight;
+                        }
+                        // 49px from header, 35px from menus
+                        customs.height -= 84;
+                    }
+                    
+                    if (sizing.full) {
+                        requestFullScreen();
+                        currentFull = true;
+                    } else if(currentFull) {
+                        cancelFullScreen();
+                        currentFull = false;
+                    }
+                    
+                    FSM.container.parentNode.removeChild(FSM.container);
+                    LoadFullScreenMario(customs);
+                };
+            
+            return function (input, details) {
+                var child;
+                
+                details.options = detailsOptions;
+                details.source = detailsSource;
+                details.update = detailsUpdate;
+                child = setSelectInput(input, details);
+            };
+        })();
         
         var optionTypes = {
             "Boolean": setBooleanInput,
             "Keys": setKeyInput,
             "Number": setNumberInput,
-            "Select": setSelectInput
+            "Select": setSelectInput,
+            "ScreenSize": setScreenSizeInput
         };
 
         return function (schema) {

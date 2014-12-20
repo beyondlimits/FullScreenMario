@@ -5142,7 +5142,7 @@ var FullScreenMario = (function(GameStartr) {
      */
     function getAbsoluteHeight(yloc, correct_unitsize) {
         var EightBitter = EightBittr.ensureCorrectCaller(this),
-            height = yloc + EightBitter.MapScreener.bottom_death_difference;
+            height = yloc + EightBitter.MapScreener.height;
         
         if (!correct_unitsize) {
             height *= EightBitter.unitsize;
@@ -5394,7 +5394,7 @@ var FullScreenMario = (function(GameStartr) {
             
         pipe.macro = undefined;
         
-        if (height == "Infinity") {
+        if (height === "Infinity") {
             pipe.height = scope.MapScreener.height;
         } else {
             pipe.y += height;

@@ -1642,7 +1642,6 @@ FullScreenMario.prototype.settings.maps = {
             "areas": [
                 {
                     "setting": "Castle",
-                    "blockBoundaries": true,
                     "creation": [
                         { "location": 0 },
                         { "macro": "StartInsideCastle", "width": 48 },
@@ -2799,7 +2798,6 @@ FullScreenMario.prototype.settings.maps = {
             "areas": [
                 {
                     "setting": "Castle",
-                    "blockBoundaries": true,
                     "creation": [
                         { "location": 0 },
                         { "macro": "StartInsideCastle" },
@@ -3357,7 +3355,6 @@ FullScreenMario.prototype.settings.maps = {
             "areas": [
                 {
                     "setting": "Castle",
-                    "blockBoundaries": true,
                     "creation": [
                         { "location": 0 },
                         { "macro": "StartInsideCastle" },
@@ -3400,7 +3397,6 @@ FullScreenMario.prototype.settings.maps = {
                     ]
                 }, {
                     "setting": "Castle",
-                    "blockBoundaries": true,
                     "creation": [
                         { "location": 2 },
                         { "macro": "Section" }
@@ -3462,7 +3458,6 @@ FullScreenMario.prototype.settings.maps = {
                     ]
                 }, {
                     "setting": "Castle",
-                    "blockBoundaries": true,
                     "creation": [
                         { "location": 3 },
                         { "macro": "Floor", "width": 24 },
