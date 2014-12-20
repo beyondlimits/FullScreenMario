@@ -4446,13 +4446,18 @@ var FullScreenMario = (function(GameStartr) {
      * be reduced to jumping; otherwise it should be reduced to walking.
      */
     function killKoopa(thing, big) {
+        var spawn;
+        
         if (thing.jumping || thing.floating) {
-            thing.EightBitter.killReplace(
-                thing, "Koopa", undefined, [ "smart" ]
+            spawn = thing.EightBitter.killReplace(
+                thing, "Koopa", undefined, ["smart", "direction", "moveleft"]
             );
+            spawn.xvel = spawn.moveleft ? -spawn.speed : spawn.speed;
         } else {
-            return thing.EightBitter.killToShell(thing, big);
+            spawn = thing.EightBitter.killToShell(thing, big);
         }
+        
+        return spawn;
     }
     
     /**
