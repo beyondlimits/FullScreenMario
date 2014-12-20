@@ -423,9 +423,10 @@
                 nofall: true,
                 nocollidesolid: true,
                 nocollidechar: true,
-                movement: undefined,
+                movement: FullScreenMario.prototype.moveCheepCheep,
                 xvel: FullScreenMario.unitsize / -6,
-                yvel: FullScreenMario.unitsize / -32,
+                // yvel: FullScreenMario.unitsize / -32,
+                yvel: FullScreenMario.unitsize / -1,
                 death: FullScreenMario.prototype.killFlip,
                 spriteCycleSynched: [
                     ["one", "two"]

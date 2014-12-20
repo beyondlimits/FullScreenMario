@@ -1631,7 +1631,7 @@ var FullScreenMario = (function(GameStartr) {
         var dx = thing.EightBitter.MapScreener.width - thing.left;
         
         thing.EightBitter.MapScreener.canscroll = false;
-        if (dx > 0) {
+        if (dx < 0) {
             thing.EightBitter.scrollWindow(-dx);
         }
     }
@@ -3081,7 +3081,16 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      */
-    function moveCheepFlying(thing) {
+    function moveCheepCheep(thing) {
+        if (thing.top < thing.EightBitter.unitsize * 24) {
+            thing.EightBitter.setTop(thing, thing.EightBitter.unitsize * 24);
+        }
+    }
+    
+    /**
+     * 
+     */
+    function moveCheepCheepFlying(thing) {
         if (thing.top < thing.EightBitter.unitsize * 28) {
             thing.movement = undefined;
             thing.nofall = false;
@@ -3135,7 +3144,7 @@ var FullScreenMario = (function(GameStartr) {
             thing.yvel = Math.min(thing.yvel - .035, -.7); // going up
         }
         
-        if (thing.top > thing.EightBitter.unitsize * 32) {
+        if (thing.top > thing.EightBitter.unitsize * 24) {
             thing.EightBitter.shiftVert(thing, thing.yvel, true);
         }
 
@@ -6393,7 +6402,8 @@ var FullScreenMario = (function(GameStartr) {
         "moveShell": moveShell,
         "movePiranha": movePiranha,
         "moveBubble": moveBubble,
-        "moveCheepFlying": moveCheepFlying,
+        "moveCheepCheep": moveCheepCheep,
+        "moveCheepCheepFlying": moveCheepCheepFlying,
         "moveBlooper": moveBlooper,
         "moveBlooperSqueezing": moveBlooperSqueezing,
         "movePodobooFalling": movePodobooFalling,
