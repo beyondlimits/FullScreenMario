@@ -878,6 +878,7 @@
             Toad: [8, 13],
             TreeTrunk: [4, 4],
             Water: {
+                "hidden": true,
                 "width": 4,
                 "height": 5,
                 // spriteCycle: [

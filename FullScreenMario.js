@@ -2303,9 +2303,13 @@ var FullScreenMario = (function(GameStartr) {
         // Player interacting with enemies
         if (thing.player) {
             // Player landing on top of an enemy
-            if (!thing.EightBitter.MapScreener.underwater 
-                && ((thing.star && !other.nostar)
-                    || (!other.deadly && isThingOnThing(thing, other)))) {
+            if (
+                (thing.star && !other.nostar)
+                || (
+                    !thing.EightBitter.MapScreener.underwater
+                    || (!other.deadly && isThingOnThing(thing, other))
+                )
+            ) {
                 
                 // Enforces toly (not touching means stop)
                 if (thing.EightBitter.isCharacterAboveEnemy(thing, other)) {
