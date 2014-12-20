@@ -5080,6 +5080,7 @@ var FullScreenMario = (function(GameStartr) {
         );
         
         EightBitter.animatePlayerPipingStart(EightBitter.player);
+        EightBitter.AudioPlayer.play("Pipe");
         
         EightBitter.TimeHandler.addEventInterval(function () {
             EightBitter.shiftVert(EightBitter.player, EightBitter.unitsize / -4);
@@ -5116,6 +5117,7 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         thing.EightBitter.animatePlayerPipingStart(thing);
+        thing.EightBitter.AudioPlayer.play("Pipe");
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
             thing.EightBitter.shiftVert(thing, thing.EightBitter.unitsize / 4);
@@ -5146,6 +5148,7 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         thing.EightBitter.animatePlayerPipingStart(thing);
+        thing.EightBitter.AudioPlayer.play("Pipe");
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
             thing.EightBitter.shiftHoriz(thing, thing.EightBitter.unitsize / 4);

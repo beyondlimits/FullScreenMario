@@ -29,7 +29,6 @@ FullScreenMario.prototype.settings.audio = {
             "Game Over 2",
             "Game Over",
             "Hurry",
-            "Into the Tunnel",
             "Jump Small",
             "Jump Super",
             "Kick",
