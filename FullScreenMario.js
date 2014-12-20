@@ -615,7 +615,12 @@ var FullScreenMario = (function(GameStartr) {
             // Resting tests
             if (character.resting) {
                 if (!EightBitter.isCharacterOnResting(character, character.resting)) {
-                    character.resting = undefined; // Necessary for moving platforms :(
+                    if (character.onRestingOff) {
+                        character.onRestingOff(character, character.resting);
+                    } else {
+                        // Necessary for moving platforms
+                        character.resting = undefined; 
+                    }
                 } else {
                     character.yvel = 0;
                     EightBitter.setBottom(character, character.resting.top);
@@ -4219,18 +4224,23 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function animatePlayerPaddling(thing) {
-        if (!thing.paddling) {
+        if (!thing.paddlingCycle) {
             thing.EightBitter.removeClass(thing, "skidding paddle1 paddle2 paddle3 paddle4 paddle5");
             thing.EightBitter.addClass(thing, "paddling");
             thing.EightBitter.TimeHandler.cancelClassCycle(thing, "paddling_cycle");
-            thing.EightBitter.TimeHandler.addClassCycle(thing, 
-                ["paddle1", "paddle2", "paddle3", "paddle2", "paddle1",
-                function () {
-                    return thing.paddling = false;
-                },
-                "paddling_cycle", 3]);
+            thing.EightBitter.TimeHandler.addClassCycle(
+                thing, 
+                [
+                    "paddle1", "paddle2", "paddle3", "paddle2", "paddle1",
+                    function () {
+                        return thing.paddlingCycle = false;
+                    },
+                ],
+                "paddling_cycle", 
+                7
+            );
         }
-        thing.paddling = thing.swimming = true;
+        thing.paddling = thing.paddlingCycle = thing.swimming = true;
         thing.yvel = thing.EightBitter.unitsize * -.84;
     }
     
@@ -4251,6 +4261,17 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         thing.EightBitter.ModAttacher.fireEvent("onPlayerLanding", thing, thing.resting);
+    }
+    
+    /**
+     * 
+     */
+    function animatePlayerRestingOff(thing) {
+        if (thing.EightBitter.MapScreener.underwater) {
+            thing.EightBitter.switchClass(thing, "running", "paddling");
+            console.log("ooh");
+        }
+        thing.resting = undefined;
     }
     
     /**
@@ -6503,6 +6524,7 @@ var FullScreenMario = (function(GameStartr) {
         "animatePlayerFire": animatePlayerFire,
         "animatePlayerPaddling": animatePlayerPaddling,
         "animatePlayerLanding": animatePlayerLanding,
+        "animatePlayerRestingOff": animatePlayerRestingOff,
         "animatePlayerBubbling": animatePlayerBubbling,
         "animatePlayerRunningCycle": animatePlayerRunningCycle,
         "animatePlayerPipingStart": animatePlayerPipingStart,
