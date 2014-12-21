@@ -39,7 +39,7 @@ function PixelDrawr(settings) {
         
         // Whether self.refillGlobalCanvas should skip redrawing the main canvas
         // every time.
-        no_refill,
+        noRefill,
         
         // For refillQuadrant, an Array of string names to refill (bottom-to-top)
         groupNames,
@@ -58,7 +58,7 @@ function PixelDrawr(settings) {
         MapScreener = settings.MapScreener;
         getCanvas = settings.getCanvas;
         unitsize = settings.unitsize || 4;
-        no_refill = settings.no_refill;
+        noRefill = settings.noRefill;
         spriteCacheCutoff = settings.spriteCacheCutoff || 0;
         groupNames = settings.groupNames;
         framerateSkip = settings.framerateSkip || 1;
@@ -110,7 +110,7 @@ function PixelDrawr(settings) {
      * 
      */
     self.setNoRefill = function (enabled) {
-        no_refill = enabled;
+        noRefill = enabled;
     };
     
     
@@ -258,7 +258,7 @@ function PixelDrawr(settings) {
      * are made to call self.refillThingArray in order.
      * 
      * @param {string} background   The background to refill the context with
-     *                              before drawing anything, unless no_refill is
+     *                              before drawing anything, unless noRefill is
      *                              enabled.
      * 
      * @return {Self}
@@ -269,7 +269,7 @@ function PixelDrawr(settings) {
             return;
         }
         
-        if (!no_refill) {
+        if (!noRefill) {
             drawBackground();
         }
         
@@ -346,7 +346,7 @@ function PixelDrawr(settings) {
         // quadrant.context.fillStyle = getRandomColor();
         // quadrant.context.fillRect(0, 0, quadrant.canvas.width, quadrant.canvas.height);
         
-        if (!no_refill) {
+        if (!noRefill) {
             quadrant.context.drawImage(
                 backgroundCanvas,
                 quadrant.left,
@@ -397,7 +397,8 @@ function PixelDrawr(settings) {
         }
         
         // Whether or not the thing has a regular sprite or a SpriteMultiple, 
-        // that sprite has already been drawn to the thing's canvas.
+        // that sprite has already been drawn to the thing's canvas, unless it's
+        // above the cutoff, in which case that logic happens now.
         if (thing.canvas.width > 0) {
             drawThingOnContextSingle(context, thing.canvas, thing, thing.left, thing.top);
         } else {
@@ -446,7 +447,10 @@ function PixelDrawr(settings) {
             drawPatternOnCanvas(context, canvas, leftc, topc, thing.unitwidth, thing.unitheight, thing.opacity || 1);
         }
         // Opacities not equal to one must reset the context afterwards
-        else if (thing.opacity != 1) {
+        else if (thing.opacity !== 1) {
+            if (thing.opacity === .7) {
+                debugger;
+            }
             context.globalAlpha = thing.opacity;
             context.drawImage(canvas, leftc, topc);
             context.globalAlpha = 1;
@@ -567,12 +571,16 @@ function PixelDrawr(settings) {
      * often it's used by the regular draw functions.
      * Not a fan of this lack of control over pattern source coordinates...
      */
-    function drawPatternOnCanvas(context, source, leftc, topc, width, height, opacity) {
+    function drawPatternOnCanvas(context, source, left, top, width, height, opacity) {
         context.globalAlpha = opacity;
-        context.translate(leftc, topc);
+        context.translate(left, top);
         context.fillStyle = context.createPattern(source, "repeat");
-        context.fillRect(0, 0, width, height);
-        context.translate(-leftc, -topc);
+        context.fillRect(
+            0, 0, 
+            Math.min(width, MapScreener.right - left), 
+            Math.min(height, MapScreener.bottom - top)
+        );
+        context.translate(-left, -top);
         context.globalAlpha = 1;
     }
     
