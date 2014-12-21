@@ -164,7 +164,7 @@ function StatsHoldr(settings) {
                     "className": prefix + "_container"
                 }]
             ]
-            container = makeContainer(settings);
+            container = makeContainer(settings.containers);
         }
     };
     
@@ -184,9 +184,8 @@ function StatsHoldr(settings) {
      * @return {Mixed} The known value of a key, assuming that key exists.
      */
     self.get = function (key) {
-        if (!checkExistence(key)) {
-            throw new Error("Unknown key given to StatsHoldr: '" + key + "'.");
-        }
+        checkExistence(key);
+        
         return values[key].value;
     }
     
@@ -258,7 +257,7 @@ function StatsHoldr(settings) {
         proliferate(this, settings);
 
         if (!this.hasOwnProperty("value")) {
-            this.value = this.valueDefault || "";
+            this.value = this.valueDefault;
         }
         
         if (this.hasElement) {
@@ -315,7 +314,7 @@ function StatsHoldr(settings) {
         if (
             this.hasOwnProperty("minimum") 
             && Number(this.value) <= Number(this.minimum)
-        )) {
+        ) {
             this.value = this.minimum;
             if (this.onMinimum) {
                 this.onMinimum.apply(this, callbackArgs);

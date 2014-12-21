@@ -1484,6 +1484,33 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * 
+     */
+    function spawnRandomBulletBill(EightBitter) {
+        var spawn;
+        
+        if (!EightBitter.MapScreener.spawningBulletBills) {
+            return true;
+        }
+        
+        spawn = EightBitter.ObjectMaker.make("BulletBill");
+        spawn.direction = spawn.moveleft = true;
+        spawn.xvel *= -1;
+        EightBitter.flipHoriz(spawn);
+        
+        EightBitter.addThing(
+            spawn,
+            EightBitter.MapScreener.width,
+            Math.floor(
+                EightBitter.NumberMaker.randomIntWithin(
+                    0,
+                    EightBitter.MapScreener.floor
+                ) / 8
+            ) * 8 * EightBitter.unitsize
+        );
+    }
+    
+    /**
      * Spawns a custom text Thing by killing it and placing the contents of its
      * texts member variable. These are written with a determined amount of
      * spacing between them, as if by a typewriter.
@@ -1616,6 +1643,23 @@ var FullScreenMario = (function(GameStartr) {
      */
     function activateCheepsStop(thing) {
         thing.EightBitter.MapScreener.spawningCheeps = false;
+    }
+    
+    /**
+     * 
+     */
+    function activateBulletBillsStart(thing) {
+        thing.EightBitter.MapScreener.spawningBulletBills = true;
+        thing.EightBitter.TimeHandler.addEventInterval(
+            spawnRandomBulletBill, 210, Infinity, thing.EightBitter
+        );
+    }
+    
+    /**
+     * 
+     */
+    function activateBulletBillsStop(thing) {
+        thing.EightBitter.MapScreener.spawningBulletBills = false;
     }
     
     /**
@@ -5873,6 +5917,38 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      */
+    function macroBulletBillsStart(reference, prethings, area, map, scope) {
+        return [
+            { 
+                "thing": "DetectCollision", 
+                "x": reference.x || 0,
+                "y": scope.MapScreener.floor,
+                "width": reference.width || 8,
+                "height": scope.MapScreener.height / scope.unitsize,
+                "activate": scope.activateBulletBillsStart
+            }
+        ];
+    }
+    
+    /**
+     * 
+     */
+    function macroBulletBillsStop(reference, prethings, area, map, scope) {
+        return [
+            { 
+                "thing": "DetectCollision", 
+                "x": reference.x || 0,
+                "y": scope.MapScreener.floor,
+                "width": reference.width || 8,
+                "height": scope.MapScreener.height / scope.unitsize,
+                "activate": scope.activateBulletBillsStop
+            }
+        ];
+    }
+    
+    /**
+     * 
+     */
     function macroLakituStop(reference, prethings, area, map, scope) {
         return [
             {
@@ -6436,6 +6512,7 @@ var FullScreenMario = (function(GameStartr) {
         "spawnMoveFloating": spawnMoveFloating,
         "spawnMoveSliding": spawnMoveSliding,
         "spawnRandomCheep": spawnRandomCheep,
+        "spawnRandomBulletBill": spawnRandomBulletBill,
         "spawnCustomText": spawnCustomText,
         "spawnDetector": spawnDetector,
         "spawnCollectionComponent": spawnCollectionComponent,
@@ -6443,6 +6520,8 @@ var FullScreenMario = (function(GameStartr) {
         "spawnRandomSpawner": spawnRandomSpawner,
         "activateCheepsStart": activateCheepsStart,
         "activateCheepsStop": activateCheepsStop,
+        "activateBulletBillsStart": activateBulletBillsStart,
+        "activateBulletBillsStop": activateBulletBillsStop,
         "activateLakituStop": activateLakituStop,
         "activateWarpWorld": activateWarpWorld,
         "activateWindowDetector": activateWindowDetector,
@@ -6616,6 +6695,8 @@ var FullScreenMario = (function(GameStartr) {
         "macroWarpWorld": macroWarpWorld,
         "macroCheepsStart": macroCheepsStart,
         "macroCheepsStop": macroCheepsStop,
+        "macroBulletBillsStart": macroBulletBillsStart,
+        "macroBulletBillsStop": macroBulletBillsStop,
         "macroLakituStop": macroLakituStop,
         "macroStartInsideCastle": macroStartInsideCastle,
         "macroEndOutsideCastle": macroEndOutsideCastle,

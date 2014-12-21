@@ -56,6 +56,8 @@ FullScreenMario.prototype.settings.maps = {
         "WarpWorld": FullScreenMario.prototype.macroWarpWorld,
         "CheepsStart": FullScreenMario.prototype.macroCheepsStart,
         "CheepsStop": FullScreenMario.prototype.macroCheepsStop,
+        "BulletBillsStart": FullScreenMario.prototype.macroBulletBillsStart,
+        "BulletBillsStop": FullScreenMario.prototype.macroBulletBillsStop,
         "LakituStop": FullScreenMario.prototype.macroLakituStop,
         "StartInsideCastle": FullScreenMario.prototype.macroStartInsideCastle,
         "EndOutsideCastle": FullScreenMario.prototype.macroEndOutsideCastle,
@@ -1835,7 +1837,11 @@ FullScreenMario.prototype.settings.maps = {
         }, {
             "name": "5-2",
             "locations": [
-                { "entry": "Plain" }, { "entry": "PipeVertical" }, { "x": 1032 }, { "area": 1 }, { "area": 2, "entry": "Plain" }
+                { "entry": "Plain" }, 
+                { "entry": "PipeVertical" }, 
+                { "x": 1032 },
+                { "area": 1 }, 
+                { "area": 2, "entry": "Plain" }
             ],
             "areas": [
                 {
@@ -1993,12 +1999,12 @@ FullScreenMario.prototype.settings.maps = {
                 {
                     "setting": "Overworld",
                     "blockBoundaries": true,
-                    "effects": "Cannon",
                     "creation": [
                         { "location": 0 },
                         { "macro": "Pattern", "pattern": "BackCloud", "x": 0, "y": 4, "repeat": 5 },
                         { "macro": "Floor", "x": 0, "y": 0, "width": 128 },
                         { "macro": "CastleSmall" },
+                        { "macro": "BulletBillsStart", "width": 128 },
                         { "macro": "Tree", "x": 144, "y": 8, "width": 32 },
                         { "macro": "Tree", "x": 192, "y": 32, "width": 64, "solidTrunk": true },
                         { "macro": "Tree", "x": 208, "y": 64, "width": 40 },
@@ -2042,6 +2048,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Stone", "x": 1104, "y": 32, "width": 16, "height": 32 },
                         { "thing": "Stone", "x": 1120, "y": 48, "width": 16, "height": 48 },
                         { "thing": "Stone", "x": 1136, "y": 64, "width": 16, "height": 64 },
+                        { "macro": "BulletBillsStop", "x": 1152 },
                         { "macro": "EndOutsideCastle", "x": 1220, "large": true, "walls": 12 }
                     ]
                 }
