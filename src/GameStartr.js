@@ -237,9 +237,8 @@ var GameStartr = (function (EightBittr) {
     function resetStatsHolder(EightBitter, customs) {
         EightBitter.StatsHolder = new StatsHoldr(proliferate({
             "callbackArgs": [EightBitter],
-            "width": customs.width,
             "proliferate": EightBitter.proliferate,
-            "createElement": EightBitter.createElement,
+            "createElement": EightBitter.createElement
         }, EightBitter.settings.statistics));
     }
     

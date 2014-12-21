@@ -25,54 +25,54 @@ FullScreenMario.prototype.settings.statistics = {
     "separator": "<br />",
     "values": {
         "power": {
-            "value_default": 1,
+            "valueDefault": 1,
             "storeLocally": false
         },
         "traveled": {
-            "value_default": 0
+            "valueDefault": 0
         },
         "score": {
-            "value_default": 0,
+            "valueDefault": 0,
             "digits": 6,
-            "has_element": true,
+            "hasElement": true,
             "modularity": 100000,
-            "on_modular": function (EightBitter) {
+            "onModular": function (EightBitter) {
                 EightBitter.gainLife();
             }
         },
         "time": {
-            "value_default": 0,
+            "valueDefault": 0,
             "digits": 3,
-            "has_element": true,
+            "hasElement": true,
             "minimum": 0,
             "triggers": {
                 100: function (EightBitter) {
                     EightBitter.AudioPlayer.playThemePrefixed("Hurry");
                 }
             },
-            "on_minimum": function (EightBitter) {
+            "onMinimum": function (EightBitter) {
                 EightBitter.killPlayer(FSM.player, true);
             }
         },
         "world": {
-            "value_default": 0,
-            "has_element": true
+            "valueDefault": 0,
+            "hasElement": true
         },
         "coins": {
-            "value_default": 0,
-            "has_element": true,
+            "valueDefault": 0,
+            "hasElement": true,
             "modularity": 100,
-            "on_modular": function (EightBitter) {
+            "onModular": function (EightBitter) {
                 EightBitter.player.gainLife();
             }
         },
         "lives": {
-            "value_default": 3,
+            "valueDefault": 3,
             "storeLocally": true,
-            "has_element": true
+            "hasElement": true
         },
         "luigi": {
-            "value_default": 0,
+            "valueDefault": 0,
             "storeLocally": true
         }
     }

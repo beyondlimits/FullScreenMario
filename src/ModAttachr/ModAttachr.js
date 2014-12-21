@@ -181,7 +181,7 @@ function ModAttachr(settings) {
         
         if (StatsHolder) {
             StatsHolder.addStatistic(mod.name, {
-                "value_default": 0,
+                "valueDefault": 0,
                 "storeLocally": true
             });
             

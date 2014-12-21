@@ -159,6 +159,8 @@ var FullScreenMario = (function(GameStartr) {
             self.GroupHolder.getCharacterGroup(),
             self.GroupHolder.getTextGroup()
         ]);
+        
+        self.StatsHolder.getContainer().style.width = customs.width + "px";
     }
     
     
