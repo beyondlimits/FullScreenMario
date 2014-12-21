@@ -2,6 +2,24 @@
  * InputWritr.js
  * A middleman that manages input events and their associated triggers
  */
+
+/**
+ * InputWritr.js
+ * 
+ * A wrapper to link input events and associated triggers. Pipe functions are
+ * available that take in user input, switch on the event code, and call the
+ * appropriate callback.
+ * Further utilities allow for saving and playback of input in JSON format.
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * @author "Josh Goldberg" <josh@fullscreenmario.com>
+ */
 function InputWritr(settings) {
     "use strict";
     if (!this || this === window) {
@@ -36,7 +54,11 @@ function InputWritr(settings) {
         can_trigger,
 
         // Whether to record events into the history
-        recording;
+        recording,
+        
+        keyAliasesToCodes,
+        
+        keyCodesToAliases;
 
     /**
      *
@@ -64,6 +86,26 @@ function InputWritr(settings) {
         recording = settings.hasOwnProperty("recording") ? settings.recording : true;
         
         self.addAliases(settings.aliases || {});
+        
+        keyAliasesToCodes = settings.keyAliasesToCodes || {
+            "shift": 16,
+            "ctrl": 17,
+            "space": 32,
+            "left": 37,
+            "up": 38,
+            "right": 39,
+            "down": 40
+        };
+        
+        keyCodesToAliases = settings.keyCodesToAliases || {
+            "16": "shift",
+            "17": "ctrl",
+            "32": "space",
+            "37": "left",
+            "38": "up",
+            "39": "right",
+            "40": "down"
+        };
     };
 
     /**
@@ -132,23 +174,8 @@ function InputWritr(settings) {
             return String.fromCharCode(alias);
         }
         
-        switch (alias) {
-            case 16:
-                return "shift";
-            case 17:
-                return "ctrl";
-            case 32:
-                return "space";
-            case 37:
-                return "left";
-            case 38:
-                return "up";
-            case 39:
-                return "right";
-            case 40:
-                return "down";
-        }
-        return "?";
+        return typeof keyCodesToAliases[alias] !== "undefined"
+            ? keyCodesToAliases[alias] : "?";
     }
     
     /**
@@ -163,24 +190,8 @@ function InputWritr(settings) {
             return key.charCodeAt(0) - 32;
         }
         
-        switch (key) {
-            case "shift":
-                return 16;
-            case "ctrl":
-                return 17;
-            case "space":
-                return 32;
-            case "left":
-                return 37;
-            case "up":
-                return 38;
-            case "right":
-                return 39;
-            case "down":
-                return 40;
-        }
-        
-        return -1;
+        return typeof keyAliasesToCodes[alias] !== "undefined"
+            ? keyAliasesToCodes[alias] : -1;
     }
     
     /**
@@ -502,7 +513,7 @@ function InputWritr(settings) {
             // If there's a function under that alias, run it
             if (functions.hasOwnProperty(alias)) {
                 if (recording) {
-                    history[Math.round(get_timestamp())] = [trigger, alias];
+                    history[get_timestamp() | 0] = [trigger, alias];
                 }
                 
                 self.callEvent(functions[alias], undefined, arguments[0]);

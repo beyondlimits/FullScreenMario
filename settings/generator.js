@@ -4,7 +4,7 @@ FullScreenMario.prototype.settings.generator = {
         /* Randomization continuation
         */
         
-        "RandomSpawner": {
+        "RandomSpawnerOverworld": {
             "width": 0,
             "height": 0,
             "contents": {
@@ -109,8 +109,8 @@ FullScreenMario.prototype.settings.generator = {
             }
         },
         "OverworldLandArea": {
-            "height": 80,
             "width": 160,
+            "height": 80,
             "contents": {
                 "mode": "Certain",
                 "direction": "top",
@@ -139,21 +139,21 @@ FullScreenMario.prototype.settings.generator = {
                 "mode": "Random",
                 "direction": "right",
                 "children": [{
-                    "percent": 30,
+                    "percent": 35,
                     "type": "Random",
                     "title": "OverworldBetweenSmallEnemies",
                 }, {
-                    "percent": 30,
+                    "percent": 40,
                     "type": "Random",
                     "title": "OverworldBetweenSpotty"
                 }, {
-                    "percent": 20,
+                    "percent": 10,
                     "type": "Random",
                     "title": "OverworldBetweenRamps"
                 }, {
-                    "percent": 20,
+                    "percent": 15,
                     "type": "Random",
-                    "title": "OverworldBetweenFloating"
+                    "title": "OverworldBetweenWatery"
                 }]
             }
         },
@@ -277,36 +277,134 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
-        "OverworldBetweenWateryBridge": {
-            "width": 168,
+        "OverworldBetweenWatery": {
+            "width": 112,
             "height": 80,
             "contents": {
                 "mode": "Certain",
                 "direction": "right",
                 "children": [{
                     "type": "Random",
-                    "title": "OverworldBetweenFloating"
+                    "title": "RampUpSmallFloor"
+                }, {
+                    "type": "Random",
+                    "title": "OverworldBetweenWateryBridge", 
+                }, {
+                    "type": "Random",
+                    "title": "RampDownSmallFloor"
                 }]
             }
         },
+        "OverworldBetweenWateryBridge": {
+            "width": 48,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Random",
+                    "title": "Water",
+                    "sizing": {
+                        "height": 8
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 24
+                    },
+                }, {
+                    "type": "Random",
+                    "title": "Bridge"
+                }, {
+                    "type": "Random",
+                    "title": "OverworldBetweenWateryBridgeTop"
+                }]
+            }
+        },
+        "OverworldBetweenWateryBridgeTop": {
+            "width": 48,
+            "height": 40,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Random",
+                    "title": "OverworldBetweenWateryBridgeTopEnemies"
+                }, {
+                    "type": "Random",
+                    "title": "OverworldBetweenWateryBridgeTopSolid"
+                }]
+            }
+        },
+        "OverworldBetweenWateryBridgeTopEnemies": {
+            "width": 48,
+            "height": 16,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "bottom",
+                "spacing": {
+                    "min": 4,
+                    "max": 20,
+                    "units": 4
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": 16
+                }, {
+                    "type": "Random",
+                    "title": "EnemyEasy"
+                }, {
+                    "type": "Random",
+                    "title": "EnemyEasy"
+                }, {
+                    "type": "Random",
+                    "title": "EnemyEasy"
+                }]
+            }
+        },
+        "OverworldBetweenWateryBridgeTopSolid": {
+            "width": 48,
+            "height": 24,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "bottom",
+                "spacing": {
+                    "min": 0,
+                    "max": 24,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "Block"
+                }]
+            }
+        },
+        
         
         
         /* General obstacles
         */
         
         "LandObstacleGroup": {
-            "width": 40,
+            "width": 160,
             "height": 80,
             "contents": {
                 "mode": "Random",
                 "direction": "right",
                 "spacing": {
                     "min": 0,
-                    "max": 48,
-                    "units": 8
+                    "max": 8,
+                    "units": 16
                 },
                 "children": [{
-                    "percent": 25,
+                    "percent": 45,
                     "type": "Random",
                     "title": "LandObstacleGroupEnemies"
                 }, {
@@ -314,25 +412,21 @@ FullScreenMario.prototype.settings.generator = {
                     "type": "Random",
                     "title": "LandObstacleGroupSingleStory"
                 }, {
-                    "percent": 10,
-                    "type": "Random",
-                    "title": "LandObstacleGroupDoubleStorySpotty"
-                }, {
-                    "percent": 10,
+                    "percent": 20,
                     "type": "Random",
                     "title": "LandObstacleGroupDoubleStory"
                 }, {
                     "percent": 10,
                     "type": "Random",
-                    "title": "LandObstacleGroupPipeSmall"
+                    "title": "LandObstacleGroupVertical"
                 }, {
-                    "percent": 5,
+                    "percent": 2,
                     "type": "Random",
-                    "title": "LandObstacleGroupPipeMedium"
+                    "title": "LandObstacleGroupPitSmall"
                 }, {
-                    "percent": 15,
+                    "percent": 3,
                     "type": "Random",
-                    "title": "LandObstacleGroupDifficult"
+                    "title": "LandObstacleGroupPitLarge"
                 }]
             }
         },
@@ -344,58 +438,50 @@ FullScreenMario.prototype.settings.generator = {
                 "direction": "right",
                 "spacing": 4,
                 "children": [{
-                    "percent": 80,
+                    "percent": 55,
                     "type": "Random",
-                    "title": "EnemySmall"
+                    "title": "EnemyEasy"
                 }, {
-                    "percent": 20,
+                    "percent": 5,
+                    "type": "Random",
+                    "title": "EnemyHard"
+                }, {
+                    "percent": 40,
                     "type": "Random",
                     "title": "Nothing"
                 }]
             }
         },
         "LandObstacleGroupSingleStory": {
-            "width": 40,
+            "width": 64,
+            "height": 80,
+            "contents": {
+                "mode": "Multiple",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Random",
+                    "title": "LandObstacleGroupSolidsSpotty"
+                }, {
+                    "type": "Random",
+                    "title": "EnemyEasy"
+                }]
+            }
+        },
+        "LandObstacleGroupSingleStorySolids": {
+            "width": 64,
             "height": 40,
             "contents": {
                 "mode": "Certain",
                 "direction": "top",
                 "children": [{
                     "type": "Random",
-                    "title": "EnemySmall"
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 32
+                    }
                 }, {
                     "type": "Random",
-                    "title": "Nothing"
-                }, {
-                    "type": "Random",
-                    "title": "SolidSmallSpotty"
-                }]
-            }
-        },
-        "LandObstacleGroupDoubleStorySpotty": {
-            "width": 64,
-            "height": 80,
-            "contents": {
-                "mode": "Certain",
-                "direction": "top",
-                "children": [{
-                    "type": "Random",
-                    "title": "EnemySmall"
-                }, {
-                    "type": "Random",
-                    "title": "Nothing"
-                }, {
-                    "type": "Random",
-                    "title": "SolidSmall"
-                }, {
-                    "type": "Random",
-                    "title": "EnemySmall"
-                }, {
-                    "type": "Random",
-                    "title": "Nothing"
-                }, {
-                    "type": "Random",
-                    "title": "SolidSmallSpotty"
+                    "title": "LandObstacleGroupSolidsSpotty"
                 }]
             }
         },
@@ -403,130 +489,100 @@ FullScreenMario.prototype.settings.generator = {
             "width": 64,
             "height": 80,
             "contents": {
-                "mode": "Certain",
-                "direction": "top",
-                "children": [{
-                    "type": "Random",
-                    "title": "EnemySmall"
-                }, {
-                    "type": "Random",
-                    "title": "Nothing"
-                }, {
-                    "type": "Random",
-                    "title": "SolidSmall"
-                }, {
-                    "type": "Random",
-                    "title": "EnemySmall"
-                }, {
-                    "type": "Random",
-                    "title": "Nothing"
-                }, {
-                    "type": "Random",
-                    "title": "SolidSmall"
-                }, {
-                    "type": "Random",
-                    "title": "EnemySmall"
-                }]
-            }
-        },
-        "LandObstacleGroupDifficult": {
-            "width": 24,
-            "height": 80,
-            "contents": {
-                "mode": "Random",
-                "direction": "right",
-                "snap": "bottom",
-                "children": [{
-                    "percent": 500,
-                    "type": "Random",
-                    "title": "LandObstacleGroupCannon"
-                // }, {
-                    // "percent": 50,
-                    // "type": "Random",
-                    // "title": "HammerBroSolo"
-                }]
-            }
-        },
-        "LandObstacleGroupCannon": {
-            "width": 24,
-            "height": 80,
-            "contents": {
-                "mode": "Certain",
-                "direction": "right",
+                "mode": "Multiple",
                 "snap": "bottom",
                 "children": [{
                     "type": "Random",
-                    "title": "Nothing"
+                    "title": "LandObstacleGroupDoubleStorySolids"
                 }, {
                     "type": "Random",
-                    "title": "LandObstacleGroupCannonThin"
-                }, {
-                    "type": "Random",
-                    "title": "Nothing"
+                    "title": "LandObstacleGroupEnemies"
                 }]
             }
         },
-        "LandObstacleGroupCannonThin": {
-            "width": 8,
-            "height": 80,
-            "contents": {
-                "mode": "Certain",
-                "direction": "top",
-                "snap": "bottom",
-                "children": [{
-                    "type": "Random",
-                    "title": "Cannon"
-                }, {
-                    "type": "Random",
-                    "title": "Nothing",
-                    "stretch": {
-                        "height": true
-                    }
-                }]
-            }
-        },
-        "LandObstacleGroupDifficultSmall": {
-            "width": 48,
-            "height": 80,
-            "contents": {
-                "mode": "Certain",
-                "direction": "right",
-                "padding": 8,
-                "children": [{
-                    "type": "Random",
-                    "title": "Nothing"
-                }, {
-                    "type": "Random",
-                    "title": "LandObstacleGroupDifficult"
-                }, {
-                    "type": "Random",
-                    "title": "Nothing"
-                }]
-            }
-        },
-        "LandObstacleGroupPipeSmall": {
-            "width": 40,
-            "height": 80,
-            "contents": {
-                "mode": "Random",
-                "direction": "right",
-                "spacing": {
-                    "min": 0,
-                    "max": 8,
-                    "units": 8
-                },
-                "children": [{
-                    "percent": 100,
-                    "type": "Random",
-                    "title": "Pipe"
-                }]
-            }
-        },
-        "LandObstacleGroupPipeMedium": {
+        "LandObstacleGroupDoubleStorySolids": {
             "width": 64,
             "height": 80,
             "contents": {
+                "mode": "Certain",
+                "snap": "bottom",
+                "direction": "top",
+                "children": [{
+                    "type": "Random",
+                    "title": "LandObstacleGroupSolidsPopulated"
+                }, {
+                    "type": "Random",
+                    "title": "LandObstacleGroupSolidsSpotty"
+                }]
+            }
+        },
+        "LandObstacleGroupSolidsPopulated": {
+            "width": 64,
+            "height": 32,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 24
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "LandObstacleGroupSolid"
+                }, {
+                    "type": "Random",
+                    "title": "EnemyEasyElevated"
+                }]
+            }
+        },
+        "LandObstacleGroupSolids": {
+            "width": 64,
+            "height": 32,
+            "contents": {
                 "mode": "Random",
+                "snap": "bottom",
+                "direction": "right",
+                "children": [{
+                    "percent": 75,
+                    "type": "Random",
+                    "title": "Brick"
+                }, {
+                    "percent": 25,
+                    "type": "Random",
+                    "title": "Block"
+                }]
+            }
+        },
+        "LandObstacleGroupSolidsSpotty": {
+            "width": 64,
+            "height": 32,
+            "contents": {
+                "mode": "Random",
+                "snap": "bottom",
+                "direction": "right",
+                "children": [{
+                    "percent": 55,
+                    "type": "Random",
+                    "title": "Brick"
+                }, {
+                    "percent": 25,
+                    "type": "Random",
+                    "title": "Block"
+                }, {
+                    "percent": 20,
+                    "type": "Random",
+                    "title": "Nothing"
+                }]
+            }
+        },
+        "LandObstacleGroupVertical": {
+            "width": 32,
+            "height": 80,
+            "contents": {
+                "mode": "Random",
+                "snap": "bottom",
                 "direction": "right",
                 "spacing": {
                     "min": 0,
@@ -534,18 +590,105 @@ FullScreenMario.prototype.settings.generator = {
                     "units": 8
                 },
                 "children": [{
-                    "percent": 100,
+                    "percent": 45,
                     "type": "Random",
-                    "title": "Pipe"
+                    "title": "PipeRandom"
+                }, {
+                    "percent": 30,
+                    "type": "Random",
+                    "title": "StoneTower"
+                }, {
+                    "percent": 25,
+                    "type": "Random",
+                    "title": "CannonTower"
                 }]
             }
         },
-
+        "LandObstacleGroupPitSmall": {
+            "width": 40,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "snap": "bottom",
+                "direction": "right",
+                "children": [{
+                    "type": "Random",
+                    "title": "StoneTower"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "PitTreasure"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "StoneTower"
+                }]
+            }
+        },
+        "LandObstacleGroupPitLarge": {
+            "width": 56,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "snap": "bottom",
+                "direction": "right",
+                "children": [{
+                    "type": "Random",
+                    "title": "StoneTower"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "width": 16
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "PitTreasure"
+                }, {
+                    "type": "Random",
+                    "title": "EnemyEasy"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "StoneTower"
+                }]
+            }
+        },
+        "PitTreasure": {
+            "width": 8,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "spacing": {
+                    "min": 0,
+                    "max": 40,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 32
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "BlockTreasure",
+                }]
+            }
+        },
+        
         
         /* Enemy groups
         */
         
-        "EnemySmall": {
+        "EnemyEasy": {
             "width": 8,
             "height": 12,
             "contents": {
@@ -570,6 +713,54 @@ FullScreenMario.prototype.settings.generator = {
                     "percent": 20,
                     "type": "Random",
                     "title": "Beetle"
+                }]
+            }
+        },
+        "EnemyEasyElevated": {
+            "width": 64,
+            "height": 12,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "snap": "bottom",
+                "spacing": 4,
+                "children": [{
+                    "percent": 25,
+                    "type": "Random",
+                    "title": "Goomba"
+                }, {
+                    "percent": 15,
+                    "type": "Random",
+                    "title": "Koopa"
+                }, {
+                    "percent": 10,
+                    "type": "Random",
+                    "title": "Beetle"
+                }, {
+                    "percent": 50,
+                    "type": "Random",
+                    "title": "Nothing"
+                }]
+            }
+        },
+        "EnemyHard": {
+            "width": 8,
+            "height": 12,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "children": [{
+                    "percent": 40,
+                    "type": "Random",
+                    "title": "HammerBro"
+                }, {
+                    "percent": 40,
+                    "type": "Random",
+                    "title": "Blooper"
+                }, {
+                    "percent": 20,
+                    "type": "Random",
+                    "title": "Lakitu"
                 }]
             }
         },
@@ -616,6 +807,23 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
+        "LandObstacleGroupSolid": {
+            "width": 8,
+            "height": 8,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "children": [{
+                    "percent": 70,
+                    "type": "Random",
+                    "title": "Brick"
+                }, {
+                    "percent": 30,
+                    "type": "Random",
+                    "title": "Block"
+                }]
+            }
+        },
         "Cannon": {
             "width": 8,
             "height": 32,
@@ -624,13 +832,13 @@ FullScreenMario.prototype.settings.generator = {
                 "direction": "top",
                 "snap": "bottom",
                 "children": [{
-                    "percent": 20,
-                    "type": "Random",
-                    "title": "CannonSmall"
-                }, {
-                    "percent": 40,
+                    "percent": 50,
                     "type": "Random",
                     "title": "CannonMedium"
+                }, {
+                    "percent": 10,
+                    "type": "Random",
+                    "title": "CannonSmall"
                 }, {
                     "percent": 40,
                     "type": "Random",
@@ -962,6 +1170,53 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
+        "StoneTower": {
+            "width": 8,
+            "height": 32,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "percent": 50,
+                    "type": "Known",
+                    "title": "Stone",
+                    "snap": "bottom",
+                    "sizing": {
+                        "height": 24
+                    },
+                    "arguments": {
+                        "height": 24
+                    }
+                }, {
+                    "percent": 50,
+                    "type": "Known",
+                    "title": "Stone",
+                    "stretch": {
+                        "height": true
+                    },
+                }]
+            }
+        },
+        "CannonTower": {
+            "width": 24,
+            "height": 32,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "Cannon"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing"
+                }]
+            }
+        },
         
         /* Scenery groups
         */
@@ -1239,6 +1494,52 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
+        "HammerBro": {
+            "width": 8,
+            "height": 12,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Known",
+                    "title": "HammerBro"
+                }]
+            }
+        },
+        "Blooper": {
+            "width": 8,
+            "height": 40,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Blooper"
+                }]
+            }
+        },
+        "Lakitu": {
+            "width": 8,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "right",
+                "spacing": 4,
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 0
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Lakitu"
+                }]
+            }
+        },
         
         
         /* Solids
@@ -1276,28 +1577,168 @@ FullScreenMario.prototype.settings.generator = {
             "width": 8,
             "height": 8,
             "contents": {
-                "mode": "Random",
+                "mode": "Certain",
                 "direction": "right",
                 "snap": "top",
                 "children": [{
-                    "percent": 90,
-                    "type": "Known",
-                    "title": "Block"
-                }, {
-                    "percent": 9,
                     "type": "Known",
                     "title": "Block",
-                    "arguments": {
-                        "contents": "Mushroom"
-                    }
-                }, {
-                    "percent": 1,
+                    "arguments": [{
+                        "percent": 90,
+                        "values": {}
+                    }, {
+                        "percent": 9,
+                        "values": {
+                            "contents": "Mushroom"
+                        }
+                    }, {
+                        "percent": 1,
+                        "values": {
+                            "contents": "Mushroom1Up",
+                            "hidden": true
+                        }
+                    }]
+                }]
+            }
+        },
+        "BlockTreasure": {
+            "width": 8,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "top",
+                "children": [{
                     "type": "Known",
                     "title": "Block",
+                    "arguments": [{
+                        "percent": 35,
+                        "values": {
+                            "contents": "Mushroom"
+                        }
+                    }, {
+                        "percent": 35,
+                        "values": {
+                            "contents": "Star"
+                        }
+                    }, {
+                        "percent": 30,
+                        "values": {
+                            "contents": "Mushroom1Up"
+                        }
+                    }]
+                }]
+            }
+        },
+        "Bridge": {
+            "width": 8,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "snap": "bottom",
+                "direction": "right",
+                "children": [{
+                    "type": "Known",
+                    "title": "Bridge",
+                    "stretch": {
+                        "width": true
+                    },
                     "arguments": {
-                        "contents": "Mushroom1Up",
-                        "hidden": true
+                        "macro": "Bridge",
                     }
+                }]
+            }
+        },
+        "PipeRandom": {
+            "width": 16,
+            "height": 40,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "bottom",
+                "spacing": -40,
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 0
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Pipe",
+                    "sizing": {
+                        "height": 0
+                    },
+                    "arguments": [{
+                        "percent": 25,
+                        "values": {
+                            "macro": "Pipe",
+                            "piranha": true,
+                            "height": 16
+                        }
+                    }, {
+                        "percent": 5,
+                        "values": {
+                            "macro": "Pipe",
+                            "height": 16
+                        }
+                    }, {
+                        "percent": 25,
+                        "values": {
+                            "macro": "Pipe",
+                            "piranha": true,
+                            "height": 24
+                        }
+                    }, {
+                        "percent": 5,
+                        "values": {
+                            "macro": "Pipe",
+                            "height": 24
+                        }
+                    }, {
+                        "percent": 20,
+                        "values": {
+                            "macro": "Pipe",
+                            "piranha": true,
+                            "height": 32
+                        }
+                    }, {
+                        "percent": 5,
+                        "values": {
+                            "macro": "Pipe",
+                            "height": 32
+                        }
+                    }, {
+                        "percent": 5,
+                        "values": {
+                            "macro": "Pipe",
+                            "piranha": true,
+                            "transport": "Underworld",
+                            "height": 32
+                        }
+                    }, {
+                        "percent": 5,
+                        "values": {
+                            "macro": "Pipe",
+                            "transport": "Underworld",
+                            "height": 32
+                        }
+                    }, {
+                        "percent": 3,
+                        "values": {
+                            "macro": "Pipe",
+                            "piranha": true,
+                            "transport": "Underwater",
+                            "height": 32
+                        }
+                    }, {
+                        "percent": 2,
+                        "values": {
+                            "macro": "Pipe",
+                            "transport": "Underwater",
+                            "height": 32
+                        }
+                    }]
                 }]
             }
         },
@@ -1305,32 +1746,11 @@ FullScreenMario.prototype.settings.generator = {
             "width": 16,
             "height": 32,
             "contents": {
-                "mode": "Random",
-                "direction": "right",
+                "mode": "Certain",
                 "snap": "bottom",
                 "children": [{
-                    "percent": 50,
                     "type": "Known",
-                    "title": "Pipe",
-                    "snap": "bottom",
-                    "sizing": {
-                        "height": 24
-                    },
-                    "arguments": {
-                        // "macro": "Pipe",
-                        "height": 24
-                    }
-                }, {
-                    "percent": 50,
-                    "type": "Known",
-                    "title": "Pipe",
-                    "stretch": {
-                        "height": true
-                    },
-                    "arguments": {
-                        // "macro": "Pipe",
-                        // "piranha": true
-                    }
+                    "title": "Pipe"
                 }]
             }
         },
@@ -1393,6 +1813,19 @@ FullScreenMario.prototype.settings.generator = {
                     "arguments": {
                         "height": "Infinity"
                     }
+                }]
+            }
+        },
+        "Springboard": {
+            "width": 8,
+            "height": 14.5,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Known",
+                    "title": "Springboard"
                 }]
             }
         },
@@ -1543,6 +1976,25 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
+        "Water": {
+            "width": 4,
+            "height": 5,
+            "contents": {
+                "mode": "Certain",
+                "snap": "bottom",
+                "direction": "right",
+                "children": [{
+                    "type": "Known",
+                    "title": "Water",
+                    "stretch": {
+                        "width": true
+                    },
+                    "arguments": {
+                        "macro": "Water",
+                    }
+                }]
+            }
+        },
         
         
         /* General macros
@@ -1552,7 +2004,7 @@ FullScreenMario.prototype.settings.generator = {
             "width": 160,
             "height": 80,
             "contents": {
-                "mode": "Certain",
+                "mode": "Multiple",
                 "snap": "bottom",
                 "argumentMap": {
                     "left": "x",
@@ -1560,9 +2012,19 @@ FullScreenMario.prototype.settings.generator = {
                 },
                 "children": [{
                     "type": "Known",
+                    "title": "Floor",
+                    "arguments": {
+                        "macro": "Floor",
+                        "width": 320
+                    }
+                }, {
+                    "type": "Known",
                     "title": "EndOutsideCastle",
                     "arguments": {
                         "macro": "EndOutsideCastle"
+                    },
+                    "sizing": {
+                        "height": 80
                     }
                 }]
             }

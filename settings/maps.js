@@ -195,20 +195,6 @@ FullScreenMario.prototype.settings.maps = {
         return library;
     })([
         {
-            "name": "Random",
-            "locations": [
-                { "entry": "Plain" }
-            ],
-            "areas": [
-                {
-                    "setting": "Overworld",
-                    "creation": [
-                        { "location": 0 },
-                        { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Overworld", "randomTop": 80, "randomWidth": 2800, "randomBottom": -8 }
-                    ]
-                }
-            ]
-        }, {
             "name": "1-1",
             "locations": [
                   { "entry": "Plain" },
@@ -3554,6 +3540,50 @@ FullScreenMario.prototype.settings.maps = {
                     ]
                 }
             ]
+        }, {
+            "name": "Random",
+            "locations": {
+                "0": { "entry": "Plain", "area": "Overworld" },
+                "Overworld": { "entry": "Plain", "area": "Overworld" },
+                "Underworld": { "entry": "Plain", "area": "Underworld" }
+            },
+            "areas": {
+                "Overworld": {
+                    "setting": "Overworld",
+                    "creation": [
+                        { "location": 0 },
+                        { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Overworld", "randomTop": 80, "randomWidth": 2800, "randomBottom": -8 }
+                    ]
+                },
+                "Underworld": {
+                    "setting": "Underworld",
+                    "creation": [
+                        { "location": 0 },
+                        { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Underworld", "randomTop": 80, "randomWidth": 2800, "randomBottom": -8 }
+                    ]
+                },
+                "Underwater": {
+                    "setting": "Underworld",
+                    "creation": [
+                        { "location": 0 },
+                        { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Underwater", "randomTop": 80, "randomWidth": 2800, "randomBottom": -8 }
+                    ]
+                },
+                "Sky": {
+                    "setting": "Underworld",
+                    "creation": [
+                        { "location": 0 },
+                        { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Sky", "randomTop": 80, "randomWidth": 2800, "randomBottom": -8 }
+                    ]
+                },
+                "Castle": {
+                    "setting": "Underworld",
+                    "creation": [
+                        { "location": 0 },
+                        { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Castle", "randomTop": 80, "randomWidth": 2800, "randomBottom": -8 }
+                    ]
+                }
+            }
         }
     ])
 };

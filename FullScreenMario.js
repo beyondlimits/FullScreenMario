@@ -1374,6 +1374,14 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function spawnLakitu(thing) {
+        if (
+            thing.EightBitter.isCharacterAlive(
+                thing.EightBitter.MapScreener.lakitu
+            )
+        ) {
+            thing.EightBitter.killNormal(thing);
+            return;
+        }
         thing.EightBitter.MapScreener.lakitu = thing;
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {

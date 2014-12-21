@@ -388,7 +388,9 @@ function WorldSeedr(settings) {
             output = {
                 "title": title,
                 "type": choice.type,
-                "arguments": choice["arguments"],
+                "arguments": choice["arguments"] instanceof Array
+                    ? chooseAmong(choice["arguments"]).values
+                    : choice["arguments"],
             },
             name, i;
         

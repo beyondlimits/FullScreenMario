@@ -98,6 +98,44 @@ function GroupHoldr(settings) {
         setGroupNames(settings.groupNames, settings.groupTypes);
     };
     
+    
+    /* Simple gets
+    */
+    
+    /**
+     * @return {Object} The Object with Object<String, Function>s for each 
+     *                  action available on groups.
+     */
+    self.getFunctions = function () {
+        return functions;
+    };
+    
+    /**
+     * @return {Object} The Object storing each of the internal groups.
+     */
+    self.getGroups = function () {
+        return groups;
+    };
+    
+    /**
+     * @param {String} name
+     * @return {Object} The group of the given name.
+     */
+    self.getGroup = function (name) {
+        return groups[name];
+    };
+    
+    /**
+     * @return {String[]} An Array containing each of the group names.
+     */
+    self.getGroupNames = function () {
+        return groupNames;
+    };
+    
+    
+    /* Core logic
+    */
+    
     /** 
      * Meaty function to reset, given an array of names an object of types
      * Any pre-existing functions are cleared, and new ones are added as
@@ -456,12 +494,12 @@ function GroupHoldr(settings) {
     };
     
     /**
-     * 
+     * Clears each Array by setting its length to 0.
      */
     self.clearArrays = function () {
         var group, name, i;
         
-        for (i = 0; i < groupNames.length; i += 1) {
+        for (i = groupNames.length - 1; i >= 0; i -= 1) {
             group = groups[groupNames[i]];
             
             if (group instanceof Array) {
@@ -469,25 +507,6 @@ function GroupHoldr(settings) {
             }
         }
     }
-    
-    /* Simple gets
-    */
-    
-    self.getFunctions = function () {
-        return functions;
-    };
-    
-    self.getGroups = function () {
-        return groups;
-    };
-    
-    self.getGroup = function (name) {
-        return groups[name];
-    };
-    
-    self.getGroupNames = function () {
-        return groupNames;
-    };
     
     
     /* Utilities
