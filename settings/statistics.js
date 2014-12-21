@@ -1,5 +1,6 @@
 FullScreenMario.prototype.settings.statistics = {
     "prefix": "FullScreenMario",
+    "doMakeContainer": true,
     "containers": [
         ["table", {
             "id": "data_display",
@@ -46,7 +47,7 @@ FullScreenMario.prototype.settings.statistics = {
             "minimum": 0,
             "triggers": {
                 100: function (EightBitter) {
-                    EightBitter.AudioPlayer.playThemePrefix("Hurry");
+                    EightBitter.AudioPlayer.playThemePrefixed("Hurry");
                 }
             },
             "on_minimum": function (EightBitter) {

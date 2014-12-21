@@ -1,9 +1,79 @@
-/* AudioPlayr.js
- * A library to play audio files derived from Full Screen Mario
- * This will:
- * 1. Load files via AJAX upon startup
- * 2. Create appropriate HTML5 <audio> elements
- * 3. Play and pause those audio files on demand
+/**
+ * AudioPlayr.js
+ * 
+ * An audio library to automate preloading and controlled playback of multiple
+ * audio tracks, with support for different browsers' preferred fileTypes.
+ * Volume and mute status are stored locally using a StatsHoldr, which in turn
+ * requires proliferate and createElement functions (such as those given by the
+ * EightBittr prototype).
+ * 
+ * @example
+ * // Creating and using an AudioPlayr to load and play audio files. The 
+ * // 'Sounds/Samples/mp3' directory should have Coin.mp3 and Bump.mp3 in it.
+ * var AudioPlayer = new AudioPlayr({
+ *     "directory": "Sounds",
+ *     "fileTypes": ["mp3"],
+ *     "statistics": {
+ *         "prefix": "MyAudioPlayr",
+ *         "proliferate": EightBittr.prototype.proliferate,
+ *         "createElement": EightBittr.prototype.createElement,
+ *         "values": {
+ *             "volume": {
+ *                 "value_default": 0.5,
+ *                 "storeLocally": true
+ *             },
+ *             "muted": {
+ *                 "value_default": 0,
+ *                 "storeLocally": false
+ *             }
+ *         }
+ *     },
+ *     "library": {
+ *         "Sounds": [
+ *             "Coin",
+ *             "Bump"
+ *         ]
+ *     }
+ * });
+ * AudioPlayer.play("Coin"); // Returns an <audio> playing Coin.mp3
+ * 
+ * @example
+ * // Creating and using an AudioPlayr to load and play audio files. A theme 
+ * // track is kept looping in the background, and the Coin sound is played 
+ * // every seven seconds.
+ * var AudioPlayer = new AudioPlayr({
+ *     "directory": "Sounds",
+ *     "fileTypes": ["mp3"],
+ *     "statistics": {
+ *         "prefix": "MyAudioPlayr",
+ *         "proliferate": EightBittr.prototype.proliferate,
+ *         "createElement": EightBittr.prototype.createElement,
+ *         "values": {
+ *             "volume": {
+ *                 "value_default": 0.5,
+ *                 "storeLocally": true
+ *             },
+ *             "muted": {
+ *                 "value_default": 0,
+ *                 "storeLocally": false
+ *             }
+ *         }
+ *     },
+ *     "library": {
+ *         "Sounds": [
+ *             "Coin"
+ *         ],
+ *         "Themes": [
+ *             "Overworld"
+ *         ]
+ *     }
+ * });
+ * AudioPlayer.playTheme("Overworld");
+ * setInterval(function () {
+ *     AudioPlayer.play("Coin");
+ * }, 7000);
+ * 
+ * @author "Josh Goldberg" <josh@fullscreenmario.com>
  */
 function AudioPlayr(settings) {
     "use strict";
@@ -12,37 +82,62 @@ function AudioPlayr(settings) {
     }
     var self = this,
 
-        // A list of filenames to be turned into <audio> objects
+        // A listing of filenames to be turned into <audio> objects.
         library,
 
-        // What file types to add as sources to sounds
-        filetypes,
+        // What file types to add as sources to sounds.
+        fileTypes,
 
-        // Currently playing sound objects, keyed by name (no extensions)
+        // Currently playing sound objects, keyed by name (no extensions).
         sounds,
 
-        // The currently playing theme
+        // The currently playing theme.
         theme,
 
-        // Directory from which audio files are AJAXed if needed
+        // Directory from which audio files are AJAXed upon startup.
         directory,
 
-        // The function or int used to determine what playLocal's volume is
+        // The Function or Number used to determine what playLocal's volume is.
         getVolumeLocal,
 
-        // The function or string used to get a default theme name
+        // The Function or String used to get a default theme name.
         getThemeDefault,
 
-        // Storage container for settings like volume and muted status
+        // Storage container for settings like volume and muted status.
         StatsHolder;
     
     /**
+     * Resets the AudioPlayr.
      * 
+     * @constructor
+     * @param {Object} library   The names of the audio files to be preloaded so
+     *                           they can later be played by the AudioPlayr. The
+     *                           library Object stores Objects inside it, 
+     *                           representing the paths within each filetype's
+     *                           directory.
+     * @param {String} directory   The directory in which all directories of 
+     *                             audio files are stored.
+     * @param {String[]} filetypes   The allowed filetypes for each audio file.
+     *                               Each of these should have a directory of
+     *                               their name under the main directory, which
+     *                               should contain each file of the filetype.
+     * @param {Object} statistics   The arguments to be passed to the internal
+     *                              StatsHoldr. This must contain values for 
+     *                              "volume" and "muted".
+     * @param {Mixed} [getVolumeLocal]   A Function or Number to get the "local"
+     *                                   volume for playLocal calls. Functions
+     *                                   are called for a return value, and 
+     *                                   Numbers are constant (defaults to 1).
+     * @param {Mixed} [getThemeDefault]   A Function or String to get the 
+     *                                    default theme for playTheme calls.
+     *                                    Functions are called for a return
+     *                                    value, and Strings are constant
+     *                                    (defaults to "Theme").
      */
     self.reset = function reset(settings) {
-        library = settings.library || {};
-        filetypes = settings.filetypes || ["mp3", "ogg"];
-        directory = settings.directory || "";
+        library = settings.library;
+        directory = settings.directory;
+        fileTypes = settings.fileTypes;
         getVolumeLocal = settings.getVolumeLocal || 1;
         getThemeDefault = settings.getThemeDefault || "Theme";
 
@@ -63,35 +158,36 @@ function AudioPlayr(settings) {
     */
     
     /**
-     * 
+     * @return {Object} The listing of <audio> Elements, keyed by name.
      */
     self.getLibrary = function () {
         return library;
     };
     
     /**
-     * 
+     * @return {String[]} The allowed filetypes for audio files.
      */
-    self.getFileTypes = function () {
-        return filetypes;
+    self.getfileTypes = function () {
+        return fileTypes;
     };
     
     /**
-     * 
+     * @return {Object} The currently playing <audio> Elements, keyed by name.
      */
-    self.getCurrentSounds = function () {
+    self.getSounds = function () {
         return sounds;
     };
     
     /**
-     * 
+     * @return {HTMLAudioElement} The current playing theme's <audio> Element.
      */
-    self.getCurrentTheme = function () {
+    self.getTheme = function () {
         return theme;
     };
     
     /**
-     * 
+     * @return {String} The directory under which all filetype directories are 
+     *                  to be located.
      */
     self.getDirectory = function () {
         return directory;
@@ -102,19 +198,23 @@ function AudioPlayr(settings) {
     */
     
     /**
-     * 
+     * @return {Number} The current volume, which is a Number in [0,1],
+     *                  retrieved by the StatsHoldr.
      */
     self.getVolume = function () {
         return StatsHolder.get("volume");
     };
     
     /**
+     * Sets the current volume. If not muted, all sounds will have their volume
+     * updated.
      * 
+     * @param {Number} volume   A Number in [0,1] to set as the current volume.
      */
     self.setVolume = function (volume) {
         if (!self.getMuted()) {
             for (var i in sounds) {
-                sounds[i].volume = sounds[i].volume_real * volume;
+                sounds[i].volume = sounds[i].volumeReal * volume;
             }
         }
         
@@ -122,21 +222,31 @@ function AudioPlayr(settings) {
     };
     
     /**
-     * 
+     * @return {Boolean} whether this is currently muted.
      */
     self.getMuted = function () {
-        return StatsHolder.get("muted");
+        return Boolean(StatsHolder.get("muted"));
     };
     
     /**
+     * Calls either setMutedOn or setMutedOff as is appropriate.
      * 
+     * @param {Boolean} muted   The new status for muted.
      */
     self.setMuted = function (muted) {
         muted ? self.setMutedOn() : self.setMutedOff();
     }
     
     /**
-     * 
+     * Calls either setMutedOn or setMutedOff to toggle whether this is muted.
+     */
+    self.toggleMuted = function () {
+        self.setMuted(!self.getMuted());
+    };
+    
+    /**
+     * Sets volume to 0 in all currently playing sounds and stores the muted
+     * status as on in the internal StatsHoldr.
      */
     self.setMutedOn = function () {
         for (var i in sounds) {
@@ -148,7 +258,8 @@ function AudioPlayr(settings) {
     };
     
     /**
-     * 
+     * Sets sound volumes to their actual volumes and stores the muted status
+     * as off in the internal StatsHoldr.
      */
     self.setMutedOff = function () {
         var volume = self.getVolume(),
@@ -157,18 +268,11 @@ function AudioPlayr(settings) {
         for (i in sounds) {
             if (sounds.hasOwnProperty(i)) {
                 sound = sounds[i];
-                sound.volume = sound.volume_real * volume;
+                sound.volume = sound.volumeReal * volume;
             }
         }
         
         StatsHolder.set("muted", 0);
-    };
-    
-    /**
-     * 
-     */
-    self.toggleMuted = function () {
-        self.setMuted(!self.getMuted());
     };
     
     
@@ -176,7 +280,15 @@ function AudioPlayr(settings) {
     */
     
     /**
+     * @param {String} name   The name of the sound to play.
      * 
+     * Plays the sound of the given name. Internally, this stops any previously
+     * playing sound of that name and starts a new one, with volume set to the
+     * current volume and muted status. If the name wasn't previously being 
+     * played (and therefore a new Element has been created), an event listener
+     * is added to delete it from sounds after.
+     * 
+     * @return {HTMLAudioElement} The sound's <audio> element, now playing.
      */
     self.play = function (name) {
         var sound;
@@ -185,7 +297,9 @@ function AudioPlayr(settings) {
         if (!sounds.hasOwnProperty(name)) {
             // If the sound also isn't in the library, it's unknown
             if (!library.hasOwnProperty(name)) {
-                throw new Error("Unknown name given to AudioPlayr.play: '" + name + "'."); 
+                throw new Error(
+                    "Unknown name given to AudioPlayr.play: '" + name + "'."
+                ); 
             }
             sounds[name] = sound = library[name];
         } else {
@@ -197,7 +311,7 @@ function AudioPlayr(settings) {
         if (self.getMuted()) {
             sound.volume = 0;
         } else {
-            sound.volume_real = 1;
+            sound.volumeReal = 1;
             sound.volume = self.getVolume();
         }
         
@@ -213,20 +327,18 @@ function AudioPlayr(settings) {
     };
     
     /**
-     * 
+     * Pauses all currently playing sounds.
      */
     self.pauseAll = function () {
         for (var i in sounds) {
-            if (!sounds.hasOwnProperty(i)) {
-                continue;
+            if (sounds.hasOwnProperty(i)) {
+                sounds[i].pause();
             }
-            
-            sounds[i].pause();
         }
     };
     
     /**
-     * 
+     * Un-pauses (resumes) all currently paused sounds.
      */
     self.resumeAll = function () {
         for (var i in sounds) {
@@ -239,7 +351,7 @@ function AudioPlayr(settings) {
     };
     
     /**
-     * 
+     * Pauses the currently playing theme, if there is one.
      */
     self.pauseTheme = function () {
         if (theme) {
@@ -248,7 +360,7 @@ function AudioPlayr(settings) {
     };
     
     /**
-     * 
+     * Resumes the theme, if there is one and it's paused.
      */
     self.resumeTheme = function () {
         if (theme) {
@@ -257,7 +369,7 @@ function AudioPlayr(settings) {
     };
     
     /**
-     * 
+     * Stops all sounds and any theme, and removes all references to them.
      */
     self.clearAll = function () {
         self.pauseAll();
@@ -266,34 +378,52 @@ function AudioPlayr(settings) {
     };
     
     /**
+     * "Local" version of play that changes the output sound's volume depending
+     * on the result of a getVolumeLocal call. This defaults to 1, but may be
+     * less. For example, in a video game, sounds further from the viewpoint
+     * should have lessened volume.
      * 
+     * @param {String} name   The name of the sound to play.
+     * @param {Mixed} [location]   An argument for getVolumeLocal, if that's a
+     *                             Function.
+     * @return {HTMLAudioElement} The sound's <audio> element, now playing.
      */
     self.playLocal = function (name, location) {
         var sound = self.play(name);
 
         switch (getVolumeLocal.constructor) {
             case Function:
-                sound.volume_real = getVolumeLocal(location);
+                sound.volumeReal = getVolumeLocal(location);
                 break;
             case Number:
-                sound.volume_real = getVolumeLocal;
+                sound.volumeReal = getVolumeLocal;
                 break;
             default:
-                sound.volume_real = Number(volume_real) || 1;
+                sound.volumeReal = Number(volumeReal) || 1;
                 break;
         }
         
         if (self.getMuted()) {
             sound.volume = 0;
         } else {
-            sound.volume = sound.volume_real * self.getVolume();
+            sound.volume = sound.volumeReal * self.getVolume();
         }
 
         return sound;
     };
     
     /**
+     * Pauses any previously playing theme and starts playback of a new theme
+     * sound. This is different from normal sounds in that it normally loops and
+     * is controlled by pauseTheme and co. If loop is on and the sound wasn't
+     * already playing, an event listener is added for when it ends.
      * 
+     * @param {String} [name]   The name of the sound to be used as the theme.
+     *                          If not provided, getThemeDefault is used to 
+     *                          provide one.
+     * @param {Boolean} [loop]   Whether the theme should always loop (by 
+     *                           default, false).
+     * @return {HTMLAudioElement} The theme's <audio> element, now playing.
      */
     self.playTheme = function (name, loop) {
         self.pauseTheme();
@@ -325,11 +455,19 @@ function AudioPlayr(settings) {
     };
     
     /**
+     * Wrapper around playTheme that plays a sound, then a theme. This is 
+     * implemented using an event listener on the sound's ending.
      * 
+     * @param {String} [name]   The name of the sound to be used as the theme.
+     *                          If not provided, getThemeDefault is used to 
+     *                          provide one.
+     * @param {Boolean} [loop]   Whether the theme should always loop (by 
+     *                           default, false).
+     * @return {HTMLAudioElement} The sound's <audio> element, now playing.
      */
-    self.playThemePrefix = function (prefix, name, loop) {
+    self.playThemePrefixed = function (prefix, name, loop) {
+        var sound = self.play(prefix);
         self.pauseTheme();
-        self.play("Hurry");
         
         // If name isn't given, use the default getter
         if (typeof(name) === "undefined") {
@@ -343,12 +481,18 @@ function AudioPlayr(settings) {
             }
         }
         
-        self.addEventListener("Hurry", "ended", self.playTheme.bind(self, "Hurry " + name, loop));
+        self.addEventListener(
+            prefix,
+            "ended", 
+            self.playTheme.bind(self, prefix + " " + name, loop)
+        );
+        
+        return sound;
     };
 
 
     /* Public utilities
-     */
+    */
 
     /**
      * Adds an event listener to a currently playing sound.
@@ -359,7 +503,9 @@ function AudioPlayr(settings) {
      */
     self.addEventListener = function(name, event, callback) {
         if (!sounds.hasOwnProperty(name)) {
-            throw new Error("Unknown name given to AudioPlayr.addEventListener: '" + name + "'.");
+            throw new Error(
+                "Unknown name given to AudioPlayr.addEventListener: '" + name + "'."
+            );
         }
         
         sounds[name].addEventListener(event, callback);
@@ -396,7 +542,7 @@ function AudioPlayr(settings) {
     }
 
     /**
-     * Carefully stops a sound. HTMLAudioElements don't natively have a .stop()
+     * Carefully stops a sound. HTMLAudioElement don't natively have a .stop()
      * function, so this is the shim to do that.
      */
     function soundStop(sound) {
@@ -441,8 +587,8 @@ function AudioPlayr(settings) {
             type, child, i;
 
         // Create an audio source for each child
-        for (i in filetypes) {
-            type = filetypes[i];
+        for (i in fileTypes) {
+            type = fileTypes[i];
             child = document.createElement("source");
             child.type = "audio/" + type;
             child.src = directory + "/" + sectionName + "/" + type + "/" + name + "." + type;
@@ -452,13 +598,13 @@ function AudioPlayr(settings) {
 
         // This preloads the sound.
         sound.volume = 0;
-        sound.volume_real = 1;
+        sound.volumeReal = 1;
         sound.used = 0;
         sound.play();
         
         return sound;
     }
-    
+     
     
     self.reset(settings || {});
 }

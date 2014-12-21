@@ -421,14 +421,14 @@ var EightBittr = (function () {
     /**
      * 
      */
-    function proliferate(recipient, donor, no_override) {
+    function proliferate(recipient, donor, noOverride) {
         var setting, i;
       
         // For each attribute of the donor:
         for (i in donor) {
             if (donor.hasOwnProperty(i)) {
-                // If no_override, don't override already existing properties
-                if (no_override && recipient.hasOwnProperty(i)) {
+                // If noOverride, don't override already existing properties
+                if (noOverride && recipient.hasOwnProperty(i)) {
                     continue;
                 }
 
@@ -437,7 +437,7 @@ var EightBittr = (function () {
                     if (!recipient.hasOwnProperty(i)) {
                         recipient[i] = new setting.constructor();
                     }
-                    proliferate(recipient[i], setting, no_override);
+                    proliferate(recipient[i], setting, noOverride);
                 }
                 // Regular primitives are easy to copy otherwise
                 else {
@@ -455,14 +455,14 @@ var EightBittr = (function () {
      * @remarks This may not be good with JSLint, but it works for prototypal
      *          inheritance, since hasOwnProperty only is for the current class
      */
-    function proliferateHard(recipient, donor, no_override) {
+    function proliferateHard(recipient, donor, noOverride) {
         var setting, i;
       
         // For each attribute of the donor:
         for (i in donor) {
             if (donor.hasOwnProperty(i)) {
-                // If no_override, don't override already existing properties
-                if (no_override && recipient[i]) {
+                // If noOverride, don't override already existing properties
+                if (noOverride && recipient[i]) {
                     continue;
                 }
 
@@ -471,7 +471,7 @@ var EightBittr = (function () {
                     if (!recipient[i]) {
                         recipient[i] = new setting.constructor();
                     }
-                    proliferate(recipient[i], setting, no_override);
+                    proliferate(recipient[i], setting, noOverride);
                 }
                 // Regular primitives are easy to copy otherwise
                 else {
@@ -489,17 +489,17 @@ var EightBittr = (function () {
      * 
      * @param {Element} recipient
      * @param {Any} donor
-     * @param {Boolean} [no_override]
+     * @param {Boolean} [noOverride]
      * @return {Element}
      */
-    function proliferateElement(recipient, donor, no_override) {
+    function proliferateElement(recipient, donor, noOverride) {
         var setting, i, j;
       
         // For each attribute of the donor:
         for (i in donor) {
             if (donor.hasOwnProperty(i)) {
-                // If no_override, don't override already existing properties
-                if (no_override && recipient.hasOwnProperty(i)) {
+                // If noOverride, don't override already existing properties
+                if (noOverride && recipient.hasOwnProperty(i)) {
                     continue;
                 }
                 
@@ -523,7 +523,7 @@ var EightBittr = (function () {
                             if (!recipient.hasOwnProperty(i)) {
                                 recipient[i] = new setting.constructor();
                             }
-                            proliferate(recipient[i], setting, no_override);
+                            proliferate(recipient[i], setting, noOverride);
                         }
                         // Regular primitives are easy to copy otherwise
                         else {

@@ -280,21 +280,21 @@ function ObjectMakr(settings) {
      * 
      * @param {Object} recipient   An object receiving the donor's members
      * @param {Object} donor   An object whose members are copied to recipient
-     * @param {Boolean} no_override   If recipient properties may be overriden
+     * @param {Boolean} noOverride   If recipient properties may be overriden
      */
-    function proliferate(recipient, donor, no_override) {
+    function proliferate(recipient, donor, noOverride) {
         var setting, i;
         // For each attribute of the donor
         for (i in donor) {
-            // If no_override is specified, don't override if it already exists
-            if (no_override && recipient.hasOwnProperty(i)) continue;
+            // If noOverride is specified, don't override if it already exists
+            if (noOverride && recipient.hasOwnProperty(i)) continue;
 
             // If it's an object, recurse on a new version of it
             if ((typeof (setting = donor[i]) == "object")) {
                 if (!recipient.hasOwnProperty(i)) {
                     recipient[i] = new setting.constructor();
                 }
-                proliferate(recipient[i], setting, no_override);
+                proliferate(recipient[i], setting, noOverride);
             }
             // Regular primitives are easy to copy otherwise
             else {

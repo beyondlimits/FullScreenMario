@@ -45,13 +45,15 @@ function StatsHoldr(settings) {
     /**
      * 
      */
-    self.reset = function reset(settings) {
-        proliferate = settings.proliferate;
-        createElement = settings.createElement;
+    self.reset = function (settings) {
         localStorage = settings.localStorage || window.localStorage || {};
         prefix = settings.prefix || "";
         separator = settings.separator || "";
+        proliferate = settings.proliferate;
+        createElement = settings.createElement;
         callbackArgs = settings.callbackArgs;
+        
+        console.log("Ah", settings);
 
         defaults = {};
         if (settings.defaults) {
@@ -65,7 +67,7 @@ function StatsHoldr(settings) {
             }
         }
 
-        if (!settings.no_container) {
+        if (settings.doMakeContainer) {
             containers = settings.containers || [
                 ["div", {
                     "className": prefix + "_container"
@@ -73,7 +75,7 @@ function StatsHoldr(settings) {
             ]
             container = makeContainer(settings);
         }
-    }
+    };
 
     /* Retrieval
      */

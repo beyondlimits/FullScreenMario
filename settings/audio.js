@@ -1,7 +1,7 @@
 FullScreenMario.prototype.settings.audio = {
     "directory": "Sounds",
+    "fileTypes": ["mp3", "ogg"],
     "statistics": {
-        "no_container": true,
         "prefix": "FullScreenMarioAudioPlayer",
         "values": {
             "volume": {
