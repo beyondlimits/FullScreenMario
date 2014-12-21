@@ -290,14 +290,29 @@ FullScreenMario.prototype.settings.mods = {
             "enabled": false,
             "events": {
                 "onModEnable": function (mod) {
-                    var stats = this.ObjectMaker.getFunction("Player").prototype;
-                    mod.value_old = stats.maxspeedsave;
-                    stats.maxspeedsave = stats.maxspeed = stats.scrollspeed = mod.value_old * 4;
+                    var stats = this.ObjectMaker.getFunction("Player").prototype,
+                        keyNames = mod.settings.keyNames,
+                        multiplier = mod.settings.multiplier,
+                        i;
+                    
+                    for (i = 0; i < keyNames.length; i += 1) {
+                        mod.settings[keyNames[i]] = stats[keyNames[i]];
+                        stats[keyNames[i]] *= multiplier;
+                    }
                 },
                 "onModDisable": function (mod) {
-                    var stats = this.ObjectMaker.getFunction("Player").prototype;
-                    stats.maxspeedsave = stats.maxspeed = stats.scrollspeed = mod.value_old;
+                    var stats = this.ObjectMaker.getFunction("Player").prototype,
+                        keyNames = mod.settings.keyNames,
+                        i;
+                    
+                    for (i = 0; i < keyNames.length; i += 1) {
+                        stats[keyNames[i]] = mod.settings[keyNames[i]];
+                    }
                 }
+            },
+            "settings": {
+                "keyNames": ["maxspeedsave", "maxspeed", "scrollspeed"],
+                "multiplier": 14
             }
         }, {
             "name": "Invincibility",
