@@ -192,10 +192,7 @@ function LevelEditr(settings) {
     self.handleUploadStart = function (event) {
         var file, reader;
         
-        if (event) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
+        cancelEvent(event);
 
         if (event && event.dataTransfer) {
             file = event.dataTransfer.files[0];
@@ -218,8 +215,7 @@ function LevelEditr(settings) {
     }
     
     function handleDragOver(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        cancelEvent(event);
     }
     
     function handleDragDrop(event) {
@@ -254,8 +250,10 @@ function LevelEditr(settings) {
     /**
      * 
      */
-    function setCurrentClickMode(mode) {
+    function setCurrentClickMode(mode, event) {
         current_click_mode = mode;
+        
+        cancelEvent(event);
     }
     
     /**
@@ -272,6 +270,8 @@ function LevelEditr(settings) {
                     current_type, 
                     GameStarter.proliferate({
                         "onThingMake": undefined,
+                        "onThingAdd": undefined,
+                        "onThingAdded": undefined,
                         "outerok": true
                     }, getNormalizedThingArguments(args))
                 )
@@ -361,12 +361,12 @@ function LevelEditr(settings) {
             GameStarter.setLeft(
                 current_thing["thing"], 
                 roundTo(x - GameStarter.container.offsetLeft, blocksize) 
-                        + (current_thing["xloc"] || 0) * GameStarter.unitsize
+                        + (current_thing.left || 0) * GameStarter.unitsize
             );
             GameStarter.setTop(
                 current_thing["thing"], 
                 roundTo(y - GameStarter.container.offsetTop, blocksize) 
-                        - (current_thing["yloc"] || 0) * GameStarter.unitsize
+                        - (current_thing.top || 0) * GameStarter.unitsize
             );
         }
     }
@@ -402,16 +402,19 @@ function LevelEditr(settings) {
             y = roundTo(event.y || event.clientY || 0, blocksize),
             current_thing, i;
         
+        // killCurrentThings();
+        
         if (!current_things.length || !addMapCreationMacro(x, y)) {
             return;
         }
         
         for (i = 0; i < current_things.length; i += 1) {
             current_thing = current_things[i];
+            // debugger;
             onClickEditingGenericAdd(
-                x + (current_thing["xloc"] || 0) * GameStarter.unitsize,
-                y - (current_thing["yloc"] || 0) * GameStarter.unitsize,
-                current_thing["title"],
+                x + (current_thing["left"] || 0) * GameStarter.unitsize,
+                y - (current_thing["top"] || 0) * GameStarter.unitsize,
+                current_thing["thing"].title || current_thing["title"],
                 current_thing["reference"]
             );
             
@@ -423,7 +426,10 @@ function LevelEditr(settings) {
      */
     function onClickEditingGenericAdd(x, y, type, args) {
         var thing = GameStarter.ObjectMaker.make(type, GameStarter.proliferate({
-            "onThingMake": undefined
+            "onThingMake": undefined,
+            "onThingAdd": undefined,
+            "onThingAdded": undefined,
+            "movement": undefined
         }, getNormalizedThingArguments(args)));
         
         if (current_mode === "Build") {
@@ -443,15 +449,17 @@ function LevelEditr(settings) {
     function onThingIconClick(title, event) {
         var x = event.x || event.clientX || 0,
             y = event.y || event.clientY || 0,
-            target = event.target.nodeName === "DIV" ? event.target : event.target.parentNode;
+            target = event.target.nodeName === "DIV"
+                ? event.target : event.target.parentNode,
+            i;
+        
+        killCurrentThings();
         
         setTimeout(function () {
             setCurrentThing(title, getCurrentArgs(), x, y);
         });
         
-        event.preventDefault();
-        event.stopPropagation();
-        event.cancelBubble = true;
+        cancelEvent(event);
         
         setVisualOptions(target.name, false, target.options);
     }
@@ -464,7 +472,8 @@ function LevelEditr(settings) {
             setVisualOptions(title, description, options);
         }
         
-        var map = getMapObject();
+        var map = getMapObject(),
+            i;
         
         if (!map) {
             return;
@@ -575,6 +584,7 @@ function LevelEditr(settings) {
         
         setTextareaValue(stringifySmart(map), true);
         GameStarter.StatsHolder.set("time", time)
+        GameStarter.TimeHandler.cancelAllEvents();
     }
     
     
@@ -712,7 +722,6 @@ function LevelEditr(settings) {
             map = getMapObject();
         
         if (!map) {
-            console.log("No map");
             return;
         }
         
@@ -988,6 +997,7 @@ function LevelEditr(settings) {
                         }),
                         GameStarter.createElement("div", {
                             "className": "EditorSectionChoosers",
+                            "onclick": cancelEvent,
                             "children": [
                                 display["sections"]["buttons"]["ClickToPlace"]["container"] = GameStarter.createElement("div", {
                                     "className": "EditorMenuOption EditorSectionChooser EditorMenuOptionThird",
@@ -1017,6 +1027,7 @@ function LevelEditr(settings) {
                         }),
                         display["sections"]["ClickToPlace"]["container"] = GameStarter.createElement("div", {
                             "className": "EditorOptionsList EditorSectionMain",
+                            "onclick": cancelEvent,
                             "style": {
                                 "display": "block"
                             },
@@ -1129,6 +1140,7 @@ function LevelEditr(settings) {
                         }),
                         display["sections"]["MapSettings"]["container"] = GameStarter.createElement("div", {
                             "className": "EditorMapSettings EditorSectionMain",
+                            "onclick": cancelEvent,
                             "style": {
                                 "display": "none"
                             },
@@ -1163,6 +1175,7 @@ function LevelEditr(settings) {
                                                 display["sections"]["MapSettings"]["Time"] = createSelect([
                                                     "100", "200", "300", "400", "500", "1000", "2000", "Infinity"
                                                 ], {
+                                                    "value": "Infinity",
                                                     "onchange": setMapTime.bind(undefined, true)
                                                 })
                                             ]
@@ -1241,6 +1254,7 @@ function LevelEditr(settings) {
                         }),
                         display["sections"]["JSON"] = GameStarter.createElement("div", {
                             "className": "EditorJSON EditorSectionMain",
+                            "onclick": cancelEvent,
                             "style": {
                                 "display": "none"
                             },
@@ -1258,9 +1272,11 @@ function LevelEditr(settings) {
                         }),
                         display["sections"]["ClickToPlace"]["VisualSummary"] = GameStarter.createElement("div", {
                             "className": "EditorVisualSummary",
+                            "onclick": cancelEvent,
                         }),
                         display["sections"]["ClickToPlace"]["VisualOptions"] = GameStarter.createElement("div", {
                             "className": "EditorVisualOptions",
+                            "onclick": cancelEvent,
                             "textContent": "Click an icon to view options.",
                             "style": {
                                 "display": "block"
@@ -1268,6 +1284,7 @@ function LevelEditr(settings) {
                         }),
                         GameStarter.createElement("div", {
                             "className": "EditorMenu",
+                            "onclick": cancelEvent,
                             "children": (function (actions) {
                                 return Object.keys(actions).map(function (key) {
                                     return GameStarter.createElement("div", {
@@ -1348,8 +1365,9 @@ function LevelEditr(settings) {
      * 
      */
     self.setSectionClickToPlaceThings = function (event) {
-        setCurrentClickMode("Thing")
+        setCurrentClickMode("Thing", event);
         display.gui.onclick = onClickEditingThing;
+        display.scrollers.container.onclick = onClickEditingThing;
         display.sections.ClickToPlace.VisualOptions.style.display = "block";
         display.sections.ClickToPlace.Things.style.display = "block";
         display.sections.ClickToPlace.Macros.style.display = "none";
@@ -1361,8 +1379,9 @@ function LevelEditr(settings) {
      * 
      */
     self.setSectionClickToPlaceMacros = function (event) {
-        setCurrentClickMode("Macro");
+        setCurrentClickMode("Macro", event);
         display.gui.onclick = onClickEditingMacro;
+        display.scrollers.container.onclick = onClickEditingMacro;
         display.sections.ClickToPlace.VisualOptions.style.display = "block";
         display.sections.ClickToPlace.Things.style.display = "none";
         display.sections.ClickToPlace.Macros.style.display = "block";
@@ -1684,6 +1703,8 @@ function LevelEditr(settings) {
     function disableThing(thing, opacity) {
         thing.movement = undefined;
         thing.onThingMake = undefined;
+        thing.onThingAdd = undefined;
+        thing.onThingAdded = undefined;
         thing.nofall = true;
         thing.nocollide = true;
         thing.xvel = 0;
@@ -1759,6 +1780,10 @@ function LevelEditr(settings) {
             }));
         }
         
+        if (typeof attributes.value !== "undefined") {
+            select.value = attributes.value;
+        }
+        
         return select;
     }
     
@@ -1778,8 +1803,28 @@ function LevelEditr(settings) {
     /**
      * 
      */
+    function killCurrentThings() {
+        for (var i = 0; i < current_things.length - 1; i += 1) {
+            GameStarter.killNormal(current_things[i].thing);
+        }
+    }
+    
+    /**
+     * 
+     */
     function cancelEvent(event) {
-        event.stopPropagation();
+        if (!event) {
+            return;
+        }
+        
+        if (typeof event.preventDefault === "function") {
+            event.preventDefault();
+        }
+        
+        if (typeof event.stopPropagation === "function") {
+            event.stopPropagation();
+        }
+        
         event.cancelBubble = true;
     }
     

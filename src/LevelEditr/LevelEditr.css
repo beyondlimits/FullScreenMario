@@ -139,6 +139,10 @@
     background: gray;
 }
 
+.LevelEditor.minimized .EditorSectionChoosers {
+    opacity: 0;
+}
+
 
 /* EditorSectionMain
 */
@@ -185,6 +189,10 @@
     padding: 3px 7px;
 }
 
+.LevelEditor.minimized .EditorJSON {
+    opacity: 0;
+}
+
 
 /* EditorOptions
 */
@@ -194,6 +202,10 @@
     padding-left: 3px;
     clear: both;
     min-width: 98px;
+}
+
+.LevelEditor.minimized .EditorOptionsList {
+    opacity: 0;
 }
 
 .LevelEditor .EditorListOption {
@@ -223,7 +235,7 @@
 }
 
 .LevelEditor.minimized .EditorVisualSummary {
-    opacity: 1;
+    opacity: 0;
 }
 
 .LevelEditor .EditorVisualOptions {
@@ -244,7 +256,7 @@
 }
 
 .LevelEditor.minimized .EditorVisualOptions {
-    opacity: 0;
+    left: 100%;
 }
 
 .LevelEditor .EditorVisualOptions .VisualOption {
@@ -291,8 +303,12 @@
     cursor: pointer;
 }
 
-.LevelEditor.minimized .EditorMenuOption {
-    padding: 7px 3px;
+.LevelEditor.minimized .EditorMenuOption:not(:first-of-type) {
+    display: none;
+}
+
+.LevelEditor.minimized .EditorMenuOption:first-of-type {
+    width: auto;
 }
 
 .LevelEditor .EditorMenuOption:hover {
@@ -321,4 +337,8 @@
 
 .LevelEditor .EditorMapSettingsSubGroup {
     padding-left: 14px;
+}
+
+.LevelEditor.minimized .EditorMapSettings {
+    opacity: 0;
 }

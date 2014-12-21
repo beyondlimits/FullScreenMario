@@ -19,7 +19,7 @@
 		"map_setting_default": "Overworld",
 		"map_entry_default": "Plain",
 		"things": things,
-        "thing_groups": ["Character", "Solid", "Scenery"],
+        "thing_groups": ["Text", "Character", "Solid", "Scenery"],
 		"thing_keys": (function () {
 			var keys = [];
 			Object.keys(things).forEach(function (group) {
@@ -82,7 +82,7 @@
 		"Pipe": {
 			"height": {
                 "type": "Number",
-                "value": 2,
+                "value": 8,
                 "mod": 8,
                 "Infinite": true
             }
@@ -203,7 +203,7 @@
         "options": {
             "width": {
                 "type": "Number",
-                "value": 32,
+                "value": 4,
                 "mod": 8
             }
         }
@@ -214,7 +214,7 @@
         "options": {
             "width": {
                 "type": "Number",
-                "value": 32,
+                "value": 4,
                 "mod": 8
             }
         }

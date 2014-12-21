@@ -430,7 +430,7 @@ function MapsCreatr(settings) {
         }
         
         prethings[prething.thing[key_group_type]].push(prething);
-        if (!thing.noBoundaryStretch) {
+        if (!thing.noBoundaryStretch && area.boundaries) {
             stretchAreaBoundaries(prething, area);
         }
         
@@ -442,7 +442,7 @@ function MapsCreatr(settings) {
             map.locations[thing[key_entrance]].entrance = prething.thing;
         }
         
-        if (reference.collectionName) {
+        if (reference.collectionName && area.collections) {
             ensureThingCollection(
                 prething,
                 reference.collectionName, 
