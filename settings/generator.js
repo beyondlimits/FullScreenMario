@@ -167,7 +167,13 @@ FullScreenMario.prototype.settings.generator = {
                     "title": "OverworldClump"
                 }, {
                     "type": "Random",
+                    "title": "OverworldBetweenSpotty"
+                }, {
+                    "type": "Random",
                     "title": "OverworldBetween"
+                }, {
+                    "type": "Random",
+                    "title": "OverworldBetweenSpotty"
                 }]
             }
         },
@@ -517,7 +523,7 @@ FullScreenMario.prototype.settings.generator = {
                 "children": [{
                     "percent": 55,
                     "type": "Random",
-                    "title": "EnemyEasy"
+                    "title": "EnemyEasyScattered"
                 }, {
                     "percent": 5,
                     "type": "Random",
@@ -789,7 +795,7 @@ FullScreenMario.prototype.settings.generator = {
             }
         },
         "UnderworldStart": {
-            "width": 48,
+            "width": 128,
             "height": 80,
             "contents": {
                 "mode": "Certain",
@@ -798,10 +804,31 @@ FullScreenMario.prototype.settings.generator = {
                 "children": [{
                     "type": "Known",
                     "title": "Floor",
-                    "arguments": {
-                        "macro": "Floor",
-                        "width": 48
-                    }
+                    "arguments": [{
+                        "percent": 25,
+                        "values": {
+                            "macro": "Floor", 
+                            "width": 64
+                        }
+                    }, {
+                        "percent": 25,
+                        "values": {
+                            "macro": "Floor",
+                            "width": 80
+                        }
+                    }, {
+                        "percent": 25,
+                        "values": {
+                            "macro": "Floor",
+                            "width": 96
+                        }
+                    }, {
+                        "percent": 25,
+                        "values": {
+                            "macro": "Floor",
+                            "width": 128
+                        }
+                    }]
                 }, {
                     "type": "Known",
                     "title": "Brick",
@@ -813,7 +840,7 @@ FullScreenMario.prototype.settings.generator = {
             }
         },
         "UnderworldRandomization": {
-            "width": 1400,
+            "width": 1320,
             "height": 80,
             "contents": {
                 "mode": "Repeat",
@@ -823,7 +850,13 @@ FullScreenMario.prototype.settings.generator = {
                     "title": "UnderworldLandArea"
                 }, {
                     "type": "Random",
+                    "title": "UnderworldBetweenSpotty"
+                }, {
+                    "type": "Random",
                     "title": "UnderworldBetween"
+                }, {
+                    "type": "Random",
+                    "title": "UnderworldBetweenSpotty"
                 }]
             }
         },
@@ -859,25 +892,29 @@ FullScreenMario.prototype.settings.generator = {
                 "mode": "Random",
                 "direction": "right",
                 "spacing": [{
-                    "percent": 60,
+                    "percent": 50,
                     "value": 0
                 }, {
-                    "percent": 20,
+                    "percent": 30,
                     "value": 8
                 }, {
                     "percent": 20,
                     "value": 16
                 }],
                 "children": [{
-                    "percent": 55,
+                    "percent": 30,
                     "type": "Random",
-                    "title": "LandObstacleGroup"
+                    "title": "EnemyEasyScattered"
                 }, {
                     "percent": 25,
                     "type": "Random",
                     "title": "UnderworldBricksOverhangs"
                 }, {
                     "percent": 20,
+                    "type": "Random",
+                    "title": "LandObstacleGroupSingleStory"
+                }, {
+                    "percent": 25,
                     "type": "Random",
                     "title": "LandObstacleGroupVertical"
                 }]
@@ -939,24 +976,7 @@ FullScreenMario.prototype.settings.generator = {
                 }, {
                     "percent": 30,
                     "type": "Random",
-                    "title": "Nothing",
-                    "arguments": [{
-                        "percent": 50,
-                        "values": {
-                            "sizing": {
-                                "width": 32,
-                                "height": 16
-                            }
-                        }
-                    }, {
-                        "percent": 50,
-                        "values": {
-                            "sizing": {
-                                "width": 32,
-                                "height": 8
-                            }
-                        }
-                    }]
+                    "title": "EnemyEasyScattered",
                 }]
             }
         },
@@ -1322,6 +1342,347 @@ FullScreenMario.prototype.settings.generator = {
         },
         
         
+        /* Sky
+        */
+        
+        "Sky": {
+            "width": 1400, // ???
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "left",
+                "children": [{
+                    "type": "Random",
+                    "title": "SkyStart"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "SkyBeforeMain"
+                }, {
+                    "type": "Random",
+                    "title": "SkyMain"
+                }, {
+                    "type": "Random",
+                    "title": "SkyEnd"
+                }]
+            }
+        },
+        "SkyStart": {
+            "width": 32,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "left",
+                "children": [{
+                    "type": "Known",
+                    "title": "Stone",
+                    "arguments": {
+                        "width": 32
+                    },
+                    "sizing": {
+                        "width": 32
+                    }
+                }]
+            }
+        },
+        "SkyBeforeMain": {
+            "width": 80,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "left",
+                "children": [{
+                    "type": "Known",
+                    "title": "Stone",
+                    "arguments": {
+                        "width": 80
+                    },
+                    "sizing": {
+                        "width": 80
+                    }
+                }]
+            }
+        },
+        "SkyMain": {
+            "width": 560,
+            "height": 80,
+            "contents": {
+                "mode": "Multiple",
+                "children": [{
+                    "type": "Random",
+                    "title": "SkyMainLand"
+                }, {
+                    "type": "Random",
+                    "title": "SkyMainTransport"
+                }, {
+                    "type": "Random",
+                    "title": "SkyMainAir"
+                }]
+            }
+        },
+        "SkyMainLand": {
+            "width": 560,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "left",
+                "children": [{
+                    "type": "Known",
+                    "title": "Stone",
+                    "arguments": {
+                        "width": 560
+                    }
+                }]
+            }
+        },
+        "SkyMainTransport": {
+            "width": 140,
+            "height": 40,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "left",
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 32 
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Platform",
+                    "arguments": {
+                        "width": 24,
+                        "transport": "true"
+                    }
+                }]
+            }
+        },
+        "SkyMainAir": {
+            "width": 560,
+            "height": 80,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "snap": "bottom",
+                "spacing": 8,
+                "children": [{
+                    "percent": 20,
+                    "type": "Random",
+                    "title": "SkyCoinsShort"
+                }, {
+                    "percent": 20,
+                    "type": "Random",
+                    "title": "SkyCoinsMedium"
+                }, {
+                    "percent": 20,
+                    "type": "Random",
+                    "title": "SkyCoinsLong"
+                }, {
+                    "percent": 40,
+                    "type": "Random",
+                    "title": "SkyCoinsStone"
+                }]
+            }
+        },
+        "SkyCoinsShort": {
+            "width": 24,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "left",
+                "spacing": {
+                    "min": 0,
+                    "max": 16,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 56
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "SkyCoinsRow",
+                    "stretch": {
+                        "width": true
+                    }
+                }]
+            }
+        },
+        "SkyCoinsMedium": {
+            "width": 56,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "left",
+                "spacing": {
+                    "min": 0,
+                    "max": 16,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 56
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "SkyCoinsRow",
+                    "stretch": {
+                        "width": true
+                    }
+                }]
+            }
+        },
+        "SkyCoinsLong": {
+            "width": 128,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "left",
+                "spacing": {
+                    "min": 0,
+                    "max": 16,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 56
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "SkyCoinsRow",
+                    "stretch": {
+                        "width": true
+                    }
+                }]
+            }
+        },
+        "SkyCoinsRow": {
+            "width": 5,
+            "height": 7,
+            "contents": {
+                "mode": "Repeat",
+                "direction": "right",
+                "snap": "top",
+                "spacing": 3,
+                "children": [{
+                    "type": "Random",
+                    "title": "Coin"
+                }]
+            }
+        },
+        "SkyCoinsStone": {
+            "width": 24,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                }, {
+                    "type": "Random",
+                    "title": "SkyCoinsStoneVertical",
+                }]
+            }
+        },
+        "SkyCoinsStoneVertical": {
+            "width": 8,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "spacing": {
+                    "min": 0,
+                    "max": 8,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 64
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "arguments": [{
+                        "percent": 33,
+                        "values": {}
+                    }, {
+                        "percent": 34,
+                        "values": {
+                            "width": 16
+                        }
+                    }, {
+                        "percent": 33,
+                        "values": {
+                            "height": 16
+                        }
+                    }]
+                }]
+            }
+        },
+        "SkyEnd": {
+            "width": 320,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "right",
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "SkyEndCoins"
+                }]
+            }
+        },
+        "SkyEndCoins": {
+            "width": 24,
+            "height": 7,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "bottom",
+                "spacing": 3,
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "width": 64
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Coin"
+                }, {
+                    "type": "Known",
+                    "title": "Coin"
+                }, {
+                    "type": "Known",
+                    "title": "Coin"
+                }]
+            }
+        },
+        
+        
         /* Enemy groups
         */
         
@@ -1350,6 +1711,44 @@ FullScreenMario.prototype.settings.generator = {
                     "percent": 20,
                     "type": "Random",
                     "title": "Beetle"
+                }]
+            }
+        },
+        "EnemyEasyScattered": {
+            "width": 8,
+            "height": 12,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "spacing": [{
+                    "percent": 45,
+                    "value": 8
+                }, {
+                    "percent": 25,
+                    "value": 4
+                }, {
+                    "percent": 15,
+                    "value": 12
+                }, {
+                    "percent": 15,
+                    "value": 16
+                }],
+                "children": [{
+                    "percent": 40,
+                    "type": "Random",
+                    "title": "Goomba"
+                }, {
+                    "percent": 30,
+                    "type": "Random",
+                    "title": "Koopa"
+                }, {
+                    "percent": 15,
+                    "type": "Random",
+                    "title": "Beetle"
+                }, {
+                    "percent": 15,
+                    "type": "Random",
+                    "title": "Nothing"
                 }]
             }
         },
@@ -2567,7 +2966,7 @@ FullScreenMario.prototype.settings.generator = {
             "contents": {
                 "mode": "Certain",
                 "direction": "right",
-                "snap": "bottom",
+                "snap": "top",
                 "children": [{
                     "type": "Known",
                     "title": "Stone"
@@ -2742,6 +3141,20 @@ FullScreenMario.prototype.settings.generator = {
                     "title": "LakituStop",
                     "arguments": {
                         "macro": "LakituStop"
+                    }
+                }]
+            }
+        },
+        "Platform": {
+            "width": 16,
+            "height": 4,
+            "contents": {
+                "mode": "Certain",
+                "children": [{
+                    "type": "Known",
+                    "title": "Platform",
+                    "stretch": {
+                        "width": true
                     }
                 }]
             }

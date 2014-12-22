@@ -965,7 +965,11 @@ FullScreenMario.prototype.settings.maps = {
             "name": "3-1",
             "time": 300,
             "locations": [
-                { "entry": "Plain" }, { "entry": "PipeVertical" }, { "xloc": 1272 }, { "area": 1 }, { "area": 2, "entry": "Vine" }
+                { "entry": "Plain" }, 
+                { "entry": "PipeVertical" },
+                { "xloc": 1272 }, 
+                { "area": 1 }, 
+                { "area": 2, "entry": "Vine" }
             ],
             "areas": [
                 {
@@ -3546,7 +3550,8 @@ FullScreenMario.prototype.settings.maps = {
             "locations": {
                 "0": { "entry": "Plain", "area": "Overworld" },
                 "Overworld": { "entry": "Plain", "area": "Overworld" },
-                "Underworld": { "entry": "Plain", "area": "Underworld" }
+                "Underworld": { "entry": "Plain", "area": "Underworld" },
+                "Sky": { "entry": "Vine", "area": "Sky" }
             },
             "areas": {
                 "Overworld": {
@@ -3571,7 +3576,7 @@ FullScreenMario.prototype.settings.maps = {
                     ]
                 },
                 "Sky": {
-                    "setting": "Overworld",
+                    "setting": "Sky",
                     "creation": [
                         { "location": 0 },
                         { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Sky", "randomTop": 80, "randomWidth": 2800, "randomBottom": -8 }
