@@ -5548,6 +5548,52 @@ var FullScreenMario = (function(GameStartr) {
         
         return output;
     }
+    
+    /**
+     * 
+     * 
+     * @remarks This could be used in 1-2 and 4-2, but there's no real need to 
+     *          take the time (unless you're a volunteer and want something to 
+     *          do!). It was introduced for WorldSeedr generation.
+     */
+    function macroPipeCorner(reference, prethings, area, map, scope) {
+        var x = reference.x || 0,
+            y = reference.y || 0,
+            height = reference.height || 16,
+            output = [
+                {
+                    "thing": "PipeHorizontal",
+                    "x": x,
+                    "y": y,
+                    "transport": reference.transport || 0
+                },
+                {
+                    "thing": "PipeVertical",
+                    "x": x + 16,
+                    "y": y + height - 16,
+                    "height": height
+                }
+            ];
+        
+        if (reference.scrollEnabler) {
+            output.push({
+                "thing": "ScrollEnabler", 
+                "x": x + 16, 
+                "y": y + height + 48, 
+                "height": 64,
+                "width": 16
+            });
+        }
+        
+        if (reference.scrollBlocker) {
+            output.push({
+                "thing": "ScrollBlocker", 
+                "x": x + 32
+            });
+        }
+        
+        return output;
+    }
 
     /**
      * 
@@ -5783,7 +5829,7 @@ var FullScreenMario = (function(GameStartr) {
         var output = [],
             direction = reference.direction || 1,
             levels = direction > 0 ? [0, 48] : [8, 56],
-            width = reference.width || 4,
+            width = reference.width || 16,
             x = reference.x || 0,
             yvel = direction * scope.unitsize * .42,
             i;
@@ -6219,7 +6265,7 @@ var FullScreenMario = (function(GameStartr) {
         var x = reference.x || 0,
             y = reference.y || 0,
             output;
-
+        
         // Output starts off with the general flag & collision detection
         output = [
             // Initial collision detector
@@ -6239,10 +6285,10 @@ var FullScreenMario = (function(GameStartr) {
         if (reference.large) {
             output.push({
                 "macro": "CastleLarge",
-                "x": x + (reference.castleDistance || 28),
+                "x": x + (reference.castleDistance || 24),
                 "y": y,
                 "transport": "setNextLevel",
-                "walls": reference.walls
+                "walls": reference.walls || 8
             });
         } else {
             output.push({
@@ -6691,6 +6737,7 @@ var FullScreenMario = (function(GameStartr) {
         "macroFillPrePattern": macroFillPrePattern,
         "macroFloor": macroFloor,
         "macroPipe": macroPipe,
+        "macroPipeCorner": macroPipeCorner,
         "macroTree": macroTree,
         "macroShroom": macroShroom,
         "macroWater": macroWater,

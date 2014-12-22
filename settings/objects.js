@@ -737,6 +737,7 @@
                 }
             },
             PipeVertical: {
+                position: "beginning",
                 width: 16,
                 spritewidth: 16
             },

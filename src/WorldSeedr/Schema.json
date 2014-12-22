@@ -21,7 +21,7 @@ Child = {
         "width": Boolean, // optional
         "height": Boolean // optional
     },
-    "arguments": Object // optional
+    "arguments": Object // optional; only allowed if type = "Known"
 };
 
 Spacing = // one of

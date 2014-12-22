@@ -23,8 +23,85 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
+        "RandomSpawnerUnderworld": {
+            "width": 0,
+            "height": 0,
+            "contents": {
+                "mode": "Random",
+                "limit": 1,
+                "children": [{
+                    "percent": 100,
+                    "type": "Known",
+                    "title": "RandomSpawner",
+                    "arguments": {
+                        "randomization": "Underworld",
+                        "randomWidth": 1400,
+                        "randomTop": 80,
+                        "randomBottom": 0
+                    }
+                }]
+            }
+        },
+        "RandomSpawnerUnderwater": {
+            "width": 0,
+            "height": 0,
+            "contents": {
+                "mode": "Random",
+                "limit": 1,
+                "children": [{
+                    "percent": 100,
+                    "type": "Known",
+                    "title": "RandomSpawner",
+                    "arguments": {
+                        "randomization": "Underwater",
+                        "randomWidth": 700,
+                        "randomTop": 80,
+                        "randomBottom": 0
+                    }
+                }]
+            }
+        },
+        "RandomSpawnerSky": {
+            "width": 0,
+            "height": 0,
+            "contents": {
+                "mode": "Random",
+                "limit": 1,
+                "children": [{
+                    "percent": 100,
+                    "type": "Known",
+                    "title": "RandomSpawner",
+                    "arguments": {
+                        "randomization": "Sky",
+                        "randomWidth": 700,
+                        "randomTop": 80,
+                        "randomBottom": 0
+                    }
+                }]
+            }
+        },
+        "RandomSpawnerCastle": {
+            "width": 0,
+            "height": 0,
+            "contents": {
+                "mode": "Random",
+                "limit": 1,
+                "children": [{
+                    "percent": 100,
+                    "type": "Known",
+                    "title": "RandomSpawner",
+                    "arguments": {
+                        "randomization": "Castle",
+                        "randomWidth": 700,
+                        "randomTop": 80,
+                        "randomBottom": 0
+                    }
+                }]
+            }
+        },
         
-        /* Whole areas
+        
+        /* Overworld
         */
         
         "Overworld": {
@@ -41,13 +118,13 @@ FullScreenMario.prototype.settings.generator = {
                     "title": "OverworldBody"
                 }, {
                     "type": "Random",
-                    "title": "EndOutsideCastle"
+                    "title": "OverworldEnd"
                 }]
             }
         },
         "OverworldStart": {
-            "height": 80,
             "width": 112,
+            "height": 80,
             "contents": {
                 "mode": "Certain",
                 "direction": "top",
@@ -66,8 +143,8 @@ FullScreenMario.prototype.settings.generator = {
             }
         },
         "OverworldBody": {
+            "width": 2400,
             "height": 80,
-            "width": 2688,
             "contents": {
                 "mode": "Multiple",
                 "children": [{
@@ -80,8 +157,8 @@ FullScreenMario.prototype.settings.generator = {
             }
         },
         "OverworldRandomization": {
+            "width": 2400,
             "height": 80,
-            "width": 2688,
             "contents": {
                 "mode": "Repeat",
                 "direction": "right",
@@ -95,8 +172,8 @@ FullScreenMario.prototype.settings.generator = {
             }
         },
         "OverworldClump": {
-            "height": 80,
             "width": 160,
+            "height": 80,
             "contents": {
                 "mode": "Multiple",
                 "children": [{
@@ -133,8 +210,8 @@ FullScreenMario.prototype.settings.generator = {
         */
         
         "OverworldBetween": {
-            "height": 80,
             "width": 112,
+            "height": 80,
             "contents": {
                 "mode": "Random",
                 "direction": "right",
@@ -382,7 +459,7 @@ FullScreenMario.prototype.settings.generator = {
                     "title": "Nothing"
                 }, {
                     "type": "Random",
-                    "title": "Block"
+                    "title": "BlockReward"
                 }]
             }
         },
@@ -404,21 +481,21 @@ FullScreenMario.prototype.settings.generator = {
                     "units": 16
                 },
                 "children": [{
-                    "percent": 45,
+                    "percent": 40,
                     "type": "Random",
                     "title": "LandObstacleGroupEnemies"
                 }, {
-                    "percent": 20,
+                    "percent": 25,
+                    "type": "Random",
+                    "title": "LandObstacleGroupVertical"
+                }, {
+                    "percent": 15,
                     "type": "Random",
                     "title": "LandObstacleGroupSingleStory"
                 }, {
-                    "percent": 20,
+                    "percent": 15,
                     "type": "Random",
                     "title": "LandObstacleGroupDoubleStory"
-                }, {
-                    "percent": 10,
-                    "type": "Random",
-                    "title": "LandObstacleGroupVertical"
                 }, {
                     "percent": 2,
                     "type": "Random",
@@ -446,7 +523,11 @@ FullScreenMario.prototype.settings.generator = {
                     "type": "Random",
                     "title": "EnemyHard"
                 }, {
-                    "percent": 40,
+                    "percent": 20,
+                    "type": "Random",
+                    "title": "LandObstacleGroupVertical"
+                }, {
+                    "percent": 20,
                     "type": "Random",
                     "title": "Nothing"
                 }]
@@ -563,15 +644,15 @@ FullScreenMario.prototype.settings.generator = {
                 "snap": "bottom",
                 "direction": "right",
                 "children": [{
-                    "percent": 55,
+                    "percent": 30,
                     "type": "Random",
                     "title": "Brick"
                 }, {
-                    "percent": 25,
+                    "percent": 20,
                     "type": "Random",
                     "title": "Block"
                 }, {
-                    "percent": 20,
+                    "percent": 50,
                     "type": "Random",
                     "title": "Nothing"
                 }]
@@ -590,11 +671,11 @@ FullScreenMario.prototype.settings.generator = {
                     "units": 8
                 },
                 "children": [{
-                    "percent": 45,
+                    "percent": 40,
                     "type": "Random",
                     "title": "PipeRandom"
                 }, {
-                    "percent": 30,
+                    "percent": 35,
                     "type": "Random",
                     "title": "StoneTower"
                 }, {
@@ -680,6 +761,562 @@ FullScreenMario.prototype.settings.generator = {
                 }, {
                     "type": "Random",
                     "title": "BlockTreasure",
+                }]
+            }
+        },
+        
+        
+        /* Underworld
+        */
+        
+        "Underworld": {
+            "width": 1400,
+            "height": 88,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "left",
+                "children": [{
+                    "type": "Random",
+                    "title": "UnderworldStart"
+                }, {
+                    "type": "Random",
+                    "title": "UnderworldRandomization"
+                }, {
+                    "type": "Random",
+                    "title": "UnderworldEnd"
+                }]
+            }
+        },
+        "UnderworldStart": {
+            "width": 48,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "left",
+                "children": [{
+                    "type": "Known",
+                    "title": "Floor",
+                    "arguments": {
+                        "macro": "Floor",
+                        "width": 48
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Brick",
+                    "arguments": {
+                        "macro": "Fill",
+                        "ynum": 11
+                    }
+                }]
+            }
+        },
+        "UnderworldRandomization": {
+            "width": 1400,
+            "height": 80,
+            "contents": {
+                "mode": "Repeat",
+                "direction": "right",
+                "children": [{
+                    "type": "Random",
+                    "title": "UnderworldLandArea"
+                }, {
+                    "type": "Random",
+                    "title": "UnderworldBetween"
+                }]
+            }
+        },
+        "UnderworldLandArea": {
+            "width": 160,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Floor",
+                    "arguments": {
+                        "macro": "Floor",
+                        "width": 160
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "UnderworldObstacleGroup"
+                }, {
+                    "type": "Random",
+                    "title": "Brick", 
+                    "sizing": {
+                        "width": 160
+                    }
+                }]
+            }
+        },
+        "UnderworldObstacleGroup": {
+            "width": 160,
+            "height": 80,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "spacing": [{
+                    "percent": 60,
+                    "value": 0
+                }, {
+                    "percent": 20,
+                    "value": 8
+                }, {
+                    "percent": 20,
+                    "value": 16
+                }],
+                "children": [{
+                    "percent": 55,
+                    "type": "Random",
+                    "title": "LandObstacleGroup"
+                }, {
+                    "percent": 25,
+                    "type": "Random",
+                    "title": "UnderworldBricksOverhangs"
+                }, {
+                    "percent": 20,
+                    "type": "Random",
+                    "title": "LandObstacleGroupVertical"
+                }]
+            }
+        },
+        "UnderworldBricksOverhangs": {
+            "width": 160,
+            "height": 64,
+            "contents": {
+                "mode": "Repeat",
+                "direction": "right",
+                "snap": "bottom",
+                "spacing": {
+                    "min": 0,
+                    "max": 24,
+                    "units": 8
+                },
+                "children": [{
+                    "percent": 100,
+                    "type": "Random",
+                    "title": "UnderworldBricksOverhang"
+                }]
+            }
+        },
+        "UnderworldBricksOverhang": {
+            "width": 32,
+            "height": 64,
+            "contents": {
+                "mode": "Random",
+                "direction": "top",
+                "snap": "left",
+                "spacing": [{
+                    "percent": 40,
+                    "value": 0
+                }, {
+                    "percent": 40,
+                    "value": 16
+                }, {
+                    "percent": 20,
+                    "value": 8
+                }],
+                "children": [{
+                    "percent": 40,
+                    "type": "Random",
+                    "title": "UnderworldBrickCluster"
+                }, {
+                    "percent": 30,
+                    "type": "Known",
+                    "title": "Coin",
+                    "arguments": {
+                        "macro": "Fill",
+                        "xnum": 4,
+                        "xwidth": 8
+                    },
+                    "sizing": {
+                        "width": 32,
+                        "height": 16
+                    }
+                }, {
+                    "percent": 30,
+                    "type": "Random",
+                    "title": "Nothing",
+                    "arguments": [{
+                        "percent": 50,
+                        "values": {
+                            "sizing": {
+                                "width": 32,
+                                "height": 16
+                            }
+                        }
+                    }, {
+                        "percent": 50,
+                        "values": {
+                            "sizing": {
+                                "width": 32,
+                                "height": 8
+                            }
+                        }
+                    }]
+                }]
+            }
+        },
+        "UnderworldBrickCluster": {
+            "width": 32,
+            "height": 16,
+            "contents": {
+                "mode": "Repeat",
+                "direction": "top",
+                "children": [{
+                    "type": "Random",
+                    "title": "UnderworldBrickRow"
+                }]
+            }
+        },
+        "UnderworldBrickRow": {
+            "width": 32,
+            "height": 8,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "children": [{
+                    "percent": 97,
+                    "type": "Known",
+                    "title": "Brick"
+                }, {
+                    "percent": 3,
+                    "type": "Known",
+                    "title": "Brick",
+                    "arguments": {
+                        "contents": "Coin"
+                    }
+                }]
+            }
+        },
+        "UnderworldBetween": {
+            "width": 112,
+            "height": 80,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "children": [{
+                    "percent": 30,
+                    "type": "Random",
+                    "title": "UnderworldBetweenSpotty"
+                }, {
+                    "percent": 25,
+                    "type": "Random",
+                    "title": "OverworldBetweenWatery"
+                }, {
+                    "percent": 25,
+                    "type": "Random",
+                    "title": "UnderworldBetweenPlatforms"
+                }, {
+                    "percent": 20,
+                    "type": "Random",
+                    "title": "OverworldBetweenRamps"
+                }]
+            }
+        },
+        "UnderworldBetweenSpotty": {
+            "width": 112,
+            "height": 80,
+            "contents": {
+                "mode": "Multiple",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Random",
+                    "title": "UnderworldBetweenSpots"
+                }, {
+                    "type": "Random",
+                    "title": "UnderworldBrickCeiling",
+                    "sizing": {
+                        "width": 112
+                    }
+                }]
+            }
+        },
+        "UnderworldBetweenSpots": {
+            "width": 112,
+            "height": 80,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "percent": 50,
+                    "type": "Random",
+                    "title": "UnderworldBetweenSpot",
+                }, {
+                    "percent": 50,
+                    "type": "Random",
+                    "title": "Nothing",
+                }]
+            }
+        },
+        "UnderworldBetweenSpot": {
+            "width": 8,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Floor",
+                    "arguments": [{
+                        "percent": 40,
+                        "values": {
+                            "macro": "Floor"
+                        }
+                    }, {
+                        "percent": 30,
+                        "values": {
+                            "macro": "Floor",
+                            "y": 8
+                        }
+                    }, {
+                        "percent": 30,
+                        "values": {
+                            "macro": "Floor",
+                            "y": 16
+                        }
+                    }]
+                }]
+            }
+        },
+        "UnderworldBetweenPlatforms": {
+            "width": 112,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "spacing": {
+                    "min": 0,
+                    "max": 8,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "width": 16
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "PlatformGenerator"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "PlatformGenerator"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing"
+                }]
+            }
+        },
+        "UnderworldBrickCeiling": {
+            "width": 8,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "left",
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 88
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "Brick"
+                }]
+            }
+        },
+        "UnderworldEnd": {
+            "width": 480,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "left",
+                "children": [{
+                    "type": "Random",
+                    "title": "UnderworldEndFloor"
+                }, {
+                    "type": "Random",
+                    "title": "UnderworldEndLand"
+                }]
+            }
+        },
+        "UnderworldEndFloor": {
+            "width": 480,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "children": [{
+                    "type": "Random",
+                    "title": "Floor"
+                }]
+            }
+        },
+        "UnderworldEndLand": {
+            "width": 488,
+            "height": 72,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Random",
+                    "title": "LakituStop",
+                    "sizing": {
+                        "width": 0
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "UnderworldEndPipeArea"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "width": 64
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "RampUpLarge"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "width": 64
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "UnderworldEndOutsideCastle"
+                }, {
+                    "type": "Known",
+                    "title": "ScrollBlocker",
+                    "sizing": {
+                        "width": 0,
+                        "height": 0
+                    }
+                }]
+            }
+        },
+        "UnderworldEndPipeArea": {
+            "width": 144,
+            "height": 88,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Random",
+                    "title": "UnderworldEndPipeFront"
+                }, {
+                    "type": "Random",
+                    "title": "UnderworldEndPipeTransport"
+                }, {
+                    "type": "Known",
+                    "title": "Brick",
+                    "arguments": {
+                        "macro": "Fill",
+                        "xnum": 7,
+                        "ynum": 11,
+                        "yheight": -8
+                    }
+                }]
+            }
+        },
+        "UnderworldEndPipeFront": {
+            "width": 80,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "left",
+                "children": [{
+                    "type": "Known",
+                    "title": "Brick",
+                    "arguments": {
+                        "macro": "Fill",
+                        "xnum": 10,
+                        "ynum": 3
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 40
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Block",
+                    "arguments": {
+                        "hidden": true
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 24
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Brick",
+                    "arguments": {
+                        "macro": "Fill",
+                        "xnum": 10,
+                        "ynum": 1
+                    }
+                }]
+            }
+        },
+        "UnderworldEndPipeTransport": {
+            "width": 32,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "right",
+                "children": [{
+                    "type": "Known",
+                    "title": "Brick",
+                    "arguments": {
+                        "macro": "Fill",
+                        "xnum": 4,
+                        "ynum": 3,
+                        "yheight": -8
+                    },
+                    "sizing": {
+                        "height": 24
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "PipeCorner",
+                    "arguments": {
+                        "macro": "PipeCorner",
+                        "height": 64,
+                        "transport": "Overworld",
+                        "scrollEnabler": true,
+                        "scrollBlocker": true
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 40
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Brick",
+                    "arguments": {
+                        "macro": "Fill",
+                        "xnum": 2
+                    }
                 }]
             }
         },
@@ -831,6 +1468,13 @@ FullScreenMario.prototype.settings.generator = {
                 "mode": "Random",
                 "direction": "top",
                 "snap": "bottom",
+                "spacing": [{
+                    "percent": 50,
+                    "value": 0
+                }, {
+                    "percent": 50,
+                    "value": 24
+                }],
                 "children": [{
                     "percent": 50,
                     "type": "Random",
@@ -1295,7 +1939,7 @@ FullScreenMario.prototype.settings.generator = {
         },
         "OverworldClouds": {
             "height": 56,
-            "width": 2688,
+            "width": 2528,
             "contents": {
                 "mode": "Random",
                 "direction": "right",
@@ -1630,6 +2274,43 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
+        "BlockReward": {
+            "width": 8,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right", 
+                "snap": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Block",
+                    "arguments": [{
+                        "percent": 30,
+                        "values": {
+                            "hidden": true
+                        }
+                    }, {
+                        "percent": 30,
+                        "values": {
+                            "hidden": true,
+                            "contents": "Mushroom"
+                        }
+                    }, {
+                        "percent": 30,
+                        "values": {
+                            "hidden": true,
+                            "contents": "Star"
+                        }
+                    }, {
+                        "percent": 30,
+                        "values": {
+                            "hidden": true,
+                            "contents": "Mushroom1Up"
+                        }
+                    }]
+                }]
+            }
+        },
         "Bridge": {
             "width": 8,
             "height": 8,
@@ -1649,6 +2330,18 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
+        "Coin": {
+            "width": 5,
+            "height": 7,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "children": [{
+                    "type": "Known",
+                    "title": "Coin"
+                }]
+            }
+        },
         "PipeRandom": {
             "width": 16,
             "height": 40,
@@ -1656,7 +2349,7 @@ FullScreenMario.prototype.settings.generator = {
                 "mode": "Certain",
                 "direction": "top",
                 "snap": "bottom",
-                "spacing": -40,
+                // "spacing": -40,
                 "children": [{
                     "type": "Random",
                     "title": "Nothing",
@@ -1751,6 +2444,45 @@ FullScreenMario.prototype.settings.generator = {
                 "children": [{
                     "type": "Known",
                     "title": "Pipe"
+                }]
+            }
+        },
+        "PipeHorizontal": {
+            "width": 16,
+            "height": 16,
+            "contents": {
+                "mode": "Certain",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Known",
+                    "title": "PipeHorizontal"
+                }]
+            }
+        },
+        "PipeVertical": {
+            "width": 16,
+            "height": 16,
+            "contents": {
+                "mode": "Certain",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Known",
+                    "title": "PipeVertical"
+                }]
+            }
+        },
+        "PipeCorner": {
+            "width": 32,
+            "height": 16,
+            "contents": {
+                "mode": "Certain",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Known",
+                    "title": "PipeCorner",
+                    "arguments": {
+                        "macro": "PipeCorner"
+                    }
                 }]
             }
         },
@@ -1997,35 +2729,151 @@ FullScreenMario.prototype.settings.generator = {
         },
         
         
-        /* General macros
+        /* General macros & helpers
         */
         
-        "EndOutsideCastle": {
-            "width": 160,
-            "height": 80,
+        "LakituStop": {
+            "width": 8,
+            "height": 8,
             "contents": {
-                "mode": "Multiple",
-                "snap": "bottom",
-                "argumentMap": {
-                    "left": "x",
-                    "top": "y"
-                },
+                "mode": "Certain",
                 "children": [{
                     "type": "Known",
-                    "title": "Floor",
+                    "title": "LakituStop",
                     "arguments": {
-                        "macro": "Floor",
-                        "width": 320
+                        "macro": "LakituStop"
+                    }
+                }]
+            }
+        },
+        "PlatformGenerator": {
+            "width": 24,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "children": [{
+                    "type": "Known",
+                    "title": "PlatformGenerator",
+                    "arguments": [{
+                        "percent": 25,
+                        "values": {
+                            "macro": "PlatformGenerator"
+                        }
+                    }, {
+                        "percent": 25,
+                        "values": {
+                            "macro": "PlatformGenerator",
+                            "width": 24
+                        }
+                    }, {
+                        "percent": 25,
+                        "values": {
+                            "macro": "PlatformGenerator",
+                            "direction": -1,
+                            "width": 24
+                        }
+                    }, {
+                        "percent": 25,
+                        "values": {
+                            "macro": "PlatformGenerator",
+                            "direction": -1,
+                        }
+                    }]
+                }]
+            }
+        },
+        "OverworldEnd": {
+            "width": 400,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "left",
+                "children": [{
+                    "type": "Random",
+                    "title": "OverworldEndFloor"
+                }, {
+                    "type": "Random",
+                    "title": "OverworldEndLand"
+                }]
+            }
+        },
+        "OverworldEndFloor": {
+            "width": 400,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "children": [{
+                    "type": "Random", 
+                    "title": "Floor"
+                }]
+            }
+        },
+        "OverworldEndLand": {
+            "width": 400,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Random",
+                    "title": "LakituStop"
+                }, {
+                    "type": "Random", 
+                    "title": "RampUpLarge"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "width": 64
                     }
                 }, {
+                    "type": "Random",
+                    "title": "EndOutsideCastle"
+                }]
+            }
+        },
+        "EndOutsideCastle": {
+            "width": 144,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
                     "type": "Known",
                     "title": "EndOutsideCastle",
                     "arguments": {
-                        "macro": "EndOutsideCastle"
+                        "macro": "EndOutsideCastle",
+                        "large": true
                     },
                     "sizing": {
-                        "height": 80
+                        "height": 0
                     }
+                }]
+            }
+        },
+        "UnderworldEndOutsideCastle": {
+            "width": 144,
+            "Height": 88,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Random",
+                    "title": "EndOutsideCastle"
+                }]
+            }
+        },
+        "ScrollBlocker": {
+            "width": 8,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "children": [{
+                    "type": "Known",
+                    "title": "ScrollBlocker"
                 }]
             }
         },

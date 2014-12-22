@@ -44,6 +44,7 @@ FullScreenMario.prototype.settings.maps = {
         "Pattern": FullScreenMario.prototype.macroFillPrePattern,
         "Floor": FullScreenMario.prototype.macroFloor,
         "Pipe": FullScreenMario.prototype.macroPipe,
+        "PipeCorner": FullScreenMario.prototype.macroPipeCorner,
         "Tree": FullScreenMario.prototype.macroTree,
         "Shroom": FullScreenMario.prototype.macroShroom,
         "Water": FullScreenMario.prototype.macroWater,
@@ -3563,21 +3564,21 @@ FullScreenMario.prototype.settings.maps = {
                     ]
                 },
                 "Underwater": {
-                    "setting": "Underworld",
+                    "setting": "Underwater",
                     "creation": [
                         { "location": 0 },
                         { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Underwater", "randomTop": 80, "randomWidth": 2800, "randomBottom": -8 }
                     ]
                 },
                 "Sky": {
-                    "setting": "Underworld",
+                    "setting": "Overworld",
                     "creation": [
                         { "location": 0 },
                         { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Sky", "randomTop": 80, "randomWidth": 2800, "randomBottom": -8 }
                     ]
                 },
                 "Castle": {
-                    "setting": "Underworld",
+                    "setting": "Castle",
                     "creation": [
                         { "location": 0 },
                         { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Castle", "randomTop": 80, "randomWidth": 2800, "randomBottom": -8 }

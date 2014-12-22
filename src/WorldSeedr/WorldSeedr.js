@@ -125,7 +125,6 @@ function WorldSeedr(settings) {
      * 
      */
     self.generateFull = function (schema) {
-        // console.log("Generate full", schema.title, schema.left, "-", schema.right);
         var generated = self.generate(schema.title, schema),
             child, contents, i;
         
@@ -184,8 +183,6 @@ function WorldSeedr(settings) {
                 break;
         }
         
-        // console.log("\tGenerated children", children);
-        
         return getPositionExtremes(children);
     }
     
@@ -241,6 +238,7 @@ function WorldSeedr(settings) {
      */
     function generateContentChildrenRepeat(contents, position, direction, spacing) {
         var choices = contents.children,
+            positionOld = positionCopy(position),
             children = [],
             choice, child, 
             i = 0;
@@ -251,17 +249,21 @@ function WorldSeedr(settings) {
             if (choice.type === "Final") {
                 child = parseChoiceFinal(contents, choice, position, direction);
             } else {
-                
                 child = parseChoice(choice, position, direction);
+                
                 if (child) {
                     if (child.type !== "Known") {
                         child.contents = self.generate(child.title, position);
                     }
-                    shrinkPositionByChild(position, child, direction, spacing);
                 }
             }
             
-            children.push(child);
+            if (child && doesChoiceFitPosition(child, position)) {
+                shrinkPositionByChild(position, child, direction, spacing);
+                children.push(child);
+            } else {
+                break;
+            }
             
             i += 1;
             if (i >= choices.length) {
@@ -397,7 +399,7 @@ function WorldSeedr(settings) {
         for (i in sizingNames) {
             name = sizingNames[i];
             
-            output[name] = (sizing && sizing[name])
+            output[name] = (sizing && typeof sizing[name] !== "undefined")
                 ? sizing[name]
                 : schema[name];
         }
@@ -728,6 +730,10 @@ function WorldSeedr(settings) {
      * 
      */
     function parseSpacingObject(spacing) {
+        if (spacing.constructor === Number) {
+            return spacing;
+        }
+        
         var min = spacing.min,
             max = spacing.max,
             units = spacing.units || 0;
