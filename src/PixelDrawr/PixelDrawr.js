@@ -448,9 +448,6 @@ function PixelDrawr(settings) {
         }
         // Opacities not equal to one must reset the context afterwards
         else if (thing.opacity !== 1) {
-            if (thing.opacity === .7) {
-                debugger;
-            }
             context.globalAlpha = thing.opacity;
             context.drawImage(canvas, leftc, topc);
             context.globalAlpha = 1;

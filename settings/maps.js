@@ -2200,7 +2200,14 @@ FullScreenMario.prototype.settings.maps = {
         }, {
             "name": "6-2",
             "locations": [
-                { "entry": "Plain" }, { "entry": "PipeVertical" }, { "entry": "PipeVertical" }, { "xloc": 1304 }, { "entry": "PipeVertical" }, { "area": 1 }, { "area": 2 }, { "area": 3, "entry": "Vine" }, { "area": 4 }
+                { "entry": "Plain" }, 
+                { "entry": "PipeVertical" }, 
+                { "entry": "PipeVertical" },
+                { "xloc": 1304 }, 
+                { "entry": "PipeVertical" },
+                { "area": 1 }, { "area": 2 }, 
+                { "area": 3, "entry": "Vine" },
+                { "area": 4 }
             ],
             "areas": [
                 {
@@ -3550,6 +3557,8 @@ FullScreenMario.prototype.settings.maps = {
             "locations": {
                 "0": { "entry": "Plain", "area": "Overworld" },
                 "Overworld": { "entry": "Plain", "area": "Overworld" },
+                "OverworldFromSky": { "area": "Overworld" },
+                "OverworldFromPipe": { "entry": "PipeVertical", "area": "OverworldWithPipe" },
                 "Underworld": { "entry": "Plain", "area": "Underworld" },
                 "Sky": { "entry": "Vine", "area": "Sky" }
             },
@@ -3558,6 +3567,14 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "creation": [
                         { "location": 0 },
+                        { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Overworld", "randomTop": 80, "randomWidth": 2800, "randomBottom": -8 }
+                    ]
+                },
+                "OverworldWithPipe": {
+                    "setting": "Overworld",
+                    "creation": [
+                        { "location": 0 },
+                        { "macro": "Pipe", "entrance": "OverworldFromPipe", "height": 16 },
                         { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Overworld", "randomTop": 80, "randomWidth": 2800, "randomBottom": -8 }
                     ]
                 },

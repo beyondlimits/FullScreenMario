@@ -59,7 +59,9 @@
                     "PipeHorizontal": {},
                     "PipeVertical": {},
                     "Platform": {},
-                    "Stone": {},
+                    "Stone": {
+                        "RestingStone": {}
+                    },
                     "Cannon": {},
                     "Springboard": {},
                     "Floor": {},
@@ -221,7 +223,7 @@
                 "toly": 0
             },
             "Map": {
-                "initialized": false,
+                "initialized": false
             },
             "Area": {
                 "onMake": FullScreenMario.prototype.initializeArea,
@@ -230,12 +232,16 @@
                 "jumpmod": 1.056,
                 "maxyvel": 7,
                 "maxyvelinv": -14,
+                "onPlayerDeathTimeout": 280,
+                "onGameOverTimeout": 280,
                 "gravity": FullScreenMario.gravity,
                 "canscroll": true,
                 "underwater": false,
                 "notime": false,
                 "nokeys": false,
                 "allowDeviceMotion": false,
+                "onPlayerDeath": FullScreenMario.prototype.setMap,
+                "onGameOver": FullScreenMario.prototype.gameOver,
                 "attributes": {
                     "underwater": {
                         "gravity": FullScreenMario.gravity / 2.8,
@@ -248,6 +254,10 @@
                         "afters": [
                             { "thing": "ScrollBlocker" }
                         ]
+                    },
+                    "random": {
+                        "onPlayerDeath": FullScreenMario.prototype.mapEntranceRespawn,
+                        "onPlayerDeathTimeout": 140
                     }
                 }
             },
@@ -772,6 +782,10 @@
                         "movement": FullScreenMario.prototype.movePlatformScale
                     }
                 }
+            },
+            RestingStone: {
+                opacity: 0.01, // Why is opacity set to 1 when added?
+                onRestedUpon: FullScreenMario.prototype.activateRestingStone
             },
             Cannon: {
                 frequency: 280,

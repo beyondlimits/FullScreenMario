@@ -1709,7 +1709,7 @@ function LevelEditr(settings) {
         thing.nocollide = true;
         thing.xvel = 0;
         thing.yvel = 0;
-        thing.opacity = typeof(opacity) === "undefined" ? .49 : opacity;
+        thing.opacity = typeof opacity === "undefined" ? .49 : opacity;
     }
     
     /**

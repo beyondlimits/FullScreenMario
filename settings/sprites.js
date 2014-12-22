@@ -625,6 +625,7 @@ FullScreenMario.prototype.settings.sprites = {
                 "normal": "p[0,1,6,9]x18,x38,220000222x05,322x05,32223333x210,x38,",
                 "Sky": "p[0,1,6]001111000x15,2012x15,212x15,212211112112211220111122000222200"
             },
+            "RestingStone": ["same", ["solids", "Stone"]],
             "Scale": {
                 "normal": ["multiple", "horizontal", {
                     "left": "p[0,2,5,9]000x27,00x28,0222333000022x35,00223331333022331113302233313330220x35,00220033300022x08,",

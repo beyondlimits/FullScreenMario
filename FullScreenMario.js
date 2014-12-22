@@ -1144,7 +1144,7 @@ var FullScreenMario = (function(GameStartr) {
         
         thing.EightBitter.TimeHandler.addEvent(
             thing.EightBitter.playerStarOffFinal,
-            117,
+            70,
             thing
         );
     }
@@ -1721,6 +1721,20 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      */
+    function activateRestingStone(thing, other) {
+        thing.opacity = 1;
+        FSM.AudioPlayer.playTheme();
+        thing.EightBitter.TimeHandler.addEventInterval(function () {
+            if (other.resting !== thing) {
+                thing.EightBitter.killNormal(thing);
+                return true;
+            }
+        }, 1, Infinity);
+    }
+    
+    /**
+     * 
+     */
     function activateWindowDetector(thing) {
         if (thing.EightBitter.MapScreener.right - thing.EightBitter.MapScreener.left < thing.left) {
             return;
@@ -1988,6 +2002,9 @@ var FullScreenMario = (function(GameStartr) {
                 thing.resting = other;
                 if (thing.onResting) {
                     thing.onResting(thing, other);
+                }
+                if (other.onRestedUpon) {
+                    other.onRestedUpon(other, thing);
                 }
             }
         }
@@ -4734,60 +4751,71 @@ var FullScreenMario = (function(GameStartr) {
             return;
         }
         
+        var EightBitter = thing.EightBitter,
+            area = thing.EightBitter.MapsHandler.getArea();
+        
         // Large big: real, no-animation death
         if (big == 2) {
             thing.dead = thing.dying = true;
-            thing.EightBitter.MapScreener.notime = true;
+            EightBitter.MapScreener.notime = true;
         }
         // Regular big: regular (enemy, time, etc.) kill
         else {
             // If the player can survive this, just power down
             if (!big && thing.power > 1) {
                 thing.power = 1;
-                thing.EightBitter.StatsHolder.set("power", 1);
-                thing.EightBitter.AudioPlayer.play("Power Down");
-                thing.EightBitter.playerGetsSmall(thing);
+                EightBitter.StatsHolder.set("power", 1);
+                EightBitter.AudioPlayer.play("Power Down");
+                EightBitter.playerGetsSmall(thing);
                 return;
             }
             // The player can't survive this: animate a death
             else {
                 thing.dying = true;
                 
-                thing.EightBitter.setSize(thing, 7.5, 7, true);
-                thing.EightBitter.updateSize(thing);
-                thing.EightBitter.setClass(thing, "character player dead");
-                thing.EightBitter.thingStoreVelocity(thing);
-                thing.EightBitter.arrayToEnd(thing, thing.EightBitter.GroupHolder.getGroup(thing.grouptype));
+                EightBitter.setSize(thing, 7.5, 7, true);
+                EightBitter.updateSize(thing);
+                EightBitter.setClass(thing, "character player dead");
+                EightBitter.thingStoreVelocity(thing);
+                EightBitter.arrayToEnd(thing, EightBitter.GroupHolder.getGroup(thing.grouptype));
                 
-                thing.EightBitter.MapScreener.notime = true;
-                thing.EightBitter.MapScreener.nokeys = true;
+                EightBitter.MapScreener.notime = true;
+                EightBitter.MapScreener.nokeys = true;
                 
-                thing.EightBitter.TimeHandler.cancelAllCycles(thing);
-                thing.EightBitter.TimeHandler.addEvent(function () {
-                    thing.EightBitter.thingRetrieveVelocity(thing, true);
+                EightBitter.TimeHandler.cancelAllCycles(thing);
+                EightBitter.TimeHandler.addEvent(function () {
+                    EightBitter.thingRetrieveVelocity(thing, true);
                     thing.nocollide = true;
                     thing.movement = thing.resting = undefined;
-                    thing.gravity = thing.EightBitter.MapScreener.gravity / 2.1;
+                    thing.gravity = EightBitter.MapScreener.gravity / 2.1;
                     thing.yvel = FullScreenMario.unitsize * -1.4;
                 }, 7);
             }
         }
         
         thing.nocollide = thing.nomove = 1;
-        thing.EightBitter.MapScreener.nokeys = true;
-        thing.EightBitter.AudioPlayer.pauseAll();
-        thing.EightBitter.AudioPlayer.play("Player Dies");
-        thing.EightBitter.StatsHolder.decrease("lives");
-        thing.EightBitter.StatsHolder.set("power", 1);
+        EightBitter.MapScreener.nokeys = true;
+        EightBitter.AudioPlayer.pauseAll();
+        EightBitter.AudioPlayer.play("Player Dies");
+        EightBitter.StatsHolder.decrease("lives");
+        EightBitter.StatsHolder.set("power", 1);
         
-        if (thing.EightBitter.StatsHolder.get("lives") > 0) {
-            thing.EightBitter.TimeHandler.addEvent(function () {
-                thing.EightBitter.setMap();
-            }, 280);
+        if (EightBitter.StatsHolder.get("lives") > 0) {
+            EightBitter.TimeHandler.addEvent(
+                area.onPlayerDeath.bind(
+                    EightBitter
+                ),
+                area.onPlayerDeathTimeout,
+                EightBitter
+            );
         } else {
-            thing.EightBitter.TimeHandler.addEvent(function () {
-                thing.EightBitter.gameOver();
-            }, 280);
+            EightBitter.TimeHandler.addEvent(
+                area.onGameOver.bind(
+                    EightBitter
+                ),
+                area.onGameOverTimeout,
+                EightBitter
+            );
         }
     }
     
@@ -5166,7 +5194,26 @@ var FullScreenMario = (function(GameStartr) {
     function mapEntrancePipeHorizontal(EightBitter, location) {
         throw new Error("mapEntrancePipeHorizontal is not yet implemented.");
     }
-
+    
+    /**
+     * 
+     */
+    function mapEntranceRespawn(EightBitter) {
+        EightBitter.MapScreener.nokeys = false;
+        EightBitter.MapScreener.notime = false;
+        EightBitter.MapScreener.canscroll = true;
+        
+        EightBitter.addPlayer(EightBitter.unitsize * 16, 0);
+        EightBitter.animateFlicker(EightBitter.player);
+        
+        if (!EightBitter.MapScreener.underwater) {
+            EightBitter.addThing(
+                "RestingStone", 
+                EightBitter.player.left,
+                EightBitter.player.top + EightBitter.unitsize * 48
+            );
+        }
+    }
     
     
     /* Map exits
@@ -6578,6 +6625,7 @@ var FullScreenMario = (function(GameStartr) {
         "activateBulletBillsStop": activateBulletBillsStop,
         "activateLakituStop": activateLakituStop,
         "activateWarpWorld": activateWarpWorld,
+        "activateRestingStone": activateRestingStone,
         "activateWindowDetector": activateWindowDetector,
         "activateScrollBlocker": activateScrollBlocker,
         "activateScrollEnabler": activateScrollEnabler,
@@ -6722,6 +6770,7 @@ var FullScreenMario = (function(GameStartr) {
         "mapEntranceVinePlayer": mapEntranceVinePlayer,
         "mapEntrancePipeVertical": mapEntrancePipeVertical,
         "mapEntrancePipeHorizontal": mapEntrancePipeHorizontal,
+        "mapEntranceRespawn": mapEntranceRespawn,
         // Map exits
         "mapExitPipeVertical": mapExitPipeVertical,
         "mapExitPipeHorizontal": mapExitPipeHorizontal,
