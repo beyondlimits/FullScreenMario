@@ -16,7 +16,7 @@ FullScreenMario.prototype.settings.generator = {
                     "title": "RandomSpawner",
                     "arguments": {
                         "randomization": "Overworld",
-                        "randomWidth": 2800,
+                        "randomWidth": 2992,
                         "randomTop": 80,
                         "randomBottom": 0
                     }
@@ -106,7 +106,7 @@ FullScreenMario.prototype.settings.generator = {
         
         "Overworld": {
             "height": 80,
-            "width": 2800,
+            "width": 2992,
             "contents": {
                 "mode": "Certain",
                 "direction": "right",
@@ -143,7 +143,7 @@ FullScreenMario.prototype.settings.generator = {
             }
         },
         "OverworldBody": {
-            "width": 2400,
+            "width": 2480,
             "height": 80,
             "contents": {
                 "mode": "Multiple",
@@ -157,7 +157,7 @@ FullScreenMario.prototype.settings.generator = {
             }
         },
         "OverworldRandomization": {
-            "width": 2400,
+            "width": 2480,
             "height": 80,
             "contents": {
                 "mode": "Repeat",
@@ -222,59 +222,29 @@ FullScreenMario.prototype.settings.generator = {
                 "mode": "Random",
                 "direction": "right",
                 "children": [{
-                    "percent": 35,
+                    // "percent": 30,
+                    // "type": "Random",
+                    // "title": "OverworldBetweenSpotty"
+                // }, {
+                    // "percent": 20,
+                    // "type": "Random",
+                    // "title": "OverworldBetweenEnemySpots"
+                // }, {
+                    // "percent": 15,
+                    // "type": "Random",
+                    // "title": "OverworldBetweenRamps"
+                // }, {
+                    // "percent": 15,
+                    // "type": "Random",
+                    // "title": "OverworldBetweenWatery"
+                // }, {
+                    // "percent": 10,
+                    // "type": "Random",
+                    // "title": "OverworldBetweenSpring"
+                // }, {
+                    "percent": 100,
                     "type": "Random",
-                    "title": "OverworldBetweenSmallEnemies",
-                }, {
-                    "percent": 40,
-                    "type": "Random",
-                    "title": "OverworldBetweenSpotty"
-                }, {
-                    "percent": 10,
-                    "type": "Random",
-                    "title": "OverworldBetweenRamps"
-                }, {
-                    "percent": 15,
-                    "type": "Random",
-                    "title": "OverworldBetweenWatery"
-                }]
-            }
-        },
-        "OverworldBetweenSmallEnemies": {
-            "width": 112,
-            "height": 80,
-            "contents": {
-                "mode": "Certain",
-                "direction": "top",
-                "children": [{
-                    "type": "Known",
-                    "title": "Floor",
-                    "arguments": {
-                        "macro": "Floor",
-                        "width": 112
-                    }
-                }, {
-                    "type": "Random",
-                    "title": "OverworldBetweenSmallEnemiesLand",
-                    "sizing": {
-                        "width": 112
-                    }
-                }]
-            }
-        },
-        "OverworldBetweenSmallEnemiesLand": {
-            "width": 112,
-            "height": 80,
-            "contents": {
-                "mode": "Multiple",
-                "direction": "top",
-                "spacing": -8,
-                "children": [{
-                    "type": "Random",
-                    "title": "LandObstacleGroupEnemies"
-                }, {
-                    "type": "Random",
-                    "title": "OverworldScenery"
+                    "title": "OverworldBetweenPipeTransit"
                 }]
             }
         },
@@ -285,11 +255,11 @@ FullScreenMario.prototype.settings.generator = {
                 "mode": "Random",
                 "direction": "right",
                 "children": [{
-                    "percent": 50,
+                    "percent": 60,
                     "type": "Random",
                     "title": "OverworldBetweenSpot",
                 }, {
-                    "percent": 50,
+                    "percent": 40,
                     "type": "Random",
                     "title": "Nothing",
                 }]
@@ -302,16 +272,99 @@ FullScreenMario.prototype.settings.generator = {
                 "mode": "Certain",
                 "direction": "top",
                 "children": [{
-                    "type": "Random",
-                    "title": "Floor"
+                    "type": "Known",
+                    "title": "Floor",
+                    "arguments": {
+                        "macro": "Floor",
+                    }
                 }, {
                     "type": "Random",
+                    "title": "OverworldBetweenSpotContent"
+                }]
+            }
+        },
+        "OverworldBetweenSpotContent": {
+            "width": 8,
+            "height": 24,
+            "contents": {
+                "mode": "Random",
+                "direction": "top",
+                "spacing": 24,
+                "children": [{
+                    "percent": 90,
+                    "type": "Random",
                     "title": "OverworldBetweenSpotScenery"
+                }, {
+                    "percent": 10,
+                    "type": "Random",
+                    "title": "KoopaJumping"
+                }]
+            }
+        },
+        "OverworldBetweenEnemySpots": {
+            "width": 112,
+            "height": 24,
+            "contents": {
+                "mode": "Repeat",
+                "direction": "right",
+                "spacing": [{
+                    "percent": 60,
+                    "value": 0
+                }, {
+                    "percent": 25,
+                    "value": 8
+                }, {
+                    "percent": 15,
+                    "value": 16
+                }],
+                "children": [{
+                    "type": "Random",
+                    "title": "OverworldBetweenEnemySpot"
+                }]
+            }
+        },
+        "OverworldBetweenEnemySpot": {
+            "width": 32,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Floor",
+                    "arguments": {
+                        "macro": "Floor",
+                        "width": 32
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "OverworldBetweenEnemySpotContent"
+                }]
+            }
+        },
+        "OverworldBetweenEnemySpotContent": {
+            "width": 32,
+            "height": 80,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "children": [{
+                    "percent": 45,
+                    "type": "Random",
+                    "title": "EnemyEasy"
+                }, {
+                    "percent": 15,
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "percent": 40,
+                    "type": "Random",
+                    "title": "LandObstacleGroupVertical"
                 }]
             }
         },
         "OverworldBetweenRamps": {
-            "width": 96,
+            "width": 112,
             "height": 80,
             "contents": {
                 "mode": "Certain",
@@ -469,7 +522,122 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
-        
+        "OverworldBetweenSpring": {
+            "width": 112,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "children": [{
+                    "type": "Random",
+                    "title": "OverworldBetweenSpringLand"
+                }, {
+                    "type": "Random",
+                    "title": "OverworldBetweenSpringGap"
+                }]
+            }
+        },
+        "OverworldBetweenSpringLand": {
+            "width": 8,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Floor",
+                    "arguments": {
+                        "macro": "Floor"
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Springboard"
+                }]
+            }
+        },
+        "OverworldBetweenSpringGap": {
+            "width": 104,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "spacing": {
+                    "min": 40,
+                    "max": 104,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "OverworldBetweenSpringReward"
+                }]
+            }
+        },
+        "OverworldBetweenSpringReward": {
+            "width": 8,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "spacing": {
+                    "min": 16,
+                    "max": 40,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "Brick"
+                }, {
+                    "type": "Random",
+                    "title": "BlockTreasureFloating"
+                }]
+            }
+        },
+        "OverworldBetweenPipeTransit": {
+            "width": 112,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Floor",
+                    "arguments": {
+                        "macro": "Floor",
+                        "width": 112
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "OverworldBetweenPipeTransitLand"
+                }]
+            }
+        },
+        "OverworldBetweenPipeTransitLand": {
+            "width": 104,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "bottom",
+                "spacing": {
+                    "min": 32,
+                    "max": 80,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "PipeRandomTransit"
+                }]
+            }
+        },
         
         
         /* General obstacles
@@ -487,23 +655,19 @@ FullScreenMario.prototype.settings.generator = {
                     "units": 16
                 },
                 "children": [{
-                    "percent": 40,
+                    "percent": 50,
                     "type": "Random",
-                    "title": "LandObstacleGroupEnemies"
+                    "title": "LandObstacleGroupDoubleStory"
+                }, {
+                    "percent": 30,
+                    "type": "Random",
+                    "title": "LandObstacleGroupSingleStory"
                 }, {
                     "percent": 25,
                     "type": "Random",
                     "title": "LandObstacleGroupVertical"
                 }, {
-                    "percent": 15,
-                    "type": "Random",
-                    "title": "LandObstacleGroupSingleStory"
-                }, {
-                    "percent": 15,
-                    "type": "Random",
-                    "title": "LandObstacleGroupDoubleStory"
-                }, {
-                    "percent": 2,
+                    "percent": 3,
                     "type": "Random",
                     "title": "LandObstacleGroupPitSmall"
                 }, {
@@ -521,21 +685,17 @@ FullScreenMario.prototype.settings.generator = {
                 "direction": "right",
                 "spacing": 4,
                 "children": [{
-                    "percent": 55,
+                    "percent": 65,
                     "type": "Random",
                     "title": "EnemyEasyScattered"
                 }, {
-                    "percent": 5,
+                    "percent": 2,
                     "type": "Random",
                     "title": "EnemyHard"
                 }, {
-                    "percent": 20,
+                    "percent": 13,
                     "type": "Random",
                     "title": "LandObstacleGroupVertical"
-                }, {
-                    "percent": 20,
-                    "type": "Random",
-                    "title": "Nothing"
                 }]
             }
         },
@@ -843,20 +1003,20 @@ FullScreenMario.prototype.settings.generator = {
             "width": 1320,
             "height": 80,
             "contents": {
-                "mode": "Repeat",
+                "mode": "Random",
                 "direction": "right",
                 "children": [{
+                    "percent": 40,
                     "type": "Random",
                     "title": "UnderworldLandArea"
                 }, {
-                    "type": "Random",
-                    "title": "UnderworldBetweenSpotty"
-                }, {
+                    "percent": 40,
                     "type": "Random",
                     "title": "UnderworldBetween"
                 }, {
+                    "percent": 20,
                     "type": "Random",
-                    "title": "UnderworldBetweenSpotty"
+                    "title": "Nothing"
                 }]
             }
         },
@@ -2302,15 +2462,15 @@ FullScreenMario.prototype.settings.generator = {
                     "units": 4
                 },
                 "children": [{
-                    "percent": 15,
+                    "percent": 17,
                     "type": "Random",
                     "title": "Bush1"
                 }, {
-                    "percent": 15,
+                    "percent": 17,
                     "type": "Random",
                     "title": "Bush2"
                 }, {
-                    "percent": 15,
+                    "percent": 17,
                     "type": "Random",
                     "title": "Bush3"
                 }, {
@@ -2318,19 +2478,19 @@ FullScreenMario.prototype.settings.generator = {
                     "type": "Random",
                     "title": "Fence"
                 }, {
-                    "percent": 15,
+                    "percent": 17,
                     "type": "Random",
                     "title": "HillSmall"
                 }, {
-                    "percent": 10,
+                    "percent": 17,
                     "type": "Random",
                     "title": "HillLarge"
                 }, {
-                    "percent": 10,
+                    "percent": 5,
                     "type": "Random",
                     "title": "PlantSmall"
                 }, {
-                    "percent": 10,
+                    "percent": 5,
                     "type": "Random",
                     "title": "PlantLarge"
                 }]
@@ -2524,6 +2684,31 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
+        "KoopaJumping": {
+            "width": 8,
+            "height": 12,
+            "contents": {
+                "mode": "Random",
+                "direction": "top",
+                "snap": "left",
+                "children": [{
+                    "percent": 35,
+                    "type": "Known",
+                    "title": "Koopa",
+                    "arguments": {
+                        "jumping": true
+                    }
+                }, {
+                    "percent": 65,
+                    "type": "Known",
+                    "title": "Koopa",
+                    "arguments": {
+                        "smart": true,
+                        "jumping": true
+                    }
+                }]
+            }
+        },
         "Beetle": {
             "width": 8,
             "height": 8.5,
@@ -2673,6 +2858,53 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
+        "BlockTreasureFloating": {
+            "width": 8,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Block",
+                    "arguments": [{
+                        "percent": 20,
+                        "values": {
+                            "contents": "Mushroom"
+                        }
+                    }, {
+                        "percent": 20,
+                        "values": {
+                            "hidden": true,
+                            "contents": "Mushroom"
+                        }
+                    }, {
+                        "percent": 15,
+                        "values": {
+                            "contents": "Star"
+                        }
+                    }, {
+                        "percent": 15,
+                        "values": {
+                            "hidden": true,
+                            "contents": "Star"
+                        }
+                    }, {
+                        "percent": 20,
+                        "values": {
+                            "contents": "Mushroom1Up"
+                        }
+                    }, {
+                        "percent": 20,
+                        "values": {
+                            "hidden": true,
+                            "contents": "Mushroom1Up"
+                        }
+                    }]
+                }]
+            }
+        },
         "BlockReward": {
             "width": 8,
             "height": 8,
@@ -2748,7 +2980,6 @@ FullScreenMario.prototype.settings.generator = {
                 "mode": "Certain",
                 "direction": "top",
                 "snap": "bottom",
-                // "spacing": -40,
                 "children": [{
                     "type": "Random",
                     "title": "Nothing",
@@ -2829,6 +3060,39 @@ FullScreenMario.prototype.settings.generator = {
                             "macro": "Pipe",
                             "transport": "Underwater",
                             "height": 32
+                        }
+                    }]
+                }]
+            }
+        },
+        "PipeRandomTransit": {
+            "width": 16,
+            "height": 40,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Known",
+                    "title": "Pipe",
+                    "sizing": {
+                        "height": 0
+                    },
+                    "arguments": [{
+                        "percent": 50,
+                        "values": {
+                            "macro": "Pipe",
+                            "piranha": true,
+                            "height": 24,
+                            "transport": "Underworld"
+                        }
+                    }, {
+                        "percent": 50,
+                        "values": {
+                            "macro": "Pipe",
+                            "piranha": true,
+                            "height": 32,
+                            "transport": "Underworld"
                         }
                     }]
                 }]
@@ -2966,7 +3230,7 @@ FullScreenMario.prototype.settings.generator = {
             "contents": {
                 "mode": "Certain",
                 "direction": "right",
-                "snap": "top",
+                "snap": "bottom",
                 "children": [{
                     "type": "Known",
                     "title": "Stone"

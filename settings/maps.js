@@ -3565,6 +3565,7 @@ FullScreenMario.prototype.settings.maps = {
             "areas": {
                 "Overworld": {
                     "setting": "Overworld",
+                    "random": true,
                     "creation": [
                         { "location": 0 },
                         { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Overworld", "randomTop": 80, "randomWidth": 2800, "randomBottom": -8 }
@@ -3572,6 +3573,7 @@ FullScreenMario.prototype.settings.maps = {
                 },
                 "OverworldWithPipe": {
                     "setting": "Overworld",
+                    "random": true,
                     "creation": [
                         { "location": 0 },
                         { "macro": "Pipe", "entrance": "OverworldFromPipe", "height": 16 },
@@ -3580,6 +3582,7 @@ FullScreenMario.prototype.settings.maps = {
                 },
                 "Underworld": {
                     "setting": "Underworld",
+                    "random": true,
                     "creation": [
                         { "location": 0 },
                         { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Underworld", "randomTop": 80, "randomWidth": 2800, "randomBottom": -8 }
@@ -3587,6 +3590,7 @@ FullScreenMario.prototype.settings.maps = {
                 },
                 "Underwater": {
                     "setting": "Underwater",
+                    "random": true,
                     "creation": [
                         { "location": 0 },
                         { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Underwater", "randomTop": 80, "randomWidth": 2800, "randomBottom": -8 }
@@ -3594,6 +3598,7 @@ FullScreenMario.prototype.settings.maps = {
                 },
                 "Sky": {
                     "setting": "Sky",
+                    "random": true,
                     "creation": [
                         { "location": 0 },
                         { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Sky", "randomTop": 80, "randomWidth": 2800, "randomBottom": -8 }
@@ -3601,6 +3606,7 @@ FullScreenMario.prototype.settings.maps = {
                 },
                 "Castle": {
                     "setting": "Castle",
+                    "random": true,
                     "creation": [
                         { "location": 0 },
                         { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Castle", "randomTop": 80, "randomWidth": 2800, "randomBottom": -8 }

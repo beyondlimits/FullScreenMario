@@ -1313,6 +1313,27 @@ var FullScreenMario = (function(GameStartr) {
         other.attachedCharacter = undefined;
     }
     
+    /**
+     * 
+     */
+    function playerAddRestingStone(thing) {
+        var stone = thing.EightBitter.addThing(
+            "RestingStone", 
+            thing.left,
+            thing.top + thing.EightBitter.unitsize * 48
+        );
+        
+        thing.nocollide = true;
+        
+        thing.EightBitter.TimeHandler.addEventInterval(function () {
+            if (thing.bottom >= stone.top) {
+                thing.nocollide = false;
+                thing.EightBitter.setBottom(thing, stone.top);
+                return true;
+            }
+        }, 1, Infinity);
+    }
+    
     
     /* Spawn / activate functions
     */
@@ -4386,7 +4407,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function animatePlayerPipingStart(thing) {
-        thing.nocollide = thing.nofall = true;
+        thing.nocollide = thing.nofall = thing.piping = true;
         thing.xvel = thing.yvel = 0;
         thing.movementOld = thing.movement;
         thing.movement = undefined;
@@ -4408,7 +4429,7 @@ var FullScreenMario = (function(GameStartr) {
     function animatePlayerPipingEnd(thing) {
         thing.movement = thing.movementOld;
         
-        thing.nocollide = thing.nofall = false;
+        thing.nocollide = thing.nofall = thing.piping = false;
         
         thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Scenery", "Character");
     }
@@ -5207,11 +5228,7 @@ var FullScreenMario = (function(GameStartr) {
         EightBitter.animateFlicker(EightBitter.player);
         
         if (!EightBitter.MapScreener.underwater) {
-            EightBitter.addThing(
-                "RestingStone", 
-                EightBitter.player.left,
-                EightBitter.player.top + EightBitter.unitsize * 48
-            );
+            EightBitter.playerAddRestingStone(EightBitter.player);
         }
     }
     
@@ -6601,6 +6618,7 @@ var FullScreenMario = (function(GameStartr) {
         "setPlayerSizeLarge": setPlayerSizeLarge,
         "animatePlayerRemoveCrouch": animatePlayerRemoveCrouch,
         "unattachPlayer": unattachPlayer,
+        "playerAddRestingStone": playerAddRestingStone,
         // Spawn / actions
         "spawnHammerBro": spawnHammerBro,
         "spawnBowser": spawnBowser,
