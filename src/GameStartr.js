@@ -256,6 +256,9 @@ var GameStartr = (function (EightBittr) {
         }, EightBitter.settings.collisions));
         
         EightBitter.GroupHolder = EightBitter.ThingHitter.getGroupHolder();
+        
+        EightBitter.ThingHitter.cacheHitCheckGroup("Solid");
+        EightBitter.ThingHitter.cacheHitCheckGroup("Character");
     }
     
     /**
@@ -619,7 +622,6 @@ var GameStartr = (function (EightBittr) {
         // for each Thing constructor (optimization does not respect prototypal 
         // inheritance, sadly)
         thing.EightBitter.ThingHitter.cacheHitCheckType(
-            thing,
             thing.title,
             thing.grouptype
         );

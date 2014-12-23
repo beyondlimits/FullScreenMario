@@ -714,13 +714,20 @@ var FullScreenMario = (function(GameStartr) {
     */
 
     /**
-     * Generic checker for canCollide, used for both Solids and Characters
+     * Function generator for generic canThingCollide checker.
      * 
-     * @param {Thing} thing
-     * @return {Boolean}
+     * @return {Function}
      */
-    function canThingCollide(thing) {
-        return thing.alive && !thing.nocollide;
+    function generateCanThingCollide() {
+        /**
+         * Generic checker for canCollide, used for both Solids and Characters
+         * 
+         * @param {Thing} thing
+         * @return {Boolean}
+         */
+        return function canThingCollide(thing) {
+            return thing.alive && !thing.nocollide;
+        };
     }
 
     /**
@@ -884,33 +891,40 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      */
-    function isCharacterTouchingCharacter(thing, other) {
-        if (thing.nocollidechar && (!other.player || thing.nocollideplayer)) {
-            return false;
-        }
-        
-        if (other.nocollidechar && (!thing.player || other.nocollideplayer)) {
-            return false;
-        }
-        
-        return thing.EightBitter.isThingTouchingThing(thing, other);
+    function generateIsCharacterTouchingCharacter() {
+        /**
+         * 
+         */
+        return function isCharacterTouchingCharacter(thing, other) {
+            if (thing.nocollidechar && (!other.player || thing.nocollideplayer)) {
+                return false;
+            }
+            
+            if (other.nocollidechar && (!thing.player || other.nocollideplayer)) {
+                return false;
+            }
+            
+            return thing.EightBitter.isThingTouchingThing(thing, other);
+        };
     }
     
-    /**
-     * 
-     * @param {Thing} thing
-     * @param {Thing} other
-     */
-    function isCharacterTouchingSolid(thing, other) {        // Hidden solids can only be touched by the player bottom-bumping them,
-        // or by specifying collide_hidden
-        if (other.hidden && !other.collide_hidden) {            if (!thing.player || !thing.EightBitter.isSolidOnCharacter(other, thing)) {                return false;            }
-        }
-        
-        if (thing.nocollidesolid && !(thing.allowUpSolids && other.up)) {
-            return false;
-        }
-        
-        return thing.EightBitter.isThingTouchingThing(thing, other);
+    function generateIsCharacterTouchingSolid() {
+        /**
+         * 
+         * @param {Thing} thing
+         * @param {Thing} other
+         */
+        return function isCharacterTouchingSolid(thing, other) {            // Hidden solids can only be touched by the player bottom-bumping them,
+            // or by specifying collide_hidden
+            if (other.hidden && !other.collide_hidden) {                if (!thing.player || !thing.EightBitter.isSolidOnCharacter(other, thing)) {                    return false;                }
+            }
+            
+            if (thing.nocollidesolid && !(thing.allowUpSolids && other.up)) {
+                return false;
+            }
+            
+            return thing.EightBitter.isThingTouchingThing(thing, other);
+        };
     }
     
     /**
@@ -1934,47 +1948,57 @@ var FullScreenMario = (function(GameStartr) {
     */
 
     /**
-     * // thing = character
-     * // other = solid
      * 
-     * @param {Thing} thing
-     * @param {Thing} other
      */
-    function hitCharacterSolid(thing, other) {
-        // "Up" solids are special (they kill things that aren't their .up)
-        if (other.up && thing !== other.up) {
-            return thing.EightBitter.collideCharacterSolidUp(thing, other);
-        }
-        
-        other.collide(thing, other);
-        
-        // If a character is bumping into the bottom, call that
-        if (thing.undermid) {
-            if (thing.undermid.bottomBump) {
-                thing.undermid.bottomBump(thing.undermid, thing);
+    function generateHitCharacterSolid() {
+        /**
+         * // thing = character
+         * // other = solid
+         * 
+         * @param {Thing} thing
+         * @param {Thing} other
+         */
+        return function hitCharacterSolid(thing, other) {
+            // "Up" solids are special (they kill things that aren't their .up)
+            if (other.up && thing !== other.up) {
+                return thing.EightBitter.collideCharacterSolidUp(thing, other);
             }
-        }
-        else if (thing.under && thing.under.bottomBump) {
-            thing.under.bottomBump(thing.under, thing);
-        }
+            
+            other.collide(thing, other);
+            
+            // If a character is bumping into the bottom, call that
+            if (thing.undermid) {
+                if (thing.undermid.bottomBump) {
+                    thing.undermid.bottomBump(thing.undermid, thing);
+                }
+            }
+            else if (thing.under && thing.under.bottomBump) {
+                thing.under.bottomBump(thing.under, thing);
+            }
+        };
     }
 
     /**
-     *  
-     * @param {Thing} thing
-     * @param {Thing} other
+     * 
      */
-    function hitCharacterCharacter(thing, other) {
-        // The player calls the other's collide function, such as playerStar
-        if (thing.player) {
-            if (other.collide) {
-                return other.collide(thing, other);
+    function generateHitCharacterCharacter(thing, other) {
+        /**
+         *  
+         * @param {Thing} thing
+         * @param {Thing} other
+         */
+        return function hitCharacterCharacter(thing, other) {
+            // The player calls the other's collide function, such as playerStar
+            if (thing.player) {
+                if (other.collide) {
+                    return other.collide(thing, other);
+                }
             }
-        }
-        // Otherwise just use thing's collide function
-        else if (thing.collide) {
-            thing.collide(other, thing);
-        }
+            // Otherwise just use thing's collide function
+            else if (thing.collide) {
+                thing.collide(other, thing);
+            }
+        };
     }
     
     /**
@@ -6566,12 +6590,12 @@ var FullScreenMario = (function(GameStartr) {
         "maintainCharacters": maintainCharacters,
         "maintainPlayer": maintainPlayer,
         // Collision detectors
-        "canThingCollide": canThingCollide,
+        "generateCanThingCollide": generateCanThingCollide,
         "isThingTouchingThing": isThingTouchingThing,
         "isThingOnThing": isThingOnThing,
         "isThingOnSolid": isThingOnSolid,
-        "isCharacterTouchingSolid": isCharacterTouchingSolid,
-        "isCharacterTouchingCharacter": isCharacterTouchingCharacter,
+        "generateIsCharacterTouchingSolid": generateIsCharacterTouchingSolid,
+        "generateIsCharacterTouchingCharacter": generateIsCharacterTouchingCharacter,
         "isCharacterOnSolid": isCharacterOnSolid,
         "isCharacterOnResting": isCharacterOnResting,
         "isCharacterAboveEnemy": isCharacterAboveEnemy,
@@ -6629,8 +6653,8 @@ var FullScreenMario = (function(GameStartr) {
         "activateSectionStretch": activateSectionStretch,
         "activateSectionAfter": activateSectionAfter,
         // Collision / actions
-        "hitCharacterSolid": hitCharacterSolid,
-        "hitCharacterCharacter": hitCharacterCharacter,
+        "generateHitCharacterSolid": generateHitCharacterSolid,
+        "generateHitCharacterCharacter": generateHitCharacterCharacter,
         "collideFriendly": collideFriendly,
         "collideCharacterSolid": collideCharacterSolid,
         "collideCharacterSolidUp": collideCharacterSolidUp,

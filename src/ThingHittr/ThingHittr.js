@@ -17,71 +17,39 @@ function ThingHittr(settings) {
         // Names of groups to check collisions within
         groupNames,
         
-        // Container for functions to collision check between specific types
-        // E.x. ["character"] = { "solid": function(a,b) {...} }
-        hitChecks,
-        // Quick reference of Object.keys(hitChecks)
-        hitCheckKeys,
-        
-        // Container for functions to react to collisions between specific types
-        // E.x. ["character"] = { "solid": function(a,b) {...} }
-        hitFunctions,
-        
-        // Container for functions to check and react to objects having overlaps
-        overlapFunctions,
-        
-        // Global check functions, such as canCollide
         globalChecks,
         
-        cachedTypeNames,
+        hitChecks,
         
-        // Optional scope variable to bind important functions to
-        scope;
+        hitFunctions,
+        
+        hitCheckGenerators,
+        
+        globalCheckGenerators,
+        
+        hitFunctionGenerators,
+        
+        cachedGroupNames,
+        
+        cachedTypeNames;
     
     /**
      * 
      */
     self.reset = function(settings) {
-        // Get the main containers from settings, or make new ones if necessary
         GroupHolder = settings.GroupHolder || new GroupHoldr(settings);
-        QuadsKeeper = settings.QuadsKeeper || new QuadsKeepr(settings);
+        QuadsKeeper = settings.QuadsKeeper || new GroupHoldr(settings);
         
+        globalCheckGenerators = settings.globalCheckGenerators;
+        hitCheckGenerators = settings.hitCheckGenerators;
+        hitFunctionGenerators = settings.hitFunctionGenerators;
         
-        // Collision checking information should be given in the settings
-        if (!settings.groupNames) {
-            throw new Error("No groupNames given to ThingHittr");
-        }
-        if (!settings.hitChecks) {
-            throw new Error("No hitChecks given to ThingHittr");
-        }
+        hitChecks = {};
+        globalChecks = {};
+        hitFunctions = {};
+        
         groupNames = settings.groupNames;
-        hitChecks = settings.hitChecks;
-        hitCheckKeys = Object.keys(hitChecks);
-        
-        // Collision functions should be given in the settings
-        if (!settings.hitFunctions) {
-            throw new Error("No hitFunctions given to ThingHittr");
-        }
-        hitFunctions = settings.hitFunctions;
-        
-        // Overlap functions may be given in the settings
-        overlapFunctions = settings.overlapFunctions || {};
-        
-        // Global checks should be given in the settings
-        if (!settings.globalChecks) {
-            throw new Error("No globalChecks given to ThingHittr");
-        }
-        globalChecks = settings.globalChecks;
-        
-        // If a scope is provided, make external hit checks and functions use it
-        // as their "this" variable (very good for EightBittr objects)
-        if (settings.scope) {
-            setScopeAll(hitChecks, settings.scope);
-            setScopeAll(hitFunctions, settings.scope);
-            setScopeAll(overlapFunctions, settings.scope);
-            setScopeAll(globalChecks, settings.scope);
-        }
-        
+        cachedGroupNames = {};
         cachedTypeNames = {};
     };
     
@@ -110,26 +78,56 @@ function ThingHittr(settings) {
     /**
      * 
      */
-    self.cacheHitCheckType = function (thing, typeName, groupName) {
+    self.cacheHitCheckGroup = function (groupName) {
+        if (cachedGroupNames[groupName]) {
+            return;
+        }
+        
+        cachedGroupNames[groupName] = true;
+        
+        if (typeof globalCheckGenerators[groupName] !== "undefined") {
+            globalChecks[groupName] = cacheGlobalCheck(groupName);
+        }
+    };
+    
+    /**
+     * 
+     */
+    self.cacheHitCheckType = function (typeName, groupName) {
         if (cachedTypeNames[typeName]) {
             return;
         }
-        cachedTypeNames[typeName] = true;
         
-        if (typeof globalChecks[groupName] !== "undefined") {
+        if (typeof globalCheckGenerators[groupName] !== "undefined") {
             globalChecks[typeName] = cacheGlobalCheck(groupName);
         }
         
-        if (typeof hitChecks[groupName] !== "undefined") {
-            hitChecks[typeName] = cacheHitCheck(groupName);
+        if (typeof hitCheckGenerators[groupName] !== "undefined") {
+            hitChecks[typeName] = cacheFunctionGroup(hitCheckGenerators, groupName);
         }
         
-        self["checkHitsOfOne" + typeName] = function checkHitsGenerated(thing) {
+        if (typeof hitFunctionGenerators[groupName] !== "undefined") {
+            hitFunctions[typeName] = cacheFunctionGroup(hitFunctionGenerators, groupName);
+        }
+
+        cachedTypeNames[typeName] = true;
+        
+        self["checkHitsOfOne" + typeName] = self.generateHitsCheck(typeName);
+    };
+    
+    /**
+     * 
+     */
+    self.generateHitsCheck = function (typeName) {
+        /**
+         * 
+         */
+        return function checkHitsGenerated(thing) {
             var others, other, hitCheck,
                 i, j, k;
              
             // Don't do anything if the thing shouldn't be checking
-            if (!globalChecks[typeName].canCollide(thing)) {
+            if (!globalChecks[typeName](thing)) {
                 return;
             }
             
@@ -154,13 +152,13 @@ function ThingHittr(settings) {
                         }
                         
                         // Do nothing if these two shouldn't be colliding
-                        if (!globalChecks[other.grouptype].canCollide(other)) {
+                        if (!globalChecks[other.grouptype](other)) {
                             continue;
                         }
                         
                         // If they do hit, great! Do the corresponding hit_function
                         if (hitCheck(thing, other)) {
-                            hitFunctions[thing.grouptype][other.grouptype](thing, other);
+                            hitFunctions[typeName][other.grouptype](thing, other);
                         }
                     }
                 }
@@ -170,40 +168,26 @@ function ThingHittr(settings) {
     
     /**
      * 
-     * 
-     * @todo Use a function generator
      */
     function cacheGlobalCheck(groupName) {
-        return globalChecks[groupName];
-    };
-    
-    /**
-     * 
-     * 
-     * @todo Use a function generator
-     */
-    function cacheHitCheck(groupName) {
-        return hitChecks[groupName];
+        return globalCheckGenerators[groupName]();
     };
     
     /**
      * 
      */
-    function setScopeAll(functions, scope) {
-        var i;
-        for (i in functions) {
-            if (functions.hasOwnProperty(i)) {
-                switch (typeof functions[i]) {
-                    case "function":
-                        functions[i] = functions[i].bind(scope);
-                        break;
-                    case "object":
-                        setScopeAll(functions[i], scope);
-                        break;
-                }
-            }
+    function cacheFunctionGroup(functions, groupName) {
+        var group = functions[groupName],
+            output = {},
+            i;
+        
+        for (i in group) {
+            output[i] = group[i]();
         }
-    }
+        
+        return output;
+    };
+    
     
     self.reset(settings || {});
 }
