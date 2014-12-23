@@ -283,10 +283,9 @@ var GameStartr = (function (EightBittr) {
      * @param {EightBittr} EightBitter
      * @param {Object} [customs]
      * @remarks Requirement(s): NumberMaker (src/NumberMakr/NumberMakr.js)
-     *                          numbers.js (settings/numbers.js)    
      */
     function resetNumberMaker(EightBitter, customs) {
-        EightBitter.NumberMaker = new NumberMakr(EightBitter.settings.numbers);
+        EightBitter.NumberMaker = new NumberMakr();
     }
     
     /**

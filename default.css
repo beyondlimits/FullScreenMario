@@ -106,8 +106,8 @@ section#game .EightBitter {
 }
 
 #controls .control:hover {
-    margin-top: -256px;
-    height: 291px; /* 256px + 28px */
+    margin-top: -288px;
+    height: 316px; /* 288px + 28px */
     border-color: #99ffcc;
     background: #009966;
     z-index: 70;
@@ -136,7 +136,7 @@ section#game .EightBitter {
 
 #controls .select-options {
     position: relative;
-    max-height: 245px;
+    max-height: 277px;
     overflow-y: auto;
 }
 
@@ -170,7 +170,7 @@ section#game .EightBitter {
 }
 
 #controls .select-option.select-option-large {
-    padding: 7px 0;
+    padding: 14px 0;
     font-size: 15px;
     line-height: 140%;
 }
@@ -214,7 +214,7 @@ section#game .EightBitter {
 /* Controls - options */
 
 #controls #control-Options .select-options td {
-    padding-top: 3px;
+    padding-top: 7px;
     padding-bottom: 7px;
 }
 
@@ -252,12 +252,13 @@ section#game .EightBitter {
 
 #controls .maps-grid-option-extra {
     display: block;
-    margin: 3px 2px 0 1px;
+    margin: 7px 2px 0 1px;
     padding: 3px 0;
 }
 
 #controls .maps-grid-input {
-    width: 100%;
+    margin: 0 2px 0 1px;
+    width: 98%;
     box-sizing: border-box;
     font-family: 'Press Start';
     text-align: center;

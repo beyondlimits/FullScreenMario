@@ -42,25 +42,6 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
-        "RandomSpawnerUnderwater": {
-            "width": 0,
-            "height": 0,
-            "contents": {
-                "mode": "Random",
-                "limit": 1,
-                "children": [{
-                    "percent": 100,
-                    "type": "Known",
-                    "title": "RandomSpawner",
-                    "arguments": {
-                        "randomization": "Underwater",
-                        "randomWidth": 700,
-                        "randomTop": 80,
-                        "randomBottom": 0
-                    }
-                }]
-            }
-        },
         "RandomSpawnerSky": {
             "width": 0,
             "height": 0,
@@ -167,13 +148,13 @@ FullScreenMario.prototype.settings.generator = {
                     "title": "OverworldClump"
                 }, {
                     "type": "Random",
-                    "title": "OverworldBetweenSpotty"
+                    "title": "OverworldSegwaySpotty"
                 }, {
                     "type": "Random",
-                    "title": "OverworldBetween"
+                    "title": "OverworldSegway"
                 }, {
                     "type": "Random",
-                    "title": "OverworldBetweenSpotty"
+                    "title": "OverworldSegwaySpotty"
                 }]
             }
         },
@@ -212,10 +193,10 @@ FullScreenMario.prototype.settings.generator = {
         },
         
         
-        /* Areas between floors
+        /* Areas Segway floors
         */
         
-        "OverworldBetween": {
+        "OverworldSegway": {
             "width": 112,
             "height": 80,
             "contents": {
@@ -224,31 +205,31 @@ FullScreenMario.prototype.settings.generator = {
                 "children": [{
                     "percent": 30,
                     "type": "Random",
-                    "title": "OverworldBetweenSpotty"
+                    "title": "OverworldSegwaySpotty"
                 }, {
                     "percent": 20,
                     "type": "Random",
-                    "title": "OverworldBetweenEnemySpots"
+                    "title": "OverworldSegwayEnemySpots"
                 }, {
                     "percent": 15,
                     "type": "Random",
-                    "title": "OverworldBetweenRamps"
+                    "title": "OverworldSegwayRamps"
                 }, {
                     "percent": 15,
                     "type": "Random",
-                    "title": "OverworldBetweenWatery"
+                    "title": "OverworldSegwayWatery"
                 }, {
                     "percent": 10,
                     "type": "Random",
-                    "title": "OverworldBetweenSpring"
+                    "title": "OverworldSegwaySpring"
                 }, {
                     "percent": 10,
                     "type": "Random",
-                    "title": "OverworldBetweenPipeTransit"
+                    "title": "OverworldSegwayPipeTransit"
                 }]
             }
         },
-        "OverworldBetweenSpotty": {
+        "OverworldSegwaySpotty": {
             "width": 112,
             "height": 80,
             "contents": {
@@ -257,7 +238,7 @@ FullScreenMario.prototype.settings.generator = {
                 "children": [{
                     "percent": 60,
                     "type": "Random",
-                    "title": "OverworldBetweenSpot",
+                    "title": "OverworldSegwaySpot",
                 }, {
                     "percent": 40,
                     "type": "Random",
@@ -265,7 +246,7 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
-        "OverworldBetweenSpot": {
+        "OverworldSegwaySpot": {
             "width": 8,
             "height": 80,
             "contents": {
@@ -279,11 +260,11 @@ FullScreenMario.prototype.settings.generator = {
                     }
                 }, {
                     "type": "Random",
-                    "title": "OverworldBetweenSpotContent"
+                    "title": "OverworldSegwaySpotContent"
                 }]
             }
         },
-        "OverworldBetweenSpotContent": {
+        "OverworldSegwaySpotContent": {
             "width": 8,
             "height": 24,
             "contents": {
@@ -293,7 +274,7 @@ FullScreenMario.prototype.settings.generator = {
                 "children": [{
                     "percent": 90,
                     "type": "Random",
-                    "title": "OverworldBetweenSpotScenery"
+                    "title": "OverworldSegwaySpotScenery"
                 }, {
                     "percent": 10,
                     "type": "Random",
@@ -301,7 +282,7 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
-        "OverworldBetweenEnemySpots": {
+        "OverworldSegwayEnemySpots": {
             "width": 112,
             "height": 24,
             "contents": {
@@ -319,11 +300,11 @@ FullScreenMario.prototype.settings.generator = {
                 }],
                 "children": [{
                     "type": "Random",
-                    "title": "OverworldBetweenEnemySpot"
+                    "title": "OverworldSegwayEnemySpot"
                 }]
             }
         },
-        "OverworldBetweenEnemySpot": {
+        "OverworldSegwayEnemySpot": {
             "width": 32,
             "height": 80,
             "contents": {
@@ -338,11 +319,11 @@ FullScreenMario.prototype.settings.generator = {
                     }
                 }, {
                     "type": "Random",
-                    "title": "OverworldBetweenEnemySpotContent"
+                    "title": "OverworldSegwayEnemySpotContent"
                 }]
             }
         },
-        "OverworldBetweenEnemySpotContent": {
+        "OverworldSegwayEnemySpotContent": {
             "width": 32,
             "height": 80,
             "contents": {
@@ -363,7 +344,7 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
-        "OverworldBetweenRamps": {
+        "OverworldSegwayRamps": {
             "width": 112,
             "height": 80,
             "contents": {
@@ -384,7 +365,7 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
-        "OverworldBetweenFloating": {
+        "OverworldSegwayFloating": {
             "width": 112,
             "height": 80,
             "contents": {
@@ -397,11 +378,11 @@ FullScreenMario.prototype.settings.generator = {
                 }, {
                     "percent": 50,
                     "type": "Random",
-                    "title": "OverworldBetweenFloat"
+                    "title": "OverworldSegwayFloat"
                 }]
             }
         },
-        "OverworldBetweenFloat": {
+        "OverworldSegwayFloat": {
             "width": 8,
             "height": 80,
             "contents": {
@@ -413,7 +394,7 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
-        "OverworldBetweenWatery": {
+        "OverworldSegwayWatery": {
             "width": 112,
             "height": 80,
             "contents": {
@@ -424,14 +405,14 @@ FullScreenMario.prototype.settings.generator = {
                     "title": "RampUpSmallFloor"
                 }, {
                     "type": "Random",
-                    "title": "OverworldBetweenWateryBridge", 
+                    "title": "OverworldSegwayWateryBridge", 
                 }, {
                     "type": "Random",
                     "title": "RampDownSmallFloor"
                 }]
             }
         },
-        "OverworldBetweenWateryBridge": {
+        "OverworldSegwayWateryBridge": {
             "width": 48,
             "height": 80,
             "contents": {
@@ -454,11 +435,11 @@ FullScreenMario.prototype.settings.generator = {
                     "title": "Bridge"
                 }, {
                     "type": "Random",
-                    "title": "OverworldBetweenWateryBridgeTop"
+                    "title": "OverworldSegwayWateryBridgeTop"
                 }]
             }
         },
-        "OverworldBetweenWateryBridgeTop": {
+        "OverworldSegwayWateryBridgeTop": {
             "width": 48,
             "height": 40,
             "contents": {
@@ -466,14 +447,14 @@ FullScreenMario.prototype.settings.generator = {
                 "direction": "top",
                 "children": [{
                     "type": "Random",
-                    "title": "OverworldBetweenWateryBridgeTopEnemies"
+                    "title": "OverworldSegwayWateryBridgeTopEnemies"
                 }, {
                     "type": "Random",
-                    "title": "OverworldBetweenWateryBridgeTopSolid"
+                    "title": "OverworldSegwayWateryBridgeTopSolid"
                 }]
             }
         },
-        "OverworldBetweenWateryBridgeTopEnemies": {
+        "OverworldSegwayWateryBridgeTopEnemies": {
             "width": 48,
             "height": 16,
             "contents": {
@@ -501,7 +482,7 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
-        "OverworldBetweenWateryBridgeTopSolid": {
+        "OverworldSegwayWateryBridgeTopSolid": {
             "width": 48,
             "height": 24,
             "contents": {
@@ -522,7 +503,7 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
-        "OverworldBetweenSpring": {
+        "OverworldSegwaySpring": {
             "width": 112,
             "height": 80,
             "contents": {
@@ -530,14 +511,14 @@ FullScreenMario.prototype.settings.generator = {
                 "direction": "right",
                 "children": [{
                     "type": "Random",
-                    "title": "OverworldBetweenSpringLand"
+                    "title": "OverworldSegwaySpringLand"
                 }, {
                     "type": "Random",
-                    "title": "OverworldBetweenSpringGap"
+                    "title": "OverworldSegwaySpringGap"
                 }]
             }
         },
-        "OverworldBetweenSpringLand": {
+        "OverworldSegwaySpringLand": {
             "width": 8,
             "height": 80,
             "contents": {
@@ -555,15 +536,15 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
-        "OverworldBetweenSpringGap": {
+        "OverworldSegwaySpringGap": {
             "width": 104,
             "height": 80,
             "contents": {
                 "mode": "Certain",
                 "direction": "right",
                 "spacing": {
-                    "min": 40,
-                    "max": 104,
+                    "min": 48,
+                    "max": 80,
                     "units": 8
                 },
                 "children": [{
@@ -571,11 +552,11 @@ FullScreenMario.prototype.settings.generator = {
                     "title": "Nothing"
                 }, {
                     "type": "Random",
-                    "title": "OverworldBetweenSpringReward"
+                    "title": "OverworldSegwaySpringReward"
                 }]
             }
         },
-        "OverworldBetweenSpringReward": {
+        "OverworldSegwaySpringReward": {
             "width": 8,
             "height": 80,
             "contents": {
@@ -598,7 +579,7 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
-        "OverworldBetweenPipeTransit": {
+        "OverworldSegwayPipeTransit": {
             "width": 112,
             "height": 80,
             "contents": {
@@ -613,11 +594,11 @@ FullScreenMario.prototype.settings.generator = {
                     }
                 }, {
                     "type": "Random",
-                    "title": "OverworldBetweenPipeTransitLand"
+                    "title": "OverworldSegwayPipeTransitLand"
                 }]
             }
         },
-        "OverworldBetweenPipeTransitLand": {
+        "OverworldSegwayPipeTransitLand": {
             "width": 104,
             "height": 80,
             "contents": {
@@ -936,7 +917,7 @@ FullScreenMario.prototype.settings.generator = {
         */
         
         "Underworld": {
-            "width": 1400,
+            "width": 1520,
             "height": 88,
             "contents": {
                 "mode": "Certain",
@@ -948,6 +929,12 @@ FullScreenMario.prototype.settings.generator = {
                 }, {
                     "type": "Random",
                     "title": "UnderworldRandomization"
+                }, {
+                    "type": "Random",
+                    "title": "UnderworldPreEnd"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing"
                 }, {
                     "type": "Random",
                     "title": "UnderworldEnd"
@@ -968,12 +955,6 @@ FullScreenMario.prototype.settings.generator = {
                         "percent": 25,
                         "values": {
                             "macro": "Floor", 
-                            "width": 64
-                        }
-                    }, {
-                        "percent": 25,
-                        "values": {
-                            "macro": "Floor",
                             "width": 80
                         }
                     }, {
@@ -981,6 +962,12 @@ FullScreenMario.prototype.settings.generator = {
                         "values": {
                             "macro": "Floor",
                             "width": 96
+                        }
+                    }, {
+                        "percent": 25,
+                        "values": {
+                            "macro": "Floor",
+                            "width": 104
                         }
                     }, {
                         "percent": 25,
@@ -1000,7 +987,7 @@ FullScreenMario.prototype.settings.generator = {
             }
         },
         "UnderworldRandomization": {
-            "width": 1320,
+            "width": 1512,
             "height": 80,
             "contents": {
                 "mode": "Random",
@@ -1012,7 +999,7 @@ FullScreenMario.prototype.settings.generator = {
                 }, {
                     "percent": 40,
                     "type": "Random",
-                    "title": "UnderworldBetween"
+                    "title": "UnderworldSegway"
                 }, {
                     "percent": 20,
                     "type": "Random",
@@ -1172,7 +1159,7 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
-        "UnderworldBetween": {
+        "UnderworldSegway": {
             "width": 112,
             "height": 80,
             "contents": {
@@ -1181,23 +1168,23 @@ FullScreenMario.prototype.settings.generator = {
                 "children": [{
                     "percent": 30,
                     "type": "Random",
-                    "title": "UnderworldBetweenSpotty"
+                    "title": "UnderworldSegwaySpotty"
                 }, {
                     "percent": 25,
                     "type": "Random",
-                    "title": "OverworldBetweenWatery"
+                    "title": "OverworldSegwayWatery"
                 }, {
                     "percent": 25,
                     "type": "Random",
-                    "title": "UnderworldBetweenPlatforms"
+                    "title": "UnderworldSegwayPlatforms"
                 }, {
                     "percent": 20,
                     "type": "Random",
-                    "title": "OverworldBetweenRamps"
+                    "title": "OverworldSegwayRamps"
                 }]
             }
         },
-        "UnderworldBetweenSpotty": {
+        "UnderworldSegwaySpotty": {
             "width": 112,
             "height": 80,
             "contents": {
@@ -1206,7 +1193,7 @@ FullScreenMario.prototype.settings.generator = {
                 "snap": "bottom",
                 "children": [{
                     "type": "Random",
-                    "title": "UnderworldBetweenSpots"
+                    "title": "UnderworldSegwaySpots"
                 }, {
                     "type": "Random",
                     "title": "UnderworldBrickCeiling",
@@ -1216,7 +1203,7 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
-        "UnderworldBetweenSpots": {
+        "UnderworldSegwaySpots": {
             "width": 112,
             "height": 80,
             "contents": {
@@ -1226,7 +1213,7 @@ FullScreenMario.prototype.settings.generator = {
                 "children": [{
                     "percent": 50,
                     "type": "Random",
-                    "title": "UnderworldBetweenSpot",
+                    "title": "UnderworldSegwaySpot",
                 }, {
                     "percent": 50,
                     "type": "Random",
@@ -1234,7 +1221,7 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
-        "UnderworldBetweenSpot": {
+        "UnderworldSegwaySpot": {
             "width": 8,
             "height": 80,
             "contents": {
@@ -1264,7 +1251,7 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
-        "UnderworldBetweenPlatforms": {
+        "UnderworldSegwayPlatforms": {
             "width": 112,
             "height": 80,
             "contents": {
@@ -1315,6 +1302,28 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
+        "UnderworldPreEnd": {
+            "width": 112,
+            "height": 80,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "snap": "left",
+                "spacing": 32,
+                "children": [{
+                    "percent": 50,
+                    "type": "Random",
+                    "title": "OverworldSegwaySpring"
+                }, {
+                    "percent": 50,
+                    "type": "Random",
+                    "title": "PlatformGenerator"
+                }]
+            }
+        },
+        
+        // OverworldSegwaySpring is 112
+        // platgen is 24
         "UnderworldEnd": {
             "width": 480,
             "height": 80,
@@ -1838,6 +1847,745 @@ FullScreenMario.prototype.settings.generator = {
                 }, {
                     "type": "Known",
                     "title": "Coin"
+                }]
+            }
+        },
+        
+        
+        /* Castle
+        */
+        
+        "Castle": {
+            "height": 80,
+            "width": 2000,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "children": [{
+                    "type": "Random",
+                    "title": "CastleStart"
+                }, {
+                    "type": "Random",
+                    "title": "CastleBody"
+                }, {
+                    "type": "Random",
+                    "title": "CastleEnd"
+                }]
+            }
+        },
+        "CastleStart": {
+            "width": 112,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Random",
+                    "title": "StartInsideCastle"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 80
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "arguments": {
+                        "height": 24,
+                        "width": 112
+                    }
+                }]
+            }
+        },
+        "CastleBody": {
+            "width": 1632,
+            "height": 80,
+            "contents": {
+                "mode": "Repeat",
+                "direction": "right",
+                "children": [{
+                    "type": "Random",
+                    "title": "CastleSegway"
+                }, {
+                    "type": "Random",
+                    "title": "CastleLandArea"
+                }, {
+                    "type": "Random",
+                    "title": "CastleSegway"
+                }, {
+                    "type": "Random",
+                    "title": "CastleLandAreaLarge"
+                }]
+            }
+        },
+        "CastleSegway": {
+            "width": 168,
+            "height": 80,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "percent": 50,
+                    "type": "Random",
+                    "title": "CastleSegwayFloatingGap"
+                }, {
+                    "percent": 50,
+                    "type": "Random",
+                    "title": "CastleSegwayPlatformGap"
+                }]
+            }
+        },
+        "CastleSegwayFloatingGap": {
+            "width": 168,
+            "height": 80,
+            "contents": {
+                "mode": "Repeat",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Random",
+                    "title": "CastleSegwayGapSpace"
+                }, {
+                    "type": "Random",
+                    "title": "CastleSegwayGapChunk"
+                }]
+            }
+        },
+        "CastleSegwayGapSpace": {
+            "width": 24,
+            "height": 80,
+            "contents": {
+                "mode": "Multiple",
+                "children": [{
+                    "type": "Random",
+                    "title": "CastleSegwayGapSpaceWater"
+                }, {
+                    "type": "Random",
+                    "title": "CastleSegwayGapSpaceEnemyArea"
+                }]
+            }
+        },
+        "CastleSegwayGapSpaceWater": {
+            "width": 24,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Random",
+                    "title": "Water",
+                    "sizing": {
+                        "width": 24
+                    }
+                }]
+            }
+        },
+        "CastleSegwayGapSpaceEnemyArea": {
+            "width": 24,
+            "height": 40,
+            "contents": {
+                "mode": "Repeat",
+                "direction": "right",
+                "snap": "bottom",
+                "spacing": [{
+                    "percent": 60,
+                    "value": 24
+                }, {
+                    "percent": 15,
+                    "value": 0
+                }, {
+                    "percent": 15,
+                    "value": 8
+                }, {
+                    "percent": 15,
+                    "value": 16
+                }],
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "width": 0
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "Podoboo"
+                }]
+            }
+        },
+        "CastleSegwayGapChunk": {
+            "width": 24,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "spacing": {
+                    "min": 16,
+                    "max": 40,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Water",
+                    "sizing": {
+                        "width": 24
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "CastleSegwayGapChunkSolids"
+                }, {
+                    "type": "Random",
+                    "title": "CastleSegwayGapChunkReward"
+                }]
+            }
+        },
+        "CastleSegwayGapChunkSolids": {
+            "width": 24,
+            "height": 8,
+            "contents": {
+                "mode": "Repeat",
+                "direction": "right",
+                "children": [{
+                    "percent": 80,
+                    "type": "Random",
+                    "title": "Stone"
+                }, {
+                    "percent": 20,
+                    "type": "Random",
+                    "title": "CastleBlockActive"
+                }]
+            }
+        },
+        "CastleSegwayGapChunkReward": {
+            "width": 16,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "CastleSegwayGapChunkBlock"
+                }]
+            }
+        },
+        "CastleSegwayGapChunkBlock": {
+            "width": 8,
+            "height": 8,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "children": [{
+                    "percent": 50,
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "percent": 50,
+                    "type": "Known",
+                    "title": "Block",
+                    "arguments": {
+                        "contents": "Mushroom"
+                    }
+                }]
+            }
+        },
+        "CastleSegwayPlatformGap": {
+            "width": 168,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "children": [{
+                    "type": "Random",
+                    "title": "CastleSegwayPlatformGapBorder"
+                }, {
+                    "type": "Random",
+                    "title": "CastleSegwayPlatformGapPlatforms"
+                }, {
+                    "type": "Random",
+                    "title": "CastleSegwayPlatformGapBorder"
+                }]
+            }
+        },
+        "CastleSegwayPlatformGapBorder": {
+            "width": 24,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "spacing": {
+                    "min": 0,
+                    "max": 24,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Known",
+                    "title": "Floor",
+                    "arguments": {
+                        "macro": "Floor"
+                    },
+                    "sizing": {
+                        "height": 32
+                    },
+                    "stretch": {
+                        "width": true
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "CastleSegwayPlatformGapBorderCastleBlock"
+                }]
+            }
+        },
+        "CastleSegwayPlatformGapBorderCastleBlock": {
+            "width": 24,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "spacing": {
+                    "min": 0,
+                    "max": 16,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "width": 0
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "CastleBlockActive"
+                }]
+            }
+        },
+        "CastleSegwayPlatformGapPlatforms": {
+            "width": 120,
+            "height": 80,
+            "contents": {
+                "mode": "Repeat",
+                "direction": "right",
+                "spacing": {
+                    "min": 0,
+                    "max": 16,
+                    "units": 16
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "PlatformGenerator"
+                }]
+            }
+        },
+        "CastleLandArea": {
+            "width": 160,
+            "height": 80,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "children": [{
+                    "percent": 100,
+                    "type": "Random",
+                    "title": "CastleLandTunnel"
+                }]
+            }
+        },
+        "CastleLandTunnel": {
+            "width": 160,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Floor",
+                    "arguments": {
+                        "macro": "Floor",
+                        "width": 160,
+                    },
+                    "sizing": {
+                        "height": 32
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "CastleLandTunnelEnemies"
+                }, {
+                    "type": "Random",
+                    "title": "CastleLandTunnelTop"
+                }]
+            }
+        },
+        "CastleLandTunnelEnemies": {
+            "width": 160,
+            "height": 16,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "snap": "bottom",
+                "spacing": [{
+                    "percent": 10,
+                    "value": 4
+                }, {
+                    "percent": 15,
+                    "value": 8
+                }, {
+                    "percent": 85,
+                    "value": {
+                        "min": 32,
+                        "max": 64,
+                        "units": 8
+                    }
+                }],
+                "children": [{
+                    "percent": 70,
+                    "type": "Random",
+                    "title": "Goomba"
+                }, {
+                    "percent": 15,
+                    "type": "Random",
+                    "title": "Beetle"
+                }, {
+                    "percent": 15,
+                    "type": "Random",
+                    "title": "Koopa"
+                }]
+            }
+        },
+        "CastleLandTunnelTop": {
+            "width": 160,
+            "height": 32,
+            "contents": {
+                "mode": "Certain",
+                "direction": "bottom",
+                "children": [{
+                    "type": "Known",
+                    "title": "Stone",
+                    "stretch": {
+                        "width": true
+                    },
+                    "arguments": [{
+                        "percent": 33,
+                        "values": {
+                            "height": 24
+                        }
+                    }, {
+                        "percent": 34,
+                        "values": {
+                            "height": 32
+                        }
+                    }, {
+                        "percent": 33,
+                        "values": {
+                            "height": 40
+                        }
+                    }, ]
+                }]
+            }
+        },
+        "CastleLandAreaLarge": {
+            "width": 320,
+            "height": 80,
+            "contents": {
+                "mode": "Repeat",
+                "direction": "right",
+                "children": [{
+                    "type": "Random",
+                    "title": "CastleLandAreaChunk"
+                }, {
+                    "type": "Random",
+                    "title": "CastleLandAreaBetween"
+                }]
+            }
+        },
+        "CastleLandAreaChunk": {
+            "width": 152,
+            "height": 80,
+            "contents": {
+                "mode": "Repeat",
+                "direction": "right",
+                "children": [{
+                    "percent": 100,
+                    "type": "Random",
+                    "title": "CastleLandAreaCavern"
+                }]
+            }
+        },
+        "CastleLandAreaCavern": {
+            "width": 152,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Floor",
+                    "arguments": {
+                        "macro": "Floor",
+                        "width": 152,
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "CastleLandAreaCavernInside"
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "arguments": {
+                        "width": 152
+                    }
+                }]
+            }
+        },
+        "CastleLandAreaCavernInside": {
+            "width": 152,
+            "height": 80,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "snap": "bottom",
+                "spacing": {
+                    "min": 8,
+                    "max": 40,
+                    "units": 8
+                },
+                "children": [{
+                    "percent": 40,
+                    "type": "Random",
+                    "title": "CastleLandAreaCavernInsideTites"
+                }, {
+                    "percent": 35,
+                    "type": "Random",
+                    "title": "CastleLandAreaCavernInsideBonus"
+                }, {
+                    "percent": 25,
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "width": 24
+                    }
+                }]
+            }
+        },
+        "CastleLandAreaCavernInsideTites": {
+            "width": 24,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Known",
+                    "title": "Stone",
+                    "arguments": {
+                        "width": 24
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "CastleLandAreaCavernInsideTitesCastleBlock"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 40
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "CastleLandAreaCavernInsideTitesCastleBlock"
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "width": 24,
+                        "height": 16
+                    },
+                    "arguments": {
+                        "width": 24,
+                        "height": 16
+                    }
+                }]
+            }
+        },
+        "CastleLandAreaCavernInsideTitesCastleBlock": {
+            "width": 24,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "CastleBlockActive"
+                }]
+            }
+        },
+        "CastleLandAreaCavernInsideBonus": {
+            "width": 24,
+            "height": 64,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "spacing": {
+                    "min": 8,
+                    "max": 24,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "CastleLandAreaCavernInsideBonusBlocks"
+                }, {
+                    "type": "Random",
+                    "title": "CastleLandAreaCavernInsideBonusBlocks"
+                }]
+            }
+        },
+        "CastleLandAreaCavernInsideBonusBlocks": {
+            "width": 24,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Known",
+                    "title": "Block",
+                    "arguments": [{
+                        "percent": 45,
+                        "values": {
+                            "hidden": true
+                        }
+                    }, {
+                        "percent": 35,
+                        "values": {}
+                    }, {
+                        "percent": 15,
+                        "values": {
+                            "contents": "Mushroom",
+                            "hidden": true
+                        }
+                    }, {
+                        "percent": 5,
+                        "values": {
+                            "contents": "Mushroom",
+                        }
+                    }]
+                }]
+            }
+        },
+        "CastleLandAreaBetween": {
+            "width": 16,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Water",
+                    "arguments": {
+                        "macro": "Water",
+                        "width": 16
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 83
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "arguments": {
+                        "width": 16
+                    }
+                }]
+            }
+        },
+        "CastleEnd": {
+            "width": 256,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "children": [{
+                    "type": "Random",
+                    "title": "CastlePreEnd"
+                }, {
+                    "type": "Random",
+                    "title": "EndInsideCastle"
+                }]
+            }
+        },
+        "CastlePreEnd": {
+            "width": 80,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Floor", 
+                    "arguments": {
+                        "macro": "Floor",
+                        "width": 80
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "CastlePreEndBlocks"
+                }, {
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 56
+                    }
+                }, {
+                    "type": "Known",
+                    "title": "Stone",
+                    "arguments": [{
+                        "percent": 50,
+                        "values": {
+                            "width": 80,
+                            "height": 24
+                        }
+                    }, {
+                        "percent": 50,
+                        "values": {
+                            "width": 80,
+                            "height": 32
+                        }
+                    }]
+                }]
+            }
+        },
+        "CastlePreEndBlocks": {
+            "width": 80,
+            "height": 24,
+            "contents": {
+                "mode": "Repeat",
+                "direction": "right",
+                "snap": "top",
+                "spacing": 16,
+                "children": [{
+                    "type": "Known",
+                    "title": "Stone",
+                    "sizing": {
+                        "width": 16,
+                        "height": 24
+                    },
+                    "arguments": {
+                        "width": 16,
+                        "height": 24
+                    }
                 }]
             }
         },
@@ -2401,6 +3149,25 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
+        "StoneTowerLarge": {
+            "width": 8,
+            "height": 64,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Stone",
+                    "arguments": {
+                        "height": 64
+                    },
+                    "sizing": {
+                        "height": 64
+                    }
+                }]
+            }
+        },
         "CannonTower": {
             "width": 24,
             "height": 32,
@@ -2605,7 +3372,7 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
-        "OverworldBetweenSpotScenery": {
+        "OverworldSegwaySpotScenery": {
             "width": 8,
             "height": 23,
             "contents": {
@@ -2765,6 +3532,23 @@ FullScreenMario.prototype.settings.generator = {
                 }, {
                     "type": "Known",
                     "title": "Lakitu"
+                }]
+            }
+        },
+        "Podoboo": {
+            "width": 8,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "spacing": -40,
+                "snap": "bottom",
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Known",
+                    "title": "Podoboo"
                 }]
             }
         },
@@ -3237,6 +4021,55 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
+        "CastleBlock": {
+            "width": 8,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "children": [{
+                    "type": "Known",
+                    "title": "CastleBlock"
+                }]
+            }
+        },
+        "CastleBlockActive": {
+            "width": 8,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "children": [{
+                    "type": "Known",
+                    "title": "CastleBlock",
+                    "arguments": [{
+                        "percent": 20,
+                        "values": {}
+                    }, {
+                        "percent": 25,
+                        "values": {
+                            "fireballs": 6
+                        }
+                    }, {
+                        "percent": 25,
+                        "values": {
+                            "fireballs": 6,
+                            "direction": 1
+                        }
+                    }, {
+                        "percent": 15,
+                        "values": {
+                            "fireballs": 12
+                        }
+                    }, {
+                        "percent": 15,
+                        "values": {
+                            "fireballs": 12,
+                            "direction": 1
+                        }
+                    }]
+                }]
+            }
+        },
         
         
         /* Scenery
@@ -3460,7 +4293,7 @@ FullScreenMario.prototype.settings.generator = {
             }
         },
         "OverworldEnd": {
-            "width": 400,
+            "width": 288,
             "height": 80,
             "contents": {
                 "mode": "Certain",
@@ -3476,7 +4309,7 @@ FullScreenMario.prototype.settings.generator = {
             }
         },
         "OverworldEndFloor": {
-            "width": 400,
+            "width": 288,
             "height": 8,
             "contents": {
                 "mode": "Certain",
@@ -3487,8 +4320,8 @@ FullScreenMario.prototype.settings.generator = {
             }
         },
         "OverworldEndLand": {
-            "width": 400,
-            "height": 80,
+            "width": 288,
+            "height": 64,
             "contents": {
                 "mode": "Certain",
                 "direction": "right",
@@ -3501,6 +4334,9 @@ FullScreenMario.prototype.settings.generator = {
                     "title": "RampUpLarge"
                 }, {
                     "type": "Random",
+                    "title": "StoneTowerLarge"
+                }, {
+                    "type": "Random",
                     "title": "Nothing",
                     "sizing": {
                         "width": 64
@@ -3508,6 +4344,9 @@ FullScreenMario.prototype.settings.generator = {
                 }, {
                     "type": "Random",
                     "title": "EndOutsideCastle"
+                }, {
+                    "type": "Random",
+                    "title": "ScrollBlocker"
                 }]
             }
         },
@@ -3522,6 +4361,7 @@ FullScreenMario.prototype.settings.generator = {
                     "title": "EndOutsideCastle",
                     "arguments": {
                         "macro": "EndOutsideCastle",
+                        "transport": "Castle",
                         "large": true
                     },
                     "sizing": {
@@ -3539,6 +4379,41 @@ FullScreenMario.prototype.settings.generator = {
                 "children": [{
                     "type": "Random",
                     "title": "EndOutsideCastle"
+                }]
+            }
+        },
+        "StartInsideCastle": {
+            "width": 112,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Known",
+                    "title": "StartInsideCastle",
+                    "arguments": {
+                        "macro": "StartInsideCastle",
+                        "width": 112
+                    }
+                }]
+            }
+        },
+        "EndInsideCastle": {
+            "width": 256,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "EndInsideCastle",
+                    "arguments": {
+                        "macro": "EndInsideCastle"
+                    },
+                    "sizing": {
+                        "height": 8
+                    }
                 }]
             }
         },

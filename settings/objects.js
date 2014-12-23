@@ -76,7 +76,6 @@
                     "detector": {
                         "DetectCollision": {
                             "ScrollEnabler": {},
-                            "LevelTransport": {}
                         },
                         "DetectWindow": {
                             "ScrollBlocker": {},
@@ -837,9 +836,6 @@
             },
             ScrollEnabler: {
                 activate: FullScreenMario.prototype.activateScrollEnabler
-            },
-            LevelTransport: {
-                activate: FullScreenMario.prototype.collideLevelTransport,
             },
             DetectWindow: {
                 movement: FullScreenMario.prototype.activateWindowDetector

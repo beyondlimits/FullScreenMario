@@ -174,7 +174,7 @@ var FullScreenMario = (function(GameStartr) {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
         EightBitter.StatsHolder.set("lives", 3);
-        EightBitter.setMap("1-1");
+        EightBitter.setMap(EightBitter.settings.maps.mapDefault);
         
         EightBitter.ModAttacher.fireEvent("onGameStart");
     }
@@ -216,25 +216,6 @@ var FullScreenMario = (function(GameStartr) {
         }, 420);
         
         EightBitter.ModAttacher.fireEvent("onGameOver");
-    }
-    
-    /**
-     * 
-     */
-    function nextLevel() {
-        var EightBitter = EightBittr.ensureCorrectCaller(this),
-            ints = EightBitter.MapsHandler.getMapName().split("-").map(Number);
-        
-        if (ints[1] > 3) {
-            ints[0] += 1;
-            ints[1] = 1;
-        } else {
-            ints[1] += 1;
-        }
-        
-        EightBitter.setMap(ints.join("-"));
-        
-        EightBitter.ModAttacher.fireEvent("onNextLevel");
     }
     
     /**
@@ -2746,19 +2727,9 @@ var FullScreenMario = (function(GameStartr) {
             i += 1;
         }, interval, keys.length);
         
-        if (thing.EightBitter.MapsHandler.getMapName() === "8-4") {
-            try {
-                thing.EightBitter.ModAttacher.enableMod("Hard Mode");
-            } catch (err) {
-                console.warn("No 'Hard Mode' mod found in FullScreenMario.");
-            }
-            
-            thing.EightBitter.setMap("1-1");
-        } else {
-            thing.EightBitter.TimeHandler.addEvent(function () {
-                thing.EightBitter.nextLevel();
-            }, (interval * keys.length) + 280)
-        }
+        thing.EightBitter.TimeHandler.addEvent(function () {
+            thing.EightBitter.collideLevelTransport(thing, other);
+        }, (interval * keys.length) + 280);
     }
     
     /**
@@ -2795,19 +2766,20 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function collideLevelTransport(thing, other) {
-        if (other.transport) {
-            switch (other.transport.type) {
-                case "location":
-                    thing.EightBitter.setLocation(other.transport.value);
-                    break;
-                case "map":
-                    thing.EightBitter.setMap(other.transport.value);
-                    break;
-                default:
-                    throw new Error("Unknown transport type:", other.transport);
-            }
-        } else {
-            thing.EightBitter.nextLevel();
+        var transport = other.transport;
+        
+        if (typeof transport === "undefined") {
+            throw new Error("No transport given to collideLevelTransport");
+        }
+        
+        if (transport.constructor === String) {
+            thing.EightBitter.setLocation(transport.location);
+        } else if (typeof transport.map !== "undefined") {
+            thing.EightBitter.setMap(transport.map);
+        } else if (typeof transport.location !== "undefined") {
+            thing.EightBitter.setLocation(transport.location);
+        } else {        
+            throw new Error("Unknown transport type:" + transport);
         }
     }   
     
@@ -4219,7 +4191,7 @@ var FullScreenMario = (function(GameStartr) {
         
         thing.EightBitter.TimeHandler.addEvent(function () {
             thing.EightBitter.AudioPlayer.addEventImmediate("Stage Clear", "ended", function () {
-                thing.EightBitter.nextLevel();
+                thing.EightBitter.collideLevelTransport(thing, other);
             });
         }, i * fireInterval + 420);
     }
@@ -6192,6 +6164,7 @@ var FullScreenMario = (function(GameStartr) {
                 "y": y + 16,
                 "height": 16,
                 "activate": FullScreenMario.prototype.collideCastleDoor,
+                "transport": reference.transport,
                 "position": "end"
             });
         }
@@ -6291,6 +6264,7 @@ var FullScreenMario = (function(GameStartr) {
                 "y": y + 16,
                 "height": 16,
                 "activate": FullScreenMario.prototype.collideCastleDoor,
+                "transport": reference.transport,
                 "position": "end"
             });
         }
@@ -6353,7 +6327,7 @@ var FullScreenMario = (function(GameStartr) {
                 "macro": "CastleLarge",
                 "x": x + (reference.castleDistance || 24),
                 "y": y,
-                "transport": "setNextLevel",
+                "transport": reference.transport,
                 "walls": reference.walls || 8
             });
         } else {
@@ -6361,7 +6335,7 @@ var FullScreenMario = (function(GameStartr) {
                 "macro": "CastleSmall",
                 "x": x + (reference.castleDistance || 32),
                 "y": y,
-                "transport": "setNextLevel"
+                "transport": reference.transport
             });
         }
 
@@ -6407,6 +6381,7 @@ var FullScreenMario = (function(GameStartr) {
                 "textAttributes": {
                     "hidden": true
                 },
+                "transport": reference.transport,
                 "collectionName": "endInsideCastleText",
                 "collectionKey": "2"
             }];
@@ -6437,6 +6412,7 @@ var FullScreenMario = (function(GameStartr) {
                 "textAttributes": {
                     "hidden": true
                 },
+                "transport": reference.transport,
                 "collectionName": "endInsideCastleText",
                 "collectionKey": "2"
             }, {
@@ -6562,7 +6538,6 @@ var FullScreenMario = (function(GameStartr) {
         // Global manipulations
         "gameStart": gameStart,
         "gameOver": gameOver,
-        "nextLevel": nextLevel,
         "addPreThing": addPreThing,
         "addPlayer": addPlayer,
         "scrollPlayer": scrollPlayer,
