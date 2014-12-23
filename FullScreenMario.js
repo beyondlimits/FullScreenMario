@@ -595,7 +595,8 @@ var FullScreenMario = (function(GameStartr) {
             character.under = character.undermid = false;
             EightBitter.updatePosition(character);
             EightBitter.QuadsKeeper.determineThingQuadrants(character);
-            EightBitter.ThingHitter.checkHitsOfOne(character);
+            // EightBitter.ThingHitter.checkHitsOfOne(character);
+            EightBitter.ThingHitter["checkHitsOfOne" + character.title](character);
 
             // Resting tests
             if (character.resting) {
@@ -713,7 +714,7 @@ var FullScreenMario = (function(GameStartr) {
     */
 
     /**
-     * Generic checker for can_collide, used for both Solids and Characters
+     * Generic checker for canCollide, used for both Solids and Characters
      * 
      * @param {Thing} thing
      * @return {Boolean}
