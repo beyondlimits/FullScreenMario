@@ -3559,8 +3559,9 @@ FullScreenMario.prototype.settings.maps = {
                 "Overworld": { "entry": "Plain", "area": "Overworld" },
                 "OverworldFromSky": { "area": "Overworld" },
                 "OverworldFromPipe": { "entry": "PipeVertical", "area": "OverworldWithPipe" },
-                "Underworld": { "entry": "Plain", "area": "Underworld" },
-                "Sky": { "entry": "Vine", "area": "Sky" }
+                "Underworld": { "area": "Underworld" },
+                "Sky": { "entry": "Vine", "area": "Sky" },
+                "Castle": { "entry": "Castle", "area": "Castle" }
             },
             "areas": {
                 "Overworld": {

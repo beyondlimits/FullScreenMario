@@ -5023,7 +5023,7 @@ var FullScreenMario = (function(GameStartr) {
         var EightBitter = EightBittr.ensureCorrectCaller(this),
             map;
         
-        if (typeof(name) === "undefined") {
+        if (typeof name === "undefined" || name instanceof EightBittr) {
             name = EightBitter.MapsHandler.getMapName();
         }
         

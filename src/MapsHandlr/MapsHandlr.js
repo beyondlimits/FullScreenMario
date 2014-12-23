@@ -150,7 +150,7 @@ function MapsHandlr(settings) {
      * @return {Map}
      */
     self.getMap = function (name) {
-        if (arguments.length) {
+        if (typeof name !== "undefined") {
             return MapsCreator.getMap(name);
         } else {
             return map_current;

@@ -542,14 +542,14 @@ function UserWrappr(settings) {
         var output = document.createElement("div"),
             rangeX = schema.rangeX,
             rangeY = schema.rangeY,
-            element;
+            element,
+            i, j;
         
         output.className = "select-options select-options-maps-grid";
         
         if (rangeX && rangeY) {
             var table = document.createElement("table"),
-                row,
-                i, j;
+                row;
                 
             function getParentControlDiv(element) {
                 if (element.className === "control") {
@@ -584,13 +584,25 @@ function UserWrappr(settings) {
         }
         
         if (schema.extras) {
-            for (var i in schema.extras) {
+            var extra;
+            for (i in schema.extras) {
+                extra = schema.extras[i];
                 element = document.createElement("div");
+                
                 element.className = "select-option maps-grid-option maps-grid-option-extra";
-                element.textContent = i;
-                element.setAttribute("value", schema.extras[i]);
-                element.onclick = schema.callback.bind(self, GameStarter, schema, element);
+                element.textContent = extra.title;
+                element.setAttribute("value", extra.title);
+                element.onclick = extra.callback.bind(self, GameStarter, schema, element);
                 output.appendChild(element);
+                
+                if (extra.extraElements) {
+                    for (j = 0; j < extra.extraElements.length; j += 1) {
+                        output.appendChild(GameStarter.createElement.apply(
+                            GameStarter,
+                            extra.extraElements[j]
+                        ));
+                    }
+                }
             }
         }
         

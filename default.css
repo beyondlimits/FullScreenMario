@@ -252,8 +252,15 @@ section#game .EightBitter {
 
 #controls .maps-grid-option-extra {
     display: block;
-    margin: 0 2px 0 1px;
+    margin: 3px 2px 0 1px;
     padding: 3px 0;
+}
+
+#controls .maps-grid-input {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'Press Start';
+    text-align: center;
 }
 
 

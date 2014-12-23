@@ -147,7 +147,54 @@ FullScreenMario.prototype.settings.ui = {
             "rangeX": [1, 4],
             "rangeY": [1, 8],
             "extras": {
-                "Map Generator!": "Random"
+                "Map Generator!": (function () {
+                    var shuffle = function (string) {
+                        return string
+                            .split('')
+                            // Same function used in browserchoice.eu :)
+                            .sort(function () {
+                                return 0.5 - Math.random()
+                            })
+                            .reverse()
+                            .join('');
+                    };
+                    
+                    var getNewSeed = function () {
+                        return shuffle(String(new Date().getTime()));
+                    };
+                    
+                    return {
+                        "title": "Map Generator!",
+                        "callback": function (GameStarter, schema, button, event) {
+                            var parent = event.target.parentNode,
+                                randomizer = parent.querySelector(".randomInput");
+                                
+                            randomizer.value = randomizer.value.replace(/[^\d]/g, '');
+                            if (!randomizer.value) {
+                                randomizer.value = getNewSeed();
+                            }
+                            
+                            GameStarter.NumberMaker.resetFromSeed(randomizer.value);
+                            GameStarter.setMap("Random");
+                            
+                            if (!randomizer.getAttribute("custom")) {
+                                randomizer.value = getNewSeed();
+                            }
+                        },
+                        "extraElements": [
+                            [
+                                "input", {
+                                    "className": "randomInput maps-grid-input",
+                                    "type": "text",
+                                    "value": getNewSeed(),
+                                    "onchange": function (event) {
+                                        event.target.setAttribute("custom", true)
+                                    }
+                                }
+                            ]
+                        ]
+                    };
+                })()
             },
             "callback": function (GameStarter, schema, button, event) {
                 GameStarter.setMap(button.getAttribute("value") || button.textContent);
