@@ -160,7 +160,15 @@ function ThingHittr(settings) {
                     }
                     
                     // If needed, check whether a collision should be happening
-                    tryCollision(hit_check, thing, other);
+                    // Do nothing if these two shouldn't be colliding
+                    if (!global_checks[other.grouptype].can_collide(other)) {
+                        break;
+                    }
+                    
+                    // If they do hit, great! Do the corresponding hit_function
+                    if (hit_check(thing, other)) {
+                        hit_functions[thing.grouptype][other.grouptype](thing, other);
+                    }
                 }
            }
         }
@@ -171,13 +179,11 @@ function ThingHittr(settings) {
      */
     function tryCollision(hit_check, thing, other) {
         // Do nothing if these two shouldn't be colliding
-        if (!global_checks[other.grouptype].can_collide(other)) {
-            return;
-        }
-        
-        // If they do hit, great! Do the corresponding hit_function
-        if (hit_check(thing, other)) {
-            hit_functions[thing.grouptype][other.grouptype](thing, other);
+        if (global_checks[other.grouptype].can_collide(other)) {
+            // If they do hit, great! Do the corresponding hit_function
+            if (hit_check(thing, other)) {
+                hit_functions[thing.grouptype][other.grouptype](thing, other);
+            }
         }
     }
     
