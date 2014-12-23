@@ -466,7 +466,9 @@ var FullScreenMario = (function(GameStartr) {
      */
     function keyUpDown(player) {
         player.keys.crouch = 0;
-        player.EightBitter.animatePlayerRemoveCrouch(player);
+        if (!player.piping) {
+            player.EightBitter.animatePlayerRemoveCrouch(player);
+        }
         player.EightBitter.ModAttacher.fireEvent("onKeyUpDown");
     }
     

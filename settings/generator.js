@@ -222,27 +222,27 @@ FullScreenMario.prototype.settings.generator = {
                 "mode": "Random",
                 "direction": "right",
                 "children": [{
-                    // "percent": 30,
-                    // "type": "Random",
-                    // "title": "OverworldBetweenSpotty"
-                // }, {
-                    // "percent": 20,
-                    // "type": "Random",
-                    // "title": "OverworldBetweenEnemySpots"
-                // }, {
-                    // "percent": 15,
-                    // "type": "Random",
-                    // "title": "OverworldBetweenRamps"
-                // }, {
-                    // "percent": 15,
-                    // "type": "Random",
-                    // "title": "OverworldBetweenWatery"
-                // }, {
-                    // "percent": 10,
-                    // "type": "Random",
-                    // "title": "OverworldBetweenSpring"
-                // }, {
-                    "percent": 100,
+                    "percent": 30,
+                    "type": "Random",
+                    "title": "OverworldBetweenSpotty"
+                }, {
+                    "percent": 20,
+                    "type": "Random",
+                    "title": "OverworldBetweenEnemySpots"
+                }, {
+                    "percent": 15,
+                    "type": "Random",
+                    "title": "OverworldBetweenRamps"
+                }, {
+                    "percent": 15,
+                    "type": "Random",
+                    "title": "OverworldBetweenWatery"
+                }, {
+                    "percent": 10,
+                    "type": "Random",
+                    "title": "OverworldBetweenSpring"
+                }, {
+                    "percent": 10,
                     "type": "Random",
                     "title": "OverworldBetweenPipeTransit"
                 }]
