@@ -3229,29 +3229,29 @@ FullScreenMario.prototype.settings.generator = {
                     "units": 4
                 },
                 "children": [{
-                    "percent": 17,
+                    "percent": 25,
+                    "type": "Random",
+                    "title": "HillSmall"
+                }, {
+                    "percent": 25,
+                    "type": "Random",
+                    "title": "HillLarge"
+                }, {
+                    "percent": 12,
                     "type": "Random",
                     "title": "Bush1"
                 }, {
-                    "percent": 17,
+                    "percent": 11,
                     "type": "Random",
                     "title": "Bush2"
                 }, {
-                    "percent": 17,
+                    "percent": 12,
                     "type": "Random",
                     "title": "Bush3"
                 }, {
                     "percent": 10,
                     "type": "Random",
                     "title": "Fence"
-                }, {
-                    "percent": 17,
-                    "type": "Random",
-                    "title": "HillSmall"
-                }, {
-                    "percent": 17,
-                    "type": "Random",
-                    "title": "HillLarge"
                 }, {
                     "percent": 5,
                     "type": "Random",

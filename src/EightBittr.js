@@ -157,17 +157,6 @@ var EightBittr = (function () {
     };
     
     
-    /* Collision functions
-    */
-    
-    /**
-     * 
-     */
-    function canThingCollide(thing) {
-        return thing.alive && !thing.nocollide;
-    }
-    
-    
     /* HTML functions
     */
     
@@ -625,8 +614,6 @@ var EightBittr = (function () {
         // Setup
         "reset": reset,
         "resetTimed": resetTimed,
-        // Collisions
-        "canThingCollide": canThingCollide,
         // HTML
         "getCanvas": getCanvas,
         // Physics
