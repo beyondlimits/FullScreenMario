@@ -1,9 +1,8 @@
 (function () {
     FullScreenMario.prototype.settings.objects = {
-        "on_make": "onMake",
-        "store_type": "title",
-        "index_map": ["width", "height"],
-        "do_properties_full": true,
+        "onMake": "onMake",
+        "indexMap": ["width", "height"],
+        "doPropertiesFull": true,
         "inheritance": {
             "Quadrant": {},
             "Map": {},

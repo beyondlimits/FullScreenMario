@@ -480,11 +480,11 @@ function MapsCreatr(settings) {
         
         this.right = this.left + (
             reference.width
-            || ObjectMaker.getPropertiesFull(this.title).width
+            || ObjectMaker.getFullPropertiesOf(this.title).width
         );
         this.bottom = this.top + (
             reference.height
-            || ObjectMaker.getPropertiesFull(this.title).height
+            || ObjectMaker.getFullPropertiesOf(this.title).height
         );
         
         if (reference.position) {

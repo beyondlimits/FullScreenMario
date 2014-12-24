@@ -5486,7 +5486,7 @@ var FullScreenMario = (function(GameStartr) {
      *              "x": 644, "y": 64, "xnum": 5, "xwidth": 8 }
      */
     function macroFillPreThings(reference, prethings, area, map, scope) {
-        var defaults = scope.ObjectMaker.getPropertiesFull(reference.thing),
+        var defaults = scope.ObjectMaker.getFullPropertiesOf(reference.thing),
             xnum = reference.xnum || 1,
             ynum = reference.ynum || 1,
             xwidth = reference.xwidth || defaults.width,
@@ -5535,7 +5535,7 @@ var FullScreenMario = (function(GameStartr) {
         }
         var pattern = scope.settings.maps.patterns[reference.pattern],
             length = pattern.length,
-            defaults = scope.ObjectMaker.getPropertiesFull(),
+            defaults = scope.ObjectMaker.getFullProperties(),
             repeats = reference.repeat || 1,
             xpos = reference.x || 0,
             ypos = reference.y || 0,
