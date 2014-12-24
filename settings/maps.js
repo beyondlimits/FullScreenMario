@@ -2605,7 +2605,9 @@ FullScreenMario.prototype.settings.maps = {
         }, {
             "name": "7-2",
             "locations": [
-                { "entry": "Walking" }, { "area": 1 }, { "area": 2, "entry": "PipeVertical" }
+                { "entry": "Walking" },
+                { "area": 1 }, 
+                { "area": 2, "entry": "PipeVertical" }
             ],
             "areas": [
                 {

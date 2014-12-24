@@ -6344,7 +6344,7 @@ var FullScreenMario = (function(GameStartr) {
         output = [
             // Initial collision detector
             {
-                thing: "DetectCollision", x: x, y: y + 108, height: 100, 
+                thing: "DetectCollision", x: x, y: y + 108, height: 100,
                 activate: FullScreenMario.prototype.collideFlagpole,
                 activate_fail: FullScreenMario.prototype.killNormal 
             },
@@ -6415,7 +6415,6 @@ var FullScreenMario = (function(GameStartr) {
                 "textAttributes": {
                     "hidden": true
                 },
-                "transport": reference.transport,
                 "collectionName": "endInsideCastleText",
                 "collectionKey": "2"
             }];
@@ -6446,7 +6445,6 @@ var FullScreenMario = (function(GameStartr) {
                 "textAttributes": {
                     "hidden": true
                 },
-                "transport": reference.transport,
                 "collectionName": "endInsideCastleText",
                 "collectionKey": "2"
             }, {
@@ -6482,8 +6480,12 @@ var FullScreenMario = (function(GameStartr) {
             { "thing": "Stone", "x": x + 112, "y": y + 80, "width": 16, "height": 24 },
             // Peach's Magical Happy Chamber of Fantastic Love
             { 
-                "thing": "DetectCollision", "x": x + 180, "activate": scope.collideCastleNPC, 
-                "collectionName": "endInsideCastleText", "collectionKey": "npc", "collectionKeys": keys
+                "thing": "DetectCollision", "x": x + 180, 
+                "activate": scope.collideCastleNPC, 
+                "transport": reference.transport,
+                "collectionName": "endInsideCastleText", 
+                "collectionKey": "npc", 
+                "collectionKeys": keys
             },
             { "thing": npc, "x": x + 200, "y": 13 },
             { "thing": "ScrollBlocker", "x": x + 256 }
