@@ -45,7 +45,7 @@ function UserWrappr(settings) {
             document.cancelFullScreen
             || document.webkitCancelFullScreen
             || document.mozCancelFullScreen
-            || document.msCancelFullScreen
+            || document.msCancelFullscreen
         ).bind(document);
     
     /**
