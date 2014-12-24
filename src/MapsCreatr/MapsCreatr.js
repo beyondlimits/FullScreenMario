@@ -18,7 +18,7 @@ function MapsCreatr(settings) {
         macros,
         
         // Associative array storing default macro settings for all macros
-        macro_defaults,
+        macroDefaults,
         
         // Associative array storing entrance functions, keyed by string alias
         entrances,
@@ -32,7 +32,7 @@ function MapsCreatr(settings) {
         yloc,
         
         // What key to check for group type under a Thing
-        key_group_type,
+        keyGroupType,
         
         // What key to check for if a PreThing's Thing is a Location's entrance
         key_entrance,
@@ -56,11 +56,11 @@ function MapsCreatr(settings) {
         }
         groupTypes = settings.groupTypes;
         
-        key_group_type = settings.key_group_type || "grouptype";
+        keyGroupType = settings.keyGroupType || "grouptype";
         key_entrance = settings.key_entrance || "entrance";
         
         macros = settings.macros || {};
-        macro_defaults = settings.macro_defaults || {};
+        macroDefaults = settings.macroDefaults || {};
         entrances = settings.entrances || {};
         scope = settings.scope || self;
         
@@ -169,17 +169,17 @@ function MapsCreatr(settings) {
      * @param {Map} map
      */
     function setMapAreas(map) {
-        var areas_raw = map.areas,
-            locations_raw = map.locations,
+        var areasRaw = map.areas,
+            locationsRaw = map.locations,
             // The parsed containers should be the same types as the originals
-            areas_parsed = new areas_raw.constructor(),
-            locations_parsed = new locations_raw.constructor(),
+            areas_parsed = new areasRaw.constructor(),
+            locations_parsed = new locationsRaw.constructor(),
             obj, i;
         
         // Parse all the Area objects (works for both Arrays and Objects)
-        for (i in areas_raw) {
-            if (areas_raw.hasOwnProperty(i)) {
-                obj = areas_parsed[i] = ObjectMaker.make("Area", areas_raw[i]);
+        for (i in areasRaw) {
+            if (areasRaw.hasOwnProperty(i)) {
+                obj = areas_parsed[i] = ObjectMaker.make("Area", areasRaw[i]);
                 obj.map = map;
                 obj.name = i;
             }
@@ -192,27 +192,27 @@ function MapsCreatr(settings) {
         }
         
         // Parse all the Location objects (works for both Arrays and Objects)
-        for (i in locations_raw) {
-            if (locations_raw.hasOwnProperty(i)) {
-                obj = locations_parsed[i] = ObjectMaker.make("Location", locations_raw[i]);
+        for (i in locationsRaw) {
+            if (locationsRaw.hasOwnProperty(i)) {
+                obj = locations_parsed[i] = ObjectMaker.make("Location", locationsRaw[i]);
                 
                 // Location entrances should actually be the keyed functions
                 if (!entrances.hasOwnProperty(obj.entry)) {
                     throw new Error("Location " + i + " has unknown entry string: " + obj.entry);
                 }
-                obj.entry_raw = obj.entry;
+                obj.entryRaw = obj.entry;
                 obj.entry = entrances[obj.entry];
                 obj.name = i;
-                obj.area = locations_raw[i].area || 0;
+                obj.area = locationsRaw[i].area || 0;
             }
         }
         
         // Store the output object in the Map, and keep the raw settings for the
         // sake of debugging / user interest
         map.areas = areas_parsed;
-        map.areas_raw = areas_raw;
+        map.areasRaw = areasRaw;
         map.locations = locations_parsed;
-        map.lcations_raw = locations_raw;
+        map.lcationsRaw = locationsRaw;
     }
     
     /**
@@ -224,22 +224,22 @@ function MapsCreatr(settings) {
      * @param {Map} map
      */
     function setMapLocations(map) {
-        var locs_raw = map.locations,
+        var locsRaw = map.locations,
             // The parsed container should be the same type as the original
-            locs_parsed = new locs_raw.constructor(),
+            locs_parsed = new locsRaw.constructor(),
             location, i;
             
-        // Parse all the keys in locas_raw (works for both Arrays and Objects)
-        for (i in locs_raw) {
-            if (locs_raw.hasOwnProperty(i)) {
-                locs_parsed[i] = ObjectMaker.make("Location", locs_raw[i]);
+        // Parse all the keys in locasRaw (works for both Arrays and Objects)
+        for (i in locsRaw) {
+            if (locsRaw.hasOwnProperty(i)) {
+                locs_parsed[i] = ObjectMaker.make("Location", locsRaw[i]);
                 
                 // The area should be an object reference, under the Map's areas
                 locs_parsed[i].area = map.areas[locs_parsed[i].area || 0];
                 if (!locs_parsed[i].area) {
                     throw new Error("Location " + i
                             + " references an invalid area: "
-                            + locs_raw[i].area);
+                            + locsRaw[i].area);
                 }
             }
         }
@@ -247,7 +247,7 @@ function MapsCreatr(settings) {
         // Store the output object in the Map, and keep the old settings for the
         // sake of debugging / user interest
         map.locations = locs_parsed;
-        map.locations_raw = locs_raw;
+        map.locationsRaw = locsRaw;
     }
     
     
@@ -371,9 +371,9 @@ function MapsCreatr(settings) {
         // Avoid modifying the original macro by creating a new object in its
         // place, while submissively proliferating any default macro settings
         outputs = macro(reference, prethings, area, map, scope);
-        for (i in macro_defaults) {
-            if (macro_defaults.hasOwnProperty(i) && !outputs.hasOwnProperty(i)) {
-                outputs[i] = macro_defaults[i];
+        for (i in macroDefaults) {
+            if (macroDefaults.hasOwnProperty(i) && !outputs.hasOwnProperty(i)) {
+                outputs[i] = macroDefaults[i];
             }
         }
         
@@ -394,7 +394,7 @@ function MapsCreatr(settings) {
     /**
      * Macro case: PreThing instruction. This creates a PreThing from the
      * given reference and adds it to its respective group in PreThings (based
-     * on the PreThing's [key_group_type] variable).
+     * on the PreThing's [keyGroupType] variable).
      * 
      * @param {Object} reference   A JSON mapping of some number of PreThings. 
      * @param {Object} PreThings   An associative array of PreThing Arrays, 
@@ -415,21 +415,21 @@ function MapsCreatr(settings) {
         prething = new PreThing(ObjectMaker.make(thing, reference), reference);
         thing = prething.thing;
         
-        if (!prething.thing[key_group_type]) {
-            console.warn("A Thing does not contain a " + key_group_type + ". "
+        if (!prething.thing[keyGroupType]) {
+            console.warn("A Thing does not contain a " + keyGroupType + ". "
                     + "It will be ignored: ",
                     prething, "\n", arguments);
             return;
         }
         
-        if (groupTypes.indexOf(prething.thing[key_group_type]) === -1) {
-            console.warn("A Thing contains an unknown " + key_group_type
-                    + ". It will be ignored: " + thing[key_group_type],
+        if (groupTypes.indexOf(prething.thing[keyGroupType]) === -1) {
+            console.warn("A Thing contains an unknown " + keyGroupType
+                    + ". It will be ignored: " + thing[keyGroupType],
                     prething, reference, prethings, area, map);
             return;
         }
         
-        prethings[prething.thing[key_group_type]].push(prething);
+        prethings[prething.thing[keyGroupType]].push(prething);
         if (!thing.noBoundaryStretch && area.boundaries) {
             stretchAreaBoundaries(prething, area);
         }

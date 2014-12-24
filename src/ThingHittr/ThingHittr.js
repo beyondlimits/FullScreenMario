@@ -157,7 +157,7 @@ function ThingHittr(settings) {
                             continue;
                         }
                         
-                        // If they do hit, great! Do the corresponding hit_function
+                        // If they do hit, great! Do the corresponding hitFunction
                         if (hitCheck(thing, other)) {
                             hitFunctions[typeName][other.grouptype](thing, other);
                         }

@@ -42,7 +42,7 @@ function QuadsKeepr(settings) {
         thing_changed,
         thing_tolerance_x,
         thing_tolerance_y,
-        thing_group_name,
+        thingGroupName,
         
         // An Array of string names a Thing may be placed into 
         groupNames,
@@ -83,7 +83,7 @@ function QuadsKeepr(settings) {
         thing_changed = settings.thing_changed || "changed";
         thing_tolerance_x = settings.thing_tolerance_x || "tolx";
         thing_tolerance_y = settings.thing_tolerance_y || "toly";
-        thing_group_name = settings.thing_group_name || "group";
+        thingGroupName = settings.thingGroupName || "group";
     };
     
     
@@ -582,7 +582,7 @@ function QuadsKeepr(settings) {
      * wiping each quadrant's memory of that Array's group type and determining
      * each Thing's quadrants.
      * 
-     * @param {String} group_name
+     * @param {String} groupName
      * @param {Thing[]} things
      */
     self.determineAllQuadrants = function (group, things) {
@@ -601,7 +601,7 @@ function QuadsKeepr(settings) {
      * 
      */
     self.determineThingQuadrants = function (thing) {
-        var group = thing[thing_group_name],
+        var group = thing[thingGroupName],
             rowStart = findQuadrantRowStart(thing),
             colStart = findQuadrantColStart(thing),
             rowEnd = findQuadrantRowEnd(thing),

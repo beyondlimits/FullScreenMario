@@ -286,7 +286,7 @@
                 outerok: false,
                 // Sprites
                 sprite: "",
-                sprite_type: "neither",
+                spriteType: "neither",
                 opacity: 1,
                 // Triggered functions
                 animate: FullScreenMario.prototype.animateEmerge,
@@ -588,7 +588,7 @@
                 height: 4,
                 nofire: true,
                 nostar: true,
-                collide_primary: true,
+                collidePrimary: true,
                 grounded: true,
                 animate: FullScreenMario.prototype.animateFireballEmerge,
                 collide: FullScreenMario.prototype.collideFireball,
@@ -626,7 +626,7 @@
             Shell: {
                 height: 7,
                 speed: FullScreenMario.unitsize * 2,
-                collide_primary: true,
+                collidePrimary: true,
                 nofire: false,
                 moveleft: 0,
                 xvel: 0,
@@ -756,8 +756,8 @@
             Platform: {
                 height: 4,
                 spritewidth: 4,
-                fall_threshold_start: FullScreenMario.unitsize * 2.8,
-                fall_threshold_end: FullScreenMario.unitsize * 2,
+                fallThresholdStart: FullScreenMario.unitsize * 2.8,
+                fallThresholdEnd: FullScreenMario.unitsize * 2,
                 acceleration: FullScreenMario.unitsize / 16,
                 repeat: true,
                 killonend: false,

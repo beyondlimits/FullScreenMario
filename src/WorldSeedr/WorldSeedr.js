@@ -36,7 +36,7 @@ function WorldSeedr(settings) {
         sizingNames = ["width", "height"],
         
         // Scratch Array of prethings to be added to during generation
-        generated_commands;
+        generatedCommands;
     
     /**
      * 
@@ -59,8 +59,8 @@ function WorldSeedr(settings) {
     /**
      * 
      */
-    self.setPossibilities = function (all_possibilities_new) {
-        all_possibilities = all_possibilities_new;
+    self.setPossibilities = function (all_possibilitiesNew) {
+        all_possibilities = all_possibilitiesNew;
     };
     
     /**
@@ -73,22 +73,22 @@ function WorldSeedr(settings) {
     /**
      * 
      */
-    self.setOnPlacement = function (onPlacement_new) {
-        onPlacement = onPlacement_new;
+    self.setOnPlacement = function (onPlacementNew) {
+        onPlacement = onPlacementNew;
     };
     
     /**
      * 
      */
     self.clearGeneratedCommands = function () {
-        generated_commands = [];
+        generatedCommands = [];
     };
     
     /**
      * 
      */
     self.runGeneratedCommands = function () {
-        onPlacement(generated_commands);
+        onPlacement(generatedCommands);
     };
     
     
@@ -133,7 +133,7 @@ function WorldSeedr(settings) {
                     
             switch (child.type) {
                 case "Known":
-                    generated_commands.push(child);
+                    generatedCommands.push(child);
                     break;
                 case "Random":
                     self.generateFull(child);

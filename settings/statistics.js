@@ -3,7 +3,7 @@ FullScreenMario.prototype.settings.statistics = {
     "doMakeContainer": true,
     "containers": [
         ["table", {
-            "id": "data_display",
+            "id": "dataDisplay",
             "style": {
                 "position": "absolute",
                 "top": 0,

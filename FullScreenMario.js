@@ -2403,7 +2403,7 @@ var FullScreenMario = (function(GameStartr) {
         
         // Items
         if (thing.group === "item") {
-            if (thing.collide_primary) {
+            if (thing.collidePrimary) {
                 return thing.collide(other, thing);
             }
             return;
@@ -2783,8 +2783,8 @@ var FullScreenMario = (function(GameStartr) {
      */
     function collideDetector(thing, other) {
         if (!thing.player) {
-            if (other.activate_fail) {
-                other.activate_fail(thing);
+            if (other.activateFail) {
+                other.activateFail(thing);
             }
             return;
         }
@@ -3079,8 +3079,8 @@ var FullScreenMario = (function(GameStartr) {
      */
     function movePlatformSpawn(thing) {
         if (thing.bottom < 0) {
-            thing.EightBitter.setTop(thing, thing.EightBitter.MapScreener.bottom_platform_max);
-        } else if (thing.top > thing.EightBitter.MapScreener.bottom_platform_max) {
+            thing.EightBitter.setTop(thing, thing.EightBitter.MapScreener.bottomPlatformMax);
+        } else if (thing.top > thing.EightBitter.MapScreener.bottomPlatformMax) {
             thing.EightBitter.setBottom(thing, 0);
         } else {
             thing.EightBitter.movePlatform(thing);
@@ -3176,8 +3176,8 @@ var FullScreenMario = (function(GameStartr) {
                 player.movement = FullScreenMario.prototype.movePlayer;
             }
         }
-    }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if (thing.EightBitter.player.resting !== thing) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        thing.EightBitter.shiftVert(thing, thing.yvel += thing.EightBitter.unitsize / 8);        thing.EightBitter.setBottom(thing.EightBitter.player, thing.top);                // After a velocity threshold, start always falling        if (thing.yvel >= (thing.fall_threshold_start || thing.EightBitter.unitsize * 2.8)) {            thing.freefall = true;            thing.movement = thing.EightBitter.moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || thing.EightBitter.unitsize / 16;        thing.EightBitter.shiftVert(thing, thing.yvel);
-                // After a velocity threshold, stop accelerating        if (thing.yvel >= (thing.fall_threshold_end || thing.EightBitter.unitsize * 2)) {
+    }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if (thing.EightBitter.player.resting !== thing) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        thing.EightBitter.shiftVert(thing, thing.yvel += thing.EightBitter.unitsize / 8);        thing.EightBitter.setBottom(thing.EightBitter.player, thing.top);                // After a velocity threshold, start always falling        if (thing.yvel >= (thing.fallThresholdStart || thing.EightBitter.unitsize * 2.8)) {            thing.freefall = true;            thing.movement = thing.EightBitter.moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || thing.EightBitter.unitsize / 16;        thing.EightBitter.shiftVert(thing, thing.yvel);
+                // After a velocity threshold, stop accelerating        if (thing.yvel >= (thing.fallThresholdEnd || thing.EightBitter.unitsize * 2)) {
             thing.movement = movePlatform;        }    }
     
     /**
@@ -3208,7 +3208,7 @@ var FullScreenMario = (function(GameStartr) {
     function movePiranha(thing) {
         var bottom = thing.bottom,
             height = thing.height + thing.direction,
-            at_end = false;
+            atEnd = false;
         
         if (thing.resting && !FSM.isCharacterAlive(thing.resting)) {
             bottom = thing.top + thing.constructor.prototype.height * thing.EightBitter.unitsize;
@@ -3218,16 +3218,16 @@ var FullScreenMario = (function(GameStartr) {
         
         if (height <= 0) {
             height = thing.height = 0;
-            at_end = true;
+            atEnd = true;
         } else if (height >= thing.constructor.prototype.height) {
             height = thing.height = thing.constructor.prototype.height;
-            at_end = true;
+            atEnd = true;
         }
         
         thing.EightBitter.setHeight(thing, height, true, true);
         thing.EightBitter.setBottom(thing, bottom);
         
-        if (at_end) {
+        if (atEnd) {
             thing.counter = 0;
             thing.movement = movePiranhaLatent;
         }
@@ -4341,7 +4341,7 @@ var FullScreenMario = (function(GameStartr) {
         if (!thing.paddlingCycle) {
             thing.EightBitter.removeClass(thing, "skidding paddle1 paddle2 paddle3 paddle4 paddle5");
             thing.EightBitter.addClass(thing, "paddling");
-            thing.EightBitter.TimeHandler.cancelClassCycle(thing, "paddling_cycle");
+            thing.EightBitter.TimeHandler.cancelClassCycle(thing, "paddlingCycle");
             thing.EightBitter.TimeHandler.addClassCycle(
                 thing, 
                 [
@@ -4350,7 +4350,7 @@ var FullScreenMario = (function(GameStartr) {
                         return thing.paddlingCycle = false;
                     },
                 ],
-                "paddling_cycle", 
+                "paddlingCycle", 
                 7
             );
         }
@@ -5359,16 +5359,16 @@ var FullScreenMario = (function(GameStartr) {
      * distance from the floor).
      * 
      * @param {Number} yloc   A height to find the distance to the floor from.
-     * @param {Boolean} [correct_unitsize]   Whether the yloc accounts for 
+     * @param {Boolean} [correctUnitsize]   Whether the yloc accounts for 
      *                                       unitsize expansion (e.g. 48 rather
      *                                       than 12, for unitsize=4).
      * @return {Number}
      */
-    function getAbsoluteHeight(yloc, correct_unitsize) {
+    function getAbsoluteHeight(yloc, correctUnitsize) {
         var EightBitter = EightBittr.ensureCorrectCaller(this),
             height = yloc + EightBitter.MapScreener.height;
         
-        if (!correct_unitsize) {
+        if (!correctUnitsize) {
             height *= EightBitter.unitsize;
         }
         
@@ -5408,7 +5408,7 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      */
-    function mapPlaceRandomCommands(EightBitter, generated_commands) {
+    function mapPlaceRandomCommands(EightBitter, generatedCommands) {
         var MapsCreator = EightBitter.MapsCreator,
             MapsHandler = EightBitter.MapsHandler,
             prethings = MapsHandler.getPreThings(),
@@ -5416,8 +5416,8 @@ var FullScreenMario = (function(GameStartr) {
             map = MapsHandler.getMap(),
             command, output, i;
         
-        for (i = 0; i < generated_commands.length; i += 1) {
-            command = generated_commands[i];
+        for (i = 0; i < generatedCommands.length; i += 1) {
+            command = generatedCommands[i];
             
             output = {
                 "thing": command.title,
@@ -5436,8 +5436,8 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      */
-    function mapStretchThing(thing, xloc_real) {
-        thing.EightBitter.setWidth(thing, xloc_real * thing.EightBitter.unitsize);
+    function mapStretchThing(thing, xlocReal) {
+        thing.EightBitter.setWidth(thing, xlocReal * thing.EightBitter.unitsize);
     }
     
     /**
@@ -6361,7 +6361,7 @@ var FullScreenMario = (function(GameStartr) {
             {
                 thing: "DetectCollision", x: x, y: y + 108, height: 100,
                 activate: FullScreenMario.prototype.collideFlagpole,
-                activate_fail: FullScreenMario.prototype.killNormal 
+                activateFail: FullScreenMario.prototype.killNormal 
             },
             // Flag (scenery)
             { thing: "Flag", x: x - 4.5, y: y + 79.5 },

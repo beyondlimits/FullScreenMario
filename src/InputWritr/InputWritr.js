@@ -42,9 +42,9 @@ function InputWritr(settings) {
         histories,
 
         // For compatibility, a var reference to getting the performance.now() timestamp
-        get_timestamp,
+        getTimestamp,
         // 
-        starting_time,
+        startingTime,
 
         // An object to be passed to event calls, commonly with key information
         // (such as "Down" => 0 }
@@ -64,8 +64,8 @@ function InputWritr(settings) {
      *
      */
     self.reset = function (settings) {
-        get_timestamp = (
-            settings.get_timestamp
+        getTimestamp = (
+            settings.getTimestamp
             || performance.now 
             || performance.webkitNow 
             || performance.mozNow 
@@ -112,16 +112,16 @@ function InputWritr(settings) {
      * Clears the currently tracked inputs history and resets the starting time,
      * and (optionally) saves the current history.
      *
-     * @param {Boolean} [keep_history]   Whether the currently tracked history
+     * @param {Boolean} [keepHistory]   Whether the currently tracked history
      *                                   of inputs should be added to the master
      *                                   Array of histories (defaults to true).
      */
-    self.restartHistory = function (keep_history) {
-        if (history && arguments.length && keep_history) {
+    self.restartHistory = function (keepHistory) {
+        if (history && arguments.length && keepHistory) {
             histories.push(history);
         }
         history = {};
-        starting_time = get_timestamp();
+        startingTime = getTimestamp();
     };
 
 
@@ -248,8 +248,8 @@ function InputWritr(settings) {
      *
      * @param {Boolean}
      */
-    self.setRecording = function (recording_new) {
-        recording = recording_new;
+    self.setRecording = function (recordingNew) {
+        recording = recordingNew;
     };
 
     /**
@@ -257,8 +257,8 @@ function InputWritr(settings) {
      *
      * @param {Object}
      */
-    self.setEventInformation = function (eventInfo_new) {
-        eventInformation = eventInfo_new;
+    self.setEventInformation = function (eventInfoNew) {
+        eventInformation = eventInfoNew;
     };
 
     
@@ -274,7 +274,7 @@ function InputWritr(settings) {
      *                         be callable.
      */
     self.addAliasValues = function (name, values) {
-        var trigger_name, trigger_group, 
+        var triggerName, triggerGroup, 
             i;
         
         if (!aliases.hasOwnProperty(name)) {
@@ -283,16 +283,16 @@ function InputWritr(settings) {
             aliases[name].push.apply(aliases[name], values);
         }
         
-        // trigger_name = "onkeydown", "onkeyup", ...
-        for (trigger_name in triggers) {
-            if (triggers.hasOwnProperty(trigger_name)) {
-                // trigger_group = { "left": function, ... }, ...
-                trigger_group = triggers[trigger_name];
+        // triggerName = "onkeydown", "onkeyup", ...
+        for (triggerName in triggers) {
+            if (triggers.hasOwnProperty(triggerName)) {
+                // triggerGroup = { "left": function, ... }, ...
+                triggerGroup = triggers[triggerName];
                 
-                if (trigger_group.hasOwnProperty(name)) {
+                if (triggerGroup.hasOwnProperty(name)) {
                     // values[i] = 37, 65, ...
                     for (i = 0; i < values.length; i += 1) {
-                        trigger_group[values[i]] = trigger_group[name];
+                        triggerGroup[values[i]] = triggerGroup[name];
                     }
                 }
             }
@@ -308,7 +308,7 @@ function InputWritr(settings) {
      *                         longer be callable.
      */
     self.removeAliasValues = function (name, values) {
-        var trigger_name, trigger_group, 
+        var triggerName, triggerGroup, 
             i;
         
         if (!aliases.hasOwnProperty(name)) {
@@ -319,17 +319,17 @@ function InputWritr(settings) {
             aliases[name].splice(aliases[name].indexOf(values[i], 1));
         }
         
-        // trigger_name = "onkeydown", "onkeyup", ...
-        for (trigger_name in triggers) {
-            if (triggers.hasOwnProperty(trigger_name)) {
-                // trigger_group = { "left": function, ... }, ...
-                trigger_group = triggers[trigger_name];
+        // triggerName = "onkeydown", "onkeyup", ...
+        for (triggerName in triggers) {
+            if (triggers.hasOwnProperty(triggerName)) {
+                // triggerGroup = { "left": function, ... }, ...
+                triggerGroup = triggers[triggerName];
                 
-                if (trigger_group.hasOwnProperty(name)) {
+                if (triggerGroup.hasOwnProperty(name)) {
                     // values[i] = 37, 65, ...
                     for (i = 0; i < values.length; i += 1) {
-                        if (trigger_group.hasOwnProperty(values[i])) {
-                            delete trigger_group[values[i]];
+                        if (triggerGroup.hasOwnProperty(values[i])) {
+                            delete triggerGroup[values[i]];
                         }
                     }
                 }
@@ -348,13 +348,13 @@ function InputWritr(settings) {
     /**
      * Adds a set of alises from an Object containing "name" => [values] pairs.
      * 
-     * @param {Object} aliases_raw
+     * @param {Object} aliasesRaw
      */
-    self.addAliases = function (aliases_raw) {
-        var alias_name;
-        for (alias_name in aliases_raw) {
-            if (aliases_raw.hasOwnProperty(alias_name)) {
-                self.addAliasValues(alias_name, aliases_raw[alias_name]);
+    self.addAliases = function (aliasesRaw) {
+        var aliasName;
+        for (aliasName in aliasesRaw) {
+            if (aliasesRaw.hasOwnProperty(aliasName)) {
+                self.addAliasValues(aliasName, aliasesRaw[aliasName]);
             }
         }
     }
@@ -423,7 +423,7 @@ function InputWritr(settings) {
         for (time in events) {
             if (events.hasOwnProperty(time)) {
                 call = makeEventCall(events[time]);
-                timeouts[time] = setTimeout(call, Math.round(time - starting_time));
+                timeouts[time] = setTimeout(call, Math.round(time - startingTime));
             }
         }
     }
@@ -475,45 +475,45 @@ function InputWritr(settings) {
      *
      * @param {String} trigger   The label for the Array of functions that the
      *                           pipe function should choose from.
-     * @param {String} [code_label]   An optional mapping String for the alias:
+     * @param {String} [codeLabel]   An optional mapping String for the alias:
      *                                if provided, it changes the alias to a
-     *                                listed alias keyed by code_label.
-     * @param {Boolean} [prevent_defaults]   Whether the input to the pipe
+     *                                listed alias keyed by codeLabel.
+     * @param {Boolean} [preventDefaults]   Whether the input to the pipe
      *                                       function will be an HTML-style
      *                                       event, where .preventDefault()
      *                                       should be clicked.
      * @return {Function}
      * @example   Creating a function that calls an onKeyUp event, with a given
-     *            input's keyCode being used as the code_label.
+     *            input's keyCode being used as the codeLabel.
      *            InputWriter.makePipe("onkeyup", "keyCode");
      * @example   Creating a function that calls an onMouseDown event, and
      *            preventDefault of the argument.
      *            InputWriter.makePipe("onmousedown", null, true);
      */
-    self.makePipe = function (trigger, code_label, prevent_defaults) {
+    self.makePipe = function (trigger, codeLabel, preventDefaults) {
         if (!triggers.hasOwnProperty(trigger)) {
             console.warn("No trigger of label '" + trigger + "' has been defined.");
             return;
         }
 
         var functions = triggers[trigger],
-            use_label = arguments.length >= 2;
+            useLabel = arguments.length >= 2;
 
         return function Pipe(alias) {
             // Typical usage means alias will be an event from a key/mouse input
-            if (prevent_defaults && alias.preventDefault instanceof Function) {
+            if (preventDefaults && alias.preventDefault instanceof Function) {
                 alias.preventDefault();
             }
 
-            // If a code_label is needed, replace the alias with it
-            if (use_label) {
-                alias = alias[code_label];
+            // If a codeLabel is needed, replace the alias with it
+            if (useLabel) {
+                alias = alias[codeLabel];
             }
 
             // If there's a function under that alias, run it
             if (functions.hasOwnProperty(alias)) {
                 if (recording) {
-                    history[get_timestamp() | 0] = [trigger, alias];
+                    history[getTimestamp() | 0] = [trigger, alias];
                 }
                 
                 self.callEvent(functions[alias], undefined, arguments[0]);

@@ -160,14 +160,14 @@ function PixelDrawr(settings) {
         // PixelRender does most of the work in fetching the rendered sprite
         thing.sprite = PixelRender.decode(generateObjectKey(thing), thing);
         
-        // To do: remove dependency on .num_sprites and sprite_type
+        // To do: remove dependency on .num_sprites and spriteType
         if (thing.sprite.multiple) {
-            thing.sprite_type = thing.sprite.type;
+            thing.spriteType = thing.sprite.type;
             refillThingCanvasMultiple(thing, thing.sprite);
         }
         else {
             thing.num_sprites = 1;
-            thing.sprite_type = "normal";
+            thing.spriteType = "normal";
             refillThingCanvasSingle(thing, thing.sprite);
         }
         
@@ -211,23 +211,23 @@ function PixelDrawr(settings) {
             return;
         }
         
-        var sprites_raw = thing.sprite,
+        var spritesRaw = thing.sprite,
             canvases = thing.canvases = {
-                "direction": sprites_raw.direction,
+                "direction": spritesRaw.direction,
                 "multiple": true 
             },
             canvas, context, imageData, i;
 
         thing.num_sprites = 1;
 
-        for (i in sprites_raw.sprites) {
+        for (i in spritesRaw.sprites) {
             // Make a new sprite for this individual component
             canvas = createCanvas(thing.spritewidth * unitsize, thing.spriteheight * unitsize);
             context = canvas.getContext("2d");
 
             // Copy over this sprite's information the same way as refillThingCanvas
             imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-            PixelRender.memcpyU8(sprites_raw.sprites[i], imageData.data);
+            PixelRender.memcpyU8(spritesRaw.sprites[i], imageData.data);
             context.putImageData(imageData, 0, 0);
 
             // Record the canvas and context in thing.sprites

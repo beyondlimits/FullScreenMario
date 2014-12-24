@@ -1,7 +1,7 @@
 (function (things, macros) {
 	FullScreenMario.prototype.settings.editor = {
 		"blocksize": FullScreenMario.unitsize * 4,
-		"map_default": {
+		"mapDefault": {
 			"name": "New Map",
 			"locations": [
 				{ "entry": "Plain" }
@@ -16,11 +16,11 @@
 				}
 			]
 		},
-		"map_setting_default": "Overworld",
-		"map_entry_default": "Plain",
+		"mapSettingDefault": "Overworld",
+		"mapEntryDefault": "Plain",
 		"things": things,
-        "thing_groups": ["Text", "Character", "Solid", "Scenery"],
-		"thing_keys": (function () {
+        "thingGroups": ["Text", "Character", "Solid", "Scenery"],
+		"thingKeys": (function () {
 			var keys = [];
 			Object.keys(things).forEach(function (group) {
 				keys.push.apply(keys, Object.keys(things[group]));

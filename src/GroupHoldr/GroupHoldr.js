@@ -173,11 +173,11 @@ function GroupHoldr(settings) {
         }
         // Otherwise assume everything uses the same one, such as from a String
         else {
-            var type_func = getTypeFunction(types),
-                type_name = getTypeName(types);
+            var typeFunc = getTypeFunction(types),
+                typeName = getTypeName(types);
             groupNames.forEach(function (name) {
-                groupTypes[name] = type_func;
-                groupTypeNames[name] = type_name;
+                groupTypes[name] = typeFunc;
+                groupTypeNames[name] = typeName;
             });
         }
         
@@ -210,7 +210,7 @@ function GroupHoldr(settings) {
     }
     
     /**
-     * Resets groups to an empty object, and fills it with a new group_type for
+     * Resets groups to an empty object, and fills it with a new groupType for
      * each name in groupNames
      */
     function setGroups() {
@@ -401,42 +401,42 @@ function GroupHoldr(settings) {
      * Deletes a given object from a group by calling Array.splice on
      * the result of Array.indexOf
      * 
-     * @param {String} group_name   The string name of the group to delete an
+     * @param {String} groupName   The string name of the group to delete an
      *                              object from.
      * @param {Number} object   The object to be deleted from the group.
      */
-    self.deleteObject = function (group_name, object) {
-        groups[group_name].splice(groups[group_name].indexOf(object), 1);
+    self.deleteObject = function (groupName, object) {
+        groups[groupName].splice(groups[groupName].indexOf(object), 1);
     };
     
     /**
      * Deletes a given index from a group by calling Array.splice. 
      * 
-     * @param {String} group_name   The string name of the group to delete an
+     * @param {String} groupName   The string name of the group to delete an
      *                              object from.
      * @param {Number} index   The index to be deleted from the group.
      * @param {Number} [max]   How many elements to delete after that index (if
      *                         falsy, just the first 1).
      */
-    self.deleteIndex = function (group_name, index, max) {
-        groups[group_name].splice(index, max || 1);
+    self.deleteIndex = function (groupName, index, max) {
+        groups[groupName].splice(index, max || 1);
     };
     
     /**
-     * Switches an object from groupOld to group_new by removing it from the
+     * Switches an object from groupOld to groupNew by removing it from the
      * old group and adding it to the new. If the new group uses an associative
      * array, a key should be passed in (which defaults to undefined).
      * 
      * @param {Mixed} object   The object to be moved from one group to another.
      * @param {String} groupOld   The string name of the object's old group.
-     * @param {String} group_new   The string name of the object's new group.
-     * @param {String} [key_new]   A key for the object to be placed in the new
+     * @param {String} groupNew   The string name of the object's new group.
+     * @param {String} [keyNew]   A key for the object to be placed in the new
      *                             group, required only if the group contains an
      *                             associative array.
      */
-    self.switchObjectGroup = function (object, groupOld, group_new, key_new) {
+    self.switchObjectGroup = function (object, groupOld, groupNew, keyNew) {
         self.deleteObject(groupOld, object);
-        functions.add[group_new](object, key_new);
+        functions.add[groupNew](object, keyNew);
     };
     
     

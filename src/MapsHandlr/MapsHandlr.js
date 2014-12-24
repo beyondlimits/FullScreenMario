@@ -28,7 +28,7 @@ function MapsHandlr(settings) {
         location_current,
         
         // The name of the currently edited map, set by self.setMap
-        map_name,
+        mapName,
         
         // The current area's array of prethings that are to be added in order
         // during self.spawnMap
@@ -138,7 +138,7 @@ function MapsHandlr(settings) {
      * @return {Mixed}
      */
     self.getMapName = function () {
-        return map_name;
+        return mapName;
     };
     
     /** 
@@ -217,7 +217,7 @@ function MapsHandlr(settings) {
             throw new Error("No map found under: " + name);
         }
         
-        map_name = name;
+        mapName = name;
         
         // Most of the work is done by setLocation (by default, the map's first)
         if (arguments.length > 1) {

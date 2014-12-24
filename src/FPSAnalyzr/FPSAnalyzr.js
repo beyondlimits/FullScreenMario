@@ -170,16 +170,16 @@ function FPSAnalyzr(settings) {
      *                    measurements
      */
     self.getMeasurements = function () {
-        var fps_kept_real = Math.min(maxKept, numRecorded),
+        var fpsKeptReal = Math.min(maxKept, numRecorded),
             copy, i;
         if (isFinite(maxKept)) {
-            copy = new Array(fps_kept_real);
+            copy = new Array(fpsKeptReal);
         } else {
             copy = {};
-            copy.length = fps_kept_real;
+            copy.length = fpsKeptReal;
         }
         
-        for (i = fps_kept_real - 1; i >= 0; --i) {
+        for (i = fpsKeptReal - 1; i >= 0; --i) {
             copy[i] = measurements[i];
         }
         
@@ -226,14 +226,14 @@ function FPSAnalyzr(settings) {
      */
     self.getMedian = function () {
         var copy = self.getMeasurements().sort(),
-            fps_kept_real = copy.length,
-            fps_kept_half = Math.floor(fps_kept_real / 2),
+            fpsKeptReal = copy.length,
+            fpsKeptHalf = Math.floor(fpsKeptReal / 2),
             i;
          
         if (copy.length % 2 == 0) {
-            return copy[fps_kept_half];
+            return copy[fpsKeptHalf];
         } else {
-            return (copy[fps_kept_half - 2] + copy[fps_kept_half]) / 2;
+            return (copy[fpsKeptHalf - 2] + copy[fpsKeptHalf]) / 2;
         }
     }
     

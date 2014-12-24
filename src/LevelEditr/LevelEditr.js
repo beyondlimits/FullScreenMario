@@ -19,37 +19,37 @@ function LevelEditr(settings) {
         things,
         
         // The listing of groups that Things may fall into
-        thing_groups,
+        thingGroups,
         
         // The complete list of Things that may be placed
-        thing_keys,
+        thingKeys,
         
         // The listings of macros that the GUI displays
         macros,
         
         // The default string name of the map
-        map_name_default,
+        mapNameDefault,
         
         // The default integer time of the map
-        map_time_default,
+        mapTimeDefault,
         
         // The default string setting of the map's areas
-        map_setting_default,
+        mapSettingDefault,
         
         // The default string entry of the map's locations
-        map_entry_default,
+        mapEntryDefault,
         
         // The starting object used as a default template for new maps
-        map_default,
+        mapDefault,
         
         // An Object containing the display's HTML elements
         display,
         
         // The current mode of editing as a string, such as "Build" or "Play"
-        current_mode,
+        currentMode,
         
         // The current mode of click as a string, such as "Thing" or "Macro"
-        current_click_mode,
+        currentClickMode,
         
         // What size "blocks" placed Things should snap to
         blocksize,
@@ -61,12 +61,12 @@ function LevelEditr(settings) {
         beautifier,
         
         // The currently selected Thing to be placed
-        current_things,
+        currentThings,
         
         // The type string of the currently selected thing, such as "Koopa"
-        current_type,
+        currentType,
         
-        // The current arguments for current_things, such as { "smart": true }
+        // The current arguments for currentThings, such as { "smart": true }
         currentArgs;
     
     /**
@@ -75,20 +75,20 @@ function LevelEditr(settings) {
     self.reset = function reset(settings) {
         GameStarter = settings.GameStarter;
         things = settings.things;
-        thing_groups = settings.thing_groups;
-        thing_keys = settings.thing_keys;
+        thingGroups = settings.thingGroups;
+        thingKeys = settings.thingKeys;
         macros = settings.macros;
         beautifier = settings.beautifier;
-        map_name_default = settings.map_name_default || "New Map";
-        map_time_default = settings.map_time_default || Infinity;
-        map_setting_default = settings.map_setting_default || "";
-        map_entry_default = settings.map_entry_default || "";
-        map_default = settings.map_default || {};
+        mapNameDefault = settings.mapNameDefault || "New Map";
+        mapTimeDefault = settings.mapTimeDefault || Infinity;
+        mapSettingDefault = settings.mapSettingDefault || "";
+        mapEntryDefault = settings.mapEntryDefault || "";
+        mapDefault = settings.mapDefault || {};
         blocksize = settings.blocksize || 1;
         
-        current_things = [];
-        current_mode = "Build";
-        current_click_mode = "Thing";
+        currentThings = [];
+        currentMode = "Build";
+        currentClickMode = "Thing";
     };
     
     
@@ -110,7 +110,7 @@ function LevelEditr(settings) {
         
         setCurrentMode("Build");
         
-        setTextareaValue(stringifySmart(map_default), true);
+        setTextareaValue(stringifySmart(mapDefault), true);
         resetDisplayMap();
         disableThing(GameStarter.player);
     };
@@ -244,14 +244,14 @@ function LevelEditr(settings) {
      * 
      */
     function setCurrentMode(mode) {
-        current_mode = mode;
+        currentMode = mode;
     }
     
     /**
      * 
      */
     function setCurrentClickMode(mode, event) {
-        current_click_mode = mode;
+        currentClickMode = mode;
         
         cancelEvent(event);
     }
@@ -260,14 +260,14 @@ function LevelEditr(settings) {
      * 
      */
     function setCurrentThing(type, args, x, y) {
-        current_type = type;
+        currentType = type;
         currentArgs = args;
-        current_things = [
+        currentThings = [
             {
                 "x": 0,
                 "y": 0,
                 "thing": GameStarter.ObjectMaker.make(
-                    current_type, 
+                    currentType, 
                     GameStarter.proliferate({
                         "onThingMake": undefined,
                         "onThingAdd": undefined,
@@ -278,22 +278,22 @@ function LevelEditr(settings) {
             }
         ];
         
-        disableThing(current_things[0]["thing"]);
-        GameStarter.addThing(current_things[0]["thing"], x || 0, y || 0);
+        disableThing(currentThings[0]["thing"]);
+        GameStarter.addThing(currentThings[0]["thing"], x || 0, y || 0);
     };
     
     function setCurrentMacroThings() {
-        var current_thing, i;
+        var currentThing, i;
         
-        for (i = 0; i < current_things.length; i += 1) {
-            current_thing = current_things[i];
-            current_thing.outerok = true;
+        for (i = 0; i < currentThings.length; i += 1) {
+            currentThing = currentThings[i];
+            currentThing.outerok = true;
             
-            disableThing(current_thing["thing"]);
+            disableThing(currentThing["thing"]);
             GameStarter.addThing(
-                current_thing["thing"], 
-                current_thing["xloc"] || 0,
-                current_thing["yloc"] || 0
+                currentThing["thing"], 
+                currentThing["xloc"] || 0,
+                currentThing["yloc"] || 0
             );
         }
     }
@@ -302,10 +302,10 @@ function LevelEditr(settings) {
      * 
      */
     function setCurrentArgs() {
-        if (current_click_mode === "Thing") {
-            setCurrentThing(current_type, getCurrentArgs());
+        if (currentClickMode === "Thing") {
+            setCurrentThing(currentType, getCurrentArgs());
         } else {
-            onMacroIconClick(current_type, false, getCurrentArgs());
+            onMacroIconClick(currentType, false, getCurrentArgs());
         }
     }
     
@@ -349,24 +349,24 @@ function LevelEditr(settings) {
     function onMouseMoveEditing(event) {
         var x = event.x || event.clientX || 0,
             y = event.y || event.clientY || 0,
-            current_thing, i;
+            currentThing, i;
         
-        for (i = 0; i < current_things.length; i += 1) {
-            current_thing = current_things[i];
+        for (i = 0; i < currentThings.length; i += 1) {
+            currentThing = currentThings[i];
             
-            if (!current_thing["thing"]) {
+            if (!currentThing["thing"]) {
                 continue;
             }
             
             GameStarter.setLeft(
-                current_thing["thing"], 
+                currentThing["thing"], 
                 roundTo(x - GameStarter.container.offsetLeft, blocksize) 
-                        + (current_thing.left || 0) * GameStarter.unitsize
+                        + (currentThing.left || 0) * GameStarter.unitsize
             );
             GameStarter.setTop(
-                current_thing["thing"], 
+                currentThing["thing"], 
                 roundTo(y - GameStarter.container.offsetTop, blocksize) 
-                        - (current_thing.top || 0) * GameStarter.unitsize
+                        - (currentThing.top || 0) * GameStarter.unitsize
             );
         }
     }
@@ -375,7 +375,7 @@ function LevelEditr(settings) {
      * 
      */
     function onClickEditingThing(event) {
-        if (current_mode !== "Build") {
+        if (currentMode !== "Build") {
             return;
         }
         
@@ -383,39 +383,39 @@ function LevelEditr(settings) {
             y = roundTo(event.y || event.clientY || 0, blocksize),
             thing;
         
-        if (!current_things.length || !addMapCreationThing(x, y)) {
+        if (!currentThings.length || !addMapCreationThing(x, y)) {
             return;
         }
         
-        onClickEditingGenericAdd(x, y, current_type, currentArgs);
+        onClickEditingGenericAdd(x, y, currentType, currentArgs);
     }
     
     /**
      * 
      */
     function onClickEditingMacro(event) {
-        if (current_mode !== "Build") {
+        if (currentMode !== "Build") {
             return;
         }
         
         var x = roundTo(event.x || event.clientX || 0, blocksize),
             y = roundTo(event.y || event.clientY || 0, blocksize),
-            current_thing, i;
+            currentThing, i;
         
         // killCurrentThings();
         
-        if (!current_things.length || !addMapCreationMacro(x, y)) {
+        if (!currentThings.length || !addMapCreationMacro(x, y)) {
             return;
         }
         
-        for (i = 0; i < current_things.length; i += 1) {
-            current_thing = current_things[i];
+        for (i = 0; i < currentThings.length; i += 1) {
+            currentThing = currentThings[i];
             // debugger;
             onClickEditingGenericAdd(
-                x + (current_thing["left"] || 0) * GameStarter.unitsize,
-                y - (current_thing["top"] || 0) * GameStarter.unitsize,
-                current_thing["thing"].title || current_thing["title"],
-                current_thing["reference"]
+                x + (currentThing["left"] || 0) * GameStarter.unitsize,
+                y - (currentThing["top"] || 0) * GameStarter.unitsize,
+                currentThing["thing"].title || currentThing["title"],
+                currentThing["reference"]
             );
             
         }
@@ -432,7 +432,7 @@ function LevelEditr(settings) {
             "movement": undefined
         }, getNormalizedThingArguments(args)));
         
-        if (current_mode === "Build") {
+        if (currentMode === "Build") {
             disableThing(thing, .7);
         }
         
@@ -479,17 +479,17 @@ function LevelEditr(settings) {
             return;
         }
         
-        current_things = [];
+        currentThings = [];
         GameStarter.MapsCreator.analyzePreMacro(
             GameStarter.proliferate({
                 "macro": title
             }, getCurrentArgs()),
-            createPrethingsHolder(current_things),
+            createPrethingsHolder(currentThings),
             getCurrentAreaObject(map),
             map
         );
         
-        current_type = title;
+        currentType = title;
         setCurrentMacroThings();
     }
     
@@ -499,7 +499,7 @@ function LevelEditr(settings) {
     function createPrethingsHolder(object) {
         var output = {};
         
-        thing_groups.forEach(function (group) {
+        thingGroups.forEach(function (group) {
             output[group] = object;
         });
         
@@ -726,7 +726,7 @@ function LevelEditr(settings) {
         }
         
         map.locations[name] = {
-            "entry": map_entry_default
+            "entry": mapEntryDefault
         };
         
         resetAllVisualOptionSelects("VisualOptionLocation", Object.keys(map.locations));
@@ -744,7 +744,7 @@ function LevelEditr(settings) {
         }
         
         map.areas[name] = {
-            "setting": map_setting_default,
+            "setting": mapSettingDefault,
             "creation": []
         };
         
@@ -782,7 +782,7 @@ function LevelEditr(settings) {
         try {
             var map = parseSmart(display.stringer.textarea.value);
             display.stringer.messenger.textContent = "";
-            display.namer.value = map.name || map_name_default;
+            display.namer.value = map.name || mapNameDefault;
             return map;
         }
         catch (error) {
@@ -835,7 +835,7 @@ function LevelEditr(settings) {
     function addMapCreationThing(x, y) {
         var mapObject = getMapObject(),
             thingRaw = GameStarter.proliferate({
-                "thing": current_type,
+                "thing": currentType,
                 "x": getNormalizedX(x) + (GameStarter.MapScreener.left / GameStarter.unitsize),
                 "y": getNormalizedY(y)
             }, currentArgs);
@@ -854,7 +854,7 @@ function LevelEditr(settings) {
     function addMapCreationMacro(x, y) {
         var mapObject = getMapObject(),
             macroRaw = GameStarter.proliferate({
-                "macro": current_type,
+                "macro": currentType,
                 "x": getNormalizedX(x) + (GameStarter.MapScreener.left / GameStarter.unitsize),
                 "y": getNormalizedY(y)
             }, getCurrentArgs());
@@ -976,8 +976,8 @@ function LevelEditr(settings) {
                                         display["namer"] = GameStarter.createElement("input", {
                                             "className": "EditorNameInput",
                                             "type": "text",
-                                            "placeholder": map_name_default,
-                                            "value": map_name_default,
+                                            "placeholder": mapNameDefault,
+                                            "value": mapNameDefault,
                                             "onkeyup": setMapName,
                                             "onchange": setMapName
                                         })
@@ -1581,7 +1581,7 @@ function LevelEditr(settings) {
                 });
             
             case "Everything":
-                return createSelect(thing_keys, {
+                return createSelect(thingKeys, {
                     "className": "VisualOptionValue VisualOptionEverything",
                     "data-type": "String",
                     "onchange": setCurrentArgs
@@ -1599,7 +1599,7 @@ function LevelEditr(settings) {
      * 
      */
     function resetDisplayMap() {
-        setTextareaValue(stringifySmart(map_default), true);
+        setTextareaValue(stringifySmart(mapDefault), true);
         setDisplayMap(true);
         GameStarter.InputWriter.setCanTrigger(false);
     }
@@ -1645,7 +1645,7 @@ function LevelEditr(settings) {
      * 
      */
     function getMapName() {
-        return display.namer.value || map_name_default;
+        return display.namer.value || mapNameDefault;
     }
     
     
@@ -1804,8 +1804,8 @@ function LevelEditr(settings) {
      * 
      */
     function killCurrentThings() {
-        for (var i = 0; i < current_things.length - 1; i += 1) {
-            GameStarter.killNormal(current_things[i].thing);
+        for (var i = 0; i < currentThings.length - 1; i += 1) {
+            GameStarter.killNormal(currentThings[i].thing);
         }
     }
     

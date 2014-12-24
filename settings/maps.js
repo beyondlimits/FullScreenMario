@@ -15,12 +15,12 @@ FullScreenMario.prototype.settings.maps = {
         "canscroll"
     ],
     "screenVariables": {
-        "bottom_death_difference": function (EightBitter) {
+        "bottomDeathDifference": function (EightBitter) {
             return EightBitter.unitsize * 12;
         },
-        "bottom_platform_max": function (EightBitter) {
+        "bottomPlatformMax": function (EightBitter) {
             var area = EightBitter.MapsHandler.getArea(),
-                diff = EightBitter.MapScreener.bottom_death_difference;
+                diff = EightBitter.MapScreener.bottomDeathDifference;
                 
             if (!area) {
                 return -1;

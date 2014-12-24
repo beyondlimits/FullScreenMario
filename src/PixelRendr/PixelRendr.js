@@ -25,11 +25,11 @@ function PixelRendr(settings) {
 
         // Ordered array of arrays, each representing an RGBA value.
         // [0,0,0,0] is clear, [255,255,255,255] is white, and so on.
-        palette_default,
+        paletteDefault,
 
         // Default digit size (how many characters per number)
         // E.x. "7" is 1, "07" is 2
-        digitsize_default,
+        digitsizeDefault,
 
         // Utility RegExp to split strings on every #digitsize characters
         digitsplit,
@@ -63,9 +63,9 @@ function PixelRendr(settings) {
             throw new Error("No palette given to PixelRendr.");
         }
 
-        palette_default = settings.palette;
-        digitsize_default = getDigitSize(palette_default);
-        digitsplit = new RegExp('.{1,' + digitsize_default + '}', 'g');
+        paletteDefault = settings.palette;
+        digitsizeDefault = getDigitSize(paletteDefault);
+        digitsplit = new RegExp('.{1,' + digitsizeDefault + '}', 'g');
         filters = settings.filters || {};
         unitsize = settings.unitsize || 4;
         scale = settings.scale || 2;
@@ -284,28 +284,28 @@ function PixelRendr(settings) {
         // Same: just returns a reference to the target
         // ["same", ["container", "path", "to", "target"]]
         case "same":
-            var sprite_raw = followPath(library.raws, command[1], 0);
-            switch (sprite_raw.constructor) {
+            var spriteRaw = followPath(library.raws, command[1], 0);
+            switch (spriteRaw.constructor) {
             case String:
-                return ProcessorBase.process(sprite_raw, path);
+                return ProcessorBase.process(spriteRaw, path);
             case Array:
-                return evaluatePost(caller, sprite_raw, path);
+                return evaluatePost(caller, spriteRaw, path);
             default:
-                return libraryParse(sprite_raw, path);
+                return libraryParse(spriteRaw, path);
             }
 
         // Filter: takes a reference to the target, and applies a filter to it
         // ["filter", ["container", "path", "to", "target"], filters.DoThisFilter]
         case "filter":
             // Find the sprite this should be filtering from
-            var sprite_raw = followPath(library.raws, command[1], 0),
+            var spriteRaw = followPath(library.raws, command[1], 0),
                 filter = filters[command[2]];
             if (!filter) {
                 console.log("Invalid filter provided:", command[2], filters);
-                // return sprite_raw;
+                // return spriteRaw;
                 filter = {};
             }
-            return evaluatePostFilter(sprite_raw, path, filter);
+            return evaluatePostFilter(spriteRaw, path, filter);
 
         // Multiple: uses more than one image, either vertically or horizontally
         // Not to be confused with having .repeat = true.
@@ -322,31 +322,31 @@ function PixelRendr(settings) {
     }
 
     // Driver function to recursively apply a filter on a sprite / container
-    function evaluatePostFilter(sprite_raw, path, filter) {
+    function evaluatePostFilter(spriteRaw, path, filter) {
         // If it's just a String, process the sprite normally
-        if (typeof (sprite_raw) == "string") {
-            return ProcessorBase.process(sprite_raw, path, {
+        if (typeof (spriteRaw) == "string") {
+            return ProcessorBase.process(spriteRaw, path, {
                 filter: filter
             });
         }
 
         // If it's an Array, that's a post that hasn't yet been evaluated: evaluate it by the path
-        if (sprite_raw instanceof Array) {
-            return evaluatePostFilter(followPath(library.raws, sprite_raw[1], 0), sprite_raw[1].join(' '), filter);
+        if (spriteRaw instanceof Array) {
+            return evaluatePostFilter(followPath(library.raws, spriteRaw[1], 0), spriteRaw[1].join(' '), filter);
         }
 
         // If it's a generic Object, go recursively on its children
-        if (sprite_raw instanceof Object) {
+        if (spriteRaw instanceof Object) {
             var output = {},
                 i;
-            for (i in sprite_raw) {
-                output[i] = evaluatePostFilter(sprite_raw[i], path + ' ' + i, filter);
+            for (i in spriteRaw) {
+                output[i] = evaluatePostFilter(spriteRaw[i], path + ' ' + i, filter);
             }
             return output;
         }
 
         // Anything else is a complaint
-        console.warn("Invalid sprite provided for a post filter.", sprite_raw, path, filter);
+        console.warn("Invalid sprite provided for a post filter.", spriteRaw, path, filter);
     }
 
     //
@@ -390,8 +390,8 @@ function PixelRendr(settings) {
     // This is the first function called on strings in libraryParse
     // This could output the Uint8ClampedArray immediately if given the area - deliberately does not, for ease of storage
     function spriteUnravel(colors) {
-        var paletteref = getPaletteReferenceStarting(palette_default),
-            digitsize = digitsize_default,
+        var paletteref = getPaletteReferenceStarting(paletteDefault),
+            digitsize = digitsizeDefault,
             clength = colors.length,
             current, rep, nixloc, newp, i, len,
             output = "",
@@ -403,7 +403,7 @@ function PixelRendr(settings) {
                 // Get the location of the ending comma
                 nixloc = colors.indexOf(",", ++loc);
                 // Get the color
-                current = makeDigit(paletteref[colors.slice(loc, loc += digitsize)], digitsize_default);
+                current = makeDigit(paletteref[colors.slice(loc, loc += digitsize)], digitsizeDefault);
                 // Get the rep times
                 rep = Number(colors.slice(loc, nixloc));
                 // Add that int to output, rep many times
@@ -425,14 +425,14 @@ function PixelRendr(settings) {
                 }
                 // Otherwise go back to default
                 else {
-                    paletteref = getPaletteReference(palette_default);
-                    digitsize = digitsize_default;
+                    paletteref = getPaletteReference(paletteDefault);
+                    digitsize = digitsizeDefault;
                 }
                 break;
 
                 // A typical number
             default:
-                output += makeDigit(paletteref[colors.slice(loc, loc += digitsize)], digitsize_default);
+                output += makeDigit(paletteref[colors.slice(loc, loc += digitsize)], digitsizeDefault);
                 break;
             }
         }
@@ -450,7 +450,7 @@ function PixelRendr(settings) {
 
         // For each number,
         while (i < clength) {
-            current = colors.slice(i, i += digitsize_default);
+            current = colors.slice(i, i += digitsizeDefault);
             // Put it into output as many times as needed
             for (j = 0; j < scale; ++j)
                 output += current;
@@ -463,10 +463,10 @@ function PixelRendr(settings) {
         // If there isn't a filter (as is the normal), just return the sprite
         if (!attributes || !attributes.filter) return sprite;
         var filter = attributes.filter,
-            filter_name = filter[0];
-        if (!filter_name) return sprite;
+            filterName = filter[0];
+        if (!filterName) return sprite;
 
-        switch (filter_name) {
+        switch (filterName) {
             // Palette filters switch all instances of one color with another
         case "palette":
             // Split the sprite on on each digit ('...1234...' => [...,'12','34,...]
@@ -483,7 +483,7 @@ function PixelRendr(settings) {
     // Given the expanded version of colors, output the rgba array
     function spriteGetArray(colors) {
         var clength = colors.length,
-            numcolors = clength / digitsize_default,
+            numcolors = clength / digitsizeDefault,
             split = colors.match(digitsplit),
             olength = numcolors * 4,
             output = new Uint8ClampedArray(olength),
@@ -491,7 +491,7 @@ function PixelRendr(settings) {
         // For each color,
         for (i = 0, j = 0; i < numcolors; ++i) {
             // Grab its RGBA ints
-            reference = palette_default[Number(split[i])];
+            reference = paletteDefault[Number(split[i])];
             // Place each in output
             for (k = 0; k < 4; ++k)
                 output[j + k] = reference[k];
@@ -745,7 +745,7 @@ function PixelRendr(settings) {
     function getPaletteReferenceStarting(palette) {
         var output = {};
         for (var i = 0; i < palette.length; ++i)
-            output[makeDigit(i, digitsize_default)] = makeDigit(i, digitsize_default)
+            output[makeDigit(i, digitsizeDefault)] = makeDigit(i, digitsizeDefault)
         return output;
     }
     
@@ -758,8 +758,8 @@ function PixelRendr(settings) {
             best_i,
             i;
         
-        for (i = palette_default.length - 1; i >= 0; i -= 1) {
-            difference = arrayDifference(palette_default[i], rgba);
+        for (i = paletteDefault.length - 1; i >= 0; i -= 1) {
+            difference = arrayDifference(paletteDefault[i], rgba);
             if (difference < best_difference) {
                 best_difference = difference;
                 best_i = i;

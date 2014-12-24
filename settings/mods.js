@@ -336,7 +336,7 @@ FullScreenMario.prototype.settings.mods = {
                 }
             }
         }, {
-            "name": "parallaxHoriz Clouds",
+            "name": "Parallax Clouds",
             "description": "Clouds in the sky scroll at about 63% the normal rate.",
             "author": {
                 "name": "Josh Goldberg",
