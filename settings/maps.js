@@ -335,7 +335,12 @@ FullScreenMario.prototype.settings.maps = {
         }, {
             "name": "1-2",
             "locations": [
-                { "entry": "Walking" }, { "area": 1 }, { "area": 2 }, { "area": 1, "entry": "PipeVertical" }, { "area": 3, "entry": "PipeVertical" }, { "area": 1 }
+                { "entry": "Walking" }, 
+                { "area": 1 },
+                { "area": 2 },
+                { "area": 1, "entry": "PipeVertical" },
+                { "area": 3, "entry": "PipeVertical" }, 
+                { "area": 1 }
             ],
             "areas": [
                 {
@@ -2620,7 +2625,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "macro": "Floor", "width": 192 },
                         { "macro": "CastleSmall" },
                         { "thing": "PipeHorizontal", "x": 80, "y": 16, "transport": 1 },
-                        { "macro": "Pipe", "x": 96, "y": 32, "height": 32 }
+                        { "macro": "Pipe", "x": 96, "height": 32 }
                     ]
                 }, {
                     "setting": "Underwater",
