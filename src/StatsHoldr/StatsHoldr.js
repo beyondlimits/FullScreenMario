@@ -4,7 +4,7 @@
  * A versatile container to store and manipulate values in localStorage, and
  * optionally keep an updated HTML container showing these values. Operations 
  * such as setting, increasing/decreasing, and default values are all abstracted
- * automatically.  Values are stored in memory as well as in localStorage for
+ * automatically. Values are stored in memory as well as in localStorage for
  * fast lookups.
  * Each StatsHoldr instance requires proliferate and createElement functions 
  * (such as those given by the EightBittr prototype).
@@ -425,7 +425,7 @@ function StatsHoldr(settings) {
     self.increase = function (key, amount) {
         checkExistence(key);
         
-        values[key].amount += arguments.length > 1 ? amount : 1;
+        values[key].value += arguments.length > 1 ? amount : 1;
         values[key].update();
     }
     

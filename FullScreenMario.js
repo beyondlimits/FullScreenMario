@@ -175,6 +175,7 @@ var FullScreenMario = (function(GameStartr) {
         
         EightBitter.StatsHolder.set("lives", 3);
         EightBitter.setMap(EightBitter.settings.maps.mapDefault);
+        EightBitter.GamesRunner.pause();
         
         EightBitter.ModAttacher.fireEvent("onGameStart");
     }
