@@ -1450,6 +1450,10 @@ var FullScreenMario = (function(GameStartr) {
             thing.angle = -0.25;
         }
         
+        if (!thing.direction) {
+            thing.direction = -1;
+        }
+        
         thing.EightBitter.TimeHandler.addEventInterval(
             thing.EightBitter.animateCastleBlock,
             Math.round(7 / Math.abs(thing.speed)),
@@ -4299,7 +4303,7 @@ var FullScreenMario = (function(GameStartr) {
             thing.EightBitter.setMidY(balls[i], thing.top + ay * i);
         }
         
-        thing.angle += thing.dt;
+        thing.angle += thing.dt * thing.direction;
     }
     
     /**

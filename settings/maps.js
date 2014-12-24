@@ -432,7 +432,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "macro": "Fill", "thing": "Brick", "x": 1144, "y": 40, "xnum": 5, "ynum": 1 },
                         { "thing": "Koopa", "x": 1152, "y": 12, "smart": true },
                         { "thing": "Brick", "x": 1184, "y": 40, "contents": "Mushroom" },
-                        { "macro": "PlatformGenerator", "x": 1224, "width": 24, "direction": -1 },
+                        { "macro": "PlatformGenerator", "x": 1224, "width": 24, "direction": 1 },
                         { "macro": "Floor", "x": 1264,  "width": 256 },
                         { "macro": "Fill", "thing": "Brick", "x": 1264, "y": 8, "xnum": 17, "ynum": 3 },
                         { "thing": "PipeHorizontal", "x": 1312, "y": 40, "transport": 4 },
@@ -2920,7 +2920,7 @@ FullScreenMario.prototype.settings.maps = {
                                     { "macro": "Water", "x": 56, "width": 24 },
                                     { "thing": "Stone", "x": 72, "y": 56, "width": 24 },
                                     { "macro": "Floor", "x": 80 },
-                                    { "thing": "CastleBlock", "x": 80, "y": 48, "fireballs": 6, "direction": -1 },
+                                    { "thing": "CastleBlock", "x": 80, "y": 48, "fireballs": 6, "direction": 1 },
                                     { "macro": "Water", "x": 88, "width": 24 },
                                     { "thing": "Stone", "x": 104, "y": 56, "width": 32 },
                                     { "macro": "Floor", "x": 112, "width": 24 }
