@@ -39,6 +39,7 @@ function UserWrappr(settings) {
             || documentElement.webkitRequestFullScreen
             || documentElement.mozRequestFullScreen
             || documentElement.msRequestFullscreen
+            || function () {}
         ).bind(documentElement),
         
         cancelFullScreen = (
@@ -46,6 +47,7 @@ function UserWrappr(settings) {
             || document.webkitCancelFullScreen
             || document.mozCancelFullScreen
             || document.msCancelFullscreen
+            || function () {}
         ).bind(document);
     
     /**
