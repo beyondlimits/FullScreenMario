@@ -51,6 +51,8 @@ function ThingHittr(settings) {
         groupNames = settings.groupNames;
         cachedGroupNames = {};
         cachedTypeNames = {};
+        
+        self.checkHitsOf = {};
     };
     
     
@@ -111,8 +113,7 @@ function ThingHittr(settings) {
         }
 
         cachedTypeNames[typeName] = true;
-        
-        self["checkHitsOfOne" + typeName] = self.generateHitsCheck(typeName);
+        self.checkHitsOf[typeName] = self.generateHitsCheck(typeName);
     };
     
     /**

@@ -519,6 +519,7 @@
                 spawntype: "Goomba",
                 deadly: true,
                 noflip: true,
+                nofiredeath: true,
                 nokillend: true,
                 skipoverlaps: true,
                 movement: FullScreenMario.prototype.moveBowser,

@@ -595,8 +595,7 @@ var FullScreenMario = (function(GameStartr) {
             character.under = character.undermid = false;
             EightBitter.updatePosition(character);
             EightBitter.QuadsKeeper.determineThingQuadrants(character);
-            // EightBitter.ThingHitter.checkHitsOfOne(character);
-            EightBitter.ThingHitter["checkHitsOfOne" + character.title](character);
+            EightBitter.ThingHitter.checkHitsOf[character.title](character);
 
             // Resting tests
             if (character.resting) {
@@ -1351,6 +1350,7 @@ var FullScreenMario = (function(GameStartr) {
      */
     function spawnBowser(thing) {
         thing.counter = 0;
+        thing.deathcount = 0;
         thing.EightBitter.TimeHandler.addEventInterval(thing.EightBitter.animateBowserJump, 117, Infinity, thing);
         thing.EightBitter.TimeHandler.addEventInterval(thing.EightBitter.animateBowserFire, 280, Infinity, thing);
         thing.EightBitter.TimeHandler.addEventInterval(thing.EightBitter.animateBowserFire, 350, Infinity, thing);
@@ -2171,8 +2171,10 @@ var FullScreenMario = (function(GameStartr) {
      * @remarks thing is character, other is fireball
      */
     function collideFireball(thing, other) {
-        if (!thing.EightBitter.isCharacterAlive(thing) 
-                || thing.height < thing.EightBitter.unitsize) {
+        if (
+            !thing.EightBitter.isCharacterAlive(thing) 
+            || thing.height < thing.EightBitter.unitsize
+        ) {
             return;
         }
         
@@ -2183,13 +2185,15 @@ var FullScreenMario = (function(GameStartr) {
             return;
         }
         
-        if (!thing.firedeath) {
+        if (thing.nofiredeath) {
             thing.EightBitter.AudioPlayer.playLocal("Bump", thing.EightBitter.getMidX(other));
+            thing.death(thing);
         } else {
             thing.EightBitter.AudioPlayer.playLocal("Kick", thing.EightBitter.getMidX(other));
             thing.death(thing, 2);
             thing.EightBitter.scoreOn(thing.scoreFire, thing);
         }
+        
         other.death(other);
     }
     
@@ -4134,6 +4138,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function animateFireballExplode(thing, level) {
+        thing.nocollide = true;
         thing.EightBitter.killNormal(thing);
         if (level === 2) {
             return;
