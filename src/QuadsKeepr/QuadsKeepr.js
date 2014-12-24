@@ -9,7 +9,7 @@ function QuadsKeepr(settings) {
         ObjectMaker,
         
         // Function used to create a canvas of a given width and height
-        getCanvas,
+        createCanvas,
         
         // How many rows and columns of quadrants there should be
         num_rows,
@@ -57,7 +57,7 @@ function QuadsKeepr(settings) {
      */
     self.reset = function (settings) {
         ObjectMaker = settings.ObjectMaker;
-        getCanvas = settings.getCanvas;
+        createCanvas = settings.createCanvas;
         
         num_rows = settings.num_rows;
         num_cols = settings.num_cols;
@@ -278,7 +278,7 @@ function QuadsKeepr(settings) {
      */
     function createQuadrant(left, top) {
         var quadrant = ObjectMaker.make("Quadrant"),
-            canvas = getCanvas(quadrant_width, quadrant_height),
+            canvas = createCanvas(quadrant_width, quadrant_height),
             i;
         
         quadrant.changed = true;

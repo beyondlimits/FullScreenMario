@@ -26,7 +26,7 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Object} [style]   Additional CSS styles to be given to the
      *                           game's container <div> element.
      * @param {} 
-     * @returns {FullScreenMario}
+     * @return {FullScreenMario}
      * 
      * @example Creating a 15 x 14.5 blocks sized FullScreenMario object.
      * var FSM = new FullScreenMario({
@@ -565,7 +565,7 @@ var FullScreenMario = (function(GameStartr) {
                     solid.movement(solid);
                 }
             } else {
-                EightBitter.arrayDeleteMember(solid, solids, i);
+                EightBitter.arrayDeleteThing(solid, solids, i);
                 i -= 1;
             }
         }
@@ -622,14 +622,14 @@ var FullScreenMario = (function(GameStartr) {
                     (!character.outerok || (
                         character.right < EightBitter.MapScreener.width - delx
                     ))) {
-                    EightBitter.arrayDeleteMember(character, characters, i);
+                    EightBitter.arrayDeleteThing(character, characters, i);
                 } else {
                     if (!character.nomove && character.movement) {
                         character.movement(character);
                     }
                 }
             } else {
-                EightBitter.arrayDeleteMember(character, characters, i);
+                EightBitter.arrayDeleteThing(character, characters, i);
                 i -= 1;
             }
         }
@@ -4747,7 +4747,7 @@ var FullScreenMario = (function(GameStartr) {
             
             if (!thing.nokillend) {
                 thing.EightBitter.killNormal(thing);
-                thing.EightBitter.arrayDeleteMember(thing, group, i);
+                thing.EightBitter.arrayDeleteThing(thing, group, i);
             } else if (thing.killonend) {
                 thing.killonend(thing);
             }
@@ -4762,7 +4762,7 @@ var FullScreenMario = (function(GameStartr) {
                 if (thing.killonend instanceof Function) {
                     thing.killonend(thing, group, i);
                 } else {
-                    thing.EightBitter.arrayDeleteMember(thing, group, i);
+                    thing.EightBitter.arrayDeleteThing(thing, group, i);
                 }
             }
         }

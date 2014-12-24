@@ -190,7 +190,7 @@ function StringFilr(settings) {
      * @param {String} path   The current path within the library.
      * @param {String[] output   An Array of the String paths to parts that
      *                           don't have a matching key.
-     * @returns {String[]} output
+     * @return {String[]} output
      */
     self.findLackingNormal = function (current, path, output) {
         var i;

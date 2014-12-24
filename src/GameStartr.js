@@ -77,21 +77,33 @@ var GameStartr = (function (EightBittr) {
         "resetContainer"
     ];
     
+    
     /* Resets
     */
     
     /**
+     * Resets the EightBittr by calling the parent EightBittr.prototype.reset.
      * 
+     * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
      */
     function reset(EightBitter, customs) {
         EightBittr.prototype.reset(EightBitter, EightBitter.resets, customs);
     };
     
     /**
+     * Resets the EightBittr and records the time by calling the parent 
+     * EightBittr.prototype.resetTimed.
      * 
+     * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
+     * @return {Array} How long each reset Function took followed by the entire
+     * operation, in milliseconds.
      */
     function resetTimed(EightBitter, customs) {
-        return EightBittr.prototype.resetTimed(EightBitter, EightBitter.resets, customs);
+        return EightBittr.prototype.resetTimed(
+            EightBitter, EightBitter.resets, customs
+        );
     };
     
     /**
@@ -132,7 +144,7 @@ var GameStartr = (function (EightBittr) {
         
         EightBitter.QuadsKeeper = new QuadsKeepr(proliferate({
             "ObjectMaker": EightBitter.ObjectMaker,
-            "getCanvas": EightBitter.getCanvas,
+            "createCanvas": EightBitter.createCanvas,
             "quadrant_width": quadrant_width,
             "quadrant_height": quadrant_height,
             "start_left": -quadrant_width,
@@ -170,7 +182,7 @@ var GameStartr = (function (EightBittr) {
         EightBitter.PixelDrawer = new PixelDrawr(proliferate({
             "PixelRender": EightBitter.PixelRender,
             "MapScreener": EightBitter.MapScreener,
-            "getCanvas": EightBitter.getCanvas,
+            "createCanvas": EightBitter.createCanvas,
             "unitsize": EightBitter.unitsize,
             "innerWidth": customs.width,
             "generateObjectKey": EightBitter.generateObjectKey
@@ -391,7 +403,11 @@ var GameStartr = (function (EightBittr) {
     }
     
     /** 
+     * Starts self.ModAttacher. All mods are enabled, and the "onReady" trigger
+     * is fired.
      * 
+     * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
      */
     function startModAttacher(EightBitter, customs) {
         var mods = customs.mods,
@@ -409,7 +425,11 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Resets the parent HTML container. Width and height are set by customs, 
+     * and canvas and StatsHolder container elements are added.
      * 
+     * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
      */
     function resetContainer(EightBitter, customs) {
         EightBitter.container = EightBitter.createElement("div", {
@@ -421,7 +441,7 @@ var GameStartr = (function (EightBittr) {
             }, customs.style)
         });
         
-        EightBitter.canvas = EightBitter.getCanvas(customs.width, customs.height);
+        EightBitter.canvas = EightBitter.createCanvas(customs.width, customs.height);
         EightBitter.PixelDrawer.setCanvas(EightBitter.canvas);
         
         EightBitter.container.appendChild(EightBitter.canvas);
@@ -433,7 +453,12 @@ var GameStartr = (function (EightBittr) {
     */
     
     /**
+     * Scrolls the game window by shifting all Things and checking for quadrant
+     * refreshes.
      * 
+     * @this {GameStartr}
+     * @param {Number} dx   How far to scroll horizontally.
+     * @param {Number} [dy]   How far to scroll vertically.
      */
     function scrollWindow(dx, dy) {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
@@ -452,7 +477,13 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Scrolls everything but a single Thing.
      * 
+     * 
+     * @this {GameStartr}
+     * @param {Thing} thing
+     * @param {Number} dx   How far to scroll horizontally.
+     * @param {Number} [dy]   How far to scroll vertically.
      */
     function scrollThing(thing, dx, dy) {
         var saveleft = thing.left,
@@ -464,7 +495,15 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Spawns all Things within a given area that should be there. 
      * 
+     * @param {EightBittr} EightBitter
+     * @param {String} direction
+     * @param {Number} top
+     * @param {Number} right
+     * @param {Number} bottom
+     * @param {Number} left
+     * @remarks This is generally called by a QuadsKeepr during a screen update.
      */
     function onAreaSpawn(EightBitter, direction, top, right, bottom, left) {
         EightBitter.MapsHandler.spawnMap(
@@ -477,22 +516,36 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * "Unspawns" all Things within a given area that should be gone by marking
+     * their PreThings as not in game.
      * 
+     * @param {EightBittr} EightBitter
+     * @param {String} direction
+     * @param {Number} top
+     * @param {Number} right
+     * @param {Number} bottom
+     * @param {Number} left
+     * @remarks This is generally called by a QuadsKeepr during a screen update.
      */
     function onAreaUnspawn(EightBitter, direction, top, right, bottom, left) {
         EightBitter.MapsHandler.unspawnMap(
             direction,
-            top / EightBitter.unitsize,
+            (top + EightBitter.MapScreener.top) / EightBitter.unitsize,
             (right + EightBitter.MapScreener.left) / EightBitter.unitsize,
-            bottom / EightBitter.unitsize,
+            (bottom + EightBitter.MapScreener.top) / EightBitter.unitsize,
             (left + EightBitter.MapScreener.left) / EightBitter.unitsize
         );
     }
     
     /**
+     * Adds a new Thing to the game at a given position, relative to the top
+     * left corner of the screen. 
      * 
-     * 
-     * 
+     * @param {Mixed} thing   What type of Thing to add. This may be a String of
+     *                        the class title, an Array containing the String
+     *                        and an Object of settings, or an actual Thing.
+     * @param {Number} [left]   Defaults to 0.
+     * @param {Number} [top]   Defaults to 0.
      */
     function addThing(thing, left, top) {
         if (typeof(thing) === "string" || thing instanceof String) {
@@ -531,7 +584,18 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Processes a Thing so that it is ready to be placed in gameplay. There are
+     * a lot of steps here: width and height must be set with defaults and given
+     * to spritewidth and spriteheight, a quadrants Array must be given, the 
+     * sprite must be set, attributes and onThingMake called upon, and initial
+     * class cycles and flipping set.
      * 
+     * @param {Thing} thing
+     * @param {String} type   What type Thing this is (the name of the class).
+     * @param {Object} [settings]   Additional settings to be given to the 
+     *                              Thing.
+     * @param {Object} defaults   The default settings for the Thing's class.
+     * @remarks This is generally called as the onMake call in an ObjectMakr.
      */
     function thingProcess(thing, type, settings, defaults) {
         // If the Thing doesn't specify its own title, use the type by default
@@ -554,13 +618,19 @@ var GameStartr = (function (EightBittr) {
         // Each thing has at least 4 maximum quadrants (for the QuadsKeepr)
         var maxquads = 4,
             num;
-        num = Math.floor(thing.width 
-            * (FullScreenMario.unitsize / thing.EightBitter.QuadsKeeper.getQuadrantWidth()));
+        num = Math.floor(
+            thing.width * (
+                FullScreenMario.unitsize / thing.EightBitter.QuadsKeeper.getQuadrantWidth()
+            )
+        );
         if (num > 0) {
             maxquads += ((num + 1) * maxquads / 2);
         }
-        num = Math.floor(thing.height 
-            * (FullScreenMario.unitsize / thing.EightBitter.QuadsKeeper.getQuadrantHeight()));
+        num = Math.floor(
+            thing.height * (
+                FullScreenMario.unitsize / thing.EightBitter.QuadsKeeper.getQuadrantHeight()
+            )
+        );
         if (num > 0) {
             maxquads += ((num + 1) * maxquads / 2);
         }
@@ -568,16 +638,21 @@ var GameStartr = (function (EightBittr) {
         thing.quadrants = new Array(maxquads);
         
         // Basic sprite information
-        var spritewidth = thing.spritewidth = thing.spritewidth || thing.width,
-            spriteheight = thing.spriteheight = thing.spriteheight || thing.height,
-            // Sprite sizing
-            spritewidthpixels = thing.spritewidthpixels = spritewidth * FullScreenMario.unitsize,
-            spriteheightpixels = thing.spriteheightpixels = spriteheight * FullScreenMario.unitsize;
+        thing.spritewidth = thing.spritewidth || thing.width;
+        thing.spriteheight = thing.spriteheight || thing.height;
+        
+        // Sprite sizing
+        thing.spritewidthpixels = thing.spritewidth * FullScreenMario.unitsize;
+        thing.spriteheightpixels = thing.spriteheight * FullScreenMario.unitsize;
         
         // Canvas, context, imageData
-        var canvas = thing.canvas = FullScreenMario.prototype.getCanvas(spritewidthpixels, spriteheightpixels),
-            context = thing.context = canvas.getContext("2d"),
-            imageData = thing.imageData = context.getImageData(0, 0, spritewidthpixels, spriteheightpixels);
+        thing.canvas = FullScreenMario.prototype.createCanvas(
+            thing.spritewidthpixels, thing.spriteheightpixels
+        );
+        thing.context = thing.canvas.getContext("2d");
+        thing.imageData = thing.context.getImageData(
+            0, 0, thing.spritewidthpixels, thing.spriteheightpixels
+        );
         
         if (thing.opacity !== 1) {
             thing.EightBitter.setOpacity(thing, thing.opacity);
@@ -627,11 +702,18 @@ var GameStartr = (function (EightBittr) {
         );
         
         // Mods!
-        thing.EightBitter.ModAttacher.fireEvent("onThingMake", thing.EightBitter, thing, type, settings, defaults);
+        thing.EightBitter.ModAttacher.fireEvent(
+            "onThingMake", thing.EightBitter, thing, type, settings, defaults
+        );
     }
     
     /**
+     * Processes additional Thing attributes. For each attribute the Thing's
+     * class says it may have, if it has it, the attribute's key is appeneded to
+     * the Thing's name and the attribute value proliferated onto the Thing.
      * 
+     * @param {Thing} thing
+     * @param {Object} attributes
      */
     function thingProcessAttributes(thing, attributes) {
         var attribute, i;
@@ -657,8 +739,8 @@ var GameStartr = (function (EightBittr) {
     */
     
     /** 
-     * Sets a Thing's "changed" flag to true, which indicates to the
-     * PixelDrawer to redraw the Thing and its quadrant.
+     * Sets a Thing's "changed" flag to true, which indicates to the PixelDrawr
+     * to redraw the Thing and its quadrant.
      * 
      * @param {Thing} thing
      */
@@ -667,6 +749,8 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Shifts a Thing vertically. 
+     * 
      * 
      */
     function shiftVert(thing, dy, notChanged) {
@@ -1063,9 +1147,6 @@ var GameStartr = (function (EightBittr) {
      */
     function setOpacity(thing, opacity) {
         thing.opacity = opacity;
-        thing.canvas.opacity = opacity;
-        thing.context.opacity = opacity;
-        // thing.EightBitter.PixelDrawer.setThingSprite(thing);
         thing.EightBitter.markChanged(thing);
     }
     
@@ -1076,11 +1157,38 @@ var GameStartr = (function (EightBittr) {
     /**
      * 
      */
-    function takeScreenshot(name) {
+    function arrayDeleteThing(thing, array, location) {
+        if (typeof location === "undefined") {
+            location = array.indexOf(thing);
+            if (location === -1) {
+                return;
+            }
+        }
+        
+        array.splice(location, 1);
+        
+        if (typeof(thing.onDelete) === "function") {
+            thing.onDelete(thing);
+        }
+    }
+    
+    /**
+     * Takes a snapshot of the current screen canvas by simulating a click event
+     * on a dummy link.
+     * 
+     * @param {String} [name]   A name for the image to be saved as (by default,
+     *                          "FullScreenMario Screenshot").
+     * @param {String} [format]   A format for the image to be saved as (by
+     *                            default, "png").
+     * @remarks For security concerns, browsers won't allow this unless it's
+     *          called within a callback of a genuine user-triggered event.
+     */
+    function takeScreenshot(name, format) {
         var EightBitter = EightBittr.ensureCorrectCaller(this),
             format = "image/png",
             link = EightBitter.createElement("a", {
-                "download": (name || "FullScreenMario Screenshot")+ ".png",
+                "download": (name || "FullScreenMario Screenshot") 
+                    + "." + format,
                 "href": EightBitter.canvas.toDataURL(format)
                     .replace(format, "image/octet-stream")
             });
@@ -1160,6 +1268,7 @@ var GameStartr = (function (EightBittr) {
         "unflipVert": unflipVert,
         "setOpacity": setOpacity,
         // Miscellaneous utilities
+        "arrayDeleteThing": arrayDeleteThing,
         "takeScreenshot": takeScreenshot
     });
     

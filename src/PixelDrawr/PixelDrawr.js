@@ -27,7 +27,7 @@ function PixelDrawr(settings) {
         thing_arrays,
         
         // Utility function to create a canvas (typically taken from EightBittr)
-        getCanvas,
+        createCanvas,
         
         unitsize,
         
@@ -56,7 +56,7 @@ function PixelDrawr(settings) {
     self.reset = function(settings) {
         PixelRender = settings.PixelRender;
         MapScreener = settings.MapScreener;
-        getCanvas = settings.getCanvas;
+        createCanvas = settings.createCanvas;
         unitsize = settings.unitsize || 4;
         noRefill = settings.noRefill;
         spriteCacheCutoff = settings.spriteCacheCutoff || 0;
@@ -121,7 +121,7 @@ function PixelDrawr(settings) {
      * 
      */
     self.resetBackground = function () {
-        backgroundCanvas = getCanvas(MapScreener.width, MapScreener.height);
+        backgroundCanvas = createCanvas(MapScreener.width, MapScreener.height);
         backgroundContext = backgroundCanvas.getContext("2d");
     };
     
@@ -222,7 +222,7 @@ function PixelDrawr(settings) {
 
         for (i in sprites_raw.sprites) {
             // Make a new sprite for this individual component
-            canvas = getCanvas(thing.spritewidth * unitsize, thing.spriteheight * unitsize);
+            canvas = createCanvas(thing.spritewidth * unitsize, thing.spriteheight * unitsize);
             context = canvas.getContext("2d");
 
             // Copy over this sprite's information the same way as refillThingCanvas
