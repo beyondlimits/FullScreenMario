@@ -1076,9 +1076,13 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
-     * Completely pauses 
+     * Completely pauses a Thing by setting its velocities to zero and disabling
+     * it from falling, colliding, or moving. Its old attributes for those are
+     * saved so thingResumeVelocity may restore them.
      * 
-     * 
+     * @param {Thing} thing
+     * @param {Boolean} [keepMovement]   Whether to keep movement instead of
+     *                                   wiping it (by default, false).
      */
     function thingPauseVelocity(thing, keepMovement) {
         thing.xvelOld = thing.xvel || 0;
@@ -1092,12 +1096,17 @@ var GameStartr = (function (EightBittr) {
         thing.xvel = thing.yvel = false;
         
         if (!keepMovement) {
-            thing.movement = false;
+            thing.movement = undefined;
         }
     }
     
     /**
+     * Resumes a Thing's velocity and movements after they were paused by
+     * thingPauseVelocity.
      * 
+     * @param {Thing} thing
+     * @param {Boolean} [noVelocity]   Whether to skip restoring the Thing's
+     *                                 velocity (by default, false).
      */
     function thingResumeVelocity(thing, noVelocity) {
         if (!noVelocity) {
@@ -1115,7 +1124,12 @@ var GameStartr = (function (EightBittr) {
     */
     
     /**
+     * Generates a key for a Thing based off the current area and the Thing's
+     * basic attributes. This key should be used for PixelRender.get calls, to
+     * cache the Thing's sprite.
      * 
+     * @param {Thing} thing
+     * @return {String} A key that to identify the Thing's sprite.
      */
     function generateObjectKey(thing) {
         return thing.EightBitter.MapsHandler.getArea().setting 
@@ -1124,16 +1138,12 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Sets the class of a Thing, sets the new sprite for it, and marks it as 
+     * having changed appearance. The class is stored in the Thing's internal
+     * .className attribute.
      * 
-     */
-    function setTitle(thing, string) {
-        thing.title = string;
-        thing.EightBitter.PixelDrawer.setThingSprite(thing);
-        thing.EightBitter.markChanged(thing);
-    }
-    
-    /**
-     * 
+     * @param {Thing} thing
+     * @param {String} string   The new internal .className for the Thing.
      */
     function setClass(thing, string) {
         thing.className = string;
@@ -1142,14 +1152,22 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * A version of setClass to be used before the Thing's sprite attributes
+     * have been set. This just sets the internal .className.
      * 
+     * @param {Thing} thing
+     * @param {String} string
      */
     function setClassInitial(thing, string) {
         thing.className = string;
     }
     
     /**
+     * Adds a string to a Thing's class after a ' ', updates the Thing's 
+     * sprite, and marks it as having changed appearance.
      * 
+     * @param {Thing} thing
+     * @param {String} string
      */
     function addClass(thing, string) {
         thing.className += " " + string;
@@ -1158,7 +1176,13 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Adds multiple strings to a Thing's class after a ' ', updates the Thing's 
+     * sprite, and marks it as having changed appearance. Strings may be given 
+     * as Arrays or Strings; Strings will be split on ' '. Any number of 
+     * additional arguments may be given.
      * 
+     * @param {Thing} thing
+     * @param {Mixed} string
      */
     function addClasses(thing) {
         var strings, arr, i, j;
@@ -1176,7 +1200,11 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Removes a string from a Thing's class, updates the Thing's sprite, and
+     * marks it as having changed appearance.
      * 
+     * @param {Thing} thing
+     * @param {String} string
      */
     function removeClass(thing, string) {
         if (!string) {
@@ -1190,7 +1218,13 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Removes multiple strings from a Thing's class, updates the Thing's 
+     * sprite, and marks it as having changed appearance. Strings may be given 
+     * as Arrays or Strings; Strings will be split on ' '. Any number of 
+     * additional arguments may be given.
      * 
+     * @param {Thing} thing
+     * @param {Mixed} string
      */
     function removeClasses(thing) {
         var strings, arr, i, j;
@@ -1207,14 +1241,21 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
-     * 
+     * @param {Thing} thing
+     * @param {String} string
+     * @return {Boolean} Whether the Thing's class contains the String.
      */
     function hasClass(thing, string) {
         return thing.className.indexOf(string) !== -1;
     }
     
     /**
+     * Removes the first class from a Thing and adds the second. All typical
+     * sprite updates are called.
      * 
+     * @param {Thing} thing
+     * @param {String} stringOut
+     * @param {String} stringIn
      */
     function switchClass(thing, stringOut, stringIn) {
         thing.EightBitter.removeClass(thing, stringOut);
@@ -1222,7 +1263,10 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Marks a Thing as being flipped horizontally by setting its .flipHoriz
+     * attribute to true and giving it a "flipped" class.
      * 
+     * @param {Thing}
      */
     function flipHoriz(thing) {
         thing.flipHoriz = true;
@@ -1230,7 +1274,10 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Marks a Thing as being flipped vertically by setting its .flipVert
+     * attribute to true and giving it a "flipped" class.
      * 
+     * @param {Thing}
      */
     function flipVert(thing) {
         thing.flipVert = true;
@@ -1238,7 +1285,10 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Marks a Thing as not being flipped horizontally by setting its .flipHoriz
+     * attribute to false and giving it a "flipped" class.
      * 
+     * @param {Thing}
      */
     function unflipHoriz(thing) {
         thing.flipHoriz = false;
@@ -1246,7 +1296,10 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Marks a Thing as not being flipped vertically by setting its .flipVert
+     * attribute to true and giving it a "flipped" class.
      * 
+     * @param {Thing}
      */
     function unflipVert(thing) {
         thing.flipVert = false;
@@ -1254,7 +1307,10 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Sets the opacity of the Thing and marks its appearance as changed.
      * 
+     * @param {Thing} thing
+     * @param {Number} opacity   A number in [0,1].
      */
     function setOpacity(thing, opacity) {
         thing.opacity = opacity;
@@ -1266,7 +1322,14 @@ var GameStartr = (function (EightBittr) {
     */
     
     /**
+     * Removes a Thing from an Array using Array.splice. If the thing has an 
+     * onDelete, that is called.
      * 
+     * @param {Thing} thing
+     * @param {Array} array
+     * @param {Number} [location]   The index of the Thing in the Array, for
+     *                              speed's sake (by default, it is found
+     *                              using Array.indexOf).
      */
     function arrayDeleteThing(thing, array, location) {
         if (typeof location === "undefined") {
@@ -1308,7 +1371,6 @@ var GameStartr = (function (EightBittr) {
     }
     
     
-    // Add all registered functions from above to the GameStartr prototype
     proliferateHard(EightBitterProto, {
         // Resets
         "reset": reset,
@@ -1364,7 +1426,6 @@ var GameStartr = (function (EightBittr) {
         "thingResumeVelocity": thingResumeVelocity,
         // Appearance utilities
         "generateObjectKey": generateObjectKey,
-        "setTitle": setTitle,
         "setClass": setClass,
         "setClassInitial": setClassInitial,
         "addClass": addClass,
