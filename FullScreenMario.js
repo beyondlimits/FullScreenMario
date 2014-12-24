@@ -175,7 +175,6 @@ var FullScreenMario = (function(GameStartr) {
         
         EightBitter.StatsHolder.set("lives", 3);
         EightBitter.setMap(EightBitter.settings.maps.mapDefault);
-        EightBitter.GamesRunner.pause();
         
         EightBitter.ModAttacher.fireEvent("onGameStart");
     }
@@ -191,6 +190,8 @@ var FullScreenMario = (function(GameStartr) {
                 }]
             }),
             texts, textWidth, dx, i;
+        
+        EightBitter.killNPCs();
         
         EightBitter.AudioPlayer.pauseTheme();
         EightBitter.AudioPlayer.play("Game Over");
@@ -1404,13 +1405,9 @@ var FullScreenMario = (function(GameStartr) {
         }
         thing.EightBitter.MapScreener.lakitu = thing;
         
-        thing.EightBitter.TimeHandler.addEventInterval(function () {
-            if (thing.fleeing || !thing.EightBitter.isCharacterAlive(thing)) {
-                return true;
-            } else {
-                thing.EightBitter.animateLakituThrowingSpiny(thing);
-            }
-        }, 140, Infinity);
+        thing.EightBitter.TimeHandler.addEventInterval(
+            thing.EightBitter.animateLakituThrowingSpiny, 140, Infinity, thing
+        );
     }
     
     /**
@@ -4112,6 +4109,10 @@ var FullScreenMario = (function(GameStartr) {
      * 
      */
     function animateLakituThrowingSpiny(thing) {
+        if (thing.fleeing || !thing.EightBitter.isCharacterAlive(thing)) {
+            return true;
+        }
+        
         thing.EightBitter.switchClass(thing, "out", "hiding");
         thing.EightBitter.TimeHandler.addEvent(function () {
             if (thing.dead) {
@@ -4744,6 +4745,7 @@ var FullScreenMario = (function(GameStartr) {
             thing = group[i];
             
             if (!thing.nokillend) {
+                thing.EightBitter.killNormal(thing);
                 thing.EightBitter.arrayDeleteMember(thing, group, i);
             } else if (thing.killonend) {
                 thing.killonend(thing);
