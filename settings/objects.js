@@ -833,7 +833,7 @@
             },
             detector: {
                 hidden: true,
-                collide_hidden: true
+                collideHidden: true
             },
             DetectCollision: {
                 collide: FullScreenMario.prototype.collideDetector

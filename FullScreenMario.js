@@ -916,8 +916,8 @@ var FullScreenMario = (function(GameStartr) {
          * @param {Thing} other
          */
         return function isCharacterTouchingSolid(thing, other) {            // Hidden solids can only be touched by the player bottom-bumping them,
-            // or by specifying collide_hidden
-            if (other.hidden && !other.collide_hidden) {                if (!thing.player || !thing.EightBitter.isSolidOnCharacter(other, thing)) {                    return false;                }
+            // or by specifying collideHidden
+            if (other.hidden && !other.collideHidden) {                if (!thing.player || !thing.EightBitter.isSolidOnCharacter(other, thing)) {                    return false;                }
             }
             
             if (thing.nocollidesolid && !(thing.allowUpSolids && other.up)) {
@@ -2023,7 +2023,7 @@ var FullScreenMario = (function(GameStartr) {
         
         // Character on top of solid
         if (thing.EightBitter.isCharacterOnSolid(thing, other)) {
-            if (other.hidden && !other.collide_hidden) {
+            if (other.hidden && !other.collideHidden) {
                 return;
             }
             
@@ -2043,7 +2043,7 @@ var FullScreenMario = (function(GameStartr) {
             
             if (midx > other.left && midx < other.right) {
                 thing.undermid = other;
-            } else if (other.hidden && !other.collide_hidden) {
+            } else if (other.hidden && !other.collideHidden) {
                 return;
             }
             
@@ -2061,13 +2061,14 @@ var FullScreenMario = (function(GameStartr) {
             thing.yvel = other.yvel;
         }
         
-        if (other.hidden && !other.collide_hidden) {
+        if (other.hidden && !other.collideHidden) {
             return;
         }
         
         // Character bumping into the side of the solid
         if (
-            !thing.EightBitter.isCharacterBumpingSolid(thing, other)
+            thing.resting !== other
+            && !thing.EightBitter.isCharacterBumpingSolid(thing, other)
             && !thing.EightBitter.isThingOnThing(thing, other)
             && !thing.EightBitter.isThingOnThing(other, thing) 
             && !thing.under
@@ -5047,6 +5048,8 @@ var FullScreenMario = (function(GameStartr) {
         
         map = EightBitter.MapsHandler.setMap(name);
         
+        EightBitter.ModAttacher.fireEvent("onPreSetMap", map);
+        
         EightBitter.NumberMaker.resetFromSeed(map.seed);
         EightBitter.StatsHolder.set("world", name);
         EightBitter.InputWriter.restartHistory();
@@ -5076,6 +5079,8 @@ var FullScreenMario = (function(GameStartr) {
         EightBitter.MapScreener.setVariables();
         location = EightBitter.MapsHandler.getLocation(name || 0);
         
+        EightBitter.ModAttacher.fireEvent("onPreSetLocation", location)
+        
         EightBitter.PixelDrawer.setBackground(
             EightBitter.MapsHandler.getArea().background
         );
@@ -5094,7 +5099,7 @@ var FullScreenMario = (function(GameStartr) {
         EightBitter.QuadsKeeper.resetQuadrants();
         location.entry(EightBitter, location);
         
-        EightBitter.ModAttacher.fireEvent("onSetLocation");
+        EightBitter.ModAttacher.fireEvent("onSetLocation", location);
         
         EightBitter.GamesRunner.play();
     }
