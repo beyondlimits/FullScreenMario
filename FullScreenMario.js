@@ -4583,7 +4583,8 @@ var FullScreenMario = (function(GameStartr) {
         
         if (thing.spawntype) {
             var spawn = thing.EightBitter.ObjectMaker.make(
-                thing.spawntype, thing.spawnsettings || {}
+                thing.spawntype,
+                thing.spawnsettings || {}
             );
             thing.EightBitter.addThing(spawn);
             thing.EightBitter.setBottom(spawn, thing.bottom);
@@ -4642,10 +4643,9 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
-     * For now, this just returns killToShell. In the future it should
-     * intelligently remove flying from the Koopa if need be.
-     * If thing.jumping is true when hopped upon while flying, it should
-     * be reduced to jumping; otherwise it should be reduced to walking.
+     * 
+     * 
+     * @remarks This isn't called when a shell hits a Koopa.
      */
     function killKoopa(thing, big) {
         var spawn;
@@ -4698,11 +4698,18 @@ var FullScreenMario = (function(GameStartr) {
         } else {
             thing.spawntype = thing.shelltype || "Shell";
         }
+        
+        thing.spawnsettings = {
+            "smart": thing.smart
+        };
+        
         spawn = thing.EightBitter.killSpawn(thing);
+        console.log(spawn.smart);
         nocollidecharold = spawn.nocollidechar;
         nocollideplayerold = spawn.nocollideplayer;
         spawn.nocollidechar = true;
         spawn.nocollideplayer = true;
+        
         thing.EightBitter.TimeHandler.addEvent(function () {
             spawn.nocollidechar = nocollidecharold;
             spawn.nocollideplayer = nocollideplayerold;

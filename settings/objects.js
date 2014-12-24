@@ -373,7 +373,10 @@
                 ],
                 attributes: {
                     "smart": {
-                        movement: FullScreenMario.prototype.moveSmart
+                        movement: FullScreenMario.prototype.moveSmart,
+                        "spawnsettings": {
+                            "smart": true
+                        }
                     },
                     "jumping": {
                         movement: FullScreenMario.prototype.moveJumping,
