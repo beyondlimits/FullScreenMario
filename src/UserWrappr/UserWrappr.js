@@ -14,6 +14,12 @@ function UserWrappr(settings) {
         
         GameStarter,
         
+        helpSettings,
+        
+        globalName,
+        
+        globalNameAlias,
+        
         generators,
         
         allPossibleKeys,
@@ -52,16 +58,20 @@ function UserWrappr(settings) {
             || GameStartrConstructor
         );
         
+        helpSettings = settings.helpSettings;
+        globalName = settings.globalName;
+        globalNameAlias = helpSettings.globalNameAlias;
+        
         isFullScreen = false;
-        sizes = GameStartrConstructor.prototype.settings.ui.sizes;
+        sizes = settings.sizes;
         currentSize = (
             settings.currentSize 
-            || GameStartrConstructor.prototype.settings.ui.sizeDefault
+            || settings.sizeDefault
         );
         
         GameStartrConstructor.prototype.proliferate(
             customs,
-            GameStartrConstructor.prototype.settings.ui.sizes[
+            settings.sizes[
                 customs.size || currentSize
             ],
             true
@@ -81,7 +91,10 @@ function UserWrappr(settings) {
         ];
         
         loadGameStarter(fixCustoms(customs || {}));
-        loadControls(GameStarter.settings.ui);
+        loadControls(settings);
+        
+        window[settings.globalName || "GameStarter"] = GameStarter;
+        GameStarter.UserWrapper = self;
     };
     
     
@@ -94,6 +107,117 @@ function UserWrappr(settings) {
     self.getGameStarter = function () {
         return GameStarter;
     };
+    
+    
+    /* Help dialog
+    */
+    
+    /**
+     * 
+     */
+    self.displayHelpMenu = function () {
+        helpSettings.openings.forEach(logHelpString);
+    };
+    
+    /**
+     * 
+     */
+    self.displayHelpOptions = function () {
+        logHelpString("To focus on a group, enter '" + globalName + ".UserWrapper.displayHelpOption(<group-name>);");
+        
+        Object.keys(helpSettings.options).forEach(self.displayHelpGroupSummary);
+        
+        logHelpString("\nTo focus on a group, enter '" + globalName + ".UserWrapper.displayHelpOption(<group-name>);");
+    };
+    
+    /**
+     * 
+     */
+    self.displayHelpGroupSummary = function (optionName) {
+        var actions = helpSettings.options[optionName],
+            strings = [],
+            maxTitleLength = 0,
+            action, i;
+        
+        console.log("\n" + optionName);
+        
+        for (i = 0; i < actions.length; i += 1) {
+            maxTitleLength = Math.max(
+                maxTitleLength, 
+                filterHelpString(actions[i].title).length
+            );
+        }
+        
+        for (i = 0; i < actions.length; i += 1) {
+            action = actions[i];
+            console.log(
+                padStringRight(filterHelpString(action.title), maxTitleLength)
+                + " ... " + action.description
+            );
+        }
+    };
+    
+    /**
+     * 
+     */
+    self.displayHelpOption = function (optionName) {
+        var actions = helpSettings.options[optionName],
+            action, maxExampleLength, example, i, j;
+
+        for (i = 0; i < actions.length; i += 1) {
+            action = actions[i];
+            maxExampleLength = 0;
+            logHelpString(action.title);
+            
+            for (j = 0; j < action.examples.length; j += 1) {
+                example = action.examples[j];
+                maxExampleLength = Math.max(
+                    maxExampleLength,
+                    filterHelpString("    " + example.code).length
+                );
+            }
+            
+            for (j = 0; j < action.examples.length; j += 1) {
+                example = action.examples[j];
+                logHelpString(
+                    padStringRight(
+                        filterHelpString("    " + example.code), 
+                        maxExampleLength
+                    )
+                    + "  // " + example.comment
+                );
+            }
+            
+            console.log("\n");
+        }
+    };
+    
+    /**
+     * 
+     */
+    function logHelpString(string) {
+        console.log(filterHelpString(string));
+    }
+    
+    /**
+     * 
+     */
+    function filterHelpString(string) {
+        return string.replace(new RegExp(globalNameAlias, "g"), globalName);
+    }
+    
+    /**
+     * 
+     */
+    function padStringRight(string, length) {
+        var diff = 1 + length - string.length;
+        
+        if (diff <= 0) {
+            return string;
+        }
+        
+        return string + Array.call(Array, diff).join(' ');
+    }
     
     
     /* Control section loaders

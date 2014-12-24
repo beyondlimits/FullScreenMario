@@ -1,4 +1,146 @@
 FullScreenMario.prototype.settings.ui = {
+    "globalName": "FSM",
+    "helpSettings": {
+        "globalNameAlias": "{%%%%GAME%%%%}",
+        "openings": [
+            "Hi, thanks for playing FullScreenMario! It looks like you're using the console.",
+            "There's not really any way to stop you from messing around so if you'd like to know the common cheats, enter '{%%%%GAME%%%%}.UserWrapper.displayHelpOptions()' here.",
+            "If you'd like, go ahead and look around the source code. There are a few surprises you might have fun with... ;)",
+            "http://www.github.com/DiogenesTheCynic/FullScreenMario"
+        ],
+        "options": {
+            "Map": [{
+                "title": "{%%%%GAME%%%%}.MapsHandler.setMap",
+                "description": "Go to a specified map and location.",
+                "usage": "{%%%%GAME%%%%}.MapsHandler.setMap(<map>[, <location>]);",
+                "examples": [{
+                    "code": "{%%%%GAME%%%%}.MapsHandler.setMap('1-1');",
+                    "comment": "Starts map 1-1."
+                }, {
+                    "code": "{%%%%GAME%%%%}.MapsHandler.setMap('1-2', 1);",
+                    "comment": "Starts map 1-2, at the second location."
+                }, {
+                    "code": "{%%%%GAME%%%%}.MapsHandler.setMap('Random');",
+                    "comment": "Starts the random map."
+                }, {
+                    "code": "{%%%%GAME%%%%}.MapsHandler.setMap('Random', 'Underworld');",
+                    "comment": "Starts the random map in the Underworld."
+                }]
+            }],
+            "Things": [{
+                "title": "{%%%%GAME%%%%}.addThing",
+                "description": "Adds a new Thing to the game.",
+                "usage": "{%%%%GAME%%%%}.addThing(<thing>, left, top);",
+                "examples": [{
+                    "code": "{%%%%GAME%%%%}.addThing('Goomba', 256, 384);",
+                    "comment": "Adds a Goomba to the game."
+                }, {
+                    "code": "{%%%%GAME%%%%}.addThing('Mushroom', {%%%%GAME%%%%}.player.right + 80, {%%%%GAME%%%%}.player.top);",
+                    "comment": "Adds a Mushroom to the right of the player."
+                }, {
+                    "code": "{%%%%GAME%%%%}.addThing(['Koopa', { 'smart': true }], 256, 368);",
+                    "comment": "Adds a smart Koopa to the game."
+                }, {
+                    "code": "{%%%%GAME%%%%}.addThing({%%%%GAME%%%%}.ObjectMaker.make('Koopa', { 'smart': true, 'jumping': true }), 256, 368);",
+                    "comment": "Adds a smart, jumping Koopa to the game."
+                }]
+            }, {
+                "title": "{%%%%GAME%%%%}.ObjectMaker.getProperties",
+                "description": "Retrieves the defaults for different types of objects.",
+                "usage": "{%%%%GAME%%%%}.ObjectMaker.getProperties();"
+            }, {
+                "title": "{%%%%GAME%%%%}.GroupHolder.get*******Group",
+                "description": "Retrieves the appropriate group of Things being manipulated. Choices are 'Text', 'Character', 'Solid', and 'Scenery'",
+                "usage": "{%%%%GAME%%%%}.get*******Group();",
+                "examples": [{
+                    "code": "{%%%%GAME%%%%}.GroupHolder.getCharacterGroup();",
+                    "comment": "Retrieves the currently playing Characters."
+                }]
+            }, {
+                "title": "{%%%%GAME%%%%}.GroupHolder.get*******",
+                "description": "Retrieves the numbered Thing from its group.",
+                "usage": "{%%%%GAME%%%%}.GroupHolder.get*******(<index>);",
+                "examples": [{
+                    "code": "{%%%%GAME%%%%}.GroupHolder.getCharacter(0);",
+                    "comment": "Retrieves the first playing Character."
+                }, {
+                    "code": "{%%%%GAME%%%%}.GroupHolder.getCharacter({%%%%GAME%%%%}.GroupHolder.getCharacterGroup().length - 1);",
+                    "comment": "Retrieves the last playing Character."
+                }]
+            }],
+            "Physics": [{
+                "title": "{%%%%GAME%%%%}.shiftBoth",
+                "description": "Shifts a Thing horizontally and/or vertically.",
+                "usage": "{%%%%GAME%%%%}.shiftBoth(<thing>, <dx>[, <dy>]);",
+                "examples": [{
+                    "code": "{%%%%GAME%%%%}.shiftBoth({%%%%GAME%%%%}.player, 700);",
+                    "comment": "Shifts the player 700 spaces to the right"
+                }, {
+                    "code": "{%%%%GAME%%%%}.shiftBoth({%%%%GAME%%%%}.player, 0, -{%%%%GAME%%%%}.MapScreener.height);",
+                    "comment": "Shifts the player to the top of the screen."
+                }]
+            }, {
+                "title": "{%%%%GAME%%%%}.killNormal",
+                "description": "Kills a specified Character with animation.",
+                "usage": "{%%%%GAME%%%%}.killNormal(<thing>)",
+                "examples": [{
+                    "code": "{%%%%GAME%%%%}.killNormal({%%%%GAME%%%%}.GroupHolder.getCharacter(0)",
+                    "comment": "Kills the first playing Character."
+                }, {
+                    "code": "{%%%%GAME%%%%}.GroupHolder.getSceneryGroup().forEach({%%%%GAME%%%%}.killNormal)",
+                    "comment": "Kills all playing Scenery."
+                }]
+            }, {
+                "title": "{%%%%GAME%%%%}.player.gravity",
+                "description": "Sets the current Player's gravity.",
+                "usage": "{%%%%GAME%%%%}.player.gravity = <number>;",
+                "examples": [{
+                    "code": "{%%%%GAME%%%%}.player.gravity = {%%%%GAME%%%%}.MapScreener.gravity / 2;",
+                    "comment": "Sets the player's gravity to half the default."
+                }]
+            }],
+            "Powerups": [{
+                "title": "{%%%%GAME%%%%}.playerShroom",
+                "description": "Simulates the player hitting a Mushroom.",
+                "usage": "{%%%%GAME%%%%}.playerShroom({%%%%GAME%%%%}.player)"
+            }, {
+                "title": "{%%%%GAME%%%%}.playerStar",
+                "description": "Simulates the player hitting a Star.",
+                "usage": "{%%%%GAME%%%%}.playerStar({%%%%GAME%%%%}.player)"
+            }],
+            "Statistics": [{
+                    "title": "{%%%%GAME%%%%}.StatsHolder.set('coins')",
+                "description": "Sets the number of coins you have.",
+                "usage": "{%%%%GAME%%%%}.StatsHolder.set('coins', <number>);",
+                "examples": [{
+                    "code": "{%%%%GAME%%%%}.StatsHolder.set('coins', 7);",
+                    "comment": "Sets your number of coins to seven."
+                }]
+            }, {
+                "title": "{%%%%GAME%%%%}.StatsHolder.set('lives')",
+                "description": "Sets the number of lives you have left.",
+                "usage": "{%%%%GAME%%%%}.StatsHolder.set('lives', <number>);",
+                "examples": [{
+                    "code": "{%%%%GAME%%%%}.StatsHolder.set('lives', 7);",
+                    "comment": "Sets your number of lives to seven."
+                }, {
+                    "code": "{%%%%GAME%%%%}.StatsHolder.set('lives', Infinity);",
+                    "comment": "Sets your number of lives to Infinity and beyond."
+                }]
+            }, {
+                "title": "{%%%%GAME%%%%}.StatsHolder.set('time')",
+                "description": "Sets the amount of time left in the map.",
+                "usage": "{%%%%GAME%%%%}.StatsHolder.set('time', <number>)",
+                "examples": [{
+                    "code": "{%%%%GAME%%%%}.StatsHolder.set('time', 700);",
+                    "comment": "Sets your amount of lifes to seven hundred."
+                }, {
+                    "code": "{%%%%GAME%%%%}.StatsHolder.set('time', Infinity);",
+                    "comment": "Sets your amount of time left to Infinity and beyond."
+                }]
+            }]
+        }
+    },
     "sizeDefault": "Wide",
     "sizes": {
         "NES": {

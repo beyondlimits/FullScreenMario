@@ -108,8 +108,15 @@ function ObjectMakr(settings) {
      * 
      * @return {Object}
      */
-    self.getProperties = function (title) {
-        return title ? properties[title] : properties;
+    self.getProperties = function () {
+        return properties;
+    };
+
+    /**
+     * 
+     */
+    self.getPropertiesOf = function (title) {
+        return properties[title];
     };
 
     /**

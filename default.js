@@ -4,11 +4,10 @@ document.onreadystatechange = function (event) {
     }
     
     var time_start = Date.now(),
-        UserWrapper = new UserWrappr({
+        UserWrapper = new UserWrappr(FullScreenMario.prototype.proliferate({
             "GameStartrConstructor": FullScreenMario
-        });
+        }, FullScreenMario.prototype.settings.ui, true));
     
-    window["FSM"] = UserWrapper.getGameStarter();
-    
-    console.log("It took " + (Date.now() - time_start) + " milliseconds to start");
+    console.log("It took " + (Date.now() - time_start) + " milliseconds to start.");
+    UserWrapper.displayHelpMenu();
 };
