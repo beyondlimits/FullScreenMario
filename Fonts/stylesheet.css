@@ -13,18 +13,3 @@
     font-style: normal;
 
 }
-
-
-
-
-@font-face {
-    font-family: 'Super Plumber Bros';
-    src: url('super_plumber_brothers-webfont.eot');
-    src: url('super_plumber_brothers-webfont.eot?#iefix') format('embedded-opentype'),
-         url('super_plumber_brothers-webfont.woff') format('woff'),
-         url('super_plumber_brothers-webfont.ttf') format('truetype'),
-         url('super_plumber_brothers-webfont.svg#super_plumber_brothersregular') format('svg');
-    font-weight: normal;
-    font-style: normal;
-
-}
