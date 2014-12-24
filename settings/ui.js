@@ -195,17 +195,18 @@ FullScreenMario.prototype.settings.ui = {
                     }
                 },
                 {
-                    "title": "FastFwd",
-                    "type": "Boolean",
+                    "title": "Speed",
+                    "type": "Select",
+                    "options": function (GameStarter) {
+                        return [".25x", ".5x", "1x", "2x", "5x"];
+                    },
                     "source": function (GameStarter) {
-                        return GameStarter.GamesRunner.getSpeed() !== 1;
+                        return "1x";
                     },
-                    "enable": function (GameStarter) {
-                        GameStarter.GamesRunner.setSpeed(3);
-                    },
-                    "disable": function (GameStarter) {
-                        GameStarter.GamesRunner.setSpeed(1);
-                        
+                    "update": function (GameStarter, value) {
+                        GameStarter.GamesRunner.setSpeed(
+                            Number(value.replace('x', 0))
+                        );
                     }
                 },
                 {
