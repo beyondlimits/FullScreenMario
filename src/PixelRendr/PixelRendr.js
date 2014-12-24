@@ -45,8 +45,8 @@ function PixelRendr(settings) {
         flip_horiz,
 
         // String keys for canvas creation & sizing from attributes
-        sprite_width,
-        sprite_height,
+        spriteWidth,
+        spriteHeight,
 
         // Associative array of color mapping filters
         // E.x. {"07" => "14"} maps all sevens to fourteens
@@ -71,8 +71,8 @@ function PixelRendr(settings) {
         scale = settings.scale || 2;
         flip_vert = settings.flip_vert || "flip-vert";
         flip_horiz = settings.flip_horiz || "flipped";
-        sprite_width = settings.sprite_width || "sprite_width";
-        sprite_height = settings.sprite_height || "sprite_height";
+        spriteWidth = settings.spriteWidth || "spriteWidth";
+        spriteHeight = settings.spriteHeight || "spriteHeight";
         Uint8ClampedArray = (
             settings.Uint8ClampedArray 
             || window.Uint8ClampedArray
@@ -505,8 +505,8 @@ function PixelRendr(settings) {
     function spriteRepeatRows(sprite, key, attributes) {
         // With the rows set, repeat them by unitsize to create the final, parsed product
         var parsed = new Uint8ClampedArray(sprite.length * scale),
-            rowsize = attributes[sprite_width] * 4,
-            heightscale = attributes[sprite_height] * scale,
+            rowsize = attributes[spriteWidth] * 4,
+            heightscale = attributes[spriteHeight] * scale,
             readloc = 0,
             writeloc = 0,
             si, sj;
@@ -664,8 +664,8 @@ function PixelRendr(settings) {
             occurences = information[1],
             palette = Object.keys(occurences),
             digitsize = getDigitSize(palette),
-            palette_indices = getValueIndices(palette),
-            numbers = pixels.map(getKeyValue.bind(undefined, palette_indices));
+            paletteIndices = getValueIndices(palette),
+            numbers = pixels.map(getKeyValue.bind(undefined, paletteIndices));
         
         return [palette, numbers, digitsize];
     }

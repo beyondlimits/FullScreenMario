@@ -139,18 +139,18 @@ var GameStartr = (function (EightBittr) {
      *                          quadrants.js (settings/quadrants.js)
      */
     function resetQuadsKeeper(EightBitter, customs) {
-        var quadrant_width = customs.width / (EightBitter.settings.quadrants.num_cols - 3),
-            quadrant_height = customs.height / (EightBitter.settings.quadrants.num_rows - 2);
+        var quadrantWidth = customs.width / (EightBitter.settings.quadrants.numCols - 3),
+            quadrantHeight = customs.height / (EightBitter.settings.quadrants.numRows - 2);
         
         EightBitter.QuadsKeeper = new QuadsKeepr(proliferate({
             "ObjectMaker": EightBitter.ObjectMaker,
             "createCanvas": EightBitter.createCanvas,
-            "quadrant_width": quadrant_width,
-            "quadrant_height": quadrant_height,
-            "start_left": -quadrant_width,
-            "start_height": -quadrant_height,
-            "on_add": EightBitter.onAreaSpawn.bind(EightBitter, EightBitter),
-            "on_remove": EightBitter.onAreaUnspawn.bind(EightBitter, EightBitter),
+            "quadrantWidth": quadrantWidth,
+            "quadrantHeight": quadrantHeight,
+            "startLeft": -quadrantWidth,
+            "startHeight": -quadrantHeight,
+            "onAdd": EightBitter.onAreaSpawn.bind(EightBitter, EightBitter),
+            "onRemove": EightBitter.onAreaUnspawn.bind(EightBitter, EightBitter),
         }, EightBitter.settings.quadrants));
     }
     
@@ -287,8 +287,8 @@ var GameStartr = (function (EightBittr) {
             "unitsize": FullScreenMario.unitsize,
             "width": customs.width,
             "height": customs.height,
-            "variable_args": [EightBitter],
-            "variables": EightBitter.settings.maps.screen_variables
+            "variableArgs": [EightBitter],
+            "variables": EightBitter.settings.maps.screenVariables
         });
     }
     
@@ -333,11 +333,11 @@ var GameStartr = (function (EightBittr) {
         EightBitter.MapsHandler = new MapsHandlr({
             "MapsCreator": EightBitter.MapsCreator,
             "MapScreener": EightBitter.MapScreener,
-            "screen_attributes": EightBitter.settings.maps.screen_attributes,
-            "on_spawn": EightBitter.settings.maps.on_spawn,
-            "stretch_add": EightBitter.mapAddStretched.bind(EightBitter),
-            "on_stretch": EightBitter.mapStretchThing,
-            "after_add": EightBitter.mapAddAfter.bind(EightBitter)
+            "screenAttributes": EightBitter.settings.maps.screenAttributes,
+            "onSpawn": EightBitter.settings.maps.onSpawn,
+            "stretchAdd": EightBitter.mapAddStretched.bind(EightBitter),
+            "onStretch": EightBitter.mapStretchThing,
+            "afterAdd": EightBitter.mapAddAfter.bind(EightBitter)
         });
     }
     
@@ -351,7 +351,7 @@ var GameStartr = (function (EightBittr) {
      */
     function resetInputWriter(EightBitter, customs) {
         EightBitter.InputWriter = new InputWritr(proliferate({
-            "can_trigger": EightBitter.canInputsTrigger.bind(EightBitter, EightBitter)
+            "canTrigger": EightBitter.canInputsTrigger.bind(EightBitter, EightBitter)
         }, EightBitter.settings.input.InputWritrArgs));
     }
     
@@ -381,7 +381,7 @@ var GameStartr = (function (EightBittr) {
     function resetWorldSeeder(EightBitter, customs) {
         EightBitter.WorldSeeder = new WorldSeedr(proliferate({
             "random": EightBitter.NumberMaker.random,
-            "on_placement": EightBitter.mapPlaceRandomCommands.bind(EightBitter, EightBitter)
+            "onPlacement": EightBitter.mapPlaceRandomCommands.bind(EightBitter, EightBitter)
         }, EightBitter.settings.generator));
     }
     
@@ -749,9 +749,13 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
-     * Shifts a Thing vertically. 
+     * Shifts a Thing vertically using the EightBittr utility, and marks the
+     * Thing as having a changed appearance.
      * 
-     * 
+     * @param {Thing} thing
+     * @param {Number} dy
+     * @param {Boolean} [notChanged]   Whether to skip marking the Thing as
+     *                                 changed (by default, false).
      */
     function shiftVert(thing, dy, notChanged) {
         EightBittr.prototype.shiftVert(thing, dy);
@@ -762,7 +766,13 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Shifts a Thing horizontally using the EightBittr utility, and marks the
+     * Thing as having a changed appearance.
      * 
+     * @param {Thing} thing
+     * @param {Number} dx
+     * @param {Boolean} [notChanged]   Whether to skip marking the Thing as
+     *                                 changed (by default, false).
      */
     function shiftHoriz(thing, dx, notChanged) {
         EightBittr.prototype.shiftHoriz(thing, dx);
@@ -773,7 +783,11 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Sets a Thing's top using the EightBittr utility, and marks the Thing as
+     * having a changed appearance.
      * 
+     * @param {Thing} thing
+     * @param {Number} top
      */
     function setTop(thing, top) {
         EightBittr.prototype.setTop(thing, top);
@@ -781,7 +795,11 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Sets a Thing's right using the EightBittr utility, and marks the Thing as
+     * having a changed appearance.
      * 
+     * @param {Thing} thing
+     * @param {Number} right
      */
     function setRight(thing, right) {
         EightBittr.prototype.setRight(thing, right);
@@ -789,7 +807,11 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Sets a Thing's bottom using the EightBittr utility, and marks the Thing
+     * as having a changed appearance.
      * 
+     * @param {Thing} thing
+     * @param {Number} bottom
      */
     function setBottom(thing, bottom) {
         EightBittr.prototype.setBottom(thing, bottom);
@@ -797,7 +819,11 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Sets a Thing's left using the EightBittr utility, and marks the Thing
+     * as having a changed appearance.
      * 
+     * @param {Thing} thing
+     * @param {Number} left
      */
     function setLeft(thing, left) {
         EightBittr.prototype.setLeft(thing, left);
@@ -805,27 +831,48 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Shifts a thing both horizontally and vertically. If the Thing marks 
+     * itself as having a parallax effect (parallaxHoriz or parallaxVert), that
+     * proportion of movement is respected (.5 = half, etc.).
      * 
-     * 
+     * @param {Thing} thing
+     * @param {Number} dx
+     * @param {Number} dy
+     * @param {Boolean} [notChanged]   Whether to skip marking the Thing as
+     *                                 changed (by default, false).
      */
     function shiftBoth(thing, dx, dy, notChanged) {
         dx = dx || 0;
         dy = dy || 0;
         
         if (!thing.noshiftx) {
-            if (thing.parallax) {
-                thing.EightBitter.shiftHoriz(thing, thing.parallax * dx, notChanged);
+            if (thing.parallaxHoriz) {
+                thing.EightBitter.shiftHoriz(
+                    thing, thing.parallaxHoriz * dx, notChanged
+                );
             } else {
                 thing.EightBitter.shiftHoriz(thing, dx, notChanged);
             }
         }
+        
         if (!thing.noshifty) {
-            thing.EightBitter.shiftVert(thing, dy, notChanged);
+            if (thing.parallaxVert) {
+                thing.EightBitter.shiftVert(
+                    thing, thing.parallaxVert * dy, notChanged
+                );
+            } else {
+                thing.EightBitter.shiftVert(thing, dy, notChanged);
+            }
         }
     }
     
     /**
+     * Calls shiftBoth on all members of an Array.
      * 
+     * @param {Number} dx
+     * @param {Number} dy
+     * @param {Boolean} [notChanged]   Whether to skip marking the Thing as
+     *                                 changed (by default, false).
      */
     function shiftThings(things, dx, dy, notChanged) {
         for (var i = things.length - 1; i >= 0; i -= 1) {
@@ -834,26 +881,42 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Calls shiftBoth on all groups in the calling EightBittr's GroupHoldr.
      * 
+     * @this {GameStartr}
+     * @param {Number} dx
+     * @param {Number} dy
      */
     function shiftAll(dx, dy) {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
-        EightBitter.GroupHolder.callAll(EightBitter, EightBitter.shiftThings, dx, dy, true);
+        EightBitter.GroupHolder.callAll(
+            EightBitter, EightBitter.shiftThings, dx, dy, true
+        );
     }
 
     /**
+     * Sets the width and unitwidth of a Thing, and optionally updates the
+     * Thing's spritewidth and spritewidth pixels, and/or calls updateSize.
+     * The thing is marked as having changed appearance.
      * 
+     * @param {Thing} thing
+     * @param {Number} width
+     * @param {Boolean} [updateSprite]   Whether to update the Thing's
+     *                                   spritewidth and spritewidthpixels (by
+     *                                   default, false).
+     * @param {Boolean} [updateSize]   Whether to call updateSize on the Thing
+     *                                 (by default, false).
      */
-    function setWidth(thing, width, update_sprite, update_size) {
+    function setWidth(thing, width, updateSprite, updateSize) {
         thing.width = width;
         thing.unitwidth = width * thing.EightBitter.unitsize;
         
-        if (update_sprite) {
+        if (updateSprite) {
             thing.spritewidth = width;
             thing.spritewidthpixels = width * thing.EightBitter.unitsize;
         }
         
-        if (update_size) {
+        if (updateSize) {
             thing.EightBitter.updateSize(thing);
         }
         
@@ -861,18 +924,28 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Sets the height and unitheight of a Thing, and optionally updates the
+     * Thing's spriteheight and spriteheight pixels, and/or calls updateSize.
+     * The thing is marked as having changed appearance.
      * 
+     * @param {Thing} thing
+     * @param {Number} height
+     * @param {Boolean} [updateSprite]   Whether to update the Thing's
+     *                                   spriteheight and spriteheightpixels (by
+     *                                   default, false).
+     * @param {Boolean} [updateSize]   Whether to call updateSize on the Thing
+     *                                 (by default, false).
      */
-    function setHeight(thing, height, update_sprite, update_size) {
+    function setHeight(thing, height, updateSprite, updateSize) {
         thing.height = height;
         thing.unitheight = height * thing.EightBitter.unitsize;
         
-        if (update_sprite) {
+        if (updateSprite) {
             thing.spriteheight = height;
             thing.spriteheightpixels = height * thing.EightBitter.unitsize;
         }
         
-        if (update_size) {
+        if (updateSize) {
             thing.EightBitter.updateSize(thing);
         }
         
@@ -880,28 +953,42 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Utility to call both setWidth and setHeight on a Thing.
      * 
+     * @param {Thing} thing
+     * @param {Number} width
+     * @param {Number} height
+     * @param {Boolean} [updateSprite]   Whether to update the Thing's
+     *                                   spritewidth, spriteheight, 
+     *                                   spritewidthpixels, and
+     *                                   spritspriteheightpixels (by default,
+     *                                   false).
+     * @param {Boolean} [updateSize]   Whether to call updateSize on the Thing
+     *                                 (by default, false).
      */
-    function setSize(thing, width, height, update_sprite, update_size) {
-        thing.EightBitter.setWidth(thing, width, update_sprite, update_size);
-        thing.EightBitter.setHeight(thing, height, update_sprite, update_size);
+    function setSize(thing, width, height, updateSprite, updateSize) {
+        thing.EightBitter.setWidth(thing, width, updateSprite, updateSize);
+        thing.EightBitter.setHeight(thing, height, updateSprite, updateSize);
     }
     
     /**
+     * Shifts a Thing horizontally by its xvel and vertically by its yvel, using
+     * shiftHoriz and shiftVert.
      * 
+     * @param {Thing} thing
      */
-    function updatePosition(thing, hard) {
-        if (!thing.nomove || hard) {
-            thing.EightBitter.shiftHoriz(thing, thing.xvel);
-        }
-        
-        // if (!thing.nofall || hard) {
-            thing.EightBitter.shiftVert(thing, thing.yvel);
-        // }
+    function updatePosition(thing) {
+        thing.EightBitter.shiftHoriz(thing, thing.xvel);
+        thing.EightBitter.shiftVert(thing, thing.yvel);
     }
     
     /**
+     * Completely updates the size measurements of a Thing. That means the
+     * unitwidth, unitheight, spritewidthpixels, spriteheightpixels, and
+     * spriteheightpixels attributes. The Thing's sprite is then updated by the
+     * PixelDrawer, and its appearance is marked as changed.
      * 
+     * @param {Thing} thing
      */
     function updateSize(thing) {
         thing.unitwidth = thing.width * thing.EightBitter.unitsize;
@@ -909,31 +996,21 @@ var GameStartr = (function (EightBittr) {
         thing.spritewidthpixels = thing.spritewidth * thing.EightBitter.unitsize;
         thing.spriteheightpixels = thing.spriteheight * thing.EightBitter.unitsize;
         
-        if (thing.canvas !== undefined) {
-            thing.canvas.width = thing.spritewidthpixels;
-            thing.canvas.height = thing.spriteheightpixels;
-            thing.EightBitter.PixelDrawer.setThingSprite(thing);
-        }
+        thing.canvas.width = thing.spritewidthpixels;
+        thing.canvas.height = thing.spriteheightpixels;
+        thing.EightBitter.PixelDrawer.setThingSprite(thing);
         
         thing.EightBitter.markChanged(thing);
     }
     
     /**
+     * Reduces a Thing's width by pushing back its right and decreasing its 
+     * width. It is marked as changed in appearance.
      * 
-     */
-    function reduceHeight(thing, dy, see) {
-        thing.top += dy;
-        thing.height -= dy / thing.EightBitter.unitsize;
-        
-        if (see) {
-            thing.EightBitter.updateSize(thing);
-        } else {
-            thing.EightBitter.markChanged(thing);
-        }
-    }
-    
-    /**
-     * 
+     * @param {Thing} thing
+     * @param {Number} dx
+     * @param {Boolean} [updateSize]   Whether to also call updateSize on the 
+     *                                 Thing (by default, false).
      */
     function reduceWidth(thing, dx, see) {
         thing.right -= dx;
@@ -947,7 +1024,33 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Reduces a Thing's height by pushing down its top and decreasing its 
+     * height. It is marked as changed in appearance.
      * 
+     * @param {Thing} thing
+     * @param {Number} dy
+     * @param {Boolean} [updateSize]   Whether to also call updateSize on the 
+     *                                 Thing (by default, false).
+     */
+    function reduceHeight(thing, dy, updateSize) {
+        thing.top += dy;
+        thing.height -= dy / thing.EightBitter.unitsize;
+        
+        if (updateSize) {
+            thing.EightBitter.updateSize(thing);
+        } else {
+            thing.EightBitter.markChanged(thing);
+        }
+    }
+    
+    /**
+     * Reduces a Thing's height by pushing down its top and decreasing its 
+     * height. It is marked as changed in appearance.
+     * 
+     * @param {Thing} thing
+     * @param {Number} dy
+     * @param {Boolean} [updateSize]   Whether to also call updateSize on the 
+     *                                 Thing (by default, false).
      */
     function increaseHeight(thing, dy) {
         thing.top -= dy;
@@ -957,7 +1060,13 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Increases a Thing's width by pushing forward its right and decreasing its 
+     * width. It is marked as changed in appearance.
      * 
+     * @param {Thing} thing
+     * @param {Number} dx
+     * @param {Boolean} [updateSize]   Whether to also call updateSize on the 
+     *                                 Thing (by default, false).
      */
     function increaseWidth(thing, dx) {
         thing.right += dx;
@@ -967,20 +1076,22 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Completely pauses 
+     * 
      * 
      */
-    function thingStoreVelocity(thing, keep_movement) {
-        thing.xvel_old = thing.xvel || 0;
-        thing.yvel_old = thing.yvel || 0;
+    function thingPauseVelocity(thing, keepMovement) {
+        thing.xvelOld = thing.xvel || 0;
+        thing.yvelOld = thing.yvel || 0;
         
-        thing.nofall_old = thing.nofall || false;
-        thing.nocollide_old = thing.nocollide || false;
-        thing.movement_old = thing.movement || thing.movement_old;
+        thing.nofallOld = thing.nofall || false;
+        thing.nocollideOld = thing.nocollide || false;
+        thing.movementOld = thing.movement || thing.movementOld;
         
         thing.nofall = thing.nocollide = true;
         thing.xvel = thing.yvel = false;
         
-        if (!keep_movement) {
+        if (!keepMovement) {
             thing.movement = false;
         }
     }
@@ -988,15 +1099,15 @@ var GameStartr = (function (EightBittr) {
     /**
      * 
      */
-    function thingRetrieveVelocity(thing, no_velocity) {
-        if (!no_velocity) {
-            thing.xvel = thing.xvel_old || 0;
-            thing.yvel = thing.yvel_old || 0;
+    function thingResumeVelocity(thing, noVelocity) {
+        if (!noVelocity) {
+            thing.xvel = thing.xvelOld || 0;
+            thing.yvel = thing.yvelOld || 0;
         }
         
-        thing.movement = thing.movement_old || thing.movement;
-        thing.nofall = thing.nofall_old || false;
-        thing.nocollide = thing.nocollide_old || false;
+        thing.movement = thing.movementOld || thing.movement;
+        thing.nofall = thing.nofallOld || false;
+        thing.nocollide = thing.nocollideOld || false;
     }
     
     
@@ -1105,9 +1216,9 @@ var GameStartr = (function (EightBittr) {
     /**
      * 
      */
-    function switchClass(thing, string_out, string_in) {
-        thing.EightBitter.removeClass(thing, string_out);
-        thing.EightBitter.addClass(thing, string_in);
+    function switchClass(thing, stringOut, stringIn) {
+        thing.EightBitter.removeClass(thing, stringOut);
+        thing.EightBitter.addClass(thing, stringIn);
     }
     
     /**
@@ -1245,12 +1356,12 @@ var GameStartr = (function (EightBittr) {
         "setSize": setSize,
         "updatePosition": updatePosition,
         "updateSize": updateSize,
-        "reduceHeight": reduceHeight,
         "reduceWidth": reduceWidth,
-        "increaseHeight": increaseHeight,
+        "reduceHeight": reduceHeight,
         "increaseWidth": increaseWidth,
-        "thingStoreVelocity": thingStoreVelocity,
-        "thingRetrieveVelocity": thingRetrieveVelocity,
+        "increaseHeight": increaseHeight,
+        "thingPauseVelocity": thingPauseVelocity,
+        "thingResumeVelocity": thingResumeVelocity,
         // Appearance utilities
         "generateObjectKey": generateObjectKey,
         "setTitle": setTitle,

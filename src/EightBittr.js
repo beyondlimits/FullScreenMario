@@ -1,7 +1,11 @@
 /**
  * EightBittr.js
  * 
- * Contains a set of useful default functions for the FullScreenMario engine.
+ * An abstract class used exclusively as the parent of GameStartr. EightBittr
+ * contains useful functions for manipulating Things that are independent of
+ * the required GameStartr modules.
+ * 
+ * @author "Josh Goldberg" <josh@fullscreenmario.com>
  */
 var EightBittr = (function () {
     "use strict";

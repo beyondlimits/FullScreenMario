@@ -423,19 +423,19 @@ function GroupHoldr(settings) {
     };
     
     /**
-     * Switches an object from group_old to group_new by removing it from the
+     * Switches an object from groupOld to group_new by removing it from the
      * old group and adding it to the new. If the new group uses an associative
      * array, a key should be passed in (which defaults to undefined).
      * 
      * @param {Mixed} object   The object to be moved from one group to another.
-     * @param {String} group_old   The string name of the object's old group.
+     * @param {String} groupOld   The string name of the object's old group.
      * @param {String} group_new   The string name of the object's new group.
      * @param {String} [key_new]   A key for the object to be placed in the new
      *                             group, required only if the group contains an
      *                             associative array.
      */
-    self.switchObjectGroup = function (object, group_old, group_new, key_new) {
-        self.deleteObject(group_old, object);
+    self.switchObjectGroup = function (object, groupOld, group_new, key_new) {
+        self.deleteObject(groupOld, object);
         functions.add[group_new](object, key_new);
     };
     

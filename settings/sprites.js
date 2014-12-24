@@ -1,6 +1,6 @@
 FullScreenMario.prototype.settings.sprites = {
-    "sprite_width": "spritewidthpixels",
-    "sprite_height": "spriteheightpixels",
+    "spriteWidth": "spritewidthpixels",
+    "spriteHeight": "spriteheightpixels",
     "palette": [
         [0, 0, 0, 0],
         // Grayscales (1-4)

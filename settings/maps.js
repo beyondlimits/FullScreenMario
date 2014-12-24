@@ -1,6 +1,6 @@
 FullScreenMario.prototype.settings.maps = {
     "mapDefault": "1-1",
-    "screen_attributes": [
+    "screenAttributes": [
         "gravity",
         "setting",
         "time",
@@ -14,7 +14,7 @@ FullScreenMario.prototype.settings.maps = {
         "allowDeviceMotion",
         "canscroll"
     ],
-    "screen_variables": {
+    "screenVariables": {
         "bottom_death_difference": function (EightBitter) {
             return EightBitter.unitsize * 12;
         },
@@ -38,7 +38,7 @@ FullScreenMario.prototype.settings.maps = {
             return EightBitter.gravity;
         }
     },
-    "on_spawn": FullScreenMario.prototype.addPreThing,
+    "onSpawn": FullScreenMario.prototype.addPreThing,
     "macros": {
         "Example": FullScreenMario.prototype.macroExample,
         "Fill": FullScreenMario.prototype.macroFillPreThings,

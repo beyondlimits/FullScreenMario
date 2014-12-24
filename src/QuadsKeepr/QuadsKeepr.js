@@ -12,29 +12,29 @@ function QuadsKeepr(settings) {
         createCanvas,
         
         // How many rows and columns of quadrants there should be
-        num_rows,
-        num_cols,
+        numRows,
+        numCols,
         
         // Scrolling offsets during gameplay (initially 0)
         offset_x,
         offset_y,
         
         // Starting coordinates for rows & cols
-        start_left,
+        startLeft,
         start_top,
         
-        quadrant_rows,
+        quadrantRows,
         
-        quadrant_cols,
+        quadrantCols,
         
-        quadrant_width,
+        quadrantWidth,
         
-        quadrant_height,
+        quadrantHeight,
 
         // Names under which external Things should store Quadrant information
-        thing_left,
+        thingLeft,
         thing_top,
-        thing_right,
+        thingRight,
         thing_bottom,
         thing_num_quads,
         thing_max_quads,
@@ -48,8 +48,8 @@ function QuadsKeepr(settings) {
         groupNames,
 
         // Callback for when Quadrants are added or removed, respectively
-        on_add,
-        on_remove;
+        onAdd,
+        onRemove;
         
 
     /**
@@ -59,22 +59,22 @@ function QuadsKeepr(settings) {
         ObjectMaker = settings.ObjectMaker;
         createCanvas = settings.createCanvas;
         
-        num_rows = settings.num_rows;
-        num_cols = settings.num_cols;
+        numRows = settings.numRows;
+        numCols = settings.numCols;
         
-        start_left = settings.start_left | 0;
+        startLeft = settings.startLeft | 0;
         start_top = settings.start_top | 0;
         
-        quadrant_width = settings.quadrant_width | 0;
-        quadrant_height = settings.quadrant_height | 0;
+        quadrantWidth = settings.quadrantWidth | 0;
+        quadrantHeight = settings.quadrantHeight | 0;
         
         groupNames = settings.groupNames;
 
-        on_add = settings.on_add;
-        on_remove = settings.on_remove;
+        onAdd = settings.onAdd;
+        onRemove = settings.onRemove;
 
-        thing_left = settings.thing_left || "left";
-        thing_right = settings.thing_right || "right";
+        thingLeft = settings.thingLeft || "left";
+        thingRight = settings.thingRight || "right";
         thing_top = settings.thing_top || "top";
         thing_bottom = settings.thing_bottom || "bottom";
         thing_num_quads = settings.thing_num_quads || "numquads";
@@ -94,42 +94,42 @@ function QuadsKeepr(settings) {
      * 
      */
     self.getQuadrantRows = function () {
-        return quadrant_rows;
+        return quadrantRows;
     };
     
     /**
      * 
      */
     self.getQuadrantCols = function () {
-        return quadrant_cols;
+        return quadrantCols;
     };
     
     /**
      * 
      */
     self.getNumRows = function () {
-        return num_rows;
+        return numRows;
     };
     
     /**
      * 
      */
     self.getNumCols = function () {
-        return num_cols;
+        return numCols;
     };
     
     /**
      * 
      */
     self.getQuadrantWidth = function () {
-        return quadrant_width;
+        return quadrantWidth;
     };
     
     /**
      * 
      */
     self.getQuadrantHeight = function () {
-        return quadrant_height;
+        return quadrantHeight;
     };
     
     
@@ -153,19 +153,19 @@ function QuadsKeepr(settings) {
         self.bottom += y;
         self.left += x;
         
-        for (row = 0; row < num_rows; row += 1) {
-            quadrant_rows[row].top += y;
-            quadrant_rows[row].left += x;
+        for (row = 0; row < numRows; row += 1) {
+            quadrantRows[row].top += y;
+            quadrantRows[row].left += x;
         }
         
-        for (col = 0; col< num_cols; col += 1) {
-            quadrant_cols[col].top += y;
-            quadrant_cols[col].left += x;
+        for (col = 0; col< numCols; col += 1) {
+            quadrantCols[col].top += y;
+            quadrantCols[col].left += x;
         }
         
-        for (row = 0; row < num_rows; row += 1) {
-            for (col = 0; col < num_cols; col += 1) {
-                shiftQuadrant(quadrant_rows[row].quadrants[col], x, y);
+        for (row = 0; row < numRows; row += 1) {
+            for (col = 0; col < numCols; col += 1) {
+                shiftQuadrant(quadrantRows[row].quadrants[col], x, y);
             }
         }
         
@@ -177,31 +177,31 @@ function QuadsKeepr(settings) {
      */
     function adjustOffsets() {
         // Quadrant shift: add to the right
-        while(-offset_x > quadrant_width) {
+        while(-offset_x > quadrantWidth) {
             self.shiftQuadrantCol(true);
             self.pushQuadrantCol(true);
-            offset_x += quadrant_width;
+            offset_x += quadrantWidth;
         }
         
         // Quadrant shift: add to the left
-        while(offset_x > quadrant_width) {
+        while(offset_x > quadrantWidth) {
             self.popQuadrantCol(true);
             self.unshiftQuadrantCol(true);
-            offset_x -= quadrant_width;
+            offset_x -= quadrantWidth;
         }
         
         // Quadrant shift: add to the bottom
-        while(-offset_y > quadrant_height) {
+        while(-offset_y > quadrantHeight) {
             self.unshiftQuadrantRow(true);
             self.pushQuadrantRow(true);
-            offset_y += quadrant_height;
+            offset_y += quadrantHeight;
         }
         
         // Quadrant shift: add to the top
-        while(offset_y > quadrant_height) {
+        while(offset_y > quadrantHeight) {
             self.popQuadrantRow(true);
             self.unshiftQuadrantRow(true);
-            offset_y -= quadrant_height;
+            offset_y -= quadrantHeight;
         }
     };
     
@@ -224,53 +224,53 @@ function QuadsKeepr(settings) {
      * 
      */
     self.resetQuadrants = function () {
-        var left = start_left,
+        var left = startLeft,
             top = start_top,
             quadrant,
             i, j;
         
         self.top = start_top;
-        self.right = start_left + quadrant_width * num_cols;
-        self.bottom = start_top + quadrant_height * num_rows;
-        self.left = start_left;
+        self.right = startLeft + quadrantWidth * numCols;
+        self.bottom = start_top + quadrantHeight * numRows;
+        self.left = startLeft;
         
-        quadrant_rows = [];
-        quadrant_cols = [];
+        quadrantRows = [];
+        quadrantCols = [];
         
         offset_x = 0;
         offset_y = 0;
         
-        for (i = 0; i < num_rows; i += 1) {
-            quadrant_rows.push({
-                "left": start_left,
+        for (i = 0; i < numRows; i += 1) {
+            quadrantRows.push({
+                "left": startLeft,
                 "top": top,
                 "quadrants": []
             });
-            top += quadrant_height;
+            top += quadrantHeight;
         }
         
-        for (j = 0; j < num_cols; j += 1) {
-            quadrant_cols.push({
+        for (j = 0; j < numCols; j += 1) {
+            quadrantCols.push({
                 "left": left,
                 "top": start_top,
                 "quadrants": []
             });
-            left += quadrant_width;
+            left += quadrantWidth;
         }
         
         top = start_top;
-        for (i = 0; i < num_rows; i += 1) {
-            left = start_left;
-            for (j = 0; j < num_cols; j += 1) {
+        for (i = 0; i < numRows; i += 1) {
+            left = startLeft;
+            for (j = 0; j < numCols; j += 1) {
                 quadrant = createQuadrant(left, top);
-                quadrant_rows[i].quadrants.push(quadrant);
-                quadrant_cols[j].quadrants.push(quadrant);
-                left += quadrant_width;
+                quadrantRows[i].quadrants.push(quadrant);
+                quadrantCols[j].quadrants.push(quadrant);
+                left += quadrantWidth;
             }
-            top += quadrant_height;
+            top += quadrantHeight;
         }
         
-        on_add("xInc", self.top, self.right, self.bottom, self.left);
+        onAdd("xInc", self.top, self.right, self.bottom, self.left);
     };
     
     /**
@@ -278,7 +278,7 @@ function QuadsKeepr(settings) {
      */
     function createQuadrant(left, top) {
         var quadrant = ObjectMaker.make("Quadrant"),
-            canvas = createCanvas(quadrant_width, quadrant_height),
+            canvas = createCanvas(quadrantWidth, quadrantHeight),
             i;
         
         quadrant.changed = true;
@@ -292,8 +292,8 @@ function QuadsKeepr(settings) {
         
         quadrant.left = left;
         quadrant.top = top;
-        quadrant.right = left + quadrant_width;
-        quadrant.bottom = top + quadrant_height;
+        quadrant.right = left + quadrantWidth;
+        quadrant.bottom = top + quadrantHeight;
         
         quadrant.canvas = canvas;
         quadrant.context = canvas.getContext("2d");
@@ -311,9 +311,9 @@ function QuadsKeepr(settings) {
             },
             i;
         
-        for (i = 0; i < num_cols; i += 1) {
+        for (i = 0; i < numCols; i += 1) {
             row.quadrants.push(createQuadrant(left, top));
-            left += quadrant_width;
+            left += quadrantWidth;
         }
         
         return row;
@@ -329,39 +329,39 @@ function QuadsKeepr(settings) {
             },
             i;
         
-        for (i = 0; i < num_rows; i += 1) {
+        for (i = 0; i < numRows; i += 1) {
             col.quadrants.push(createQuadrant(left, top));
-            top += quadrant_height;
+            top += quadrantHeight;
         }
         
         return col;
     };
     
     /**
-     * Adds a Quadrant row to the end of the quadrant_rows Array.
+     * Adds a Quadrant row to the end of the quadrantRows Array.
      * 
-     * @param {Boolean} callUpdate   Whether this should call the on_add 
+     * @param {Boolean} callUpdate   Whether this should call the onAdd 
      *                               trigger with the new row's bounding box.
      */
     self.pushQuadrantRow = function (callUpdate) {
         var row = createQuadrantRow(self.left, self.bottom),
             i;
         
-        num_rows += 1;
-        quadrant_rows.push(row);
+        numRows += 1;
+        quadrantRows.push(row);
         
-        for (i = 0; i < quadrant_cols.length; i += 1) {
-            quadrant_cols[i].quadrants.push(row.quadrants[i]);
+        for (i = 0; i < quadrantCols.length; i += 1) {
+            quadrantCols[i].quadrants.push(row.quadrants[i]);
         }
         
-        self.bottom += quadrant_height;
+        self.bottom += quadrantHeight;
         
-        if (callUpdate && on_add) {
-            on_add(
+        if (callUpdate && onAdd) {
+            onAdd(
                 "yInc",
                 self.bottom, 
                 self.right, 
-                self.bottom - quadrant_height, 
+                self.bottom - quadrantHeight, 
                 self.left
             );
         }
@@ -370,31 +370,31 @@ function QuadsKeepr(settings) {
     };
     
     /**
-     * Adds a Quadrant col to the end of the quadrant_cols Array.
+     * Adds a Quadrant col to the end of the quadrantCols Array.
      * 
-     * @param {Boolean} callUpdate   Whether this should call the on_add 
+     * @param {Boolean} callUpdate   Whether this should call the onAdd 
      *                               trigger with the new col's bounding box.
      */
     self.pushQuadrantCol = function (callUpdate) {
         var col = createQuadrantCol(self.right, self.top),
             i;
         
-        num_cols += 1;
-        quadrant_cols.push(col);
+        numCols += 1;
+        quadrantCols.push(col);
     
-        for (i = 0; i < quadrant_rows.length; i += 1) {
-            quadrant_rows[i].quadrants.push(col.quadrants[i]);
+        for (i = 0; i < quadrantRows.length; i += 1) {
+            quadrantRows[i].quadrants.push(col.quadrants[i]);
         }
         
-        self.right += quadrant_width;
+        self.right += quadrantWidth;
         
-        if (callUpdate && on_add) {
-            on_add(
+        if (callUpdate && onAdd) {
+            onAdd(
                 "xInc", 
                 self.top,
                 self.right - offset_y, 
                 self.bottom, 
-                self.right - quadrant_width - offset_y
+                self.right - quadrantWidth - offset_y
             );
         }
         
@@ -402,84 +402,84 @@ function QuadsKeepr(settings) {
     };
     
     /**
-     * Removes the last Quadrant row from the end of the quadrant_rows Array.
+     * Removes the last Quadrant row from the end of the quadrantRows Array.
      * 
-     * @param {Boolean} callUpdate   Whether this should call the on_add 
+     * @param {Boolean} callUpdate   Whether this should call the onAdd 
      *                               trigger with the new row's bounding box.
      */
     self.popQuadrantRow = function (callUpdate) {
-        for (var i = 0; i < quadrant_cols.length; i += 1) {
-            quadrant_cols[i].quadrants.pop();
+        for (var i = 0; i < quadrantCols.length; i += 1) {
+            quadrantCols[i].quadrants.pop();
         }
         
-        num_rows -= 1;
-        quadrant_rows.pop();
+        numRows -= 1;
+        quadrantRows.pop();
         
-        if (callUpdate && on_remove) {
-            on_remove(
+        if (callUpdate && onRemove) {
+            onRemove(
                 "yInc",
                 self.bottom, 
                 self.right, 
-                self.bottom - quadrant_height, 
+                self.bottom - quadrantHeight, 
                 self.left
             );
         }
         
-        self.bottom -= quadrant_height;
+        self.bottom -= quadrantHeight;
     };
     
     /**
-     * Removes the last Quadrant col from the end of the quadrant_cols Array.
+     * Removes the last Quadrant col from the end of the quadrantCols Array.
      * 
-     * @param {Boolean} callUpdate   Whether this should call the on_add 
+     * @param {Boolean} callUpdate   Whether this should call the onAdd 
      *                               trigger with the new row's bounding box.
      */
     self.popQuadrantCol = function (callUpdate) {
-        for (var i = 0; i < quadrant_rows.length; i += 1) {
-            quadrant_rows[i].quadrants.pop();
+        for (var i = 0; i < quadrantRows.length; i += 1) {
+            quadrantRows[i].quadrants.pop();
         }
         
-        num_cols -= 1;
-        quadrant_cols.pop();
+        numCols -= 1;
+        quadrantCols.pop();
         
-        if (callUpdate && on_remove) {
-            on_remove(
+        if (callUpdate && onRemove) {
+            onRemove(
                 "xDec", 
                 self.top,
                 self.right - offset_y, 
                 self.bottom, 
-                self.right - quadrant_width - offset_y
+                self.right - quadrantWidth - offset_y
             );
         }
         
-        self.right -= quadrant_width;
+        self.right -= quadrantWidth;
     };
     
     /**
-     * Adds a Quadrant row to the beginning of the quadrant_rows Array.
+     * Adds a Quadrant row to the beginning of the quadrantRows Array.
      * 
-     * @param {Boolean} callUpdate   Whether this should call the on_add 
+     * @param {Boolean} callUpdate   Whether this should call the onAdd 
      *                               trigger with the new row's bounding box.
      */
     self.unshiftQuadrantRow = function (callUpdate) {
-        var row = createQuadrantRow(self.left, self.top - quadrant_height),
+        var row = createQuadrantRow(self.left, self.top - quadrantHeight),
             i;
         
-        num_rows += 1;
-        quadrant_rows.unshift(row);
+        numRows += 1;
+        quadrantRows.unshift(row);
         
-        for (i = 0; i < quadrant_cols.length; i += 1) {
-            quadrant_cols[i].quadrants.unshift(row.quadrants[i]);
+        for (i = 0; i < quadrantCols.length; i += 1) {
+            quadrantCols[i].quadrants.unshift(row.quadrants[i]);
         }
         
-        self.top -= quadrant_height;
+        self.top -= quadrantHeight;
         
-        if (callUpdate && on_add) {
-            on_add(
+        if (callUpdate && onAdd) {
+            onAdd(
                 "yInc",
                 self.top,
                 self.right, 
-                self.top + quadrant_height, 
+                self.top + quadrantHeight, 
                 self.left
             );
         }
@@ -488,31 +488,31 @@ function QuadsKeepr(settings) {
     };
     
     /**
-     * Adds a Quadrant col to the beginning of the quadrant_cols Array.
+     * Adds a Quadrant col to the beginning of the quadrantCols Array.
      * 
-     * @param {Boolean} callUpdate   Whether this should call the on_add 
+     * @param {Boolean} callUpdate   Whether this should call the onAdd 
      *                               trigger with the new row's bounding box.
      */
     self.unshiftQuadrantCol = function (callUpdate) {
-        var col = createQuadrantCol(self.left - quadrant_width, self.top),
+        var col = createQuadrantCol(self.left - quadrantWidth, self.top),
             i;
         
-        num_cols += 1;
-        quadrant_cols.unshift(col);
+        numCols += 1;
+        quadrantCols.unshift(col);
         
-        for (i = 0; i < quadrant_rows.length; i += 1) {
-            quadrant_rows[i].quadrants.unshift(col.quadrants[i]);
+        for (i = 0; i < quadrantRows.length; i += 1) {
+            quadrantRows[i].quadrants.unshift(col.quadrants[i]);
         }
         
-        self.left -= quadrant_width;
+        self.left -= quadrantWidth;
         
-        if (callUpdate && on_add) {
-            on_add(
+        if (callUpdate && onAdd) {
+            onAdd(
                 "xInc",
                 self.top,
                 self.left,
                 self.bottom, 
-                self.left + quadrant_width
+                self.left + quadrantWidth
             );
         }
         
@@ -520,57 +520,57 @@ function QuadsKeepr(settings) {
     };
     
     /**
-     * Removes a Quadrant row from the beginning of the quadrant_rows Array.
+     * Removes a Quadrant row from the beginning of the quadrantRows Array.
      * 
-     * @param {Boolean} callUpdate   Whether this should call the on_add 
+     * @param {Boolean} callUpdate   Whether this should call the onAdd 
      *                               trigger with the new row's bounding box.
      */
     self.shiftQuadrantRow = function (callUpdate) {
-        for (var i = 0; i < quadrant_cols.length; i += 1) {
-            quadrant_cols[i].quadrants.shift();
+        for (var i = 0; i < quadrantCols.length; i += 1) {
+            quadrantCols[i].quadrants.shift();
         }
         
-        num_rows -= 1;
-        quadrant_rows.pop();
+        numRows -= 1;
+        quadrantRows.pop();
         
-        if (callUpdate && on_remove) {
-            on_remove(
+        if (callUpdate && onRemove) {
+            onRemove(
                 "yInc",
                 self.top,
                 self.right, 
-                self.top + quadrant_height, 
+                self.top + quadrantHeight, 
                 self.left
             );
         }
         
-        self.top += quadrant_height;
+        self.top += quadrantHeight;
     };
     
     /**
-     * Removes a Quadrant col from the beginning of the quadrant_cols Array.
+     * Removes a Quadrant col from the beginning of the quadrantCols Array.
      * 
-     * @param {Boolean} callUpdate   Whether this should call the on_add 
+     * @param {Boolean} callUpdate   Whether this should call the onAdd 
      *                               trigger with the new row's bounding box.
      */
     self.shiftQuadrantCol = function (callUpdate) {
-        for (var i = 0; i < quadrant_rows.length; i += 1) {
-            quadrant_rows[i].quadrants.shift();
+        for (var i = 0; i < quadrantRows.length; i += 1) {
+            quadrantRows[i].quadrants.shift();
         }
         
-        num_cols -= 1;
-        quadrant_cols.pop();
+        numCols -= 1;
+        quadrantCols.pop();
         
-        if (callUpdate && on_remove) {
-            on_remove(
+        if (callUpdate && onRemove) {
+            onRemove(
                 "xInc",
                 self.top,
-                self.left + quadrant_width,
+                self.left + quadrantWidth,
                 self.bottom,
                 self.left
             );
         }
         
-        self.left += quadrant_width;
+        self.left += quadrantWidth;
     };
     
     
@@ -588,9 +588,9 @@ function QuadsKeepr(settings) {
     self.determineAllQuadrants = function (group, things) {
         var row, col, k;
         
-        for (row = 0; row < num_rows; row += 1) {
-            for (col = 0; col < num_cols; col += 1) {
-                quadrant_rows[row].quadrants[col].numthings[group] = 0;
+        for (row = 0; row < numRows; row += 1) {
+            for (col = 0; col < numCols; col += 1) {
+                quadrantRows[row].quadrants[col].numthings[group] = 0;
             }
         }
         
@@ -619,7 +619,7 @@ function QuadsKeepr(settings) {
         
         for (row = rowStart; row <= rowEnd; row += 1) {
             for (col = colStart; col <= colEnd; col += 1) {
-                self.setThingInQuadrant(group, thing, quadrant_rows[row].quadrants[col]);
+                self.setThingInQuadrant(group, thing, quadrantRows[row].quadrants[col]);
             }
         }
         
@@ -658,28 +658,28 @@ function QuadsKeepr(settings) {
      * 
      */
     function findQuadrantRowStart(thing) {
-        return Math.max(Math.floor((thing.top - self.top) / quadrant_height), 0);
+        return Math.max(Math.floor((thing.top - self.top) / quadrantHeight), 0);
     }
     
     /**
      * 
      */
     function findQuadrantRowEnd(thing) {
-        return Math.min(Math.floor((thing.bottom - self.top) / quadrant_height), num_rows - 1);
+        return Math.min(Math.floor((thing.bottom - self.top) / quadrantHeight), numRows - 1);
     }
     
     /**
      * 
      */
     function findQuadrantColStart(thing) {
-        return Math.max(Math.floor((thing.left - self.left) / quadrant_width), 0);
+        return Math.max(Math.floor((thing.left - self.left) / quadrantWidth), 0);
     }
     
     /**
      * 
      */
     function findQuadrantColEnd(thing) {
-        return Math.min(Math.floor((thing.right - self.left) / quadrant_width), num_cols - 1);
+        return Math.min(Math.floor((thing.right - self.left) / quadrantWidth), numCols - 1);
     }
     
     

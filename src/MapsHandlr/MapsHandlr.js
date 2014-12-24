@@ -16,7 +16,7 @@ function MapsHandlr(settings) {
         
         // An Array of strings representing the names of attributes to be copied
         // to the MapScreener during self.setLocation
-        screen_attributes,
+        screenAttributes,
         
         // The currently referenced map from MapsCreator, set by self.setMap
         map_current, 
@@ -35,7 +35,7 @@ function MapsHandlr(settings) {
         prethings,
         
         // When a prething is to be spawned, this function should spawn it
-        on_spawn,
+        onSpawn,
         
         // When a prething is to be unspawned, this function should unspawn it
         on_unspawn,
@@ -44,16 +44,16 @@ function MapsHandlr(settings) {
         stretches,
         
         // If stretches exists, the function to call to add one to the map
-        stretch_add,
+        stretchAdd,
         
         // If stretches exists, the function to call to stretch horizontally
-        on_stretch,
+        onStretch,
         
         // Optionally, an array of Things to place at the end of the map
         afters,
         
         // If afters exists, the function to call to add one to the map
-        after_add,
+        afterAdd,
         
         // If afters exists, the function to call to stretch horizontally
         on_after,
@@ -90,15 +90,15 @@ function MapsHandlr(settings) {
         }
         MapScreener = settings.MapScreener;
         
-        screen_attributes = settings.screen_attributes || [];
+        screenAttributes = settings.screenAttributes || [];
         
-        on_spawn = settings.on_spawn;
+        onSpawn = settings.onSpawn;
         on_unspawn = settings.on_unspawn;
         
-        stretch_add = settings.stretch_add;
-        on_stretch = settings.on_stretch;
+        stretchAdd = settings.stretchAdd;
+        onStretch = settings.onStretch;
         
-        after_add = settings.after_add;
+        afterAdd = settings.afterAdd;
         on_after = settings.on_after;
     };
     
@@ -128,7 +128,7 @@ function MapsHandlr(settings) {
      * Simple getter for the Array of attribute names copied to the MapScreener.
      */
     self.getScreenAttributes = function () {
-        return screen_attributes;
+        return screenAttributes;
     };
     
     /**
@@ -247,8 +247,8 @@ function MapsHandlr(settings) {
         area_current = location.area;
         
         // Copy all the settings from that area into the MapScreenr container
-        for (i = 0, len = screen_attributes.length; i < len; i += 1) {
-            attribute = screen_attributes[i];
+        for (i = 0, len = screenAttributes.length; i < len; i += 1) {
+            attribute = screenAttributes[i];
             MapScreener[attribute] = area_current[attribute];
         }
         
@@ -274,7 +274,7 @@ function MapsHandlr(settings) {
      */
     function setStretches(stretchesRaw) {
         if (stretchesRaw) {
-            stretches = stretchesRaw.map(stretch_add);
+            stretches = stretchesRaw.map(stretchAdd);
         } else {
             stretches = [];
         }
@@ -285,7 +285,7 @@ function MapsHandlr(settings) {
      */
     function setAfters(aftersRaw) {
         if (aftersRaw) {
-            afters = aftersRaw.map(after_add);
+            afters = aftersRaw.map(afterAdd);
         } else {
             afters = [];
         }
@@ -297,7 +297,7 @@ function MapsHandlr(settings) {
      * 
      */
     self.spawnMap = function (direction, top, right, bottom, left) {
-        applySpawnAction(on_spawn, true, direction, top, right, bottom, left);
+        applySpawnAction(onSpawn, true, direction, top, right, bottom, left);
     };
     
     /**

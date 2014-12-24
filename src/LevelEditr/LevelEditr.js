@@ -13,7 +13,7 @@ function LevelEditr(settings) {
         GameStarter,
         
         // The GameStarter's settings before this LevelEditr was enabled
-        old_information,
+        oldInformation,
         
         // The listings of things that the GUI displays
         things,
@@ -67,7 +67,7 @@ function LevelEditr(settings) {
         current_type,
         
         // The current arguments for current_things, such as { "smart": true }
-        current_args;
+        currentArgs;
     
     /**
      * 
@@ -99,7 +99,7 @@ function LevelEditr(settings) {
      * 
      */
     self.enable = function () {
-        old_information = {
+        oldInformation = {
             "map": GameStarter.MapsHandler.getMapName(),
         };
         
@@ -123,7 +123,7 @@ function LevelEditr(settings) {
         display = undefined;
         
         GameStarter.InputWriter.setCanTrigger(true);
-        GameStarter.setMap(old_information["map"]);
+        GameStarter.setMap(oldInformation["map"]);
     };
     
     /**
@@ -261,7 +261,7 @@ function LevelEditr(settings) {
      */
     function setCurrentThing(type, args, x, y) {
         current_type = type;
-        current_args = args;
+        currentArgs = args;
         current_things = [
             {
                 "x": 0,
@@ -387,7 +387,7 @@ function LevelEditr(settings) {
             return;
         }
         
-        onClickEditingGenericAdd(x, y, current_type, current_args);
+        onClickEditingGenericAdd(x, y, current_type, currentArgs);
     }
     
     /**
@@ -838,7 +838,7 @@ function LevelEditr(settings) {
                 "thing": current_type,
                 "x": getNormalizedX(x) + (GameStarter.MapScreener.left / GameStarter.unitsize),
                 "y": getNormalizedY(y)
-            }, current_args);
+            }, currentArgs);
         
         if (!mapObject) {
             return false;

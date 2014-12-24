@@ -336,7 +336,7 @@ FullScreenMario.prototype.settings.mods = {
                 }
             }
         }, {
-            "name": "Parallax Clouds",
+            "name": "parallaxHoriz Clouds",
             "description": "Clouds in the sky scroll at about 63% the normal rate.",
             "author": {
                 "name": "Josh Goldberg",
@@ -345,10 +345,10 @@ FullScreenMario.prototype.settings.mods = {
             "enabled": false,
             "events": {
                 "onModEnable": function () {
-                    this.ObjectMaker.getFunction("Cloud").prototype.parallax = .7;
+                    this.ObjectMaker.getFunction("Cloud").prototype.parallaxHoriz = .7;
                 },
                 "onModDisable": function () {
-                    this.ObjectMaker.getFunction("Cloud").prototype.parallax = undefined;
+                    this.ObjectMaker.getFunction("Cloud").prototype.parallaxHoriz = undefined;
                 }
             }
         }, {

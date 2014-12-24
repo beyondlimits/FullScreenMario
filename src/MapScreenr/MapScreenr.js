@@ -12,7 +12,7 @@ function MapScreenr(settings) {
         variables,
         
         // Arguments to be passed into variable computation functions, as an Array
-        variable_args;
+        variableArgs;
     
     /**
      * 
@@ -25,7 +25,7 @@ function MapScreenr(settings) {
         }
         
         variables = settings.variables || {};
-        variable_args = settings.variable_args || [];
+        variableArgs = settings.variableArgs || [];
     }
     
     
@@ -71,7 +71,7 @@ function MapScreenr(settings) {
      */
     self.setVariables = function () {
         for (var i in variables) {
-            self[i] = variables[i].apply(self, variable_args);
+            self[i] = variables[i].apply(self, variableArgs);
         }
     }
     

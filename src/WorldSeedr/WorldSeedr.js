@@ -12,7 +12,7 @@ function WorldSeedr(settings) {
         random,
         
         // Function called in self.generateFull to place a child
-        on_placement,
+        onPlacement,
         
         // A constant listing of direction opposites, like top-bottom
         directionOpposites = {
@@ -44,7 +44,7 @@ function WorldSeedr(settings) {
     self.reset = function (settings) {
         all_possibilities = settings.possibilities;
         random = settings.random || Math.random.bind(Math);
-        on_placement = settings.on_placement || console.log.bind(console, "Placing");
+        onPlacement = settings.onPlacement || console.log.bind(console, "Placing");
         
         self.clearGeneratedCommands();
     };
@@ -67,14 +67,14 @@ function WorldSeedr(settings) {
      * 
      */
     self.getOnPlacement = function () {
-        return on_placement;
+        return onPlacement;
     };
     
     /**
      * 
      */
-    self.setOnPlacement = function (on_placement_new) {
-        on_placement = on_placement_new;
+    self.setOnPlacement = function (onPlacement_new) {
+        onPlacement = onPlacement_new;
     };
     
     /**
@@ -88,7 +88,7 @@ function WorldSeedr(settings) {
      * 
      */
     self.runGeneratedCommands = function () {
-        on_placement(generated_commands);
+        onPlacement(generated_commands);
     };
     
     

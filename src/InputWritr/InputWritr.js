@@ -48,10 +48,10 @@ function InputWritr(settings) {
 
         // An object to be passed to event calls, commonly with key information
         // (such as "Down" => 0 }
-        event_information,
+        eventInformation,
         
         // An optional boolean callback to disable or enable input triggers
-        can_trigger,
+        canTrigger,
 
         // Whether to record events into the history
         recording,
@@ -81,8 +81,8 @@ function InputWritr(settings) {
         
         triggers = settings.triggers || {};
         recipients = settings.recipients || {};
-        event_information = settings.event_information;
-        can_trigger = settings.can_trigger;
+        eventInformation = settings.eventInformation;
+        canTrigger = settings.canTrigger;
         recording = settings.hasOwnProperty("recording") ? settings.recording : true;
         
         self.addAliases(settings.aliases || {});
@@ -235,11 +235,11 @@ function InputWritr(settings) {
      */
     self.setCanTrigger = function (status) {
         if (status.constructor === Boolean) {
-            can_trigger = function () {
+            canTrigger = function () {
                 return status;
             };
         } else {
-            can_trigger = status;
+            canTrigger = status;
         }
     }
 
@@ -257,8 +257,8 @@ function InputWritr(settings) {
      *
      * @param {Object}
      */
-    self.setEventInformation = function (event_info_new) {
-        event_information = event_info_new;
+    self.setEventInformation = function (eventInfo_new) {
+        eventInformation = eventInfo_new;
     };
 
     
@@ -442,7 +442,7 @@ function InputWritr(settings) {
 
     /**
      * Primary driver function to run an event. The event is chosen from the
-     * triggers object, and called with event_information as the input.
+     * triggers object, and called with eventInformation as the input.
      *
      * @param {Function, String} event   The event function (or string alias of
      *                                   it) that will be called.
@@ -453,7 +453,7 @@ function InputWritr(settings) {
      * @return {Mixed}
      */
     self.callEvent = function (event, keycode, sourceEvent) {
-        if (can_trigger && !can_trigger(event, keycode)) {
+        if (canTrigger && !canTrigger(event, keycode)) {
             return;
         }
         
@@ -467,7 +467,7 @@ function InputWritr(settings) {
             event = triggers[event][keycode];
         }
 
-        return event(event_information, sourceEvent);
+        return event(eventInformation, sourceEvent);
     }
 
     /**
