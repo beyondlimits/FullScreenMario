@@ -324,9 +324,9 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * 
      */
-    function onGameUnpause(EightBitter) {
+    function onGamePlay(EightBitter) {
         EightBitter.AudioPlayer.resumeAll();
-        EightBitter.ModAttacher.fireEvent("onGameUnpause");
+        EightBitter.ModAttacher.fireEvent("onGamePlay");
     }
     
     
@@ -1819,7 +1819,6 @@ var FullScreenMario = (function(GameStartr) {
                     command.begin += left;
                     command.end += left;
                 }
-                console.log("Now", command.begin, command.end);
                 
                 MapsCreator.analyzePreSwitch(command, prethings, area, map);
             }
@@ -1928,7 +1927,6 @@ var FullScreenMario = (function(GameStartr) {
                 if (command.sliding) {
                     command.begin += left;
                     command.end += left;
-                    console.log("Now", left, command.begin, command.end, command);
                 }
                 
                 MapsCreator.analyzePreSwitch(command, prethings, area, map);
@@ -4384,7 +4382,6 @@ var FullScreenMario = (function(GameStartr) {
     function animatePlayerRestingOff(thing) {
         if (thing.EightBitter.MapScreener.underwater) {
             thing.EightBitter.switchClass(thing, "running", "paddling");
-            console.log("ooh");
         }
         thing.resting = undefined;
     }
@@ -4710,7 +4707,6 @@ var FullScreenMario = (function(GameStartr) {
         };
         
         spawn = thing.EightBitter.killSpawn(thing);
-        console.log(spawn.smart);
         nocollidecharold = spawn.nocollidechar;
         nocollideplayerold = spawn.nocollideplayer;
         spawn.nocollidechar = true;
@@ -6592,7 +6588,7 @@ var FullScreenMario = (function(GameStartr) {
         "addPlayer": addPlayer,
         "scrollPlayer": scrollPlayer,
         "onGamePause": onGamePause,
-        "onGameUnpause": onGameUnpause,
+        "onGamePlay": onGamePlay,
         // Inputs
         "keyDownLeft": keyDownLeft,
         "keyDownRight": keyDownRight,
