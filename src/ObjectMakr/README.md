@@ -10,10 +10,10 @@ function constructors are made available.
 
 #### Important APIs
 
-* **make(***`type`[, `settings`]***) - Creates a new instance of the given type 
+* **make(***`type`[, `settings`]***)** - Creates a new instance of the given type 
 and returns it. If desired, any settings are applied to it.
 
-* **getFunction(***`type`***) - Returns the constructor of the given class.
+* **getFunction(***`type`***)** - Returns the constructor of the given class.
 
 * **getFunctions() - Returns the constructor of the given class.
 
