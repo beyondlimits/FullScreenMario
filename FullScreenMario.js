@@ -2806,7 +2806,7 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         if (transport.constructor === String) {
-            thing.EightBitter.setLocation(transport.location);
+            thing.EightBitter.setLocation(transport);
         } else if (typeof transport.map !== "undefined") {
             thing.EightBitter.setMap(transport.map);
         } else if (typeof transport.location !== "undefined") {
