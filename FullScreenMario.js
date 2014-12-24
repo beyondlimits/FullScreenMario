@@ -3888,10 +3888,14 @@ var FullScreenMario = (function(GameStartr) {
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
             thing.hidden = !thing.hidden;
+            if (!thing.hidden) {
+                thing.EightBitter.PixelDrawer.setThingSprite(thing);
+            }
         }, interval, cleartime);
         
         thing.EightBitter.TimeHandler.addEvent(function () {
             thing.flickering = thing.hidden = false;
+            thing.EightBitter.PixelDrawer.setThingSprite(thing);
         }, cleartime * interval + 1);
     }
     
