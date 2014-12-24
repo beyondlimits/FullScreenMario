@@ -38,7 +38,7 @@ function UserWrappr(settings) {
             documentElement.requestFullScreen
             || documentElement.webkitRequestFullScreen
             || documentElement.mozRequestFullScreen
-            || documentElement.msRequestFullScreen
+            || documentElement.msRequestFullscreen
         ).bind(documentElement),
         
         cancelFullScreen = (
