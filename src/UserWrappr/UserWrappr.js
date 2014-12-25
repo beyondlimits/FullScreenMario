@@ -10,7 +10,7 @@ function UserWrappr(settings) {
         
         GameStartrConstructor,
         
-        StatsHoldr,
+        StatsHolder,
         
         GameStarter,
         
@@ -56,8 +56,7 @@ function UserWrappr(settings) {
     self.reset = function (settings) {
         var customs = settings.customs || {};
         GameStartrConstructor = (
-            settings.GameStartrConstructor
-            || GameStartrConstructor
+            settings.GameStartrConstructor || GameStartrConstructor
         );
         
         helpSettings = settings.helpSettings;
@@ -66,10 +65,7 @@ function UserWrappr(settings) {
         
         isFullScreen = false;
         sizes = settings.sizes;
-        currentSize = (
-            settings.currentSize 
-            || settings.sizeDefault
-        );
+        currentSize = settings.currentSize || settings.sizeDefault;
         
         GameStartrConstructor.prototype.proliferate(
             customs,
@@ -92,12 +88,19 @@ function UserWrappr(settings) {
             'up', 'right', 'bottom', 'left', 'space', 'shift', 'ctrl'
         ];
         
+        self.resetGameStarter();
+    };
+    
+    /**
+     * 
+     */
+    self.resetGameStarter = function (customs) {
         loadGameStarter(fixCustoms(customs || {}));
         loadControls(settings);
         
         window[settings.globalName || "GameStarter"] = GameStarter;
         GameStarter.UserWrapper = self;
-    };
+    }
     
     
     /* Simple gets
@@ -108,6 +111,13 @@ function UserWrappr(settings) {
      */
     self.getGameStarter = function () {
         return GameStarter;
+    };
+    
+    /**
+     * 
+     */
+    self.getStatsHolder = function () {
+        return StatsHolder;
     };
     
     
@@ -125,11 +135,19 @@ function UserWrappr(settings) {
      * 
      */
     self.displayHelpOptions = function () {
-        logHelpString("To focus on a group, enter '" + globalName + ".UserWrapper.displayHelpOption(<group-name>);");
+        logHelpString(
+            "To focus on a group, enter '" 
+            + globalName 
+            + ".UserWrapper.displayHelpOption(<group-name>);"
+        );
         
         Object.keys(helpSettings.options).forEach(self.displayHelpGroupSummary);
         
-        logHelpString("\nTo focus on a group, enter '" + globalName + ".UserWrapper.displayHelpOption(<group-name>);");
+        logHelpString(
+            "\nTo focus on a group, enter '" 
+            + globalName 
+            + ".UserWrapper.displayHelpOption(<group-name>);"
+        );
     };
     
     /**
@@ -262,6 +280,12 @@ function UserWrappr(settings) {
             length = schemas.length,
             i;
         
+        StatsHolder = new StatsHoldr({
+            "prefix": globalName + "::UserWrapper::StatsHolder",
+            "proliferate": GameStarter.proliferate,
+            "createElement": GameStarter.createElement
+        });
+        
         section.textContent = "";
         section.className = "length-" + length;
         
@@ -372,7 +396,7 @@ function UserWrappr(settings) {
      * 
      */
     var generatorOptionsTable = (function () {
-        function setBooleanInput(input, details) {
+        function setBooleanInput(input, details, schema) {
             var status = details.source.call(self, GameStarter) ? "on" : "off",
                 statusString = status === "on" ? "enabled" : "disabled";
             
@@ -389,11 +413,19 @@ function UserWrappr(settings) {
                     input.textContent = "on";
                     input.className = input.className.replace("disabled", "enabled");
                 }
+                
+                if (details.storeLocally) {
+                    console.log("oh", input.textContent);
+                    storeLocalStorageValue(input, input.textContent);
+                }
             };
+            
+            return input;
         }
         
-        function setKeyInput(input, details) {
+        function setKeyInput(input, details, schema) {
             var values = details.source.call(self, GameStarter),
+                children = [],
                 child, i, j;
             
             for (i = 0; i < values.length; i += 1) {
@@ -406,14 +438,22 @@ function UserWrappr(settings) {
                 child.value = child.valueOld = values[i].toLowerCase();
                 
                 child.onchange = (function (child) {
-                    details.callback.call(self, GameStarter, child.valueOld, child.value);
+                    details.callback.call(
+                        self, GameStarter, child.valueOld, child.value
+                    );
+                    if (details.storeLocally) {
+                        storeLocalStorageValue(child, child.value);
+                    }
                 }).bind(undefined, child);
                 
+                children.push(child);
                 input.appendChild(child);
             }
+            
+            return children;
         }
         
-        function setNumberInput(input, details) {
+        function setNumberInput(input, details, schema) {
             var child = document.createElement("input");
             
             child.type = "number";
@@ -425,12 +465,17 @@ function UserWrappr(settings) {
                 if (child.checkValidity()) {
                     details.update.call(self, GameStarter, child.value);
                 }
+                if (details.storeLocally) {
+                    storeLocalStorageValue(child, child.value);
+                }
             };
             
             input.appendChild(child);
+            
+            return child;
         }
         
-        function setSelectInput(input, details) {
+        function setSelectInput(input, details, schema) {
             var child = document.createElement("select"),
                 options = details.options(),
                 i;
@@ -444,6 +489,10 @@ function UserWrappr(settings) {
             child.onchange = function () {
                 details.update.call(self, GameStarter, child.value);
                 child.blur();
+                
+                if (details.storeLocally) {
+                    storeLocalStorageValue(child, child.value);
+                }
             };
             
             input.appendChild(child);
@@ -477,18 +526,18 @@ function UserWrappr(settings) {
                     }
                     
                     GameStarter.container.parentNode.removeChild(GameStarter.container);
-                    self.reset({
-                        "customs": customs
-                    });
+                    self.resetGameStarter(customs);
                 };
             
-            return function (input, details) {
+            return function (input, details, schema) {
                 var child;
                 
                 details.options = detailsOptions;
                 details.source = detailsSource;
                 details.update = detailsUpdate;
-                child = setSelectInput(input, details);
+                child = setSelectInput(input, details, schema);
+                
+                return child;
             };
         })();
         
@@ -503,7 +552,7 @@ function UserWrappr(settings) {
         return function (schema) {
             var output = document.createElement("div"),
                 table = document.createElement("table"),
-                details, row, label, input,
+                details, row, label, input, child,
                 i;
             
             output.className = "select-options select-options-table";
@@ -524,7 +573,11 @@ function UserWrappr(settings) {
                     row.appendChild(label);
                     row.appendChild(input);
                     
-                    optionTypes[schema.options[i].type](input, details);
+                    child = optionTypes[schema.options[i].type](input, details, schema);
+                    if (details.storeLocally) {
+                        ensureLocalStorageValue(child, details, schema);
+                    }
+                    
                     table.appendChild(row);
                 }
             }
@@ -734,6 +787,84 @@ function UserWrappr(settings) {
         
         return output;
     };
+    
+    
+    /* Utilities
+    */
+    
+    /**
+     * 
+     */
+    function ensureLocalStorageValue(child, details, schema) {
+        if (child.constructor === Array) {
+            ensureLocalStorageValues(child, details, schema);
+            return;
+        }
+        
+        var key = schema.title + "::" + details.title,
+            value;
+        
+        child.setAttribute("localStorageKey", key);
+        StatsHolder.addStatistic(key, {
+            "storeLocally": true,
+            "valueDefault": details.source.call(self, GameStarter)
+        });
+        
+        value = StatsHolder.get(key);
+        if (value !== "" && value !== child.value) {
+            child.value = value;
+                
+            if (child.onchange) {
+                child.onchange();
+            } else if (child.onclick) {
+                child.onclick();
+            }
+        }
+    }
+    
+    /**
+     * 
+     */
+    function ensureLocalStorageValues(children, details, schema) {
+        var keyGeneral = schema.title + "::" + details.title,
+            values = details.source.call(self, GameStarter),
+            settings = {
+                "storeLocally": true
+            },
+            key, child, value, i;
+        
+        for (i = 0; i < children.length; i += 1) {
+            key = keyGeneral + "::" + i;
+            child = children[i];
+            child.setAttribute("localStorageKey", key);
+            
+            StatsHolder.addStatistic(key, {
+                "storeLocally": true,
+                "valueDefault": values[i]
+            });
+            
+            value = StatsHolder.get(key);
+            if (value !== "" && value !== child.value) {
+                child.value = value;
+                
+                if (child.onchange) {
+                    child.onchange();
+                } else if (child.onclick) {
+                    child.onclick();
+                }
+            }
+        }
+    }
+    
+    /**
+     * 
+     */
+    function storeLocalStorageValue(child, value) {
+        var key = child.getAttribute("localStorageKey");
+        if (key) {
+            StatsHolder.set(key, value);
+        }
+    }
     
     
     /**

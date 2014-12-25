@@ -205,9 +205,10 @@ FullScreenMario.prototype.settings.ui = {
                     },
                     "update": function (GameStarter, value) {
                         GameStarter.GamesRunner.setSpeed(
-                            Number(value.replace('x', 0))
+                            Number(value.replace('x', ''))
                         );
-                    }
+                    },
+                    "storeLocally": true
                 },
                 {
                     "title": "View Mode",
@@ -220,16 +221,18 @@ FullScreenMario.prototype.settings.ui = {
                         return ["60fps", "30fps"];
                     },
                     "source": function (GameStarter) {
-                        return 1 / GameStarter.PixelDrawer.getFramerateSkip() * 60;
+                        return (1 / GameStarter.PixelDrawer.getFramerateSkip() * 60) + "fps";
                     },
                     "update": function (GameStarter, value) {
                         var numeric = Number(value.replace("fps", ""));
                         GameStarter.PixelDrawer.setFramerateSkip(1 / numeric * 60);
-                    }
+                    },
+                    "storeLocally": true
                 },
                 {
                     "title": "Tilt Controls",
                     "type": "Boolean",
+                    "storeLocally": true,
                     "source": function (GameStarter) {
                         return GameStarter.MapScreener.allowDeviceMotion;
                     },
@@ -257,8 +260,13 @@ FullScreenMario.prototype.settings.ui = {
                     return {
                         "title": title[0].toUpperCase() + title.substr(1),
                         "type": "Keys",
+                        "storeLocally": true,
                         "source": function (GameStarter) {
-                            return GameStarter.InputWriter.getAliasAsKeyStrings(title);
+                            return GameStarter.InputWriter
+                                .getAliasAsKeyStrings(title)
+                                .map(function (string) {
+                                    return string.toLowerCase();
+                                });
                         },
                         "callback": function (GameStarter, valueOld, valueNew) {
                             GameStarter.InputWriter.switchAliasValues(

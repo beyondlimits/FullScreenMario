@@ -125,9 +125,9 @@ function StatsHoldr(settings) {
      *                                   from subsequent Objects. Generally 
      *                                   given by EightBittr.prototype to reduce
      *                                   duplicate code.
-     * @param {Object} values   The keyed values to be stored, as well as all
-     *                          associated information with them. The names of
-     *                          values are keys in the values Object.
+     * @param {Object} [values]   The keyed values to be stored, as well as all
+     *                            associated information with them. The names of
+     *                            values are keys in the values Object.
      * @param {Object} [localStorage]   A substitute for localStorage, generally
      *                                  used as a shim (defaults to window's 
      *                                  localStorage, or a new Object if that

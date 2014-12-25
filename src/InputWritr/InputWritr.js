@@ -126,7 +126,7 @@ function InputWritr(settings) {
 
 
     /* Simple gets
-     */
+    */
 
     /** 
      * Returns the Object storing aliases, as "name" => [values]
@@ -190,8 +190,8 @@ function InputWritr(settings) {
             return key.charCodeAt(0) - 32;
         }
         
-        return typeof keyAliasesToCodes[alias] !== "undefined"
-            ? keyAliasesToCodes[alias] : -1;
+        return typeof keyAliasesToCodes[key] !== "undefined"
+            ? keyAliasesToCodes[key] : -1;
     }
     
     /**
@@ -225,7 +225,7 @@ function InputWritr(settings) {
 
 
     /* Simple sets
-     */
+    */
      
     /**
      * Simple set function for the Function used to determine whether this is 

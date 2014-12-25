@@ -135,18 +135,30 @@ var FullScreenMario = (function(GameStartr) {
     };            /* Resets    */
     
     /**
+     * Resets self.StatsHolder via the parent GameStartr resetStatsHolder.
      * 
+     * If the screen isn't wide enough to fit the 'lives' display, it's hidden.
+     * 
+     * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
      */
-    function resetStatsHolder(self, customs) {
-        GameStartr.prototype.resetStatsHolder(self, customs);
+    function resetStatsHolder(EightBitter, customs) {
+        GameStartr.prototype.resetStatsHolder(EightBitter, customs);
         
         if (customs.width < 560) {
-            self.StatsHolder.getContainer().children[0].cells[4].style.display = "none";
+            EightBitter.StatsHolder.getContainer().children[0].cells[4].style.display = "none";
         }
     }
     
     /**
+     * Sets self.container via the parent GameStartr resetContaienr.
      * 
+     * The container is given the "Press Start" font, the PixelRender is told
+     * to draw the scenery, solid, character, and text groups, and the container
+     * width is set to the custom's width.
+     * 
+     * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
      */
     function resetContainer(self, customs) {
         GameStartr.prototype.resetContainer(self, customs);
@@ -168,7 +180,10 @@ var FullScreenMario = (function(GameStartr) {
     */
     
     /**
+     * Completely restarts the game. Lives are reset to 3, the map goes back
+     * to default, and the onGameStart mod trigger is fired.
      * 
+     * @this {EightBittr}
      */
     function gameStart() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
