@@ -22,7 +22,6 @@ FullScreenMario.prototype.settings.statistics = {
     "defaults": {
         "element": "td"
     },
-    "separator": "<br />",
     "values": {
         "power": {
             "valueDefault": 1,

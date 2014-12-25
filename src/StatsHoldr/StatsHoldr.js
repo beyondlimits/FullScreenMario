@@ -50,7 +50,6 @@
  *     "defaults": {
  *         "element": "td"
  *     },
- *     "separator": "<br />",
  *     "values": {
  *         "bestStage": {
  *             "valueDefault": "Beginning",
@@ -97,9 +96,6 @@ function StatsHoldr(settings) {
         // An array of elements as createElement arguments, outside-to-inside.
         containers,
 
-        // A bit of text between an element's label and value.
-        separator,
-
         // An Array of objects to be passed to triggered events.
         callbackArgs,
         
@@ -136,8 +132,6 @@ function StatsHoldr(settings) {
      *                                      children for each value should be
      *                                      made (defaults to false).
      * @param {Object} [defaults]   Default attributes for each value.
-     * @param {String} [separator]   A String to place between keys and values
-     *                               in the HTML container (defaults to "").
      * @param {Array} [callbackArgs]   Arguments to pass via Function.apply to 
      *                                 triggered callbacks (defaults to []).
      */
@@ -147,7 +141,6 @@ function StatsHoldr(settings) {
         createElement = settings.createElement;
         callbackArgs = settings.callbackArgs || [];
         localStorage = settings.localStorage || window.localStorage || {};
-        separator = settings.separator || "";
         
         defaults = settings.defaults || {};
 
@@ -262,9 +255,14 @@ function StatsHoldr(settings) {
         
         if (this.hasElement) {
             this.element = createElement(this.element || "div", {
-                className: prefix + "_value " + key,
-                innerHTML: this.key + separator + this.value
+                className: prefix + "_value " + key
             });
+            this.element.appendChild(createElement("div", {
+                "textContent": key
+            }));
+            this.element.appendChild(createElement("div", {
+                "textContent": this.value
+            }));
         }
 
         if (this.storeLocally) {
@@ -379,13 +377,12 @@ function StatsHoldr(settings) {
     };
     
     /**
-     * Updates the Value's element by giving it an innerHTML of its key, the
-     * separator, and its value.
+     * Updates the Value's element's second child to be the Value's value.
      * 
      * @this {Value}
      */
     Value.prototype.updateElement = function () {
-        this.element.innerHTML = this.key + separator + this.value;
+        this.element.children[1].textContent = this.value;
     };
     
     /**

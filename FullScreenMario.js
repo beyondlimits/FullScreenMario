@@ -298,9 +298,9 @@ var FullScreenMario = (function(GameStartr) {
         
         EightBitter.setPlayerSizeSmall(player);
         
-        if (player.power > 1) {
+        if (player.power >= 2) {
             EightBitter.playerGetsBig(player, true);
-            if (player.power > 2) {
+            if (player.power === 3) {
                 EightBitter.playerGetsFire(player, true);
             }
         }
@@ -1064,21 +1064,23 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         thing.EightBitter.AudioPlayer.play("Powerup");
-        thing.EightBitter.StatsHolder.increase("power");
-        
         thing.EightBitter.scoreOn(1000, thing.EightBitter.player);
         
         if (thing.power < 3) {
-            thing.shrooming = true;
-            thing.power += 1;
+            thing.EightBitter.StatsHolder.increase("power");
             
-            if (thing.power === 3) {
-                thing.EightBitter.playerGetsFire(thing.EightBitter.player);
-            } else {
-                thing.EightBitter.playerGetsBig(thing.EightBitter.player);
+            if (thing.power < 3) {
+                thing.shrooming = true;
+                thing.power += 1;
+                
+                if (thing.power === 3) {
+                    thing.EightBitter.playerGetsFire(thing.EightBitter.player);
+                } else {
+                    thing.EightBitter.playerGetsBig(thing.EightBitter.player);
+                }
             }
         }
-        
+            
         thing.EightBitter.ModAttacher.fireEvent("onPlayerShroom", thing, other);
     }
     

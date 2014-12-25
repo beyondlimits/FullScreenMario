@@ -415,7 +415,6 @@ function UserWrappr(settings) {
                 }
                 
                 if (details.storeLocally) {
-                    console.log("oh", input.textContent);
                     storeLocalStorageValue(input, input.textContent);
                 }
             };
