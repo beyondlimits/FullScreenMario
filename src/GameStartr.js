@@ -1,7 +1,13 @@
 /**
  * GameStartr.js
  * 
- * Virtual / abstract constructor for games
+ * An abstract class used as a base for creating sprite-based 2D games. Utility
+ * functions and an expansive skeleton are available for a child class to make
+ * us of, particular with physics manipulations, graphics rendering, and reset
+ * functions based around the 19 required modules.
+ * 
+ * Descendent classes of GameStartr must put their settings in their prototype
+ * under settings. Reset Functions below list their required file names.
  */
 var GameStartr = (function (EightBittr) {
     "use strict";
