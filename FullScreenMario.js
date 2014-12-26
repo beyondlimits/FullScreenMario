@@ -198,7 +198,9 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
-     * 
+     * Completely ends the game. All Thing groups are clared, sounds are 
+     * stopped, the screen goes to black, "GAME OVER" is displayed. After a 
+     * while, the game restarts again via gameStart.
      */
     function gameOver() {
         var EightBitter = EightBittr.ensureCorrectCaller(this),
@@ -239,7 +241,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Adds a Thing via addPreThing based on the specifications in a PreThing.
+     * This is done relative to MapScreener.left and MapScreener.floor.
      * 
+     * @param {PreThing} prething
      */
     function addPreThing(prething) {
         var thing = prething.thing,
@@ -270,11 +275,15 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Adds a new Player Thing to the game and sets it as EightBitter.play. Any
+     * required additional settings (namely keys, power/size, and swimming) are
+     * applied here.
      * 
-     * 
-     * 
-     * @todo Create a generic version of this in GameStartr
-     * @todo Make players as an array of players (native multiplayer!)
+     * @this {EightBittr}
+     * @param {Number} [left]   A left coordinate to place the Thing at (by
+     *                          default, unitsize * 16).
+     * @param {Number} [bottom]   A bottom coordinate to place the Thing upon
+     *                            (by default, unitsize * 16).         
      */
     function addPlayer(left, bottom) {
         var EightBitter = EightBittr.ensureCorrectCaller(this),
@@ -308,10 +317,15 @@ var FullScreenMario = (function(GameStartr) {
             }
         }
         
+        if (typeof left === "undefined") {
+            left = EightBitter.unitsize * 16;
+        }
+        if (typeof bottom === "undefined") {
+            bottom = EightBitter.unitsize * 16;
+        }
+        
         EightBitter.addThing(
-            player,
-            typeof(left) === "undefined" ? EightBitter.unitsize * 16 : left, 
-            bottom - player.height * EightBitter.unitsize
+            player, left, bottom - player.height * EightBitter.unitsize
         );
         
         EightBitter.ModAttacher.fireEvent("onAddPlayer", player);
@@ -320,7 +334,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Shortcut to call scrollThing on the player.
      * 
+     * @this {EightBittr}
+     * @param {Number} dx
+     * @param {Number} dy
      */
     function scrollPlayer(dx, dy) {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
@@ -331,7 +349,8 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
-     * 
+     * Triggered Function for when the game is paused. Music stops, the pause
+     * bleep is played, and the mod event is fired.
      */
     function onGamePause(EightBitter) {
         EightBitter.AudioPlayer.pauseAll();
@@ -340,7 +359,8 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
-     * 
+     * Triggered Function for when the game is played or unpause. Music resumes 
+     * and the mod event is fired.
      */
     function onGamePlay(EightBitter) {
         EightBitter.AudioPlayer.resumeAll();
@@ -352,7 +372,10 @@ var FullScreenMario = (function(GameStartr) {
     */
     
     /**
+     * Reacts to the left key being pressed. keys.run and leftDown are marked 
+     * and the mod event is fired.
      * 
+     * @param {Player} player
      */
     function keyDownLeft(player) {
         player.keys.run = -1;
@@ -361,7 +384,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Reacts to the right key being pressed. keys.run and keys.rightDown are
+     * marked and the mod event is fired.
      * 
+     * @param {Player} player
      */
     function keyDownRight(player) {
         player.keys.run = 1;
@@ -370,7 +396,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Reacts to the up key being pressed. If the player can jump, it does, and
+     * underwater paddling is checked. The mod event is fired.
      * 
+     * @param {Player} player
      */
     function keyDownUp(player) {
         player.keys.up = true;
@@ -398,7 +427,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Reacts to the down key being pressed. keys.crouch is marked and the mod
+     * event is fired.
      * 
+     * @param {Player} player
      */
     function keyDownDown(player) {
         player.keys.crouch = true;
@@ -406,7 +438,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Reacts to the sprint key being pressed. Firing happens if the player is
+     * able, keys.spring is marked, and the mod event is fired.
      * 
+     * @param {Player} player
      */
     function keyDownSprint(player) {
         if (player.power === 3 && player.keys.sprint === 0 && !player.crouch) {
@@ -417,18 +452,25 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Reacts to the pause key being pressed. Pausing happens almost immediately
+     * (the delay helps prevent accidental pauses) and the mod event fires.
      * 
+     * @param {Player} player
      */
     function keyDownPause(player) {
-        var FSM = player.EightBitter;
-        if (!FSM.GamesRunner.getPaused()) {
-            FSM.TimeHandler.addEvent(FSM.GamesRunner.pause, 7, true);
+        if (!player.EightBitter.GamesRunner.getPaused()) {
+            player.EightBitter.TimeHandler.addEvent(
+                player.EightBitter.GamesRunner.pause, 7, true
+            );
         }
         player.EightBitter.ModAttacher.fireEvent("onKeyDownPause");
     }
     
     /**
+     * Reacts to the mute key being lifted. Muting is toggled and the mod event
+     * is fired.
      * 
+     * @param {Player} player
      */
     function keyDownMute(player) {
         player.EightBitter.AudioPlayer.toggleMuted();
@@ -436,7 +478,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Reacts to the left key being lifted. keys.run and keys.leftDown are 
+     * marked and the mod event is fired.
      * 
+     * @param {Player} player
      */
     function keyUpLeft(player) {
         player.keys.run = player.keys.leftDown = 0;
@@ -444,7 +489,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Reacts to the right key being lifted. keys.run and keys.rightDown are 
+     * marked and the mod event is fired.
      * 
+     * @param {Player} player
      */
     function keyUpRight(player) {
         player.keys.run = player.keys.rightDown = 0;
@@ -452,7 +500,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Reacts to the up key being lifted. Jumping stops and the mod event is
+     * fired.
      * 
+     * @param {Player} player
      */
     function keyUpUp(player) {
         if (!player.EightBitter.MapScreener.underwater) {
@@ -463,7 +514,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Reacts to the down key being lifted. keys.crouch is marked, crouch
+     * removal happens if necessary, and the mod event is fired.
      * 
+     * @param {Player} player
      */
     function keyUpDown(player) {
         player.keys.crouch = 0;
@@ -474,7 +528,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Reacts to the spring key being lifted. keys.sprint is marked and the mod
+     * event is fired.
      * 
+     * @param {Player} player
      */
     function keyUpSprint(player) {
         player.keys.sprint = 0;
@@ -482,7 +539,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Reacts to the pause key being lifted. The game is unpaused if necessary
+     * and the mod event is fired.
      * 
+     * @param {Player} player
      */
     function keyUpPause(player) {
         if (player.EightBitter.GamesRunner.getPaused()) {
@@ -492,7 +552,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Reacts to a right click being pressed. Pausing is toggled and the mod
+     * event is fired.
      * 
+     * @param {Player} player
      */
     function mouseDownRight(player) {
         player.EightBitter.GamesRunner.togglePause();
@@ -500,7 +563,12 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Reacts to a regularly caused device motion event. Acceleration is checked
+     * for changed tilt horizontally (to trigger left or right key statuses) or
+     * changed tilt vertically (jumping). The mod event is also fired.
      * 
+     * @param {Player} player
+     * @param {DeviceMotionEvent} event
      */
     var deviceMotion = (function () {
         var motionDown = false,
@@ -550,7 +618,10 @@ var FullScreenMario = (function(GameStartr) {
     })();
     
     /**
+     * Checks whether inputs can be fired, which is equivalent to the status of
+     * the MapScreener's nokeys variable (an inverse value).
      * 
+     * @param {EightBittr} EightBitter
      */
     function canInputsTrigger(EightBitter) {
         return !EightBitter.MapScreener.nokeys;
@@ -561,9 +632,13 @@ var FullScreenMario = (function(GameStartr) {
     */
     
     /**
+     * Regular maintenance Function called on the Solids group every upkeep.  
+     * Things are checked for being alive and to the right of QuadsKeeper.left; 
+     * if they aren't, they are removed. Each Thing is also allowed a movement
+     * Function.
      * 
-     * 
-     * @param {FullScreenMario} EightBitter
+     * @param {EightBittr} EightBitter
+     * @param {Solid[]} solids   EightBittr's GroupHolder's Solid group.
      */
     function maintainSolids(EightBitter, solids) {
         var delx = EightBitter.QuadsKeeper.left,
@@ -586,9 +661,14 @@ var FullScreenMario = (function(GameStartr) {
     }
 
     /**
+     * Regular maintenance Function called on the Characters group every upkeep.
+     * Things have gravity and y-velocities, collision detection, and resting
+     * checks applied before they're checked for being alive. If they are, they
+     * are allowed a movement Function; if not, they are removed.
      * 
-     * 
-     * @param {FullScreenMario} EightBitter
+     * @param {EightBittr} EightBitter
+     * @param {Character[]} characters   EightBittr's GroupHolder's Characters
+     *                                   group.
      */
     function maintainCharacters(EightBitter, characters) {
         var delx = EightBitter.QuadsKeeper.right,
@@ -650,9 +730,12 @@ var FullScreenMario = (function(GameStartr) {
     }
 
     /**
+     * Regular maintenance Function called on the player every upkeep. A barrage
+     * of tests are applied, namely falling/jumping, dying, x- and y-velocities,
+     * running, and scrolling. This is separate from the movePlayer movement
+     * Function that will be called in maintainCharacters.
      * 
-     * 
-     * @param {FullScreenMario} EightBitter
+     * @param {EightBittr} EightBitter
      */
     function maintainPlayer(EightBitter) {
         var player = EightBitter.player;
@@ -729,13 +812,17 @@ var FullScreenMario = (function(GameStartr) {
     */
 
     /**
-     * Function generator for generic canThingCollide checker.
+     * Function generator for the generic canThingCollide checker. This is used
+     * repeatedly by ThingHittr to generate separately optimized Functions for
+     * different Thing types.
      * 
      * @return {Function}
      */
     function generateCanThingCollide() {
         /**
-         * Generic checker for canCollide, used for both Solids and Characters
+         * Generic checker for canCollide, used for both Solids and Characters.
+         * This just returns if the Thing is alive and doesn't have the
+         * nocollide flag.
          * 
          * @param {Thing} thing
          * @return {Boolean}
@@ -746,8 +833,8 @@ var FullScreenMario = (function(GameStartr) {
     }
 
     /**
-     * Generic base function to check if one thing is touching another
-     * This will be called by the more specific thing touching functions
+     * Generic base function to check if one Thing is touching another. This 
+     * will be called by the more specific Thing touching functions.
      * 
      * @param {Thing} thing
      * @param {Thing} other
@@ -765,9 +852,13 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
-     * Is thing on top of other?
+     * General top collision detection Function for two Things to determine if
+     * one Thing is on top of another. This takes into consideration factors
+     * such as which are solid or an enemy, and y-velocity.
      * 
-     * 
+     * @param {Thing} thing
+     * @param {Thing} other
+     * @return {Boolean}
      * @remarks This is a more specific form of isThingTouchingThing
      */
     function isThingOnThing(thing, other) {
@@ -783,8 +874,10 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         // If thing is the player, and it's on top of an enemy, that's true
-        if (thing.player && thing.bottom < other.bottom 
-                && other.type === "enemy") {
+        if (
+            thing.player && thing.bottom < other.bottom 
+            && other.type === "enemy"
+        ) {
             return true;
         }
         
@@ -819,8 +912,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Top collision Function to determine if one Thing is on top of a solid.
      * 
-     * 
+     * @param {Thing} thing
+     * @param {Solid} other
      * @remarks Similar to isThingOnThing, but more specifically used for
      *          isCharacterOnSolid and isCharacterOnResting
      */
@@ -854,7 +949,13 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Top collision Function to determine if a character is on top of a solid.
+     * This is always true for resting (since resting checks happen before when
+     * this should be called).
      * 
+     * @param {Character} thing
+     * @param {Solid} other
+     * @return {Boolean}
      */
     function isCharacterOnSolid(thing, other) {
         // If character is resting on solid, this is automatically true
@@ -882,7 +983,14 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Top collision Function to determine if a character should be considered 
+     * resting on a solid. This mostly uses isThingOnSolid, but also checks for
+     * the corner cases of the character being exactly at the edge of the solid
+     * (such as when jumping while next to it).
      * 
+     * @param {Character} thing
+     * @param {Solid} other
+     * @return {Boolean}
      */
     function isCharacterOnResting(thing, other) {
         if (!thing.EightBitter.isThingOnSolid(thing, other)) {
@@ -904,11 +1012,21 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Function generator for the generic isCharacterTouchingCharacter checker.
+     * This is used repeatedly by ThingHittr to generate separately optimized
+     * Functions for different Thing types.
      * 
+     * @return {Function} 
      */
     function generateIsCharacterTouchingCharacter() {
         /**
+         * Generic checker for whether two characters are touching each other.
+         * This mostly checks to see if either has the nocollidechar flag, and
+         * if the other is a player. isThingTouchingThing is used after.
          * 
+         * @param {Character} thing
+         * @param {Character} other
+         * @return {Boolean}
          */
         return function isCharacterTouchingCharacter(thing, other) {
             if (thing.nocollidechar && (!other.player || thing.nocollideplayer)) {
@@ -923,16 +1041,28 @@ var FullScreenMario = (function(GameStartr) {
         };
     }
     
+    /**
+     * Function generator for the generic isCharacterTouchingSolid checker. This
+     * is used repeatedly by ThingHittr to generate separately optimized 
+     * Functions for different Thing types.
+     * 
+     * @return {Function}
+     */
     function generateIsCharacterTouchingSolid() {
         /**
+         * Generic checker for whether a character is touching a solid. The
+         * hidden, collideHidden, and nocollidesolid flags are most relevant.
          * 
-         * @param {Thing} thing
-         * @param {Thing} other
+         * @param {Character} thing
+         * @param {Solid} other
          */
-        return function isCharacterTouchingSolid(thing, other) {            // Hidden solids can only be touched by the player bottom-bumping them,
-            // or by specifying collideHidden
+        return function isCharacterTouchingSolid(thing, other) {            // Hidden solids can only be touched by the player bottom-bumping
+            // them, or by specifying collideHidden
             if (other.hidden && !other.collideHidden) {
-                if (!thing.player || !thing.EightBitter.isSolidOnCharacter(other, thing)) {                    return false;                }
+                if (
+                    !thing.player 
+                    || !thing.EightBitter.isSolidOnCharacter(other, thing)
+                ) {                    return false;                }
             }
             
             if (thing.nocollidesolid && !(thing.allowUpSolids && other.up)) {
@@ -944,25 +1074,32 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
-     * 
+     * @param {Character} thing
+     * @param {Enemy} other
+     * @return {Boolean} Whether the Thing's bottom is above the other's top,
+     *                   allowing for the other's toly.
      */
     function isCharacterAboveEnemy(thing, other) {
         return thing.bottom < other.top + other.toly;
     }
     
     /**
-     * 
+     * @param {Character} thing
+     * @param {Solid} other
+     * @return {Boolean} Whether the Thing's top is above the other's bottom,
+     *                   allowing for the Thing's toly and yvel.
      */
     function isCharacterBumpingSolid(thing, other) {
         return thing.top + thing.toly + Math.abs(thing.yvel) > other.bottom;
     }
     
     /**
-     * 
-     * 
+     * @param {Solid} thing
+     * @param {Character} other
+     * @return {Boolean} Whether the Thing, typically a solid, is on top of the 
+     *                   other .
      * @remarks Similar to isThingOnThing, but more specifically used for
      *          characterTouchedSolid
-     * @remarks This sets the character's .midx property
      */    function isSolidOnCharacter(thing, other) {
         // This can never be true if other is falling
         if (other.yvel >= 0) {
@@ -971,8 +1108,8 @@ var FullScreenMario = (function(GameStartr) {
         
         // Horizontally, all that's required is for the other's midpoint to
         // be within the thing's left and right
-        other.midx = thing.EightBitter.getMidX(other);
-        if (other.midx <= thing.left || other.midx >= thing.right) {
+        var midx = thing.EightBitter.getMidX(other);
+        if (midx <= thing.left || midx >= thing.right) {
             return false;
         }
         
@@ -988,7 +1125,9 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
-     * 
+     * @param {Character} thing
+     * @return {Boolean} Whether the Thing is alive, meaning it has a true alive
+     *                   flag and a false dead flag.
      */
     function isCharacterAlive(thing) {
         return thing && thing.alive && !thing.dead;
@@ -999,7 +1138,14 @@ var FullScreenMario = (function(GameStartr) {
     */
     
     /**
+     * Externally facing Function to gain some number of lives. StatsHolder 
+     * increases the "score" statistic, an audio is played, and the mod event is 
+     * fired.
      * 
+     * @this {EightBittr}
+     * @param {Number} [amount]   How many lives to gain (by default, 1).
+     * @param {Boolean} [nosound]   Whether the sound should be skipped (by
+     *                              default, false).
      */
     function gainLife(amount, nosound) {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
@@ -1016,10 +1162,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
-     * Basic function for Mario causing an item to jump slightly into the air, 
-     * such as from hitting a solid below it. 
+     * Basic Function for an item to jump slightly into the air, such as from 
+     * the player hitting a solid below it. 
      * 
-     * @param {Thing} thing
+     * @param {Item} thing
      * @remarks This simply moves the thing up slightly and decreases its
      *          y-velocity, without considering x-direction.
      */
@@ -1029,7 +1175,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Generic Function for when the player jumps on top of an enemy. The enemy
+     * is killed, the player's velocity points upward, and score is gained.
      * 
+     * @param {Player} thing
+     * @param {Enemy} other
      */
     function jumpEnemy(thing, other) {
         if (thing.keys.up) {
@@ -1056,10 +1206,15 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Callback for the player hitting a Mushroom or FireFlower. The player's
+     * power and the StatsHolder's "power" statistic both go up, and the
+     * corresponding animations and mod event are triggered.
      * 
+     * @param {Player} thing
+     * @param {Item} [other]
      */
     function playerShroom(thing, other) {
-        if (thing.shrooming) {
+        if (thing.shrooming || !thing.player) {
             return;
         }
         
@@ -1085,18 +1240,31 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Callback for the player hitting a Mushroom1Up. The game simply calls 
+     * gainLife and triggers the mod event.
      * 
+     * @param {Player} thing
+     * @param {Item} [other]
      */
     function playerShroom1Up(thing, other) {
-        if (thing.player) {
-            thing.EightBitter.gainLife(1);
+        if (!thing.player) {
+            return;
         }
         
-        thing.EightBitter.ModAttacher.fireEvent("onPlayerShroom1Up", thing, other);
+        thing.EightBitter.gainLife(1);
+        thing.EightBitter.ModAttacher.fireEvent(
+            "onPlayerShroom1Up", thing, other
+        );
     }
     
     /**
+     * Callback for the player hitting a Star. A set of animation loops and 
+     * sounds play, and the mod event is triggered. After some long period time,
+     * playerStarDown is called to start the process of removing star power.
      * 
+     * @param {Player} thing
+     * @param {Number} [timeout]   How long to wait before calling 
+     *                             playerStarDown (by default, 560).
      */
     function playerStarUp(thing, timeout) {
         thing.star += 1;
@@ -1120,7 +1288,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Trigger to commence reducing the player's star power. This slows the
+     * class cycle, times a playerStarOffCycle trigger, and fires the mod event.
      * 
+     * @param {Player} thing
      */
     function playerStarDown(thing) {
         if (!thing.player) {
@@ -1142,7 +1313,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Trigger to continue reducing the player's star power. This resumes 
+     * playing the regular theme, times a playerStarOffFinal trigger, and fires
+     * the mod event.
      * 
+     * @param {Player} thing
      */
     function playerStarOffCycle(thing) {
         if (!thing.player) {
@@ -1156,17 +1331,21 @@ var FullScreenMario = (function(GameStartr) {
         
         thing.EightBitter.AudioPlayer.playTheme();
         
-        thing.EightBitter.ModAttacher.fireEvent("onPlayerStarOffCycle", thing);
-        
         thing.EightBitter.TimeHandler.addEvent(
             thing.EightBitter.playerStarOffFinal,
             70,
             thing
         );
+        
+        thing.EightBitter.ModAttacher.fireEvent("onPlayerStarOffCycle", thing);
     }
     
     /**
+     * Trigger to finish reducing the player's star power. This actually reduces
+     * the player's star attribute, cancels the sprite cycle, adds the previous 
+     * classes back, and fires the mod event.
      * 
+     * @param {Player} thing
      */
     function playerStarOffFinal(thing) {
         if (!thing.player) {
@@ -1186,7 +1365,13 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Sizing modifier for the player, typically called when entering a location
+     * or colliding with a Mushroom. This sets the player's size to the large 
+     * mode and optionally plays the animation. The mod event is then fired.
      * 
+     * @param {Player} thing
+     * @param {Boolean} [noAnimation]   Whether to skip the animation (by 
+     *                                  default, false).
      */
     function playerGetsBig(thing, noAnimation) {
         thing.keys.down = 0;
@@ -1205,7 +1390,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animation scheduler for the player getting big. The shrooming classes are
+     * cycled through rapidly while the player's velocity is paused.
      * 
+     * @param {Player} thing
      */
     function playerGetsBigAnimation(thing) {
         var stages = [
@@ -1232,10 +1420,16 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Sizing modifier for the player, typically called when going down to 
+     * normal size after being large. This containst eha nimation scheduling
+     * to cycle through paddling classes, then flickers the player. The mod 
+     * event is fired.
      * 
+     * @param {Player} thing
      */
     function playerGetsSmall(thing) {
         var bottom = thing.bottom;
+        
         thing.keys.down = 0;
         thing.EightBitter.thingPauseVelocity(thing);
         
@@ -1271,17 +1465,22 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Visual changer for when the player collides with a FireFlower. The 
+     * "fiery" class is added, and the mod event is fired.
      * 
+     * @param {Player} thing
      */
     function playerGetsFire(thing) {
         thing.shrooming = false;
-        thing.EightBitter.removeClass(thing, "intofiery");
         thing.EightBitter.addClass(thing, "fiery");
         thing.EightBitter.ModAttacher.fireEvent("onPlayerGetsFire");
     }
     
     /**
+     * Actually sets the size for a player to small (8x8) via setSize and 
+     * updateSize.
      * 
+     * @param {Player} thing
      */
     function setPlayerSizeSmall(thing) {
         thing.EightBitter.setSize(thing, 8, 8, true);
@@ -1289,7 +1488,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Actually sets the size for a player to large (8x16) via setSize and 
+     * updateSize.
      * 
+     * @param {Player} thing
      */
     function setPlayerSizeLarge(thing) {
         thing.EightBitter.setSize(thing, 8, 16, true);
@@ -1297,7 +1499,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Removes the crouching flag from the player and re-adds the running cycle. 
+     * If the player is large (has power > 1), size and classes must be set.
      * 
+     * @param {Player} thing
      */
     function animatePlayerRemoveCrouch(thing) {
         thing.crouching = false;
@@ -1314,17 +1519,19 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Officially unattaches a character from a solid. The thing's physics flags
+     * are reset to normal, the two have their attachment flags set, and the 
+     * thing is set to be jumping off.
      * 
-     * 
-     * @param {Thing} thing   A character attached to other
-     * @param {Other} other   A solid the thing is attached to
+     * @param {Player} thing   A character attached to other.
+     * @param {Solid} other   A solid the thing is attached to.
      */
     function unattachPlayer(thing, other) {
         thing.nofall = false;
         thing.nocollide = false;
         thing.skipoverlaps = false;
         thing.attachedSolid = undefined;
-        thing.xvel = thing.keys.run;
+        thing.xvel = thing.keys ? thing.keys.run : 0;
         thing.movement = thing.EightBitter.movePlayer;
         
         thing.EightBitter.addClass(thing, "jumping");
@@ -1334,7 +1541,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Adds an invisible RestingStone underneath the player. It is hidden and
+     * unable to collide until the player falls to its level, at which point the
+     * stone is set underneath the player to be rested upon.
      * 
+     * @param {Player} thing
      */
     function playerAddRestingStone(thing) {
         var stone = thing.EightBitter.addThing(
@@ -1348,6 +1559,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.TimeHandler.addEventInterval(function () {
             if (thing.bottom >= stone.top) {
                 thing.nocollide = false;
+                thing.EightBitter.setMidXObj(stone, thing);
                 thing.EightBitter.setBottom(thing, stone.top);
                 return true;
             }
@@ -1359,29 +1571,50 @@ var FullScreenMario = (function(GameStartr) {
     */
     
     /**
+     * Spawn callback for HammerBros. Gravity is reduced, and the hammer and
+     * jump event intervals are started. The cyclical movement counter is set to
+     * 0.
      * 
+     * @param {HammerBro} thing
      */
     function spawnHammerBro(thing) {
         thing.counter = 0;
         thing.gravity = thing.EightBitter.MapScreener.gravity / 2.1;
-        thing.EightBitter.TimeHandler.addEvent(animateThrowingHammer, 35, thing, 7);
-        thing.EightBitter.TimeHandler.addEventInterval(animateJump, 140, Infinity, thing);
+        thing.EightBitter.TimeHandler.addEvent(
+            animateThrowingHammer, 35, thing, 7
+        );
+        thing.EightBitter.TimeHandler.addEventInterval(
+            animateJump, 140, Infinity, thing
+        );
     }
     
     /** 
+     * Spawn callback for Bowsers. The cyclical movement counter is set to 0 and
+     * the jump event interval is started.
      * 
+     * @param {Bowser} thing
      */
     function spawnBowser(thing) {
+        var i;
+        
         thing.counter = 0;
         thing.deathcount = 0;
-        thing.EightBitter.TimeHandler.addEventInterval(thing.EightBitter.animateBowserJump, 117, Infinity, thing);
-        thing.EightBitter.TimeHandler.addEventInterval(thing.EightBitter.animateBowserFire, 280, Infinity, thing);
-        thing.EightBitter.TimeHandler.addEventInterval(thing.EightBitter.animateBowserFire, 350, Infinity, thing);
-        thing.EightBitter.TimeHandler.addEventInterval(thing.EightBitter.animateBowserFire, 490, Infinity, thing);
+        
+        for (i = 0; i < thing.fireTimes.length; i += 1) {
+            thing.EightBitter.TimeHandler.addEventInterval(
+                thing.EightBitter.animateBowserJump,
+                thing.fireTimes[i],
+                Infinity, 
+                thing
+            );
+        }
     }
     
     /**
+     * Spawn callback for Piranhas. The movement counter and direction are
+     * reset, and if the Piranha is on a pipe, it has a reduced height (6).
      * 
+     * @param {Piranha} thing
      */
     function spawnPiranha(thing) {
         thing.counter = 0;
@@ -1393,7 +1626,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Spawn callback for Bloopers. Its squeeze and movement counters are set to
+     * 0.
      * 
+     * @param {Blooper} thing
      */
     function spawnBlooper(thing) {
         thing.squeeze = 0;
@@ -1401,7 +1637,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Spawn callback for Podoboos. The jumping interval is set to the Thing's
+     * frequency.
      * 
+     * @param {Podoboo} thing
      */
     function spawnPodoboo(thing) {
         thing.EightBitter.TimeHandler.addEventInterval(
@@ -1413,7 +1652,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Spawn callback for Lakitus. These are only allowed to exist if there 
+     * isn't already one registered in the MapScreener. If there isn't, it is
+     * registered and its throwing interval is scheduled.
      * 
+     * @param {Lakitu} thing
      */
     function spawnLakitu(thing) {
         if (
@@ -1432,7 +1675,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Spawning callback for Cannons. Unless specified by the nofire flag, the
+     * firing interval is set to the Thing's frequency.
      * 
+     * @param {Cannon} thing
      */
     function spawnCannon(thing) {
         if (!thing.nofire) {
@@ -1446,7 +1692,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Spawning callback for CastleBlocks. If the Thing has fireballs, an Array
+     * of them are made and animated to tick around the block like a clock, set
+     * by the thing's speed and direction.
      * 
+     * @param {CastleBlock} thing
      */
     function spawnCastleBlock(thing) {
         if (!thing.fireballs) {
@@ -1483,19 +1733,32 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Spawning callback for floating Things, such as Koopas and Platforms. The
+     * Thing's begin and end attributes are set relative to the MapScreener's
+     * floor, so its movement can handle cycling between the two.
      * 
+     * @param {Thing} thing
      */
     function spawnMoveFloating(thing) {
         // Make sure thing.begin <= thing.end
         thing.EightBitter.setMovementEndpoints(thing);
         
         // Make thing.begin and thing.end relative to the area's floor
-        thing.begin = thing.EightBitter.MapScreener.floor * thing.EightBitter.unitsize - thing.begin;
-        thing.end = thing.EightBitter.MapScreener.floor * thing.EightBitter.unitsize - thing.end;
+        thing.begin = (
+            thing.EightBitter.MapScreener.floor 
+            * thing.EightBitter.unitsize - thing.begin
+        );
+        thing.end = (
+            thing.EightBitter.MapScreener.floor
+            * thing.EightBitter.unitsize - thing.end
+        );
     }
     
     /**
+     * Spawning callback for sliding Things, such as Platforms. The Thing's 
+     * begin and end attributes do not need to be relative to anything.
      * 
+     * @param {Thing} thing
      */
     function spawnMoveSliding(thing) {
         // Make sure thing.begin <= thing.end
@@ -1503,7 +1766,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Generator callback to create a random CheepCheep. The spawn is given a
+     * random x-velocity, is placed at a random point just below the screen, and
+     * is oriented towards the player.
      * 
+     * @param {EightBittr} EightBitter
      */
     function spawnRandomCheep(EightBitter) {
         var spawn;
@@ -1534,7 +1801,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Generator callback to create a BulleBill. The spawn moves horizontally
+     * at a constant rate towards the left side of the bill, and is placed at a
+     * random point to the right side of the screen.
      * 
+     * @param {EightBittr} EightBitter
      */
     function spawnRandomBulletBill(EightBitter) {
         var spawn;
@@ -1561,11 +1832,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
-     * Spawns a custom text Thing by killing it and placing the contents of its
-     * texts member variable. These are written with a determined amount of
-     * spacing between them, as if by a typewriter.
+     * Spawns a CustomText by killing it and placing the contents of its texts
+     * member variable. These are written with a determined amount of spacing
+     * between them, as if by a typewriter.
      * 
-     * @param {Thing} thing
+     * @param {CustomText} thing
      */
     function spawnCustomText(thing) {
         var top = thing.top,
@@ -1613,7 +1884,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Spawning callback for generic detectors, activated as soon as they are 
+     * placed. The Thing's activate trigger is called, then it is killed.
      * 
+     * @param {Detector} thing
      */
     function spawnDetector(thing) {
         thing.activate(thing);
@@ -1625,6 +1899,9 @@ var FullScreenMario = (function(GameStartr) {
      * container collection Object. This is called by onThingMake, so they're 
      * immediately put in the collection and have it as a member variable.
      * 
+     * @param {Object} collection   The collection Object shared by all members
+     *                              of it. It should be automatically generated.
+     * @param {Thing} thing   A member of the collection being spawned.
      * @remarks This should be bound in prethings as ".bind(scope, collection)"
      */
     function spawnCollectionComponent(collection, thing) {
@@ -1637,6 +1914,9 @@ var FullScreenMario = (function(GameStartr) {
      * ("partners") in that collection. This is called by onThingAdd, so it's
      * always after spawnCollectionComponent (which is by onThingMake).     
      * 
+     * @param {Object} collection   The collection Object shared by all members
+     *                              of it. It should be automatically generated.
+     * @param {Thing} thing   A member of the collection being spawned.
      * @remarks This should be bound in prethings as ".bind(scope, collection)"
      */
     function spawnCollectionPartner(collection, thing) {
@@ -1653,11 +1933,18 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Spawning callback for RandomSpawner Things, which generate a set of 
+     * commands using the WorldSeeder to be piped into the MapsHandlr, then 
+     * spawn the immediate area.
      * 
+     * @param {RandomSpawner} thing
      */
     function spawnRandomSpawner(thing) {
         var EightBitter = thing.EightBitter,
-            left = (thing.left + EightBitter.MapScreener.left) / EightBitter.unitsize;
+            left = (
+                (thing.left + EightBitter.MapScreener.left) 
+                / EightBitter.unitsize
+            );
         
         EightBitter.WorldSeeder.clearGeneratedCommands();
         EightBitter.WorldSeeder.generateFull({
@@ -1679,7 +1966,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Activation callback for starting spawnRandomCheep on an interval.
+     * MapScreener is notified that spawningCheeps is true.
      * 
+     * @param {Detector} thing
      */
     function activateCheepsStart(thing) {
         thing.EightBitter.MapScreener.spawningCheeps = true;
@@ -1689,14 +1979,20 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Activation callback to stop spawning CheepCheeps. MapScreener is notified
+     * that spawningCheeps is false.
      * 
+     * @param {Detector} thing
      */
     function activateCheepsStop(thing) {
         thing.EightBitter.MapScreener.spawningCheeps = false;
     }
     
     /**
+     * Activation callback for starting spawnRandomBulletBill on an interval.
+     * MapScreener is notified that spawningBulletBills is true.
      * 
+     * @param {Detector} thing
      */
     function activateBulletBillsStart(thing) {
         thing.EightBitter.MapScreener.spawningBulletBills = true;
@@ -1706,14 +2002,20 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Activation callback to stop spawning BulletBills. MapScreener is notified
+     * that spawningBulletBills is false.
      * 
+     * @param {Detector} thing
      */
     function activateBulletBillsStop(thing) {
         thing.EightBitter.MapScreener.spawningBulletBills = false;
     }
     
     /**
+     * Activation callback to tell the area's Lakitu, if it exists, to start 
+     * fleeing the scene.
      * 
+     * @param {Detector} thing
      */
     function activateLakituStop(thing) {
         var lakitu = thing.EightBitter.MapScreener.lakitu;
@@ -1727,12 +2029,21 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Activation callback for a warp world area, triggered by the player 
+     * touching a collider on top of it. Piranhas disappear and texts are
+     * revealed.
      * 
+     * @param {Thing} player
+     * @param {DetectCollision} other
      */
     function activateWarpWorld(thing, other) {
         var collection = other.collection,
             key = 0, 
             keyString, scenery, texts, j;
+        
+        if (!thing.player) {
+            return;
+        }
         
         texts = collection["Welcomer"].children;
         for (j = 0; j < texts.length; j += 1) {
@@ -1761,7 +2072,13 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Activation callback for when the player lands on a RestingStone. The 
+     * stone "appears" (via opacity), the regular theme plays if it wasn't 
+     * already, and the RestingStone waits to kill itself when the player isn't
+     * touching it.
      * 
+     * @param {RestingStone} thing
+     * @param {Player} other
      */
     function activateRestingStone(thing, other) {
         thing.opacity = 1;
@@ -1775,32 +2092,45 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Generic activation callback for DetectWindow Things. This is typically 
+     * set as a .movement Function, so it waits until the calling Thing is 
+     * within the MapScreener's area to call the activate Function and kill 
+     * itself.
      * 
+     * @param {DetectWindow} thing
      */
     function activateWindowDetector(thing) {
-        if (thing.EightBitter.MapScreener.right - thing.EightBitter.MapScreener.left < thing.left) {
+        if (thing.EightBitter.MapScreener.right 
+            - thing.EightBitter.MapScreener.left < thing.left) {
             return;
         }
-        
         
         thing.activate(thing);
         thing.EightBitter.killNormal(thing);
     }
     
     /**
+     * Activation callback for ScrollBlocker Things. These are WindowDetectors
+     * that set MapScreener.canscroll to false when they're triggered. If the
+     * latest scrollWindow call pushed it too far to the left, it scrolls back
+     * the other way.
      * 
+     * @param {ScrollBlocker} thing
      */
     function activateScrollBlocker(thing) {
         var dx = thing.EightBitter.MapScreener.width - thing.left;
         
         thing.EightBitter.MapScreener.canscroll = false;
         if (dx < 0) {
-            thing.EightBitter.scrollWindow(-dx);
+            thing.EightBitter.scrollWindow(dx);
         }
     }
     
     /**
+     * Activation callback for ScrollBlocker Things. These are DetectCollision
+     * that set MapScreener.canscroll to true when they're triggered. 
      * 
+     * @param {DetectCollision} thing
      */
     function activateScrollEnabler(thing) {
         thing.EightBitter.MapScreener.canscroll = true;

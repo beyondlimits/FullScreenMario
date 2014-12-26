@@ -486,6 +486,7 @@ FullScreenMario.prototype.settings.mods = {
                 "onModDisable": function (mod) {
                     mod.settings.qcount = 0;
                     mod.settings.events.forEach(this.TimeHandler.cancelEvent);
+                    mod.settings.events.length = 0;
                     this.InputWriter.removeEvent("onkeydown", 81, undefined);
                     this.InputWriter.removeEvent("onkeydown", "q", undefined);
                 },

@@ -518,6 +518,7 @@
                 speed: FullScreenMario.unitsize * .14,
                 gravity: FullScreenMario.gravity / 2.8,
                 spawntype: "Goomba",
+                fireTimes: [117, 280, 350, 490],
                 deadly: true,
                 noflip: true,
                 nofiredeath: true,
