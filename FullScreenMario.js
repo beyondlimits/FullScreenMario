@@ -1101,7 +1101,7 @@ var FullScreenMario = (function(GameStartr) {
     function playerStarUp(thing, timeout) {
         thing.star += 1;
         
-        thing.EightBitter.switchClass(thing, "normal", "star");
+        thing.EightBitter.switchClass(thing, "normal fiery", "star");
         
         thing.EightBitter.AudioPlayer.play("Powerup");
         thing.EightBitter.AudioPlayer.playTheme("Star", true);
@@ -1177,6 +1177,10 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.TimeHandler.cancelClassCycle(thing, "star");
         thing.EightBitter.removeClasses(thing, "star star1 star2 star3 star4");
         thing.EightBitter.addClass(thing, "normal");
+        
+        if (thing.power === 3) {
+            thing.EightBitter.addClass(thing, "fiery");
+        }
         
         thing.EightBitter.ModAttacher.fireEvent("onPlayerStarOffFinal", thing);
     }
