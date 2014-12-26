@@ -680,7 +680,7 @@ var FullScreenMario = (function(GameStartr) {
             }
             // Player has fallen too far
             if (!player.dying && player.top > EightBitter.MapScreener.bottom) {
-                // If the map has an exit loc (cloud world), transport there
+                // If the map has an exit (e.g. cloud world), transport there
                 if (EightBitter.MapsHandler.getArea().exit) {
                     EightBitter.setLocation(EightBitter.MapsHandler.getArea().exit);
                 }

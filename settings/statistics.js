@@ -8,8 +8,9 @@ FullScreenMario.prototype.settings.statistics = {
                 "position": "absolute",
                 "top": 0,
                 "width": "100%",
+                "color": "white",
                 "fontSize": "21px",
-                "textTransform": "uppercase"
+                "textTransform": "uppercase",
             }
         }],
         ["tr", {
