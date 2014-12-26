@@ -43,10 +43,6 @@ module.exports = function (grunt) {
         "cssmin": {
             "target": {
                 "files": {
-                    "<%= meta.deployPath %>/FullScreenMario.min.css": [
-                        "Fonts/stylesheet.css",
-                        "src/LevelEditr/LevelEditr.css"
-                    ],
                     "<%= meta.deployPath %>/index.min.css": ["index.css"]
                 }
             }
@@ -69,6 +65,9 @@ module.exports = function (grunt) {
                     "<%= meta.deployPath %>/index.html": ["<%= meta.deployPath %>/index.html"]
                 }
             }
+        },
+        "clean": {
+            "js": ["<%= meta.deployPath %>/FullScreenMario.js"]
         }
     });
     
@@ -78,7 +77,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-contrib-cssmin");
     grunt.loadNpmTasks("grunt-processhtml");
     grunt.loadNpmTasks("grunt-contrib-htmlmin");
+    grunt.loadNpmTasks("grunt-contrib-clean");
     grunt.registerTask("default", [
-        "copy", "concat", "uglify", "cssmin", "processhtml", "htmlmin"
+        "copy", "concat", "uglify", "cssmin", "processhtml", "htmlmin", "clean"
     ]);
 };
