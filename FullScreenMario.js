@@ -2023,6 +2023,9 @@ var FullScreenMario = (function(GameStartr) {
      */
     function collideFriendly(thing, other) {
         if (thing.player) {
+            if (!thing.EightBitter.isCharacterAlive(other)) {
+                return;
+            }
             if (other.action) {
                 other.action(thing, other);
             }
