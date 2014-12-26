@@ -404,18 +404,30 @@ function UserWrappr(settings) {
             input.textContent = status;
             
             input.onclick = function () {
-                if (input.textContent === "on") {
-                    details.disable.call(self, GameStarter);
-                    input.textContent = "off";
-                    input.className = input.className.replace("enabled", "disabled");
-                } else {
+                input.setValue(newStatus = input.textContent === "off");
+            };
+            
+            input.setValue = function (newStatus) {
+                if (newStatus.constructor === String) {
+                    if (newStatus === "false" || newStatus === "off") {
+                        newStatus = false;
+                    } else if(newStatus === "true" || newStatus === "on") {
+                        newStatus = true;
+                    }
+                }
+                
+                if (newStatus) {
                     details.enable.call(self, GameStarter);
                     input.textContent = "on";
                     input.className = input.className.replace("disabled", "enabled");
+                } else {
+                    details.disable.call(self, GameStarter);
+                    input.textContent = "off";
+                    input.className = input.className.replace("enabled", "disabled");
                 }
                 
                 if (details.storeLocally) {
-                    storeLocalStorageValue(input, input.textContent);
+                    storeLocalStorageValue(input, newStatus.toString());
                 }
             };
             
@@ -801,19 +813,22 @@ function UserWrappr(settings) {
         }
         
         var key = schema.title + "::" + details.title,
+            valueDefault = details.source.call(self, GameStarter).toString(),
             value;
         
         child.setAttribute("localStorageKey", key);
         StatsHolder.addStatistic(key, {
             "storeLocally": true,
-            "valueDefault": details.source.call(self, GameStarter)
+            "valueDefault": valueDefault
         });
         
         value = StatsHolder.get(key);
         if (value !== "" && value !== child.value) {
             child.value = value;
                 
-            if (child.onchange) {
+            if (child.setValue) {
+                child.setValue(value);
+            } else if (child.onchange) {
                 child.onchange();
             } else if (child.onclick) {
                 child.onclick();
