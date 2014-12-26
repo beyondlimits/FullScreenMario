@@ -57,6 +57,18 @@ module.exports = function (grunt) {
                     "<%= meta.deployPath %>/index.html": ["index.html"]
                 }
             }
+        },
+        "htmlmin": {
+            "dist": {
+                "options": {
+                    "removeComments": true,
+                    "collapseWhitespace": true,
+                    "minifyURLs": true
+                },
+                "files": {
+                    "<%= meta.deployPath %>/index.html": ["<%= meta.deployPath %>/index.html"]
+                }
+            }
         }
     });
     
@@ -65,7 +77,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-contrib-uglify");
     grunt.loadNpmTasks("grunt-contrib-cssmin");
     grunt.loadNpmTasks("grunt-processhtml");
+    grunt.loadNpmTasks("grunt-contrib-htmlmin");
     grunt.registerTask("default", [
-        "copy", "concat", "uglify", "cssmin", "processhtml"
+        "copy", "concat", "uglify", "cssmin", "processhtml", "htmlmin"
     ]);
 };
