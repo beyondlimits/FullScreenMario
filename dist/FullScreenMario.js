@@ -15042,9 +15042,7 @@ function UserWrappr(settings) {
         
         GameStartrConstructor.prototype.proliferate(
             customs,
-            settings.sizes[
-                customs.size || currentSize
-            ],
+            settings.sizes[customs.size || currentSize],
             true
         );
         
@@ -15061,7 +15059,7 @@ function UserWrappr(settings) {
             'up', 'right', 'bottom', 'left', 'space', 'shift', 'ctrl'
         ];
         
-        self.resetGameStarter();
+        self.resetGameStarter(customs);
     };
     
     /**
@@ -15222,7 +15220,6 @@ function UserWrappr(settings) {
     var loadGameStarter = function (customs) {
         var section = document.getElementById("game");
         
-        console.log("Customs!", customs);
         GameStarter = new GameStartrConstructor(customs);
         
         section.textContent = "";
@@ -23571,7 +23568,7 @@ FullScreenMario.prototype.settings.audio = {
     "directory": "Sounds",
     "fileTypes": ["mp3", "ogg"],
     "statistics": {
-        "prefix": "FullScreenMarioAudioPlayer",
+        "prefix": "FullScreenMario::AudioPlayer::",
         "values": {
             "volume": {
                 "valueDefault": 0.5,
@@ -32038,7 +32035,7 @@ FullScreenMario.prototype.settings.maps = {
 };
 FullScreenMario.prototype.settings.mods = {
     "storeLocally": true,
-    "prefix": "FullScreenMarioMods",
+    "prefix": "FullScreenMario::Mods::",
     "mods": [
         {
             "name": "Bouncy Bounce",
