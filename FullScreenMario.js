@@ -509,10 +509,6 @@ var FullScreenMario = (function(GameStartr) {
         return function deviceMotion(player, event) {
             player.EightBitter.ModAttacher.fireEvent("onDeviceMotion", event);
             
-            if (!player.EightBitter.MapScreener.allowDeviceMotion) {
-                return;
-            }
-            
             var acceleration = event.accelerationIncludingGravity;
             
             if (y !== undefined) {
@@ -932,7 +928,8 @@ var FullScreenMario = (function(GameStartr) {
          */
         return function isCharacterTouchingSolid(thing, other) {            // Hidden solids can only be touched by the player bottom-bumping them,
             // or by specifying collideHidden
-            if (other.hidden && !other.collideHidden) {                if (!thing.player || !thing.EightBitter.isSolidOnCharacter(other, thing)) {                    return false;                }
+            if (other.hidden && !other.collideHidden) {
+                if (!thing.player || !thing.EightBitter.isSolidOnCharacter(other, thing)) {                    return false;                }
             }
             
             if (thing.nocollidesolid && !(thing.allowUpSolids && other.up)) {

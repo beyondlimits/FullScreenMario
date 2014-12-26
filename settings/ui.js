@@ -234,13 +234,13 @@ FullScreenMario.prototype.settings.ui = {
                     "type": "Boolean",
                     "storeLocally": true,
                     "source": function (GameStarter) {
-                        return GameStarter.MapScreener.allowDeviceMotion;
+                        return false;
                     },
                     "enable": function (GameStarter) {
-                        GameStarter.MapScreener.allowDeviceMotion = true;
+                        window.ondevicemotion = GameStarter.InputWriter.makePipe("ondevicemotion", "type");
                     },
                     "disable": function (GameStarter) {
-                        GameStarter.MapScreener.allowDeviceMotion = false;
+                        window.ondevicemotion = undefined;
                     }
                 }
             ],

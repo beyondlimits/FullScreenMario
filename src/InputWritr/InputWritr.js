@@ -1,23 +1,45 @@
 /**
  * InputWritr.js
- * A middleman that manages input events and their associated triggers
- */
-
-/**
- * InputWritr.js
  * 
- * A wrapper to link input events and associated triggers. Pipe functions are
- * available that take in user input, switch on the event code, and call the
- * appropriate callback.
- * Further utilities allow for saving and playback of input in JSON format.
+ * A general utility for automating interactions with user-called events linked
+ * with callbacks. Pipe functions are available that take in user input, switch 
+ * on the event code, and call the appropriate callback. These Pipe functions 
+ * can be made during runtime; further utilities allow for saving and playback 
+ * of input histories in JSON format.
  * 
+ * @example 
+ * // Creating and using an InputWritr to log keystrokes on the 'a' key.
+ * var InputWriter = new InputWritr({
+ *     "triggers": {
+ *         "onkeydown": {
+ *             "65": function () {
+ *                 console.log("Hello!");
+ *             }
+ *         }
+ *     }
+ * });
+ * document.body.onkeydown = InputWriter.makePipe("onkeydown", "keyCode");
  * 
- * 
- * 
- * 
- * 
- * 
- * 
+ * @example
+ * // Creating and using an InputWritr to simulate WASD arrow controls.
+ * var InputWriter = new InputWritr({
+ *     "triggers": {
+ *         "aliases": {
+ *             "up": [87, 38],    // w, up
+ *             "right": [68, 39], // d, right
+ *             "down": [83, 40],  // s, down
+ *             "left": [65, 37],  // a, left
+ *         },
+ *         "onkeydown": {
+ *             "up": console.log.bind(console, "up"),
+ *             "right": console.log.bind(console, "right"),
+ *             "down": console.log.bind(console, "down"),
+ *             "left": console.log.bind(console, "left"),
+ *         }
+ *     }
+ * });
+ * document.body.onkeydown = InputWriter.makePipe("onkeydown", "keyCode");
+ *
  * @author "Josh Goldberg" <josh@fullscreenmario.com>
  */
 function InputWritr(settings) {
@@ -27,43 +49,64 @@ function InputWritr(settings) {
     }
     var self = this,
 
-        // 
+        // A mapping of events to their key codes to their callbacks.
         triggers,
 
-        // The arguments to be passed to calls activated by triggers
-        recipients,
-        
-        //
+        // Known, allowed aliases for triggers.
         aliases,
 
-        // An Array of every action that has happened, with a timestamp
+        // An Array of every action that has happened, with a timestamp.
         history,
-        // An Array of all histories, with indices set by self.saveHistory
+        
+        // An Array of all histories, with indices set by self.saveHistory.
         histories,
 
-        // For compatibility, a var reference to getting the performance.now() timestamp
+        // For compatibility, a reference to performance.now() or an equivalent.
         getTimestamp,
-        // 
+        
+        // A starting time used for calculating playback delays in playHistory.
         startingTime,
 
-        // An object to be passed to event calls, commonly with key information
+        // An object to be passed to event calls, commonly with key information.
         // (such as "Down" => 0 }
         eventInformation,
         
-        // An optional boolean callback to disable or enable input triggers
+        // An optional boolean callback to disable or enable input triggers.
         canTrigger,
 
         // Whether to record events into the history
-        recording,
+        isRecording,
         
+        // A quick lookup table of key aliases to their character codes.
         keyAliasesToCodes,
         
+        // A quick lookup table of character codes to their key aliases.
         keyCodesToAliases;
 
     /**
-     *
+     * Resests the InputWritr.
+     * 
+     * @constructor
+     * @param {Object} triggers   The mapping of events to their key codes to
+     *                            their callbacks.
+     * @param {Object} [aliases]   Known, allowed aliases for triggers.
+     * @param {Function} [getTimestamp]   A Function to return the current time
+     *                                    as a Number. If not provided, all 
+     *                                    variations of performance.now are 
+     *                                    tried; if they don't exist, 
+     *                                    Date.getTime is used.
+     * @param {Mixed} [eventInformation]   The first argument to be passed to
+     *                                     event callbacks (defaults to 
+     *                                     undefined).
+     * @param {Boolean} [canTrigger]   Whether inputs are currently allowed to
+     *                                 trigger (defaults to true).
+     * @param {Boolean} [isRecording]   Whether triggered inputs are currently
+     *                                  allowed to be written to history
+     *                                  (defaults to true).
      */
     self.reset = function (settings) {
+        triggers = settings.triggers;
+        
         getTimestamp = (
             settings.getTimestamp
             || performance.now 
@@ -75,15 +118,17 @@ function InputWritr(settings) {
                 return new Date().getTime();
             }
         ).bind(performance);
+        
+        eventInformation = settings.eventInformation;
+        
+        canTrigger = settings.hasOwnProperty("canTrigger") 
+            ? settings.canTrigger : true;
+        isRecording = settings.hasOwnProperty("isRecording") 
+            ? settings.isRecording : true;
 
+        history = {};
         histories = [];
         aliases = {};
-        
-        triggers = settings.triggers || {};
-        recipients = settings.recipients || {};
-        eventInformation = settings.eventInformation;
-        canTrigger = settings.canTrigger;
-        recording = settings.hasOwnProperty("recording") ? settings.recording : true;
         
         self.addAliases(settings.aliases || {});
         
@@ -117,7 +162,7 @@ function InputWritr(settings) {
      *                                   Array of histories (defaults to true).
      */
     self.restartHistory = function (keepHistory) {
-        if (history && arguments.length && keepHistory) {
+        if (keepHistory) {
             histories.push(history);
         }
         history = {};
@@ -129,16 +174,15 @@ function InputWritr(settings) {
     */
 
     /** 
-     * Returns the Object storing aliases, as "name" => [values]
-     * 
-     * @return {Object} aliases
+     * @return {Object} The stored mapping of aliases to values.
      */
     self.getAliases = function () {
         return aliases;
     };
     
     /**
-     * 
+     * @return {Object} The stored mapping of aliases to values, with values
+     *                  mapped to their equivalent key Strings.
      */
     self.getAliasesAsKeyStrings = function () {
         var output = {},
@@ -152,14 +196,21 @@ function InputWritr(settings) {
     };
     
     /**
-     * 
+     * @param {Number} alias An alias allowed to be passed in, typically a
+     *                          character code.
+     * @return {String[]}   The mapped key Strings corresponding to that alias,
+     *                      typically the human-readable Strings representing 
+     *                      input names, such as "a" or "left".
      */
     self.getAliasAsKeyStrings = function (alias) {
         return aliases[alias].map(self.convertAliasToKeyString);
-    }
+    };
     
     /**
-     * 
+     * @param {Number} alias   The alias of an input, typically a character 
+     *                          code.
+     * @return {String} The human-readable String representing the input name,
+     *                  such as "a" or "left".
      */
     self.convertAliasToKeyString = function (alias) {
         if (alias.constructor === String) {
@@ -176,9 +227,11 @@ function InputWritr(settings) {
         
         return typeof keyCodesToAliases[alias] !== "undefined"
             ? keyCodesToAliases[alias] : "?";
-    }
+    };
     
     /**
+     * @param {String} key   The number code of an input.
+     * @return {Number} The machine-usable character code of the input.
      * 
      */
     self.convertKeyStringToAlias = function (key) {
@@ -192,35 +245,38 @@ function InputWritr(settings) {
         
         return typeof keyAliasesToCodes[key] !== "undefined"
             ? keyAliasesToCodes[key] : -1;
-    }
+    };
     
     /**
      * Get function for a single history, either the current or a past one.
      *
      * @param {String} [name]   The identifier for the old history to return. If
      *                          none is provided, the current history is used.
-     * @return {Object}   A history of inputs
+     * @return {Object}   A history of inputs in JSON-friendly form.
      */
     self.getHistory = function (name) {
         return arguments.length ? histories[name] : history;
     };
 
     /**
-     * Simple get function for the Array of histories.
-     *
-     * @return {Array}
+     * @return {Array} All previously stored histories.
      */
     self.getHistories = function () {
         return histories;
     };
+    
+    /**
+     * @return {Boolean} Whether this is currently allowing inputs.
+     */
+    self.getCanTrigger = function () {
+        return canTrigger;
+    };
 
     /**
-     * Simple get function for the Boolean of whether this is recording inputs.
-     *
-     * @return {Boolean}
+     * @return {Boolean} Whether this is currently recording allowed inputs.
      */
-    self.getRecording = function () {
-        return recording;
+    self.getIsRecording = function () {
+        return isRecording;
     };
 
 
@@ -228,12 +284,11 @@ function InputWritr(settings) {
     */
      
     /**
-     * Simple set function for the Function used to determine whether this is 
-     * accepting inputs.
-     * 
-     * @param {Function}
+     * @param {Mixed} canTriggerNew   Whether this is now allowing inputs. This 
+     *                                may be either a Function (to be evaluated 
+     *                                on each input) or a general Boolean.
      */
-    self.setCanTrigger = function (status) {
+    self.setCanTrigger = function (canTriggerNew) {
         if (status.constructor === Boolean) {
             canTrigger = function () {
                 return status;
@@ -241,28 +296,26 @@ function InputWritr(settings) {
         } else {
             canTrigger = status;
         }
-    }
-
-    /**
-     * Simple set function for the Boolean of whether this is recording inputs.
-     *
-     * @param {Boolean}
-     */
-    self.setRecording = function (recordingNew) {
-        recording = recordingNew;
     };
 
     /**
-     * Simple set function for the arguments object passed to event calls.
-     *
-     * @param {Object}
+     * @param {Boolean} isRecordingNew   Whether this is now recording allowed
+     *                                   inputs.    
      */
-    self.setEventInformation = function (eventInfoNew) {
-        eventInformation = eventInfoNew;
+    self.setIsRecording = function (isRecordingNew) {
+        isRecording = isRecordingNew;
+    };
+
+    /**
+     * @param {Mixed} eventInformationNew   A new first argument for event 
+     *                                      callbacks.
+     */
+    self.setEventInformation = function (eventInformationNew) {
+        eventInformation = eventInformationNew;
     };
 
     
-    /* Additions
+    /* Aliases
     */
     
     /**
@@ -338,7 +391,15 @@ function InputWritr(settings) {
     };
     
     /**
+     * Shortcut to remove old alias values and add new ones in.
      * 
+     * 
+     * @param {String} name   The name of the event that is having aliases
+     *                        added and removed, such as "left".
+     * @param {Array} valuesOld   An array of aliases by which the event will no
+     *                            longer be callable.
+     * @param {Array} valuesNew   An array of aliases by which the event will 
+     *                            now be callable.
      */
     self.switchAliasValues = function (name, valuesOld, valuesNew) {
         self.removeAliasValues(name, valuesOld);
@@ -357,36 +418,59 @@ function InputWritr(settings) {
                 self.addAliasValues(aliasName, aliasesRaw[aliasName]);
             }
         }
-    }
+    };
+    
+    
+    /* Functions
+    */
     
     /**
+     * Adds a triggerable event by marking a new callback under the trigger's
+     * triggers. Any aliases for the label are also given the callback.
      * 
-     * 
-     * 
+     * @param {String} trigger   The name of the triggered event.
+     * @param {Mixed} label   The code within the trigger to call within, 
+     *                        typically either a character code or an alias.
+     * @param {Function} callback   The callback Function to be triggered.
      */
     self.addEvent = function (trigger, label, callback) {
         if (!triggers.hasOwnProperty(trigger)) {
-            throw new Error("Unknown trigger requested: '" + trigger + "'");
+            throw new Error("Unknown trigger requested: '" + trigger + "'.");
         }
         
+        console.log(trigger, label, callback.name);
         triggers[trigger][label] = callback;
         
         if (aliases.hasOwnProperty(label)) {
             for (var i = 0; i < aliases[label].length; i += 1) {
-                if (triggers[trigger][label]) {
-                    triggers[trigger][label][aliases[i]] = callback;
-                }
+                triggers[trigger][aliases[i]] = callback;
             }
         }
     };
     
     /**
+     * Removes a triggerable event by deleting any callbacks under the trigger's
+     * triggers. Any aliases for the label are also given the callback.
      * 
+     * @param {String} trigger   The name of the triggered event.
+     * @param {Mixed} label   The code within the trigger to call within, 
+     *                        typically either a character code or an alias.
      */
-    self.cancelEvent = function (trigger, label) {
-        self.addEvent(trigger, label, false);
+    self.removeEvent = function (trigger, label) {
+        if (!triggers.hasOwnProperty(trigger)) {
+            throw new Error("Unknown trigger requested: '" + trigger + "'.");
+        }
+        
+        delete triggers[trigger][label];
+        
+        if (aliases.hasOwnProperty(label)) {
+            for (var i = 0; i < aliases[label].length; i += 1) {
+                if (triggers[trigger][aliases[i]]) {
+                    delete triggers[trigger][aliases[i]];
+                }
+            }
+        }
     };
-    
     
     /**
      * Stores the current history in the histories Array. self.restartHistory is
@@ -402,31 +486,33 @@ function InputWritr(settings) {
             histories[name] = history;
         }
     };
+    
+    /**
+     * Plays back the current history using self.playEvents.
+     */
+    self.playHistory = function () {
+        self.playEvents(history);
+    };
 
     /**
      * "Plays" back an Array of event information by simulating each keystroke
      * in a new call, timed by setTimeout.
      *
-     * @param {Object} events   An optional events history to play back. If not
-     *                          provided, the current history is used.
+     * @param {Object} events   The events history to play back.
      * @remarks This will execute the same actions in the same order as before,
      *          but the arguments object may be different.
      */
-    self.playHistory = function (events) {
+    self.playEvents = function (events) {
         var timeouts = {},
             time, call;
-
-        if (!arguments.length) {
-            events = history;
-        }
 
         for (time in events) {
             if (events.hasOwnProperty(time)) {
                 call = makeEventCall(events[time]);
-                timeouts[time] = setTimeout(call, Math.round(time - startingTime));
+                timeouts[time] = setTimeout(call, (time - startingTime) | 0);
             }
         }
-    }
+    };
 
     /**
      * Curry utility to create a closure that runs call() when called.
@@ -453,14 +539,18 @@ function InputWritr(settings) {
      * @return {Mixed}
      */
     self.callEvent = function (event, keycode, sourceEvent) {
-        if (canTrigger && !canTrigger(event, keycode)) {
-            return;
+        if (canTrigger.constructor === Boolean) {
+            if (!canTrigger) {
+                return;
+            }
+        } else if (canTrigger.constructor === Function) {
+            if (canTrigger(event, keycode)) {
+                return;
+            }
         }
         
-        // If the event doesn't exist, ignore it
         if (!event) {
-            console.warn("Blank event given, ignoring it.");
-            return;
+            throw new Error("Blank event given, ignoring it.");
         }
         
         if (event.constructor === String) {
@@ -468,7 +558,7 @@ function InputWritr(settings) {
         }
 
         return event(eventInformation, sourceEvent);
-    }
+    };
 
     /**
      * Creates and returns a function to run a trigger.
@@ -492,7 +582,7 @@ function InputWritr(settings) {
      */
     self.makePipe = function (trigger, codeLabel, preventDefaults) {
         if (!triggers.hasOwnProperty(trigger)) {
-            console.warn("No trigger of label '" + trigger + "' has been defined.");
+            throw new Error("No trigger of label '" + trigger + "' defined.");
             return;
         }
 
@@ -512,14 +602,15 @@ function InputWritr(settings) {
 
             // If there's a function under that alias, run it
             if (functions.hasOwnProperty(alias)) {
-                if (recording) {
+                if (isRecording) {
                     history[getTimestamp() | 0] = [trigger, alias];
                 }
                 
                 self.callEvent(functions[alias], undefined, arguments[0]);
             }
         }
-    }
-
+    };
+    
+    
     self.reset(settings || {});
 }

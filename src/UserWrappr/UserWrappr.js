@@ -254,10 +254,6 @@ function UserWrappr(settings) {
         section.textContent = "";
         section.appendChild(GameStarter.container);
         
-        GameStarter.proliferate(window, {
-            "ondevicemotion": GameStarter.InputWriter.makePipe("ondevicemotion", "type")
-        });
-        
         GameStarter.proliferate(document.body, {
             "onkeydown": GameStarter.InputWriter.makePipe("onkeydown", "keyCode"),
             "onkeyup": GameStarter.InputWriter.makePipe("onkeyup", "keyCode")

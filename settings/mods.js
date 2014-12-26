@@ -460,7 +460,7 @@ FullScreenMario.prototype.settings.mods = {
                         
                         if (mod.settings.levels[mod.settings.qcount]) {
                             var level = mod.settings.levels[mod.settings.qcount];
-                            mod.settings.event = EightBitter.TimeHandler.addEventInterval(function () {
+                            mod.settings.events.push(EightBitter.TimeHandler.addEventInterval(function () {
                                 if (charactersEightBitter.length < 210) {
                                     var num = Math.floor(Math.random() * level.length),
                                         lul = EightBitter.ObjectMaker.make.apply(EightBitter, level[num]);
@@ -478,16 +478,16 @@ FullScreenMario.prototype.settings.mods = {
                                         88 * Math.random() * EightBitter.unitsize
                                     );
                                 }
-                            }, 7, Infinity);
+                            }, 7, Infinity));
                         }
                     });
                     this.InputWriter.addAliasValues("q", [81]);
                 },
                 "onModDisable": function (mod) {
                     mod.settings.qcount = 0;
-                    this.TimeHandler.cancelEvent(mod.settings.event);
-                    this.InputWriter.cancelEvent("onkeydown", 81, true);
-                    this.InputWriter.cancelEvent("onkeydown", "q", true);
+                    mod.settings.events.forEach(this.TimeHandler.cancelEvent);
+                    this.InputWriter.removeEvent("onkeydown", 81, undefined);
+                    this.InputWriter.removeEvent("onkeydown", "q", undefined);
                 },
                 "onSetLocation": function (mod) {
                     mod.settings.qcount = 0;
@@ -496,6 +496,7 @@ FullScreenMario.prototype.settings.mods = {
             "settings": {
                 "qcount": 0,
                 "characters": [],
+                "events": [],
                 "levels": {
                     "7": [ ["Goomba"] ],
                     "14": [ 
@@ -503,10 +504,10 @@ FullScreenMario.prototype.settings.mods = {
                         ["Koopa", { "smart": true }],
                         ["Koopa", { "jumping": true }],
                         ["Koopa", { "smart": true, "jumping": true }],
-                        // ["Beetle"],
-                        // ["HammerBro"],
-                        // ["Lakitu"],
-                        // ["Blooper"]
+                        ["Beetle"],
+                        ["HammerBro"],
+                        ["Lakitu"],
+                        ["Blooper"]
                     ],
                     "21": [ ["Bowser"] ]
                 }

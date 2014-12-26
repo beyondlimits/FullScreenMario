@@ -237,7 +237,6 @@
                 "underwater": false,
                 "notime": false,
                 "nokeys": false,
-                "allowDeviceMotion": false,
                 "onPlayerDeath": FullScreenMario.prototype.setMap,
                 "onGameOver": FullScreenMario.prototype.gameOver,
                 "attributes": {
