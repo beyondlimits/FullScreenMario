@@ -87,6 +87,10 @@ function UserWrappr(settings) {
         ];
         
         self.resetGameStarter(customs);
+        
+        if (GameStarter.settings.ui.styleSheet) {
+            GameStarter.addPageStyles(GameStarter.settings.ui.styleSheet);
+        }
     };
     
     /**

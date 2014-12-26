@@ -1,5 +1,22 @@
 FullScreenMario.prototype.settings.ui = {
     "globalName": "FSM",
+    "styleSheet": {
+        ".FullScreenMario": {
+            "color": "white"
+        },
+        "@font-face": {
+            "font-family": "'Press Start'",
+            "src": "url('Fonts/pressstart2p-webfont.eot')",
+            "src": [
+                    "url('Fonts/pressstart2p-webfont.eot?#iefix') format('embedded-opentype')",
+                    "url('Fonts/pressstart2p-webfont.woff') format('woff')",
+                    "url('Fonts/pressstart2p-webfont.ttf') format('truetype')",
+                    "url('Fonts/pressstart2p-webfont.svg') format('svg')"
+                ].join(", "),
+            "font-weight": "normal",
+            "font-style": "normal"
+        }
+    },
     "helpSettings": {
         "globalNameAlias": "{%%%%GAME%%%%}",
         "openings": [

@@ -1376,6 +1376,33 @@ var GameStartr = (function (EightBittr) {
         link.click();
     }
     
+    /**
+     * 
+     */
+    function addPageStyles(styles) {
+        var EightBitter = EightBittr.ensureCorrectCaller(this),
+            sheet = EightBitter.createElement("style", {
+                "type": "text/css"
+            }),
+            compiled = "", i, j;
+        
+        for (i in styles) {
+            compiled += i + " { \r\n";
+            for (j in styles[i]) {
+                compiled += "  " + j + ": " + styles[i][j] + ";\r\n"
+            }
+            compiled += "}\r\n";
+        }
+        
+        if (sheet.styleSheet) {
+            sheet.styleSheet.cssText = compiled;
+        } else {
+            sheet.appendChild(document.createTextNode(compiled));
+        }
+        
+        document.querySelector("head").appendChild(sheet);
+    }
+    
     
     proliferateHard(EightBitterProto, {
         // Resets
@@ -1447,7 +1474,8 @@ var GameStartr = (function (EightBittr) {
         "setOpacity": setOpacity,
         // Miscellaneous utilities
         "arrayDeleteThing": arrayDeleteThing,
-        "takeScreenshot": takeScreenshot
+        "takeScreenshot": takeScreenshot,
+        "addPageStyles": addPageStyles
     });
     
     return GameStartr;
