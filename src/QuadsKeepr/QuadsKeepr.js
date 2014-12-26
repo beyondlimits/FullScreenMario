@@ -16,12 +16,12 @@ function QuadsKeepr(settings) {
         numCols,
         
         // Scrolling offsets during gameplay (initially 0)
-        offset_x,
-        offset_y,
+        offsetX,
+        offsetY,
         
         // Starting coordinates for rows & cols
         startLeft,
-        start_top,
+        startTop,
         
         quadrantRows,
         
@@ -33,15 +33,15 @@ function QuadsKeepr(settings) {
 
         // Names under which external Things should store Quadrant information
         thingLeft,
-        thing_top,
+        thingTop,
         thingRight,
-        thing_bottom,
-        thing_num_quads,
-        thing_max_quads,
-        thing_quadrants,
-        thing_changed,
-        thing_tolerance_x,
-        thing_tolerance_y,
+        thingBottom,
+        thingNumQuads,
+        thingMaxQuads,
+        thingQuadrants,
+        thingChanged,
+        thingToleranceX,
+        thingToleranceY,
         thingGroupName,
         
         // An Array of string names a Thing may be placed into 
@@ -63,7 +63,7 @@ function QuadsKeepr(settings) {
         numCols = settings.numCols;
         
         startLeft = settings.startLeft | 0;
-        start_top = settings.start_top | 0;
+        startTop = settings.startTop | 0;
         
         quadrantWidth = settings.quadrantWidth | 0;
         quadrantHeight = settings.quadrantHeight | 0;
@@ -75,14 +75,14 @@ function QuadsKeepr(settings) {
 
         thingLeft = settings.thingLeft || "left";
         thingRight = settings.thingRight || "right";
-        thing_top = settings.thing_top || "top";
-        thing_bottom = settings.thing_bottom || "bottom";
-        thing_num_quads = settings.thing_num_quads || "numquads";
-        thing_max_quads = settings.thing_max_quads || "maxquads";
-        thing_quadrants = settings.thing_quadrants || "quadrants";
-        thing_changed = settings.thing_changed || "changed";
-        thing_tolerance_x = settings.thing_tolerance_x || "tolx";
-        thing_tolerance_y = settings.thing_tolerance_y || "toly";
+        thingTop = settings.thingTop || "top";
+        thingBottom = settings.thingBottom || "bottom";
+        thingNumQuads = settings.thingNumQuads || "numquads";
+        thingMaxQuads = settings.thingMaxQuads || "maxquads";
+        thingQuadrants = settings.thingQuadrants || "quadrants";
+        thingChanged = settings.thingChanged || "changed";
+        thingToleranceX = settings.thingToleranceX || "tolx";
+        thingToleranceY = settings.thingToleranceY || "toly";
         thingGroupName = settings.thingGroupName || "group";
     };
     
@@ -145,8 +145,8 @@ function QuadsKeepr(settings) {
         x = x | 0;
         y = y | 0;
         
-        offset_x += x;
-        offset_y += y;
+        offsetX += x;
+        offsetY += y;
         
         self.top += y;
         self.right += x;
@@ -177,31 +177,31 @@ function QuadsKeepr(settings) {
      */
     function adjustOffsets() {
         // Quadrant shift: add to the right
-        while(-offset_x > quadrantWidth) {
+        while(-offsetX > quadrantWidth) {
             self.shiftQuadrantCol(true);
             self.pushQuadrantCol(true);
-            offset_x += quadrantWidth;
+            offsetX += quadrantWidth;
         }
         
         // Quadrant shift: add to the left
-        while(offset_x > quadrantWidth) {
+        while(offsetX > quadrantWidth) {
             self.popQuadrantCol(true);
             self.unshiftQuadrantCol(true);
-            offset_x -= quadrantWidth;
+            offsetX -= quadrantWidth;
         }
         
         // Quadrant shift: add to the bottom
-        while(-offset_y > quadrantHeight) {
+        while(-offsetY > quadrantHeight) {
             self.unshiftQuadrantRow(true);
             self.pushQuadrantRow(true);
-            offset_y += quadrantHeight;
+            offsetY += quadrantHeight;
         }
         
         // Quadrant shift: add to the top
-        while(offset_y > quadrantHeight) {
+        while(offsetY > quadrantHeight) {
             self.popQuadrantRow(true);
             self.unshiftQuadrantRow(true);
-            offset_y -= quadrantHeight;
+            offsetY -= quadrantHeight;
         }
     };
     
@@ -225,20 +225,20 @@ function QuadsKeepr(settings) {
      */
     self.resetQuadrants = function () {
         var left = startLeft,
-            top = start_top,
+            top = startTop,
             quadrant,
             i, j;
         
-        self.top = start_top;
+        self.top = startTop;
         self.right = startLeft + quadrantWidth * numCols;
-        self.bottom = start_top + quadrantHeight * numRows;
+        self.bottom = startTop + quadrantHeight * numRows;
         self.left = startLeft;
         
         quadrantRows = [];
         quadrantCols = [];
         
-        offset_x = 0;
-        offset_y = 0;
+        offsetX = 0;
+        offsetY = 0;
         
         for (i = 0; i < numRows; i += 1) {
             quadrantRows.push({
@@ -252,13 +252,13 @@ function QuadsKeepr(settings) {
         for (j = 0; j < numCols; j += 1) {
             quadrantCols.push({
                 "left": left,
-                "top": start_top,
+                "top": startTop,
                 "quadrants": []
             });
             left += quadrantWidth;
         }
         
-        top = start_top;
+        top = startTop;
         for (i = 0; i < numRows; i += 1) {
             left = startLeft;
             for (j = 0; j < numCols; j += 1) {
@@ -392,9 +392,9 @@ function QuadsKeepr(settings) {
             onAdd(
                 "xInc", 
                 self.top,
-                self.right - offset_y, 
+                self.right - offsetY, 
                 self.bottom, 
-                self.right - quadrantWidth - offset_y
+                self.right - quadrantWidth - offsetY
             );
         }
         
@@ -446,9 +446,9 @@ function QuadsKeepr(settings) {
             onRemove(
                 "xDec", 
                 self.top,
-                self.right - offset_y, 
+                self.right - offsetY, 
                 self.bottom, 
-                self.right - quadrantWidth - offset_y
+                self.right - quadrantWidth - offsetY
             );
         }
         
@@ -610,12 +610,12 @@ function QuadsKeepr(settings) {
         
         // Mark each of the Thing's Quadrants as changed
         // This is done first because the old Quadrants are changed
-        if (thing[thing_changed]) {
+        if (thing[thingChanged]) {
             markThingQuadrantsChanged(thing);
         }
         
         // The Thing no longer has any Quadrants: rebuild them!
-        thing[thing_num_quads] = 0;
+        thing[thingNumQuads] = 0;
         
         for (row = rowStart; row <= rowEnd; row += 1) {
             for (col = colStart; col <= colEnd; col += 1) {
@@ -624,12 +624,12 @@ function QuadsKeepr(settings) {
         }
         
         // Mark the Thing's new Quadrants as changed
-        if (thing[thing_changed]) {
+        if (thing[thingChanged]) {
             markThingQuadrantsChanged(thing);
         }
         
         // The thing is no longer considered changed, since quadrants know it
-        thing[thing_changed] = false;
+        thing[thingChanged] = false;
     };
     
     /**
@@ -637,8 +637,8 @@ function QuadsKeepr(settings) {
      */
     self.setThingInQuadrant = function (group, thing, quadrant) {
         // Mark the Quadrant in the Thing
-        thing[thing_quadrants][thing[thing_num_quads]] = quadrant;
-        thing[thing_num_quads] += 1;
+        thing[thingQuadrants][thing[thingNumQuads]] = quadrant;
+        thing[thingNumQuads] += 1;
         
         // Mark the Thing in the Quadrant
         quadrant.things[group][quadrant.numthings[group]] = thing;
@@ -649,8 +649,8 @@ function QuadsKeepr(settings) {
      * 
      */
     function markThingQuadrantsChanged(thing) {
-        for (var i = 0; i < thing[thing_num_quads]; i += 1) {
-            thing[thing_quadrants][i].changed = true;
+        for (var i = 0; i < thing[thingNumQuads]; i += 1) {
+            thing[thingQuadrants][i].changed = true;
         }
     }
     

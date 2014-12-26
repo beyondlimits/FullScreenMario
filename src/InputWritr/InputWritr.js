@@ -544,7 +544,7 @@ function InputWritr(settings) {
                 return;
             }
         } else if (canTrigger.constructor === Function) {
-            if (canTrigger(event, keycode)) {
+            if (!canTrigger(event, keycode)) {
                 return;
             }
         }

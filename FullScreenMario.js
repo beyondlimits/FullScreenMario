@@ -1,3 +1,6 @@
+/**
+ * This is not the final FullScreenMario.js file! See dist/FullScreenMario.js.
+ */
 var FullScreenMario = (function(GameStartr) {
     "use strict";
     

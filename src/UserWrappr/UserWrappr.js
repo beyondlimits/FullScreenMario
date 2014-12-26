@@ -69,9 +69,7 @@ function UserWrappr(settings) {
         
         GameStartrConstructor.prototype.proliferate(
             customs,
-            settings.sizes[
-                customs.size || currentSize
-            ],
+            settings.sizes[customs.size || currentSize],
             true
         );
         
@@ -88,7 +86,7 @@ function UserWrappr(settings) {
             'up', 'right', 'bottom', 'left', 'space', 'shift', 'ctrl'
         ];
         
-        self.resetGameStarter();
+        self.resetGameStarter(customs);
     };
     
     /**
@@ -249,7 +247,7 @@ function UserWrappr(settings) {
     var loadGameStarter = function (customs) {
         var section = document.getElementById("game");
         
-        GameStarter = new FullScreenMario(customs);
+        GameStarter = new GameStartrConstructor(customs);
         
         section.textContent = "";
         section.appendChild(GameStarter.container);

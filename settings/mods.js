@@ -1,6 +1,6 @@
 FullScreenMario.prototype.settings.mods = {
     "storeLocally": true,
-    "prefix": "FullScreenMarioMods",
+    "prefix": "FullScreenMario::Mods::",
     "mods": [
         {
             "name": "Bouncy Bounce",
@@ -556,4 +556,4 @@ FullScreenMario.prototype.settings.mods = {
             }
         }
     ]
-}
+};
