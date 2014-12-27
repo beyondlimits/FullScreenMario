@@ -75,10 +75,13 @@ var FullScreenMario = (function(GameStartr) {
      * 
      * FSM.gameStart();
      */
-    function FullScreenMario(customs) {        // Call the parent GameStartr constructor to set the base settings and        // verify the prototype requirements
+    function FullScreenMario(customs) {
+        // Call the parent GameStartr constructor to set the base settings and
+        // verify the prototype requirements
         GameStartr.call(this, {
             "customs": customs,
-            "constructor": FullScreenMario,            "requirements": {
+            "constructor": FullScreenMario,
+            "requirements": {
                 "settings": {
                     "audio": "settings/audio.js",
                     "collisions": "settings/collisions.js",
@@ -96,14 +99,16 @@ var FullScreenMario = (function(GameStartr) {
                     "sprites": "settings/sprites.js",
                     "statistics": "settings/statistics.js",
                     "ui": "settings/ui.js",
-                }            },
+                }
+            },
             "constants": [
                 "unitsize",
                 "scale",
                 "gravity",
                 "pointLevels",
                 "customTextMappings"
-            ]        });
+            ]
+        });
         
         if (customs.resetTimed) {
             this.resetTimes = this.resetTimed(this, customs);
@@ -135,7 +140,11 @@ var FullScreenMario = (function(GameStartr) {
         ":": "Colon",
         "/": "Slash",
         "©": "Copyright"
-    };            /* Resets    */
+    };
+    
+    
+    /* Resets
+    */
     
     /**
      * Resets self.StatsHolder via the parent GameStartr resetStatsHolder.
@@ -961,7 +970,14 @@ var FullScreenMario = (function(GameStartr) {
         // If character is resting on solid, this is automatically true
         if (thing.resting === other) {
             return true;
-        }                // If the character is jumping upwards, it's not on a solid        // (removing this check would cause Mario to have "sticky" behavior when        // jumping at the corners of solids)        if (thing.yvel < 0) {            return false;        }
+        }
+        
+        // If the character is jumping upwards, it's not on a solid
+        // (removing this check would cause Mario to have "sticky" behavior when
+        // jumping at the corners of solids)
+        if (thing.yvel < 0) {
+            return false;
+        }
         
         // The character and solid must be touching appropriately
         if (!thing.EightBitter.isThingOnSolid(thing, other)) {
@@ -1056,13 +1072,16 @@ var FullScreenMario = (function(GameStartr) {
          * @param {Character} thing
          * @param {Solid} other
          */
-        return function isCharacterTouchingSolid(thing, other) {            // Hidden solids can only be touched by the player bottom-bumping
+        return function isCharacterTouchingSolid(thing, other) {
+            // Hidden solids can only be touched by the player bottom-bumping
             // them, or by specifying collideHidden
             if (other.hidden && !other.collideHidden) {
                 if (
                     !thing.player 
                     || !thing.EightBitter.isSolidOnCharacter(other, thing)
-                ) {                    return false;                }
+                ) {
+                    return false;
+                }
             }
             
             if (thing.nocollidesolid && !(thing.allowUpSolids && other.up)) {
@@ -1100,7 +1119,8 @@ var FullScreenMario = (function(GameStartr) {
      *                   other .
      * @remarks Similar to isThingOnThing, but more specifically used for
      *          characterTouchedSolid
-     */    function isSolidOnCharacter(thing, other) {
+     */
+    function isSolidOnCharacter(thing, other) {
         // This can never be true if other is falling
         if (other.yvel >= 0) {
             return false;
@@ -2137,7 +2157,12 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Activates the "before" component of a stretchable section. The creation
+     * commands of the section are loaded onto the screen as is and a 
+     * DetectWindow is added to their immediate right that will trigger the 
+     * equivalent activateSectionStretch.
      * 
+     * @param {DetectWindow} thing
      */
     function activateSectionBefore(thing) {
         var EightBitter = thing.EightBitter,
@@ -2152,13 +2177,13 @@ var FullScreenMario = (function(GameStartr) {
             before = section.before ? section.before.creation : undefined,
             command, i;
         
-        // If there is a before, parse each command into the current prethings array
+        // If there is a before, parse each command into the prethings array
         if (before) {
             for (i = 0; i < before.length; i += 1) {
-                // A copy of the command must be used, so the original isn't modified
+                // A copy of the command must be used to not modify the original 
                 command = EightBitter.proliferate({}, before[i]);
                 
-                // The command's x-location must be shifted by the thing's placement
+                // The command's x must be shifted by the thing's placement
                 if (!command.x) {
                     command.x = left;
                 } else {
@@ -2185,7 +2210,7 @@ var FullScreenMario = (function(GameStartr) {
         
         MapsCreator.analyzePreSwitch(command, prethings, area, map);
         
-        // Spawn the map, so new Things that should be placed will be spawned if nearby
+        // Spawn new Things that should be placed for being nearby
         MapsHandler.spawnMap(
             "xInc",
             MapScreener.top / EightBitter.unitsize,
@@ -2196,7 +2221,13 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Activates the "stretch" component of a stretchable section. The creation
+     * commands of the section are loaded onto the screen and have their widths
+     * set to take up the entire width of the screen. A DetectWindow is added
+     * to their immediate right that will trigger the equivalent
+     * activateSectionAfter.
      * 
+     * @param {DetectWindow} thing
      */
     function activateSectionStretch(thing) {
         var EightBitter = thing.EightBitter,
@@ -2245,7 +2276,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Activates the "after" component of a stretchable sectin. The creation
+     * commands of the stretch are loaded onto the screen as is.
      * 
+     * @param {DetectWindow} thing
      */
     function activateSectionAfter(thing) {
         // Since the section was passed, do the rest of things normally
@@ -2299,15 +2333,21 @@ var FullScreenMario = (function(GameStartr) {
     */
 
     /**
+     * Function generator for the generic hitCharacterSolid callback. This is 
+     * used repeatedly by ThingHittr to generate separately optimized Functions
+     * for different Thing types.
      * 
+     * @return {Function}
      */
     function generateHitCharacterSolid() {
         /**
-         * // thing = character
-         * // other = solid
+         * Generic callback for when a character touches a solid. Solids that 
+         * "up" kill anything that didn't cause the up, but otherwise this will
+         * normally involve the solid's collide callback being called and
+         * under/undermid checks activating.
          * 
-         * @param {Thing} thing
-         * @param {Thing} other
+         * @param {Character} thing
+         * @param {Solid} other
          */
         return function hitCharacterSolid(thing, other) {
             // "Up" solids are special (they kill things that aren't their .up)
@@ -2330,13 +2370,20 @@ var FullScreenMario = (function(GameStartr) {
     }
 
     /**
+     * Function generator for the generic hitCharacterCharacter callback. This
+     * is used repeatedly by ThingHittr to generate separately optimized 
+     * Functions for different Thing types.
      * 
+     * @return {Function}
      */
     function generateHitCharacterCharacter(thing, other) {
         /**
+         * Generic callback for when a character touches another character. The
+         * first Thing's collide callback is called unless it's a player, in 
+         * which the other Thing's is.
          *  
-         * @param {Thing} thing
-         * @param {Thing} other
+         * @param {Character} thing
+         * @param {Character} other
          */
         return function hitCharacterCharacter(thing, other) {
             // The player calls the other's collide function, such as playerStar
@@ -2353,7 +2400,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Collision callback used by most Items. The item's action callback will
+     * be called only if the first Thing is a player.
      * 
+     * @param {Thing} thing
+     * @param {Item} other
      */
     function collideFriendly(thing, other) {
         if (thing.player) {
@@ -2368,7 +2419,13 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * General callback for when a character touches a solid. This mostly 
+     * determines if the character is on top (it should rest on the solid), to
+     * the side (it should shouldn't overlap), or undernearth (it also shouldn't
+     * overlap).
      * 
+     * @param {Character} thing
+     * @param {Solid} other
      */
     function collideCharacterSolid(thing, other) {
         if (other.up === thing) {
@@ -2409,7 +2466,9 @@ var FullScreenMario = (function(GameStartr) {
             
             if (thing.player) {
                 thing.keys.jump = 0;
-                thing.EightBitter.setTop(thing, other.bottom - thing.toly + other.yvel);
+                thing.EightBitter.setTop(
+                    thing, other.bottom - thing.toly + other.yvel
+                );
             }
             
             thing.yvel = other.yvel;
@@ -2460,16 +2519,22 @@ var FullScreenMario = (function(GameStartr) {
                     thing.collide(other, thing);
                 }
             }
-            // Players trigger other actions (e.g. Pipe -> mapExitPipeHorizontal)
+            // Players trigger other actions (e.g. Pipe's mapExitPipeHorizontal)
             else if (other.actionLeft) {
-                thing.EightBitter.ModAttacher.fireEvent("onPlayerActionLeft", thing, other);
+                thing.EightBitter.ModAttacher.fireEvent(
+                    "onPlayerActionLeft", thing, other
+                );
                 other.actionLeft(thing, other, other.transport);
             }
         }
     }
     
     /**
+     * Collision callback for a character hitting an "up" solid. If it has an
+     * onCollideUp callback that is called; otherwise, it is killed.
      * 
+     * @param {Character} thing
+     * @param {Solid} other
      */
     function collideCharacterSolidUp(thing, other) {
         if (thing.onCollideUp) {
@@ -2481,7 +2546,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Collision callback for an item hitting an "up" solid. Items just hop
+     * and switch direction.
      * 
+     * @param {Item} thing
+     * @param {Solid} other
      */
     function collideUpItem(thing, other) {
         thing.EightBitter.animateCharacterHop(thing);
@@ -2489,27 +2558,42 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Collision callback for a floating coin being hit by an "up" solid. It is
+     * animated, as if it were hit as the contents of a solid.
      * 
+     * @param {Coin} thing
+     * @param {Solid} other
      */
     function collideUpCoin(thing, other) {
-        other = thing.blockparent;
+        thing.blockparent = other;
         thing.animate(thing, other);
     }
     
     /**
+     * Collision callback for a player hitting a regular Coin. The Coin
+     * disappears but points and Coin totals are both increased, along with
+     * the "Coin" sound being played.
      * 
+     * @param {Player} thing
+     * @param {Coin} other
      */
     function collideCoin(thing, other) {
-        if (thing.player) {
-            thing.EightBitter.AudioPlayer.play("Coin");
-            thing.EightBitter.StatsHolder.increase("score", 200);
-            thing.EightBitter.StatsHolder.increase("coins", 1);
-            thing.EightBitter.killNormal(other);
+        if (!thing.player) {
+            return;
         }
+        
+        thing.EightBitter.AudioPlayer.play("Coin");
+        thing.EightBitter.StatsHolder.increase("score", 200);
+        thing.EightBitter.StatsHolder.increase("coins", 1);
+        thing.EightBitter.killNormal(other);
     }
     
     /**
+     * Collision callback for a player hitting a Star. The Star is killed, and
+     * the playerStarUp trigger is called on the Thing.
      * 
+     * @param {Player} thing
+     * @param {Star} other
      */
     function collideStar(thing, other) {
         if (!thing.player || thing.star) {
@@ -2521,9 +2605,12 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Collision callback for a character being hit by a fireball. It will
+     * most likely be killed with an explosion unless it has the nofiredeath 
+     * flag, in which case only the fireball dies.
      * 
-     * 
-     * @remarks thing is character, other is fireball
+     * @param {Character} thing
+     * @param {Fireball} other
      */
     function collideFireball(thing, other) {
         if (
@@ -2541,10 +2628,14 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         if (thing.nofiredeath) {
-            thing.EightBitter.AudioPlayer.playLocal("Bump", thing.EightBitter.getMidX(other));
+            thing.EightBitter.AudioPlayer.playLocal(
+                "Bump", thing.EightBitter.getMidX(other)
+            );
             thing.death(thing);
         } else {
-            thing.EightBitter.AudioPlayer.playLocal("Kick", thing.EightBitter.getMidX(other));
+            thing.EightBitter.AudioPlayer.playLocal(
+                "Kick", thing.EightBitter.getMidX(other)
+            );
             thing.death(thing, 2);
             thing.EightBitter.scoreOn(thing.scoreFire, thing);
         }
@@ -2553,14 +2644,27 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Collision callback for hitting a CastleFireball. The character is killed
+     * unless it has the star flag, in which case the CastleFireball is.
      * 
+     * @param {Character} thing
+     * @param {CastleFireball} other
      */
     function collideCastleFireball(thing, other) {
-        thing.death(thing);
+        if (thing.star) {
+            other.death(other);
+        } else {
+            thing.death(thing);
+        }
     }
     
     /**
+     * Collision callback for when a character hits a Shell. This covers various
+     * cases, such as deaths, side-to-side Shell collisions, player stomps, and
+     * so on.
      * 
+     * @param {Character} thing
+     * @param {Shell} other
      */
     function collideShell(thing, other) {
         // If only one is a shell, it should be other, not thing
@@ -2589,7 +2693,9 @@ var FullScreenMario = (function(GameStartr) {
             }
             
             thing.EightBitter.AudioPlayer.play("Kick");
-            thing.EightBitter.scoreOn(thing.EightBitter.findScore(other.enemyhitcount), thing);
+            thing.EightBitter.scoreOn(
+                thing.EightBitter.findScore(other.enemyhitcount), thing
+            );
             other.enemyhitcount += 1;
         } else {
             thing.moveleft = thing.EightBitter.objectToLeft(thing, other);
@@ -2597,7 +2703,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Collision callback for a solid being hit by a Shell. The Shell will 
+     * bounce the opposition direction.
      * 
+     * @param {Solid} thing
+     * @param {Shell} other
      */
     function collideShellSolid(thing, other) {
         if (other.right < thing.right) {
@@ -2614,7 +2724,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Collision callback for when the player hits a Shell. This covers all the
+     * possible scenarios, and is much larger than common sense dictates.
      * 
+     * @param {Player} thing
+     * @param {Shell} other
      */
     function collideShellPlayer(thing, other) {
         var shelltoleft = thing.EightBitter.objectToLeft(other, thing),
@@ -2694,7 +2808,9 @@ var FullScreenMario = (function(GameStartr) {
                     thing.EightBitter.jumpEnemy(thing, other);
                     thing.yvel *= 2;
                     // thing.EightBitter.scorePlayerShell(thing, other);
-                    thing.EightBitter.setBottom(thing, other.top - thing.EightBitter.unitsize, true);
+                    thing.EightBitter.setBottom(
+                        thing, other.top - thing.EightBitter.unitsize, true
+                    );
                 } else {
                     // thing.EightBitter.scorePlayerShell(thing, other);
                 }
@@ -2719,7 +2835,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Collision callback for two Shells. If one is moving, it kills the other;
+     * otherwise, they bounce off.
      * 
+     * @param {Shell} thing
+     * @param {Shell} other
      */
     function collideShellShell(thing, other) {
         if (thing.xvel !== 0) {
@@ -2741,7 +2861,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Collision callback for a general character hitting an enemy. This covers
+     * many general cases, most of which involve a player and an enemy.
      * 
+     * @param {Character} thing
+     * @param {Enemy} other
      */
     function collideEnemy(thing, other) {
         // If either is a player, make it thing (not other)
@@ -2750,8 +2874,10 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         // Death: nothing happens
-        if (!thing.EightBitter.isCharacterAlive(thing)
-            || !thing.EightBitter.isCharacterAlive(other)) {
+        if (
+            !thing.EightBitter.isCharacterAlive(thing)
+            || !thing.EightBitter.isCharacterAlive(other)
+        ) {
             return;
         }
         
@@ -2763,65 +2889,74 @@ var FullScreenMario = (function(GameStartr) {
             return;
         }
         
-        // Player interacting with enemies
-        if (thing.player) {
-            // Player landing on top of an enemy
-            if (
-                (thing.star && !other.nostar)
-                || (
-                    !thing.EightBitter.MapScreener.underwater
-                    && (!other.deadly && isThingOnThing(thing, other))
-                )
-            ) {
-                
-                // Enforces toly (not touching means stop)
-                if (thing.EightBitter.isCharacterAboveEnemy(thing, other)) {
-                    return;
-                }
-                
-                // A star player just kills the enemy, no matter what
-                if (thing.star) {
-                    other.nocollide = true;
-                    other.death(other, 2);
-                    thing.EightBitter.scoreOn(other.scoreStar, other);
-                    thing.EightBitter.AudioPlayer.play("Kick");
-                }
-                // A non-star player kills the enemy with spawn, and hops
-                else {
-                    thing.EightBitter.setBottom(thing, 
-                                Math.min(thing.bottom, 
-                                        other.top + thing.EightBitter.unitsize));
-                    thing.EightBitter.TimeHandler.addEvent(jumpEnemy, 0, thing, other);
-                    
-                    // thing.EightBitter.scoreOn(other.scoreStomp, other);
-                    other.death(other, thing.star ? 2 : 0);
-                    
-                    thing.EightBitter.addClass(thing, "hopping");
-                    thing.EightBitter.removeClasses(thing, "running skidding jumping one two three");
-                    thing.hopping = true;
-                    
-                    if (thing.power === 1) {
-                        thing.EightBitter.setPlayerSizeSmall(thing); 
-                    }
-                }
-            }
-            // Player being landed on by an enemy
-            else if (!thing.EightBitter.isCharacterAboveEnemy(thing, other)) {
-                thing.death(thing);
-            }
-        }
+        
         // For non-players, it's just to characters colliding: they bounce
-        else {
+        if (!thing.player) {
             thing.moveleft = thing.EightBitter.objectToLeft(thing, other);
             other.moveleft = !thing.moveleft;
+            return;
         }
         
+        // Player landing on top of an enemy
+        if (
+            (thing.star && !other.nostar)
+            || (
+                !thing.EightBitter.MapScreener.underwater
+                && (!other.deadly && isThingOnThing(thing, other))
+            )
+        ) {
+            // Enforces toly (not touching means stop)
+            if (thing.EightBitter.isCharacterAboveEnemy(thing, other)) {
+                return;
+            }
+            
+            // A star player just kills the enemy, no matter what
+            if (thing.star) {
+                other.nocollide = true;
+                other.death(other, 2);
+                thing.EightBitter.scoreOn(other.scoreStar, other);
+                thing.EightBitter.AudioPlayer.play("Kick");
+            }
+            // A non-star player kills the enemy with spawn, and hops
+            else {
+                thing.EightBitter.setBottom(
+                    thing, 
+                    Math.min(
+                        thing.bottom, other.top + thing.EightBitter.unitsize
+                    )
+                );
+                thing.EightBitter.TimeHandler.addEvent(
+                    jumpEnemy, 0, thing, other
+                );
+                
+                other.death(other, thing.star ? 2 : 0);
+                
+                thing.EightBitter.addClass(thing, "hopping");
+                thing.EightBitter.removeClasses(
+                    thing, "running skidding jumping one two three"
+                );
+                thing.hopping = true;
+                
+                if (thing.power === 1) {
+                    thing.EightBitter.setPlayerSizeSmall(thing); 
+                }
+            }
+        }
+        // Player being landed on by an enemy
+        else if (!thing.EightBitter.isCharacterAboveEnemy(thing, other)) {
+            thing.death(thing);
+        }
     }
     
     
     /**
+     * Collision callback for a character bumping into the bottom of a solid.
+     * Only players cause the solid to jump and be considered "up", though large
+     * players will kill solids that have the breakable flag on. If the solid 
+     * does jump and has contents, they emerge.
      * 
-     * @remarks thing is solid, other is character
+     * @param {Solid} thing
+     * @param {Character} other
      */
     function collideBottomBrick(thing, other) {
         if (other.solid && !thing.solid) {
@@ -2868,7 +3003,12 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Collision callback for the player hitting the bottom of a Block. Unused
+     * Blocks have their contents emerge (by default a Coin), while used Blocks
+     * just have a small bump noise played.
      * 
+     * @param {Player} thing
+     * @param {Solid} other
      */
     function collideBottomBlock(thing, other) {
         if (other.solid && !thing.solid) {
@@ -2891,11 +3031,17 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.animateSolidBump(thing);
         thing.EightBitter.removeClass(thing, "hidden");
         thing.EightBitter.switchClass(thing, "unused", "used");
-        thing.EightBitter.TimeHandler.addEvent(thing.EightBitter.animateSolidContents, 7, thing, other);
+        thing.EightBitter.TimeHandler.addEvent(
+            thing.EightBitter.animateSolidContents, 7, thing, other
+        );
     }
     
     /**
+     * Collision callback for Vines. The player becomes "attached" to the Vine
+     * and starts climbing it, with movement set to movePlayerVine.
      * 
+     * @param {Player} thing
+     * @param {Solid} other
      */
     function collideVine(thing, other) {
         if (!thing.player || thing.attachedSolid || thing.climbing) {
@@ -2928,11 +3074,16 @@ var FullScreenMario = (function(GameStartr) {
             thing.EightBitter.flipHoriz(thing);
         }
         
-        thing.EightBitter.addClass(thing, "climbing");
-        thing.EightBitter.removeClasses(thing, "running", "jumping", "skidding");
         thing.EightBitter.thingPauseVelocity(thing);
+        thing.EightBitter.addClass(thing, "climbing");
+        thing.EightBitter.removeClasses(
+            thing, "running", "jumping", "skidding"
+        );
+        
         thing.EightBitter.TimeHandler.cancelClassCycle(thing, "running");
-        thing.EightBitter.TimeHandler.addClassCycle(thing, ["one", "two"], "climbing");
+        thing.EightBitter.TimeHandler.addClassCycle(
+            thing, ["one", "two"], "climbing"
+        );
         
         thing.attachedLeft = !thing.EightBitter.objectToLeft(thing, other);
         thing.attachedOff = thing.attachedLeft ? 1 : -1;
@@ -2941,7 +3092,12 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Collision callback for a character hitting a Springboard. This acts as a
+     * normal solid to non-players, and only acts as a spring if the player is
+     * above it and moving down.
      * 
+     * @param {Character} thing
+     * @param {Springboard} other
      */
     function collideSpringboard(thing, other) {
         if (
@@ -2961,16 +3117,24 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Collision callback for a character hitting a WaterBlocker on the top of
+     * an underwater area. It simply stops them from moving up.
      * 
+     * @param {Character} thing
+     * @param {WaterBlocker} other
      */
     function collideWaterBlocker(thing, other) {
         thing.EightBitter.collideCharacterSolid(thing, other);
     }
     
     /**
+     * Collision callback for the DetectCollision on a flagpole at the end of an
+     * EndOutsideCastle. The player becomes invincible and starts sliding down
+     * the flagpole, while all other Things are killed. The collideFlagBottom
+     * callback is fired when the player reaches the bottom.
      * 
-     * 
-     * @notes thing is Player; other is the flag detector
+     * @param {Player} thing
+     * @param {DetectCollision} other
      */
     function collideFlagpole(thing, other) {
         thing.star = true;
@@ -2981,11 +3145,15 @@ var FullScreenMario = (function(GameStartr) {
         
         thing.EightBitter.killNPCs();
         thing.EightBitter.thingPauseVelocity(thing);
-        thing.EightBitter.setRight(thing, other.left + thing.EightBitter.unitsize * 3);
+        thing.EightBitter.setRight(
+            thing, other.left + thing.EightBitter.unitsize * 3
+        );
         
         thing.EightBitter.removeClasses(thing, "running jumping skidding");
         thing.EightBitter.addClass(thing, "climbing animated");
-        thing.EightBitter.TimeHandler.addClassCycle(thing, ["one", "two"], "climbing");
+        thing.EightBitter.TimeHandler.addClassCycle(
+            thing, ["one", "two"], "climbing"
+        );
         
         thing.EightBitter.AudioPlayer.pauseAll();
         thing.EightBitter.AudioPlayer.play("Flagpole");
@@ -2996,7 +3164,9 @@ var FullScreenMario = (function(GameStartr) {
             if (thing.bottom > other.bottom) {
                 thing.movement = false;
                 thing.EightBitter.setBottom(thing, other.bottom);
-                thing.EightBitter.TimeHandler.cancelClassCycle(thing, "climbing");
+                thing.EightBitter.TimeHandler.cancelClassCycle(
+                    thing, "climbing"
+                );
                 thing.EightBitter.TimeHandler.addEvent(function () {
                     thing.EightBitter.collideFlagBottom(thing, other);
                 }, 21);
@@ -3006,14 +3176,21 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Collision callback for when a player hits the bottom of a flagpole. It is
+     * flipped horizontally, shifted to the other side of the pole, and the
+     * animatePlayerOffPole callback is quickly timed.
      * 
+     * @param {Player} thing
+     * @param {Solid} other
      */
     function collideFlagBottom(thing, other) {
         thing.keys.run = 1;
         thing.maxspeed = thing.walkspeed;
         
         thing.EightBitter.flipHoriz(thing);
-        thing.EightBitter.shiftHoriz(thing, (thing.width + 1) * thing.EightBitter.unitsize);
+        thing.EightBitter.shiftHoriz(
+            thing, (thing.width + 1) * thing.EightBitter.unitsize
+        );
         
         thing.EightBitter.TimeHandler.addEvent(function () {
             thing.EightBitter.AudioPlayer.play("Stage Clear");
@@ -3022,10 +3199,12 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Collision callback for the player hitting a CastleAxe. The player and
+     * screen are paused for 140 steps (other callbacks should be animating
+     * the custcene).
      * 
-     * 
-     * @param {Thing} thing   player
-     * @param {Thing} other   axe
+     * @param {Player} thing
+     * @param {CastleAxe} other
      */
     function collideCastleAxe(thing, other) {
         if (!thing.EightBitter.isCharacterAlive(thing)) {
@@ -3058,7 +3237,12 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Collision callback for a player hitting the DetectCollision placed next 
+     * a CastleDoor in EndOutsideCastle. Time is converted one step at a time to
+     * score, after which animateEndLevelFireworks is called.
      * 
+     * @param {Player} thing
+     * @param {DetectCollision} other
      */
     function collideCastleDoor(thing, other) {
         var time = String(thing.EightBitter.StatsHolder.get("time")),
@@ -3088,7 +3272,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /** 
+     * Collision callback for a player reaching a castle's NPC. The ending text
+     * chunks are revealed in turn, after which collideLevelTransport is called.
      * 
+     * @param {Player} thing
+     * @param {DetectCollision} other
      */
     function collideCastleNPC(thing, other) {
         var keys = other.collection.npc.collectionKeys,
@@ -3117,9 +3305,19 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Collision callback for a player hitting the transportation Platform in
+     * cloud worlds. The player collides with it as normal for solids, but if
+     * the player is then resting on it, it becomes a normal moving platform
+     * with only horizontal momentum.
      * 
+     * @param {Player} thing
+     * @param {Solid} other
      */
     function collideTransport(thing, other) {
+        if (!thing.player) {
+            return;
+        }
+        
         thing.EightBitter.collideCharacterSolid(thing, other);
         if (thing.resting !== other) {
             return;
@@ -3131,9 +3329,12 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * General collision callback for DetectCollision Things. The real activate
+     * callback is only hit if the Thing is a player; otherwise, an optional
+     * activateFail may be activated.
      * 
-     * 
-     * thing is character; other is detector
+     * @param {Thing} thing
+     * @param {DetectCollision} other
      */
     function collideDetector(thing, other) {
         if (!thing.player) {
@@ -3147,10 +3348,19 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Collision callback for level transports (any Thing with a .transport 
+     * attribute). Depending on the transport, either the map or location are 
+     * shifted to it.
      * 
+     * @param {Player} thing
+     * @param {Thing} other
      */
     function collideLevelTransport(thing, other) {
         var transport = other.transport;
+        
+        if (!thing.player) {
+            return;
+        }
         
         if (typeof transport === "undefined") {
             throw new Error("No transport given to collideLevelTransport");
@@ -3172,11 +3382,11 @@ var FullScreenMario = (function(GameStartr) {
     */
     
     /**
-     * Base, generic movement function for simple characters. The Thing moves
+     * Base, generic movement Function for simple characters. The Thing moves
      * at a constant rate in either the x or y direction, and switches direction
      * only if directed by the engine (e.g. when it hits a Solid)
      * 
-     * @param {Thing} thing
+     * @param {Character} thing
      * @remarks thing.speed is the only required member attribute; .direction
      *          and .moveleft should be set by the game engine.
      */
@@ -3202,9 +3412,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
-     * Extension of the moveSimple movement function for Things that shouldn't
+     * Extension of the moveSimple movement Function for Things that shouldn't
      * fall off the edge of their resting blocks
-     * @param {Thing} thing
+     * 
+     * @param {Character} thing
      */
     function moveSmart(thing) {
         // Start off by calling moveSimple for normal movement
@@ -3240,9 +3451,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
-     * Extension of the moveSimple movement function for Things that should
-     * jump whenever they hit a resting block.
-     * @param {Thing} thing
+     * Extension of the moveSimple movement Function for Things that should
+     * jump whenever they start resting.
+     * 
+     * @param {Character} thing
      * @remarks thing.jumpheight is required to know how high to jump
      */
     function moveJumping(thing) {
@@ -3257,9 +3469,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Movement Function for Things that slide back and forth, such as 
+     * HammerBros and Lakitus.
      * 
-     * 
-     * @remarks thing.counter must be a number set elsewhere
+     * @remarks thing.counter must be a number set elsewhere, such as in a spawn
+     *          Function.    
      */
     function movePacing(thing) {
         thing.counter += .007;
@@ -3267,7 +3481,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Movement Function for HammerBros. They movePacing, look towards the 
+     * player, and have the nocollidesolid flag if they're jumping up or 
+     * intentionally falling through a solid.
      * 
+     * @param {HammerBro} thing
      */
     function moveHammerBro(thing) {
         thing.EightBitter.movePacing(thing);
@@ -3276,16 +3494,22 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Movement Function for Bowser. Bowser always faces the player and 
+     * movePaces if he's to the right of the player, or moves to the right if
+     * he's to the left.
      * 
+     * @param {Bowser} thing
      */
     function moveBowser(thing) {
         // Facing to the right
         if (thing.flipHoriz) {
-            // To the left of the player: walk to the right
-            if (thing.EightBitter.objectToLeft(thing, thing.EightBitter.player)) {
+            // To the left of player: walk to the right
+            if (
+                thing.EightBitter.objectToLeft(thing, thing.EightBitter.player)
+            ) {
                 thing.EightBitter.moveSimple(thing);
             }
-            // To the right of the player: look to the left and movePacing as normal
+            // To the right of player: look to the left and movePacing as normal
             else {
                 thing.lookleft = thing.moveleft = true;
                 thing.EightBitter.unflipHoriz(thing);
@@ -3294,32 +3518,19 @@ var FullScreenMario = (function(GameStartr) {
         } 
         // Facing to the left
         else {
-            // To the left of the player: look and walk to the right
-            if (thing.EightBitter.objectToLeft(thing, thing.EightBitter.player)) {
+            // To the left of player: look and walk to the right
+            if (
+                thing.EightBitter.objectToLeft(thing, thing.EightBitter.player)
+            ) {
                 thing.lookleft = thing.moveleft = false;
                 thing.EightBitter.flipHoriz(thing);
                 thing.EightBitter.moveSimple(thing);
             }
             // To the right of the player: movePacing as normal
-            // todo: tell fire and jump to skip if !flipHoriz
             else {
                 thing.EightBitter.movePacing(thing);
             }
         }
-        
-        // if (thing.flipHoriz) {
-            // if (thing.EightBitter.objectToLeft(thing, thing.EightBitter.player)) {
-                // thing.EightBitter.flipHoriz(thing);
-            // } else {
-                // thing.EightBitter.moveSimple(thing);
-            // }
-        // } else {
-            // if (thing.EightBitter.objectToLeft(thing.EightBitter.player, thing)) {
-                // thing.EightBitter.unflipHoriz(thing);
-                // thing.EightBitter.moveSimple(thing);
-            // }   
-        // }
-        
     }
     
     /**
@@ -3361,7 +3572,7 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
-     * Actual movement function for Things that float sideways (horizontally).
+     * Actual movement Function for Things that float sideways (horizontally).
      * If the Thing has reached thing.begin or thing.end, it gradually switches
      * thing.xvel
      * 
@@ -3373,11 +3584,15 @@ var FullScreenMario = (function(GameStartr) {
     function moveSliding(thing) {
         // If to the left of the endpoint:
         if (thing.EightBitter.MapScreener.left + thing.left <= thing.begin) {
-            thing.xvel = Math.min(thing.xvel + thing.EightBitter.unitsize / 64, thing.maxvel);
+            thing.xvel = Math.min(
+                thing.xvel + thing.EightBitter.unitsize / 64, thing.maxvel
+            );
         }
         // If to the right of the endpoint:
         else if (thing.EightBitter.MapScreener.left + thing.right > thing.end) {
-            thing.xvel = Math.max(thing.xvel - thing.EightBitter.unitsize / 64, -thing.maxvel);
+            thing.xvel = Math.max(
+                thing.xvel - thing.EightBitter.unitsize / 64, -thing.maxvel
+            );
         }
         
         // Deal with velocities and whether the player is resting on this
@@ -3402,8 +3617,9 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
-     * Moves a platform by its velocities, and checks for whether the player
-     * is resting on it (if so, the player must be moved accordingly)
+     * General movement Function for Platforms. Moves a Platform by its 
+     * velocities, and checks for whether a Thing is resting on it (if so, 
+     * the Thing is accordingly).
      * 
      * @param {Thing} thing
      */
@@ -3429,27 +3645,104 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Movement Function for platforms that are in a PlatformGenerator. They
+     * have the typical movePlatform applied to them, but if they reach the
+     * bottom or top of the screen, they are shifted to the opposite side.
      * 
+     * @param {Platform} thing
      */
     function movePlatformSpawn(thing) {
         if (thing.bottom < 0) {
-            thing.EightBitter.setTop(thing, thing.EightBitter.MapScreener.bottomPlatformMax);
-        } else if (thing.top > thing.EightBitter.MapScreener.bottomPlatformMax) {
+            thing.EightBitter.setTop(
+                thing, thing.EightBitter.MapScreener.bottomPlatformMax
+            );
+        } else if (
+            thing.top > thing.EightBitter.MapScreener.bottomPlatformMax
+        ) {
             thing.EightBitter.setBottom(thing, 0);
         } else {
             thing.EightBitter.movePlatform(thing);
             return;
         }
         
-        if (thing.EightBitter.player && thing.EightBitter.player.resting === thing) {
+        if (
+            thing.EightBitter.player
+            && thing.EightBitter.player.resting === thing
+        ) {
             thing.EightBitter.player.resting = undefined;
+        }
+    }
+
+    /**
+     * Movement Function for Platforms that fall whenever rested upon by a 
+     * player. Being rested upon means the Platform falls; when it reaches a 
+     * terminal velocity, it switches to moveFreeFalling forever.
+     * 
+     * @param {Platform} thing
+     */
+    function moveFalling(thing) {
+        // If the player isn't resting on this thing (any more?), ignore it
+        if (thing.EightBitter.player.resting !== thing) {
+            // Since the player might have been on this thing but isn't anymore, 
+            // set the yvel to 0 just in case
+            thing.yvel = 0;
+            return;
+        }
+
+        // Since the player is on this thing, start falling more
+        thing.EightBitter.shiftVert(
+            thing, thing.yvel += thing.EightBitter.unitsize / 8
+        );
+        thing.EightBitter.setBottom(thing.EightBitter.player, thing.top);
+
+        // After a velocity threshold, start always falling
+        if (
+            thing.yvel >= (
+                thing.fallThresholdStart || thing.EightBitter.unitsize * 2.8
+            )
+        ) {
+            thing.freefall = true;
+            thing.movement = thing.EightBitter.moveFreeFalling;
+        }
+    }
+
+    /**
+     * Movement Function for Platforms that have reached terminal velocity in
+     * moveFalling and are now destined to die. The Platform will continue to
+     * accelerate towards certain death until another velocity threshold,
+     * and then switches to movePlatform to remain at that rate.
+     * 
+     * @param {Platform} thing
+     */
+    function moveFreeFalling(thing) {
+        // Accelerate downwards, increasing the thing's y-velocity
+        thing.yvel += thing.acceleration || thing.EightBitter.unitsize / 16;
+        thing.EightBitter.shiftVert(thing, thing.yvel);
+
+        // After a velocity threshold, stop accelerating
+        if (
+            thing.yvel >= (
+                thing.fallThresholdEnd || thing.EightBitter.unitsize * 2
+            )
+        ) {
+            thing.movement = movePlatform;
         }
     }
     
     /**
+     * Movement Function for Platforms that are a part of a scale.  Nothing
+     * happens if a Platform isn't being rested and doesn't have a y-velocity. 
+     * Being rested upon means the y-velocity increases, and not being rested
+     * means the y-velocity decreases: either moves the corresponding Platform
+     * "partner" in the other vertical direction. When the Platform is too far
+     * down (visually has no string left), they both fall.
      * 
+     * @param {Platform} thing
+     * @todo Implement this! See #146.
      */
     function movePlatformScale(thing) {
+        return;
+
         // If the Player is resting on this, fall hard
         if (thing.EightBitter.player.resting === thing) {
             thing.yvel += thing.EightBitter.unitsize / 16;
@@ -3481,7 +3774,12 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Movement Function for Vines. They are constantly growing upward, until
+     * some trigger (generally from animateEmergeVine) sets movement to 
+     * undefined. If there is an attached Thing, it is moved up at the same rate
+     * as the Vine.
      * 
+     * @param {Vine} thing
      */
     function moveVine(thing) {
         thing.EightBitter.increaseHeight(thing, thing.speed);
@@ -3496,7 +3794,12 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Movement Function for Springboards that are "pushing up" during or after
+     * being hit by a player. The Springboard changes its height based on its
+     * tension. If the player is still on it, then the player is given extra
+     * vertical velocity and taken off.
      * 
+     * @param {Vine} thing
      */
     function moveSpringboardUp(thing) {
         var player = thing.EightBitter.player;
@@ -3530,12 +3833,16 @@ var FullScreenMario = (function(GameStartr) {
                 player.movement = FullScreenMario.prototype.movePlayer;
             }
         }
-    }        /**     *      */    function moveFalling(thing) {        // If the player isn't resting on this thing (any more?), ignore it        if (thing.EightBitter.player.resting !== thing) {            // Since the player might have been on this thing but isn't anymore,             // set the yvel to 0 just in case            thing.yvel = 0;            return;        }                // Since the player is on this thing, start falling more        thing.EightBitter.shiftVert(thing, thing.yvel += thing.EightBitter.unitsize / 8);        thing.EightBitter.setBottom(thing.EightBitter.player, thing.top);                // After a velocity threshold, start always falling        if (thing.yvel >= (thing.fallThresholdStart || thing.EightBitter.unitsize * 2.8)) {            thing.freefall = true;            thing.movement = thing.EightBitter.moveFreeFalling;        }    }        /**     *      */    function moveFreeFalling(thing) {        // Accelerate downwards, increasing the thing's y-velocity        thing.yvel += thing.acceleration || thing.EightBitter.unitsize / 16;        thing.EightBitter.shiftVert(thing, thing.yvel);
-                // After a velocity threshold, stop accelerating        if (thing.yvel >= (thing.fallThresholdEnd || thing.EightBitter.unitsize * 2)) {
-            thing.movement = movePlatform;        }    }
+    }
     
     /**
+     * Movement Function for Shells. This actually does nothing for moving 
+     * Shells (since they only interact unusually on collision). For Shells with
+     * no x-velocity, a counting variable is increased. Once it reaches 350, the
+     * shell is "peeking" visually; when it reaches 490, the Shell spawns back
+     * into its original spawner (typically Koopa or Beetle).
      * 
+     * @param {Shell} thing
      */
     function moveShell(thing) {
         if (thing.xvel !== 0) {
@@ -3557,7 +3864,12 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Movement Function for Piranhas. These constantly change their height 
+     * except when they reach 0 or full height (alternating direction), at which
+     * point they switch to movePiranhaLatent to wait to move in the opposite
+     * direction.
      * 
+     * @param {Piranha} thing
      */
     function movePiranha(thing) {
         var bottom = thing.bottom,
@@ -3565,7 +3877,9 @@ var FullScreenMario = (function(GameStartr) {
             atEnd = false;
         
         if (thing.resting && !FSM.isCharacterAlive(thing.resting)) {
-            bottom = thing.top + thing.constructor.prototype.height * thing.EightBitter.unitsize;
+            bottom = thing.top + (
+                thing.constructor.prototype.height * thing.EightBitter.unitsize
+            );
             height = Infinity;
             thing.resting = undefined;
         }
@@ -3586,48 +3900,28 @@ var FullScreenMario = (function(GameStartr) {
             thing.movement = movePiranhaLatent;
         }
     }
-    
+
     /**
+     * Movement Function for Piranhas that are not changing size. They wait 
+     * until a counter reaches a point (and then, if their height is 0, for the
+     * player to go away) to switch back to movePiranha.
      * 
-     */
-    function moveBubble(thing) {
-        if (thing.top < thing.EightBitter.MapScreener.top + thing.EightBitter.unitsize * 16) {
-            thing.EightBitter.killNormal(thing);
-        }
-    }
-    
-    /**
-     * 
-     */
-    function moveCheepCheep(thing) {
-        if (thing.top < thing.EightBitter.unitsize * 24) {
-            thing.EightBitter.setTop(thing, thing.EightBitter.unitsize * 24);
-        }
-    }
-    
-    /**
-     * 
-     */
-    function moveCheepCheepFlying(thing) {
-        if (thing.top < thing.EightBitter.unitsize * 28) {
-            thing.movement = undefined;
-            thing.nofall = false;
-        }
-    }
-    
-    /**
-     * 
+     * @param {Piranha} thing
      */
     function movePiranhaLatent(thing) {
         var playerx = thing.EightBitter.getMidX(thing.EightBitter.player);
 
-        if (thing.counter >= thing.countermax
-                && (thing.height > 0
-                    || playerx < thing.left - thing.EightBitter.unitsize * 8
-                    || playerx > thing.right + thing.EightBitter.unitsize * 8)) {
+        if (
+            thing.counter >= thing.countermax
+            && (
+                thing.height > 0
+                || playerx < thing.left - thing.EightBitter.unitsize * 8
+                || playerx > thing.right + thing.EightBitter.unitsize * 8
+            )
+        ) {
             thing.movement = undefined;
             thing.direction *= -1;
-            
+
             thing.EightBitter.TimeHandler.addEvent(function () {
                 thing.movement = thing.EightBitter.movePiranha;
             }, 7);
@@ -3637,7 +3931,55 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Movement Function for the Bubbles that come out of a player's mouth
+     * underwater. They die when they reach a top threshold of unitsize * 16.
      * 
+     * @param {Bubble} thing
+     */
+    function moveBubble(thing) {
+        if (
+            thing.top < (
+                thing.EightBitter.MapScreener.top
+                + thing.EightBitter.unitsize * 16
+            )
+        ) {
+            thing.EightBitter.killNormal(thing);
+        }
+    }
+    
+    /**
+     * Movement Function for typical CheepCheeps, which are underwater. They
+     * move according to their native velocities except that they cannot travel
+     * above the unitsize * 16 top threshold.
+     * 
+     * @param {CheepCheep} thing
+     */
+    function moveCheepCheep(thing) {
+        if (thing.top < thing.EightBitter.unitsize * 16) {
+            thing.EightBitter.setTop(thing, thing.EightBitter.unitsize * 16);
+        }
+    }
+    
+    /**
+     * Movement Function for flying CheepCheeps, like in bridge areas. They 
+     * lose a movement Function (and therefore just fall) at a unitsize * 28 top
+     * threshold.
+     * 
+     * @param {CheepCheep} thing
+     */
+    function moveCheepCheepFlying(thing) {
+        if (thing.top < thing.EightBitter.unitsize * 28) {
+            thing.movement = undefined;
+            thing.nofall = false;
+        }
+    }
+    
+    /**
+     * Movement Function for Bloopers. These switch between "squeezing" (moving
+     * down) and moving up ("unsqueezing"). They always try to unsqueeze if the 
+     * player is above them.
+     * 
+     * @param {Blooper} thing
      */
     function moveBlooper(thing) {
         switch (thing.counter) {
@@ -3662,27 +4004,42 @@ var FullScreenMario = (function(GameStartr) {
             thing.yvel = Math.min(thing.yvel - .035, -.7); // going up
         }
         
-        if (thing.top > thing.EightBitter.unitsize * 24) {
+        if (thing.top > thing.EightBitter.unitsize * 16) {
             thing.EightBitter.shiftVert(thing, thing.yvel, true);
         }
 
         if (!thing.squeeze) {
-            if (thing.EightBitter.player.left > thing.right + thing.EightBitter.unitsize * 8) {
+            if (
+                thing.EightBitter.player.left
+                > thing.right + thing.EightBitter.unitsize * 8
+            ) {
                 // Go to the right
-                thing.xvel = Math.min(thing.speed, thing.xvel + thing.EightBitter.unitsize / 32);
+                thing.xvel = Math.min(
+                    thing.speed, thing.xvel + thing.EightBitter.unitsize / 32
+                );
             }
-            else if (thing.EightBitter.player.right < thing.left - thing.EightBitter.unitsize * 8) {
+            else if (
+                thing.EightBitter.player.right
+                < thing.left - thing.EightBitter.unitsize * 8
+            ) {
                 // Go to the left
-                thing.xvel = Math.max(-thing.speed, thing.xvel - thing.EightBitter.unitsize / 32);
+                thing.xvel = Math.max(
+                    -thing.speed,
+                    thing.xvel - thing.EightBitter.unitsize / 32
+                );
             }
         }
     }
     
     /**
+     * Additional movement Function for Bloopers that are "squeezing". Squeezing
+     * Bloopers travel downard at a gradual pace until they reach either the
+     * player's bottom or a threshold of unitsize * 90.
      * 
+     * @param {Blooper} thing
      */
     function moveBlooperSqueezing(thing) {
-        if (thing.squeeze != 2) {
+        if (thing.squeeze !== 2) {
             thing.squeeze = 2;
             thing.EightBitter.addClass(thing, "squeeze");
             thing.EightBitter.setHeight(thing, 10, true, true);
@@ -3696,13 +4053,21 @@ var FullScreenMario = (function(GameStartr) {
         
         thing.squeeze += 1;
         
-        if (thing.top > thing.EightBitter.player.bottom || thing.bottom > 360) {
+        if (
+            thing.top > thing.EightBitter.player.bottom
+            || thing.bottom > thing.EightBitter.unitsize * 91
+        ) {
             thing.EightBitter.animateBlooperUnsqueezing(thing);
         }
     }
     
     /**
+     * Movement Function for Podoboos that is only used when they are falling.
+     * Podoboo animations trigger this when they reach a certain height, and
+     * use this to determine when they should stop accelerating downward, which
+     * is their starting location.
      * 
+     * @param {Podoboo} thing
      */
     function movePodobooFalling(thing) {
         if (thing.top >= thing.starty) {
@@ -3726,7 +4091,12 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Movement Function for Lakitus that have finished their moveLakituInitial
+     * run. This is similar to movePacing in that it makes the Lakitu pace to 
+     * left and right of the player, and moves with the player rather than the
+     * scrolling window.
      * 
+     * @param {Lakitu} thing
      */
     function moveLakitu(thing) {
         var player = thing.EightBitter.player;
@@ -3755,7 +4125,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Initial entry movement Function for Lakitus. They enter by sliding across
+     * the top of the screen until they reach the player, and then switch to
+     * their standard moveLakitu movement.
      * 
+     * @param {Lakitu} thing
      */
     function moveLakituInitial(thing) {
         if (thing.right < thing.EightBitter.player.left) {
@@ -3769,14 +4143,22 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Alternate movement Function for Lakitus. This is used when the player
+     * reaches the ending flagpole in a level and the Lakitu just flies to the 
+     * left.
      * 
+     * @param {Lakitu} thing
      */
     function moveLakituFleeing(thing) {
         thing.EightBitter.shiftHoriz(thing, -thing.EightBitter.unitsize);
     }
     
     /**
+     * Movement Function for Coins that have been animated. They move based on
+     * their yvel, and if they have a parent, die when they go below the parent.
      * 
+     * @param {Coin} thing
+     * @param {Solid} [parent]
      */
     function moveCoinEmerge(thing, parent) {
         thing.EightBitter.shiftVert(thing, thing.yvel);
@@ -3786,9 +4168,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Movement Function for the player. It reacts to almost all actions that 
+     * to be done, but is horribly written so that is all the documentation you
+     * get here. Sorry! Sections are labeled on the inside.
      * 
-     * 
-     * This is one of the worst written functions in the engine. Kill me please.
+     * @param {Player} thing
      */
     function movePlayer(thing) {
         // Not jumping
@@ -3965,7 +4349,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Alternate movement Function for players attached to a Vine. They may 
+     * climb up or down the Vine, or jump off. 
      * 
+     * @param {Player} thing
      */
     function movePlayerVine(thing) {
         var attachedSolid = thing.attachedSolid,
@@ -4027,7 +4414,12 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Movement Function for players pressing down onto a Springboard. This does
+     * basically nothing except check for when the player is off the spring or
+     * the spring is fully contracted. The former restores the player's movement
+     * and the latter clears it (to be restored in moveSpringboardUp).
      * 
+     * @param {Player} thing
      */
     function movePlayerSpringboardDown(thing) {
         var other = thing.spring;
@@ -4068,15 +4460,18 @@ var FullScreenMario = (function(GameStartr) {
     // Animations
     
     /**
+     * Animates a solid that has just had its bottom "bumped" by a player. It
+     * moves with a dx that is initially negative (up) and increases (to down).
      * 
+     * @param {Solid} thing
      */
     function animateSolidBump(thing) {
-        var direction = -3;
+        var dx = -3;
         
         thing.EightBitter.TimeHandler.addEventInterval(function (thing) {
-            thing.EightBitter.shiftVert(thing, direction);
-            direction += .5;
-            if (direction === 3.5) {
+            thing.EightBitter.shiftVert(thing, dx);
+            dx += .5;
+            if (dx === 3.5) {
                 thing.up = false;
                 return true;
             }
@@ -4084,7 +4479,9 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animates a Block to switch from unused to used.
      * 
+     * @param {Block} thing
      */
     function animateBlockBecomesUsed(thing) {
         thing.used = true;
@@ -4092,16 +4489,28 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animates a solid to have its contents emerge. A new Thing based on the 
+     * contents is spawned directly on top of (visually behind) the solid, and
+     * has its animate callback triggered.
      * 
+     * @param {Solid} thing
+     * @param {Player} other
+     * @remarks If the contents are "Mushroom" and a large player hits the 
+     *          solid, they turn into "FireFlower".
      */
     function animateSolidContents(thing, other) {
         var output;
 
-        if (other && other.player && other.power > 1 && thing.contents === "Mushroom") {
+        if (
+            other
+            && other.player
+            && other.power > 1
+            && thing.contents === "Mushroom"
+        ) {
             thing.contents = "FireFlower";
         }
         
-        var output = thing.EightBitter.addThing(thing.contents);
+        output = thing.EightBitter.addThing(thing.contents);
         thing.EightBitter.setMidXObj(output, thing);
         thing.EightBitter.setTop(output, thing.top);
         output.blockparent = thing;
@@ -4111,7 +4520,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animates a Brick turning into four rotating shards flying out of it. The
+     * shards have an initial x- and y-velocities, and die after 70 steps.
      * 
+     * @param {Brick} thing
      */
     function animateBrickShards(thing) {
         var unitsize = thing.EightBitter.unitsize,
@@ -4127,12 +4539,20 @@ var FullScreenMario = (function(GameStartr) {
             shard.xvel = shard.speed = unitsize / 2 - unitsize * (i > 1);
             shard.yvel = unitsize * -1.4 + i % 2;
             
-            thing.EightBitter.TimeHandler.addEvent(thing.EightBitter.killNormal, 70, shard);
+            thing.EightBitter.TimeHandler.addEvent(
+                thing.EightBitter.killNormal, 70, shard
+            );
         }
     }
     
     /**
+     * Standard animation Function for Things emerging from a solid as contents.
+     * They start at inside the solid, slowly move up, then moveSimple until 
+     * they're off the solid, at which point they revert to their normal 
+     * movement.
      * 
+     * @param {Thing} thing
+     * @param {Solid} other
      */
     function animateEmerge(thing, other) {
         thing.nomove = thing.nocollide = thing.nofall = thing.alive = true;
@@ -4153,7 +4573,9 @@ var FullScreenMario = (function(GameStartr) {
             }
             
             thing.EightBitter.setBottom(thing, other.top);
-            thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Scenery", "Character");
+            thing.EightBitter.GroupHolder.switchObjectGroup(
+                thing, "Scenery", "Character"
+            );
             thing.nomove = thing.nocollide = thing.nofall = thing.moveleft = false;
             
             if (thing.emergeOut) {
@@ -4180,9 +4602,15 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
-     *
+     * Animation Function for Coins emerging from (or being hit by) a solid. The
+     * Coin switches to the Scenery group, rotates between animation classes, 
+     * moves up then down then dies, plays the "Coin" sound, and increaes the
+     * "coins" and "score" statistics.
+     * 
+     * @param {Coin} thing
+     * @param {Solid} other
      */
-    function animateEmergeCoin(thing, solid) {
+    function animateEmergeCoin(thing, other) {
         thing.nocollide = thing.alive = thing.nofall = true;
         thing.yvel -= thing.EightBitter.unitsize;
         
@@ -4199,7 +4627,7 @@ var FullScreenMario = (function(GameStartr) {
         ], 0, 5);
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
-            thing.EightBitter.moveCoinEmerge(thing, solid);
+            thing.EightBitter.moveCoinEmerge(thing, other);
             return !thing.EightBitter.isCharacterAlive(thing);
         }, 1, Infinity);
         
@@ -4213,7 +4641,12 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animation Function for a Vine emerging from a solid. It continues to grow
+     * as normal via moveVine for 700 steps, then has its movement erased to 
+     * stop.
      * 
+     * @param {Vine} thing
+     * @param {Solid} solid
      */
     function animateEmergeVine(thing, solid) {
         // This allows the thing's movement to keep it on the solid
@@ -4231,7 +4664,14 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animates a "flicker" effect on a Thing by repeatedly toggling its hidden
+     * flag for a little while.
      * 
+     * @param {Thing} thing
+     * @param {Number} [cleartime]   How long to wait to stop the effect (by 
+     *                               default, 49).
+     * @param {Number} [interval]   How many steps between hidden toggles (by
+     *                              default, 2).
      */
     function animateFlicker(thing, cleartime, interval) {
         cleartime = Math.round(cleartime) || 49;
@@ -4253,8 +4693,14 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animate Function for a HammerBro to throw a hammer. The HammerBro 
+     * switches to the "throwing" class, waits and throws a few repeats, then
+     * goes back to normal.
      * 
-     * 
+     * @param {HammerBro} thing
+     * @param {Number} count   How many times left there are to throw a hammer.
+     *                         If equal to 3, a hammer will not be thrown (to
+     *                         mimic the pause in the original game).
      * @remarks This could probably be re-written.
      */
     function animateThrowingHammer(thing, count) {
@@ -4307,10 +4753,15 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animation Function for when Bowser jumps. This will only trigger if he is
+     * facing left and a player exists. If either Bowser or the player die, it
+     * is cancelled. He is given a negative yvel to jump, and the nocollidesolid
+     * flag is enabled as long as he is rising.
      * 
+     * @param {Bowser} thing
      */
     function animateBowserJump(thing) {
-        if (!thing.lookleft || !thing.lookleft || !thing.EightBitter.player) {
+        if (!thing.lookleft || !thing.EightBitter.player) {
             return;
         }
         
@@ -4335,7 +4786,12 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animation Function for when Bowser fires. This will only trigger if he is
+     * facing left and a player exists. If either Bowser or the player die, it
+     * is cancelled. His mouth is closed and an animateBowserFireOpen call is
+     * scheduled to complete the animation.
      * 
+     * @param {Bowser} thing
      */
     function animateBowserFire(thing) {
         if (!thing.lookleft || !thing.lookleft || !thing.EightBitter.player) {
@@ -4354,11 +4810,17 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.AudioPlayer.playLocal("Bowser Fires", thing.left);
         
         // After a bit, re-open and fire
-        thing.EightBitter.TimeHandler.addEvent(animateBowserFireOpen, 14, thing);
+        thing.EightBitter.TimeHandler.addEvent(
+            animateBowserFireOpen, 14, thing
+        );
     }
     
     /**
+     * Animation Function for when Bowser actually fires. A BowserFire Thing is
+     * placed at his mouth, given a (rounded to unitsize * 8) destination y, and
+     * sent firing to the player.
      * 
+     * @param {Thing} thing
      */
     function animateBowserFireOpen(thing) {
         var unitsize = thing.EightBitter.unitsize,
@@ -4367,6 +4829,10 @@ var FullScreenMario = (function(GameStartr) {
                 Math.round(thing.EightBitter.player.bottom / (unitsize * 8)) 
                     * unitsize * 8
             );
+
+        if (!thing.EightBitter.isCharacterAlive(thing)) {
+            return true;
+        }
         
         thing.EightBitter.removeClass(thing, "firing");
         thing.EightBitter.addThing(
@@ -4379,7 +4845,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animation Function for when Bowser freezes upon the player hitting a 
+     * CastleAxe. Velocity and movement are paused, then nofall is disabled 
+     * after 70 steps.
      * 
+     * @param {Bowser} thing
      */
     function animateBowserFreeze(thing) {
         thing.nofall = true;
@@ -4393,7 +4863,12 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animation Function for a standard jump, such as what HammerBros do. The
+     * jump may be in either up or down, chosen at random by the NumberMaker.
+     * Steps are taken to ensure the Thing does not collide at improper points
+     * during the jump.
      * 
+     * @param {Thing} thing
      */
     function animateJump(thing) {
         // Finish
@@ -4408,7 +4883,9 @@ var FullScreenMario = (function(GameStartr) {
         
         // Jump up?
         if (
-            thing.EightBitter.MapScreener.floor - (thing.bottom / thing.EightBitter.unitsize) >= 30
+            thing.EightBitter.MapScreener.floor - (
+                thing.bottom / thing.EightBitter.unitsize
+            ) >= 30
             && thing.resting.title !== "Floor"
             && thing.EightBitter.NumberMaker.randomBoolean()
         ) {
@@ -4431,7 +4908,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animation Function for Bloopers starting to "unsqueeze". The "squeeze"
+     * class is removed, their height is reset to 12, and their counter reset.
      * 
+     * @param {Blooper} thing
      */
     function animateBlooperUnsqueezing(thing) {
         thing.counter = 0;
@@ -4442,7 +4922,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animation Function for Podoboos jumping up. Their top is recorded and a 
+     * large negative yvel is given; after the jumpheight number of steps, they
+     * fall back down.
      * 
+     * @param {Podoboo} thing
      */
     function animatePodobooJumpUp(thing) {
         thing.starty = thing.top;
@@ -4456,14 +4940,21 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animation Function for when a Podoboo needs to stop jumping. It obtains 
+     * the movePodobooFalling movement to track its descent.
      * 
+     * @param {Podoboo} thing
      */
     function animatePodobooJumpDown(thing) {
         thing.movement = thing.EightBitter.movePodobooFalling;
     }
     
     /**
+     * Animation Function for a Lakitu throwing a SpinyEgg. The Lakitu hides
+     * behind its cloud ("hiding" class), waits 21 steps, then throws an egg up
+     * and comes out of "hiding".
      * 
+     * @param {Lakitu} thing
      */
     function animateLakituThrowingSpiny(thing) {
         if (thing.fleeing || !thing.EightBitter.isCharacterAlive(thing)) {
@@ -4475,35 +4966,53 @@ var FullScreenMario = (function(GameStartr) {
             if (thing.dead) {
                 return;
             }
-            var spawn = thing.EightBitter.addThing("SpinyEgg", thing.left, thing.top);
+            var spawn = thing.EightBitter.addThing(
+                "SpinyEgg", thing.left, thing.top
+            );
             spawn.yvel = thing.EightBitter.unitsize * -2.1;
             thing.EightBitter.switchClass(thing, "hiding", "out");
         }, 21);
     }
     
     /**
+     * Animation Function for when a SpinyEgg hits the ground. The SpinyEgg is
+     * killed and a Spiny is put in its place, moving towards the player.
      * 
+     * @param {SpinyEgg} thing
      */
     function animateSpinyEggHatching(thing) {
-        var spawn = thing.EightBitter.addThing("Spiny", thing.left, thing.top - thing.yvel);
-        spawn.moveleft = thing.EightBitter.objectToLeft(thing.EightBitter.player, spawn);
+        var spawn = thing.EightBitter.addThing(
+            "Spiny", thing.left, thing.top - thing.yvel
+        );
+        spawn.moveleft = thing.EightBitter.objectToLeft(
+            thing.EightBitter.player, spawn
+        );
         thing.EightBitter.killNormal(thing);
     }
     
     /**
+     * Animation Function for when a Fireball emerges from a player. All that
+     * happens is the "Fireball" sound plays.
      * 
+     * @param {Fireball} thing
      */
     function animateFireballEmerge(thing) {
         thing.EightBitter.AudioPlayer.play("Fireball");
     }
     
     /**
+     * Animation Function for when a Fireball explodes. It is deleted and, 
+     * unless big is === 2 (as this is used as a kill Function), a Firework is
+     * put in its place.
      * 
+     * @param {Fireball} thing
+     * @param {Number} [big]   The "level" of death this is (a 2 implies this is
+     *                         a sudden death, without animations).
      */
-    function animateFireballExplode(thing, level) {
+    function animateFireballExplode(thing, big) {
         thing.nocollide = true;
         thing.EightBitter.killNormal(thing);
-        if (level === 2) {
+        if (big === 2) {
             return;
         }
         
@@ -4514,7 +5023,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animation Function for a Firework, triggered immediately upon spawning.
+     * The Firework cycles between "n1" through "n3", then dies.
      * 
+     * @param {Firework} thing
      */
     function animateFirework(thing) {
         var name = thing.className + " n",
@@ -4523,6 +5035,7 @@ var FullScreenMario = (function(GameStartr) {
         for (i = 0; i < 3; i += 1) {
             thing.EightBitter.TimeHandler.addEvent(function (i) {
                 thing.EightBitter.setClass(thing, name + String(i + 1));
+                console.log(thing.className);
             }, i * 7, i);
         }
         
@@ -4532,7 +5045,9 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
-     * 
+     * Animation Function for the Fireworks found at the end of 
+     * EndOutsideCastle. numFireworks dicatates how many to place, and positions
+     * are declared within.
      * 
      * @param {Collider} other 
      * @remarks The left of other is the right of player, and is 4 units away 
@@ -4557,7 +5072,7 @@ var FullScreenMario = (function(GameStartr) {
                 [-8, -40]
             ],
             i = 0,
-            firework;
+            firework, position;
         
         thing.EightBitter.addThing(
             flag,
@@ -4574,29 +5089,42 @@ var FullScreenMario = (function(GameStartr) {
         
         if (numFireworks > 0 ) {
             thing.EightBitter.TimeHandler.addEventInterval(function () {
-                firework = thing.EightBitter.addThing("Firework",
-                    thing.left + fireworkPositions[i][0] * thing.EightBitter.unitsize,
-                    thing.top + fireworkPositions[i][1] * thing.EightBitter.unitsize);
+                position = fireworkPositions[i];
+                firework = thing.EightBitter.addThing(
+                    "Firework",
+                    thing.left + position[0] * thing.EightBitter.unitsize,
+                    thing.top + position[1] * thing.EightBitter.unitsize
+                );
                 firework.animate(firework);
                 i += 1;
             }, fireInterval, numFireworks);
         }
         
         thing.EightBitter.TimeHandler.addEvent(function () {
-            thing.EightBitter.AudioPlayer.addEventImmediate("Stage Clear", "ended", function () {
-                thing.EightBitter.collideLevelTransport(thing, other);
-            });
+            thing.EightBitter.AudioPlayer.addEventImmediate(
+                "Stage Clear", "ended", function () {
+                    thing.EightBitter.collideLevelTransport(thing, other);
+                }
+            );
         }, i * fireInterval + 420);
     }
     
     /**
+     * Animation Function for a Cannon outputting a BulletBill. This will only
+     * happen if the Cannon isn't within 8 units of the player. The spawn flies
+     * at a constant rate towards the player.
      * 
+     * @param {Cannon} thing
      */
     function animateCannonFiring(thing) {
         // Don't fire if Player is too close
         if (
-            thing.EightBitter.player.right > thing.left - thing.EightBitter.unitsize * 8
-            && thing.EightBitter.player.left < thing.right + thing.EightBitter.unitsize * 8
+            thing.EightBitter.player.right > (
+                thing.left - thing.EightBitter.unitsize * 8
+            )
+            && thing.EightBitter.player.left < (
+                thing.right + thing.EightBitter.unitsize * 8
+            )
         ) {
             return;
         }
@@ -4608,7 +5136,9 @@ var FullScreenMario = (function(GameStartr) {
             thing.EightBitter.flipHoriz(spawn);
             thing.EightBitter.addThing(spawn, thing.left, thing.top);
         } else {
-            thing.EightBitter.addThing(spawn, thing.left + thing.width, thing.top);
+            thing.EightBitter.addThing(
+                spawn, thing.left + thing.width, thing.top
+            );
         }
         
         thing.EightBitter.AudioPlayer.playLocal("Bump", thing.right);
@@ -6175,36 +6705,35 @@ var FullScreenMario = (function(GameStartr) {
             between = reference.between || 40,
             dropLeft = reference.dropLeft || 24,
             dropRight = reference.dropRight || 24,
+            collectionName = "ScaleCollection--" + [
+                x, y, widthLeft, widthRight, dropLeft, dropRight
+            ].join(","),
             // Tension is always the height from the top to a platform
             tensionLeft = dropLeft * unitsize,
             tensionRight = dropRight * unitsize,
-            // Each part of the scale is registered in the collection {}
-            collection = {},
-            onThingMake = scope.spawnCollectionComponent.bind(scope, collection),
-            onThingAdd = scope.spawnCollectionPartner.bind(scope, collection),
             stringLeft = { 
                 "thing": "String",
                 "x": x, 
                 "y": y - 4, 
                 "height": dropLeft - 4,
-                "onThingMake": onThingMake,
-                "collectionName": "stringLeft",
+                "collectionName": collectionName,
+                "collectionKey": "stringLeft",
             },
             stringRight = {
                 "thing": "String",
                 "x": x + between,
                 "y": y - 4, 
                 "height": dropRight - 4,
-                "onThingMake": onThingMake,
-                "collectionName": "stringRight"
+                "collectionName": collectionName,
+                "collectionKey": "stringRight"
             },
             stringMiddle = { 
                 "thing": "String", 
                 "x": x + 4, 
                 "y": y, 
-                "width": between - 7, 
-                "onThingMake": onThingMake,
-                "collectionName": "stringMiddle" 
+                "width": between - 7,
+                "collectionName": collectionName,
+                "collectionKey": "stringMiddle" 
             },
             cornerLeft = {
                 "thing": "StringCornerLeft", 
@@ -6223,14 +6752,8 @@ var FullScreenMario = (function(GameStartr) {
                 "width": widthLeft,
                 "scale": true,
                 "tension": (dropLeft - 1.5) * unitsize,
-                "onThingMake": onThingMake,
-                "onThingAdd": onThingAdd,
-                "collectionName": "platformLeft",
-                "collectionPartnerNames": {
-                    "stringHere": "stringLeft",
-                    "stringOther": "stringRight",
-                    "platformOther": "platformRight",
-                }
+                "collectionName": collectionName,
+                "collectionKey": "platformLeft"
             },
             platformRight = { 
                 "thing": "Platform",
@@ -6239,14 +6762,8 @@ var FullScreenMario = (function(GameStartr) {
                 "width": widthRight,
                 "scale": true,
                 "tension": (dropRight - 1.5) * unitsize,
-                "onThingMake": onThingMake,
-                "onThingAdd": onThingAdd,
-                "collectionName": "platformRight" ,
-                "collectionPartnerNames": {
-                    "stringHere": "stringRight",
-                    "stringOther": "stringLeft",
-                    "platformOther": "platformLeft",
-                }
+                "collectionName": collectionName,
+                "collectionKey": "platformRight"
             };
         
         return [
@@ -7076,10 +7593,13 @@ var FullScreenMario = (function(GameStartr) {
         "setMovementEndpoints": setMovementEndpoints,
         "movePlatformSpawn": movePlatformSpawn,
         "movePlatformScale": movePlatformScale,
+        "moveFalling": moveFalling,
+        "moveFreeFalling": moveFreeFalling,
         "moveVine": moveVine,
-        "moveSpringboardUp": moveSpringboardUp,        "moveFalling": moveFalling,        "moveFreeFalling": moveFreeFalling,
+        "moveSpringboardUp": moveSpringboardUp,
         "moveShell": moveShell,
         "movePiranha": movePiranha,
+        "movePiranhaLatent": movePiranhaLatent,
         "moveBubble": moveBubble,
         "moveCheepCheep": moveCheepCheep,
         "moveCheepCheepFlying": moveCheepCheepFlying,
