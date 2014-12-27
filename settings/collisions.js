@@ -1,6 +1,10 @@
 FullScreenMario.prototype.settings.collisions = {
     "groupNames": ["Solid", "Character", "Scenery", "Text"],
     "groupTypes": "Array",
+    "globalCheckGenerators": {
+        "Character": FullScreenMario.prototype.generateCanThingCollide,
+        "Solid": FullScreenMario.prototype.generateCanThingCollide
+    },
     "hitCheckGenerators": {
         "Character": {
             "Character": FullScreenMario.prototype.generateIsCharacterTouchingCharacter,
@@ -12,9 +16,5 @@ FullScreenMario.prototype.settings.collisions = {
             "Solid": FullScreenMario.prototype.generateHitCharacterSolid,
             "Character": FullScreenMario.prototype.generateHitCharacterCharacter
         }
-    },
-    "globalCheckGenerators": {
-        "Character": FullScreenMario.prototype.generateCanThingCollide,
-        "Solid": FullScreenMario.prototype.generateCanThingCollide
     }
 };
