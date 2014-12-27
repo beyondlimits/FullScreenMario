@@ -124,8 +124,8 @@ var FullScreenMario = (function(GameStartr) {
     FullScreenMario.unitsize = 4;
     FullScreenMario.scale = FullScreenMario.unitsize / 2;
     
-    // Gravity is always a function of unitsize
-    FullScreenMario.gravity = Math.round(12 * FullScreenMario.unitsize) / 100; // .48
+    // Gravity is always a function of unitsize (and about .48)
+    FullScreenMario.gravity = Math.round(12 * FullScreenMario.unitsize) / 100;
     
     // Levels of points to award for hopping on / shelling enemies
     FullScreenMario.pointLevels = [
@@ -1014,12 +1014,16 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         // Corner case: when character is exactly falling off the right (false)
-        if (thing.left + thing.xvel + thing.EightBitter.unitsize === other.right) {
+        if (
+            thing.left + thing.xvel + thing.EightBitter.unitsize === other.right
+        ) {
             return false;
         }
         
         // Corner case: when character is exactly falling off the left (false)
-        if (thing.right - thing.xvel - thing.EightBitter.unitsize === other.left) {
+        if (
+            thing.right - thing.xvel - thing.EightBitter.unitsize === other.left
+        ) {
             return false;
         }
         
@@ -1045,11 +1049,17 @@ var FullScreenMario = (function(GameStartr) {
          * @return {Boolean}
          */
         return function isCharacterTouchingCharacter(thing, other) {
-            if (thing.nocollidechar && (!other.player || thing.nocollideplayer)) {
+            if (
+                thing.nocollidechar
+                && (!other.player || thing.nocollideplayer)
+            ) {
                 return false;
             }
             
-            if (other.nocollidechar && (!thing.player || other.nocollideplayer)) {
+            if (
+                other.nocollidechar
+                && (!thing.player || other.nocollideplayer)
+            ) {
                 return false;
             }
             
@@ -1456,14 +1466,18 @@ var FullScreenMario = (function(GameStartr) {
         // Step one
         thing.nocollidechar = true;
         thing.EightBitter.animateFlicker(thing);
-        thing.EightBitter.removeClasses(thing, "running skidding jumping fiery");
+        thing.EightBitter.removeClasses(
+            thing, "running skidding jumping fiery"
+        );
         thing.EightBitter.addClasses(thing, "paddling small");
         
         // Step two (t+21)
         thing.EightBitter.TimeHandler.addEvent(function (thing) {
             thing.EightBitter.removeClass(thing, "large");
             thing.EightBitter.setPlayerSizeSmall(thing);
-            thing.EightBitter.setBottom(thing, bottom - FullScreenMario.unitsize);
+            thing.EightBitter.setBottom(
+                thing, bottom - FullScreenMario.unitsize
+            );
         }, 21, thing);
         
         // Step three (t+42)
@@ -1723,11 +1737,11 @@ var FullScreenMario = (function(GameStartr) {
             return;
         }
         
-        var balls = new Array(thing.fireballs),
+        var balls = [],
             i;
         
         for (i = 0; i < thing.fireballs; i += 1) {
-            balls[i] = thing.EightBitter.addThing("CastleFireball");
+            balls.push(thing.EightBitter.addThing("CastleFireball"));
             thing.EightBitter.setMidObj(balls[i], thing);
         }
         
@@ -1877,7 +1891,10 @@ var FullScreenMario = (function(GameStartr) {
             text = texts[i].text;
             
             if (texts[i].offset) {
-                left = thing.left + texts[i].offset * thing.EightBitter.unitsize;
+                left = (
+                    thing.left
+                    + texts[i].offset * thing.EightBitter.unitsize
+                );
             } else {
                 left = thing.left;
             }
@@ -1885,12 +1902,18 @@ var FullScreenMario = (function(GameStartr) {
             for (j = 0; j < text.length; j += 1) {
                 letter = text[j];
                 
-                if (thing.EightBitter.customTextMappings.hasOwnProperty(letter)) {
+                if (
+                    thing.EightBitter.customTextMappings.hasOwnProperty(
+                        letter
+                    )
+                ) {
                     letter = thing.EightBitter.customTextMappings[letter];
                 }
                 letter = "Text" + thing.size + letter;
                 
-                textThing = thing.EightBitter.ObjectMaker.make(letter, attributes);
+                textThing = thing.EightBitter.ObjectMaker.make(
+                    letter, attributes
+                );
                 textThing.EightBitter.addThing(textThing, left, top);
                 children.push(textThing);
                 
@@ -5035,7 +5058,6 @@ var FullScreenMario = (function(GameStartr) {
         for (i = 0; i < 3; i += 1) {
             thing.EightBitter.TimeHandler.addEvent(function (i) {
                 thing.EightBitter.setClass(thing, name + String(i + 1));
-                console.log(thing.className);
             }, i * 7, i);
         }
         
@@ -5145,21 +5167,23 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animation Function for a fiery player throwing a Fireball. The player may
+     * only do so if fewer than 2 other thrown Fireballs exist. A new Fireball
+     * is created in front of where the player is facing and are sent bouncing
+     * away.
      * 
+     * @param {Player} thing
+     * @remarks Yes, it's called numballs.
      */
     function animatePlayerFire(thing) {
         if (thing.numballs >= 2) {
             return;
         }
         
-        thing.numballs += 1;
-        thing.EightBitter.addClass(thing, "firing");
-        
         var ball = thing.EightBitter.ObjectMaker.make("Fireball", {
                 "moveleft": thing.moveleft,
                 "speed": thing.EightBitter.unitsize * 1.75,
                 "jumpheight": thing.EightBitter.unitsize * 1.56,
-                // "gravity": thing.EightBitter.MapScreener.gravity * 1.56, // not there!
                 "gravity": thing.EightBitter.MapScreener.gravity * 1.56,
                 "yvel": thing.EightBitter.unitsize,
                 "movement": thing.EightBitter.moveJumping
@@ -5168,11 +5192,16 @@ var FullScreenMario = (function(GameStartr) {
                 ? (thing.left - thing.EightBitter.unitsize / 4)
                 : (thing.right + thing.EightBitter.unitsize / 4);
         
-        thing.EightBitter.addThing(ball, xloc, thing.top + thing.EightBitter.unitsize * 8);
+        thing.EightBitter.addThing(
+            ball, xloc, thing.top + thing.EightBitter.unitsize * 8
+        );
         ball.animate(ball);
         ball.onDelete = function () {
             thing.numballs -= 1;
         };
+
+        thing.numballs += 1;
+        thing.EightBitter.addClass(thing, "firing");
         
         thing.EightBitter.TimeHandler.addEvent(function () {
             thing.EightBitter.removeClass(thing, "firing");
@@ -5180,7 +5209,13 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animation Function that regularly spings CastleFireballs around their
+     * parent CastleBlock. The CastleBlock's location and angle determine the
+     * location of each CastleFireball, and its dt and direction determine how
+     * the angle is changed for the next call.
      * 
+     * @param {CastleBlock} thing
+     * @param {CastleFireball[]} balls
      */
     function animateCastleBlock(thing, balls) {
         var ax = Math.cos(thing.angle * Math.PI) * thing.EightBitter.unitsize * 4,
@@ -5196,7 +5231,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animation Function to close a CastleBridge when the player triggers its
+     * killonend after hitting the CastleAxe in EndInsideCastle. Its width is
+     * reduced repeatedly on an interval until it's 0.
      * 
+     * @param {CastleBridge} thing
      */
     function animateCastleBridgeOpen(thing) {
         thing.EightBitter.TimeHandler.addEvent(function () {
@@ -5212,20 +5251,32 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animation Function for when a CastleChain opens, which just delays a
+     * killNormal call for 7 steps.
      * 
+     * @param {CastleChain} thing
      */
     function animateCastleChainOpen(thing) {
         thing.EightBitter.TimeHandler.addEvent(killNormal, 7, thing);
     }
     
     /**
+     * Animation Function for when the player paddles underwater. Any previous
+     * Any previous paddling classes and cycle are removed, and a new one is 
+     * added that, when it finishes, remnoves the player's paddlingCycle as 
+     * well.
      * 
+     * @param {Player} thing
      */
     function animatePlayerPaddling(thing) {
         if (!thing.paddlingCycle) {
-            thing.EightBitter.removeClass(thing, "skidding paddle1 paddle2 paddle3 paddle4 paddle5");
+            thing.EightBitter.removeClasses(
+                thing, "skidding paddle1 paddle2 paddle3 paddle4 paddle5"
+            );
             thing.EightBitter.addClass(thing, "paddling");
-            thing.EightBitter.TimeHandler.cancelClassCycle(thing, "paddlingCycle");
+            thing.EightBitter.TimeHandler.cancelClassCycle(
+                thing, "paddlingCycle"
+            );
             thing.EightBitter.TimeHandler.addClassCycle(
                 thing, 
                 [
@@ -5243,7 +5294,10 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animation Function for when a player lands to reset size and remove 
+     * hopping (and if underwater, paddling) classes. The mod event is fired.
      * 
+     * @param {Player} thing
      */
     function animatePlayerLanding(thing) {
         if (thing.crouching && thing.power > 1) {
@@ -5258,28 +5312,41 @@ var FullScreenMario = (function(GameStartr) {
             thing.EightBitter.removeClass(thing, "paddling");
         }
         
-        thing.EightBitter.ModAttacher.fireEvent("onPlayerLanding", thing, thing.resting);
+        thing.EightBitter.ModAttacher.fireEvent(
+            "onPlayerLanding", thing, thing.resting
+        );
     }
     
     /**
+     * Animation Function for when the player moves off a resting solid. It
+     * sets resting to undefined, and if underwater, switches the "running" and
+     * "paddling" classes.
      * 
+     * @param {Player} thing
      */
     function animatePlayerRestingOff(thing) {
+        thing.resting = undefined;
         if (thing.EightBitter.MapScreener.underwater) {
             thing.EightBitter.switchClass(thing, "running", "paddling");
         }
-        thing.resting = undefined;
     }
     
     /**
+     * Animation Function for when a player breathes a underwater. This creates
+     * a Bubble, which slowly rises to the top of the screen.
      * 
+     * @param {Player} thing
      */
     function animatePlayerBubbling(thing) {
         thing.EightBitter.addThing("Bubble", thing.right, thing.top);
     }
     
     /**
+     * Animation Function to give the player a cycle of running classes. The 
+     * cycle auto-updates its time as a function of how fast the player is 
+     * moving relative to its maximum speed.
      * 
+     * @param {Player} thing
      */
     function animatePlayerRunningCycle(thing) {
         thing.EightBitter.switchClass(thing, "still", "running");
@@ -5287,12 +5354,17 @@ var FullScreenMario = (function(GameStartr) {
         thing.running = thing.EightBitter.TimeHandler.addClassCycle(thing, [
             "one", "two", "three", "two"
         ], "running", function (event) {
-            event.timeout = 5 + Math.ceil(thing.maxspeedsave - Math.abs(thing.xvel));
+            event.timeout = 5 + Math.ceil(
+                thing.maxspeedsave - Math.abs(thing.xvel)
+            );
         });
     }
     
     /**
+     * Animation Function for when a player hops on an enemy. Resting is set to
+     * undefined, and a small vertical yvel is given.
      * 
+     * @param {Player} thing
      */
     function animateCharacterHop(thing) {
         thing.resting = undefined;
@@ -5300,7 +5372,12 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animation Function to start a player transferring through a Pipe. This is
+     * generic for entrances and exists horizontally and vertically: movement
+     * and velocities are frozen, size is reset, and the piping flag enabled. 
+     * The player is also moved into the Scenery group to be behind the Pipe.
      * 
+     * @param {Player} thing
      */
     function animatePlayerPipingStart(thing) {
         thing.nocollide = thing.nofall = thing.piping = true;
@@ -5315,23 +5392,37 @@ var FullScreenMario = (function(GameStartr) {
         }
         thing.EightBitter.removeClasses(thing, "jumping running crouching");
         
-        thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Character", "Scenery");
+        thing.EightBitter.GroupHolder.switchObjectGroup(
+            thing, "Character", "Scenery"
+        );
         thing.EightBitter.TimeHandler.cancelAllCycles(thing);
     }
     
     /**
+     * Animation Function for when a player is done passing through a Pipe. This
+     * is abstracted for exits both horizontally and vertically, typically after
+     * an area has just been entered.
      * 
+     * @param {Player} thing
      */
     function animatePlayerPipingEnd(thing) {
         thing.movement = thing.movementOld;
         
         thing.nocollide = thing.nofall = thing.piping = false;
         
-        thing.EightBitter.GroupHolder.switchObjectGroup(thing, "Scenery", "Character");
+        thing.EightBitter.GroupHolder.switchObjectGroup(
+            thing, "Scenery", "Character"
+        );
     }
     
     /**
+     * Animation Function for when a player is hopping off a pole. It hops off
+     * and faces the opposite direction.
      * 
+     * @param {Player} thing
+     * @param {Boolean} [doRun]   Whether the player should have a running cycle
+     *                            added immediately, such as during cutscenes
+     *                            (by default, false).
      */
     function animatePlayerOffPole(thing, doRun) {
         thing.EightBitter.removeClasses(thing, "climbing running");
@@ -5355,7 +5446,11 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Animation Function for when a player must hop off a Vine during an area's
+     * opening cutscene. The player switches sides, waits 14 steps, then calls
+     * animatePlayerOffPole.
      * 
+     * @param {Player} thing
      */
     function animatePlayerOffVine(thing) {
         thing.EightBitter.flipHoriz(thing);
@@ -5376,7 +5471,11 @@ var FullScreenMario = (function(GameStartr) {
     */
     
     /**
+     * Makes one Thing look towards another, chainging lookleft and moveleft in
+     * the process.
      * 
+     * @param {Thing} thing
+     * @param {Thing} other
      */
     function lookTowardsThing(thing, other) {
         // Case: other is to the left
@@ -5394,7 +5493,13 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Makes one Thing look towards the player, chainging lookleft and moveleft 
+     * in the process.
      * 
+     * @param {Thing} thing
+     * @param {Boolean} [big]   Whether to always change lookleft and moveleft,
+     *                          even if lookleft is already accurate (by 
+     *                          default, false).
      */
     function lookTowardsPlayer(thing, big) {
         // Case: Player is to the left
@@ -5420,7 +5525,11 @@ var FullScreenMario = (function(GameStartr) {
     */
     
     /**
+     * Standard Function to kill a Thing, which means marking it as dead and
+     * clearing its numquads, resting, movement, and cycles. It will later be
+     * marked as gone by its maintain* Function (Solids or Characters).
      * 
+     * @param {Thing} thing
      */
     function killNormal(thing) {
         if (!thing) {
@@ -5440,7 +5549,13 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Death Function commonly called on characters to animate a small flip
+     * before killNormal is called.
      * 
+     * @param {Thing} thing
+     * @param {Number} [extra]   How much time to wait beyond the standard 70
+     *                           steps before calling killNormal (by default, 
+     *                           0).
      */
     function killFlip(thing, extra) {
         thing.EightBitter.flipVert(thing);
@@ -5457,11 +5572,18 @@ var FullScreenMario = (function(GameStartr) {
         thing.speed = thing.xvel = thing.nofall = false;
         thing.resting = thing.movement = undefined;
         thing.yvel = -thing.EightBitter.unitsize;
-        thing.EightBitter.TimeHandler.addEvent(thing.EightBitter.killNormal, 70 + extra, thing);
+        thing.EightBitter.TimeHandler.addEvent(
+            thing.EightBitter.killNormal, 70 + extra, thing
+        );
     }
     
     /**
+     * Kill Function to replace a Thing with a spawned Thing, determined by the
+     * thing's spawntype, in the same location.
      * 
+     * @param {Thing} thing 
+     * @param {Boolean} [big]   Whether this should skip creating the spawn (by
+     *                          default, false).
      */
     function killSpawn(thing, big) {
         if (big) {
@@ -5478,7 +5600,7 @@ var FullScreenMario = (function(GameStartr) {
             thing.EightBitter.setBottom(spawn, thing.bottom);
             thing.EightBitter.setMidXObj(spawn, thing);
         } else {
-            console.warn("Thing " + thing.title + " has no .spawntype.");
+            throw new Error("Thing " + thing.title + " has no .spawntype.");
         }
         
         thing.EightBitter.killNormal(thing);
@@ -5487,7 +5609,17 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * A kill Function similar to killSpawn but more configurable. A spawned 
+     * Thing is created with the given attributes and copies over any specified
+     * attributes from the original Thing.
      * 
+     * @param {Thing} thing
+     * @param {String} type   The type of new Thing to create, such as "Goomba".
+     * @param {Object} [attributes]   An optional object to pass in to the
+     *                                ObjectMaker.make call (by default, {}).
+     * @param {String[]} [attributesCopied]   An optional listing of attributes
+     *                                        to copy from the original Thing
+     *                                        (by default, none).
      */
     function killReplace(thing, type, attributes, attributesCopied) {
         var spawn, i;
@@ -5519,7 +5651,12 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Kill Function for Goombas. If big isn't specified, it replaces the 
+     * killed Goomba with a DeadGoomba via killSpawn.
      * 
+     * @param {Thing} thing
+     * @param {Boolean} [big]   Whether to call killFlip on the Thing instead of
+     *                          killSpawn, such as when a Shell hits it.
      */
     function killGoomba(thing, big) {
         if (big) {
@@ -5531,9 +5668,13 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Kill Function for Koopas. Jumping and floating Koopas are replacing with
+     * an equivalent Koopa that's just walking, while walking Koopas become
+     * Shells.
      * 
-     * 
-     * @remarks This isn't called when a shell hits a Koopa.
+     * @param {Koopa} thing
+     * @param {Boolean} [big]   Whether shells should be immediately killed.
+     * @remarks This isn't called when a Shell hits a Koopa.
      */
     function killKoopa(thing, big) {
         var spawn;
@@ -5551,7 +5692,13 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Kill Function for Bowsers. In reality this is only called when the player
+     * Fireballs him or all NPCs are to be killed. It takes five Fireballs to 
+     * killFlip a Bowser, which scores 5000 points.
      * 
+     * @param {Bowser} thing
+     * @param {Boolean} [big]   Whether this should default to killFlip, as in
+     *                          an EndInsideCastle cutscene.
      */
     function killBowser(thing, big) {
         if (big) {
@@ -5572,7 +5719,14 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Kills a Thing by replacing it with another Thing, typically a Shell or
+     * BeetleShell (determined by thing.shelltype). The spawn inherits smartness
+     * and location from its parent, and is temporarily given nocollidechar to
+     * stop double collision detections.
      * 
+     * @param {Thing} thing
+     * @param {Boolean} [big]   Whether the spawned Shell should be killed
+     *                          immediately (by default, false).
      */
     function killToShell(thing, big) {
         var spawn, nocollidecharold, nocollideplayerold;
@@ -5616,7 +5770,7 @@ var FullScreenMario = (function(GameStartr) {
      * have a .killonend function, that's called on them.
      * Solids are only deleted if their .killonend is true.
      * 
-     * @remarks If thing.killonend is a function, it is called on the thing.
+     * @remarks If thing.killonend is a Function, it is called on the Thing.
      * @todo   Rename .killonend to be more accurate
      */
     function killNPCs() {
@@ -5653,14 +5807,26 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Kill Function for Bricks. The Brick is killed an an animateBrickShards
+     * animation is timed. If other is provided, it's also marked as the Brick's
+     * up, which will kill colliding characters: this works because 
+     * maintainSolids happens before maintainCharacters, so the killNormal won't
+     * come into play until after the next maintainCharacters call.
      * 
+     * @param {Brick} thing
+     * @param {Thing} [other]   An optional Thing to mark as the cause of the
+     *                          Brick's death (its up attribute). 
      */
     function killBrick(thing, other) {
         thing.EightBitter.AudioPlayer.play("Break Block");
-        thing.EightBitter.TimeHandler.addEvent(thing.EightBitter.animateBrickShards, 1, thing);
+        thing.EightBitter.TimeHandler.addEvent(
+            thing.EightBitter.animateBrickShards, 1, thing
+        );
         thing.EightBitter.killNormal(thing);
         
-        if (other instanceof thing.EightBitter.ObjectMaker.getFunction("Thing")) {
+        if (
+            other instanceof thing.EightBitter.ObjectMaker.getFunction("Thing")
+        ) {
             thing.up = other;
         } else {
             thing.up = undefined;
@@ -5668,7 +5834,18 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Kill Function for the player. It's big and complicated, but in general...
+     * 1. If big === 2, just kill it altogether
+     * 2. If the player is large and big isn't true, just power down the player.
+     * 3. The player can't survive this, so animate the "shrug" class and an
+     *    up-then-down movement. 
+     * At the end of 1. and 3., decrease the "lives" and "power" statistics and
+     * call the equivalent onPlayerDeath or onGameOver callbacks, depending on
+     * how many lives are left. The mod event is also fired.
      * 
+     * @param {Thing} thing
+     * @param {Number} [big]   The severity of this death: 0 for normal, 1 for
+     *                         not survivable, 2 for immediate death.
      */
     function killPlayer(thing, big) {
         if (!thing.alive || thing.flickering || thing.dying) {
@@ -5679,7 +5856,7 @@ var FullScreenMario = (function(GameStartr) {
             area = thing.EightBitter.MapsHandler.getArea();
         
         // Large big: real, no-animation death
-        if (big == 2) {
+        if (big === 2) {
             thing.dead = thing.dying = true;
             EightBitter.MapScreener.notime = true;
         }
@@ -5701,7 +5878,9 @@ var FullScreenMario = (function(GameStartr) {
                 EightBitter.updateSize(thing);
                 EightBitter.setClass(thing, "character player dead");
                 EightBitter.thingPauseVelocity(thing);
-                EightBitter.arrayToEnd(thing, EightBitter.GroupHolder.getGroup(thing.grouptype));
+                EightBitter.arrayToEnd(
+                    thing, EightBitter.GroupHolder.getGroup(thing.grouptype)
+                );
                 
                 EightBitter.MapScreener.notime = true;
                 EightBitter.MapScreener.nokeys = true;
@@ -5748,20 +5927,28 @@ var FullScreenMario = (function(GameStartr) {
     */
     
     /**
-     * 
+     * @this {EightBittr}
+     * @param {Number} level   What number call this is in a chain of scoring
+     *                         events, such as a Shell or hopping spree.
+     * @return {Number}   How many points should be gained (if 0, that means the
+     *                    maximum points were passed and gainLife was called).
      */
     function findScore(level) {
-        if (level < this.pointLevels.length) {
-            return this.pointLevels[level];
-        } else {
-            this.gainLife(1);
+        var EightBitter = EightBittr.ensureCorrectCaller(this);
+
+        if (level < EightBitter.pointLevels.length) {
+            return EightBitter.pointLevels[level];
         }
+
+        EightBitter.gainLife(1);
+        return 0;
     }
     
     /**
      * Driver function to score some number of points for the player and show
      * the gains via an animation.
      * 
+     * @this {EightBittr}
      * @param {Number} value   How many points the player is receiving.
      * @param {Boolean} continuation   Whether the game shouldn't increase the 
      *                                 score amount in the StatsHoldr (this will
@@ -5832,7 +6019,7 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
-     * 
+     * Animates a score on top of a Thing.
      * 
      * @param {Thing} thing   
      * @param {Number} [timeout]   How many game ticks to wait before killing
@@ -5842,15 +6029,27 @@ var FullScreenMario = (function(GameStartr) {
      */
     function scoreAnimate(thing, timeout) {
         timeout = timeout || 28;
-        thing.EightBitter.TimeHandler.addEventInterval(thing.EightBitter.shiftVert, 1, timeout, thing, -thing.EightBitter.unitsize / 6);
-        thing.EightBitter.TimeHandler.addEvent(thing.EightBitter.killNormal, timeout, thing);
+        thing.EightBitter.TimeHandler.addEventInterval(
+            thing.EightBitter.shiftVert,
+            1,
+            timeout,
+            thing,
+            -thing.EightBitter.unitsize / 6
+        );
+        thing.EightBitter.TimeHandler.addEvent(
+            thing.EightBitter.killNormal, timeout, thing
+        );
     }
     
     /**
+     * Inelegant catch-all Function for when the player has hit a shell and 
+     * needs points to be scored. This takes into account player star status and
+     * Shell resting and peeking. With none of those modifiers, it defaults to
+     * scoreOn with 100.
      * 
-     * 
+     * @param {Player} thing
+     * @param {Shell} other
      * @remarks See http://themushroomkingdom.net/smb_breakdown.shtml
-     * (Assume thing is the player and other is the shell)
      */
     function scorePlayerShell(thing, other) {
         // Star player: 200 points
@@ -5876,11 +6075,14 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Determines the amount a player should score upon hitting a flag, based on
+     * the player's y-position, then calls scoreOn with that amount.
      * 
-     * 
+     * @param {Player} thing
+     * @param {Number} difference   How far up the pole the player is.
      * @remarks See http://themushroomkingdom.net/smb_breakdown.shtml
      */
-    function scorePlayerFlag(player, difference) {
+    function scorePlayerFlag(thing, difference) {
         var amount;
         
         if (difference < 28) {
@@ -5891,7 +6093,7 @@ var FullScreenMario = (function(GameStartr) {
             amount = difference < 62 ? 2000 : 5000;
         }
         
-        player.EightBitter.scoreOn(amount, player);
+        thing.EightBitter.scoreOn(amount, thing);
     }
     
     
@@ -5899,14 +6101,19 @@ var FullScreenMario = (function(GameStartr) {
     */
     
     /**
-     * 
+     * @param {EightBittr} EightBitter
+     * @param {Number} xloc   The x-location of the sound's source.
+     * @return {Number} How loud the sound should be at that position, in [0,1].
      */
-    function getVolumeLocal(EightBitter) {
+    function getVolumeLocal(EightBitter, xloc) {
         return .49;
     }
     
     /**
-     * 
+     * @param {EightBittr} EightBitter
+     * @return {String} The name of the default audio for the current area,
+     *                  which is the first word in the area's setting (split on
+     *                  spaces).
      */
     function getAudioThemeDefault(EightBitter) {
         return EightBitter.MapsHandler.getArea().setting.split(' ')[0];
@@ -5917,10 +6124,14 @@ var FullScreenMario = (function(GameStartr) {
     */
     
     /**
+     * Sets the game state to a new map, resetting all Things and inputs in the
+     * process. The mod events are fired.
      * 
-     * 
-     * @param {Mixed} [name]
-     * @param {Mixed} [location]
+     * @param {String} [name]   The name of the map (by default, the currently
+     *                          played one).
+     * @param {Mixed} [location]   The name of the location within the map (by
+     *                             default 0 for the first in Array form).
+     * @remarks Most of the work here is done by setLocation.
      */
     function setMap(name, location) {
         var EightBitter = EightBittr.ensureCorrectCaller(this),
@@ -5937,16 +6148,20 @@ var FullScreenMario = (function(GameStartr) {
         EightBitter.NumberMaker.resetFromSeed(map.seed);
         EightBitter.StatsHolder.set("world", name);
         EightBitter.InputWriter.restartHistory();
+
         EightBitter.ModAttacher.fireEvent("onSetMap", map);
         
         EightBitter.setLocation(location || 0);
     }
     
     /**
+     * Sets the game state to a location within the current map, resetting all
+     * Things, inputs, the current Area, PixelRender, and MapScreener in the
+     * process. The location's entry Function is called to bring a new Player
+     * into the game. The mod events are fired.
      * 
-     * 
-     * 
-     * @param {Mixed} [location]
+     * @param {Mixed} [location]   The name of the location within the map (by
+     *                             default 0 for the first in Array form).
      */
     function setLocation(name) {
         var EightBitter = EightBittr.ensureCorrectCaller(this),
@@ -5975,7 +6190,9 @@ var FullScreenMario = (function(GameStartr) {
             }
         }, 25, Infinity);
         
-        EightBitter.StatsHolder.set("time", EightBitter.MapsHandler.getArea().time);
+        EightBitter.StatsHolder.set(
+            "time", EightBitter.MapsHandler.getArea().time
+        );
   
         EightBitter.AudioPlayer.clearAll();
         EightBitter.AudioPlayer.playTheme();
@@ -5991,50 +6208,72 @@ var FullScreenMario = (function(GameStartr) {
     /* Map entrances
     */
      
-     /**
-      * 
-      */
-     function mapEntranceNormal(EightBitter, location) {
+    /**
+     * Standard map entrance Function for dropping from the ceiling. A new 
+     * player is placed 16x16 units away from the top-left corner, with
+     * location.xloc scrolling applied if necessary.
+     * 
+     * @param {EightBittr} EightBittr
+     * @param {Location} [location]   The calling Location entering into (by
+     *                                default, not used).
+     */
+    function mapEntranceNormal(EightBitter, location) {
         if (location && location.xloc) {
-            EightBitter.scrollWindow(location.xloc * EightBitter.unitsize);
-        }
-        
-        EightBitter.addPlayer(
-            EightBitter.unitsize * 16,
-            EightBitter.unitsize * 16
-        );
-     }
+           EightBitter.scrollWindow(location.xloc * EightBitter.unitsize);
+       }
+       
+       EightBitter.addPlayer(
+           EightBitter.unitsize * 16,
+           EightBitter.unitsize * 16
+       );
+    }
     
     /**
+     * Standard map entrance Function for starting on the ground. A new player
+     * is placed 16x16 units away from the top-left corner, with location.xloc
+     * scrolling applied if necessary.
      * 
+     * @param {EightBittr} EightBittr
+     * @param {Location} [location]   The calling Location entering into (by
+     *                                default, not used).
      */
-     function mapEntrancePlain(EightBitter, location) {
-        if (location && location.xloc) {
-            EightBitter.scrollWindow(location.xloc * EightBitter.unitsize);
-        }
+    function mapEntrancePlain(EightBitter, location) {
+       if (location && location.xloc) {
+           EightBitter.scrollWindow(location.xloc * EightBitter.unitsize);
+       }
+       
+       EightBitter.addPlayer(
+           EightBitter.unitsize * 16,
+           EightBitter.MapScreener.floor * EightBitter.unitsize
+       );
         
-        EightBitter.addPlayer(
-            EightBitter.unitsize * 16,
-            EightBitter.MapScreener.floor * EightBitter.unitsize
-        );
-        
-     }
-     
-     /**
-      * 
-      */
-     function mapEntranceWalking(EightBitter) {
-        EightBitter.mapEntrancePlain(EightBitter);
-        
-        EightBitter.player.keys.run = 1;
-        EightBitter.player.maxspeed = EightBitter.player.walkspeed;
-        
-        EightBitter.MapScreener.nokeys = true;
-        EightBitter.MapScreener.notime = true;
     }
      
     /**
+     * Map entrance Function for starting on the ground and immediately walking
+     * as if in a cutscene. mapEntrancePlain is immediately called, and the 
+     * player has movement forced to be walking, with nokeys and notime set to
+     * true.
      * 
+     * @param {EightBittr} EightBitter
+     * @param {Location} [location]   The calling Location entering into (by
+     *                                default, not used).
+     */
+    function mapEntranceWalking(EightBitter, location) {
+       EightBitter.mapEntrancePlain(EightBitter, location);
+       
+       EightBitter.player.keys.run = 1;
+       EightBitter.player.maxspeed = EightBitter.player.walkspeed;
+       
+       EightBitter.MapScreener.nokeys = true;
+       EightBitter.MapScreener.notime = true;
+    }
+     
+    /**
+     * Map entrance Function for entering a castle area. The player is simply
+     * added at 2 x 56.
+     * 
+     * @param {EightBittr} EightBitter
      */
     function mapEntranceCastle(EightBitter) {
         EightBitter.addPlayer(
@@ -6044,7 +6283,12 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Map entrance Function for entering an area climbing a Vine. The Vine 
+     * enters first by growing, then the player climbs it and hops off. The 
+     * player's actions are done via mapEntranceVinePlayer and are triggered
+     * when the Vine's top reaches its threshold.
      * 
+     * @param {EightBittr} EightBittr
      */
     function mapEntranceVine(EightBitter) {
         var vine = EightBitter.addThing(
@@ -6052,7 +6296,9 @@ var FullScreenMario = (function(GameStartr) {
                 EightBitter.unitsize * 32,
                 EightBitter.MapScreener.bottom + EightBitter.unitsize * 8
             ),
-            threshold = EightBitter.MapScreener.bottom - EightBitter.unitsize * 40;
+            threshold = (
+                EightBitter.MapScreener.bottom - EightBitter.unitsize * 40
+            );
         
         EightBitter.TimeHandler.addEventInterval(function () {
             if (vine.top < threshold) {
@@ -6064,10 +6310,17 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Continuation of mapEntranceVine for the player's actions. The player
+     * climbs up the Vine; once it reaches the threshold, it hops off using
+     * animatePlayerOffVine.
      * 
+     * @param {EightBittr} EightBitter
+     * @param {Vine} vine
      */
      function mapEntranceVinePlayer(EightBitter, vine) {
-        var threshold = EightBitter.MapScreener.bottom - EightBitter.unitsize * 24,
+         var threshold = (
+                EightBitter.MapScreener.bottom - EightBitter.unitsize * 24
+            ),
             speed = EightBitter.unitsize / -4,
             player = EightBitter.addPlayer(
                 EightBitter.unitsize * 29,
@@ -6089,9 +6342,14 @@ var FullScreenMario = (function(GameStartr) {
         }, 1, Infinity);
     }
     
-    
     /**
+     * Map entrance Function for coming in through a vertical Pipe. The player 
+     * is added just below the top of the Pipe, and is animated to rise up 
+     * through it like an Italian chestburster.
      * 
+     * @param {EightBittr} EightBittr
+     * @param {Location} [location]   The calling Location entering into (by
+     *                                default, not used).
      */
     function mapEntrancePipeVertical(EightBitter, location) {
         if (location && location.xloc) {
@@ -6099,8 +6357,14 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         EightBitter.addPlayer(
-            location.entrance.left + EightBitter.player.width * EightBitter.unitsize / 2,
-            location.entrance.top + EightBitter.player.height * EightBitter.unitsize
+            (
+                location.entrance.left 
+                + EightBitter.player.width * EightBitter.unitsize / 2
+            ),
+            (
+                location.entrance.top 
+                + EightBitter.player.height * EightBitter.unitsize
+            )
         );
         
         EightBitter.animatePlayerPipingStart(EightBitter.player);
@@ -6117,14 +6381,24 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Map entrance Function for coming in through a horizontal Pipe. The player 
+     * is added just to the left of the entrance, and is animated to pass  
+     * through it like an Italian chestburster.
      * 
+     * @param {EightBittr} EightBittr
+     * @param {Location} [location]   The calling Location entering into (by
+     *                                default, not used).
      */
     function mapEntrancePipeHorizontal(EightBitter, location) {
         throw new Error("mapEntrancePipeHorizontal is not yet implemented.");
     }
     
     /**
+     * Map entrance Function for the player reincarnating into a level, 
+     * typically from a random map. The player is placed at 16 x 0 and a
+     * Resting Stone placed some spaces below via playerAddRestingStone.
      * 
+     * @param {EightBittr} EightBitter
      */
     function mapEntranceRespawn(EightBitter) {
         EightBitter.MapScreener.nokeys = false;
@@ -6144,9 +6418,11 @@ var FullScreenMario = (function(GameStartr) {
     */
     
     /**
+     * Map exit Function for leaving through a vertical Pipe. The player is
+     * animated to pass through it and then transfer locations.
      * 
-     * 
-     * @notes Thing is a Player, other is a Pipe.
+     * @param {Player} thing
+     * @param {Pipe} other
      */
     function mapExitPipeVertical(thing, other) {
         if (!thing.resting || typeof(other.transport) === "undefined"
@@ -6175,11 +6451,17 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Map exit Function for leaving through a horiontal Pipe. The player is
+     * animated to pass through it and then transfer locations.
      * 
-     * 
-     * @notes Thing is a Player, other is a Pipe. The third argument was added
-     *        because the "Bouncy Bounce!" mod rendered some areas unescapable
-     *        without it.
+     * @param {Player} thing
+     * @param {Pipe} other
+     * @param {Boolean} [shouldTransport]   Whether not resting and not paddling
+     *                                      does not imply the player cannot
+     *                                      pass through the Pipe (by default,
+     *                                      false, as this is normal).
+     * @remarks The shouldTransport argument was added because the "Bouncy 
+     *          Bounce!" mod rendered some areas without it.
      */
     function mapExitPipeHorizontal(thing, other, shouldTransport) {
         if (!shouldTransport && !thing.resting && !thing.paddling) {
@@ -6206,16 +6488,21 @@ var FullScreenMario = (function(GameStartr) {
     */
     
     /**
-     * This is used as the OnMake callback for areas. In the future, it would be
-     * better to make areas inherit from base area types (Overworld, etc.) so 
-     * this inelegant switch statement doesn't have to be used.
+     * The onMake callback for Areas. Attributes are copied as specified in the
+     * prototype, and the background is set based on the setting.
+     * 
+     * @this {Area}
+     * @remarks In the future, it might be more elegant to make Areas inherit
+     * from base Area types (Overworld, etc.) so  this inelegant switch
+     * statement doesn't have to be used.
      */
     function initializeArea() {
-        var setting = this.setting;
+        var setting = this.setting,
+            i;
         
         // Copy all attributes, if they exist
         if (this.attributes) {
-            for (var i in this.attributes) {
+            for (i in this.attributes) {
                 if (this[i]) {
                     // Add the extra options
                     proliferate(this, this.attributes[i]);
@@ -6238,15 +6525,14 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
-     * Gets the distance from the absolute base (bottom of the user's viewport)
-     * to a specific height above the floor (in the form given by map functions,
-     * distance from the floor).
-     * 
      * @param {Number} yloc   A height to find the distance to the floor from.
      * @param {Boolean} [correctUnitsize]   Whether the yloc accounts for 
-     *                                       unitsize expansion (e.g. 48 rather
-     *                                       than 12, for unitsize=4).
-     * @return {Number}
+     *                                      unitsize expansion (e.g. 48 rather
+     *                                      than 12, for unitsize=4).
+     * @return {Number} The distance from the absolute base (bottom of the 
+     *                  user's viewport) to a specific height above the floor 
+     *                  (in the form given by map functions, distance from the 
+     *                  floor).
      */
     function getAbsoluteHeight(yloc, correctUnitsize) {
         var EightBitter = EightBittr.ensureCorrectCaller(this),
@@ -6260,23 +6546,38 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Adds a PreThing to the map and stretches it to fit a width equal to the 
+     * current map's outermost boundaries.
      * 
+     * @this {EightBittr}
+     * @param {PreThing} prething
+     * @return {Thing} A strethed Thing, newly added via addThing.
      */
-    function mapAddStretched(raw) {
+    function mapAddStretched(prething) {
         var EightBitter = EightBittr.ensureCorrectCaller(this),
             boundaries = EightBitter.MapsHandler.getArea().boundaries,
-            y = (EightBitter.MapScreener.floor - raw.y) * EightBitter.unitsize;
+            y = (
+                (EightBitter.MapScreener.floor - prething.y) 
+                * EightBitter.unitsize
+            ),
+            thing = EightBitter.ObjectMaker.make(prething.thing, {
+                "width": boundaries.right - boundaries.left,
+                "height": (
+                    raw.height || EightBitter.getAbsoluteHeight(prething.y)
+                )
+            });
         
-        return EightBitter.addThing(EightBitter.ObjectMaker.make(raw.thing, {
-            "width": boundaries.right - boundaries.left,
-            "height": raw.height || EightBitter.getAbsoluteHeight(raw.y)
-        }), boundaries.left, y);
+        return EightBitter.addThing(thing, boundaries.left, y);
     }
     
     /**
+     * Analyzes a PreThing to be placed to the right of the current map's
+     * boundaries (after everything else).
      * 
+     * @this {EightBittr}
+     * @param {PreThing} prething
      */
-    function mapAddAfter(raw) {
+    function mapAddAfter(prething) {
         var EightBitter = EightBittr.ensureCorrectCaller(this),
             MapsCreator = EightBitter.MapsCreator,
             MapsHandler = EightBitter.MapsHandler,
@@ -6285,12 +6586,17 @@ var FullScreenMario = (function(GameStartr) {
             map = MapsHandler.getMap(),
             boundaries = EightBitter.MapsHandler.getArea().boundaries;
         
-        raw.x = boundaries.right;
-        MapsCreator.analyzePreSwitch(raw, prethings, area, map);
+        prething.x = boundaries.right;
+        MapsCreator.analyzePreSwitch(prething, prethings, area, map);
     }
     
     /**
+     * Runs through commands generated by a WorldSeedr and evaluates all of 
+     * to create PreThings via MapsCreator.analyzePreSwitch. 
      * 
+     * @param {EightBittr} EightBitter
+     * @param {Object[]} generatedCommands   The commands generated by a
+     *                                       WorldSeedr.generateFull call.
      */
     function mapPlaceRandomCommands(EightBitter, generatedCommands) {
         var MapsCreator = EightBitter.MapsCreator,
@@ -6316,13 +6622,10 @@ var FullScreenMario = (function(GameStartr) {
             MapsCreator.analyzePreSwitch(output, prethings, area, map);
         }
     }
-    
-    /**
-     * 
-     */
-    function mapStretchThing(thing, xlocReal) {
-        thing.EightBitter.setWidth(thing, xlocReal * thing.EightBitter.unitsize);
-    }
+
+
+    /* Map macros
+    */
     
     /**
      * Sample macro with no functionality, except to console.log a listing of 
@@ -6366,8 +6669,11 @@ var FullScreenMario = (function(GameStartr) {
      *                          placed Things horizontally (defaults to 0)
      * @param {Number} yheight   How many units are between the top edges of
      *                           placed Things vertically (defaults to 0)
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [y]   The y-location (defaults to 0).
      * @example   { "macro": "Fill", "thing": "Brick",
      *              "x": 644, "y": 64, "xnum": 5, "xwidth": 8 }
+     * @return {Object[]}
      */
     function macroFillPreThings(reference, prethings, area, map, scope) {
         var defaults = scope.ObjectMaker.getFullPropertiesOf(reference.thing),
@@ -6378,7 +6684,7 @@ var FullScreenMario = (function(GameStartr) {
             x = reference.x || 0,
             yref = reference.y || 0,
             ynum = reference.ynum || 1,
-            outputs = new Array(xnum * ynum),
+            outputs = [],
             output,
             o = 0, y, i, j;
         
@@ -6390,7 +6696,7 @@ var FullScreenMario = (function(GameStartr) {
                     "y": y,
                     "macro": undefined
                 };
-                outputs[o] = proliferate(output, reference, true);
+                outputs.push(proliferate(output, reference, true));
                 o += 1;
                 y += yheight;
             }
@@ -6407,9 +6713,12 @@ var FullScreenMario = (function(GameStartr) {
      * @alias Pattern
      * @param {String} pattern   The name of the pattern to print, from the
      *                           listing in scope.settings.maps.patterns.
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [y]   The y-location (defaults to 0).
      * @param {Number} [repeat]   How many times to repeat the overall pattern 
      *                            (by default, 1).
      * @param {Number[]} [skips]   Which numbered items to skip, if any.
+     * @return {Object[]}
      */
     function macroFillPrePattern(reference, prethings, area, map, scope) {
         // Make sure the pattern exists before doing anything
@@ -6423,7 +6732,7 @@ var FullScreenMario = (function(GameStartr) {
             repeats = reference.repeat || 1,
             xpos = reference.x || 0,
             ypos = reference.y || 0,
-            outputs = new Array(length * repeats),
+            outputs = [],
             o = 0,
             skips = {},
             output, prething, i, j;
@@ -6452,7 +6761,7 @@ var FullScreenMario = (function(GameStartr) {
                 };
                 output.y += defaults[prething[0]].height;
                 
-                outputs[o] = output;
+                outputs.push(output);
                 o += 1;
             }
             xpos += pattern.width;
@@ -6462,10 +6771,13 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Macro to place a Floor Thing with infinite height. All settings are 
+     * passed in except "macro", which becomes undefined.
      * 
-     * 
-     * @param {Object} reference   A listing of the settings for this macro,
-     *                             from an Area's .creation Object.
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [y]   The y-location (defaults to 0).
+     * @param {Number} [width]   How wide the Floor should be (by default, 8).
+     * @return {Object}
      */
     function macroFloor(reference, prethings, area, map, scope) {
         var x = reference.x || 0,
@@ -6476,16 +6788,27 @@ var FullScreenMario = (function(GameStartr) {
                 "y": y,
                 "width": (reference.width || 8),
                 "height": "Infinity",
-            }, reference, true );
+            }, reference, true);
         floor.macro = undefined;
         return floor;
     }
     
     /**
+     * Macro to place a Pipe, possibly with a pirahna, location hooks, and/or
+     * infinite height. All settings are copied to Pipe except for "macro",
+     * which becomes undefined.
      * 
-     * 
-     * @param {Object} reference   A listing of the settings for this macro,
-     *                             from an Area's .creation Object.
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [y]   The y-location (defaults to 0).
+     * @param {Mixed} [height]   How high the Pipe should be (by default, 8). 
+     *                           May be a Number or "Infinity".
+     * @param {Boolean} [piranha]   Whethere there should be a Piranha spawned
+     *                              with the Pipe (by default, false).
+     * @param {Mixed} [transport]   What location the Pipe should transport to
+     *                              (by default, none).
+     * @param {Mixed} [entrance]   What location the Pipe should act as an
+     *                             entrance to (by default, none).
+     * @return {Object[]}
      */
     function macroPipe(reference, prethings, area, map, scope) {
         var x = reference.x || 0,
@@ -6521,9 +6844,23 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Macro to place a horizontal Pipe with a vertical one, likely with 
+     * location hooks.
      * 
-     * 
-     * @remarks This could be used in 1-2 and 4-2, but there's no real need to 
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [y]   The y-location (defaults to 0).
+     * @param {Mixed} [height]   How high the Pipe should be (by default, 8). 
+     *                           May be a Number or "Infinity".
+     * @param {Mixed} [transport]   What location the Pipe should transport to
+     *                              (by default, none).
+     * @param {Boolean} [scrollEnabler]   Whether there should be a 
+     *                                    ScrollEnabler placed on top of the
+     *                                    PipeVertical (by default, false).
+     * @param {Boolean} [scrollBlocker]   Whether there should be a 
+     *                                    ScrollBlocker placed to the right of
+     *                                    the PipeVertical (by default, false).
+     * @return {Object[]}
+     * @remarks This could be used in maps like 1-2, but there's no real need to 
      *          take the time (unless you're a volunteer and want something to 
      *          do!). It was introduced for WorldSeedr generation.
      */
@@ -6567,14 +6904,22 @@ var FullScreenMario = (function(GameStartr) {
     }
 
     /**
+     * Macro to place a large Tree. 
      * 
-     * 
-     * @param {Object} reference   A listing of the settings for this macro,
-     *                             from an Area's .creation Object.
+     * @param {Number} width   How wide the Tree should be (preferably a 
+     *                         multiple of eight
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [y]   The y-location (defaults to 0).
+     * @param {Boolean} [solidTrunk]   Whether the trunk scenery should be 
+     *                                 listed in the Solids group instead of
+     *                                 Scenery for the sake of overlaps (by
+     *                                 default, false).
+     * @return {Object[]}
+     * @remarks Although the tree trunks in later trees overlap earlier ones, 
+     *          it's ok because the pattern is indistinguishible when placed 
+     *          correctly.
      */
     function macroTree(reference, prethings, area, map, scope) {
-        // Although the tree trunks in later trees overlap earlier ones, it's ok
-        // because the pattern is indistinguishible when placed correctly.
         var x = reference.x || 0,
             y = reference.y || 0,
             width = reference.width || 24,
@@ -6602,22 +6947,41 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Macro to place a large Shroom (a Tree that looks like a large Mushroom). 
      * 
-     * 
-     * @param {Object} reference   A listing of the settings for this macro,
-     *                             from an Area's .creation Object.
+     * @param {Number} width   How wide the Shroom should be (preferably a 
+     *                         multiple of eight).
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [y]   The y-location (defaults to 0).
+     * @param {Boolean} [solidTrunk]   Whether the trunk scenery should be 
+     *                                 listed in the Solids group instead of
+     *                                 Scenery for the sake of overlaps (by
+     *                                 default, false).
+     * @return {Object[]}
+     * @remarks Although the shroom trunks in later shrooms overlap earlier  
+     *          ones, it's ok because the pattern is indistinguishible when 
+     *          placed correctly.
      */
     function macroShroom(reference, prethings, area, map, scope) {
         var x = reference.x || 0,
             y = reference.y || 0,
             width = reference.width || 24,
             output = [
-                { "thing": "ShroomTop", "x": x, "y": y, "width": width }
+                {
+                    "thing": "ShroomTop",
+                    "x": x,
+                    "y": y,
+                    "width": width
+                }
             ];
         
         if (width > 16) {
             output.push({
-                "thing": "ShroomTrunk", "x": x + (width - 8) / 2, "y": y - 8, "height": "Infinity" 
+                "thing": "ShroomTrunk",
+                "x": x + (width - 8) / 2,
+                "y": y - 8,
+                "height": "Infinity",
+                "grouptype": reference.solidTrunk ? "Solid" : "Scenery"
             });
         }
         
@@ -6625,10 +6989,13 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Macro to place Water of infinite height. All settings are copied to the 
+     * Water except for "macro", which becomes undefined.
      * 
-     * 
-     * @param {Object} reference   A listing of the settings for this macro,
-     *                             from an Area's .creation Object.
+     * @param {Number} width   How wide the Water should be.
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [y]   The y-location (defaults to 0).
+     * @return {Object}
      */
     function macroWater(reference, prethings, area, map, scope) {
         var x = reference.x || 0,
@@ -6645,10 +7012,12 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Macro to place a row of Bricks at y = 88.
      * 
-     * 
-     * @param {Object} reference   A listing of the settings for this macro,
-     *                             from an Area's .creation Object.
+     * @param {Number} width   How wide the ceiling should be (eight times the
+     *                         number of Bricks).
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @return {Object}
      */
     function macroCeiling(reference) {
         return {
@@ -6656,16 +7025,24 @@ var FullScreenMario = (function(GameStartr) {
             "thing": "Brick",
             "x": reference.x,
             "y": 88,
-            "xnum": Math.floor(reference.width / 8),
+            "xnum": (reference.width / 8) | 0,
             "xwidth": 8
         };
     }
     
     /**
+     * Macro to place a bridge, possibly with columns at the start and/or end.
      * 
-     * 
-     * @param {Object} reference   A listing of the settings for this macro,
-     *                             from an Area's .creation Object.
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [y]   The y-location (defaults to 0).
+     * @param {Number} [width]   How wide the bridge should be (by default, 16).
+     * @param {Boolean} [begin]   Whether the first 8 units should be taken up
+     *                            by an infinitely high Stone column (by 
+     *                            default, false).
+     * @param {Boolean} [end]   Whether the last 8 units should be taken up by
+     *                          an infinitely high Stone column (by default,
+     *                          false).
+     * @return {Object[]}
      */
     function macroBridge(reference) {
         var x = reference.x || 0,
@@ -6676,14 +7053,24 @@ var FullScreenMario = (function(GameStartr) {
         // A beginning column reduces the width and pushes it forward
         if (reference.begin) {
             width -= 8;
-            output.push({ "thing": "Stone", "x": x, "y": y, "height": "Infinity" });
+            output.push({
+                "thing": "Stone",
+                "x": x,
+                "y": y,
+                "height": "Infinity"
+            });
             x += 8;
         }
 
         // An ending column just reduces the width 
         if (reference.end) {
             width -= 8;
-            output.push({ "thing": "Stone", "x": x + width, "y": y, "height": "Infinity" });
+            output.push({
+                "thing": "Stone",
+                "x": x + width,
+                "y": y,
+                "height": "Infinity"
+            });
         }
 
         // Between any columns is a BridgeBase with a Railing on top
@@ -6694,7 +7081,22 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Macro to place a scale on the map, which is two Platforms seemingly
+     * suspended by Strings.
      * 
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [y]   The y-location (defaults to 0).
+     * @param {Number} [widthLeft]   How wide the left Platform should be (by
+     *                               default, 24).
+     * @param {Number} [widthRight]   How wide the right Platform should be (by
+     *                               default, 24).
+     * @param {Number} [between]   How much space there should be between
+     *                             Platforms (by default, 40).
+     * @param {Number} [dropLeft]   How far down from y the left platform should
+     *                              start (by default, 24).
+     * @param {Number} [dropRight]   How far down from y the right platform
+     *                               should start (by default, 24).
+     * @return {Object[]}
      */
     function macroScale(reference, prethings, area, map, scope) {
         var x = reference.x || 0,
@@ -6778,10 +7180,15 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
-     * 
-     * 
-     * @param {Object} reference   A listing of the settings for this macro,
-     *                             from an Area's .creation Object.
+     * Macro to place what appears to be a PlatformGenerator on the map (in 
+     * actuality, it is multiple Platforms vertically that know how to respawn).
+     *
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [direction]   What direction to travel (either -1 or 1;
+     *                               defaults to 1).
+     * @param {Number} [width]   How wide the Platforms should be (by default,
+     *                           16).
+     * @return {Object[]}
      */
     function macroPlatformGenerator(reference, prethings, area, map, scope) {
         var output = [],
@@ -6815,7 +7222,16 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Macro to place a Warp World group of Pipes, Texts, Piranhas, and 
+     * detectors.
      * 
+     * @param {String[]} warps   The map names each Pipe should warp to.
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [y]   The y-location (defaults to 0).
+     * @param {Number} [textHeight]   How far above the Piranhas to place the
+     *                                CustomText labels (by default, 8).
+     * 
+     * @return {Object[]}
      */
     function macroWarpWorld(reference, prethings, area, map, scope) {
         var output = [],
@@ -6895,90 +7311,115 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Macro to place a DetectCollision that will start the map spawning random
+     * CheepCheeps intermittently.
      * 
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [width]   How wide the infinitely tall DetectCollision
+     *                           should be (by default, 8).
+     * @return {Object}
      */
     function macroCheepsStart(reference, prethings, area, map, scope) {
-        return [
-            { 
-                "thing": "DetectCollision", 
-                "x": reference.x || 0,
-                "y": scope.MapScreener.floor,
-                "width": reference.width || 8,
-                "height": scope.MapScreener.height / scope.unitsize,
-                "activate": scope.activateCheepsStart
-            }
-        ];
+        return { 
+            "thing": "DetectCollision", 
+            "x": reference.x || 0,
+            "y": scope.MapScreener.floor,
+            "width": reference.width || 8,
+            "height": scope.MapScreener.height / scope.unitsize,
+            "activate": scope.activateCheepsStart
+        };
     }
     
     /**
+     * Macro to place a DetectCollision that will stop the map spawning random
+     * CheepCheeps intermittently.
      * 
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [width]   How wide the infinitely tall DetectCollision
+     *                           should be (by default, 8).
+     * @return {Object}
      */
     function macroCheepsStop(reference, prethings, area, map, scope) {
-        return [
-            { 
-                "thing": "DetectCollision", 
-                "x": reference.x || 0,
-                "y": scope.MapScreener.floor,
-                "width": reference.width || 8,
-                "height": scope.MapScreener.height / scope.unitsize,
-                "activate": scope.activateCheepsStop
-            }
-        ];
+        return {
+            "thing": "DetectCollision",
+            "x": reference.x || 0,
+            "y": scope.MapScreener.floor,
+            "width": reference.width || 8,
+            "height": scope.MapScreener.height / scope.unitsize,
+            "activate": scope.activateCheepsStop
+        };
     }
     
     /**
+     * Macro to place a DetectCollision that will start the map spawning random
+     * BulletBills intermittently.
      * 
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [width]   How wide the infinitely tall DetectCollision
+     *                           should be (by default, 8).
+     * @return {Object}
      */
     function macroBulletBillsStart(reference, prethings, area, map, scope) {
-        return [
-            { 
-                "thing": "DetectCollision", 
-                "x": reference.x || 0,
-                "y": scope.MapScreener.floor,
-                "width": reference.width || 8,
-                "height": scope.MapScreener.height / scope.unitsize,
-                "activate": scope.activateBulletBillsStart
-            }
-        ];
+        return {
+            "thing": "DetectCollision",
+            "x": reference.x || 0,
+            "y": scope.MapScreener.floor,
+            "width": reference.width || 8,
+            "height": scope.MapScreener.height / scope.unitsize,
+            "activate": scope.activateBulletBillsStart
+        };
     }
     
     /**
+     * Macro to place a DetectCollision that will stop the map spawning random
+     * BulletBills intermittently.
      * 
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [width]   How wide the infinitely tall DetectCollision
+     *                           should be (by default, 8).
+     * @return {Object}
      */
     function macroBulletBillsStop(reference, prethings, area, map, scope) {
-        return [
-            { 
-                "thing": "DetectCollision", 
-                "x": reference.x || 0,
-                "y": scope.MapScreener.floor,
-                "width": reference.width || 8,
-                "height": scope.MapScreener.height / scope.unitsize,
-                "activate": scope.activateBulletBillsStop
-            }
-        ];
+        return {
+            "thing": "DetectCollision",
+            "x": reference.x || 0,
+            "y": scope.MapScreener.floor,
+            "width": reference.width || 8,
+            "height": scope.MapScreener.height / scope.unitsize,
+            "activate": scope.activateBulletBillsStop
+        };
     }
     
     /**
+     * Macro to place a DetectCollision that will tell any current Lakitu to 
+     * flee the scene.
      * 
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [width]   How wide the infinitely tall DetectCollision
+     *                           should be (by default, 8).
+     * @return {Object}
      */
     function macroLakituStop(reference, prethings, area, map, scope) {
-        return [
-            {
-                "thing": "DetectCollision",
-                "x": reference.x || 0,
-                "y": scope.MapScreener.floor,
-                "width": reference.width || 8,
-                "height": scope.MapScreener.height / scope.unitsize,
-                "activate": scope.activateLakituStop
-            }
-        ];
+        return {
+            "thing": "DetectCollision",
+            "x": reference.x || 0,
+            "y": scope.MapScreener.floor,
+            "width": reference.width || 8,
+            "height": scope.MapScreener.height / scope.unitsize,
+            "activate": scope.activateLakituStop
+        };
     }
     
     /**
+     * Macro to place a small castle, which is really a collection of sceneries.
      * 
-     * 
-     * @param {Object} reference   A listing of the settings for this macro,
-     *                             from an Area's .creation Object.
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [y]   The y-location (defaults to 0).
+     * @param {Mixed} [transport]   What map or location to shift to after 
+     *                              ending theatrics (collidePlayerTransport).
+     * @param {Number} [walls]   How many CastleWall Things should be placed to
+     *                           the right of the castle (by default, 2).
+     * @return {Object[]}
      */
     function macroCastleSmall(reference) {
         var output = [],
@@ -7093,10 +7534,14 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Macro to place a large castle, which is really a collection of sceneries
+     * underneath a small castle.
      * 
-     * 
-     * @param {Object} reference   A listing of the settings for this macro,
-     *                             from an Area's .creation Object.
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [y]   The y-location (defaults to 0).
+     * @param {Mixed} [transport]   What map or location to shift to after 
+     *                              ending theatrics (collidePlayerTransport).
+     * @return {Object[]}
      */
     function macroCastleLarge(reference) {
         var output = [],
@@ -7193,33 +7638,59 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Macro to place the typical starting Things for the inside of a castle
+     * area.
      * 
-     * 
-     * @param {Object} reference   A listing of the settings for this macro,
-     *                             from an Area's .creation Object.
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [y]   The y-location (defaults to 0).
+     * @param {Number} [width]   How wide the entire shebang should be (by 
+     *                           default, 40).
+     * @return {Object[]}
      */
     function macroStartInsideCastle(reference, prethings, area, map, scope) {
         var x = reference.x || 0,
             y = reference.y || 0,
             width = (reference.width || 0) - 40,
             output = [
-                { "thing": "Stone", "x": x, "y": y + 48, "width": 24, "height": "Infinity" },
-                { "thing": "Stone", "x": x + 24, "y": y + 40, "width": 8, "height": "Infinity" },
-                { "thing": "Stone", "x": x + 32, "y": y + 32, "width": 8, "height": "Infinity" }
+                {
+                    "thing": "Stone", "x": x, "y": y + 48,
+                    "width": 24, "height": "Infinity"
+                },
+                {
+                    "thing": "Stone", "x": x + 24, "y": y + 40,
+                    "width": 8, "height": "Infinity"
+                },
+                {
+                    "thing": "Stone", "x": x + 32, "y": y + 32,
+                    "width": 8, "height": "Infinity"
+                }
             ];
         
         if (width > 0) {
-            output.push({ "macro": "Floor", "x": x + 40, "y": y + 24, "width": width });
+            output.push({
+                "macro": "Floor", "x": x + 40, "y": y + 24, "width": width
+            });
         }
         
         return output;
     }
     
     /**
+     * Macro to place the typical ending Things for the inside of an outdoor
+     * area.
      * 
-     *
-     * @param {Object} reference   A listing of the settings for this macro,
-     *                             from an Area's .creation Object.
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [y]   The y-location (defaults to 0).
+     * @param {Mixed} [transport]   What map or location to shift to after 
+     *                              ending theatrics (collidePlayerTransport).
+     * @param {Boolean} [large]   Whether this should place a large castle
+     *                            instead of a small (by default, false).
+     * @param {Number} [castleDistance]   How far from the flagpole to the 
+     *                                    castle (by default, 24 for large
+     *                                    castles and 32 for small).
+     * @param {Number} [walls]   For large castles, how many CastleWall Things
+     *                           should be placed after (by default, 2).
+     * @return {Object[]}
      */
     function macroEndOutsideCastle(reference) {
         var x = reference.x || 0,
@@ -7263,16 +7734,25 @@ var FullScreenMario = (function(GameStartr) {
     }
 
     /**
+     * Macro to place the typical ending Things for the inside of a castle area.
+     * 
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [y]   The y-location (defaults to 0).
+     * @param {Mixed} [transport]   What map or location to shift to after 
+     *                              ending theatrics (collidePlayerTransport).
+     * @param {String} [npc]   Which NPC to use (either "Toad" or "Peach"; 
+     *                         "Toad" by default).
+     * @param {Boolean} [hard]   Whether Bowser should be "hard" (by default,
+     *                           false).
      * 
      * 
-     * @param {Object} reference   A listing of the settings for this macro,
-     *                             from an Area's .creation Object.
+     * 
+     * @return {Object[]}
      */
     function macroEndInsideCastle(reference, prethings, area, map, scope) {
         var x = reference.x || 0,
             y = reference.y || 0,
             npc = reference.npc || "Toad",
-            style = reference.style || {},
             output, texts, keys;
 
         if (npc === "Toad") {
@@ -7356,14 +7836,23 @@ var FullScreenMario = (function(GameStartr) {
             { "macro": "Water", "x": x, "y": y, "width": 104 },
             // Bridge & Bowser area
             { "thing": "CastleBridge", "x": x, "y": y + 24, "width": 104 },
-            { "thing": "Bowser", "x": x + 69, "y": y + 42, "hard": reference.hard },
+            {
+                "thing": "Bowser", "x": x + 69, "y": y + 42,
+                "hard": reference.hard
+            },
             { "thing": "CastleChain", "x": x + 96, "y": y + 32 },
             // Axe area
             { "thing": "CastleAxe", "x": x + 104, "y": y + 40 },
             { "thing": "ScrollBlocker", "x": x + 112 },
             { "macro": "Floor", "x": x + 104, "y": y, "width": 152 },
-            { "thing": "Stone", "x": x + 104, "y": y + 32, "width": 24, "height": 32 },
-            { "thing": "Stone", "x": x + 112, "y": y + 80, "width": 16, "height": 24 },
+            {
+                "thing": "Stone", "x": x + 104, "y": y + 32,
+                "width": 24, "height": 32
+            },
+            {
+                "thing": "Stone", "x": x + 112, "y": y + 80,
+                "width": 16, "height": 24
+            },
             // Peach's Magical Happy Chamber of Fantastic Love
             { 
                 "thing": "DetectCollision", "x": x + 180, 
@@ -7382,39 +7871,59 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Macro to place a DetectSpawn that will call activateSectionBefore to 
+     * start a stretch section.
      * 
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [y]   The y-location (defaults to 0).
+     * @param {Number} [section]   Which of the area's sections to spawn (by
+     *                             default, 0).
+     * @return {Object}
      */
     function macroSection(reference, prethings, area, map, scope) {
-        return [
-            { 
-                "thing": "DetectSpawn", 
-                "x": reference.x, 
-                "y": reference.y, 
-                "activate": scope.activateSectionBefore,
-                "section": reference.section || 0 
-            }
-        ];
+        return {
+            "thing": "DetectSpawn",
+            "x": reference.x || 0,
+            "y": reference.y || 0,
+            "activate": scope.activateSectionBefore,
+            "section": reference.section || 0
+        };
     }
     
     /**
+     * Macro to place a DetectCollision to mark the current section as passed.
      * 
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [y]   The y-location (defaults to 0).
+     * @param {Number} [width]   How wide the DetectCollision should be (by
+     *                           default, 8).
+     * @param {Number} [height]   How high the DetectCollision should be (by
+     *                            default, 8).
+     * @return {Object}
      */
     function macroSectionPass(reference, prethings, area, map, scope) {
-        return [
-            { 
-                "thing": "DetectCollision", 
-                "x": reference.x,
-                "y": reference.y, 
-                "width": reference.width || 8, "height": reference.height || 8, 
-                "activate": function (thing) {
-                    thing.EightBitter.MapScreener.sectionPassed = true;
-                }
+        return {
+            "thing": "DetectCollision",
+            "x": reference.x || 0,
+            "y": reference.y || 0,
+            "width": reference.width || 8,
+            "height": reference.height || 8,
+            "activate": function (thing) {
+                thing.EightBitter.MapScreener.sectionPassed = true;
             }
-        ];
+        };
     }
     
     /**
+     * Macro to place a DetectCollision to mark the current section as failed.
      * 
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [y]   The y-location (defaults to 0).
+     * @param {Number} [width]   How wide the DetectCollision should be (by
+     *                           default, 8).
+     * @param {Number} [height]   How high the DetectCollision should be (by
+     *                            default, 8).
+     * @return {Object}
      */
     function macroSectionFail(reference, prethings, area, map, scope) {
         return [
@@ -7422,7 +7931,8 @@ var FullScreenMario = (function(GameStartr) {
                 "thing": "DetectCollision", 
                 "x": reference.x,
                 "y": reference.y, 
-                "width": reference.width || 8, "height": reference.height || 8, 
+                "width": reference.width || 8,
+                "height": reference.height || 8,
                 "activate": function (thing) {
                     thing.EightBitter.MapScreener.sectionPassed = false;
                 }
@@ -7431,28 +7941,33 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Macro to place a DetectSpawn that will spawn a following section based on
+     * whether the current one was marked as passed or failed.
      * 
+     * @param {Number} [x]   The x-location (defaults to 0).
+     * @param {Number} [y]   The y-location (defaults to 0).
+     * @param {Number} [pass]   Which section to spawn if passed (by default, 
+     *                          0).
+     * @param {Number} [fail]   Which section to spawn if failed (by default, 
+     *                          0).
+     * @return {Object}
      */
     function macroSectionDecider(reference, prethings, area, map, scope) {
-        return [
-            {
-                "thing": "DetectSpawn",
-                "x": reference.x, "y": reference.y,
-                "width": reference.width || 8, "height": reference.height || 8,
-                "activate": function (thing) {
-                    if (thing.EightBitter.MapScreener.sectionPassed) {
-                        thing.section = reference.pass || 0;
-                    } else {
-                        thing.section = reference.fail || 0;
-                    }
-                    thing.EightBitter.activateSectionBefore(thing);
+        return {
+            "thing": "DetectSpawn",
+            "x": reference.x || 0,
+            "y": reference.y || 0,
+            "activate": function (thing) {
+                if (thing.EightBitter.MapScreener.sectionPassed) {
+                    thing.section = reference.pass || 0;
+                } else {
+                    thing.section = reference.fail || 0;
                 }
+                thing.EightBitter.activateSectionBefore(thing);
             }
-        ];
+        };
     }
     
-   
-    // Add all registered functions from above to the FullScreenMario prototype
     proliferateHard(FullScreenMario.prototype, {
         // Resets
         "resetStatsHolder": resetStatsHolder,
@@ -7700,7 +8215,7 @@ var FullScreenMario = (function(GameStartr) {
         "mapAddStretched": mapAddStretched,
         "mapAddAfter": mapAddAfter,
         "mapPlaceRandomCommands": mapPlaceRandomCommands,
-        "mapStretchThing": mapStretchThing,
+        // Map macros
         "macroExample": macroExample,
         "macroFillPreThings": macroFillPreThings,
         "macroFillPrePattern": macroFillPrePattern,
