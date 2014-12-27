@@ -1,3 +1,210 @@
+/**
+ * WorldSeedr.js
+ * 
+ * A randomization utility to automate random, recursive generation of 
+ * possibilities based on a preset position and probability schema. Each 
+ * "possibility" in the schema contains a width, height, and instructions on
+ * what type of contents it contains, which are either a preset listing or
+ * a randomization of other possibilities of certain probabilities. Additional
+ * functionality is provided to stagger layout of children, such as spacing
+ * between possibilities.
+ * 
+ * See Schema.json for a listing of allowed possibility properties.
+ * 
+ * @example
+ * // Creating and using a WorldSeedr to generate a simple square.
+ * var WorldSeeder = new WorldSeedr({
+ *         "possibilities": {
+ *             "Square": {
+ *                 "width": 8,
+ *                 "height": 8,
+ *                 "contents": {
+ *                     "mode": "Certain",
+ *                     "children": [{
+ *                         "type": "Known",
+ *                         "title": "Square"
+ *                     }]
+ *                 }
+ *             }
+ *         }
+ *     }),
+ *     generated = WorldSeeder.generate("Square", {
+ *         "top": 8,
+ *         "right": 8,
+ *         "bottom": 0,
+ *         "left": 0
+ *     });
+ * 
+ * // Object {top: 8, right: 8, bottom: 0, left: 0, children: Array[1]}
+ * console.log(generated);
+ * 
+ * // Object {title: "Square", type: "Known", arguments: undefined, width: 8...}
+ * console.log(generated.children[0]);
+ * 
+ * @example
+ * // Creating and using a WorldSeedr to generate a square snapped to to the top
+ * // of a tall area.
+ * var WorldSeeder = new WorldSeedr({
+ *         "possibilities": {
+ *             "Square": {
+ *                 "width": 8,
+ *                 "height": 8,
+ *                 "contents": {
+ *                     "mode": "Certain",
+ *                     "snap": "top",
+ *                     "children": [{
+ *                         "type": "Known",
+ *                         "title": "Square"
+ *                     }]
+ *                 }
+ *             }
+ *         }
+ *     }),
+ *     generated = WorldSeeder.generate("Square", {
+ *         "top": 16,
+ *         "right": 8,
+ *         "bottom": 0,
+ *         "left": 0
+ *     }),
+ *     square = generated.children[0];
+ * 
+ * // Square is located at: {16, 8, 8, 0}
+ * console.log("Square is located at: {" + [
+ *     square.top, square.right, square.bottom, square.left
+ * ].join(", ") + "}");
+ * 
+ * @example
+ * // Creating and using a WorldSeedr to generate random shapes of random colors
+ * // sporadically within a wide area.
+ * 
+ * var WorldSeeder = new WorldSeedr({
+ *         "possibilities": {
+ *             "Shapes": {
+ *                 "width": 40,
+ *                 "height": 8,
+ *                 "contents": {
+ *                     "mode": "Random",
+ *                     "direction": "right",
+ *                     "spacing": {
+ *                         "min": 0,
+ *                         "max": 4,
+ *                         "units": 2
+ *                     },
+ *                     "children": [{
+ *                         "percent": 35,
+ *                         "title": "Square",
+ *                         "arguments": [{
+ *                             "percent": 50,
+ *                             "values": {
+ *                                 "color": "Red"
+ *                             }
+ *                         }, {
+ *                             "percent": 50,
+ *                             "values": {
+ *                                 "color": "Purple"
+ *                             }
+ *                         }]
+ *                     }, {
+ *                         "percent": 35,
+ *                         "title": "Circle",
+ *                         "arguments": [{
+ *                             "percent": 50,
+ *                             "values": {
+ *                                 "color": "Orange"
+ *                             }
+ *                         }, {
+ *                             "percent": 50,
+ *                             "values": {
+ *                                 "color": "Blue"
+ *                             }
+ *                         }]
+ *                     }, {
+ *                         "percent": 30,
+ *                         "title": "Triangle",
+ *                         "arguments": [{
+ *                             "percent": 50,
+ *                             "values": {
+ *                                 "color": "Yellow"
+ *                             }
+ *                         }, {
+ *                             "percent": 50,
+ *                             "values": {
+ *                                 "color": "Green"
+ *                             }
+ *                         }]
+ *                     }]
+ *                 }
+ *             },
+ *             "Square": {
+ *                 "width": 8,
+ *                 "height": 8,
+ *                 "contents": {
+ *                     "mode": "Certain",
+ *                     "children": [{
+ *                         "type": "Known",
+ *                         "title": "Square",
+ *                         "arguments": {
+ *                             "red": "blue"
+ *                         }
+ *                     }]
+ *                 }
+ *             },
+ *             "Circle": {
+ *                 "width": 8,
+ *                 "height": 8,
+ *                 "contents": {
+ *                     "mode": "Certain",
+ *                     "children": [{
+ *                         "type": "Known",
+ *                         "title": "Circle"
+ *                     }]
+ *                 }
+ *             },
+ *             "Triangle": {
+ *                 "width": 8,
+ *                 "height": 8,
+ *                 "contents": {
+ *                     "mode": "Certain",
+ *                     "children": [{
+ *                         "type": "Known",
+ *                         "title": "Triangle"
+ *                     }]
+ *                 }
+ *             }
+ *         }
+ *     }),
+ *     generated = WorldSeeder.generate("Shapes", {
+ *         "top": 8,
+ *         "right": 40,
+ *         "bottom": 0,
+ *         "left": 0
+ *     }),
+ *     output = [];
+ * 
+ * generated.children.forEach(function (child) {
+ *     output.push(
+ *         child.arguments.color + " " + child.title + " at " + child.left
+ *     );
+ * });
+ * 
+ * // One possibility:
+ * // [
+ * //     "Yellow Triangle at 0", 
+ * //     "Yellow Triangle at 8", 
+ * //     "Purple Square at 18", 
+ * //     "Orange Circle at 26"
+ * // ]
+ * // Another possibility:
+ * // [
+ * //     "Green Triangle at 0",
+ * //     "Yellow Triangle at 8",
+ * //     "Red Square at 20", 
+ * //     "Orange Circle at 30"
+ * // ]
+ * console.log(output);
+ * 
+ * @author "Josh Goldberg" <josh@fullscreenmario.com
+ */
 function WorldSeedr(settings) {
     "use strict";
     if (!this || this === window) {
@@ -5,10 +212,10 @@ function WorldSeedr(settings) {
     }
     var self = this,
         
-        // A very large hashtable of possibilities, by title
-        all_possibilities,
+        // A very large listing of possibilities, keyed by title
+        possibilities,
         
-        // Function used to generate a random number, by default Math.random
+        // Function used to generate a random number
         random,
         
         // Function called in self.generateFull to place a child
@@ -22,6 +229,7 @@ function WorldSeedr(settings) {
             "left": "right"
         },
         
+        // A constant listing of what direction the sides of areas correspond to
         directionSizing = {
             "top": "height",
             "right": "width",
@@ -39,53 +247,78 @@ function WorldSeedr(settings) {
         generatedCommands;
     
     /**
+     * Resets the WorldSeedr.
      * 
+     * @constructor
+     * @param {Object} possibilities   The entire listing of possibilities that
+     *                                 may be generated.
+     * @param {Function} [random]   A Function to generate a random number in
+     *                              [0,1) (by default, Math.random).
+     * @param {Function} [onPlacement]   A Function callback for generated
+     *                                   possibilities of type "known" to be
+     *                                   called in runGeneratedCommands (by 
+     *                                   default, console.log).
      */
     self.reset = function (settings) {
-        all_possibilities = settings.possibilities;
+        if (typeof settings.possibilities === "undefined") {
+            throw new Error("No possibilities given to WorldSeedr.");
+        }
+        
+        possibilities = settings.possibilities;
         random = settings.random || Math.random.bind(Math);
-        onPlacement = settings.onPlacement || console.log.bind(console, "Placing");
+        onPlacement = settings.onPlacement || console.log.bind(console, "Got:");
         
         self.clearGeneratedCommands();
     };
     
+    
+    /* Simple gets & sets
+    */
+    
     /**
-     * 
+     * @return {Object} The listing of possibilities that may be generated.
      */
     self.getPossibilities = function () {
-        return all_possibilities;
+        return possibilities;
     };
     
     /**
-     * 
+     * @param {Object} possibilitiesNew   A new Object to list possibilities
+     *                                    that may be generated.
      */
-    self.setPossibilities = function (all_possibilitiesNew) {
-        all_possibilities = all_possibilitiesNew;
+    self.setPossibilities = function (possibilitiesNew) {
+        possibilities = possibilitiesNew;
     };
     
     /**
-     * 
+     * @return {Function} The Function callback for generated possibilities of
+     *                    type "known" to be called in runGeneratedCommands.
      */
     self.getOnPlacement = function () {
         return onPlacement;
     };
     
     /**
-     * 
+     * @param {Function} onPlacementNew   A new Function to be used as the
+     *                                    onPlacement callback.
      */
     self.setOnPlacement = function (onPlacementNew) {
         onPlacement = onPlacementNew;
     };
     
+    
+    /* Generated commands
+    */
+    
     /**
-     * 
+     * Resets the generatedCommands Array so runGeneratedCommands can start.    
      */
     self.clearGeneratedCommands = function () {
         generatedCommands = [];
     };
     
     /**
-     * 
+     * Runs the onPlacement callback on the generatedCommands Array.
      */
     self.runGeneratedCommands = function () {
         onPlacement(generatedCommands);
@@ -96,11 +329,10 @@ function WorldSeedr(settings) {
     */
     
     /**
-     * Generates a large collection of randomly chosen possibilities based on a
-     * given schema mapping. These will fit within the given position.
+     * Generates a collection of randomly chosen possibilities based on the 
+     * given schema mapping. These does not recursively parse the output; do
+     * do that, use generateFull.
      * 
-     * @param {Object} schema   A simple Object with basic information on the
-     *                          chosen possibility.
      * @param {String} name   The name of the possibility schema to start from.
      * @param {Object} position   An Object that contains .left, .right, .top, 
      *                            and .bottom.
@@ -108,21 +340,28 @@ function WorldSeedr(settings) {
      *                    position and some number of children.
      */
     self.generate = function (name, position) {
-        var schema = all_possibilities[name];
+        var schema = possibilities[name];
         
         if (!schema) {
             throw new Error("No possibility exists under '" + name + "'");
         }
         
         if (!schema.contents) {
-            throw new Error("The schema for '" + name + "' has no possibile outcomes");
+            throw new Error("'" + name + "' has no possibile outcomes.");
         }
         
-        return generateContentChildren(schema, positionCopy(position));
+        return generateChildren(schema, positionCopy(position));
     };
     
     /**
+     * Recursively generates a schema. The schema's title and itself are given 
+     * to self.generate; all outputs of type "Known" are added to the 
+     * generatedCommands Array, while everything else is recursed upon.
      * 
+     * @param {Object} schema   A simple Object with basic information on the
+     *                          chosen possibility.
+     * @return {Object}   An Object containing a position within the given 
+     *                    position and some number of children. 
      */
     self.generateFull = function (schema) {
         var generated = self.generate(schema.title, schema),
@@ -140,6 +379,8 @@ function WorldSeedr(settings) {
                     break;
             }
         }
+        
+        return generatedCommands;
     };
     
     /**
@@ -159,7 +400,7 @@ function WorldSeedr(settings) {
      * @return {Object}   An Object containing a position within the given 
      *                    position and some number of children.
      */
-    function generateContentChildren(schema, position, direction) {
+    function generateChildren(schema, position, direction) {
         var contents = schema.contents,
             spacing = contents.spacing || 0,
             positionMerged = positionMerge(schema, position),
@@ -170,16 +411,16 @@ function WorldSeedr(settings) {
         
         switch (contents.mode) {
             case "Random":
-                children = generateContentChildrenRandom(contents, positionMerged, direction, spacing);
+                children = generateChildrenRandom(contents, positionMerged, direction, spacing);
                 break;
             case "Certain":
-                children = generateContentChildrenCertain(contents, positionMerged, direction, spacing);
+                children = generateChildrenCertain(contents, positionMerged, direction, spacing);
                 break;
             case "Repeat":
-                children = generateContentChildrenRepeat(contents, positionMerged, direction, spacing);
+                children = generateChildrenRepeat(contents, positionMerged, direction, spacing);
                 break;
             case "Multiple":
-                children = generateContentChildrenMultiple(contents, positionMerged, direction, spacing);
+                children = generateChildrenMultiple(contents, positionMerged, direction, spacing);
                 break;
         }
         
@@ -200,7 +441,7 @@ function WorldSeedr(settings) {
      * @return {Object}   An Object containing a position within the given 
      *                    position and some number of children.
      */
-    function generateContentChildrenCertain(contents, position, direction, spacing) {
+    function generateChildrenCertain(contents, position, direction, spacing) {
         var child;
         
         return contents.children.map(function (choice) {
@@ -236,7 +477,7 @@ function WorldSeedr(settings) {
      * @return {Object}   An Object containing a position within the given 
      *                    position and some number of children.
      */
-    function generateContentChildrenRepeat(contents, position, direction, spacing) {
+    function generateChildrenRepeat(contents, position, direction, spacing) {
         var choices = contents.children,
             positionOld = positionCopy(position),
             children = [],
@@ -289,7 +530,7 @@ function WorldSeedr(settings) {
      * @return {Object}   An Object containing a position within the given 
      *                    position and some number of children.
      */
-    function generateContentChildrenRandom(contents, position, direction, spacing) {
+    function generateChildrenRandom(contents, position, direction, spacing) {
         var children = [],
             child;
         
@@ -326,12 +567,12 @@ function WorldSeedr(settings) {
      * @return {Object}   An Object containing a position within the given 
      *                    position and some number of children.
      */
-    function generateContentChildrenMultiple(contents, position, direction, spacing) {
+    function generateChildrenMultiple(contents, position, direction, spacing) {
         return contents.children.map(function (choice) {
             var output = parseChoice(choice, positionCopy(position), direction);
             
             if (direction) {
-                movePositionByChild(position, direction, spacing);
+                movePositionBySpacing(position, direction, spacing);
             }
             
             return output;
@@ -371,7 +612,7 @@ function WorldSeedr(settings) {
      * This is the function that parses and manipulates the positioning of the
      * new choice.
      * 
-     * @param {Object} choice   The simple definition of the object chosen from
+     * @param {Object} choice   The simple definition of the Object chosen from
      *                          a choices array. It should have at least .title,
      *                          and optionally .sizing or .arguments.
      * @param {Object} position   An Object that contains .left, .right, .top, 
@@ -384,7 +625,7 @@ function WorldSeedr(settings) {
      */
     function parseChoice(choice, position, direction) {
         var title = choice.title,
-            schema = all_possibilities[title],
+            schema = possibilities[title],
             sizing = choice["sizing"],
             stretch = choice["stretch"],
             output = {
@@ -462,7 +703,7 @@ function WorldSeedr(settings) {
      * should conform to parent (contents) via cannonsmall.snap=bottom
      */
     function parseChoiceFinal(parent, choice, position, direction) {
-        var schema = all_possibilities[choice.source],
+        var schema = possibilities[choice.source],
             output = {
                 "type": "Known",
                 "title": choice.title,
@@ -488,7 +729,7 @@ function WorldSeedr(settings) {
      * From an Array of potential choice objects, returns one chosen at random.
      * 
      * @param {Array} choice   An Array of objects with .width and .height.
-     * @return {Boolean}
+     * @return {Object}
      */
     function chooseAmong(choices) {
         if (!choices.length) {
@@ -517,7 +758,7 @@ function WorldSeedr(settings) {
      * @param {Array} choice   An Array of objects with .width and .height.
      * @param {Object} position   An Object that contains .left, .right, .top, 
      *                            and .bottom.
-     * @return {Boolean}
+     * @return {Object}
      * @remarks Functions that use this will have to react to nothing being 
      *          chosen. For example, if only 50 percentage is accumulated 
      *          among fitting ones but 75 is randomly chosen, something should
@@ -528,7 +769,7 @@ function WorldSeedr(settings) {
             height = position.top - position.bottom;
         
         return chooseAmong(choices.filter(function (choice) {
-            return doesChoiceFit(all_possibilities[choice.title], width, height);
+            return doesChoiceFit(possibilities[choice.title], width, height);
         }));
     }
     
@@ -538,8 +779,7 @@ function WorldSeedr(settings) {
      * @param {Object} choice   An Object that contains .width and .height.
      * @param {Number} width
      * @param {Number} height
-     * @return {Boolean} The boolean equivalent of the choice fits
-     *                   within the position.
+     * @return {Boolean} Whether the choice fits within the position.
      */
     function doesChoiceFit(choice, width, height) {
         return choice.width <= width && choice.height <= height;
@@ -556,7 +796,6 @@ function WorldSeedr(settings) {
      * @remarks When calling multiple times on a position (such as in 
      *          chooseAmongPosition), it's more efficient to store the width
      *          and height separately and just use doesChoiceFit.                
-     *        
      */
      function doesChoiceFitPosition(choice, position) {
         return doesChoiceFit(
@@ -567,18 +806,14 @@ function WorldSeedr(settings) {
      }
     
     /**
-     * Chooses a number in [1, 100] at random.
-     * 
-     * @return Number
+     * @return {Number} A number in [1, 100] at random.
      */
     function randomPercentage() {
         return Math.floor(random() * 100) + 1;
     }
     
     /**
-     * Chooses an integer in [min, max] at random.
-     * 
-     * @return Number
+     * @return {Number} A number in [min, max] at random.
      */
     function randomBetween(min, max) {
         return Math.floor(random() * (1 + max - min)) + min;
@@ -655,7 +890,7 @@ function WorldSeedr(settings) {
      * @param {String} direction   A string direction to shrink the position by:
      *                             "top", "right", "bottom", or "left".
      * @param {Mixed} [spacing]   How much space there should be between each
-     *                            child (defaults to 0).
+     *                            child (by default, 0).
      */
     function shrinkPositionByChild(position, child, direction, spacing) {
         switch (direction) {
@@ -675,9 +910,18 @@ function WorldSeedr(settings) {
     }
     
     /**
-     * 
+     * Moves a position by its parsed spacing. This is only useful for content
+     * of type "Multiple", which are allowed to move themselves via spacing 
+     * between placements.
+     *
+     * @param {Object} position   An Object that contains .left, .right, .top, 
+     *                            and .bottom.
+     * @param {String} direction   A string direction to shrink the position by:
+     *                             "top", "right", "bottom", or "left".
+     * @param {Mixed} [spacing]   How much space there should be between each
+     *                            child (by default, 0).
      */
-    function movePositionByChild(position, direction, spacing) {
+    function movePositionBySpacing(position, direction, spacing) {
         var space = parseSpacing(spacing);
         
         switch (direction) {
@@ -701,7 +945,15 @@ function WorldSeedr(settings) {
     }
     
     /**
+     * Recursively parses a spacing parameter to eventually return a Number, 
+     * which will likely be random.
      * 
+     * @param {Mixed} spacing   This may be a Number (returned directly), an
+     *                          Object[] containing choices for chooseAmong, a
+     *                          Number[] containing minimum and maximum values,
+     *                          or an Object containing "min", "max", and 
+     *                          "units" to round to.
+     * @return {Number}
      */
     function parseSpacing(spacing) {
         if (!spacing) {
@@ -727,7 +979,12 @@ function WorldSeedr(settings) {
     }
     
     /**
+     * Helper to parse a spacing Object. The minimum and maximum ("min" and 
+     * "max", respectively) are the range, and an optional "units" parameter
+     * is what Number it should round to.
      * 
+     * @param {Object} spacing
+     * @return {Number}
      */
     function parseSpacingObject(spacing) {
         if (spacing.constructor === Number) {
@@ -736,7 +993,7 @@ function WorldSeedr(settings) {
         
         var min = spacing.min,
             max = spacing.max,
-            units = spacing.units || 0;
+            units = spacing.units || 1;
         
         return randomBetween(min / units, max / units) * units;
     }
@@ -787,7 +1044,15 @@ function WorldSeedr(settings) {
     }
     
     /**
+     * Copies settings from a parsed choice to its arguments. What settings to
+     * copy over are determined by the schema's content's argumentMap attribute.
      * 
+     * @param {Object} schema   A simple Object with basic information on the
+     *                          chosen possibility.
+     * @param {Object} choice   The simple definition of the Object chosen from
+     *                          a choices array.
+     * @param {Object} output   The Object (likely a parsed possibility content)
+     *                          having its arguments modified.    
      */
     function copySchemaArguments(schema, choice, output) {
         var map = schema.contents.argumentMap,
@@ -805,6 +1070,7 @@ function WorldSeedr(settings) {
             output.arguments[map[i]] = choice[i];
         }
     }
+    
     
     self.reset(settings || {});
 }
