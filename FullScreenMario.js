@@ -1647,7 +1647,8 @@ var FullScreenMario = (function(GameStartr) {
     
     /** 
      * Spawn callback for Bowsers. The cyclical movement counter is set to 0 and
-     * the jump event interval is started.
+     * the firing and jumping event intervals are started. If it also specifies 
+     * a throwing interval, that's started too.
      * 
      * @param {Bowser} thing
      */
@@ -1673,6 +1674,19 @@ var FullScreenMario = (function(GameStartr) {
                 Infinity, 
                 thing
             );
+        }
+        
+        if (thing.throwing) {
+            for (i = 0; i < thing.throwAmount; i += 1) {
+                thing.EightBitter.TimeHandler.addEvent(function () {
+                    thing.EightBitter.TimeHandler.addEventInterval(
+                        thing.EightBitter.animateBowserThrow,
+                        thing.throwPeriod,
+                        Infinity, 
+                        thing
+                    );
+                }, thing.throwDelay + i * thing.throwBetween);
+            }
         }
     }
     
@@ -4939,7 +4953,7 @@ var FullScreenMario = (function(GameStartr) {
      * placed at his mouth, given a (rounded to unitsize * 8) destination y, and
      * sent firing to the player.
      * 
-     * @param {Thing} thing
+     * @param {Bowser} thing
      */
     function animateBowserFireOpen(thing) {
         var unitsize = thing.EightBitter.unitsize,
@@ -4961,6 +4975,54 @@ var FullScreenMario = (function(GameStartr) {
             thing.left - thing.EightBitter.unitsize * 8,
             thing.top + thing.EightBitter.unitsize * 4
         );
+    }
+    
+    /**
+     * Animation Function for when Bowser throws a Hammer. It's similar to a
+     * HammerBro, but the hammer appears on top of Bowser for a few steps
+     * before being thrown in the direction Bowser is facing (though it will
+     * only be added if facing left).
+     * 
+     * @param {Bowser} thing
+     */
+    function animateBowserThrow(thing) {
+        if (!thing.lookleft) {
+            return;
+        }
+        
+        var hammer = thing.EightBitter.addThing(
+            "Hammer", 
+            thing.left + thing.EightBitter.unitsize * 2,
+            thing.top - thing.EightBitter.unitsize * 2
+        );
+        
+        thing.EightBitter.TimeHandler.addEventInterval(function () {
+            thing.EightBitter.setTop(
+                hammer, thing.top - thing.EightBitter.unitsize * 2
+            );
+            if (thing.lookleft) {
+                thing.EightBitter.setLeft(
+                    hammer,
+                    thing.left + thing.EightBitter.unitsize * 2,
+                    thing.top - thing.EightBitter.unitsize * 2
+                );
+            } else {
+                thing.EightBitter.setLeft(
+                    hammer, 
+                    thing.right - thing.EightBitter.unitsize * 2, 
+                    thing.top - thing.EightBitter.unitsize * 2
+                );
+            }
+        }, 1, 14);
+        
+        thing.EightBitter.TimeHandler.addEvent(function () {
+            hammer.xvel = thing.EightBitter.unitsize * 1.17;
+            hammer.yvel = thing.EightBitter.unitsize * -2.1;
+            // hammer.gravity = thing.EightBitter.MapScreener.gravity / 1.4;
+            if (thing.lookleft) {
+                hammer.xvel *= -1;
+            }
+        }, 14);
     }
     
     /**
@@ -7862,8 +7924,10 @@ var FullScreenMario = (function(GameStartr) {
      *                         "Toad" by default).
      * @param {Boolean} [hard]   Whether Bowser should be "hard" (by default,
      *                           false).
-     * @param {String} [spawnType]   What Bowser's spawnType should be for
+     * @param {String} [spawnType]   What the Bowser's spawnType should be for
      *                               fireball deaths (by default, "Goomba").
+     * @param {Boolean} [throwing]   Whether the Bowser is also throwing hammers
+     *                               (by default, false).
      * @return {Object[]}
      */
     function macroEndInsideCastle(reference, prethings, area, map, scope) {
@@ -7956,7 +8020,8 @@ var FullScreenMario = (function(GameStartr) {
             {
                 "thing": "Bowser", "x": x + 69, "y": y + 42,
                 "hard": reference.hard, 
-                "spawnType": reference.spawnType || "Goomba"
+                "spawnType": reference.spawnType || "Goomba",
+                "throwing": reference.throwing
             },
             { "thing": "CastleChain", "x": x + 96, "y": y + 32 },
             // Axe area
@@ -8261,6 +8326,7 @@ var FullScreenMario = (function(GameStartr) {
         "animateThrowingHammer": animateThrowingHammer,
         "animateBowserJump": animateBowserJump,
         "animateBowserFire": animateBowserFire,
+        "animateBowserThrow": animateBowserThrow,
         "animateBowserFireOpen": animateBowserFireOpen,
         "animateBowserFreeze": animateBowserFreeze,
         "animateBlooperUnsqueezing": animateBlooperUnsqueezing,

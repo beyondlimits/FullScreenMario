@@ -2518,7 +2518,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Stone", "x": 928, "y": 24, "width": 32, "height": 24 },
                         { "thing": "Stone", "x": 984, "y": 24, "width": 40, "height": 24 },
                         { "thing": "Stone", "x": 984, "y": 80, "width": 40, "height": 16 },
-                        { "macro": "EndInsideCastle", "x": 1024, "spawnType": "Blooper", "transport": { "map": "7-1" } }
+                        { "macro": "EndInsideCastle", "x": 1024, "spawnType": "Blooper", "throwing": true, "transport": { "map": "7-1" } }
                     ]
                 }
             ]
@@ -2565,7 +2565,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "HammerBro", "x": 692, "y": 76 },
                         { "macro": "Pipe", "x": 744, "height": 24, "piranha": true, "transport": 2 },
                         { "thing": "Block", "x": 744, "y": 64, "contents": "Mushroom1Up", "hidden": true },
-                        { "thing": "Cannon", "x": 832, "Y": 16, "height": 16 },
+                        { "thing": "Cannon", "x": 832, "y": 16, "height": 16 },
                         { "macro": "Pipe", "x": 872, "height": 24, "piranha": true },
                         { "thing": "Koopa", "x": 912, "y": 12 },
                         { "macro": "Pipe", "x": 920, "height": 16, "piranha": true, "entrance": 1 },
@@ -3035,7 +3035,7 @@ FullScreenMario.prototype.settings.maps = {
                                     { "macro": "Floor", "x": 176, "y": 24, "width": 16 },
                                     { "macro": "Floor", "x": 192, "width": 16 },
                                     { "macro": "Floor", "x": 208, "y": 24, "width": 64 },
-                                    { "macro": "EndInsideCastle", "x": 272, "spawnType": "HammerBro", "transport": { "map": "8-1" } }
+                                    { "macro": "EndInsideCastle", "x": 272, "spawnType": "HammerBro", "throwing": false, "transport": { "map": "8-1" } }
                                 ]
                             }
                         }
@@ -3576,7 +3576,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Podoboo", "x": 160, "y": -32 },
                         { "macro": "Floor", "x": 184, "y": 24, "width": 48 },
                         { "thing": "Stone", "x": 184, "y": 80, "width": 48, "height": 16 },
-                        { "macro": "EndInsideCastle", "x": 232 }
+                        { "macro": "EndInsideCastle", "x": 232, "spawnType": "Bowser", "throwing": true, "transport": { "map": "1-1" } }
                     ]
                 }
             ]
