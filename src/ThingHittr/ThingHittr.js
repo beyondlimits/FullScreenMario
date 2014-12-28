@@ -336,8 +336,7 @@ function ThingHittr(settings) {
      * Function generator for a checkHitsOf tailored to a specific Thing type.
      * 
      * @param {String} typeName   The type of the Things to generate for.
-     * @return {Function}   A checkHitsGenerated Function that is to be run on
-     *                      used for Things of that particular type.
+     * @return {Function}
      */
     self.generateHitsCheck = function (typeName) {
         /**

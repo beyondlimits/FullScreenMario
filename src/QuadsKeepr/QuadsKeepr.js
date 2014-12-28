@@ -1,3 +1,17 @@
+/**
+ * QuadsKeepr.js
+ * 
+ * Quadrant-based collision detection. A grid structure of quadrants is kept 
+ * with Things placed within quadrants they intersect. Each Quadrant knows which
+ * Things are in it, and each Thing knows its quadrants. Operations are 
+ * available to shift quadrants horizontally or vertically and add/remove rows
+ * and columns.
+ * 
+ * 
+ * 
+ * 
+ * @author "Josh Goldberg" <josh@fullscreenmario.com>
+ */
 function QuadsKeepr(settings) {
     "use strict";
     if (!this || this === window) {
@@ -5,30 +19,34 @@ function QuadsKeepr(settings) {
     }
     var self = this,
         
-        // The ObjectMakr factory used to create Quadrant objects
+        // The ObjectMakr factory used to create Quadrant objects.
         ObjectMaker,
         
-        // Function used to create a canvas of a given width and height
+        // Function used to create a canvas of a given width and height.
         createCanvas,
         
-        // How many rows and columns of quadrants there should be
+        // How many rows and columns of quadrants there should be.
         numRows,
         numCols,
         
-        // Scrolling offsets during gameplay (initially 0)
+        // Scrolling offsets during gameplay (initially 0).
         offsetX,
         offsetY,
         
-        // Starting coordinates for rows & cols
+        // Starting coordinates for rows & columns.
         startLeft,
         startTop,
         
+        // How many rows of quadrants there should be.
         quadrantRows,
         
+        // How many columns of quadrants there should be.
         quadrantCols,
         
+        // How wide quadrants should be.
         quadrantWidth,
         
+        // How tall quadrants should be.
         quadrantHeight,
 
         // Names under which external Things should store Quadrant information
@@ -665,21 +683,27 @@ function QuadsKeepr(settings) {
      * 
      */
     function findQuadrantRowEnd(thing) {
-        return Math.min(Math.floor((thing.bottom - self.top) / quadrantHeight), numRows - 1);
+        return Math.min(
+            Math.floor((thing.bottom - self.top) / quadrantHeight), numRows - 1
+        );
     }
     
     /**
      * 
      */
     function findQuadrantColStart(thing) {
-        return Math.max(Math.floor((thing.left - self.left) / quadrantWidth), 0);
+        return Math.max(
+            Math.floor((thing.left - self.left) / quadrantWidth), 0
+        );
     }
     
     /**
      * 
      */
     function findQuadrantColEnd(thing) {
-        return Math.min(Math.floor((thing.right - self.left) / quadrantWidth), numCols - 1);
+        return Math.min(
+            Math.floor((thing.right - self.left) / quadrantWidth), numCols - 1
+        );
     }
     
     
