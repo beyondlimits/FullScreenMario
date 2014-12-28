@@ -3,7 +3,7 @@
  * 
  * A Thing collision detection automator that unifies GroupHoldr and QuadsKeepr.
  * Things contained in the GroupHoldr's groups have automated collision checking
- * aainst configurable sets of other groups, along with performance 
+ * against configurable sets of other groups, along with performance  
  * optimizations to help reduce over-reoptimization of Functions.
  * 
  * @example
@@ -275,17 +275,6 @@ function ThingHittr(settings) {
     };
     
     
-    /* Simple gets
-    */
-    
-    /**
-     * @return {GroupHoldr} The internal GroupHoldr.
-     */
-    self.getGroupHolder = function () {
-        return GroupHolder;
-    };
-    
-    
     /* Runtime preparation
     */
     
@@ -293,8 +282,7 @@ function ThingHittr(settings) {
      * Caches the hit checks for a group name. The global check for that group
      * is cached on the name for later use.
      * 
-     * @param {String} groupName   The name of the container group within 
-     *                             GroupHoldr.
+     * @param {String} groupName   The name of the container group.
      */
     self.cacheHitCheckGroup = function (groupName) {
         if (cachedGroupNames[groupName]) {
@@ -316,9 +304,8 @@ function ThingHittr(settings) {
      * The result is that you can call self.checkHitsOf[typeName] later on, and
      * expect it to work as anything in groupName.
      * 
-     * @param {String} typeName   The type of the Thing within the GroupHoldr.
-     * @param {String} groupName   The name of the container group within 
-     *                             GroupHoldr.
+     * @param {String} typeName   The type of the Things to cache for.
+     * @param {String} groupName   The name of the container group.
      */
     self.cacheHitCheckType = function (typeName, groupName) {
         if (cachedTypeNames[typeName]) {
@@ -346,10 +333,9 @@ function ThingHittr(settings) {
     };
     
     /**
-     * Function generator for a checkHitsGenerated tailored to a specific type
-     * of Thing. 
+     * Function generator for a checkHitsOf tailored to a specific Thing type.
      * 
-     * @param {String} typeName   The type of the Thing within GroupHoldr.
+     * @param {String} typeName   The type of the Things to generate for.
      * @return {Function}   A checkHitsGenerated Function that is to be run on
      *                      used for Things of that particular type.
      */
@@ -363,7 +349,7 @@ function ThingHittr(settings) {
          * 
          * @param {Thing} thing
          */
-        return function checkHitsGenerated(thing) {
+        return function checkHitsOf(thing) {
             var others, other, hitCheck,
                 i, j, k;
              
