@@ -268,7 +268,7 @@ function GroupHoldr(settings) {
          */
         
         functions.setGroup[name] = self["set" + name + "Group"] = function (value) {
-            ensureCorrectGroupType(value, name);
+            ensureCorrectgroupType(value, name);
             groups[name] = value;
         };
     }
@@ -545,7 +545,7 @@ function GroupHoldr(settings) {
     /**
      * 
      */
-    function ensureCorrectGroupType(value, name) {
+    function ensureCorrectgroupType(value, name) {
         if (groupTypes.constructor === String) {
             return value === groupTypes;
         }

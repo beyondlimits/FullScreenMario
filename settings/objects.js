@@ -295,8 +295,8 @@
                 movement: false
             },
             character: {
-                libtype: "characters",
-                grouptype: "Character",
+                libType: "characters",
+                groupType: "Character",
                 character: true,
                 lookleft: true,
                 moveleft: true,
@@ -698,8 +698,8 @@
             },
             solid: {
                 type: "solid",
-                libtype: "solids",
-                grouptype: "Solid",
+                libType: "solids",
+                groupType: "Solid",
                 spritewidth: 8,
                 spriteheight: 8,
                 repeat: true,
@@ -853,8 +853,8 @@
                 movement: FullScreenMario.prototype.spawnDetector
             },
             scenery: {
-                libtype: "scenery",
-                grouptype: "Scenery",
+                libType: "scenery",
+                groupType: "Scenery",
                 repeat: true,
                 nocollide: true, // for when placed in Solid group
                 noBoundaryStretch: true
@@ -901,8 +901,8 @@
             "Text": {
                 "width": 3.5,
                 "height": 3.5,
-                "libtype": "Text",
-                "grouptype": "Text",
+                "libType": "Text",
+                "groupType": "Text",
                 "size": ""
             },
             "DecorativeBack": {
@@ -946,8 +946,8 @@
                 "width": 3.5
             },
             "ScoreText": {
-                "libtype": "Text",
-                "grouptype": "Text",
+                "libType": "Text",
+                "groupType": "Text",
             },
             "TextCharacters": [2.5, 4],
             "TextCharagersHuge": [1, 1],

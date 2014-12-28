@@ -69,6 +69,7 @@ var GameStartr = (function (EightBittr) {
         "resetQuadsKeeper",
         "resetGamesRunner",
         "resetStatsHolder",
+        "resetGroupHolder",
         "resetThingHitter",
         "resetMapScreener",
         "resetPixelDrawer",
@@ -261,6 +262,18 @@ var GameStartr = (function (EightBittr) {
     }
     
     /**
+     * Sets self.GroupHolder.
+     * 
+     * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
+     * @remarks Requirement(s): GroupHoldr (src/ThingHittr/GroupHoldr.js)
+     *                          groups.js (settings/groups.js)
+     */
+    function resetGroupHolder(EightBitter, customs) {
+        EightBitter.GroupHolder = new GroupHoldr(EightBitter.settings.groups);
+    }
+    
+    /**
      * Sets self.ThingHitter.
      * 
      * @param {EightBittr} EightBitter
@@ -272,8 +285,6 @@ var GameStartr = (function (EightBittr) {
         EightBitter.ThingHitter = new ThingHittr(proliferate({
             "scope": EightBitter
         }, EightBitter.settings.collisions));
-        
-        EightBitter.GroupHolder = EightBitter.ThingHitter.getGroupHolder();
         
         EightBitter.ThingHitter.cacheHitCheckGroup("Solid");
         EightBitter.ThingHitter.cacheHitCheckGroup("Character");
@@ -569,7 +580,7 @@ var GameStartr = (function (EightBittr) {
         
         thing.EightBitter.updateSize(thing);
         
-        thing.EightBitter.GroupHolder.getFunctions().add[thing.grouptype](thing);
+        thing.EightBitter.GroupHolder.getFunctions().add[thing.groupType](thing);
         thing.placed = true;
         
         // This will typically be a TimeHandler.cycleClass call
@@ -704,7 +715,7 @@ var GameStartr = (function (EightBittr) {
         // inheritance, sadly)
         thing.EightBitter.ThingHitter.cacheHitCheckType(
             thing.title,
-            thing.grouptype
+            thing.groupType
         );
         
         // Mods!
@@ -722,7 +733,7 @@ var GameStartr = (function (EightBittr) {
      * @param {Object} attributes
      */
     function thingProcessAttributes(thing, attributes) {
-        var attribute, i;
+        var attribute;
 
         // For each listing in the attributes...
         for (attribute in attributes) {
@@ -1139,7 +1150,7 @@ var GameStartr = (function (EightBittr) {
      */
     function generateObjectKey(thing) {
         return thing.EightBitter.MapsHandler.getArea().setting 
-                + ' ' + thing.libtype + ' ' 
+                + ' ' + thing.libType + ' ' 
                 + thing.title + ' ' + thing.className;
     }
     
@@ -1415,6 +1426,7 @@ var GameStartr = (function (EightBittr) {
         "resetAudioPlayer": resetAudioPlayer,
         "resetGamesRunner": resetGamesRunner,
         "resetStatsHolder": resetStatsHolder,
+        "resetGroupHolder": resetGroupHolder,
         "resetThingHitter": resetThingHitter,
         "resetMapScreener": resetMapScreener,
         "resetPixelDrawer": resetPixelDrawer,

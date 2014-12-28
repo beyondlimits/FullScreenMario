@@ -271,10 +271,10 @@ var FullScreenMario = (function(GameStartr) {
             thing.EightBitter.TimeHandler.addEvent(function () {
                 switch (prething.position || thing.position) {
                     case "beginning":
-                        thing.EightBitter.arrayToBeginning(thing, thing.EightBitter.GroupHolder.getGroup(thing.grouptype));
+                        thing.EightBitter.arrayToBeginning(thing, thing.EightBitter.GroupHolder.getGroup(thing.groupType));
                         break;
                     case "end":
-                        thing.EightBitter.arrayToEnd(thing, thing.EightBitter.GroupHolder.getGroup(thing.grouptype));
+                        thing.EightBitter.arrayToEnd(thing, thing.EightBitter.GroupHolder.getGroup(thing.groupType));
                         break;
                 }
             });
@@ -872,13 +872,13 @@ var FullScreenMario = (function(GameStartr) {
      */
     function isThingOnThing(thing, other) {
         // If thing is a solid and other is falling, thing can't be above other
-        if (thing.grouptype === "Solid" && other.yvel > 0) {
+        if (thing.groupType === "Solid" && other.yvel > 0) {
             return false;
         }
         
         // If other is falling faster than thing, and isn't a solid,
         // thing can't be on top (if anything, the opposite is true)
-        if (thing.yvel < other.yvel && other.grouptype !== "Solid") {
+        if (thing.yvel < other.yvel && other.groupType !== "Solid") {
             return false;
         }
         
@@ -2699,7 +2699,7 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         // Hitting a solid (e.g. wall) 
-        if (thing.grouptype === "Solid") {
+        if (thing.groupType === "Solid") {
             return thing.EightBitter.collideShellSolid(thing, other);
         }
         
@@ -5102,7 +5102,7 @@ var FullScreenMario = (function(GameStartr) {
             doorTop - thing.EightBitter.unitsize * 24
         );
         thing.EightBitter.arrayToBeginning(
-            flag, thing.EightBitter.GroupHolder.getGroup(flag.grouptype)
+            flag, thing.EightBitter.GroupHolder.getGroup(flag.groupType)
         );
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
@@ -5879,7 +5879,7 @@ var FullScreenMario = (function(GameStartr) {
                 EightBitter.setClass(thing, "character player dead");
                 EightBitter.thingPauseVelocity(thing);
                 EightBitter.arrayToEnd(
-                    thing, EightBitter.GroupHolder.getGroup(thing.grouptype)
+                    thing, EightBitter.GroupHolder.getGroup(thing.groupType)
                 );
                 
                 EightBitter.MapScreener.notime = true;
@@ -6939,7 +6939,7 @@ var FullScreenMario = (function(GameStartr) {
                 "y": y - 8,
                 "width": width - 16,
                 "height": "Infinity",
-                "grouptype": reference.solidTrunk ? "Solid": "Scenery"
+                "groupType": reference.solidTrunk ? "Solid": "Scenery"
             });
         };
         
@@ -6981,7 +6981,7 @@ var FullScreenMario = (function(GameStartr) {
                 "x": x + (width - 8) / 2,
                 "y": y - 8,
                 "height": "Infinity",
-                "grouptype": reference.solidTrunk ? "Solid" : "Scenery"
+                "groupType": reference.solidTrunk ? "Solid" : "Scenery"
             });
         }
         

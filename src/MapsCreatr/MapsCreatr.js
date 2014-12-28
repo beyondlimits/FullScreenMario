@@ -32,7 +32,7 @@ function MapsCreatr(settings) {
         yloc,
         
         // What key to check for group type under a Thing
-        keyGroupType,
+        keygroupType,
         
         // What key to check for if a PreThing's Thing is a Location's entrance
         key_entrance,
@@ -56,7 +56,7 @@ function MapsCreatr(settings) {
         }
         groupTypes = settings.groupTypes;
         
-        keyGroupType = settings.keyGroupType || "grouptype";
+        keygroupType = settings.keygroupType || "groupType";
         key_entrance = settings.key_entrance || "entrance";
         
         macros = settings.macros || {};
@@ -394,7 +394,7 @@ function MapsCreatr(settings) {
     /**
      * Macro case: PreThing instruction. This creates a PreThing from the
      * given reference and adds it to its respective group in PreThings (based
-     * on the PreThing's [keyGroupType] variable).
+     * on the PreThing's [keygroupType] variable).
      * 
      * @param {Object} reference   A JSON mapping of some number of PreThings. 
      * @param {Object} PreThings   An associative array of PreThing Arrays, 
@@ -415,21 +415,21 @@ function MapsCreatr(settings) {
         prething = new PreThing(ObjectMaker.make(thing, reference), reference);
         thing = prething.thing;
         
-        if (!prething.thing[keyGroupType]) {
-            console.warn("A Thing does not contain a " + keyGroupType + ". "
+        if (!prething.thing[keygroupType]) {
+            console.warn("A Thing does not contain a " + keygroupType + ". "
                     + "It will be ignored: ",
                     prething, "\n", arguments);
             return;
         }
         
-        if (groupTypes.indexOf(prething.thing[keyGroupType]) === -1) {
-            console.warn("A Thing contains an unknown " + keyGroupType
-                    + ". It will be ignored: " + thing[keyGroupType],
+        if (groupTypes.indexOf(prething.thing[keygroupType]) === -1) {
+            console.warn("A Thing contains an unknown " + keygroupType
+                    + ". It will be ignored: " + thing[keygroupType],
                     prething, reference, prethings, area, map);
             return;
         }
         
-        prethings[prething.thing[keyGroupType]].push(prething);
+        prethings[prething.thing[keygroupType]].push(prething);
         if (!thing.noBoundaryStretch && area.boundaries) {
             stretchAreaBoundaries(prething, area);
         }

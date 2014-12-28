@@ -212,7 +212,7 @@ FullScreenMario.prototype.settings.mods = {
                         thing.EightBitter.shiftHoriz(thing, thing.EightBitter.unitsize * 4);
                     }
                     
-                    if (thing.grouptype === "Character") {
+                    if (thing.groupType === "Character") {
                         thing.speed *= 1.4;
                     }
                 },
