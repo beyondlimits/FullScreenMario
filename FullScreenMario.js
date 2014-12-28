@@ -6163,9 +6163,25 @@ var FullScreenMario = (function(GameStartr) {
      * @param {EightBittr} EightBitter
      * @param {Number} xloc   The x-location of the sound's source.
      * @return {Number} How loud the sound should be at that position, in [0,1].
+     *                  This is louder closer to the player, and nothing to
+     *                  the right of the visible screen.
      */
     function getVolumeLocal(EightBitter, xloc) {
-        return .49;
+        if (xloc > EightBitter.MapScreener.right) {
+            return 0;
+        }
+        
+        return Math.max(
+            .14,
+            Math.min(
+                .84,
+                1.4 * (
+                    EightBitter.MapScreener.width - Math.abs(
+                        xloc - EightBitter.player.left
+                    )
+                ) / EightBitter.MapScreener.width
+            )
+        );
     }
     
     /**
