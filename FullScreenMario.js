@@ -1613,6 +1613,17 @@ var FullScreenMario = (function(GameStartr) {
     */
     
     /**
+     * Spawn callback for DeadGoombas. They simply dissapear after 21 steps.
+     * 
+     * @param {DeadGoomba} thing
+     */
+    function spawnDeadGoomba(thing) {
+        thing.EightBitter.TimeHandler.addEvent(
+            FullScreenMario.prototype.killNormal, 21, thing
+        );
+    }
+    
+    /**
      * Spawn callback for HammerBros. Gravity is reduced, and the hammer and
      * jump event intervals are started. The cyclical movement counter is set to
      * 0.
@@ -8111,6 +8122,7 @@ var FullScreenMario = (function(GameStartr) {
         "unattachPlayer": unattachPlayer,
         "playerAddRestingStone": playerAddRestingStone,
         // Spawn / actions
+        "spawnDeadGoomba": spawnDeadGoomba,
         "spawnHammerBro": spawnHammerBro,
         "spawnBowser": spawnBowser,
         "spawnPiranha": spawnPiranha,
