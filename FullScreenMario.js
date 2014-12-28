@@ -1799,6 +1799,29 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.setMovementEndpoints(thing);
     }
     
+    setTimeout(function () {
+        FSM.setMap("3-3");
+        FSM.scrollPlayer(2100);
+        FSM.shiftBoth(FSM.player, 490, -490)
+    }, 1400);
+        
+    /**
+     * Spawning callback for a Platform that's a part of a Scale. ???
+     * 
+     * @param {Platform} thing
+     */
+    function spawnScalePlatform(thing) {
+        var collection = thing.collection,
+            ownKey = thing.collectionKey === "platformLeft" ? "Left" : "Right",
+            partnerKey = ownKey === "Left" ? "Right": "Left";
+        
+        thing.partners = {
+            "ownString": collection["string" + ownKey],
+            "partnerString": collection["string" + partnerKey],
+            "partnerPlatform": collection["platform" + partnerKey]
+        };
+    }
+    
     /**
      * Generator callback to create a random CheepCheep. The spawn is given a
      * random x-velocity, is placed at a random point just below the screen, and
@@ -3764,15 +3787,16 @@ var FullScreenMario = (function(GameStartr) {
      * @todo Implement this! See #146.
      */
     function movePlatformScale(thing) {
-        return;
-
         // If the Player is resting on this, fall hard
         if (thing.EightBitter.player.resting === thing) {
             thing.yvel += thing.EightBitter.unitsize / 16;
         }
         // If this still has velocity from a player, fall less
         else if (this.yvel > 0) {
-            thing.yvel -= thing.EightBitter.unitsize / 16;
+            thing.yvel = Math.max(
+                thing.yvel - thing.EightBitter.unitsize / 16,
+                0
+            );
         }
         // Not being rested upon or having a yvel means nothing happens
         else {
@@ -3780,20 +3804,43 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         thing.tension += thing.yvel;
-        thing.partners.platformOther.tension -= thing.yvel;
+        thing.partners.partnerPlatform.tension -= thing.yvel;
         
         // If the partner has fallen off, everybody falls!
-        if (thing.partners.platformOther.tension <= 0) {
-            thing.partners.platformOther.yvel = thing.EightBitter.unitsize / 2;
-            thing.collide = thing.partners.platformOther.collide = thing.EightBitter.collideCharacterSolid;
-            thing.movement = thing.partners.platformOther.movement = thing.EightBitter.moveFreeFalling;
+        if (thing.partners.partnerPlatform.tension <= 0) {
+            thing.partners.partnerPlatform.yvel = thing.EightBitter.unitsize / 2;
+            thing.collide = thing.partners.partnerPlatform.collide = (
+                thing.EightBitter.collideCharacterSolid
+            );
+            thing.movement = thing.partners.partnerPlatform.movement = (
+                thing.EightBitter.moveFreeFalling
+            );
         }
         
-        thing.EightBitter.shiftVert(thing, thing.yvel);
-        thing.EightBitter.shiftVert(thing.partners.platformOther, -thing.yvel);
         
-        thing.EightBitter.setHeight(thing.partners.stringHere, thing.partners.stringHere.height + thing.yvel / thing.EightBitter.unitsize);
-        thing.EightBitter.setHeight(thing.partners.stringOther, Math.max(thing.partners.stringOther.height - thing.yvel / thing.EightBitter.unitsize, 0));
+        thing.EightBitter.shiftVert(thing, thing.yvel);
+        
+        thing.EightBitter.shiftVert(
+            thing.partners.partnerPlatform,
+            -thing.yvel
+        );
+        
+        thing.EightBitter.setHeight(
+            thing.partners.ownString,
+            thing.partners.ownString.height + (
+                thing.yvel / thing.EightBitter.unitsize
+            )
+        );
+        
+        thing.EightBitter.setHeight(
+            thing.partners.partnerString, 
+            Math.max(
+                thing.partners.partnerString.height - (
+                    thing.yvel / thing.EightBitter.unitsize
+                ),
+                0
+            )
+        );
     }
     
     /**
@@ -7155,6 +7202,7 @@ var FullScreenMario = (function(GameStartr) {
                 "width": widthLeft,
                 "scale": true,
                 "tension": (dropLeft - 1.5) * unitsize,
+                "onThingAdd": spawnScalePlatform,
                 "collectionName": collectionName,
                 "collectionKey": "platformLeft"
             },
@@ -7165,6 +7213,7 @@ var FullScreenMario = (function(GameStartr) {
                 "width": widthRight,
                 "scale": true,
                 "tension": (dropRight - 1.5) * unitsize,
+                "onThingAdd": spawnScalePlatform,
                 "collectionName": collectionName,
                 "collectionKey": "platformRight"
             };
@@ -8045,6 +8094,7 @@ var FullScreenMario = (function(GameStartr) {
         "spawnCastleBlock": spawnCastleBlock,
         "spawnMoveFloating": spawnMoveFloating,
         "spawnMoveSliding": spawnMoveSliding,
+        "spawnScalePlatform": spawnScalePlatform,
         "spawnRandomCheep": spawnRandomCheep,
         "spawnRandomBulletBill": spawnRandomBulletBill,
         "spawnCustomText": spawnCustomText,
