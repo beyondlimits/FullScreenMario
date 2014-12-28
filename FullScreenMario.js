@@ -748,7 +748,7 @@ var FullScreenMario = (function(GameStartr) {
      */
     function maintainPlayer(EightBitter) {
         var player = EightBitter.player;
-        if (!player.alive) {
+        if (!EightBitter.isCharacterAlive(player)) {
             return;
         }
 
@@ -5858,6 +5858,7 @@ var FullScreenMario = (function(GameStartr) {
         // Large big: real, no-animation death
         if (big === 2) {
             thing.dead = thing.dying = true;
+            thing.alive = false;
             EightBitter.MapScreener.notime = true;
         }
         // Regular big: regular (enemy, time, etc.) kill
