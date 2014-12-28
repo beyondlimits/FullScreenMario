@@ -3856,6 +3856,7 @@ var FullScreenMario = (function(GameStartr) {
         
         // If the partner has fallen off, everybody falls!
         if (thing.partners.partnerPlatform.tension <= 0) {
+            thing.EightBitter.scoreOn(1000, thing); 
             thing.partners.partnerPlatform.yvel = thing.EightBitter.unitsize / 2;
             thing.collide = thing.partners.partnerPlatform.collide = (
                 thing.EightBitter.collideCharacterSolid
@@ -7861,9 +7862,8 @@ var FullScreenMario = (function(GameStartr) {
      *                         "Toad" by default).
      * @param {Boolean} [hard]   Whether Bowser should be "hard" (by default,
      *                           false).
-     * 
-     * 
-     * 
+     * @param {String} [spawnType]   What Bowser's spawnType should be for
+     *                               fireball deaths (by default, "Goomba").
      * @return {Object[]}
      */
     function macroEndInsideCastle(reference, prethings, area, map, scope) {
@@ -7955,7 +7955,8 @@ var FullScreenMario = (function(GameStartr) {
             { "thing": "CastleBridge", "x": x, "y": y + 24, "width": 104 },
             {
                 "thing": "Bowser", "x": x + 69, "y": y + 42,
-                "hard": reference.hard
+                "hard": reference.hard, 
+                "spawnType": reference.spawnType || "Goomba"
             },
             { "thing": "CastleChain", "x": x + 96, "y": y + 32 },
             // Axe area

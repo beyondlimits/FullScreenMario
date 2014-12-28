@@ -718,7 +718,9 @@ FullScreenMario.prototype.settings.maps = {
         }, {
             "name": "2-2",
             "locations": [
-                { "entry": "Walking" }, { "area": 1 }, { "area": 2, "entry": "PipeVertical" }
+                { "entry": "Walking" }, 
+                { "area": 1 }, 
+                { "area": 2, "entry": "PipeVertical" }
             ],
             "areas": [
                 {
@@ -961,7 +963,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Stone", "x": 920, "y": 88, "width": 104, "height": 24 },
                         { "macro": "Fill", "thing": "Stone", "x": 976, "y": 24, "xnum": 2, "xwidth": 32, "width": 16, "height": 24 },
                         { "macro": "Fill", "thing": "Brick", "x": 1024, "y": 64, "xnum": 6 },
-                        { "macro": "EndInsideCastle", "x": 1024 , "transport": { "map": "3-1" }},
+                        { "macro": "EndInsideCastle", "x": 1024, "spawnType": "Koopa", "transport": { "map": "3-1" }},
                         { "thing": "Platform", "x": 1084, "y": 56, "width": 16 }
                     ]
                 }
@@ -1301,7 +1303,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Stone", "x": 888, "y": 24, "width": 40, "height": 24 },
                         { "thing": "Stone", "x": 888, "y": 80, "width": 136, "height": 16 },
                         { "thing": "Stone", "x": 944, "y": 24, "width": 80, "height": 24 },
-                        { "macro": "EndInsideCastle", "x": 1024 , "transport": { "map": "4-1" }},
+                        { "macro": "EndInsideCastle", "x": 1024, "spawnType": "Beetle", "transport": { "map": "4-1" }},
                         { "macro": "Fill", "thing": "Brick", "x": 1056, "y": 64, "xnum": 2, "ynum": 3 },
                         { "thing": "Platform", "x": 1104, "y": 56, "width": 16 }
                     ]
@@ -1310,7 +1312,9 @@ FullScreenMario.prototype.settings.maps = {
         }, {
             "name": "4-1",
             "locations": [
-                { "entry": "Plain" }, { "entry": "PipeVertical" }, { "area": 1 }
+                { "entry": "Plain" }, 
+                { "entry": "PipeVertical" }, 
+                { "area": 1 }
             ],
             "areas": [
                 {
@@ -1752,7 +1756,7 @@ FullScreenMario.prototype.settings.maps = {
                             "before": {
                                 "width": 256,
                                 "creation": [ 
-                                    { "macro": "EndInsideCastle" }
+                                    { "macro": "EndInsideCastle", "spawnType": "Spiny", "transport": { "map": "5-1" } }
                                 ]
                             }
                         }
@@ -1762,7 +1766,9 @@ FullScreenMario.prototype.settings.maps = {
         }, {
             "name": "5-1",
             "locations": [
-                { "entry": "Plain" }, { "entry": "PipeVertical" }, { "area": 1 }
+                { "entry": "Plain" }, 
+                { "entry": "PipeVertical" }, 
+                { "area": 1 }
             ],
             "areas": [
                 {
@@ -2120,7 +2126,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Stone", "x": 920, "y": 88, "width": 104, "height": 24 },
                         { "macro": "Fill", "thing": "Stone", "x": 976, "y": 24, "xnum": 2, "xwidth": 32, "width": 16, "height": 24 },
                         { "macro": "Fill", "thing": "Brick", "x": 1024, "y": 64, "xnum": 6 },
-                        { "macro": "EndInsideCastle", "x": 1024 },
+                        { "macro": "EndInsideCastle", "x": 1024, "spawnType": "Lakitu", "transport": { "map": "6-1" } },
                         { "thing": "Podoboo", "x": 1048, "y": -40 },
                         { "thing": "Platform", "x": 1084, "y": 56, "width": 16 }
                     ]
@@ -2512,14 +2518,16 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Stone", "x": 928, "y": 24, "width": 32, "height": 24 },
                         { "thing": "Stone", "x": 984, "y": 24, "width": 40, "height": 24 },
                         { "thing": "Stone", "x": 984, "y": 80, "width": 40, "height": 16 },
-                        { "macro": "EndInsideCastle", "x": 1024 }
+                        { "macro": "EndInsideCastle", "x": 1024, "spawnType": "Blooper", "transport": { "map": "7-1" } }
                     ]
                 }
             ]
         }, {
             "name": "7-1",
             "locations": [
-                { "entry": "Plain" }, { "entry": "PipeVertical" }, { "area": 1 }
+                { "entry": "Plain" }, 
+                { "entry": "PipeVertical" },
+                { "area": 1 }
             ],
             "areas": [
                 {
@@ -3027,7 +3035,7 @@ FullScreenMario.prototype.settings.maps = {
                                     { "macro": "Floor", "x": 176, "y": 24, "width": 16 },
                                     { "macro": "Floor", "x": 192, "width": 16 },
                                     { "macro": "Floor", "x": 208, "y": 24, "width": 64 },
-                                    { "macro": "EndInsideCastle", "x": 272 }
+                                    { "macro": "EndInsideCastle", "x": 272, "spawnType": "HammerBro", "transport": { "map": "8-1" } }
                                 ]
                             }
                         }
@@ -3039,7 +3047,9 @@ FullScreenMario.prototype.settings.maps = {
             "name": "8-1",
             "time": 300,
             "locations": [
-                { "entry": "Plain" }, { "entry": "PipeVertical" }, { "area": 1 }
+                { "entry": "Plain" },
+                { "entry": "PipeVertical" }, 
+                { "area": 1 }
             ],
             "areas": [
                 {
@@ -3163,7 +3173,9 @@ FullScreenMario.prototype.settings.maps = {
         }, {
             "name": "8-2",
             "locations": [
-                { "entry": "Plain" }, { "entry": "PipeVertical" }, { "area": 1 }
+                { "entry": "Plain" }, 
+                { "entry": "PipeVertical" },
+                { "area": 1 }
             ],
             "areas": [
                 {
@@ -3366,7 +3378,11 @@ FullScreenMario.prototype.settings.maps = {
         }, {
             "name": "8-4",
             "locations": [
-                { "entry": "Castle" }, { "entry": "PipeVertical" }, { "area": 1, "entry": "PipeVertical" }, { "area": 2, "entry": "PipeVertical" }, { "area": 3, "entry": "PipeVertical", "x": 24 },
+                { "entry": "Castle" },
+                { "entry": "PipeVertical" }, 
+                { "area": 1, "entry": "PipeVertical" }, 
+                { "area": 2, "entry": "PipeVertical" }, 
+                { "area": 3, "entry": "PipeVertical", "x": 24 },
                 // { "area": 4, "entry": "PipeVertical" }
             ],
             "areas": [

@@ -4042,26 +4042,26 @@ FullScreenMario.prototype.settings.generator = {
                     "type": "Known",
                     "title": "CastleBlock",
                     "arguments": [{
-                        "percent": 20,
+                        "percent": 30,
                         "values": {}
                     }, {
-                        "percent": 25,
+                        "percent": 30,
                         "values": {
                             "fireballs": 6
                         }
                     }, {
-                        "percent": 25,
+                        "percent": 30,
                         "values": {
                             "fireballs": 6,
                             "direction": 1
                         }
                     }, {
-                        "percent": 15,
+                        "percent": 5,
                         "values": {
                             "fireballs": 12
                         }
                     }, {
-                        "percent": 15,
+                        "percent": 5,
                         "values": {
                             "fireballs": 12,
                             "direction": 1
