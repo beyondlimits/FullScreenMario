@@ -1638,8 +1638,17 @@ var FullScreenMario = (function(GameStartr) {
         
         for (i = 0; i < thing.fireTimes.length; i += 1) {
             thing.EightBitter.TimeHandler.addEventInterval(
-                thing.EightBitter.animateBowserJump,
+                thing.EightBitter.animateBowserFire,
                 thing.fireTimes[i],
+                Infinity, 
+                thing
+            );
+        }
+        
+        for (i = 0; i < thing.jumpTimes.length; i += 1) {
+            thing.EightBitter.TimeHandler.addEventInterval(
+                thing.EightBitter.animateBowserJump,
+                thing.jumpTimes[i],
                 Infinity, 
                 thing
             );
