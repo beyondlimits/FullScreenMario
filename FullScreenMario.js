@@ -1514,7 +1514,11 @@ var FullScreenMario = (function(GameStartr) {
      */
     function playerGetsFire(thing) {
         thing.shrooming = false;
-        thing.EightBitter.addClass(thing, "fiery");
+        
+        if (!thing.star) {
+            thing.EightBitter.addClass(thing, "fiery");
+        }
+        
         thing.EightBitter.ModAttacher.fireEvent("onPlayerGetsFire");
     }
     
@@ -3948,7 +3952,7 @@ var FullScreenMario = (function(GameStartr) {
             thing.EightBitter.addClass(thing, "peeking");
             thing.EightBitter.updateSize(thing);
         } else if (thing.counting === 490) {
-            thing.spawnsettings = {
+            thing.spawnSettings = {
                 "smart": thing.smart
             };
             thing.EightBitter.killSpawn(thing);
@@ -5648,7 +5652,7 @@ var FullScreenMario = (function(GameStartr) {
     
     /**
      * Kill Function to replace a Thing with a spawned Thing, determined by the
-     * thing's spawntype, in the same location.
+     * thing's spawnType, in the same location.
      * 
      * @param {Thing} thing 
      * @param {Boolean} [big]   Whether this should skip creating the spawn (by
@@ -5660,17 +5664,17 @@ var FullScreenMario = (function(GameStartr) {
             return;
         }
         
-        if (thing.spawntype) {
-            var spawn = thing.EightBitter.ObjectMaker.make(
-                thing.spawntype,
-                thing.spawnsettings || {}
-            );
-            thing.EightBitter.addThing(spawn);
-            thing.EightBitter.setBottom(spawn, thing.bottom);
-            thing.EightBitter.setMidXObj(spawn, thing);
-        } else {
-            throw new Error("Thing " + thing.title + " has no .spawntype.");
+        if (!thing.spawnType) {
+            throw new Error("Thing " + thing.title + " has no .spawnType.");
         }
+        
+        var spawn = thing.EightBitter.ObjectMaker.make(
+            thing.spawnType,
+            thing.spawnSettings || {}
+        );
+        thing.EightBitter.addThing(spawn);
+        thing.EightBitter.setBottom(spawn, thing.bottom);
+        thing.EightBitter.setMidXObj(spawn, thing);
         
         thing.EightBitter.killNormal(thing);
         
@@ -5773,7 +5777,7 @@ var FullScreenMario = (function(GameStartr) {
         if (big) {
             thing.nofall = false;
             thing.movement = undefined;
-            thing.EightBitter.killFlip(thing);
+            thing.EightBitter.killFlip(thing.EightBitter.killSpawn(thing));
             return;
         }
         
@@ -5782,7 +5786,7 @@ var FullScreenMario = (function(GameStartr) {
             thing.yvel = 0;
             thing.speed = 0;
             thing.movement = 0;
-            thing.EightBitter.killFlip(thing, 350);
+            thing.EightBitter.killFlip(thing.EightBitter.killSpawn(thing), 350);
             thing.EightBitter.scoreOn(5000, thing);
         }
     }
@@ -5800,17 +5804,17 @@ var FullScreenMario = (function(GameStartr) {
     function killToShell(thing, big) {
         var spawn, nocollidecharold, nocollideplayerold;
         
-        thing.spawnsettings = {
+        thing.spawnSettings = {
             "smart": thing.smart
         };
             
         if (big && big !== 2) {
-            thing.spawntype = thing.title;
+            thing.spawnType = thing.title;
         } else {
-            thing.spawntype = thing.shelltype || "Shell";
+            thing.spawnType = thing.shelltype || "Shell";
         }
         
-        thing.spawnsettings = {
+        thing.spawnSettings = {
             "smart": thing.smart
         };
         

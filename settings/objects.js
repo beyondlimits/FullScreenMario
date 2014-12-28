@@ -356,7 +356,7 @@
             "Goomba": {
                 "scoreFire": 100,
                 "scoreStar": 100,
-                "spawntype": "DeadGoomba",
+                "spawnType": "DeadGoomba",
                 "toly": FullScreenMario.unitsize,
                 "death": FullScreenMario.prototype.killGoomba,
                 "spriteCycleSynched": [
@@ -366,7 +366,7 @@
             "Koopa": {
                 "height": 12,
                 "shellspawn": true,
-                "spawntype": "Shell",
+                "spawnType": "Shell",
                 "shelltype": "Shell",
                 "toly": FullScreenMario.unitsize * 2,
                 "death": FullScreenMario.prototype.killKoopa,
@@ -376,7 +376,7 @@
                 "attributes": {
                     "smart": {
                         "movement": FullScreenMario.prototype.moveSmart,
-                        "spawnsettings": {
+                        "spawnSettings": {
                             "smart": true
                         }
                     },
@@ -404,7 +404,7 @@
                 "shellspawn": true,
                 "movement": FullScreenMario.prototype.moveSmart,
                 "death": FullScreenMario.prototype.killToShell,
-                "spawntype": "BeetleShell",
+                "spawnType": "BeetleShell",
                 "shelltype": "BeetleShell",
                 "spriteCycle": [
                     ["one", "two"]
@@ -496,7 +496,7 @@
                 "deadly": true,
                 "movement": undefined,
                 "onResting": FullScreenMario.prototype.animateSpinyEggHatching,
-                "spawntype": "Spiny",
+                "spawnType": "Spiny",
                 "spriteCycleSynched": [
                     ["one", "two"]
                 ]
@@ -521,7 +521,6 @@
                 "height": 16,
                 "speed": FullScreenMario.unitsize * .14,
                 "gravity": FullScreenMario.gravity / 2.8,
-                "spawntype": "Goomba",
                 "jumpTimes": [117],
                 "fireTimes": [280, 350, 490],
                 "deadly": true,
@@ -530,6 +529,7 @@
                 "nokillend": true,
                 "skipoverlaps": true,
                 "outerok": true,
+                "spawnType": "Goomba",
                 "movement": FullScreenMario.prototype.moveBowser,
                 "killonend": FullScreenMario.prototype.animateBowserFreeze,
                 "death": FullScreenMario.prototype.killBowser,
@@ -646,7 +646,7 @@
                 "movement": FullScreenMario.prototype.moveShell,
                 "collide": FullScreenMario.prototype.collideShell,
                 "death": FullScreenMario.prototype.killFlip,
-                "spawntype": "Koopa",
+                "spawnType": "Koopa",
                 "attributes": {
                     "smart": {}
                 }
@@ -654,7 +654,7 @@
             "BeetleShell": {
                 "height": 8,
                 "nofire": 2,
-                "spawntype": "Beetle"
+                "spawnType": "Beetle"
             },
             "Vine": {
                 "width": 7,
