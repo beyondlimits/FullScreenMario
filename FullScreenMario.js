@@ -200,8 +200,10 @@ var FullScreenMario = (function(GameStartr) {
     function gameStart() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
-        EightBitter.StatsHolder.set("lives", 3);
         EightBitter.setMap(EightBitter.settings.maps.mapDefault);
+        EightBitter.StatsHolder.set(
+            "lives", EightBitter.settings.statistics.values.lives.valueDefault
+        );
         
         EightBitter.ModAttacher.fireEvent("onGameStart");
     }
@@ -1799,12 +1801,6 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.setMovementEndpoints(thing);
     }
     
-    setTimeout(function () {
-        FSM.setMap("3-3");
-        FSM.scrollPlayer(2100);
-        FSM.shiftBoth(FSM.player, 490, -490)
-    }, 1400);
-        
     /**
      * Spawning callback for a Platform that's a part of a Scale. ???
      * 

@@ -315,6 +315,41 @@ FullScreenMario.prototype.settings.mods = {
                 "multiplier": 14
             }
         }, {
+            "name": "Infinite Lives",
+            "description": "Mario never really dies.",
+            "author": {
+                "name": "Josh Goldberg",
+                "email": "josh@fullscreenmario.com"
+            },
+            "enabled": false,
+            "events": {
+                "onModEnable": function (mod) {
+                    var proto = this.ObjectMaker.getFunction("Area").prototype,
+                        stats = this.settings.statistics.values.lives;
+                    
+                    mod.settings.onPlayerDeathOld = proto.onPlayerDeath;
+                    proto.onPlayerDeath = this.mapEntranceRespawn;
+                    
+                    mod.settings.livesOld = this.StatsHolder.get("lives");
+                    mod.settings.statsOld = stats.valueDefault;
+                    stats.valueDefault = Infinity;
+                    this.StatsHolder.set("lives", Infinity);
+                },
+                "onModDisable": function (mod) {
+                    var proto = this.ObjectMaker.getFunction("Area").prototype,
+                        stats = this.settings.statistics.values.lives;
+                    
+                    proto.onPlayerDeath = mod.settings.onPlayerDeathOld;
+                    
+                    stats.valueDefault = mod.settings.statsOld.valueDefault;
+                    this.StatsHolder.set("lives", mod.settings.livesOld);
+                }
+            },
+            "settings": {
+                "onPlayerDeathOld": undefined,
+                "livesOld": undefined
+            }
+        }, {
             "name": "Invincibility",
             "description": "Mario is constantly given star power.",
             "author": {
