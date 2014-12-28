@@ -3233,24 +3233,37 @@ var FullScreenMario = (function(GameStartr) {
                 "Text" + scoreAmount
             );
         
+        // This is a cutscene. No movement, no deaths, no scrolling.
         thing.star = true;
         thing.nocollidechar = true;
         thing.EightBitter.MapScreener.nokeys = true;
         thing.EightBitter.MapScreener.notime = true;
         thing.EightBitter.MapScreener.canscroll = false;
         
+        // Kill all other characters and pause the player next to the pole
         thing.EightBitter.killNPCs();
         thing.EightBitter.thingPauseVelocity(thing);
         thing.EightBitter.setRight(
             thing, other.left + thing.EightBitter.unitsize * 3
         );
         
+        // The player is now climbing down the pole
         thing.EightBitter.removeClasses(thing, "running jumping skidding");
         thing.EightBitter.addClass(thing, "climbing animated");
         thing.EightBitter.TimeHandler.addClassCycle(
             thing, ["one", "two"], "climbing"
         );
         
+        // Animate the Flag to the base of the pole
+        thing.EightBitter.TimeHandler.addEventInterval(
+            thing.EightBitter.shiftVert, 
+            1,
+            64,
+            other.collection.Flag, 
+            thing.EightBitter.unitsize
+        );
+        
+        // Add a ScoreText element at the bottom of the flag and animate it up
         thing.EightBitter.addThing(scoreThing, other.right, other.bottom);
         thing.EightBitter.TimeHandler.addEventInterval(
             thing.EightBitter.shiftVert, 
@@ -3263,23 +3276,33 @@ var FullScreenMario = (function(GameStartr) {
             thing.EightBitter.StatsHolder.increase, 72, "score", scoreAmount
         );
         
+        // All audio stops, and the flagpole clip is played
         thing.EightBitter.AudioPlayer.pauseAll();
         thing.EightBitter.AudioPlayer.play("Flagpole");
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
-            thing.EightBitter.shiftVert(thing, thing.EightBitter.unitsize);
-            
-            if (thing.bottom > other.bottom) {
-                thing.movement = false;
-                thing.EightBitter.setBottom(thing, other.bottom);
-                thing.EightBitter.TimeHandler.cancelClassCycle(
-                    thing, "climbing"
-                );
-                thing.EightBitter.TimeHandler.addEvent(function () {
-                    thing.EightBitter.collideFlagBottom(thing, other);
-                }, 21);
-                return true;
+            // While the player hasn't reached the bottom yet, slide down
+            if (thing.bottom < other.bottom) {
+                thing.EightBitter.shiftVert(thing, thing.EightBitter.unitsize);
+                return;
             }
+            
+            // If the flag hasn't reached it but the player has, don't move yet
+            if ((other.collection.Flag.bottom | 0) < (thing.bottom | 0)) {
+                return;
+            }
+            
+            // The player is done climbing: trigger the flag bottom collision
+            thing.movement = false;
+            thing.EightBitter.setBottom(thing, other.bottom);
+            thing.EightBitter.TimeHandler.cancelClassCycle(
+                thing, "climbing"
+            );
+            thing.EightBitter.TimeHandler.addEvent(function () {
+                thing.EightBitter.collideFlagBottom(thing, other);
+            }, 21);
+            
+            return true;
         }, 1, Infinity);
     }
     
@@ -7875,6 +7898,9 @@ var FullScreenMario = (function(GameStartr) {
     function macroEndOutsideCastle(reference) {
         var x = reference.x || 0,
             y = reference.y || 0,
+            collectionName = "EndOutsideCastle-" + [
+                reference.x, reference.y, reference.large
+            ].join(","),
             output;
         
         // Output starts off with the general flag & collision detection
@@ -7883,14 +7909,31 @@ var FullScreenMario = (function(GameStartr) {
             {
                 thing: "DetectCollision", x: x, y: y + 108, height: 100,
                 activate: FullScreenMario.prototype.collideFlagpole,
-                activateFail: FullScreenMario.prototype.killNormal 
+                activateFail: FullScreenMario.prototype.killNormal,
+                "collectionName": collectionName,
+                "collectionKey": "DetectCollision",
             },
             // Flag (scenery)
-            { thing: "Flag", x: x - 4.5, y: y + 79.5 },
-            { thing: "FlagTop", x: x + 1.5, y: y + 84 },
-            { thing: "FlagPole", x: x + 3, y: y + 80 },
+            { 
+                "thing": "Flag", "x": x - 4.5, "y": y + 79.5,
+                "collectionName": collectionName,
+                "collectionKey": "Flag"
+            },
+            { 
+                "thing": "FlagTop", "x": x + 1.5, "y": y + 84,
+                "collectionName": collectionName,
+                "collectionKey": "FlagTop" },
+            {
+                "thing": "FlagPole", "x": x + 3, "y": y + 80,
+                "collectionName": collectionName,
+                "collectionKey": "FlagPole"
+            },
             // Bottom stone
-            { thing: "Stone", x: x, y: y + 8 },
+            {
+                "thing": "Stone", "x": x, "y": y + 8,
+                "collectionName": collectionName,
+                "collectionKey": "FlagPole"
+            },
         ];
         
         if (reference.large) {
