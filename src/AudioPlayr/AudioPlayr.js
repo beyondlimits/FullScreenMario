@@ -323,6 +323,7 @@ function AudioPlayr(settings) {
             sound.addEventListener("ended", soundFinish.bind(undefined, name));
         }
         
+        sound.setAttribute("name", name);
         return sound;
     };
     
@@ -373,6 +374,7 @@ function AudioPlayr(settings) {
      */
     self.clearAll = function () {
         self.pauseAll();
+        self.pauseTheme();
         self.theme = undefined;
         sounds = {};
     };
@@ -441,6 +443,11 @@ function AudioPlayr(settings) {
                     name = getThemeDefault;
                     break;
             }
+        }
+        
+        // If a theme already exists, kill it
+        if (typeof theme !== "undefined" && theme.hasAttribute("name")) {
+            delete sounds[theme.getAttribute("name")];
         }
         
         sounds[name] = theme = self.play(name);

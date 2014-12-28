@@ -1304,7 +1304,13 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.switchClass(thing, "normal fiery", "star");
         
         thing.EightBitter.AudioPlayer.play("Powerup");
-        thing.EightBitter.AudioPlayer.playTheme("Star", true);
+        thing.EightBitter.AudioPlayer.addEventListener(
+            "Powerup",
+            "ended",
+            thing.EightBitter.AudioPlayer.playTheme.bind(
+                undefined, "Star", true
+            )
+        );
         
         thing.EightBitter.TimeHandler.addClassCycle(thing, [
             "star1", "star2", "star3", "star4"

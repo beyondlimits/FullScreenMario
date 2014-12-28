@@ -331,7 +331,7 @@ FullScreenMario.prototype.settings.mods = {
                     proto.onPlayerDeath = this.mapEntranceRespawn;
                     
                     mod.settings.livesOld = this.StatsHolder.get("lives");
-                    mod.settings.statsOld = stats.valueDefault;
+                    mod.settings.statsOld = stats;
                     stats.valueDefault = Infinity;
                     this.StatsHolder.set("lives", Infinity);
                 },
@@ -347,6 +347,7 @@ FullScreenMario.prototype.settings.mods = {
             },
             "settings": {
                 "onPlayerDeathOld": undefined,
+                "statsOld": undefined,
                 "livesOld": undefined
             }
         }, {
