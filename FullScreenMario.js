@@ -3202,13 +3202,23 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * Collision callback for the DetectCollision on a flagpole at the end of an
      * EndOutsideCastle. The player becomes invincible and starts sliding down
-     * the flagpole, while all other Things are killed. The collideFlagBottom
-     * callback is fired when the player reaches the bottom.
+     * the flagpole, while all other Things are killed. A score calculated by
+     * scorePlayerFlag is shown at the base of the pole and works its way up. 
+     * The collideFlagBottom callback will be fired when the player reaches the 
+     * bottom. 
      * 
      * @param {Player} thing
      * @param {DetectCollision} other
      */
     function collideFlagpole(thing, other) {
+        var height = (other.bottom - thing.bottom) | 0,
+            scoreAmount = scorePlayerFlag(
+                thing, height / thing.EightBitter.unitsize
+            ),
+            scoreThing = thing.EightBitter.ObjectMaker.make(
+                "Text" + scoreAmount
+            );
+        
         thing.star = true;
         thing.nocollidechar = true;
         thing.EightBitter.MapScreener.nokeys = true;
@@ -3225,6 +3235,18 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.addClass(thing, "climbing animated");
         thing.EightBitter.TimeHandler.addClassCycle(
             thing, ["one", "two"], "climbing"
+        );
+        
+        thing.EightBitter.addThing(scoreThing, other.right, other.bottom);
+        thing.EightBitter.TimeHandler.addEventInterval(
+            thing.EightBitter.shiftVert, 
+            1,
+            72,
+            scoreThing, 
+            -thing.EightBitter.unitsize
+        );
+        thing.EightBitter.TimeHandler.addEvent(
+            thing.EightBitter.StatsHolder.increase, 72, "score", scoreAmount
         );
         
         thing.EightBitter.AudioPlayer.pauseAll();
@@ -6150,10 +6172,13 @@ var FullScreenMario = (function(GameStartr) {
     
     /**
      * Determines the amount a player should score upon hitting a flag, based on
-     * the player's y-position, then calls scoreOn with that amount.
+     * the player's y-position.
      * 
      * @param {Player} thing
-     * @param {Number} difference   How far up the pole the player is.
+     * @param {Number} difference   How far up the pole the collision happened,
+     *                              by absolute amount (not multiplied by 
+     *                              unitsize).
+     * @return {Number}
      * @remarks See http://themushroomkingdom.net/smb_breakdown.shtml
      */
     function scorePlayerFlag(thing, difference) {
@@ -6167,7 +6192,7 @@ var FullScreenMario = (function(GameStartr) {
             amount = difference < 62 ? 2000 : 5000;
         }
         
-        thing.EightBitter.scoreOn(amount, thing);
+        return amount;
     }
     
     

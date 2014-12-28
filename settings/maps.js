@@ -436,7 +436,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "macro": "Fill", "thing": "Brick", "x": 1144, "y": 40, "xnum": 5, "ynum": 1 },
                         { "thing": "Koopa", "x": 1152, "y": 12, "smart": true },
                         { "thing": "Brick", "x": 1184, "y": 40, "contents": "Mushroom" },
-                        { "macro": "PlatformGenerator", "x": 1224, "width": 24, "direction": 1 },
+                        { "macro": "PlatformGenerator", "x": 1224, "width": 24, "direction": -1 },
                         { "macro": "Floor", "x": 1264,  "width": 256 },
                         { "macro": "Fill", "thing": "Brick", "x": 1264, "y": 8, "xnum": 17, "ynum": 3 },
                         { "thing": "PipeHorizontal", "x": 1312, "y": 40, "transport": 4 },
