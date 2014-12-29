@@ -232,6 +232,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Block", "x": 128, "y": 32 },
                         { "thing": "Brick", "x": 160, "y": 32 },
                         { "thing": "Block", "x": 168, "y": 32, "contents": "Mushroom" },
+                        { "thing": "Koopa", "x": 120, "y": 12 },
                         { "thing": "Goomba", "x": 176, "y": 8 },
                         { "thing": "Brick", "x": 176, "y": 32 },
                         { "thing": "Block", "x": 176, "y": 64 },

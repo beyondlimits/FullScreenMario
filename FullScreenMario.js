@@ -2861,20 +2861,13 @@ var FullScreenMario = (function(GameStartr) {
         // If the shell is being kicked by the player, either by hitting a still
         // shell or jumping onto an already moving one
         if (other.xvel === 0 || playerjump) {
-            // thing.EightBitter.scorePlayerShell(thing, other);
-            
             // Reset any signs of peeking from the shell
             other.counting = 0;
-            if (other.peeking) {
-                other.peeking = false;
-                thing.EightBitter.removeClass(other, "peeking");
-                other.height -= thing.EightBitter.unitsize / 8;
-                thing.EightBitter.updateSize(other);
-            }
             
             // If the shell is standing still, make it move
             if (other.xvel === 0) {
-                thing.EightBitter.scoreOn(100, other);
+                thing.EightBitter.AudioPlayer.play("Kick");
+                thing.EightBitter.scorePlayerShell(thing, other);
                 if (shelltoleft) {
                     other.moveleft = true;
                     other.xvel = -other.speed;
@@ -2890,6 +2883,13 @@ var FullScreenMario = (function(GameStartr) {
             // Otherwise it was moving, but should now be still
             else {
                 other.xvel = 0;
+            }
+            
+            if (other.peeking) {
+                other.peeking = 0;
+                thing.EightBitter.removeClass(other, "peeking");
+                other.height -= thing.EightBitter.unitsize / 8;
+                thing.EightBitter.updateSize(other);
             }
             
             // If the player is landing on the shell (with movements and xvels
@@ -4015,10 +4015,12 @@ var FullScreenMario = (function(GameStartr) {
         thing.counting += 1;
         
         if (thing.counting === 350) {
-            thing.peeking = true;
+            thing.peeking = 1;
             thing.height += thing.EightBitter.unitsize / 8;
             thing.EightBitter.addClass(thing, "peeking");
             thing.EightBitter.updateSize(thing);
+        } else if (thing.counting === 455) {
+            thing.peeking = 2;
         } else if (thing.counting === 490) {
             thing.spawnSettings = {
                 "smart": thing.smart
@@ -6242,7 +6244,7 @@ var FullScreenMario = (function(GameStartr) {
      * Inelegant catch-all Function for when the player has hit a shell and 
      * needs points to be scored. This takes into account player star status and
      * Shell resting and peeking. With none of those modifiers, it defaults to
-     * scoreOn with 100.
+     * scoreOn with 400.
      * 
      * @param {Player} thing
      * @param {Shell} other
@@ -6267,8 +6269,14 @@ var FullScreenMario = (function(GameStartr) {
             return;
         }
         
+        // Already hopping: 500 points
+        if (thing.jumpcount) {
+            thing.EightBitter.scoreOn(500, other);
+            return;
+        }
+        
         // All other cases: the shell's default
-        thing.EightBitter.scoreOn(100, other);
+        thing.EightBitter.scoreOn(400, other);
     }
     
     /**
