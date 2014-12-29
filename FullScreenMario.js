@@ -1348,6 +1348,8 @@ var FullScreenMario = (function(GameStartr) {
             thing
         );
         
+        thing.EightBitter.AudioPlayer.removeEventListeners("Powerup", "ended");
+        
         thing.EightBitter.ModAttacher.fireEvent("onPlayerStarDown", thing);
     }
     

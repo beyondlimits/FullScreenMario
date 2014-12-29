@@ -435,7 +435,7 @@ function AudioPlayr(settings) {
      *                          If not provided, getThemeDefault is used to 
      *                          provide one.
      * @param {Boolean} [loop]   Whether the theme should always loop (by 
-     *                           default, false).
+     *                           default, true).
      * @return {HTMLAudioElement} The theme's <audio> element, now playing.
      */
     self.playTheme = function (name, loop) {
@@ -513,21 +513,66 @@ function AudioPlayr(settings) {
     */
 
     /**
-     * Adds an event listener to a currently playing sound.
+     * Adds an event listener to a currently playing sound. The sound will keep
+     * track of event listeners via an .addedEvents attribute, so they can be
+     * cancelled later.
      * 
      * @param {String} name   The name of the sound.
      * @param {String} event   The name of the event, such as "ended".
      * @param {Function} callback   The Function to be called by the event.
      */
     self.addEventListener = function(name, event, callback) {
-        if (!sounds.hasOwnProperty(name)) {
+        var sound = sounds[name];
+        
+        if (!sound) {
             throw new Error(
-                "Unknown name given to AudioPlayr.addEventListener: '" + name + "'."
+                "Unknown name given to addEventListener: '" + name + "'."
             );
         }
         
-        sounds[name].addEventListener(event, callback);
+        if (!sound.addedEvents) {
+            sound.addedEvents = {};
+        }
+        
+        if (!sound.addedEvents[event]) {
+            sound.addedEvents[event] = [callback];
+        } else {
+            sound.addedEvents[event].push(callback);
+        }
+        
+        sound.addEventListener(event, callback);
     };
+    
+    /**
+     * Clears all events added by self.addEventListener to a sound under a given
+     * event. 
+     * 
+     * @param {String} name   The name of the sound.
+     * @param {String} event   The name of the event, such as "ended".
+     */
+    self.removeEventListeners = function (name, event) {
+        var sound = sounds[name],
+            events, i;
+        
+        if (!sound) {
+            throw new Error(
+                "Unknown name given to removeEventListeners: '" + name + "'."
+            );
+        }
+        
+        if (!sound.addedEvents) {
+            return;
+        }
+        
+        events = sound.addedEvents[event];
+        if (!events) {
+            return;
+        }
+        
+        for (i = 0; i < events.length; i += 1) {
+            sound.removeEventListener(event, events[i]);
+        }
+    };  
 
     /**
      * Adds an event listener to a sound. If the sound doesn't exist or has 
