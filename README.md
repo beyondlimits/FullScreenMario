@@ -13,7 +13,7 @@ Although you may no longer play on [fullscreenmario.com](http://www.fullscreenma
 
 #### In your own site
 
-Use the [index.html](dist/index.html) provided under /dist. It references all other files in /dist, so you'll want to copy the entire folder.
+Build the project using the Developing instructions, and use the [index.html](dist/index.html) provided under /dist. It references all other files in /dist, so you'll want to copy the entire folder.
 
 
 
