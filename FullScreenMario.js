@@ -3290,7 +3290,7 @@ var FullScreenMario = (function(GameStartr) {
             }
             
             // If the flag hasn't reached it but the player has, don't move yet
-            if ((other.collection.Flag.bottom | 0) < (thing.bottom | 0)) {
+            if ((other.collection.Flag.bottom | 0) < (other.bottom | 0)) {
                 return;
             }
             
