@@ -3355,10 +3355,9 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.killNormal(other);
         thing.EightBitter.killNPCs();
         
+        thing.EightBitter.AudioPlayer.clearTheme();
         thing.EightBitter.MapScreener.nokeys = true;
         thing.EightBitter.MapScreener.notime = true;
-        
-        thing.EightBitter.AudioPlayer.playTheme("World Clear");
         
         thing.EightBitter.TimeHandler.addEvent(function () {
             thing.yvel = 0;
@@ -3366,6 +3365,7 @@ var FullScreenMario = (function(GameStartr) {
             thing.maxspeed = thing.walkspeed;
             thing.EightBitter.thingResumeVelocity(thing);
             thing.EightBitter.MapScreener.canscroll = true;
+            thing.EightBitter.AudioPlayer.play("World Clear");
         }, 140);
     }
     
@@ -5425,8 +5425,10 @@ var FullScreenMario = (function(GameStartr) {
             thing.EightBitter.TimeHandler.addEventInterval(function () {
                 thing.right -= thing.EightBitter.unitsize * 2;
                 thing.EightBitter.setWidth(thing, thing.width - 2);
+                thing.EightBitter.AudioPlayer.play("Break Block");
                 
                 if (thing.width <= 0) {
+                    thing.EightBitter.AudioPlayer.play("Bowser Falls");
                     return true;
                 }
             }, 1, Infinity);
