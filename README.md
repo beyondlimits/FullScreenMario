@@ -27,7 +27,7 @@ The root index.html file includes all the raw .js anc .css files, and thus shoul
 
 #### Coding
 
-FullScreenMario is built on a modular framework called GameStartr. The [src](src/) directory contains GameStartr, its parent class EightBittr, and the 22 modules used by the GameStartr framework. These all (theoritecally) have their own README files, which you should skim before developing for FullScreenMario itself.
+FullScreenMario is built on a modular framework called GameStartr. The [src](src/) directory contains GameStartr, its parent class EightBittr, and the 22 modules used by the GameStartr framework. These all (theoretically) have their own README files, which you should skim before developing for FullScreenMario itself.
 
 The main game code outside the framework is stored in FullScreenMario.js. The FullScreenMario class inherits from GameStartr and has a global 'FSM' instance set up by the UserWrappr module in index.js. GameStartr's constructor (its reset function) contains a reset function for each module that stores the modules within it as `FSM.AudioPlayer`, `FSM.ChangeLiner`, etc. 
 
