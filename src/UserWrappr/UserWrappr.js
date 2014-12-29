@@ -91,6 +91,8 @@ function UserWrappr(settings) {
         if (GameStarter.settings.ui.styleSheet) {
             GameStarter.addPageStyles(GameStarter.settings.ui.styleSheet);
         }
+        
+        resetPageVisibilityHandlers();
     };
     
     /**
@@ -121,6 +123,51 @@ function UserWrappr(settings) {
     self.getStatsHolder = function () {
         return StatsHolder;
     };
+    
+    
+    /* Page visibility
+    */
+    
+    /**
+     * 
+     */
+    function resetPageVisibilityHandlers() {
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+    }
+    
+    /**
+     * 
+     */
+    function handleVisibilityChange(event) {
+        switch (document.visibilityState) {
+            case "hidden": 
+                onPageHidden();
+                return;
+            case "visible":
+                onPageVisible();
+                return;
+        }
+    }
+    
+    /**
+     * 
+     */
+    function onPageHidden() {
+        if (!GameStarter.GamesRunner.getPaused()) {
+            GameStarter.MapScreener.pageHidden = true;
+            GameStarter.GamesRunner.pause();
+        }
+    }
+    
+    /**
+     * 
+     */
+    function onPageVisible() {
+        if (GameStarter.MapScreener.pageHidden) {
+            GameStarter.MapScreener.pageHidden = false;
+            GameStarter.GamesRunner.play();
+        }
+    }
     
     
     /* Help dialog

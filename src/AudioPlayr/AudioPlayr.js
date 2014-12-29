@@ -346,7 +346,6 @@ function AudioPlayr(settings) {
             if (!sounds.hasOwnProperty(i)) {
                 continue;
             }
-            
             sounds[i].play();
         }
     };
@@ -374,9 +373,21 @@ function AudioPlayr(settings) {
      */
     self.clearAll = function () {
         self.pauseAll();
-        self.pauseTheme();
-        self.theme = undefined;
+        self.clearTheme();
         sounds = {};
+    };
+    
+    /**
+     * Pauses and removes the theme, if there is one.
+     */
+    self.clearTheme = function () {
+        if (!theme) {
+            return;
+        }
+        
+        self.pauseTheme();
+        delete sounds[theme.getAttribute("name")];
+        self.theme = undefined;
     };
     
     /**

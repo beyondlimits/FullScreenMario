@@ -184,6 +184,9 @@ function GamesRunnr(settings) {
             return;
         }
         
+        // Prevents double upkeeping, in case a new upkeepNext was scheduled.
+        upkeepCanceller(upkeepNext);
+        
         if (adjustFramerate) {
             upkeepNext = upkeepScheduler(
                 self.upkeep, intervalReal - (self.upkeepTimed() | 0)

@@ -224,7 +224,7 @@ var FullScreenMario = (function(GameStartr) {
         
         EightBitter.killNPCs();
         
-        EightBitter.AudioPlayer.pauseTheme();
+        EightBitter.AudioPlayer.clearAll();
         EightBitter.AudioPlayer.play("Game Over");
         
         EightBitter.GroupHolder.clearArrays();
@@ -3277,7 +3277,8 @@ var FullScreenMario = (function(GameStartr) {
         );
         
         // All audio stops, and the flagpole clip is played
-        thing.EightBitter.AudioPlayer.pauseAll();
+        thing.EightBitter.AudioPlayer.clearAll();
+        thing.EightBitter.AudioPlayer.clearTheme();
         thing.EightBitter.AudioPlayer.play("Flagpole");
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
@@ -5573,7 +5574,7 @@ var FullScreenMario = (function(GameStartr) {
         }
         thing.EightBitter.removeClasses(thing, "jumping running crouching");
         
-        thing.EightBitter.AudioPlayer.pauseTheme();
+        thing.EightBitter.AudioPlayer.clearTheme();
         thing.EightBitter.TimeHandler.cancelAllCycles(thing);
         thing.EightBitter.GroupHolder.switchObjectGroup(
             thing, "Character", "Scenery"
@@ -6081,7 +6082,7 @@ var FullScreenMario = (function(GameStartr) {
         
         thing.nocollide = thing.nomove = 1;
         EightBitter.MapScreener.nokeys = true;
-        EightBitter.AudioPlayer.pauseAll();
+        EightBitter.AudioPlayer.clearAll();
         EightBitter.AudioPlayer.play("Player Dies");
         EightBitter.StatsHolder.decrease("lives");
         EightBitter.StatsHolder.set("power", 1);
