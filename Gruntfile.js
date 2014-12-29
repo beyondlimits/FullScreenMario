@@ -15,6 +15,12 @@ module.exports = function (grunt) {
                 }, {
                     "src": "Fonts/**",
                     "dest": "<%= meta.deployPath %>/"
+                }, {
+                    "src": "README.md",
+                    "dest": "<%= meta.deployPath %>/"
+                }, {
+                    "src": "LICENSE.txt",
+                    "dest": "<%= meta.deployPath %>/"
                 }]
             }
         },
@@ -68,6 +74,13 @@ module.exports = function (grunt) {
         },
         "clean": {
             "js": ["<%= meta.deployPath %>/FullScreenMario.js"]
+        },
+        "zip": {
+            "using-cwd": {
+            "cwd": "<%= meta.deployPath %>",
+            "src": ["**"],
+            "dest": "FullScreenMario-v<%= pkg.version %>.zip"
+          }
         }
     });
     
@@ -78,7 +91,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-processhtml");
     grunt.loadNpmTasks("grunt-contrib-htmlmin");
     grunt.loadNpmTasks("grunt-contrib-clean");
+    grunt.loadNpmTasks("grunt-zip");
     grunt.registerTask("default", [
-        "copy", "concat", "uglify", "cssmin", "processhtml", "htmlmin", "clean"
+        "copy", "concat", "uglify", "cssmin", "processhtml", "htmlmin", "clean", "zip"
     ]);
 };
