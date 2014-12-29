@@ -9,7 +9,7 @@ Although you may no longer play on [fullscreenmario.com](http://www.fullscreenma
 
 #### Newcomers (non-coders)
 
-[Download the .zip](https://github.com/Diogenesthecynic/FullScreenMario-JSON/archive/master.zip) of this project, extract that onto your computer, and open **dist/index.html** in a browser (preferably Google Chrome). That's it!
+[Download the .zip](https://github.com/Diogenesthecynic/FullScreenMario-JSON/archive/master.zip) of this project, extract that onto your computer, and open **index.html** in a browser (preferably Google Chrome). That's it!
 
 #### In your own site
 
