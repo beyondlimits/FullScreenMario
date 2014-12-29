@@ -522,7 +522,7 @@ function AudioPlayr(settings) {
      * @param {Function} callback   The Function to be called by the event.
      */
     self.addEventListener = function(name, event, callback) {
-        var sound = sounds[name];
+        var sound = library[name];
         
         if (!sound) {
             throw new Error(
@@ -551,11 +551,13 @@ function AudioPlayr(settings) {
      * @param {String} event   The name of the event, such as "ended".
      */
     self.removeEventListeners = function (name, event) {
-        var sound = sounds[name],
+        var sound = library[name],
             events, i;
         
         if (!sound) {
-            return;
+            throw new Error(
+                "Unknown name given to removeEventListeners: '" + name + "'."
+            );
         }
         
         if (!sound.addedEvents) {
@@ -570,6 +572,8 @@ function AudioPlayr(settings) {
         for (i = 0; i < events.length; i += 1) {
             sound.removeEventListener(event, events[i]);
         }
+        
+        events.length = 0;
     };  
 
     /**
