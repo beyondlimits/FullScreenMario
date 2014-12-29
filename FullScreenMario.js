@@ -229,6 +229,7 @@ var FullScreenMario = (function(GameStartr) {
         
         EightBitter.GroupHolder.clearArrays();
         EightBitter.StatsHolder.hideContainer();
+        EightBitter.TimeHandler.cancelAllEvents();
         EightBitter.PixelDrawer.setBackground("black");
         
         EightBitter.addThing(
