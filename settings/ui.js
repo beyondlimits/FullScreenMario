@@ -342,6 +342,7 @@ FullScreenMario.prototype.settings.ui = {
                                 randomizer.value = getNewSeed();
                             }
                             
+                            GameStarter.LevelEditor.disable();
                             GameStarter.NumberMaker.resetFromSeed(randomizer.value);
                             GameStarter.setMap("Random");
                             
@@ -365,6 +366,7 @@ FullScreenMario.prototype.settings.ui = {
                 })()
             },
             "callback": function (GameStarter, schema, button, event) {
+                GameStarter.LevelEditor.disable();
                 GameStarter.setMap(button.getAttribute("value") || button.textContent);
             }
         }

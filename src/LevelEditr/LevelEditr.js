@@ -128,11 +128,12 @@ var LevelEditr = (function (pageStyles) {
          * 
          */
         self.disable = function () {
-            GameStarter.container.removeChild(display["container"]);
-            display = undefined;
-            
-            GameStarter.InputWriter.setCanTrigger(true);
-            GameStarter.setMap(oldInformation["map"]);
+            if (display) {
+                GameStarter.container.removeChild(display["container"]);
+                display = undefined;
+                GameStarter.InputWriter.setCanTrigger(true);
+                GameStarter.setMap(oldInformation["map"]);
+            }
         };
         
         /**
