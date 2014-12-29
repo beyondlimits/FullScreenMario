@@ -46,8 +46,10 @@ FullScreenMario.prototype.settings.statistics = {
             "hasElement": true,
             "minimum": 0,
             "triggers": {
-                100: function (EightBitter) {
-                    EightBitter.AudioPlayer.playThemePrefixed("Hurry");
+                "100": function (EightBitter) {
+                    if (!EightBitter.MapScreener.notime) {
+                        EightBitter.AudioPlayer.playThemePrefixed("Hurry");
+                    }
                 }
             },
             "onMinimum": function (EightBitter) {
