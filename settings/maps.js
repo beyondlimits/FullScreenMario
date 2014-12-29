@@ -604,7 +604,7 @@ FullScreenMario.prototype.settings.maps = {
             "name": "2-1",
             "locations": [
                 { "entry": "Plain" }, 
-                { "xloc": 1260 }, 
+                { "xloc": 1288 }, 
                 { "entry": "PipeVertical" }, 
                 { "area": 1, "entry": "Vine" }, 
                 { "area": 2 }
