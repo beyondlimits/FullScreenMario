@@ -828,7 +828,7 @@ FullScreenMario.prototype.settings.maps = {
                     "creation": [
                         { "location": 4 },
                         { "macro": "Floor", "width": 464 },
-                        { "macro": "Pipe", "height": 16, "piranha": true, "transport": 4 },
+                        { "macro": "Pipe", "height": 16, "piranha": true, "entrance": 4 },
                         { "macro": "Pattern", "pattern": "BackRegular", "x": 104, },
                         { "thing": "Stone", "x": 16, "y": 8 },
                         { "thing": "Stone", "x": 24, "y": 16, "height": 16 },
@@ -2600,7 +2600,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Stone", "x": 1344, "y": 56, "height": 56 },
                         { "thing": "Stone", "x": 1352, "y": 64, "height": 64 },
                         { "thing": "Beetle", "x": 1352, "y": 72.5 },
-                        { "macro": "EndOutsideCastle", "x": 1428 }
+                        { "macro": "EndOutsideCastle", "x": 1428, "transport": { "map": "7-2" } }
                     ]
                 }, {
                     "setting": "Underworld",
@@ -2746,7 +2746,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Stone", "x": 64, "y": 56, "height": 72 },
                         { "thing": "Stone", "x": 72, "y": 64, "height": 80 },
                         { "thing": "Stone", "x": 80, "y": 64, "height": 80 },
-                        { "macro": "EndOutsideCastle", "x": 148 }
+                        { "macro": "EndOutsideCastle", "x": 148, "transport": { "map": "7-3" } }
                     ]
                 }
             ]

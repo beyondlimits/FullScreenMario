@@ -6326,7 +6326,7 @@ var FullScreenMario = (function(GameStartr) {
             .14,
             Math.min(
                 .84,
-                1.4 * (
+                (
                     EightBitter.MapScreener.width - Math.abs(
                         xloc - EightBitter.player.left
                     )

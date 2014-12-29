@@ -555,9 +555,7 @@ function AudioPlayr(settings) {
             events, i;
         
         if (!sound) {
-            throw new Error(
-                "Unknown name given to removeEventListeners: '" + name + "'."
-            );
+            return;
         }
         
         if (!sound.addedEvents) {
