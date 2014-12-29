@@ -5573,10 +5573,11 @@ var FullScreenMario = (function(GameStartr) {
         }
         thing.EightBitter.removeClasses(thing, "jumping running crouching");
         
+        thing.EightBitter.AudioPlayer.pauseTheme();
+        thing.EightBitter.TimeHandler.cancelAllCycles(thing);
         thing.EightBitter.GroupHolder.switchObjectGroup(
             thing, "Character", "Scenery"
         );
-        thing.EightBitter.TimeHandler.cancelAllCycles(thing);
     }
     
     /**
@@ -5588,9 +5589,9 @@ var FullScreenMario = (function(GameStartr) {
      */
     function animatePlayerPipingEnd(thing) {
         thing.movement = thing.movementOld;
-        
         thing.nocollide = thing.nofall = thing.piping = false;
         
+        thing.EightBitter.AudioPlayer.resumeTheme();
         thing.EightBitter.GroupHolder.switchObjectGroup(
             thing, "Scenery", "Character"
         );
