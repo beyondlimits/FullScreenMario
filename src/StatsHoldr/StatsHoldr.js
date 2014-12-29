@@ -93,8 +93,11 @@ function StatsHoldr(settings) {
         // A container element containing children for each value's element.
         container,
 
-        // An array of elements as createElement arguments, outside-to-inside.
+        // An Array of elements as createElement arguments, outside-to-inside.
         containers,
+        
+        // Any hard-coded changes to element content, such as "INF" for Infinity
+        displayChanges,
 
         // An Array of objects to be passed to triggered events.
         callbackArgs,
@@ -143,6 +146,7 @@ function StatsHoldr(settings) {
         localStorage = settings.localStorage || window.localStorage || {};
         
         defaults = settings.defaults || {};
+        displayChanges = settings.displayChanges || {};
 
         values = {};
         if (settings.values) {
@@ -382,7 +386,11 @@ function StatsHoldr(settings) {
      * @this {Value}
      */
     Value.prototype.updateElement = function () {
-        this.element.children[1].textContent = this.value;
+        if (displayChanges.hasOwnProperty(this.value)) {
+            this.element.children[1].textContent = displayChanges[this.value];
+        } else {
+            this.element.children[1].textContent = this.value;
+        }
     };
     
     /**

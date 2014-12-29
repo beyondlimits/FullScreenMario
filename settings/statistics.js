@@ -1,6 +1,9 @@
 FullScreenMario.prototype.settings.statistics = {
     "prefix": "FullScreenMario",
     "doMakeContainer": true,
+    "displayChanges": {
+        "Infinity": "INF"
+    },
     "containers": [
         ["table", {
             "id": "dataDisplay",
