@@ -603,7 +603,11 @@ FullScreenMario.prototype.settings.maps = {
         }, {
             "name": "2-1",
             "locations": [
-                { "entry": "Plain" }, { "xloc": 1260 }, { "entry": "PipeVertical" }, { "area": 1, "entry": "Vine" }, { "area": 2 }
+                { "entry": "Plain" }, 
+                { "xloc": 1260 }, 
+                { "entry": "PipeVertical" }, 
+                { "area": 1, "entry": "Vine" }, 
+                { "area": 2 }
             ],
             "areas": [
                 {
@@ -647,7 +651,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "macro": "Pipe", "x": 592, "height": 32, "piranha": true },
                         { "macro": "Fill", "thing": "Block", "x": 632, "y": 32, "xnum": 4 },
                         { "macro": "Fill", "thing": "Brick", "x": 648, "y": 64, "xnum": 2 },
-                        { "thing": "Brick", "x": 664, "y": 64, "contents": ["Vine", { "entrance": 3 }] },
+                        { "thing": "Brick", "x": 664, "y": 64, "contents": ["Vine", { "transport": 3 }] },
                         { "macro": "Fill", "thing": "Brick", "x": 672, "y": 64, "xnum": 2 },
                         { "macro": "Fill", "thing": "Block", "x": 680, "y": 32, "xnum": 3 },
                         { "macro": "Fill", "thing": "Goomba", "x": 704, "y": 8, "xnum": 3, "xwidth": 12 },
