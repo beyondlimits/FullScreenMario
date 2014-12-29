@@ -6781,7 +6781,7 @@ var FullScreenMario = (function(GameStartr) {
             thing = EightBitter.ObjectMaker.make(prething.thing, {
                 "width": boundaries.right - boundaries.left,
                 "height": (
-                    raw.height || EightBitter.getAbsoluteHeight(prething.y)
+                    prething.height || EightBitter.getAbsoluteHeight(prething.y)
                 )
             });
         
