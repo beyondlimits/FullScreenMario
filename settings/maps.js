@@ -1623,7 +1623,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "macro": "Fill", "thing": "Coin", "x": 537, "y": 55, "xnum": 3, "xwidth": 8 },
                         { "thing": "Koopa", "x": 544, "y": 12, "smart": true },
                         { "macro": "Shroom", "x": 560, "y": 80, "width": 24 },
-                        { "macro": "Coin", "x": 561, "y": 87, "xnum": 3 },
+                        { "macro": "Fill", "thing": "Coin", "x": 561, "y": 87, "xnum": 3, "xwidth": 8 },
                         { "macro": "Shroom", "x": 576, "y": 32, "width": 24 },
                         { "thing": "Coin", "x": 585, "y": 39 },
                         { "macro": "Shroom", "x": 592, "y": 64, "width": 40 },
