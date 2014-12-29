@@ -6663,10 +6663,18 @@ var FullScreenMario = (function(GameStartr) {
      *                                      pass through the Pipe (by default,
      *                                      false, as this is normal).
      * @remarks The shouldTransport argument was added because the "Bouncy 
-     *          Bounce!" mod rendered some areas without it.
+     *          Bounce!" mod rendered some areas unenterable without it.
      */
     function mapExitPipeHorizontal(thing, other, shouldTransport) {
         if (!shouldTransport && !thing.resting && !thing.paddling) {
+            return;
+        }
+        
+        if (thing.top < other.top || thing.bottom > other.bottom) {
+            return;
+        }
+        
+        if (!thing.keys.run) {
             return;
         }
         
