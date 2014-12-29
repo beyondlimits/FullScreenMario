@@ -5187,6 +5187,10 @@ var FullScreenMario = (function(GameStartr) {
      * @param {SpinyEgg} thing
      */
     function animateSpinyEggHatching(thing) {
+        if (!thing.EightBitter.isCharacterAlive(thing)) {
+            return;
+        }
+        
         var spawn = thing.EightBitter.addThing(
             "Spiny", thing.left, thing.top - thing.yvel
         );
