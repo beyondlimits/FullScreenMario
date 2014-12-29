@@ -2188,8 +2188,14 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Player} other
      */
     function activateRestingStone(thing, other) {
+        if (thing.activated) {
+            return;
+        }
+        
+        thing.activated = true;
         thing.opacity = 1;
         FSM.AudioPlayer.playTheme();
+        
         thing.EightBitter.TimeHandler.addEventInterval(function () {
             if (other.resting !== thing) {
                 thing.EightBitter.killNormal(thing);
