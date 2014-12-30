@@ -313,7 +313,7 @@
                 "canjump": true,
                 "nofire": true,
                 "nokillend": true,
-				"checkOverlaps": true,
+                "checkOverlaps": true,
                 "power": 1,
                 "numballs": 0,
                 "moveleft": 0,

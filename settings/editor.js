@@ -1,164 +1,164 @@
 (function (things, macros) {
-	FullScreenMario.prototype.settings.editor = {
-		"blocksize": FullScreenMario.unitsize * 4,
-		"mapDefault": {
-			"name": "New Map",
-			"locations": [
-				{ "entry": "Plain" }
-			],
-			"areas": [
-				{
-					"setting": "Overworld",
-					"creation": [
-						{ "location": "0" },
-						{ "macro": "Floor", "x": 0, "y": 0, "width": 128 }
-					]
-				}
-			]
-		},
-		"mapSettingDefault": "Overworld",
-		"mapEntryDefault": "Plain",
-		"things": things,
+    FullScreenMario.prototype.settings.editor = {
+        "blocksize": FullScreenMario.unitsize * 4,
+        "mapDefault": {
+            "name": "New Map",
+            "locations": [
+                { "entry": "Plain" }
+            ],
+            "areas": [
+                {
+                    "setting": "Overworld",
+                    "creation": [
+                        { "location": "0" },
+                        { "macro": "Floor", "x": 0, "y": 0, "width": 128 }
+                    ]
+                }
+            ]
+        },
+        "mapSettingDefault": "Overworld",
+        "mapEntryDefault": "Plain",
+        "things": things,
         "thingGroups": ["Text", "Character", "Solid", "Scenery"],
-		"thingKeys": (function () {
-			var keys = [];
-			Object.keys(things).forEach(function (group) {
-				keys.push.apply(keys, Object.keys(things[group]));
-			});
-			return keys;
-		})(),
-		"macros": macros
-	};
-	
+        "thingKeys": (function () {
+            var keys = [];
+            Object.keys(things).forEach(function (group) {
+                keys.push.apply(keys, Object.keys(things[group]));
+            });
+            return keys;
+        })(),
+        "macros": macros
+    };
+    
 })({
-	"Characters": {
-		"Goomba": undefined,
-		"Koopa": {
-			"smart": "Boolean",
-			"jumping": "Boolean",
-			"flying": "Boolean"
-		},
-		"Beetle": undefined,
-		"Piranha": {
-			"evil": "Boolean"
-		},
-		"Blooper": undefined,
-		"CheepCheep": {
-			"smart": "Boolean"
-		},
-		"Podoboo": undefined,
-		"Lakitu": undefined,
-		"HammerBro": undefined,
-		"Bowser": {
-			"contents": [ 
-				"Gooma", "Koopa", "HammerBro", "Bowser"
-			]
-		}
-	},
-	"Items": {
-		"Mushroom": undefined,
-		"Mushroom1Up": undefined,
-		"MushroomDeathly": undefined,
-		"FireFlower": undefined,
-		"Star": undefined,
-		"Shell": {
-			"smart": "Boolean"
-		},
-		"BeetleShell": undefined,
-		"Coin": undefined
-	},
-	"Solids": {
-		"Block": {
-			"contents": [
-				"Coin", "Mushroom", "Star", "Mushroom1Up", "MushroomDeathly"
-			],
-			"hidden": "Boolean"
-		},
-		"Brick": {
-			"contents": [
-				"Coin", "Mushroom", "Star", "Mushroom1Up", "MushroomDeathly"
-			]
-		},
-		"Pipe": {
-			"height": {
+    "Characters": {
+        "Goomba": undefined,
+        "Koopa": {
+            "smart": "Boolean",
+            "jumping": "Boolean",
+            "flying": "Boolean"
+        },
+        "Beetle": undefined,
+        "Piranha": {
+            "evil": "Boolean"
+        },
+        "Blooper": undefined,
+        "CheepCheep": {
+            "smart": "Boolean"
+        },
+        "Podoboo": undefined,
+        "Lakitu": undefined,
+        "HammerBro": undefined,
+        "Bowser": {
+            "contents": [ 
+                "Gooma", "Koopa", "HammerBro", "Bowser"
+            ]
+        }
+    },
+    "Items": {
+        "Mushroom": undefined,
+        "Mushroom1Up": undefined,
+        "MushroomDeathly": undefined,
+        "FireFlower": undefined,
+        "Star": undefined,
+        "Shell": {
+            "smart": "Boolean"
+        },
+        "BeetleShell": undefined,
+        "Coin": undefined
+    },
+    "Solids": {
+        "Block": {
+            "contents": [
+                "Coin", "Mushroom", "Star", "Mushroom1Up", "MushroomDeathly"
+            ],
+            "hidden": "Boolean"
+        },
+        "Brick": {
+            "contents": [
+                "Coin", "Mushroom", "Star", "Mushroom1Up", "MushroomDeathly"
+            ]
+        },
+        "Pipe": {
+            "height": {
                 "type": "Number",
                 "value": 8,
                 "mod": 8,
                 "Infinite": true
             }
-		},
-		"PipeHorizontal": {
-			"width": {
+        },
+        "PipeHorizontal": {
+            "width": {
                 "type": "Number",
                 "value": 2,
                 "mod": 8
             },
             "transport": "Location"
-		},
-		"PipeVertical": {
-			"height": {
+        },
+        "PipeVertical": {
+            "height": {
                 "type": "Number",
                 "value": 2,
                 "mod": 8,
                 "Infinite": true
             },
             "transport": "Location"
-		},
-		"Platform": {
-			"width": 2
-		},
-		"Stone": {
-			"width": 1,
-			"height": {
+        },
+        "Platform": {
+            "width": 2
+        },
+        "Stone": {
+            "width": 1,
+            "height": {
                 "type": "Number",
                 "value": 1,
                 "Infinite": true
             }
-		},
-		"Cannon": {
-			"height": 1
-		},
-		"Springboard": undefined,
-		"Floor": {
-			"width": 8,
-			"height": {
+        },
+        "Cannon": {
+            "height": 1
+        },
+        "Springboard": undefined,
+        "Floor": {
+            "width": 8,
+            "height": {
                 "type": "Number",
                 "value": Infinity,
                 "Infinite": true
             }
-		},
-		"CastleBlock": {
-			"fireballs": {
+        },
+        "CastleBlock": {
+            "fireballs": {
                 "value": 0,
                 "mod": 4
             }
-		},
-		"CastleBridge": {
-			"width": 8
-		},
-		"Coral": {
-			"width": 8,
-			"height": 8
-		}
-	},
-	"Scenery": {
-		"BrickPlain": undefined,
-		"Bush1": undefined,
-		"Bush2": undefined,
-		"Bush3": undefined,
-		"Cloud1": undefined,
-		"Cloud2": undefined,
-		"Cloud3": undefined,
-		"Fence": {
+        },
+        "CastleBridge": {
             "width": 8
         },
-		"HillSmall": undefined,
-		"HillLarge": undefined,
-		"PlantSmall": undefined,
-		"PlantLarge": undefined,
-		"Railing": undefined,
-		"Water": undefined
-	}
+        "Coral": {
+            "width": 8,
+            "height": 8
+        }
+    },
+    "Scenery": {
+        "BrickPlain": undefined,
+        "Bush1": undefined,
+        "Bush2": undefined,
+        "Bush3": undefined,
+        "Cloud1": undefined,
+        "Cloud2": undefined,
+        "Cloud3": undefined,
+        "Fence": {
+            "width": 8
+        },
+        "HillSmall": undefined,
+        "HillLarge": undefined,
+        "PlantSmall": undefined,
+        "PlantLarge": undefined,
+        "Railing": undefined,
+        "Water": undefined
+    }
 }, {
     "Fill": {
         "description": "Place a bunch of Things at once, as a grid.",

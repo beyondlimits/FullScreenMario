@@ -3036,7 +3036,7 @@ FullScreenMario.prototype.settings.generator = {
                     "percent": 40,
                     "type": "Random",
                     "title": "CannonLarge"
-                }]
+                }]    
             }
         },
         "CannonStack": {

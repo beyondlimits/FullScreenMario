@@ -383,7 +383,7 @@ var GameStartr = (function (EightBittr) {
     function resetLevelEditor(EightBitter, customs) {
         EightBitter.LevelEditor = new LevelEditr(proliferate({
             "GameStarter": EightBitter,
-			"beautifier": js_beautify // Eventually there will be a custom beautifier... maybe
+            "beautifier": js_beautify // Eventually there will be a custom beautifier... maybe
         }, EightBitter.settings.editor));
     }
     

@@ -438,7 +438,6 @@ function InputWritr(settings) {
             throw new Error("Unknown trigger requested: '" + trigger + "'.");
         }
         
-        console.log(trigger, label, callback.name);
         triggers[trigger][label] = callback;
         
         if (aliases.hasOwnProperty(label)) {

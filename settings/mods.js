@@ -131,20 +131,20 @@ FullScreenMario.prototype.settings.mods = {
                         }
                         
                         this.AudioPlayer.play("Bump");
-						
-						texts = this.GroupHolder.getTextGroup().slice();
-						scenery = this.GroupHolder.getSceneryGroup().slice();
-						solids = this.GroupHolder.getSolidGroup().slice();
-						characters = this.GroupHolder.getCharacterGroup().slice();
+                        
+                        texts = this.GroupHolder.getTextGroup().slice();
+                        scenery = this.GroupHolder.getSceneryGroup().slice();
+                        solids = this.GroupHolder.getSolidGroup().slice();
+                        characters = this.GroupHolder.getCharacterGroup().slice();
                         
                         for (i = 0; i < characters.length; i += 1) {
                             character = characters[i];
                             if (
-								character.player 
-								|| character.nofall 
-								|| !character.resting 
-								|| character.grounded
-							) {
+                                character.player 
+                                || character.nofall 
+                                || !character.resting 
+                                || character.grounded
+                            ) {
                                 continue;
                             }
                             
@@ -231,11 +231,11 @@ FullScreenMario.prototype.settings.mods = {
                         "0.21": "#000000",
                         "1": "#700000"
                     },
-					"Womb": {
-						"0.21": "#703521",
-						".7": "#770014",
+                    "Womb": {
+                        "0.21": "#703521",
+                        ".7": "#770014",
                         "1": "#AA0035"
-					},
+                    },
                     "default": {
                         ".21": "#5C94FC",
                         ".49": "#77AAFF",
@@ -432,11 +432,11 @@ FullScreenMario.prototype.settings.mods = {
                         this.playerStarUp(this.player, Infinity);
                     }
                 },
-				"onPlayerRespawn": function () {
-					if (this.player) {
-						this.playerStarUp(this.player, Infinity);
-					}
-				}
+                "onPlayerRespawn": function () {
+                    if (this.player) {
+                        this.playerStarUp(this.player, Infinity);
+                    }
+                }
             }
         }, {
             "name": "Parallax Clouds",

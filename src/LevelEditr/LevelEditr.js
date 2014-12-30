@@ -72,9 +72,9 @@ var LevelEditr = (function (pageStyles) {
             
             // Whether the pageStyle styles have been added to the page
             pageStylesAdded,
-			
-			// A key to use in dropdowns to should indicate an undefined value
-			keyUndefined;
+            
+            // A key to use in dropdowns to should indicate an undefined value
+            keyUndefined;
         
         /**
          * 
@@ -92,7 +92,7 @@ var LevelEditr = (function (pageStyles) {
             mapEntryDefault = settings.mapEntryDefault || "";
             mapDefault = settings.mapDefault || {};
             blocksize = settings.blocksize || 1;
-			keyUndefined = settings.keyUndefined || "-none-";
+            keyUndefined = settings.keyUndefined || "-none-";
             
             currentThings = [];
             currentMode = "Build";
@@ -539,7 +539,7 @@ var LevelEditr = (function (pageStyles) {
                     
                     switch (valuer["data:type"]) {
                         case "Boolean":
-							value = valuer.value === "true" ? true : false;
+                            value = valuer.value === "true" ? true : false;
                             break;
                         case "Number":
                             value = (Number(valuer.value) || 0) * (Number(valuer.getAttribute("data:mod")) || 1);
@@ -548,10 +548,10 @@ var LevelEditr = (function (pageStyles) {
                             value = valuer.value;
                             break;
                     }
-					
-					if (value !== keyUndefined) {
-						args[labeler.textContent] = value;
-					}
+                    
+                    if (value !== keyUndefined) {
+                        args[labeler.textContent] = value;
+                    }
                 }
             }
             
@@ -753,9 +753,9 @@ var LevelEditr = (function (pageStyles) {
             setDisplayMap(true);
         }
         
-		/**
-		 * 
-		 */
+        /**
+         * 
+         */
         function addAreaToMap() {
             var name = display["sections"]["MapSettings"]["Area"].options.length,
                 map = getMapObject();
@@ -1572,7 +1572,7 @@ var LevelEditr = (function (pageStyles) {
                 
                 case "Location":
                     var map = getMapObject(),
-						locations;
+                        locations;
                     
                     if (!map) {
                         return GameStarter.createElement("div", {
@@ -1581,8 +1581,8 @@ var LevelEditr = (function (pageStyles) {
                         });
                     }
                     
-					locations = Object.keys(map.locations);
-					locations.unshift(keyUndefined);
+                    locations = Object.keys(map.locations);
+                    locations.unshift(keyUndefined);
                     return createSelect(locations, {
                         "className": "VisualOptionValue VisualOptionLocation",
                         "data-type": "Number"
@@ -1590,7 +1590,7 @@ var LevelEditr = (function (pageStyles) {
                 
                 case "Area":
                     var map = getMapObject(),
-						areas;
+                        areas;
                     
                     if (!map) {
                         return GameStarter.createElement("div", {
@@ -1599,8 +1599,8 @@ var LevelEditr = (function (pageStyles) {
                         });
                     }
                     
-					areas = Object.keys(map.areas);
-					areas.ushift(keyUndefined);
+                    areas = Object.keys(map.areas);
+                    areas.ushift(keyUndefined);
                     return createSelect(areas, {
                         "className": "VisualOptionValue VisualOptionArea",
                         "data-type": "Number",
