@@ -440,8 +440,7 @@
                 "nocollidechar": true,
                 "movement": FullScreenMario.prototype.moveCheepCheep,
                 "xvel": FullScreenMario.unitsize / -6,
-                // yvel": FullScreenMario.unitsize / -32,
-                "yvel": FullScreenMario.unitsize / -1,
+                "yvel": FullScreenMario.unitsize / -32,
                 "death": FullScreenMario.prototype.killFlip,
                 "spriteCycleSynched": [
                     ["one", "two"]
