@@ -731,6 +731,11 @@ var FullScreenMario = (function(GameStartr) {
             EightBitter.updatePosition(character);
             EightBitter.QuadsKeeper.determineThingQuadrants(character);
             EightBitter.ThingHitter.checkHitsOf[character.title](character);
+			
+			// Overlaps
+			if (character.overlaps && character.overlaps.length) {
+				EightBitter.maintainOverlaps(character);
+			}
 
             // Resting tests
             if (character.resting) {
@@ -767,6 +772,91 @@ var FullScreenMario = (function(GameStartr) {
             }
         }
     }
+	
+	/**
+	 * Maintenance Function only triggered for Things that are known to have 
+	 * overlapping Solids stored in their overlaps attribute. This will slide
+	 * the offending Thing away from the midpoint of those overlaps once a call
+	 * until it's past the boundary (and check for those boundaries if not 
+	 * already set).
+	 * 
+	 * @param {Thing} thing
+	 */
+	function maintainOverlaps(thing) {
+		// If checkOverlaps is still true, this is the first maintain call
+		if (thing.checkOverlaps) {
+			thing.EightBitter.setOverlapBoundaries(thing);
+		}
+		
+		thing.EightBitter.slideToX(
+			thing, 
+			thing.overlapGoal, 
+			thing.EightBitter.unitsize
+		);
+		
+		// Goal to the right: has the thing gone far enough to the right?
+		if (thing.overlapGoRight) {
+			if (thing.left >= thing.overlapCheck) {
+				thing.EightBitter.setLeft(thing, thing.overlapCheck);
+			} else {
+				return;
+			}
+		} 
+		// Goal to the left: has the thing gone far enough to the left?
+		else {
+			if (thing.right <= thing.overlapCheck) {
+				thing.EightBitter.setRight(thing, thing.overlapCheck);
+			} else {
+				return;
+			}
+		}
+		
+		// A check above didn't fail into a return, so overlapping is solved
+		thing.overlaps.length = 0;
+		thing.checkOverlaps = true;
+	}
+	
+	/**
+	 * Sets the overlapping properties of a Thing when it is first detected as
+	 * overlapping in maintainOverlaps. All solids in its overlaps Array are
+	 * checked to find the leftmost and rightmost extremes and midpoint.
+	 * Then, the Thing is checked for being to the left or right of the 
+	 * midpoint, and the goal set to move it away from the midpoint.
+	 * 
+	 * @param {Thing} thing
+	 */
+	function setOverlapBoundaries(thing) {
+		var rightX = -Infinity,
+			leftX = Infinity,
+			overlaps = thing.overlaps,
+			other, leftThing, rightThing, 
+			midpoint, i;
+		
+		for (i = 0; i < overlaps.length; i += 1) {
+			other = overlaps[i];
+			
+			if (other.right > rightX) {
+				rightThing = other;
+			}
+			if (other.left < leftX) {
+				leftThing = other;
+			}
+		}
+		
+		midpoint = (leftX + rightX) / 2;
+		
+		if (thing.EightBitter.getMidX(thing) >= midpoint) {
+			thing.overlapGoal = Infinity;
+			thing.overlapGoRight = true;
+			thing.overlapCheck = rightThing.right;
+		} else {
+			thing.overlapGoal = -Infinity;
+			thing.overlapGoRight = false;
+			thing.overlapCheck = leftThing.left;
+		}
+		
+		thing.checkOverlaps = false;
+	}
 
     /**
      * Regular maintenance Function called on the player every upkeep. A barrage
@@ -1151,6 +1241,16 @@ var FullScreenMario = (function(GameStartr) {
     function isCharacterBumpingSolid(thing, other) {
         return thing.top + thing.toly + Math.abs(thing.yvel) > other.bottom;
     }
+	
+	/**
+     * @param {Character} thing
+     * @param {Solid} other
+     * @return {Boolean} Whether the Thing is "overlapping" the solid, which 
+	 * 					 should move the Thing until it isn't.
+	 */
+	function isCharacterOverlappingSolid(thing, other) {
+		return thing.top <= other.top && thing.bottom > other.bottom;
+	}
     
     /**
      * @param {Solid} thing
@@ -1605,7 +1705,7 @@ var FullScreenMario = (function(GameStartr) {
     function unattachPlayer(thing, other) {
         thing.nofall = false;
         thing.nocollide = false;
-        thing.skipoverlaps = false;
+        thing.checkOverlaps = true;
         thing.attachedSolid = undefined;
         thing.xvel = thing.keys ? thing.keys.run : 0;
         thing.movement = thing.EightBitter.movePlayer;
@@ -1641,13 +1741,28 @@ var FullScreenMario = (function(GameStartr) {
             }
         }, 1, Infinity);
     }
+	
+	/**
+	 * Marks a new overlapping Thing in the first Thing's overlaps Array, 
+	 * creating the Array if needed.
+	 * 
+	 * @param {Thing} thing   The Thing that is overlapping another Thing.
+	 * @param {Thing} other   The Thing being added to the overlaps Array.
+	 */
+	function markOverlap(thing, other) {
+		if (!thing.overlaps) {
+			thing.overlaps = [other];
+		} else {
+			thing.overlaps.push(other);
+		}
+	}
     
     
     /* Spawn / activate functions
     */
     
     /**
-     * Spawn callback for DeadGoombas. They simply dissapear after 21 steps.
+     * Spawn callback for DeadGoombas. They simply disappear after 21 steps.
      * 
      * @param {DeadGoomba} thing
      */
@@ -2492,6 +2607,14 @@ var FullScreenMario = (function(GameStartr) {
             else if (thing.under && thing.under.bottomBump) {
                 thing.under.bottomBump(thing.under, thing);
             }
+			
+			// If the character is overlapping the solid, call that too
+			if (
+				thing.checkOverlaps 
+				&& thing.EightBitter.isCharacterOverlappingSolid(thing, other)
+			) {
+				thing.EightBitter.markOverlap(thing, other);
+			}
         };
     }
 
@@ -3182,7 +3305,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.attachedSolid = other;
         
         thing.nofall = true;
-        thing.skipoverlaps = true;
+        thing.checkOverlaps = false;
         thing.resting = undefined;
         
         // To the left of the vine
@@ -8328,6 +8451,9 @@ var FullScreenMario = (function(GameStartr) {
         "maintainSolids": maintainSolids,
         "maintainCharacters": maintainCharacters,
         "maintainPlayer": maintainPlayer,
+		// Overlap maintenance
+		"maintainOverlaps": maintainOverlaps,
+		"setOverlapBoundaries": setOverlapBoundaries,
         // Collision detectors
         "generateCanThingCollide": generateCanThingCollide,
         "isThingTouchingThing": isThingTouchingThing,
@@ -8339,6 +8465,7 @@ var FullScreenMario = (function(GameStartr) {
         "isCharacterOnResting": isCharacterOnResting,
         "isCharacterAboveEnemy": isCharacterAboveEnemy,
         "isCharacterBumpingSolid": isCharacterBumpingSolid,
+		"isCharacterOverlappingSolid": isCharacterOverlappingSolid,
         "isSolidOnCharacter": isSolidOnCharacter,
         "isCharacterAlive": isCharacterAlive,
         // Collision reactions
@@ -8360,6 +8487,7 @@ var FullScreenMario = (function(GameStartr) {
         "animatePlayerRemoveCrouch": animatePlayerRemoveCrouch,
         "unattachPlayer": unattachPlayer,
         "playerAddRestingStone": playerAddRestingStone,
+		"markOverlap": markOverlap,
         // Spawn / actions
         "spawnDeadGoomba": spawnDeadGoomba,
         "spawnHammerBro": spawnHammerBro,
