@@ -1,87 +1,6 @@
 FullScreenMario.prototype.settings.generator = {
     "possibilities": {
         
-        /* Randomization continuation
-        */
-        
-        "RandomSpawnerOverworld": {
-            "width": 0,
-            "height": 0,
-            "contents": {
-                "mode": "Random",
-                "limit": 1,
-                "children": [{
-                    "percent": 100,
-                    "type": "Known",
-                    "title": "RandomSpawner",
-                    "arguments": {
-                        "randomization": "Overworld",
-                        "randomWidth": 2992,
-                        "randomTop": 80,
-                        "randomBottom": 0
-                    }
-                }]
-            }
-        },
-        "RandomSpawnerUnderworld": {
-            "width": 0,
-            "height": 0,
-            "contents": {
-                "mode": "Random",
-                "limit": 1,
-                "children": [{
-                    "percent": 100,
-                    "type": "Known",
-                    "title": "RandomSpawner",
-                    "arguments": {
-                        "randomization": "Underworld",
-                        "randomWidth": 1400,
-                        "randomTop": 80,
-                        "randomBottom": 0
-                    }
-                }]
-            }
-        },
-        "RandomSpawnerSky": {
-            "width": 0,
-            "height": 0,
-            "contents": {
-                "mode": "Random",
-                "limit": 1,
-                "children": [{
-                    "percent": 100,
-                    "type": "Known",
-                    "title": "RandomSpawner",
-                    "arguments": {
-                        "randomization": "Sky",
-                        "randomWidth": 700,
-                        "randomTop": 80,
-                        "randomBottom": 0
-                    }
-                }]
-            }
-        },
-        "RandomSpawnerCastle": {
-            "width": 0,
-            "height": 0,
-            "contents": {
-                "mode": "Random",
-                "limit": 1,
-                "children": [{
-                    "percent": 100,
-                    "type": "Known",
-                    "title": "RandomSpawner",
-                    "arguments": {
-                        "randomization": "Castle",
-                        "randomWidth": 700,
-                        "randomTop": 80,
-                        "randomBottom": 0
-                    }
-                }]
-            }
-        },
-        
-        
         /* Overworld
         */
         
@@ -92,6 +11,9 @@ FullScreenMario.prototype.settings.generator = {
                 "mode": "Certain",
                 "direction": "right",
                 "children": [{
+                    "type": "Known",
+                    "title": "ScrollEnabler"
+                }, {
                     "type": "Random",
                     "title": "OverworldStart"
                 }, {
@@ -2523,6 +2445,9 @@ FullScreenMario.prototype.settings.generator = {
                 }, {
                     "type": "Random",
                     "title": "EndInsideCastle"
+                }, {
+                    "type": "Random",
+                    "title": "Overworld"
                 }]
             }
         },
@@ -4400,7 +4325,7 @@ FullScreenMario.prototype.settings.generator = {
             }
         },
         "EndInsideCastle": {
-            "width": 256,
+            "width": 248,
             "height": 80,
             "contents": {
                 "mode": "Certain",
@@ -4409,11 +4334,30 @@ FullScreenMario.prototype.settings.generator = {
                     "type": "Known",
                     "title": "EndInsideCastle",
                     "arguments": {
-                        "macro": "EndInsideCastle"
+                        "macro": "EndInsideCastle",
+                        "spawnType": "Bowser",
+                        "npc": "Peach",
+                        "transport": {
+                            "map": "Random",
+                            "location": "Overworld"
+                        },
+                        "topScrollEnabler": true
                     },
                     "sizing": {
                         "height": 8
                     }
+                }]
+            }
+        },
+        "ScrollEnabler": {
+            "width": 8,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "children": [{
+                    "type": "Known",
+                    "title": "ScrollEnabler"
                 }]
             }
         },

@@ -886,7 +886,7 @@
             "Fence": [8, 8],
             "HillSmall": [24, 9.5],
             "HillLarge": [40, 17.5],
-            "Peach": [13, 16],
+            "Peach": [8, 13],
             "PlatformString": [1, 1],
             "PlantSmall": [7, 15],
             "PlantLarge": [8, 23],

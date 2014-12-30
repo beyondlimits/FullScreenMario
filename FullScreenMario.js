@@ -8012,6 +8012,10 @@ var FullScreenMario = (function(GameStartr) {
      *                               fireball deaths (by default, "Goomba").
      * @param {Boolean} [throwing]   Whether the Bowser is also throwing hammers
      *                               (by default, false).
+     * @param {Boolean} [topScrollEnabler]   Whether a ScrollEnabler should be 
+     *                                       added like the ones at the end of
+     *                                       large underground PipeCorners (by
+     *                                       default, false).
      * @return {Object[]}
      */
     function macroEndInsideCastle(reference, prethings, area, map, scope) {
@@ -8132,6 +8136,19 @@ var FullScreenMario = (function(GameStartr) {
             { "thing": npc, "x": x + 200, "y": 13 },
             { "thing": "ScrollBlocker", "x": x + 256 }
         ]
+        
+        if (reference.topScrollEnabler) {
+            output.push({
+                "thing": "ScrollEnabler",
+                "x": x + 96, "y": y + 140,
+                "height": 52, "width": 16
+            });
+            output.push({
+                "thing": "ScrollEnabler",
+                "x": x + 240, "y": y + 140,
+                "height": 52, "width": 16
+            });
+        }
         
         output.push.apply(output, texts);
         return output;
