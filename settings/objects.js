@@ -225,6 +225,7 @@
             },
             "Area": {
                 "onMake": FullScreenMario.prototype.initializeArea,
+                "setBackground": FullScreenMario.prototype.setAreaBackground,
                 "floor": 104,
                 "time": 400,
                 "jumpmod": 1.056,

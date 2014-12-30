@@ -35,6 +35,59 @@ FullScreenMario.prototype.settings.mods = {
                 }
             },
         }, {
+            "name": "Dark is the Night",
+            "description": "The night is darkest before the dawn, but I promise you: the dawn is coming.",
+            "author": {
+                "name": "Josh Goldberg",
+                "email": "josh@fullscreenmario.com"
+            },
+            "enabled": true,
+            "events": {
+                "onModEnable": function (mod) {
+                    var area = this.MapsHandler.getArea();
+                    
+                    if (!area) {
+                        return;
+                    }
+                    
+                    mod.events.onPreSetLocation.call(this, mod);
+                },
+                "onPreSetLocation": function (mod) {
+                    var area = this.MapsHandler.getArea();
+                    
+                    area.setting += " Castle Alt2";
+                    area.setBackground(area);
+                    
+                    this.PixelDrawer.setBackground(area.background);
+                    this.GroupHolder.callOnAll(
+                        undefined,
+                        this.PixelDrawer.setThingSprite
+                    );
+                    
+                    this.ModAttacher.fireEvent(
+                        "onSetLocation",
+                        this.MapsHandler.getLocation()
+                    );
+                },
+                "onModDisable": function (mod) {
+                    var area = this.MapsHandler.getArea();
+                    
+                    area.setting = area.setting.replace(" Castle Alt2", "");
+                    area.setBackground(area);
+                    
+                    this.PixelDrawer.setBackground(area.background);
+                    this.GroupHolder.callOnAll(
+                        undefined,
+                        this.PixelDrawer.setThingSprite
+                    );
+                    
+                    this.ModAttacher.fireEvent(
+                        "onSetLocation",
+                        this.MapsHandler.getLocation()
+                    );
+                }
+            }
+        }, {
             "name": "Earthquake!",
             "description": "Mario landing causes everything else to jump.",
             "author": {
@@ -119,11 +172,11 @@ FullScreenMario.prototype.settings.mods = {
                 "onModDisable": function (mod) {
                     var area = this.MapsHandler.getArea();
                     
-                    area.background = mod.settings.backgroundOld;
+                    area.setBackground(area);
                     this.PixelDrawer.setBackground(area.background);
                 },
                 "onSetLocation": (function (gradients) {
-                    return function (mod) { 
+                    return function (mod) {
                         var area = this.MapsHandler.getArea(),
                             setting = area.setting,
                             context = this.canvas.getContext("2d"),
@@ -148,10 +201,7 @@ FullScreenMario.prototype.settings.mods = {
                             background.addColorStop(i, gradient[i]);
                         }
                         
-                        mod.settings.backgroundOld = area.background;
-                        
                         area.background = background;
-                        
                         this.PixelDrawer.setBackground(area.background);
                     };
                 })({
@@ -365,10 +415,14 @@ FullScreenMario.prototype.settings.mods = {
                     }
                 },
                 "onModDisable": function () {
-                    this.playerStarDown(this.player);
+                    if (this.player) {
+                        this.playerStarDown(this.player);
+                    }
                 },
                 "onSetLocation": function () {
-                    this.playerStarUp(this.player, Infinity);
+                    if (this.player) {
+                        this.playerStarUp(this.player, Infinity);
+                    }
                 }
             }
         }, {

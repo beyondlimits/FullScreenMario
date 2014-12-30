@@ -6734,9 +6734,6 @@ var FullScreenMario = (function(GameStartr) {
      * prototype, and the background is set based on the setting.
      * 
      * @this {Area}
-     * @remarks In the future, it might be more elegant to make Areas inherit
-     * from base Area types (Overworld, etc.) so  this inelegant switch
-     * statement doesn't have to be used.
      */
     function initializeArea() {
         var setting = this.setting,
@@ -6752,17 +6749,29 @@ var FullScreenMario = (function(GameStartr) {
             }
         }
         
+        this.setBackground(this);
+    }
+    
+    /**
+     * Sets an area's background as a function of its setting.
+     * 
+     * @param {Area} area
+     * @remarks In the future, it might be more elegant to make Areas inherit
+     * from base Area types (Overworld, etc.) so  this inelegant switch
+     * statement doesn't have to be used.
+     */
+    function setAreaBackground(area) {
         // Underworld, Castle, and all Nights: background is black
         if (
-            this.setting.indexOf("Underworld") !== -1
-            || this.setting.indexOf("Castle") !== -1
-            || this.setting.indexOf("Night") !== -1
+            area.setting.indexOf("Underworld") !== -1
+            || area.setting.indexOf("Castle") !== -1
+            || area.setting.indexOf("Night") !== -1
         ) {
-            this.background = "#000000";
+            area.background = "#000000";
         } 
         // Default (typically Overworld): background is sky blue
         else {
-            this.background = "#5c94fc";
+            area.background = "#5c94fc";
         }
     }
     
@@ -8498,6 +8507,7 @@ var FullScreenMario = (function(GameStartr) {
         "mapExitPipeHorizontal": mapExitPipeHorizontal,
         // Map creation
         "initializeArea": initializeArea,
+        "setAreaBackground": setAreaBackground,
         "getAbsoluteHeight": getAbsoluteHeight,
         "mapAddStretched": mapAddStretched,
         "mapAddAfter": mapAddAfter,
