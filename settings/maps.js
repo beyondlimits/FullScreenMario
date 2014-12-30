@@ -2587,6 +2587,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "HammerBro", "x": 1080, "y": 12 },
                         { "thing": "HammerBro", "x": 1096, "y": 44 },
                         { "thing": "Stone", "x": 1128, "y": 24 },
+                        { "thing": "Cannon", "x": 1168, "y": 8 },
                         { "thing": "Cannon", "x": 1168, "y": 24, "height": 16 },
                         { "macro": "Fill", "thing": "Brick", "x": 1192, "y": 40, "xnum": 2 },
                         { "thing": "Springboard", "x": 1208, "y": 14.5 },
@@ -2606,8 +2607,8 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Stone", "x": 1328, "y": 40, "height": 40 },
                         { "thing": "Stone", "x": 1336, "y": 48, "height": 48 },
                         { "thing": "Stone", "x": 1344, "y": 56, "height": 56 },
-                        { "thing": "Stone", "x": 1352, "y": 64, "height": 64 },
-                        { "thing": "Beetle", "x": 1352, "y": 72.5 },
+                        { "thing": "Stone", "x": 1352, "y": 64, "height": 64, "width": 16 },
+                        { "thing": "Beetle", "x": 1360, "y": 72.5 },
                         { "macro": "EndOutsideCastle", "x": 1428, "transport": { "map": "7-2" } }
                     ]
                 }, {
