@@ -41,7 +41,7 @@ FullScreenMario.prototype.settings.mods = {
                 "name": "Josh Goldberg",
                 "email": "josh@fullscreenmario.com"
             },
-            "enabled": true,
+            "enabled": false,
             "events": {
                 "onModEnable": function (mod) {
                     var area = this.MapsHandler.getArea();
@@ -423,7 +423,12 @@ FullScreenMario.prototype.settings.mods = {
                     if (this.player) {
                         this.playerStarUp(this.player, Infinity);
                     }
-                }
+                },
+				"onPlayerRespawn": function () {
+					if (this.player) {
+						this.playerStarUp(this.player, Infinity);
+					}
+				}
             }
         }, {
             "name": "Parallax Clouds",

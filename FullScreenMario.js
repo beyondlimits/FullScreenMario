@@ -6645,6 +6645,8 @@ var FullScreenMario = (function(GameStartr) {
         if (!EightBitter.MapScreener.underwater) {
             EightBitter.playerAddRestingStone(EightBitter.player);
         }
+		
+		EightBitter.ModAttacher.fireEvent("onPlayerRespawn");
     }
     
     
