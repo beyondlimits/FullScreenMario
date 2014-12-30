@@ -7169,6 +7169,10 @@ var FullScreenMario = (function(GameStartr) {
                 };
                 output.y += defaults[prething[0]].height;
                 
+                if (prething[3]) {
+                    output["width"] = prething[3];
+                }
+                
                 outputs.push(output);
                 o += 1;
             }
@@ -7825,7 +7829,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      * @param {Number} [x]   The x-location (defaults to 0).
      * @param {Number} [y]   The y-location (defaults to 0).
-     * @param {Mixed} [transport]   What map or location to shift to after 
+     * @param {Mixed} [transport]   What map or location to shift to after
      *                              ending theatrics (collidePlayerTransport).
      * @param {Number} [walls]   How many CastleWall Things should be placed to
      *                           the right of the castle (by default, 2).
@@ -7949,7 +7953,7 @@ var FullScreenMario = (function(GameStartr) {
      * 
      * @param {Number} [x]   The x-location (defaults to 0).
      * @param {Number} [y]   The y-location (defaults to 0).
-     * @param {Mixed} [transport]   What map or location to shift to after 
+     * @param {Mixed} [transport]   What map or location to shift to after
      *                              ending theatrics (collidePlayerTransport).
      * @return {Object[]}
      */

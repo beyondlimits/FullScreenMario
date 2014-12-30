@@ -21,7 +21,7 @@ FullScreenMario.prototype.settings.ui = {
         "globalNameAlias": "{%%%%GAME%%%%}",
         "openings": [
             "Hi, thanks for playing FullScreenMario! It looks like you're using the console.",
-            "There's not really any way to stop you from messing around so if you'd like to know the common cheats, enter '{%%%%GAME%%%%}.UserWrapper.displayHelpOptions()' here.",
+            "There's not really any way to stop you from messing around so if you'd like to know the common cheats, enter `{%%%%GAME%%%%}.UserWrapper.displayHelpOptions()` here.",
             "If you'd like, go ahead and look around the source code. There are a few surprises you might have fun with... ;)",
             "http://www.github.com/DiogenesTheCynic/FullScreenMario"
         ],
@@ -67,7 +67,7 @@ FullScreenMario.prototype.settings.ui = {
                 "usage": "{%%%%GAME%%%%}.ObjectMaker.getProperties();"
             }, {
                 "title": "{%%%%GAME%%%%}.GroupHolder.get*******Group",
-                "description": "Retrieves the appropriate group of Things being manipulated. Choices are 'Text', 'Character', 'Solid', and 'Scenery'",
+                "description": "Retrieves the appropriate group of Things being manipulated. Choices are 'Text', 'Character', 'Solid', and 'Scenery'.",
                 "usage": "{%%%%GAME%%%%}.get*******Group();",
                 "examples": [{
                     "code": "{%%%%GAME%%%%}.GroupHolder.getCharacterGroup();",

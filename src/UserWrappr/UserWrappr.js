@@ -81,9 +81,9 @@ function UserWrappr(settings) {
         };
         
         allPossibleKeys = settings.allPossibleKeys ||  [
-            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-            'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-            'up', 'right', 'down', 'left', 'space', 'shift', 'ctrl'
+            "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+            "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+            "up", "right", "down", "left", "space", "shift", "ctrl"
         ];
         
         self.resetGameStarter(customs);
@@ -185,17 +185,17 @@ function UserWrappr(settings) {
      */
     self.displayHelpOptions = function () {
         logHelpString(
-            "To focus on a group, enter '" 
+            "To focus on a group, enter `"
             + globalName 
-            + ".UserWrapper.displayHelpOption(<group-name>);"
+            + ".UserWrapper.displayHelpOption(<group-name>);`"
         );
         
         Object.keys(helpSettings.options).forEach(self.displayHelpGroupSummary);
         
         logHelpString(
-            "\nTo focus on a group, enter '" 
+            "\nTo focus on a group, enter `"
             + globalName 
-            + ".UserWrapper.displayHelpOption(<group-name>);"
+            + ".UserWrapper.displayHelpOption(<group-name>);`"
         );
     };
     
