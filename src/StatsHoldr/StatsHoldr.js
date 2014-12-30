@@ -368,7 +368,7 @@ function StatsHoldr(settings) {
      * @this {Value}
      */
     Value.prototype.checkModularity = function () {
-        if (Number || !this.modularity) {
+        if (this.value.constructor !== Number || !this.modularity) {
             return;
         }
         
