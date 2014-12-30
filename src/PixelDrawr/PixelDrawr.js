@@ -151,7 +151,7 @@ function PixelDrawr(settings) {
      * @param {Thing} thing   A thing whose sprite must be updated
      * @return {Self}
      */
-    self.setThingSprite = function(thing) {
+    self.setThingSprite = function (thing) {
         // If it's set as hidden, don't bother updating it
         if (thing.hidden) {
             return;

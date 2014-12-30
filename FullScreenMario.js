@@ -1497,7 +1497,9 @@ var FullScreenMario = (function(GameStartr) {
             return;
         }
         
-        thing.EightBitter.AudioPlayer.playTheme();
+        if (!thing.EightBitter.AudioPlayer.getTheme().paused) {
+            thing.EightBitter.AudioPlayer.playTheme();
+        }
         
         thing.EightBitter.TimeHandler.addEvent(
             thing.EightBitter.playerStarOffFinal,
