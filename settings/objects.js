@@ -451,7 +451,7 @@
                         "yvel": FullScreenMario.unitsize / -24
                     },
                     "flying": {
-                        "movement": FullScreenMario.prototype.moveCheepFlying,
+                        "movement": FullScreenMario.prototype.moveCheepCheepFlying,
                         "gravity": FullScreenMario.gravity / 3.5
                     }
                 }

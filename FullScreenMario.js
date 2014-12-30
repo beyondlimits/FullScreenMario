@@ -4128,6 +4128,8 @@ var FullScreenMario = (function(GameStartr) {
     function moveCheepCheep(thing) {
         if (thing.top < thing.EightBitter.unitsize * 16) {
             thing.EightBitter.setTop(thing, thing.EightBitter.unitsize * 16);
+            thing.yvel *= -1;
+            return;
         }
     }
     
