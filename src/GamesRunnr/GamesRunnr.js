@@ -129,7 +129,7 @@ function GamesRunnr(settings) {
             games[i] = games[i].bind(scope);
         }
         
-        setintervalReal();
+        setIntervalReal();
     };
     
     
@@ -284,7 +284,7 @@ function GamesRunnr(settings) {
         }
         
         interval = realint;
-        setintervalReal();
+        setIntervalReal();
     };
     
     /**
@@ -302,7 +302,7 @@ function GamesRunnr(settings) {
         }
         
         speed = numReal;
-        setintervalReal();
+        setIntervalReal();
     };
     
     
@@ -312,7 +312,7 @@ function GamesRunnr(settings) {
     /**
      * Sets the intervalReal variable, which is interval * (inverse of speed).
      */
-    function setintervalReal() {
+    function setIntervalReal() {
         intervalReal = (1 / speed) * interval;
     }
     
