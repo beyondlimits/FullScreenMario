@@ -868,7 +868,7 @@ var FullScreenMario = (function(GameStartr) {
      */
     function maintainPlayer(EightBitter) {
         var player = EightBitter.player;
-        if (!EightBitter.isCharacterAlive(player)) {
+        if (!EightBitter.isThingAlive(player)) {
             return;
         }
 
@@ -959,6 +959,15 @@ var FullScreenMario = (function(GameStartr) {
         return function canThingCollide(thing) {
             return thing.alive && !thing.nocollide;
         };
+    }
+    
+    /**
+     * @param {Thing} thing
+     * @return {Boolean} Whether the Thing is alive, meaning it has a true alive
+     *                   flag and a false dead flag.
+     */
+    function isThingAlive(thing) {
+        return thing && thing.alive && !thing.dead;
     }
 
     /**
@@ -1282,15 +1291,6 @@ var FullScreenMario = (function(GameStartr) {
         
         // The above checks never caught falsities, so this must be true
         return true;
-    }
-    
-    /**
-     * @param {Character} thing
-     * @return {Boolean} Whether the Thing is alive, meaning it has a true alive
-     *                   flag and a false dead flag.
-     */
-    function isCharacterAlive(thing) {
-        return thing && thing.alive && !thing.dead;
     }
     
     
@@ -1889,7 +1889,7 @@ var FullScreenMario = (function(GameStartr) {
      */
     function spawnLakitu(thing) {
         if (
-            thing.EightBitter.isCharacterAlive(
+            thing.EightBitter.isThingAlive(
                 thing.EightBitter.MapScreener.lakitu
             )
         ) {
@@ -2657,7 +2657,7 @@ var FullScreenMario = (function(GameStartr) {
      */
     function collideFriendly(thing, other) {
         if (thing.player) {
-            if (!thing.EightBitter.isCharacterAlive(other)) {
+            if (!thing.EightBitter.isThingAlive(other)) {
                 return;
             }
             if (other.action) {
@@ -2863,7 +2863,7 @@ var FullScreenMario = (function(GameStartr) {
      */
     function collideFireball(thing, other) {
         if (
-            !thing.EightBitter.isCharacterAlive(thing) 
+            !thing.EightBitter.isThingAlive(thing) 
             || thing.height < thing.EightBitter.unitsize
         ) {
             return;
@@ -3124,8 +3124,8 @@ var FullScreenMario = (function(GameStartr) {
         
         // Death: nothing happens
         if (
-            !thing.EightBitter.isCharacterAlive(thing)
-            || !thing.EightBitter.isCharacterAlive(other)
+            !thing.EightBitter.isThingAlive(thing)
+            || !thing.EightBitter.isThingAlive(other)
         ) {
             return;
         }
@@ -3502,7 +3502,7 @@ var FullScreenMario = (function(GameStartr) {
      * @param {CastleAxe} other
      */
     function collideCastleAxe(thing, other) {
-        if (!thing.EightBitter.isCharacterAlive(thing)) {
+        if (!thing.EightBitter.isThingAlive(thing)) {
             return;
         }
         
@@ -4199,7 +4199,7 @@ var FullScreenMario = (function(GameStartr) {
             height = thing.height + thing.direction,
             atEnd = false;
         
-        if (thing.resting && !thing.EightBitter.isCharacterAlive(thing.resting)) {
+        if (thing.resting && !thing.EightBitter.isThingAlive(thing.resting)) {
             bottom = thing.top + (
                 thing.constructor.prototype.height * thing.EightBitter.unitsize
             );
@@ -4953,7 +4953,7 @@ var FullScreenMario = (function(GameStartr) {
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
             thing.EightBitter.moveCoinEmerge(thing, other);
-            return !thing.EightBitter.isCharacterAlive(thing);
+            return !thing.EightBitter.isThingAlive(thing);
         }, 1, Infinity);
         
         thing.EightBitter.TimeHandler.addEvent(function () {
@@ -5030,7 +5030,7 @@ var FullScreenMario = (function(GameStartr) {
      */
     function animateThrowingHammer(thing, count) {
         if ( 
-            !thing.EightBitter.isCharacterAlive(thing)
+            !thing.EightBitter.isThingAlive(thing)
             || thing.right < thing.EightBitter.unitsize * -32
         ) {
             return true;
@@ -5041,7 +5041,7 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         thing.EightBitter.TimeHandler.addEvent(function () {
-            if (!thing.EightBitter.isCharacterAlive(thing)) {
+            if (!thing.EightBitter.isThingAlive(thing)) {
                 return;
             }
             
@@ -5091,8 +5091,8 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         if (
-            !thing.EightBitter.isCharacterAlive(thing)
-            || !thing.EightBitter.isCharacterAlive(thing.EightBitter.player)
+            !thing.EightBitter.isThingAlive(thing)
+            || !thing.EightBitter.isThingAlive(thing.EightBitter.player)
         ) {
             return true;
         }
@@ -5124,8 +5124,8 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         if (
-            !thing.EightBitter.isCharacterAlive(thing)
-            || !thing.EightBitter.isCharacterAlive(thing.EightBitter.player)
+            !thing.EightBitter.isThingAlive(thing)
+            || !thing.EightBitter.isThingAlive(thing.EightBitter.player)
         ) {
             return true;
         }
@@ -5155,7 +5155,7 @@ var FullScreenMario = (function(GameStartr) {
                     * unitsize * 8
             );
 
-        if (!thing.EightBitter.isCharacterAlive(thing)) {
+        if (!thing.EightBitter.isThingAlive(thing)) {
             return true;
         }
         
@@ -5246,7 +5246,7 @@ var FullScreenMario = (function(GameStartr) {
      */
     function animateJump(thing) {
         // Finish
-        if (!thing.EightBitter.isCharacterAlive(thing)) {
+        if (!thing.EightBitter.isThingAlive(thing)) {
             return true;
         }
         
@@ -5331,7 +5331,7 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Lakitu} thing
      */
     function animateLakituThrowingSpiny(thing) {
-        if (thing.fleeing || !thing.EightBitter.isCharacterAlive(thing)) {
+        if (thing.fleeing || !thing.EightBitter.isThingAlive(thing)) {
             return true;
         }
         
@@ -5355,7 +5355,7 @@ var FullScreenMario = (function(GameStartr) {
      * @param {SpinyEgg} thing
      */
     function animateSpinyEggHatching(thing) {
-        if (!thing.EightBitter.isCharacterAlive(thing)) {
+        if (!thing.EightBitter.isThingAlive(thing)) {
             return;
         }
         
@@ -5496,6 +5496,10 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Cannon} thing
      */
     function animateCannonFiring(thing) {
+        if (!thing.EightBitter.isThingAlive(thing)) {
+            return;
+        }
+        
         // Don't fire if Player is too close
         if (
             thing.EightBitter.player.right > (
@@ -8460,6 +8464,7 @@ var FullScreenMario = (function(GameStartr) {
         "setOverlapBoundaries": setOverlapBoundaries,
         // Collision detectors
         "generateCanThingCollide": generateCanThingCollide,
+        "isThingAlive": isThingAlive,
         "isThingTouchingThing": isThingTouchingThing,
         "isThingOnThing": isThingOnThing,
         "isThingOnSolid": isThingOnSolid,
@@ -8471,7 +8476,6 @@ var FullScreenMario = (function(GameStartr) {
         "isCharacterBumpingSolid": isCharacterBumpingSolid,
         "isCharacterOverlappingSolid": isCharacterOverlappingSolid,
         "isSolidOnCharacter": isSolidOnCharacter,
-        "isCharacterAlive": isCharacterAlive,
         // Collision reactions
         "gainLife": gainLife,
         "itemJump": itemJump,

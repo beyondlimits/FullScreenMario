@@ -797,6 +797,7 @@
             },
             "Cannon": {
                 "frequency": 280,
+                "spriteheight": 16,
                 "onThingAdded": FullScreenMario.prototype.spawnCannon
             },
             "Springboard": {
