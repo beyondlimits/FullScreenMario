@@ -4052,7 +4052,7 @@ var FullScreenMario = (function(GameStartr) {
             height = thing.height + thing.direction,
             atEnd = false;
         
-        if (thing.resting && !FSM.isCharacterAlive(thing.resting)) {
+        if (thing.resting && !thing.EightBitter.isCharacterAlive(thing.resting)) {
             bottom = thing.top + (
                 thing.constructor.prototype.height * thing.EightBitter.unitsize
             );

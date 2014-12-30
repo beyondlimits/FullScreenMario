@@ -99,13 +99,14 @@ FullScreenMario.prototype.settings.mods = {
                 "onPlayerLanding": (function () {
                     var shiftLevels = [2, 1.5, 1, .5, 0, -.5, -1, -1.5, -2],
                         shiftCount = 0,
-                        shiftAll = function (EightBitter, solids, scenery, characters) {
+                        shiftAll = function (EightBitter, texts, solids, scenery, characters) {
                             var dy = shiftLevels[shiftCount];
                             
                             if (dy < 0) {
                                 EightBitter.shiftVert(EightBitter.player, dy);
                             }
                             
+                            EightBitter.shiftThings(texts, 0, dy);
                             EightBitter.shiftThings(solids, 0, dy);
                             EightBitter.shiftThings(scenery, 0, dy);
                             EightBitter.shiftThings(characters, 0, dy);
@@ -118,9 +119,8 @@ FullScreenMario.prototype.settings.mods = {
                         };
                     
                     return function (mod) {
-                        var characters = this.GroupHolder.getCharacterGroup(),
-                            player = this.player,
-                            character, i;
+                        var player = this.player,
+                            characters, solids, scenery, texts, character, i;
                     
                         // Don't trigger during cutscenes or small landings
                         if (
@@ -131,10 +131,20 @@ FullScreenMario.prototype.settings.mods = {
                         }
                         
                         this.AudioPlayer.play("Bump");
+						
+						texts = this.GroupHolder.getTextGroup().slice();
+						scenery = this.GroupHolder.getSceneryGroup().slice();
+						solids = this.GroupHolder.getSolidGroup().slice();
+						characters = this.GroupHolder.getCharacterGroup().slice();
                         
                         for (i = 0; i < characters.length; i += 1) {
                             character = characters[i];
-                            if (character.player || character.nofall || !character.resting) {
+                            if (
+								character.player 
+								|| character.nofall 
+								|| !character.resting 
+								|| character.grounded
+							) {
                                 continue;
                             }
                             
@@ -147,9 +157,7 @@ FullScreenMario.prototype.settings.mods = {
                         if (shiftCount === 0) {
                             this.TimeHandler.addEventInterval(
                                 shiftAll, 1, Infinity, this,
-                                this.GroupHolder.getSolidGroup().slice(),
-                                this.GroupHolder.getSceneryGroup().slice(),
-                                this.GroupHolder.getCharacterGroup().slice()
+                                texts, solids, scenery, characters
                             );
                         }
                     }
