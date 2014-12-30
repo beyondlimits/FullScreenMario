@@ -73,7 +73,6 @@ FullScreenMario.prototype.settings.statistics = {
         },
         "lives": {
             "valueDefault": 3,
-            "storeLocally": true,
             "hasElement": true
         },
         "luigi": {
