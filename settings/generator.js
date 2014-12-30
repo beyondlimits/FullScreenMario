@@ -87,13 +87,17 @@ FullScreenMario.prototype.settings.generator = {
                 "mode": "Random",
                 "direction": "right",
                 "children": [{
-                    "percent": 70,
+                    "percent": 60,
                     "type": "Random",
                     "title": "OverworldClumpLand"
                 }, {
-                    "percent": 30,
+                    "percent": 20,
                     "type": "Random",
                     "title": "OverworldClumpWater"
+                }, {
+                    "percent": 20,
+                    "type": "Random",
+                    "title": "OverworldClumpTrees"
                 }]
             }
         },
@@ -239,6 +243,142 @@ FullScreenMario.prototype.settings.generator = {
                             "contents": "Star"
                         }
                     }]
+                }]
+            }
+        },
+        "OverworldClumpTrees": {
+            "width": 320,
+            "height": 80,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "spacing": {
+                    "min": 0,
+                    "max": 24,
+                    "units": 8
+                },
+                "children": [{
+                    "percent": 40,
+                    "type": "Random",
+                    "title": "OverworldTreeLarge"
+                }, {
+                    "percent": 40,
+                    "type": "Random",
+                    "title": "OverworldTreesSmall"
+                }, {
+                    "percent": 20,
+                    "type": "Random",
+                    "title": "PlatformGenerator"
+                }]
+            }
+        },
+        "OverworldTreesSmall": {
+            "width": 64,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "spacing": {
+                    "min": 0,
+                    "max": 8,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "OverworldTreeSmallShort"
+                }, {
+                    "type": "Random",
+                    "title": "OverworldTreeSmall"
+                }]
+            }
+        },
+        "OverworldTreeSmall": {
+            "width": 24,
+            "height": 80,
+            "contents": {
+                "mode": "Repeat",
+                "limit": 1,
+                "direction": "top",
+                "spacing": {
+                    "min": 32,
+                    "max": 88,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "TreeFancy"
+                }]
+            }
+        },
+        "OverworldTreeSmallShort": {
+            "width": 24,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "bottom",
+                "spacing": {
+                    "min": 0,
+                    "max": 16,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Known",
+                    "title": "Tree",
+                    "arguments": {
+                        "macro": "Tree",
+                        "width": 24
+                    }
+                }]
+            }
+        },
+        "OverworldTreeLarge": {
+            "width": 64,
+            "height": 80,
+            "contents": {
+                "mode": "Multiple",
+                "direction": "right",
+                "spacing": {
+                    "min": 0,
+                    "max": 40,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "OverworldTreeLargeBase"
+                }, {
+                    "type": "Random",
+                    "title": "OverworldTreeSmall"
+                }]
+            }
+        },
+        "OverworldTreeLargeBase": {
+            "width": 64,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "bottom",
+                "spacing": [0, 8, 8],
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Known",
+                    "title": "Tree",
+                    "arguments": {
+                        "macro": "Tree",
+                        "width": 64
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "TreeLargeCoins"
                 }]
             }
         },
@@ -3843,6 +3983,113 @@ FullScreenMario.prototype.settings.generator = {
                     },
                     "arguments": {
                         "macro": "Bridge",
+                    }
+                }]
+            }
+        },
+        "Tree": {
+            "width": 24,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Tree",
+                    "stretch": {
+                        "width": true
+                    },
+                    "arguments": {
+                        "macro": "Tree"
+                    }
+                }]
+            }
+        },
+        "TreeCoin": {
+            "width": 8,
+            "height": 12,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 4
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "Coin",
+                    "sizing": {
+                        "height": 4
+                    }
+                }]
+            }
+        },
+        "TreeCoins": {
+            "width": 8,
+            "height": 12,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "stretch": {
+                    "width": true
+                },
+                "spacing": 4,
+                "children": [{
+                    "percent": 55,
+                    "type": "Random",
+                    "title": "TreeCoin"
+                }, {
+                    "percent": 30,
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "percent": 15,
+                    "type": "Random",
+                    "title": "EnemyEasy"
+                }]
+            }
+        },
+        "TreeLargeCoins": {
+            "width": 64,
+            "height": 12,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "TreeCoins",
+                    "sizing": {
+                        "width": 56
+                    }
+                }]
+            }
+        },
+        "TreeFancy": {
+            "width": 24,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Tree",
+                    "stretch": {
+                        "width": true
+                    },
+                    "arguments": {
+                        "macro": "Tree"
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "TreeCoins",
+                    "stretch": {
+                        "width": true
                     }
                 }]
             }
