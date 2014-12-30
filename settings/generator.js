@@ -558,7 +558,7 @@ FullScreenMario.prototype.settings.generator = {
                     "units": 16
                 },
                 "children": [{
-                    "percent": 50,
+                    "percent": 30,
                     "type": "Random",
                     "title": "LandObstacleGroupDoubleStory"
                 }, {
@@ -570,11 +570,15 @@ FullScreenMario.prototype.settings.generator = {
                     "type": "Random",
                     "title": "LandObstacleGroupVertical"
                 }, {
+                    "percent": 20,
+                    "type": "Random",
+                    "title": "LandObstacleGroupPipes"
+                }, {
                     "percent": 3,
                     "type": "Random",
                     "title": "LandObstacleGroupPitSmall"
                 }, {
-                    "percent": 3,
+                    "percent": 2,
                     "type": "Random",
                     "title": "LandObstacleGroupPitLarge"
                 }]
@@ -746,6 +750,28 @@ FullScreenMario.prototype.settings.generator = {
                     "percent": 50,
                     "type": "Random",
                     "title": "Nothing"
+                }]
+            }
+        },
+        "LandObstacleGroupPipes": {
+            "width": 112,
+            "height": 80,
+            "contents": {
+                "mode": "Random",
+                "snap": "bottom",
+                "direction": "right",
+                "children": [{
+                    "percent": 80,
+                    "type": "Random",
+                    "title": "PipeRandom"
+                }, {
+                    "percent": 10,
+                    "type": "Random",
+                    "title": "PipeRandomTransit"
+                }, {
+                    "percent": 10,
+                    "type": "Random",
+                    "title": "PipeFloating"
                 }]
             }
         },
@@ -3826,6 +3852,84 @@ FullScreenMario.prototype.settings.generator = {
                             "transport": "Underworld"
                         }
                     }]
+                }]
+            }
+        },
+        "PipeFloating": {
+            "width": 64,
+            "height": 80,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "snap": "bottom",
+                "spacing": {
+                    "min": 8,
+                    "max": 32,
+                    "units": 8
+                },
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "PipeFloatingContents"
+                }]
+            }
+        },
+        "PipeFloatingContents": {
+            "width": 64,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "direction": "right",
+                "snap": "bottom",
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing"
+                }, {
+                    "type": "Random",
+                    "title": "PipeFloatingSolid"
+                }, {
+                    "type": "Random",
+                    "title": "PipeFloatingCenter"
+                }, {
+                    "type": "Random",
+                    "title": "PipeFloatingSolid"
+                }]
+            }
+        },
+        "PipeFloatingSolid": {
+            "width": 8,
+            "height": 8,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "children": [{
+                    "percent": 65,
+                    "type": "Random",
+                    "title": "Brick"
+                }, {
+                    "percent": 35,
+                    "type": "Random",
+                    "title": "Block"
+                }, ]
+            }
+        },
+        "PipeFloatingCenter": {
+            "width": 16,
+            "height": 8,
+            "contents": {
+                "mode": "Certain",
+                "direction": "top",
+                "children": [{
+                    "type": "Known",
+                    "title": "Stone",
+                    "arguments": {
+                        "width": 16
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "PipeRandomTransit"
                 }]
             }
         },
