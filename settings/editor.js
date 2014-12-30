@@ -219,6 +219,37 @@
             }
         }
     },
+    "Scale": {
+        "function": "macroScale",
+        "description": "Add two platforms suspended by string to the map.",
+        "options": {
+            "widthLeft": {
+                "type": "Number",
+                "value": 6,
+                "mod": 4
+            },
+            "widthRight": {
+                "type": "Number",
+                "value": 6,
+                "mod": 4
+            },
+            "between": {
+                "type": "Number",
+                "value": 10,
+                "mod": 4
+            },
+            "dropLeft": {
+                "type": "Number",
+                "value": 6,
+                "mod": 4
+            },
+            "dropRight": {
+                "type": "Number",
+                "value": 6,
+                "mod": 4
+            },
+        }
+    },
     "Water": {
         "function": "macroWater",
         "description": "Fill water of infinite height.",
