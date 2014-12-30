@@ -1904,13 +1904,13 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
-     * Spawning callback for Cannons. Unless specified by the nofire flag, the
-     * firing interval is set to the Thing's frequency.
+     * Spawning callback for Cannons. Unless specified by the noBullets flag,
+     * the firing interval is set to the Thing's frequency.
      * 
      * @param {Cannon} thing
      */
     function spawnCannon(thing) {
-        if (!thing.nofire) {
+        if (!thing.noBullets) {
             thing.EightBitter.TimeHandler.addEventInterval(
                 thing.EightBitter.animateCannonFiring,
                 thing.frequency,
