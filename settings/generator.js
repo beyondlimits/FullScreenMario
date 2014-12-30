@@ -602,6 +602,28 @@ FullScreenMario.prototype.settings.generator = {
                 }]
             }
         },
+        "LandObstacleGroupEnemiesPure": {
+            "width": 64,
+            "height": 80,
+            "contents": {
+                "mode": "Random",
+                "direction": "right",
+                "spacing": {
+                    "min": 4,
+                    "max": 8,
+                    "units": 4
+                },
+                "children": [{
+                    "percent": 90,
+                    "type": "Random",
+                    "title": "EnemyEasyScattered"
+                }, {
+                    "percent": 5,
+                    "type": "Random",
+                    "title": "EnemyHard"
+                }]
+            }
+        },
         "LandObstacleGroupSingleStory": {
             "width": 64,
             "height": 80,
@@ -646,7 +668,7 @@ FullScreenMario.prototype.settings.generator = {
                     "title": "LandObstacleGroupDoubleStorySolids"
                 }, {
                     "type": "Random",
-                    "title": "LandObstacleGroupEnemies"
+                    "title": "LandObstacleGroupEnemiesPure"
                 }]
             }
         },
