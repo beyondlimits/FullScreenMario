@@ -5292,6 +5292,8 @@ var FullScreenMario = (function(GameStartr) {
                 thing.EightBitter.setClass(thing, name + String(i + 1));
             }, i * 7, i);
         }
+		
+		thing.EightBitter.AudioPlayer.play("Firework");
         
         thing.EightBitter.TimeHandler.addEvent(function () {
             thing.EightBitter.killNormal(thing);
@@ -5315,8 +5317,8 @@ var FullScreenMario = (function(GameStartr) {
             flag = thing.EightBitter.ObjectMaker.make("CastleFlag", {
                 "position": "beginning"
             }),
-            flagMovements = 40,
-            fireInterval = 42,
+            flagMovements = 28,
+            fireInterval = 28,
             fireworkPositions = [
                 [0, -48],
                 [-8, -40],
