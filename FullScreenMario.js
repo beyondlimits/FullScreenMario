@@ -3397,12 +3397,12 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.AudioPlayer.clearTheme();
         thing.EightBitter.MapScreener.nokeys = true;
         thing.EightBitter.MapScreener.notime = true;
-        
+		
         thing.EightBitter.TimeHandler.addEvent(function () {
-            thing.yvel = 0;
             thing.keys.run = 1;
             thing.maxspeed = thing.walkspeed;
             thing.EightBitter.thingResumeVelocity(thing);
+			thing.yvel = 0;
             thing.EightBitter.MapScreener.canscroll = true;
             thing.EightBitter.AudioPlayer.play("World Clear");
         }, 140);
@@ -5105,6 +5105,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.nofall = true;
         thing.nothrow = true;
         thing.movement = false;
+		thing.dead = true;
         thing.EightBitter.thingPauseVelocity(thing);
         
         thing.EightBitter.TimeHandler.addEvent(function () {
