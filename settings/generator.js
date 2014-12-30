@@ -3434,8 +3434,8 @@ FullScreenMario.prototype.settings.generator = {
         */
         
         "OverworldScenery": {
-            "height": 80,
             "width": 160,
+            "height": 80,
             "contents": {
                 "mode": "Certain",
                 "direction": "top",
@@ -4770,10 +4770,45 @@ FullScreenMario.prototype.settings.generator = {
                     }
                 }, {
                     "type": "Random",
-                    "title": "EndOutsideCastle"
+                    "title": "OverworldEndOutsideCastle"
                 }, {
                     "type": "Random",
                     "title": "ScrollBlocker"
+                }]
+            }
+        },
+        "OverworldEndOutsideCastle": {
+            "width": 144,
+            "height": 80,
+            "contents": {
+                "mode": "Multiple",
+                "direction": "right",
+                "spacing": -112,
+                "children": [{
+                    "type": "Random",
+                    "title": "EndOutsideCastle"
+                }, {
+                    "type": "Random",
+                    "title": "OverworldEndOutsideCastleScenery"
+                }]
+            }
+        },
+        "OverworldEndOutsideCastleScenery": {
+            "width": 144,
+            "height": 80,
+            "contents": {
+                "mode": "Multiple",
+                "direction": "top",
+                "spacing": -8,
+                "children": [{
+                    "type": "Random",
+                    "title": "Nothing",
+                    "sizing": {
+                        "height": 0
+                    }
+                }, {
+                    "type": "Random",
+                    "title": "OverworldScenery"
                 }]
             }
         },
