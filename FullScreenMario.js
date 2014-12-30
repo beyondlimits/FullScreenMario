@@ -393,6 +393,10 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Player} player
      */
     function keyDownLeft(player) {
+		if (player.EightBitter.GamesRunner.getPaused()) {
+			return;
+		}
+		
         player.keys.run = -1;
         player.keys.leftDown = true; // independent of changes to keys.run
         player.EightBitter.ModAttacher.fireEvent("onKeyDownLeft");
@@ -405,6 +409,10 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Player} player
      */
     function keyDownRight(player) {
+		if (player.EightBitter.GamesRunner.getPaused()) {
+			return;
+		}
+		
         player.keys.run = 1;
         player.keys.rightDown = true; // independent of changes to keys.run
         player.EightBitter.ModAttacher.fireEvent("onKeyDownRight");
@@ -417,6 +425,10 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Player} player
      */
     function keyDownUp(player) {
+		if (player.EightBitter.GamesRunner.getPaused()) {
+			return;
+		}
+		
         player.keys.up = true;
         
         if (player.canjump && (
@@ -448,6 +460,10 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Player} player
      */
     function keyDownDown(player) {
+		if (player.EightBitter.GamesRunner.getPaused()) {
+			return;
+		}
+		
         player.keys.crouch = true;
         player.EightBitter.ModAttacher.fireEvent("onKeyDownDown");
     }
@@ -459,6 +475,10 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Player} player
      */
     function keyDownSprint(player) {
+		if (player.EightBitter.GamesRunner.getPaused()) {
+			return;
+		}
+		
         if (player.power === 3 && player.keys.sprint === 0 && !player.crouch) {
             player.fire(player);
         }
@@ -488,6 +508,10 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Player} player
      */
     function keyDownMute(player) {
+		if (player.EightBitter.GamesRunner.getPaused()) {
+			return;
+		}
+		
         player.EightBitter.AudioPlayer.toggleMuted();
         player.EightBitter.ModAttacher.fireEvent("onKeyDownMute");
     }
