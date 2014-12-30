@@ -439,7 +439,6 @@ function GroupHoldr(settings) {
         functions.add[groupNew](object, keyNew);
     };
     
-    
     /**
      * Calls a function for each group, with that group as the first argument.
      * Extra arguments may be passed in an array after scope and func, as in
@@ -471,6 +470,38 @@ function GroupHoldr(settings) {
     };
     
     /**
+     * Calls a function for each member of each group. Extra arguments may be 
+     * passed in an array after scope and func, as in Function.apply's standard.
+     * 
+     * @param {Mixed} [scope]   An optional scope to call this from (if falsy, 
+     *                          defaults to self).
+     * @param {Function} func   A function to apply to each group.
+     * @param {Array} [args]   An optional array of arguments to pass to the 
+     *                         function after each group.
+     */
+    self.applyOnAll = function (scope, func, args) {
+        var group, i, j;
+        
+        if (!args) {
+            args = [ undefined ];
+        } else {
+            args.unshift(undefined);
+        }
+       
+        if (!scope) {
+            scope = self;
+        }
+        
+        for (i = groupNames.length - 1; i >= 0; i -= 1) {
+            group = groups[groupNames[i]];
+            for (j in group) {
+                args[0] = group[j];
+                func.apply(scope, args);
+            }
+        }
+    };
+    
+    /**
      * Calls a function for each group, with that group as the first argument.
      * Extra arguments may be passed after scope and func natively, as in 
      * Function.call's standard.
@@ -481,7 +512,7 @@ function GroupHoldr(settings) {
      */
     self.callAll = function (scope, func) {
         var args = Array.prototype.slice.call(arguments, 1),
-            group, i, i;
+            i;
         
         if (!scope) {
             scope = self;
@@ -490,6 +521,31 @@ function GroupHoldr(settings) {
         for (i = groupNames.length - 1; i >= 0; i -= 1) {
             args[0] = groups[groupNames[i]];
             func.apply(scope, args);
+        }
+    };
+    
+    /**
+     * Calls a function for each member of each group. Extra arguments may be
+     * passed after scope and func natively, as in Function.call's standard.
+     * 
+     * @param {Mixed} [scope]   An optional scope to call this from (if falsy, 
+     *                          defaults to self).
+     * @param {Function} func   A function to apply to each group member.
+     */
+    self.callOnAll = function (scope, func) {
+        var args = Array.prototype.slice.call(arguments, 1),
+            group, i, j;
+        
+        if (!scope) {
+            scope = self;
+        }
+        
+        for (i = groupNames.length - 1; i >= 0; i -= 1) {
+            group = groups[groupNames[i]];
+            for (j in group) {
+                args[0] = group[j];
+                func.apply(scope, args);
+            }
         }
     };
     
