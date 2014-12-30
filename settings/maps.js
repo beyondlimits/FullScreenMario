@@ -2670,7 +2670,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Stone", "x": 520, "y": 24, "height": 24 },
                         { "thing": "Stone", "x": 528, "y": 40, "height": 40 },
                         { "macro": "Fill", "thing": "Coin", "x": 546, "y": 23, "xnum": 3, "xwidth": 8 },
-                        { "macro": "Floor", "x": 576, "y": 480 },
+                        { "macro": "Floor", "x": 576, "width": 480 },
                         { "thing": "Stone", "x": 576, "y": 40, "height": 40 },
                         { "thing": "Stone", "x": 584, "y": 24, "height": 24 },
                         { "thing": "CheepCheep", "x": 616, "y": 24 },
