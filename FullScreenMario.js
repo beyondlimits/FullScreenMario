@@ -3952,6 +3952,7 @@ var FullScreenMario = (function(GameStartr) {
      */
     function moveVine(thing) {
         thing.EightBitter.increaseHeight(thing, thing.speed);
+		thing.EightBitter.updateSize(thing);
         
         if (thing.attachedSolid) {
             thing.EightBitter.setBottom(thing, thing.attachedSolid.top);

@@ -662,8 +662,6 @@
             },
             "Vine": {
                 "width": 7,
-                "topheight": 7,
-                "repeat": true,
                 "nofall": true,
                 "nocollide": true,
                 "nocollidesolid": true,
