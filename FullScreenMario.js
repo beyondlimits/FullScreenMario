@@ -200,7 +200,10 @@ var FullScreenMario = (function(GameStartr) {
     function gameStart() {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
         
-        EightBitter.setMap(EightBitter.settings.maps.mapDefault);
+        EightBitter.setMap(
+            EightBitter.settings.maps.mapDefault,
+            EightBitter.settings.maps.locationDefault
+        );
         EightBitter.StatsHolder.set(
             "lives", EightBitter.settings.statistics.values.lives.valueDefault
         );
@@ -6377,7 +6380,10 @@ var FullScreenMario = (function(GameStartr) {
 
         EightBitter.ModAttacher.fireEvent("onSetMap", map);
         
-        EightBitter.setLocation(location || 0);
+        EightBitter.setLocation(
+            location
+            || EightBitter.settings.maps.locationDefault
+        );
     }
     
     /**
