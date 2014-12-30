@@ -1707,7 +1707,11 @@ var FullScreenMario = (function(GameStartr) {
         thing.direction = thing.EightBitter.unitsize / -40;
         
         if (thing.onPipe) {
+			var bottom = thing.bottom;
+			
             thing.EightBitter.setHeight(thing, 6, true, true);
+			
+			thing.EightBitter.setBottom(thing, bottom);
         }
     }
     

@@ -71,7 +71,10 @@ var LevelEditr = (function (pageStyles) {
             currentArgs,
             
             // Whether the pageStyle styles have been added to the page
-            pageStylesAdded;
+            pageStylesAdded,
+			
+			// A key to use in dropdowns to should indicate an undefined value
+			keyUndefined;
         
         /**
          * 
@@ -89,6 +92,7 @@ var LevelEditr = (function (pageStyles) {
             mapEntryDefault = settings.mapEntryDefault || "";
             mapDefault = settings.mapDefault || {};
             blocksize = settings.blocksize || 1;
+			keyUndefined = settings.keyUndefined || "-none-";
             
             currentThings = [];
             currentMode = "Build";
@@ -523,7 +527,7 @@ var LevelEditr = (function (pageStyles) {
             var args = {},
                 container = display["sections"]["ClickToPlace"]["VisualOptions"],
                 children = container.getElementsByClassName("VisualOptionsList"),
-                child, labeler, valuer, i;
+                child, labeler, valuer, value, i;
                 
             if (children.length != 0) {
                 children = children[0].children;
@@ -535,15 +539,19 @@ var LevelEditr = (function (pageStyles) {
                     
                     switch (valuer["data:type"]) {
                         case "Boolean":
-                            args[labeler.textContent] = valuer.value === "true" ? true : false;
+							value = valuer.value === "true" ? true : false;
                             break;
                         case "Number":
-                            args[labeler.textContent] = (Number(valuer.value) || 0) * (Number(valuer.getAttribute("data:mod")) || 1);
+                            value = (Number(valuer.value) || 0) * (Number(valuer.getAttribute("data:mod")) || 1);
                             break;
                         default:
-                            args[labeler.textContent] = valuer.value;
+                            value = valuer.value;
                             break;
                     }
+					
+					if (value !== keyUndefined) {
+						args[labeler.textContent] = value;
+					}
                 }
             }
             
@@ -745,6 +753,9 @@ var LevelEditr = (function (pageStyles) {
             setDisplayMap(true);
         }
         
+		/**
+		 * 
+		 */
         function addAreaToMap() {
             var name = display["sections"]["MapSettings"]["Area"].options.length,
                 map = getMapObject();
@@ -1560,7 +1571,8 @@ var LevelEditr = (function (pageStyles) {
                     });
                 
                 case "Location":
-                    var map = getMapObject();
+                    var map = getMapObject(),
+						locations;
                     
                     if (!map) {
                         return GameStarter.createElement("div", {
@@ -1569,13 +1581,16 @@ var LevelEditr = (function (pageStyles) {
                         });
                     }
                     
-                    return createSelect(Object.keys(map.locations), {
+					locations = Object.keys(map.locations);
+					locations.unshift(keyUndefined);
+                    return createSelect(locations, {
                         "className": "VisualOptionValue VisualOptionLocation",
                         "data-type": "Number"
                     });
                 
                 case "Area":
-                    var map = getMapObject();
+                    var map = getMapObject(),
+						areas;
                     
                     if (!map) {
                         return GameStarter.createElement("div", {
@@ -1584,7 +1599,9 @@ var LevelEditr = (function (pageStyles) {
                         });
                     }
                     
-                    return createSelect(Object.keys(map.areas), {
+					areas = Object.keys(map.areas);
+					areas.ushift(keyUndefined);
+                    return createSelect(areas, {
                         "className": "VisualOptionValue VisualOptionArea",
                         "data-type": "Number",
                         "onchange": setCurrentArgs
