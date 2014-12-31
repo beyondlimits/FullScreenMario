@@ -99,7 +99,7 @@ storeMaps call, keyed by name.
             "maps": {
                 "MyFirstMap": {
                     "locations": [
-                        { "area": 0, "entry": "Normal" }
+                        { "area": 0 }
                     ],
                     "areas": [{
                         "creation": [
@@ -172,7 +172,7 @@ storeMaps call, keyed by name.
             "maps": {
                 "MySecondMap": {
                     "locations": [
-                        { "area": 0, "entry": "Normal" }
+                        { "area": 0 }
                     ],
                     "areas": [{
                         "creation": [
@@ -184,7 +184,7 @@ storeMaps call, keyed by name.
             }
         }),
         map = MapsCreator.getMap("MySecondMap"),
-        prethings = MapsCreator.getPreThings(map.locations[0]);
+        prethings = MapsCreator.getPreThings(map.areas[0]);
 
     // Object {Thing: Object}
     console.log(prethings);
