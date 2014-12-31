@@ -232,7 +232,7 @@ FullScreenMario.prototype.settings.sprites = {
                     "smart": ["same", ["characters", "Koopa", "smart"]],
                     "normal": ["filter", ["characters", "Koopa", "normal", "normal"], "UnderworldKoopa"]
                 },
-                "Castle": ["filter", ["characters", "Koopa", "normal", "normal"], "Castle"]
+                "Castle": ["same", ["characters", "Koopa", "Underworld"]]
             },
             "Lakitu": {
                 "normal": "p[0,1,6,14]x05,x25,x010,x27,x08,333233322x06,3111311132x06,3x17,323x05,3113131132330000311313113233x05,3332x37,x05,222333322233000x25,33x25,3003x25,11x25,30031222111122213003x112,303x114,33x15,3113x15,33x15,3113x15,33x15,3113x15,33x114,3313x110,3130311131111311130031111333311113003x112,3000311113311113x05,3333003333000",
@@ -503,7 +503,7 @@ FullScreenMario.prototype.settings.sprites = {
                         "peeking": "p[0,5,6,9,16]x05,344443x09,44333344x07,4434444344x06,43x46,34x05,43x48,340000343x46,3430003444344443444300x45,3333x45,01114434444344x17,3x46,3111100211x46,11200022211444411222002220x16,02220022000111100022002x012,20"
                     }
                 },
-                "Castle": ["same", ["characters", "Shell", "normal", "normal"]]
+                "Castle": ["same", ["characters", "Shell", "Underworld"]]
             },
             "ShellBeetle": {
                 "normal": "p[0,2,5,9]x06,1111x010,x18,x07,1111331111x05,1111322311110000x15,33x15,0000x112,000x114,00x114,00x114,00x114,00x114,00x114,00x114,0x35,x16,x35,000033311333x010,3333x06,",
