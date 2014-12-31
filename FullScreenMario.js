@@ -920,7 +920,7 @@ var FullScreenMario = (function(GameStartr) {
 
         // Player is moving to the right
         if (player.xvel > 0) {
-            if (player.right > EightBitter.MapScreener.middlex) {
+            if (player.right > EightBitter.MapScreener.middleX) {
                 // If Player is to the right of the screen's middle, move the screen
                 if (player.right > EightBitter.MapScreener.right - EightBitter.MapScreener.left) {
                     player.xvel = Math.min(0, player.xvel);
@@ -940,7 +940,7 @@ var FullScreenMario = (function(GameStartr) {
 
         // Scrolloffset is how far over the middle player's right is
         if (EightBitter.MapScreener.canscroll) {
-            var scrolloffset = player.right - EightBitter.MapScreener.middlex;
+            var scrolloffset = player.right - EightBitter.MapScreener.middleX;
             if (scrolloffset > 0) {
                 EightBitter.scrollWindow(
                     Math.round(Math.min(player.scrollspeed, scrolloffset))
