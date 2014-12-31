@@ -2163,6 +2163,18 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.killNormal(thing);
     }
     
+    /**
+     * Spawning callback for ScrollBlockers. If the Thing is too the right of 
+     * the visible viewframe, it should limit scrolling when triggered.
+     * 
+     * @param {ScrollBlocker} thing
+     */
+    function spawnScrollBlocker(thing) {
+        if (thing.EightBitter.MapScreener.width < thing.right) {
+            thing.setEdge = true;
+        }
+    }
+    
     /** 
      * Used by Things in a collection to register themselves as a part of their
      * container collection Object. This is called by onThingMake, so they're 
@@ -2394,10 +2406,10 @@ var FullScreenMario = (function(GameStartr) {
      */
     function activateScrollBlocker(thing) {
         var dx = thing.EightBitter.MapScreener.width - thing.left;
-        
+       
         thing.EightBitter.MapScreener.canscroll = false;
-        if (dx < 0) {
-            thing.EightBitter.scrollWindow(dx);
+        if (thing.setEdge && dx > 0) {
+            thing.EightBitter.scrollWindow(-dx);
         }
     }
     
@@ -3403,6 +3415,10 @@ var FullScreenMario = (function(GameStartr) {
      * @param {DetectCollision} other
      */
     function collideFlagpole(thing, other) {
+        if (thing.bottom > other.bottom) {
+            return;
+        }
+        
         var height = (other.bottom - thing.bottom) | 0,
             scoreAmount = scorePlayerFlag(
                 thing, height / thing.EightBitter.unitsize
@@ -3424,6 +3440,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.EightBitter.setRight(
             thing, other.left + thing.EightBitter.unitsize * 3
         );
+        thing.EightBitter.killNormal(other);
         
         // The player is now climbing down the pole
         thing.EightBitter.removeClasses(thing, "running jumping skidding");
@@ -3641,7 +3658,8 @@ var FullScreenMario = (function(GameStartr) {
     /**
      * General collision callback for DetectCollision Things. The real activate
      * callback is only hit if the Thing is a player; otherwise, an optional
-     * activateFail may be activated.
+     * activateFail may be activated. The DetectCollision is then killed if it
+     * doesn't have the noActivateDeath flag.
      * 
      * @param {Thing} thing
      * @param {DetectCollision} other
@@ -3653,8 +3671,12 @@ var FullScreenMario = (function(GameStartr) {
             }
             return;
         }
+        
         other.activate(thing, other);
-        thing.EightBitter.killNormal(other);
+        
+        if (!other.noActivateDeath) {
+            thing.EightBitter.killNormal(other);
+        }
     }
     
     /**
@@ -5201,7 +5223,7 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Bowser} thing
      */
     function animateBowserThrow(thing) {
-        if (!thing.lookleft) {
+        if (!thing.lookleft || !thing.EightBitter.isThingAlive(thing)) {
             return;
         }
         
@@ -5212,6 +5234,11 @@ var FullScreenMario = (function(GameStartr) {
         );
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
+            if (!thing.EightBitter.isThingAlive(thing)) {
+                thing.EightBitter.killNormal(hammer);
+                return true;
+            }
+            
             thing.EightBitter.setTop(
                 hammer, thing.top - thing.EightBitter.unitsize * 2
             );
@@ -8148,9 +8175,10 @@ var FullScreenMario = (function(GameStartr) {
         output = [
             // Initial collision detector
             {
-                thing: "DetectCollision", x: x, y: y + 108, height: 100,
-                activate: FullScreenMario.prototype.collideFlagpole,
-                activateFail: FullScreenMario.prototype.killNormal,
+                "thing": "DetectCollision", x: x, y: y + 108, height: 100,
+                "activate": FullScreenMario.prototype.collideFlagpole,
+                "activateFail": FullScreenMario.prototype.killNormal,
+                "noActivateDeath": true,
                 "collectionName": collectionName,
                 "collectionKey": "DetectCollision",
             },
@@ -8539,6 +8567,7 @@ var FullScreenMario = (function(GameStartr) {
         "spawnRandomBulletBill": spawnRandomBulletBill,
         "spawnCustomText": spawnCustomText,
         "spawnDetector": spawnDetector,
+        "spawnScrollBlocker": spawnScrollBlocker,
         "spawnCollectionComponent": spawnCollectionComponent,
         "spawnCollectionPartner": spawnCollectionPartner,
         "spawnRandomSpawner": spawnRandomSpawner,

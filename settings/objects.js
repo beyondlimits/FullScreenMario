@@ -854,6 +854,7 @@
                 "activate": FullScreenMario.prototype.spawnRandomSpawner
             },
             "ScrollBlocker": {
+                "onThingAdded": FullScreenMario.prototype.spawnScrollBlocker,
                 "activate": FullScreenMario.prototype.activateScrollBlocker
             },
             "DetectSpawn": {
