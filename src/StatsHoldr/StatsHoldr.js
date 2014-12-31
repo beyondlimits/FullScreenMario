@@ -78,10 +78,10 @@ function StatsHoldr(settings) {
     }
     var self = this,
 
-        // The objects being stored, keyed as Object<String, Object>.
+        // The objects being stored, keyed as Object<Object>.
         values,
 
-        // Default attributes for value, as Object<String, Object>.
+        // Default attributes for value, as Object<Object>.
         defaults,
         
         // A reference to localStorage or a replacement object.

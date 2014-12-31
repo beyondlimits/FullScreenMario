@@ -107,7 +107,7 @@ function ChangeLinr(settings) {
      *                                   rather than just ones in transforms
      *                                   (defaults to false).
      */
-    self.reset = function reset(settings) {
+    self.reset = function (settings) {
         var i;
         
         if (typeof settings.pipeline === "undefined") {

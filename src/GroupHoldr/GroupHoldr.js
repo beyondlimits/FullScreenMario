@@ -103,8 +103,8 @@ function GroupHoldr(settings) {
     */
     
     /**
-     * @return {Object} The Object with Object<String, Function>s for each 
-     *                  action available on groups.
+     * @return {Object} The Object with Object<Function>s for each action
+     *                  available on groups.
      */
     self.getFunctions = function () {
         return functions;

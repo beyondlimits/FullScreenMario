@@ -79,7 +79,7 @@ var LevelEditr = (function (pageStyles) {
         /**
          * 
          */
-        self.reset = function reset(settings) {
+        self.reset = function (settings) {
             GameStarter = settings.GameStarter;
             things = settings.things;
             thingGroups = settings.thingGroups;

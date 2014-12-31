@@ -87,7 +87,7 @@ function ObjectMakr(settings) {
     /**
      * 
      */
-    self.reset = function reset(settings) {
+    self.reset = function (settings) {
         inheritance = settings.inheritance;
         properties = settings.properties || {};
         indexMap = settings.indexMap;

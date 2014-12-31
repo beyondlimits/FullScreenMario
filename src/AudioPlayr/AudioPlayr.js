@@ -134,7 +134,7 @@ function AudioPlayr(settings) {
      *                                    value, and Strings are constant
      *                                    (defaults to "Theme").
      */
-    self.reset = function reset(settings) {
+    self.reset = function (settings) {
         library = settings.library;
         directory = settings.directory;
         fileTypes = settings.fileTypes;

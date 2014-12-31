@@ -415,9 +415,9 @@ function ThingHittr(settings) {
      * Creates a set of cached Objects for when a group of Functions must be
      * generated, rather than a single one.
      * 
-     * @param {Object<String, Function>} functions   The container for the 
-     *                                               Functions to be cached.
-     * @return {Object<String, Function>}
+     * @param {Object<Function>} functions   The container for the Functions
+     *                                       to be cached.
+     * @return {Object<Function>}
      */
     function cacheFunctionGroup(functions) {
         var output = {},
