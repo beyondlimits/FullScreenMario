@@ -3420,8 +3420,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "macro": "Water", "x": 48, "width": 40 },
                         { "macro": "Floor", "x": 88, "width": 64 },
                         { "macro": "Pipe", "x": 152, "y": 16, "height": "Infinity", "piranha": true, "entrance": 1 },
-                        { "macro": "Floor", "x": 168, "width": 88 },
-                        { "macro": "Section", "x": 256 }
+                        { "macro": "Section", "x": 168 }
                     ],
                     "sections": [
                         {

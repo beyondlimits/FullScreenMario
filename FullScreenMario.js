@@ -2513,7 +2513,8 @@ var FullScreenMario = (function(GameStartr) {
             // Add a prething at the end of all this to trigger the after part
             command = {
                 "thing": "DetectWindow", 
-                "x": left + width, "y": 0, 
+                "x": left + width, 
+                "y": 0,
                 "activate": EightBitter.activateSectionAfter,
                 "section": thing.section || 0
             };
@@ -2524,7 +2525,7 @@ var FullScreenMario = (function(GameStartr) {
         MapsHandler.spawnMap(
             "xInc",
             MapScreener.top / EightBitter.unitsize,
-            MapScreener.right / EightBitter.unitsize,
+            left + (MapScreener.width / EightBitter.unitsize),
             MapScreener.bottom / EightBitter.unitsize,
             left
         );

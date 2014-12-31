@@ -597,6 +597,10 @@ var GameStartr = (function (EightBittr) {
         
         thing.EightBitter.ModAttacher.fireEvent("onAddThing", thing, left, top);
         
+        
+        if (thing.title === "Piranha") {
+            console.log(thing.left, thing.EightBitter.MapScreener.width);
+        }
         return thing;
     }
     

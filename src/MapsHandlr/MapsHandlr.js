@@ -19,13 +19,13 @@ function MapsHandlr(settings) {
         screenAttributes,
         
         // The currently referenced map from MapsCreator, set by self.setMap
-        map_current, 
+        mapCurrent, 
         
         // The currently referenced area in a map, set by self.setLocation
-        area_current,
+        areaCurrent,
         
         // The currently referenced location in an area, set by self.setLocation
-        location_current,
+        locationCurrent,
         
         // The name of the currently edited map, set by self.setMap
         mapName,
@@ -38,7 +38,7 @@ function MapsHandlr(settings) {
         onSpawn,
         
         // When a prething is to be unspawned, this function should unspawn it
-        on_unspawn,
+        onUnspawn,
         
         // Optionally, an array of Things to stretch across the map horizontally
         stretches,
@@ -93,7 +93,7 @@ function MapsHandlr(settings) {
         screenAttributes = settings.screenAttributes || [];
         
         onSpawn = settings.onSpawn;
-        on_unspawn = settings.on_unspawn;
+        onUnspawn = settings.onUnspawn;
         
         stretchAdd = settings.stretchAdd;
         onStretch = settings.onStretch;
@@ -143,7 +143,7 @@ function MapsHandlr(settings) {
     
     /** 
      * Gets the map listed under the given name. If no name is provided, the
-     * map_current is returned instead.
+     * mapCurrent is returned instead.
      * 
      * @param {Mixed} [name]   An optional key to find the map under. This will
      *                         typically be a String.
@@ -153,7 +153,7 @@ function MapsHandlr(settings) {
         if (typeof name !== "undefined") {
             return MapsCreator.getMap(name);
         } else {
-            return map_current;
+            return mapCurrent;
         }
     };
     
@@ -167,12 +167,12 @@ function MapsHandlr(settings) {
     };
     
     /**
-     * Simple getter function for the area_current object.
+     * Simple getter function for the areaCurrent object.
      * 
      * @return {Object} The current area object, included area attributes.
      */
     self.getArea = function () {
-        return area_current;
+        return areaCurrent;
     };
     
     /**
@@ -181,7 +181,7 @@ function MapsHandlr(settings) {
      * @reutrn {Object} The request location object.
      */
     self.getLocation = function (location) {
-        return area_current.map.locations[location];
+        return areaCurrent.map.locations[location];
     }
     
     /**
@@ -212,8 +212,8 @@ function MapsHandlr(settings) {
      */
     self.setMap = function (name, location) {
         // Get the newly current map from self.getMap normally
-        map_current = self.getMap(name);
-        if (!map_current) {
+        mapCurrent = self.getMap(name);
+        if (!mapCurrent) {
             throw new Error("No map found under: " + name);
         }
         
@@ -224,7 +224,7 @@ function MapsHandlr(settings) {
             self.setLocation(location);
         }
         
-        return map_current;
+        return mapCurrent;
     };
     
     /**
@@ -237,33 +237,33 @@ function MapsHandlr(settings) {
         var location, attribute, len, i;
 
         // Query the location from the current map and ensure it exists
-        location = map_current.locations[name];
+        location = mapCurrent.locations[name];
         if (!location) {
             throw new Error("Unknown location given: " + name);
         }
         
         // Since the location is valid, mark it as current (with its area)
-        location_current = location;
-        area_current = location.area;
+        locationCurrent = location;
+        areaCurrent = location.area;
         
         // Copy all the settings from that area into the MapScreenr container
         for (i = 0, len = screenAttributes.length; i < len; i += 1) {
             attribute = screenAttributes[i];
-            MapScreener[attribute] = area_current[attribute];
+            MapScreener[attribute] = areaCurrent[attribute];
         }
         
         // Reset the prethings object, enabling it to be used as a fresh start
         // for the new Area/Location placements
         prethings = MapsCreator.getPreThings(location);
         
-        if (area_current.stretches) {
-            setStretches(area_current.stretches);
+        if (areaCurrent.stretches) {
+            setStretches(areaCurrent.stretches);
         } else {
             stretches = undefined;
         }
         
-        if (area_current.afters) {
-            setAfters(area_current.afters);
+        if (areaCurrent.afters) {
+            setAfters(areaCurrent.afters);
         } else {
             afters = undefined;
         }
@@ -306,7 +306,7 @@ function MapsHandlr(settings) {
      * 
      */
     self.unspawnMap = function (direction, top, right, bottom, left) {
-        applySpawnAction(on_unspawn, false, direction, top, right, bottom, left);
+        applySpawnAction(onUnspawn, false, direction, top, right, bottom, left);
     };
     
     /**
