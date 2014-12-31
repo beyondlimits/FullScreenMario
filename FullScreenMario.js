@@ -275,7 +275,7 @@ var FullScreenMario = (function(GameStartr) {
         // front or back of the container
         if (position) {
             thing.EightBitter.TimeHandler.addEvent(function () {
-                switch (prething.position || thing.position) {
+                switch (position) {
                     case "beginning":
                         thing.EightBitter.arrayToBeginning(thing, thing.EightBitter.GroupHolder.getGroup(thing.groupType));
                         break;
@@ -6593,6 +6593,7 @@ var FullScreenMario = (function(GameStartr) {
         
         EightBitter.setLocation(
             location
+            || map.locationDefault
             || EightBitter.settings.maps.locationDefault
         );
     }
@@ -6630,6 +6631,9 @@ var FullScreenMario = (function(GameStartr) {
         EightBitter.TimeHandler.addEventInterval(function () {
             if (!EightBitter.MapScreener.notime) {
                 EightBitter.StatsHolder.decrease("time", 1);
+            }
+            if (!EightBitter.StatsHolder.get("time")) {
+                return true;
             }
         }, 25, Infinity);
         
