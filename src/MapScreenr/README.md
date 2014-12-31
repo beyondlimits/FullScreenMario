@@ -33,9 +33,9 @@ calculated on screen resets.
 
 * **height** *`Number`* - How high the MapScreenr should be.
 
-* **variables** *`Object<Function>`*
+* **[variables]** *`Object<Function>`*
 
-* **variableArgs** *`Array`*
+* **[variableArgs]** *`Array`*
 
 
 ## Sample Usage
@@ -63,7 +63,7 @@ calculated on screen resets.
         "height": 480,
         "variables": {
             "pixels": function () {
-                return this.widththis.height;
+                return this.width * this.height;
             },
             "resolution": function () {
                 return this.width / this.height;
