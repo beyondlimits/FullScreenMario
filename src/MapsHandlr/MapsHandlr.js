@@ -1,5 +1,15 @@
 /**
+ * MapsHandlr.js
  * 
+ * Map manipulator and spawner for GameStarter maps that is the front-end
+ * counterpart to MapsCreatr.js. PreThing listings are loaded from Maps stored
+ * in a MapsCreatr and added or removed from user input. Area properties are
+ * given to a MapScreenr when a new Area is loaded.
+ * 
+ * Examples are not available for MapsHandlr, as the required code would be very
+ * substantial. Instead see GameStartr.js and its map manipulation code.
+ * 
+ * @author "Josh Goldberg" <josh@fullscreenmario.com>
  */
 function MapsHandlr(settings) {
     "use strict";
@@ -8,55 +18,49 @@ function MapsHandlr(settings) {
     }
     var self = this,
         
-        // MapsCreatr container for maps from which this obtains Thing settings
+        // MapsCreatr container for Maps from which this obtains Thing settings.
         MapsCreator,
         
-        // MapScreenr container for map attributes, such as "floor" or "setting"
+        // MapScreenr container for attributes copied from Areas.
         MapScreener,
         
         // An Array of strings representing the names of attributes to be copied
-        // to the MapScreener during self.setLocation
+        // to the MapScreener during self.setLocation.
         screenAttributes,
         
-        // The currently referenced map from MapsCreator, set by self.setMap
+        // The currently referenced Map from MapsCreator, set by self.setMap.
         mapCurrent, 
         
-        // The currently referenced area in a map, set by self.setLocation
+        // The currently referenced Area, set by self.setLocation.
         areaCurrent,
         
-        // The currently referenced location in an area, set by self.setLocation
+        // The currently referenced Location, set by self.setLocation.
         locationCurrent,
         
-        // The name of the currently edited map, set by self.setMap
+        // The name of the currently edited Map, set by self.setMap.
         mapName,
         
-        // The current area's array of prethings that are to be added in order
-        // during self.spawnMap
+        // The current area's listing of PreThings that are to be added in order
+        // during self.spawnMap.
         prethings,
         
-        // When a prething is to be spawned, this function should spawn it
+        // When a prething is to be spawned, this Function should spawn it.
         onSpawn,
         
-        // When a prething is to be unspawned, this function should unspawn it
+        // When a prething is to be unspawned, this Function should unspawn it.
         onUnspawn,
         
-        // Optionally, an array of Things to stretch across the map horizontally
+        // Optionally, an Array of Things to stretch across the map.
         stretches,
         
-        // If stretches exists, the function to call to add one to the map
+        // If stretches exists, the Function to call to add one to the map.
         stretchAdd,
         
-        // If stretches exists, the function to call to stretch horizontally
-        onStretch,
-        
-        // Optionally, an array of Things to place at the end of the map
+        // Optionally, an Array of Things to place at the end of the map.
         afters,
         
-        // If afters exists, the function to call to add one to the map
+        // If afters exists, the Function to call to add one to the map.
         afterAdd,
-        
-        // If afters exists, the function to call to stretch horizontally
-        on_after,
         
         // Directional equivalents for converting from directions to keys
         directionKeys = {
@@ -75,7 +79,26 @@ function MapsHandlr(settings) {
         };
     
     /**
+     * Resets the MapsHandlr.
      * 
+     * @constructor
+     * @param {MapsCreatr} MapsCreator   A MapsCreatr used to store and lazily
+     *                                   initialize Maps.
+     * @param {MapScreenr} MapScreener   A MapScreenr used to store attributes
+     *                                   of areas.
+     * @param {Function} [onSpawn]   A callback for when a PreThing should be 
+     *                             spawned.
+     * @param {Function} [onUnspawn]   A callack for when a PreThing should be
+     *                                 un-spawned.
+     * @param {String[]} [screenAttributes]   The property names to copy from 
+     *                                        Areas to MapScreener (by default,
+     *                                        none).
+     * @param {Function} [afterAdd]   A callback for when an Area provides an
+     *                                "afters" command to add PreThings to the
+     *                                end of an Area.
+     * @param {Function} [stretchAdd]   A callback for when an Area provides a
+     *                                  "stretch" command, to add PreThings
+     *                                  to stretch across an Area.
      */
     self.reset = function (settings) {
         // Maps themselves should have been created in the MapsCreator object
@@ -89,17 +112,14 @@ function MapsHandlr(settings) {
             throw new Error("No MapScreener provided to MapsHandlr.");
         }
         MapScreener = settings.MapScreener;
-        
-        screenAttributes = settings.screenAttributes || [];
-        
+
         onSpawn = settings.onSpawn;
         onUnspawn = settings.onUnspawn;
         
-        stretchAdd = settings.stretchAdd;
-        onStretch = settings.onStretch;
+        screenAttributes = settings.screenAttributes || [];
         
+        stretchAdd = settings.stretchAdd;
         afterAdd = settings.afterAdd;
-        on_after = settings.on_after;
     };
     
     
@@ -107,35 +127,28 @@ function MapsHandlr(settings) {
     */
     
     /**
-     * Simple getter for the MapsCreatr object that makes the actual maps.
-     * 
-     * @return {MapsCreatr}
+     * @return {MapsCreatr}   The internal MapsCreator.
      */
     self.getMapsCreator = function () {
         return MapsCreator;
     };
     
     /**
-     * Simple getter for the MapScreenr object where attributes are copied.
-     * 
-     * @return {MapScreenr}
+     * @return {MapScreenr}   The internal MapScreener.
      */
     self.getMapScreener = function () {
         return MapScreener;
     };
     
     /**
-     * Simple getter for the Array of attribute names copied to the MapScreener.
+     * @return {String[]}   The attribute names to be copied to MapScreener.
      */
     self.getScreenAttributes = function () {
         return screenAttributes;
     };
     
     /**
-     * Simple getter for the key by which the current map is located in 
-     * the MapCreatr. This is typically a String.
-     *
-     * @return {Mixed}
+     * @return {String}   The key by which the current Map is indexed.
      */
     self.getMapName = function () {
         return mapName;
@@ -160,25 +173,21 @@ function MapsHandlr(settings) {
     /**
      * Simple getter pipe to the internal MapsCreator.getMaps() function.
      * 
-     * @return {Object}   An associative array of maps, keyed by their names.
+     * @return {Object<Map>}   A listing of maps, keyed by their names.
      */
     self.getMaps = function () {
         return MapsCreator.getMaps();
     };
     
     /**
-     * Simple getter function for the areaCurrent object.
-     * 
-     * @return {Object} The current area object, included area attributes.
+     * @return {Area} The current Area.
      */
     self.getArea = function () {
         return areaCurrent;
     };
     
     /**
-     * Simple getter function for a location within the current area's map.
-     * 
-     * @reutrn {Object} The request location object.
+     * @reutrn {Location} A Location within the current Map.
      */
     self.getLocation = function (location) {
         return areaCurrent.map.locations[location];
@@ -188,7 +197,7 @@ function MapsHandlr(settings) {
      * Simple getter function for the internal prethings object. This will be
      * null before the first self.setMap.
      * 
-     * return {Prething[]}   An array of the current area's Prethings.
+     * return {Object} A listing of the current area's Prethings.
      */
     self.getPreThings = function () {
         return prethings;
@@ -199,22 +208,21 @@ function MapsHandlr(settings) {
     */
     
     /**
-     * Sets the currently manipulated map in the handler to be the one under a
+     * Sets the currently manipulated Map in the handler to be the one under a
      * given name. Note that this will do very little unless a location is 
-     * provided (this is by design - an EightBitter using this should set them
-     * manually).
+     * provided.
      * 
      * @param {Mixed} name   A key to find the map under. This will typically be
      *                       a String.
-     * @param {Number} [location]   An optional number for a location to
-     *                              immediately start the map in. 
+     * @param {Mixed} [location]   An optional key for a location to immediately
+     *                              start the map in (if not provided, ignored). 
      *                          
      */
     self.setMap = function (name, location) {
         // Get the newly current map from self.getMap normally
         mapCurrent = self.getMap(name);
         if (!mapCurrent) {
-            throw new Error("No map found under: " + name);
+            throw new Error("Unknown Map in setMap: '" + name + "'.");
         }
         
         mapName = name;
@@ -228,10 +236,11 @@ function MapsHandlr(settings) {
     };
     
     /**
-     * Goes to a particular location in the given map. This is the primary,
-     * meaty function for resetting attributes in the MapScreenr.
+     * Goes to a particular location in the given map. Area attributes are 
+     * copied to the MapScreener, PreThings are loaded, and stretches and afters
+     * are checked.
      * 
-     * @param [mixed] location_number   The number of the location to start in.
+     * @param {Mixed} name   The key of the Location to start in.
      */
     self.setLocation = function (name) {
         var location, attribute, len, i;
@@ -239,7 +248,7 @@ function MapsHandlr(settings) {
         // Query the location from the current map and ensure it exists
         location = mapCurrent.locations[name];
         if (!location) {
-            throw new Error("Unknown location given: " + name);
+            throw new Error("Unknown location in setLocation: '" + name + "'.");
         }
         
         // Since the location is valid, mark it as current (with its area)
@@ -256,12 +265,14 @@ function MapsHandlr(settings) {
         // for the new Area/Location placements
         prethings = MapsCreator.getPreThings(location.area);
         
+        // Optional: set stretch commands
         if (areaCurrent.stretches) {
             setStretches(areaCurrent.stretches);
         } else {
             stretches = undefined;
         }
         
+        // Optional: set after commands
         if (areaCurrent.afters) {
             setAfters(areaCurrent.afters);
         } else {
@@ -270,7 +281,10 @@ function MapsHandlr(settings) {
     };
     
     /**
+     * Applies the stretchAdd Function to each given "stretch" command and 
+     * stores the result in stretches. If none are provided, [] is given.
      * 
+     * @param {Object[]} [stretchesRaw]
      */
     function setStretches(stretchesRaw) {
         if (stretchesRaw) {
@@ -281,7 +295,10 @@ function MapsHandlr(settings) {
     }
     
     /**
+     * Applies the afterAdd Function to each given "after" command and stores
+     * the result in afters. If none are provided, [] is given.
      * 
+     * @param {Object[]} [aftersRaw]
      */
     function setAfters(aftersRaw) {
         if (aftersRaw) {
@@ -292,34 +309,57 @@ function MapsHandlr(settings) {
     }
     
     /**
+     * Calls onSpawn on every PreThing touched by the given bounding box, 
+     * determined in order of the given direction. This is a simple wrapper 
+     * around applySpawnAction that also gives it true as the status.
      * 
-     * 
-     * 
+     * @param {String} direction   The direction by which to order PreThings: 
+     *                             "xInc", "xDec", "yInc", or "yDec".
+     * @param {Number} top   The upper-most bound to spawn within.
+     * @param {Number} right   The right-most bound to spawn within.
+     * @param {Number} bottom    The bottom-most bound to spawn within.
+     * @param {Number} left    The left-most bound to spawn within.
      */
     self.spawnMap = function (direction, top, right, bottom, left) {
         applySpawnAction(onSpawn, true, direction, top, right, bottom, left);
     };
     
     /**
+     * Calls onUnspawn on every PreThing touched by the given bounding box,
+     * determined in order of the given direction. This is a simple wrapper
+     * around applySpawnAction that also gives it false as the status.
      * 
-     * 
-     * 
+     * @param {String} direction   The direction by which to order PreThings: 
+     *                             "xInc", "xDec", "yInc", or "yDec".
+     * @param {Number} top   The upper-most bound to spawn within.
+     * @param {Number} right   The right-most bound to spawn within.
+     * @param {Number} bottom    The bottom-most bound to spawn within.
+     * @param {Number} left    The left-most bound to spawn within.
      */
     self.unspawnMap = function (direction, top, right, bottom, left) {
         applySpawnAction(onUnspawn, false, direction, top, right, bottom, left);
     };
     
     /**
-     *
-     *
+     * Calls onUnspawn on every PreThing touched by the given bounding box,
+     * determined in order of the given direction. This is used both to spawn
+     * and un-spawn PreThings, such as during QuadsKeepr shifting. The given
+     * status is used as a filter: all PreThings that already have the status
+     * (generally true or false as spawned or unspawned, respectively) will have
+     * the callback called on them.
      *
      * @param {Function} [callback]   The callback to be run whenever a 
-     *                                matching PreThing is found.
+     *                                matching PreThing is found. If falsy, this
+     *                                is ignored.
      * @param {Boolean} status   The spawn status to match PreThings against.
      *                           Only PreThings with .spawned === status will 
      *                           have the callback applied to them.
-     *
-     *
+     * @param {String} direction   The direction by which to order PreThings: 
+     *                             "xInc", "xDec", "yInc", or "yDec".
+     * @param {Number} top   The upper-most bound to apply within.
+     * @param {Number} right   The right-most bound to apply within.
+     * @param {Number} bottom    The bottom-most bound to apply within.
+     * @param {Number} left    The left-most bound to apply within.
      * @todo This will almost certainly present problems when different 
      *       directions are used. For Pokemon/Zelda style games, the system
      *       will probably need to be adapted to use a Quadrants approach
@@ -351,16 +391,6 @@ function MapsHandlr(settings) {
             for (i = start; i <= end; i += 1) {
                 prething = group[i];
                 
-                // This will have to be made relative to work for Pokemon/Zelda games...
-                // if (
-                    // prething.top > bottom
-                    // || prething.right < left
-                    // || prething.bottom < top
-                    // || prething.left > right
-                // ) {
-                    // continue;
-                // }
-                
                 // For example: if status is true (spawned), don't spawn again
                 if (prething.spawned !== status) {
                     prething.spawned = status;
@@ -374,41 +404,82 @@ function MapsHandlr(settings) {
     
     
     /**
-     * Warning: very inefficient! Should switch to binary search.
+     * Finds the index from which PreThings should start having an action 
+     * applied to them in applySpawnAction. 
+     * 
+     * @param {String} direction   The direction by which to order PreThings: 
+     *                             "xInc", "xDec", "yInc", or "yDec".
+     * @param {Number} top   The upper-most bound to apply within.
+     * @param {Number} right   The right-most bound to apply within.
+     * @param {Number} bottom    The bottom-most bound to apply within.
+     * @param {Number} left    The left-most bound to apply within.
+     * @return {Number}
      */
     function findPreThingsSpawnStart(direction, group, i, top, right, bottom, left) {
         var directionKey = directionKeys[direction],
-            directionEnd = getDirectionEnd(directionKey, top, right, bottom, left);
+            directionEnd = getDirectionEnd(directionKey, top, right, bottom, left),
+            lower = 0,
+            upper = group.length - 1,
+            index;
         
-        for (var i = 0; i < group.length; i += 1) {
-            if (group[i][directionKey] >= directionEnd) {
-                return i;
+        while (lower !== upper) {
+            index = ((lower + upper) / 2) | 0;
+            
+            if (group[index][directionKey] > directionEnd) {
+                upper = index;
+            } else {
+                lower = index + 1;
             }
         }
         
-        return i;
+        return lower;
     }
     
     /**
-     * Warning: very inefficient! Should switch to binary search.
+     * Finds the index from which PreThings should stop having an action 
+     * applied to them in applySpawnAction. 
+     * 
+     * @param {String} direction   The direction by which to order PreThings: 
+     *                             "xInc", "xDec", "yInc", or "yDec".
+     * @param {Number} top   The upper-most bound to apply within.
+     * @param {Number} right   The right-most bound to apply within.
+     * @param {Number} bottom    The bottom-most bound to apply within.
+     * @param {Number} left    The left-most bound to apply within.
+     * @return {Number}
      */
     function findPreThingsSpawnEnd(direction, group, i, top, right, bottom, left) {
         var directionKey = directionKeys[direction],
             directionKeyOpposite = directionKeys[directionOpposites[direction]],
             directionEnd = getDirectionEnd(directionKeyOpposite, top, right, bottom, left),
-            i;
+            lower = 0,
+            upper = group.length - 1,
+            index;
         
-        for (i = group.length - 1; i >= 0; i -= 1) {
-            if (group[i][directionKey] <= directionEnd) {
-                return i;
+        while (lower !== upper) {
+            index = ((lower + upper) / 2) | 0;
+            
+            if (group[index][directionKey] > directionEnd) {
+                upper = index;
+            } else {
+                lower = index + 1;
             }
         }
         
-        return i;
+        return lower;
     }
     
     /**
+     * Conditionally returns a measurement based on what direction String is
+     * given. This is useful for generically finding boundaries when the 
+     * direction isn't known, such as in findPreThingsSpawnStart and -End.
      * 
+     * @param {String} direction   The direction by which to order PreThings: 
+     *                             "xInc", "xDec", "yInc", or "yDec".
+     * @param {Number} top   The upper-most bound to apply within.
+     * @param {Number} right   The right-most bound to apply within.
+     * @param {Number} bottom    The bottom-most bound to apply within.
+     * @param {Number} left    The left-most bound to apply within.
+     * @return {Number} top, right, bottom, or left, depending on direction.
      */
     function getDirectionEnd(directionKey, top, right, bottom, left) {
         switch (directionKey) {

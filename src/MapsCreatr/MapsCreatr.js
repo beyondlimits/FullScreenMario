@@ -797,13 +797,7 @@ function MapsCreatr(settings) {
             upper = array.length,
             index;
         
-        while (true) {
-            // Case: destination found, insert here and quit it
-            if (lower === upper) {
-                array.splice(lower, 0, element);
-                return;
-            }
-            
+        while (lower !== upper) {
             index = ((lower + upper) / 2) | 0;
             
             // Case: element is less than the index
@@ -814,6 +808,11 @@ function MapsCreatr(settings) {
             else {
                 lower = index + 1;
             }
+        }
+        
+        if (lower === upper) {
+            array.splice(lower, 0, element);
+            return;
         }
     }
     

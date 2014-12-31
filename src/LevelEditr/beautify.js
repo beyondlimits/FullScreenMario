@@ -244,8 +244,8 @@
         opt = {};
 
         // compatibility
-        if (options.space_after_anon_function !== undefined && options.jslint_happy === undefined) {
-            options.jslint_happy = options.space_after_anon_function;
+        if (options.spaceAfter_anon_function !== undefined && options.jslint_happy === undefined) {
+            options.jslint_happy = options.spaceAfter_anon_function;
         }
         if (options.braces_on_own_line !== undefined) { //graceful handling of deprecated option
             opt.brace_style = options.braces_on_own_line ? "expand" : "collapse";
@@ -1553,7 +1553,7 @@
             }
 
             var space_before = true;
-            var space_after = true;
+            var spaceAfter = true;
             if (last_type === 'TK_RESERVED' && is_special_word(flags.last_text)) {
                 // "return" had a special handling in TK_WORD. Now we need to return the favor
                 output_space_before_token = true;
@@ -1597,7 +1597,7 @@
                 // unary operators (and binary +/- pretending to be unary) special cases
 
                 space_before = false;
-                space_after = false;
+                spaceAfter = false;
 
                 if (flags.last_text === ';' && is_expression(flags.mode)) {
                     // for (;; ++i)
@@ -1627,11 +1627,11 @@
                 flags.ternary_depth += 1;
             } else if (token_text === '*' && last_type === 'TK_RESERVED' && flags.last_text === 'function') {
                 space_before = false;
-                space_after = false;
+                spaceAfter = false;
             }
             output_space_before_token = output_space_before_token || space_before;
             print_token();
-            output_space_before_token = space_after;
+            output_space_before_token = spaceAfter;
         }
 
         function handle_block_comment() {

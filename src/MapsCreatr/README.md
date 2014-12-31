@@ -63,8 +63,10 @@ to automate common operations.
 Functions (by default, self).
 
 * **[entrances]** *`Object`* -  Optional entrance Functions to use as the 
-openings in Locations. If not provided, it is ignored; otherwise, an entrance 
-String is required by all Locations.
+openings in Locations.
+
+* **[requireEntrance]** *`Boolean`* - Whether Locations must have an entrance
+Function defined by "entry" (by default, false).
 
 * **[maps]** *`Object`* - Any maps that should immediately be stored via a
 storeMaps call, keyed by name.
