@@ -968,8 +968,8 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Stone", "x": 920, "y": 88, "width": 104, "height": 24 },
                         { "macro": "Fill", "thing": "Stone", "x": 976, "y": 24, "xnum": 2, "xwidth": 32, "width": 16, "height": 24 },
                         { "macro": "Fill", "thing": "Brick", "x": 1024, "y": 64, "xnum": 6 },
-                        { "macro": "EndInsideCastle", "x": 1024, "spawnType": "Koopa", "transport": { "map": "3-1" }},
-                        { "thing": "Platform", "x": 1084, "y": 56, "width": 16 }
+                        { "macro": "EndInsideCastle", "x": 1024, "spawnType": "Shell", "transport": { "map": "3-1" }},
+                        { "thing": "Platform", "x": 1108, "y": 56, "width": 16, "sliding": true, "begin": 1080, "end": 1112, "nocollidechar": true }
                     ]
                 }
             ]
@@ -1310,7 +1310,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Stone", "x": 944, "y": 24, "width": 80, "height": 24 },
                         { "macro": "EndInsideCastle", "x": 1024, "spawnType": "Beetle", "transport": { "map": "4-1" }},
                         { "macro": "Fill", "thing": "Brick", "x": 1056, "y": 64, "xnum": 2, "ynum": 3 },
-                        { "thing": "Platform", "x": 1104, "y": 56, "width": 16 }
+                        { "thing": "Platform", "x": 1084, "y": 56, "width": 16 }
                     ]
                 }
             ]
@@ -1763,7 +1763,7 @@ FullScreenMario.prototype.settings.maps = {
                             "before": {
                                 "width": 256,
                                 "creation": [ 
-                                    { "macro": "EndInsideCastle", "spawnType": "Spiny", "transport": { "map": "5-1" } }
+                                    { "macro": "EndInsideCastle", "spawnType": "SpinyEgg", "transport": { "map": "5-1" } }
                                 ]
                             }
                         }
@@ -2135,7 +2135,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "macro": "Fill", "thing": "Brick", "x": 1024, "y": 64, "xnum": 6 },
                         { "macro": "EndInsideCastle", "x": 1024, "spawnType": "Lakitu", "transport": { "map": "6-1" } },
                         { "thing": "Podoboo", "x": 1048, "y": -40 },
-                        { "thing": "Platform", "x": 1084, "y": 56, "width": 16 }
+                        { "thing": "Platform", "x": 1108, "y": 56, "width": 16, "sliding": true, "begin": 1080, "end": 1112, "nocollidechar": true }
                     ]
                 }
             ]
