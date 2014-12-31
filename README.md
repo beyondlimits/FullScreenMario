@@ -23,7 +23,7 @@ Build the project using the Developing instructions, and use the [index.html](di
 
 FullScreenMario uses [Grunt](http://gruntjs.com/) to automate building, which requires [Node.js](http://node.js.org). The process is straightforward; see [Grunt's help page](http://gruntjs.com/getting-started).
 
-The root index.html file includes all the raw .js anc .css files, and thus should only be used for development. The dist/index.html file uses the built and minified output so it should be used as production code.
+The root index.html file includes all the raw .js and .css files, and thus should only be used for development. The dist/index.html file uses the built and minified output so it should be used as production code.
 
 #### Coding
 

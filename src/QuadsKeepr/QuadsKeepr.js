@@ -117,7 +117,7 @@ function QuadsKeepr(settings) {
         // Function used to create a canvas of a given width and height.
         createCanvas,
         
-        // How many rows and columns of quadrants there should be.
+        // How many rows and columns of Quadrants there should be initially.
         numRows,
         numCols,
         
@@ -129,16 +129,16 @@ function QuadsKeepr(settings) {
         startLeft,
         startTop,
         
-        // How many rows of quadrants there should be.
+        // A QuadrantRow[] that holds each QuadrantRow in order.
         quadrantRows,
         
-        // How many columns of quadrants there should be.
+        // A QuadrantCol[] that holds each QuadrantCol in order.
         quadrantCols,
         
-        // How wide quadrants should be.
+        // How wide Quadrants should be.
         quadrantWidth,
         
-        // How tall quadrants should be.
+        // How tall Quadrants should be.
         quadrantHeight,
 
         // Names under which external Things should store Quadrant information
@@ -309,7 +309,7 @@ function QuadsKeepr(settings) {
     
     /**
      * Shifts each Quadrant horizontally and vertically, along with the row and
-     * column containers. OFfsets are adjusted to check for row or column 
+     * column containers. Offsets are adjusted to check for row or column 
      * deletion and insertion.
      * 
      * @param {Number} dx
@@ -846,10 +846,6 @@ function QuadsKeepr(settings) {
         
         // The thing is no longer considered changed, since quadrants know it
         thing[thingChanged] = false;
-        
-        if (window.durp) {
-            debugger;
-        }
     };
     
     /**

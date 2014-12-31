@@ -11,25 +11,40 @@ and columns.
 
 #### Important APIs
 
+* **resetQuadrants()** - Completely resets all Quadrants. The grid structure of 
+rows and columns is remade according to startLeft and startTop, and newly 
+created Quadrants pushed into it. 
 
+* **shiftQuadrants(***`dx`, `dy`***)** - Shifts each Quadrant horizontally and
+vertically, along with the row and column containers. Offsets are adjusted to
+check for row or column deletion and insertion.
 
 #### Important Member Variables
 
+* **ObjectMaker** *`ObjectMakr`* - An ObjectMakr factory used to create Quadrant
+objects.
 
+* **quadrantRows** *`QuadrantRow[]`* - A QuadrantRow[] that holds each 
+QuadrantRow in order (each of which holds a Quadrant[]).
+
+* **quadrantCols** *`QuadrantCol[]`* - A QuadrantCol[] that holds each 
+QuadrantCol in order (each of which holds a Quadrant[]).
 
 #### Constructor Arguments
 
 * **ObjectMaker** *`ObjectMakr`*
 
-* **createCanvas** *`Function`* - A function to create HTML5 canvas elements.
+* **numRows** *`Number`* - How many rows of Quadrants there should be initially.
 
-* **numRows** *`Number`*
+* **numCols** *`Number`* - How many columns of Quadrants there should be 
+initially.
 
-* **numCols** *`Number`*
+* **quadrantWidth** *`Number`* - How wide each Quadrant should be.
 
-* **quadrantWidth** *`Number`*
+* **quadrantHeight** *`Number`* - How high each Quadrants hould be.
 
-* **quadrantHeight** *`Number`*
+* **createCanvas** *`Function`* - A function to create HTML5 canvas elements
+for the Quadrants.
 
 * **groupNames** *`String[]`* - The names of groups Things may be in.
 
