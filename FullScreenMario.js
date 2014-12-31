@@ -785,7 +785,9 @@ var FullScreenMario = (function(GameStartr) {
     function maintainOverlaps(thing) {
         // If checkOverlaps is still true, this is the first maintain call
         if (thing.checkOverlaps) {
-            thing.EightBitter.setOverlapBoundaries(thing);
+            if (!thing.EightBitter.setOverlapBoundaries(thing)) {
+                return;
+            }
         }
         
         thing.EightBitter.slideToX(
@@ -824,8 +826,16 @@ var FullScreenMario = (function(GameStartr) {
      * midpoint, and the goal set to move it away from the midpoint.
      * 
      * @param {Thing} thing
+     * @return {Boolean}   Whether the Thing's overlaps were successfully 
+     *                     recorded (if there was only one, not so).
      */
     function setOverlapBoundaries(thing) {
+        // Only having one overlap means nothing should be done
+        if (thing.overlaps.length === 1) {
+            thing.overlaps.length = 0;
+            return false;
+        }
+        
         var rightX = -Infinity,
             leftX = Infinity,
             overlaps = thing.overlaps,
@@ -856,6 +866,8 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         thing.checkOverlaps = false;
+        
+        return true;
     }
 
     /**
