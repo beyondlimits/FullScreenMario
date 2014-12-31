@@ -4321,6 +4321,14 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Blooper} thing
      */
     function moveBlooper(thing) {
+        // If the player is dead, just drift aimlessly
+        if (!thing.EightBitter.isThingAlive(thing.EightBitter.player)) {    
+            thing.xvel = thing.EightBitter.unitsize / -4;
+            thing.yvel = 0;
+            thing.movement = undefined;
+            return;
+        }
+        
         switch (thing.counter) {
             case 56: 
                 thing.squeeze = true; 
@@ -6275,7 +6283,7 @@ var FullScreenMario = (function(GameStartr) {
             }
         }
         
-        thing.nocollide = thing.nomove = 1;
+        thing.nocollide = thing.nomove = thing.dead = true;
         EightBitter.MapScreener.nokeys = true;
         EightBitter.AudioPlayer.clearAll();
         EightBitter.AudioPlayer.play("Player Dies");
