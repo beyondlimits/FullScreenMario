@@ -2469,7 +2469,7 @@ var FullScreenMario = (function(GameStartr) {
         MapsHandler.spawnMap(
             "xInc",
             MapScreener.top / EightBitter.unitsize,
-            command.x,
+            (MapScreener.left + EightBitter.QuadsKeeper.right) / EightBitter.unitsize,
             MapScreener.bottom / EightBitter.unitsize,
             left
         );
