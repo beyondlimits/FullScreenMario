@@ -820,7 +820,8 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Stone", "x": 1512, "y": 32, "width": 16 },
                         { "thing": "Stone", "x": 1512, "y": 88, "width": 16, "height": 32 },
                         { "thing": "PipeHorizontal", "x": 1520, "y": 48, "transport": 2, "small": true },
-                        { "thing": "Stone", "x": 1528, "y": 88, "width": 112, "height": 88 }
+                        { "thing": "Stone", "x": 1528, "y": 88, "width": 128, "height": 88 },
+                        { "macro": "Floor", "x": 1640, "width": 16 }
                     ]
                 }, {
                     "setting": "Overworld",
@@ -2735,7 +2736,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "Stone", "x": 1488, "y": 8, "width": 40 },
                         { "thing": "Stone", "x": 1496, "y": 16, "width": 32 },
                         { "thing": "Stone", "x": 1504, "y": 24, "width": 24 },
-                        { "thing": "Stone", "x": 1512, "y": 32, "width": 16 },
+                        { "thing": "Stone", "x": 1512, "y": 32, "width": 16, "height": 32 },
                         { "thing": "Stone", "x": 1512, "y": 88, "width": 88 },
                         { "thing": "PipeHorizontal", "x": 1520, "y": 48, "width": 16 },
                         { "thing": "Stone", "x": 1528, "y": 88, "width": 112, "height": 88 }
