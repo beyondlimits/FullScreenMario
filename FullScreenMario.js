@@ -6944,15 +6944,18 @@ var FullScreenMario = (function(GameStartr) {
      * statement doesn't have to be used.
      */
     function setAreaBackground(area) {
-        // Underworld, Castle, and all Nights: background is black
+        // Non-underwater Underworld, Castle, and all Nights: black background
         if (
-            area.setting.indexOf("Underworld") !== -1
-            || area.setting.indexOf("Castle") !== -1
-            || area.setting.indexOf("Night") !== -1
+            area.setting.indexOf("Underwater") === -1
+            && (
+                area.setting.indexOf("Underworld") !== -1
+                || area.setting.indexOf("Castle") !== -1
+                || area.setting.indexOf("Night") !== -1
+            )
         ) {
             area.background = "#000000";
         } 
-        // Default (typically Overworld): background is sky blue
+        // Default (typically Overworld): sky blue background
         else {
             area.background = "#5c94fc";
         }

@@ -1,5 +1,5 @@
 FullScreenMario.prototype.settings.maps = {
-    "mapDefault": "1-1",
+    "mapDefault": "8-4",
     "locationDefault": "0",
     "screenAttributes": [
         "gravity",
@@ -3403,11 +3403,11 @@ FullScreenMario.prototype.settings.maps = {
             "name": "8-4",
             "locations": [
                 { "entry": "Castle" },
-                { "entry": "PipeVertical" }, 
-                { "area": 1, "entry": "PipeVertical" }, 
-                { "area": 2, "entry": "PipeVertical" }, 
-                { "area": 3, "entry": "PipeVertical", "x": 24 },
-                // { "area": 4, "entry": "PipeVertical" }
+                { "entry": "PipeVertical" },  // 1: Pipe 1
+                { "area": 1, "entry": "PipeVertical" }, // 2: Past B 
+                { "area": 2, "entry": "PipeVertical" }, // 3: Past C
+                { "area": 3, "entry": "PipeVertical", "xloc": 0 }, // 4: Underwater
+                { "area": 4, "entry": "PipeVertical" } // 5: Past E
             ],
             "areas": [
                 {
@@ -3430,13 +3430,13 @@ FullScreenMario.prototype.settings.maps = {
                                 "creation": [
                                     { "macro": "Floor" },
                                     { "thing": "Stone", "y": 88 },
-                                    { "macro": "SectionFail", "y": 80, "height": 80 },
                                 ]
                             },
                             "after": {
                                 "width": 424,
                                 "creation": [
                                     { "macro": "Pipe", "y": 16, "height": "Infinity", "piranha": true, "transport": 1 },
+                                    { "thing": "Stone", "y": 88, "width": 424 },
                                     { "macro": "Floor", "x": 16, "width": 72 },
                                     { "macro": "Fill", "thing": "Goomba", "x": 36, "y": 8, "xnum": 3, "xwidth": 12 },
                                     { "macro": "Floor", "x": 88, "y": 24, "width": 32 },
@@ -3448,6 +3448,7 @@ FullScreenMario.prototype.settings.maps = {
                                     { "macro": "Floor", "x": 320, "y": 24, "width": 56 },
                                     { "macro": "Pipe", "x": 376, "y": 48, "height": "Infinity", "piranha": true },
                                     { "macro": "Floor", "x": 392, "y": 24, "width": 32 },
+                                    { "macro": "Section", "x": 424 }
                                 ]
                             }
                         },
@@ -3456,10 +3457,34 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Castle",
                     "creation": [
                         { "location": 2 },
-                        { "macro": "Section" }
+                        { "macro": "Pipe", "y": 16, "height": "Infinity", "piranha": true, "entrance": 2 },
+                        { "thing": "Stone", "y": 88, "width": 16 },
+                        { "macro": "Section", "x": 16 }
                     ],
                     "sections": [
                         {
+                            "before": {
+                                "width": 328,
+                                "creation": [
+                                    { "thing": "Stone", "y": 88, "width": 328 },
+                                    { "macro": "Floor", "width": 40 },
+                                    { "macro": "Pipe", "x": 40, "y": 24, "height": "Infinity", "piranha": true },
+                                    { "macro": "Floor", "x": 56, "width": 64 },
+                                    { "macro": "Fill", "thing": "Beetle", "x": 88, "y": 8.5, "xnum": 2, "xwidth": 16 },
+                                    { "macro": "Pipe", "x": 120, "y": 16, "height": "Infinity", "piranha": true, "transport": 1 },
+                                    { "macro": "Floor", "x": 136, "width": 64 },
+                                    { "thing": "Koopa", "x": 176, "y": 32, "jumping": true },
+                                    { "thing": "Koopa", "x": 192, "y": 24, "jumping": true },
+                                    { "macro": "Pipe", "x": 200, "y": 24, "height": "Infinity", "piranha": true },
+                                    { "macro": "Water", "x": 216, "width": 24 },
+                                    { "macro": "Floor", "x": 240, "width": 88 },
+                                    { "thing": "Block", "x": 264, "y": 32, "hidden": true },
+                                    { "thing": "Stone", "x": 280, "y": 32, "width": 16 },
+                                    { "macro": "Pipe", "x": 280, "y": 32, "height": 24, "transport": 3 },
+                                    { "thing": "Koopa", "x": 304, "y": 28, "jumping": true },
+                                    { "thing": "Koopa", "x": 320, "y": 36, "jumping": true },
+                                ]
+                            },
                             "stretch": {
                                 "width": 8,
                                 "creation": [
@@ -3468,76 +3493,40 @@ FullScreenMario.prototype.settings.maps = {
                                 ]
                             },
                             "after": {
-                                "width": 8,
+                                "width": 16,
                                 "creation": [
-                                    { "macro": "Section" }
+                                    { "macro": "Pipe", "y": 16, "height": "Infinity", "piranha": true },
+                                    { "thing": "Stone", "y": 88, "width": 16 },
+                                    { "macro": "Section", "x": 16 }
                                 ]
                             }
-                        },
-                        {
-                            "before": {
-                                "width": 256,
-                                "creation": [
-                                    { "macro": "SectionFail", "y": 80, "width": 40, "height": 80 },
-                                    { "macro": "Pipe", "y": 16, "height": "Infinity", "piranha": true, "entrance": 2 },
-                                    { "thing": "Stone", "y": 88, "width": 45 },
-                                    { "macro": "Floor", "x": 16, "width": 40 },
-                                    { "macro": "Pipe", "x": 56, "y": 24, "height": "Infinity", "piranha": true },
-                                    { "macro":" Floor", "x": 72, "width": 64 },
-                                    { "macro": "Fill", "thing": "Beetle", "x": 104, "y": 8.5, "xnum": 2, "xwidth": 16 },
-                                    { "macro": "Pipe", "x": 136, "y": 16, "height": "Infinity", "piranha": true, "transport": 1 },
-                                    { "macro": "Floor", "x": 152, "width": 64 },
-                                    { "thing": "Koopa", "x": 192, "y": 32, "jumping": true },
-                                    { "thing": "Koopa", "x": 208, "y": 24, "jumping": true },
-                                    { "macro": "Pipe", "x": 216, "y": 24, "height": "Infinity", "piranha": true },
-                                    { "macro": "Water", "x": 232, "width": 24 },
-                                ]
-                            },
-                            "stretch": {
-                                "width": 8,
-                                "creation": [
-                                    { "thing": "Stone", "y": 88 },
-                                    { "macro": "Floor" }
-                                ]
-                            },
-                            "after": {
-                                "width": 348,
-                                "creation": [
-                                    { "macro": "Floor", "width": 104 },
-                                    { "thing": "Block", "x": 280, "y": 32, "hidden": true },
-                                    { "thing": "Stone", "x": 296, "y": 32, "width": 16 },
-                                    { "macro": "Pipe", "x": 296, "y": 32, "height": 24, "piranha": true, "transport": 3 },
-                                    { "thing": "Koopa", "x": 320, "y": 20, "jumping": true },
-                                    { "thing": "Koopa", "x": 336, "y": 24, "jumping": true },
-                                ]
-                            }
-                        },
+                        }
                     ]
                 }, {
                     "setting": "Castle",
                     "creation": [
                         { "location": 3 },
-                        { "macro": "Floor", "width": 24 },
-                        { "thing": "Stone", "y": 88, "width": 24 },
-                        { "macro": "Section", "x": 24 }
+                        { "macro": "Pipe", "y": 16, "height": "Infinity", "piranha": true, "entrance": 3 },
+                        { "thing": "Stone", "y": 88, "width": 16 },
+                        { "macro": "Section", "x": 16 }
                     ],
                     "sections": [
                         {
                             "before": {
-                                "width": 280,
+                                "width": 264,
                                 "creation": [
-                                    { "macro": "SectionFail", "y": 80, "width": 40, "height": 80 },
-                                    { "macro": "Pipe", "y": 16, "height": "Infinity", "piranha": true, "entrance": 3 },
-                                    { "thing": "Stone", "y": 88, "width": 38 },
-                                    { "macro": "Floor", "x": 16 },
-                                    { "macro": "Floor", "x": 24, "y": 24, "width": 48 },
-                                    { "macro": "Pipe", "x": 72, "y": 40, "height": "Infinity", "piranha": true },
-                                    { "macro": "CheepsStart", "x": 88, "y": 24, "width": 48 },
-                                    { "macro": "Pipe", "x": 136, "y": 48, "height": "Infinity", "piranha": true, "transport": 1 },
-                                    { "macro": "Floor", "x": 152, "y": 24, "width": 48 },
-                                    { "macro": "Water", "x": 200, "width": 32 },
-                                    { "macro": "Floor", "x": 232, "y": 24, "width": 32 },
-                                    { "macro": "Pipe", "x": 264, "y": 40, "height": "Infinity", "piranha": true, "transport": 4 },
+                                    { "thing": "Stone", "y": 88, "width": 264 },
+                                    { "macro": "Floor" },
+                                    { "macro": "Floor", "x": 8, "y": 24, "width": 48 },
+                                    { "macro": "Pipe", "x": 56, "y": 40, "height": "Infinity", "piranha": true },
+                                    { "macro": "CheepsStart", "x": 72 },
+                                    { "macro": "Floor", "x": 72, "y": 24, "width": 48 },
+                                    { "macro": "Pipe", "x": 120, "y": 48, "height": "Infinity", "piranha": true, "transport": 1 },
+                                    { "macro": "Floor", "x": 136, "y": 24, "width": 48 },
+                                    { "macro": "Water", "x": 184, "width": 32 },
+                                    { "macro": "Floor", "x": 216, "y": 24, "width": 32 },
+                                    { "macro": "Pipe", "x": 248, "y": 40, "height": "Infinity", "piranha": true, "transport": 4 },
+                                    { "macro": "CheepsStop", "x": 264 },
                                 ]
                             },
                             "stretch": {
@@ -3548,9 +3537,12 @@ FullScreenMario.prototype.settings.maps = {
                                 ]
                             },
                             "after": {
-                                "width": 24,
+                                "width": 40,
                                 "creation": [
-                                    { "macro": "Floor", "width": 24 }
+                                    { "macro": "Floor", "width": 24 },
+                                    { "thing": "Stone", "y": 88, "width": 40 },
+                                    { "macro": "Pipe", "x": 24, "y": 16, "height": "Infinity", "piranha": true },
+                                    { "macro": "Section", "x": 40 }
                                 ]
                             }
                         }
@@ -3582,7 +3574,7 @@ FullScreenMario.prototype.settings.maps = {
                         { "thing": "CastleBlock", "x": 512, "y": 44, "fireballs": 6, "hidden": true },
                         { "thing": "Stone", "x": 536, "y": 32, "width": 40, "height": 32 },
                         { "thing": "Stone", "x": 536, "y": 80, "width": 40, "height": 24 },
-                        { "thing": "PipeHorizontal", "x": 544, "y": 48, "width": 40 },
+                        { "thing": "PipeHorizontal", "x": 544, "y": 48, },
                         { "thing": "Stone", "x": 552, "y": 56, "width": 24, "height": 24 }
                     ]
                 }, {
@@ -3591,9 +3583,9 @@ FullScreenMario.prototype.settings.maps = {
                     "creation": [
                         { "location": 5 },
                         { "macro": "Pipe", "y": 16, "height": "Infinity", "piranha": true, "entrance": 5 },
-                        { "thing": "Stone", "y": 88, "width": 224 },
+                        { "thing": "Stone", "y": 88, "width": 232 },
                         { "macro": "Floor", "x": 16, "width": 40 },
-                        { "macro": "Pipe", "x": 56, "y": 16, "height": "Infinity", "piranha": true },
+                        { "macro": "Pipe", "x": 56, "y": 16, "height": "Infinity", "piranha": true, "transport": 1 },
                         { "macro": "Floor", "x": 72, "width": 72 },
                         { "thing": "HammerBro", "x": 112, "y": 12 },
                         { "macro": "Water", "x": 128, "width": 56 },

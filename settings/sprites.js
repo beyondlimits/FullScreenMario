@@ -657,7 +657,10 @@ FullScreenMario.prototype.settings.sprites = {
             },
             "Stone": {
                 "normal": "p[2,5,9]2x114,012x112,00112x110,0001112x18,00001111x28,00001111x28,00001111x28,00001111x28,00001111x28,00001111x28,00001111x28,00001111x28,0000111x09,200011x011,2001x013,2x016,2",
-                "Underwater": ["same", ["solids", "Floor", "Underwater", "normal"]],
+                "Underwater": {
+                    "normal": ["same", ["solids", "Floor", "Underwater", "normal"]],
+                    "Castle": ["same", ["solids", "Stone", "Castle", "Underwater"]]
+                },
                 "Underworld": ["filter", ["solids", "Stone", "normal"], "Underworld"],
                 "Castle": {
                     "normal": "p[1,2,3,4]0031x06,31000022310x25,310x25,310x25,310x25,310x25,310x25,310x25,310x25,310x25,3102223331x37,13333x116,x06,31x06,310x25,310x25,310x25,310x25,310x25,310x25,310x25,310x25,310x25,310x25,31x37,1x37,x117,",
