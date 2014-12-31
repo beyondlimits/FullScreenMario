@@ -1592,7 +1592,7 @@ FullScreenMario.prototype.settings.maps = {
             ],
             "areas": [
                 {
-                    "setting": "Overworld",
+                    "setting": "Overworld Shrooms",
                     "blockBoundaries": true,
                     "creation": [
                         { "location": 0 },

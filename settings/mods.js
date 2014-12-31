@@ -231,6 +231,11 @@ FullScreenMario.prototype.settings.mods = {
                         "0.21": "#000000",
                         "1": "#700000"
                     },
+                    "Shrooms": {
+                        ".21": "#9C94EC",
+                        ".49": "#A7AAEE",
+                        "1": "#FFCC77"
+                    },
                     "Womb": {
                         "0.21": "#703521",
                         ".7": "#770014",
