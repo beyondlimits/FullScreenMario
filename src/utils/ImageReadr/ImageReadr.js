@@ -78,7 +78,7 @@ document.onreadystatechange = (function (settings) {
         element.className = "palette palette-selected";
         
         PixelRender = new PixelRendr({
-            "palette": palette
+            "paletteDefault": palette
         });
         
         currentPalette = name;

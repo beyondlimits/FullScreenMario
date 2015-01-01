@@ -1,147 +1,214 @@
 # PixelRendr.js
 
-*An EightBittr.js module*
+A moderately inefficient graphics module designed to compress images as compressed text blobs, store the text blobs in a folder-like system, and later load those images via cached class-based lookups. These tasks are to be performed and cached quickly enough for use in real-time environments, such as video games.
 
+## Summary
 
-## What is PixelRendr.js?
+At its core, PixelRendr.js is a library. It takes in sprites and string keys to store them under, and offers a fast lookup API. The internal folder structure storing images is at its core a tree, where strings are nodes similar to CSS classNames. See StringFilr.js for more information on storage, and ChangeLinr.js for the processing framework.
 
-PixelRendr.js is a graphics module designed to store images as compressed text blobs, store the text blobs in a folder-like system, and load those images. These tasks are to be performed and cached quickly enough for use in real-time environments, such as video games.
+#### Generating Sprites
 
+The most straightforward way is to use the encodeUri API. Rendering is done by loading an image onto an HTML <img> element, so a browser is required; any image format supported by that browser may be provided.
 
-## What does it do?
+```javascript
+MyPixelRender.encodeURI("http://my.image.url.gif", function (results) {
+    console.log(results);
+});
+```
 
-At its core, PixelRendr.js is a library. It takes in sprites and string keys to store them under, and offers a fast lookup API. The internal folder structure storing images is at its core a tree, where strings are nodes similar to CSS classNames. For example, if the following structure is stored:
+#### Sprites Format
 
-    {
-        "Foo": {
-            "Bar": {
-                "Baz": "{Sprite A}"
-            },
-            "Quz": "{Sprite B}"
-        }
-    }
+To start, each PixelRendr keeps a global "palette" as an Array[]:
     
-Looking up "Foo Bar Baz" will retrieve Sprite A, as will looking up "Foo Baz Bar" or "Baz Bar Foo". This is useful for situations where the ordering of an object's attributes is irrelevant and/or unknown.
+```javascript
+[
+    [0, 0, 0, 0],         // transparent
+    [255, 255, 255, 255], // white
+    [0, 0, 0, 255],       // black
+    // ... and so on
+]
+````
 
+Ignoring compression, sprites are stored as a Number[]. For example:
 
-## How can I make my own sprites?
-
-The most straightforward way is to use a PixelRendr.js object's `.encodeURI(uri, callback)` method. In code:
-
-    MyPixelRender.encodeURI("http://my.image.url.gif", function (results) {
-        console.log(results);
-    });
-
-*Rendering is done by loading that image into an HTML `<img>` element, so any filetype supported by your browser is allowed.*
-
-
-## What is this image format?
-
-Images are stored as compressed arrays of integers, where each integer represents a color in a pre-defined palette. This custom notation is used over traditional image encoding to allow native filters on colors (more on that later).
-
-### How is the palette stored?
-
-In code, an array of arrays:
-
-    [
-        [0, 0, 0, 0],         // transparent
-        [255, 255, 255, 255], // white
-        [0, 0, 0, 255],       // black
-        // ... and so on
-    ]
-
-This means the number '0' codes a transparent pixel in sprites, '1' codes a white pixel, and so on.
-
-
-### How are images stored?
-
-In short, an array of numbers:
-
-    "00000001112"
-
-This refers to seven transparent pixels, three white pixels, and a black pixel. Most images are much larger and more complex than this, so a couple of compression techniques are applied:
-
-1. #### Palette Mapping
+```javascript
+"00000001112"
+```
     
-    It is necessary to have a consistent number of digits in images, as 010 could be [0, 1, 0], [0, 10], etc. So, for palettes with more than ten colors, [1, 14, 1] would be ["01", "14", "01"]:
+Using the above palette, this represents transparent pixels, three white pixels, and a black pixel. Most images are much larger and more complex than this, so a couple of compression techniques are applied:
 
-        "011401"
+1. **Palette Mapping**
+
+    It is necessary to have a consistent number of digits in images, as 010 could be [0, 1, 0], [0, 10], or etc. So, for palettes with more than ten colors, [1, 14, 1] would use ["01", "14", "01"]:
+
+    ```javascript
+    "011401011401011401011401011401011401011401"
+    ```
 
     We can avoid this wasted character space by instructing a sprite to only use a subset of the pre-defined palette:
 
-        "p[1,14]010"
+    ```javascript
+    "p[1,14]010010010010010010010"
+    ```
 
     The 'p[0,14]' tells the renderer that this sprite only uses colors 0 and 14, so the number 0 should refer to palette number 1, and the number 1 should refer to palette number 14.
 
-    *(This example is obviously less efficient, but overall the savings approach a 50% size reduction)*
-
-2. #### Character Repetition
+2. **Character Repetition**
 
     Take the following wasteful sprite:
 
-        "p[0]0000000000000000000000000000000000000000000000000"
+    ```javascript
+    "p[0]0000000000000000000000000000000000000000000000000"
+    ```
 
-    We know the 0 should be printed 35 times, so the following notation is used to indicate this:
+    We know the 0 should be printed 35 times, so the following notation is used to indicate "Print ('x') 0 35 times (','))":
 
-        "p[0]x035,"
+    ```javascript
+    "p[0]x035,"
+    ```
 
-    *(Print ('x') 0 35 times (','))*
+3. **Filters**
 
+    Many sprites are different versions of other sprites, often simply identical or miscolored (the only two commands supported so far). So, a library may declare the following filter:
 
-### How are filters applied?
-
-All filtered sprites are references to previously existing sprites. So, there might be a filter defined for your raw library:
-
+    ```javascript
     "Sample": [ "palette", { "00": "03" } ]
+    ```
 
-...along with a couple of sprites:
+    ...along with a couple of sprites:
 
-    "foo": "p[0,7,14]000111222000111222000111222000111222000111222000111222000111222"
-
+    ```javascript
+    "foo": "p[0,7,14]000111222000111222000111222",
     "bar": [ "filter", ["foo"], "Sample"]
+    ```
 
-The "bar" sprite will be a *filter*ed version of *foo*, using the *Sample* filter. The Sample filter instructs the sprite to replace all instances of "00" with "03", so "bar" will be equivalent to:
+    The "bar" sprite will be a filtered version of foo, using the Sample filter. The Sample filter instructs the sprite to replace all instances of "00" with "03", so "bar" will be equivalent to:
+ 
+   ```javascript
+   "bar": "p[3,7,14]000111222000111222000111222"
+   ```
+ 
+    Another instruction you may use is "same", which is equivalent to directly copying a sprite with no changes:
 
-    "bar": "p[3,7,14]000111222000111222000111222000111222000111222000111222000111222"
-
-The benefit of using filters is automation: changes to one are reflected in the other. A reduced byte-size for your library is an added plus.
-
-Another instruction you may use is "same", which is equivalent to directly copying a sprite with no changes:
-
+    ```javascript
     "baz": [ "same", ["bar"] ]
+    ```
 
-### What are 'multiple' sprites?
+4. **"Multiple" sprites**
 
-Objects commonly have to repeat a section of their image. Rather than use two objects to represent one, images may be directed to have one sub-image for the top/bottom or left/right, with a single sub-image filling in the middle.
+    Sprites are oftentimes of variable height. Pipes in Mario, for example, have a top opening and a shaft of potentially infinite height. Rather than use two objects to represent the two parts, sprites may be directed to have one sub-sprite for the top/bottom or left/right, with a single sub-sprite filling in the middle. Pipes, then, would use a top and middle.
 
+    ```javascript
     [ "multiple", "vertical", {
         "top": "{upper image data}",
         "bottom": "{repeated image data}"
     } ]
+    ```
 
+#### Important Member Variables
 
-## Coding Documentation
+* **BaseFiler** *`StringFilr`* - A queryable interface on top of the base 
+library.
 
-*To be filled out!*
+* **ProcessorBase**  *`ChangeLinr`* - Applies processing functions to turn
+raw strings into partial sprites.
 
-### Useful member variables
+* **ProcessorDims** *`ChangeLinr`* - Takes partial sprites and repeats rows,
+then checks for dimension flipping.
 
-1. #### Library
+* **ProcesserEncode** *`CHangeLinr`* - Reverse of ProcessorBase: takes real
+images and compresses their data into sprites.
 
-    The library variable just stores two objects:
+#### Constructor Arguments
 
-    1. ##### Raws
+* **paletteDefault** *`Array[]`* - The palette of colors to use for sprites.
+sprites. This should be an Array of Number[4]s representing rgba values.
 
-        The tree structure containing raw, unprocessed strings.
+* **[library]** *`Object`* - A library of sprites to process.
 
-    2. ##### Sprites
+* **[filters]** *`Object`* - Filters that may be used by sprites in the library.
 
-        A tree structure of the same shape as Raws, but with the processed sprite strings.
+* **[scale]** *`Number`* - An amount to expand sprites by when processing (by
+default, 1 for not at all).
 
-2. #### ProcessorBase
+* **[flipVert]** *`String`* - What sub-class in decode keys should indicate a
+sprite is to be flipped  ertically (by default, "flip-vert").
 
-    Runs the graphics pipeline. Output is cached, so string keys must be given (during initial library parsing, the real path is given, with strings separating the names).
+* **[flipHoriz]** *`String`* - What sub-class in decode keys should indicate a
+sprite is to be flipped horizontally (by default, "flip-horiz").
 
-3. #### BaseFiler
+* **[spriteWidth]** *`String`* - What key in attributes should contain sprite
+widths (by default, "spriteWidth").
 
-    Lookup wrapper for library.sprites. Given classes as space-joined arrays of strings (e.g. "one two three"), it returns and caches the output of ProcessorBase.
+* **[spriteHeight]** *`String`* - What key in attributes should contain sprite
+heights (by default, "spriteHeight").
+
+* **[Uint8ClampedArray]** *`Function`* - What internal storage container should
+be used for pixel data (by default, Uint8ClampedArray).
+
+## Sample Usage
+
+1. Creating and using a PixelRendr to create a simple black square.
+
+    ```javascript
+    var PixelRender = new PixelRendr({
+            "paletteDefault": [
+                [0, 0, 0, 255] // black
+            ],
+            "library": {
+                "BlackSquare": "x064,"
+            }
+        }),
+        sizing = {
+            "spriteWidth": 8,
+            "spriteHeight": 8
+        },
+        sprite = PixelRender.decode("BlackSquare", sizing),
+        canvas = document.createElement("canvas"),
+        context = canvas.getContext("2d"),
+        imageData;
+
+    canvas.width = sizing.spriteWidth;
+    canvas.height = sizing.spriteHeight;
+
+    imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    PixelRender.memcpyU8(sprite, imageData.data);
+    context.putImageData(imageData, 0, 0);
+    ```
+    
+2. Creating and using a PixelRendr to create a simple white square, using the
+   simple black square as reference for a filter.
+   
+   ```javascript
+   var PixelRender = new PixelRendr({
+            "paletteDefault": [
+                [0, 0, 0, 255],      // black
+                [255, 255, 255, 255] // white
+            ],
+            "library": {
+                "BlackSquare": "x064,",
+                "WhiteSquare": ["filter", ["BlackSquare"], "Invert"]
+            },
+            "filters": {
+                "Invert": ["palette", {
+                    "0": 1,
+                    "1": 0
+                }]
+            }
+        }),
+        sizing = {
+            "spriteWidth": 8,
+            "spriteHeight": 8
+        },
+        sprite = PixelRender.decode("WhiteSquare", sizing),
+        canvas = document.createElement("canvas"),
+        context = canvas.getContext("2d"),
+        imageData;
+
+    canvas.width = sizing.spriteWidth;
+    canvas.height = sizing.spriteHeight;
+
+    imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    PixelRender.memcpyU8(sprite, imageData.data);
+    context.putImageData(imageData, 0, 0);
+    ```

@@ -1,7 +1,10 @@
 FullScreenMario.prototype.settings.sprites = {
+    "scale": FullScreenMario.scale,
     "spriteWidth": "spritewidthpixels",
     "spriteHeight": "spriteheightpixels",
-    "palette": [
+    "flipVert": "flip-vert",
+    "flipHoriz": "flipped",
+    "paletteDefault": [
         [0, 0, 0, 0],
         // Grayscales (1-4)
         [255, 255, 255, 255],
