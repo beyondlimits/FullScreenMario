@@ -402,10 +402,10 @@ function MapsHandlr(settings) {
         }
     }
     
-    
     /**
-     * Finds the index from which PreThings should start having an action 
-     * applied to them in applySpawnAction. 
+     * Finds the index from which PreThings should stop having an action 
+     * applied to them in applySpawnAction. This is less efficient than the 
+     * unused version below, but is more reliable for slightly unsorted groups.
      * 
      * @param {String} direction   The direction by which to order PreThings: 
      *                             "xInc", "xDec", "yInc", or "yDec".
@@ -418,26 +418,53 @@ function MapsHandlr(settings) {
     function findPreThingsSpawnStart(direction, group, i, top, right, bottom, left) {
         var directionKey = directionKeys[direction],
             directionEnd = getDirectionEnd(directionKey, top, right, bottom, left),
-            lower = 0,
-            upper = group.length - 1,
-            index;
+            i;
         
-        while (lower !== upper) {
-            index = ((lower + upper) / 2) | 0;
-            
-            if (group[index][directionKey] > directionEnd) {
-                upper = index;
-            } else {
-                lower = index + 1;
+        for (i = 0; i < group.length; i += 1) {
+            if (group[i][directionKey] >= directionEnd) {
+                return i;
             }
         }
         
-        return lower;
+        return i;
     }
+    
+    // /**
+     // * Finds the index from which PreThings should start having an action 
+     // * applied to them in applySpawnAction. 
+     // * 
+     // * @param {String} direction   The direction by which to order PreThings: 
+     // *                             "xInc", "xDec", "yInc", or "yDec".
+     // * @param {Number} top   The upper-most bound to apply within.
+     // * @param {Number} right   The right-most bound to apply within.
+     // * @param {Number} bottom    The bottom-most bound to apply within.
+     // * @param {Number} left    The left-most bound to apply within.
+     // * @return {Number}
+     // */
+    // function findPreThingsSpawnStart(direction, group, i, top, right, bottom, left) {
+        // var directionKey = directionKeys[direction],
+            // directionEnd = getDirectionEnd(directionKey, top, right, bottom, left),
+            // lower = 0,
+            // upper = group.length - 1,
+            // index;
+        
+        // while (lower !== upper) {
+            // index = ((lower + upper) / 2) | 0;
+            
+            // if (group[index][directionKey] > directionEnd) {
+                // upper = index;
+            // } else {
+                // lower = index + 1;
+            // }
+        // }
+        
+        // return lower;
+    // }
     
     /**
      * Finds the index from which PreThings should stop having an action 
-     * applied to them in applySpawnAction. 
+     * applied to them in applySpawnAction. This is less efficient than the 
+     * unused version below, but is more reliable for slightly unsorted groups.
      * 
      * @param {String} direction   The direction by which to order PreThings: 
      *                             "xInc", "xDec", "yInc", or "yDec".
@@ -451,22 +478,49 @@ function MapsHandlr(settings) {
         var directionKey = directionKeys[direction],
             directionKeyOpposite = directionKeys[directionOpposites[direction]],
             directionEnd = getDirectionEnd(directionKeyOpposite, top, right, bottom, left),
-            lower = 0,
-            upper = group.length - 1,
-            index;
+            i;
         
-        while (lower !== upper) {
-            index = ((lower + upper) / 2) | 0;
-            
-            if (group[index][directionKey] > directionEnd) {
-                upper = index;
-            } else {
-                lower = index + 1;
+        for (i = group.length - 1; i >= 0; i -= 1) {
+            if (group[i][directionKey] <= directionEnd) {
+                return i;
             }
         }
         
-        return lower;
+        return i;
     }
+    
+    // /**
+     // * Finds the index from which PreThings should stop having an action 
+     // * applied to them in applySpawnAction. 
+     // * 
+     // * @param {String} direction   The direction by which to order PreThings: 
+     // *                             "xInc", "xDec", "yInc", or "yDec".
+     // * @param {Number} top   The upper-most bound to apply within.
+     // * @param {Number} right   The right-most bound to apply within.
+     // * @param {Number} bottom    The bottom-most bound to apply within.
+     // * @param {Number} left    The left-most bound to apply within.
+     // * @return {Number}
+     // */
+    // function findPreThingsSpawnEnd(direction, group, i, top, right, bottom, left) {
+        // var directionKey = directionKeys[direction],
+            // directionKeyOpposite = directionKeys[directionOpposites[direction]],
+            // directionEnd = getDirectionEnd(directionKeyOpposite, top, right, bottom, left),
+            // lower = 0,
+            // upper = group.length - 1,
+            // index;
+        
+        // while (lower !== upper) {
+            // index = ((lower + upper) / 2) | 0;
+            
+            // if (group[index][directionKey] > directionEnd) {
+                // upper = index;
+            // } else {
+                // lower = index + 1;
+            // }
+        // }
+        
+        // return lower;
+    // }
     
     /**
      * Conditionally returns a measurement based on what direction String is
