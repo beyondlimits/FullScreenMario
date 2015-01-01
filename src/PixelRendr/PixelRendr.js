@@ -239,6 +239,7 @@ function PixelRendr(settings) {
     /**
      * Resets the PixelRendr.
      * 
+     * @constructor
      * @param {Array[]} paletteDefault   The palette of colors to use for 
      *                                   sprites. This should be an Array of
      *                                   Number[4]s representing rgba values.

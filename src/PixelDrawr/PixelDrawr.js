@@ -1,3 +1,17 @@
+/**
+ * PixelDrawr.js
+ * 
+ * A front-end to PixelRendr to automate drawing mass amounts of sprites to a
+ * primary canvas. A PixelRendr keeps track of sprite sources, while a
+ * MapScreenr maintains boundary information on the screen. Global screen 
+ * refills may be done by drawing every Thing in the thingArrays, or by 
+ * Quadrants as a form of dirty rectangles.
+ * 
+ * Examples are not available for MapsHandlr, as the required code would be very
+ * substantial. Instead see GameStartr.js and its rendering code.
+ * 
+ * @author "Josh Goldberg" <josh@fullscreenmario.com>
+ */
 function PixelDrawr(settings) {
     "use strict";
     if (this === window) {
@@ -5,40 +19,40 @@ function PixelDrawr(settings) {
     }
     var self = this,
         
-        // A PixelRender object used to obtain raw sprite data and canvases
+        // A PixelRender used to obtain raw sprite data and canvases.
         PixelRender,
         
-        // A MapScreenr variable to be used for bounds checking
+        // A MapScreenr variable to be used for checking.
         MapScreener,
         
-        // The canvas object each Thing is to be drawn on
+        // The canvas element each Thing is to be drawn on.
         canvas,
         
-        // The 2D canvas context associated with the canvas
+        // The 2D canvas context associated with the canvas.
         context,
         
-        // A separate canvas that keeps the background of the scene
+        // A separate canvas that keeps the background of the scene.
         backgroundCanvas,
         
-        // The 2D canvas context associated with the background canvas
+        // The 2D canvas context associated with the background canvas.
         backgroundContext,
         
-        // Arrays of Thing[]s that are to be drawn in each refillGlobalCanvas
-        thing_arrays,
+        // Arrays of Thing[]s that are to be drawn in each refill.
+        thingArrays,
         
-        // Utility function to create a canvas (typically taken from EightBittr)
+        // Utility Function to create a canvas.
         createCanvas,
         
+        // How much to scale canvases on creation.
         unitsize,
         
         // A utility function to generate a class key to get an object sprite
         generateObjectKey,
         
-        // The maximum size of a SpriteMultiple to pre-render
+        // The maximum size of a SpriteMultiple to pre-render.
         spriteCacheCutoff,
         
-        // Whether self.refillGlobalCanvas should skip redrawing the main canvas
-        // every time.
+        // Whether refills should skip redrawing the background each time.
         noRefill,
         
         // For refillQuadrant, an Array of string names to refill (bottom-to-top)
@@ -51,63 +65,122 @@ function PixelDrawr(settings) {
         framesDrawn;
     
     /**
+     * Resets the PixelDrawr.
      * 
+     * @constructor
+     * @param {PixelRendr} PixelRender   The PixelRendr used for sprite lookups.
+     * @param {MapScreenr} MapScreener   The mapScreener used for screen 
+     *                                   boundary information.
+     * @param {Function} createCanvas   A Function to create a canvas of a given
+     *                                  size.
+     * @param {Number} [unitsize]   How much to scale canvases on creation (by
+     *                              default, 1 for not at all).
+     * @param {Boolean} [noRefill]   Whether refills should skip redrawing the 
+     *                               background each time (by default, false).
+     * @param {Number} [spriteCacheCutoff]   The maximum size of a 
+     *                                       SpriteMultiple to pre-render (by
+     *                                       default, 0 for never pre-render).
+     * @param {String[]} [groupNames]   The names of groups to refill (only
+     *                                  required if using Quadrant refilling).
+     * @param {Number} [framerateSkip]   How often to draw frames (by default,
+     *                                   1 for every time).
+     * @param {Function} [generateObjectKey]   How to generate keys to retrieve
+     *                                         sprites from PixelRender (by 
+     *                                         default, Object.toString).
      */
-    self.reset = function(settings) {
+    self.reset = function (settings) {
         PixelRender = settings.PixelRender;
         MapScreener = settings.MapScreener;
         createCanvas = settings.createCanvas;
-        unitsize = settings.unitsize || 4;
+        unitsize = settings.unitsize || 1;
         noRefill = settings.noRefill;
         spriteCacheCutoff = settings.spriteCacheCutoff || 0;
         groupNames = settings.groupNames;
         framerateSkip = settings.framerateSkip || 1;
         framesDrawn = 0;
-        
+
         generateObjectKey = settings.generateObjectKey || function (object) {
             return object.toString();
         };
-        
+
+        console.log(thingArrays);
         self.resetBackground();
-    }
+    };
+
     
-    
-    
-    /* Simple gets & sets
+    /* Simple gets
     */
-    
+
     /**
-     * 
+     * @return {Number} How often refill calls should be skipped.
      */
     self.getFramerateSkip = function () {
         return framerateSkip;
     };
+
+    /**
+     * @return {Array[]} The Arrays to be redrawn during refill calls.
+     */
+    self.getThingArrays = function () {
+        return thingArrays;
+    };
+
+    /**
+     * @return {HTMLCanvasElement} The canvas element each Thing is to drawn on.
+     */
+    self.getCanvas = function () {
+        return canvas;
+    };
+
+    /**
+     * The 2D canvas context associated with the canvas.
+     */
+    self.getContext = function () {
+        return context;
+    };
+
+
+    /**
+     * Whether refills should skip redrawing the background each time.
+     */
+    self.getNoRefill = function () {
+        return noRefill;
+    };
+    
+    
+
+    /* Simple sets
+    */
     
     /**
-     * 
+     * @param {Number} skip   How often refill calls should be skipped.
      */
     self.setFramerateSkip = function (skip) {
         framerateSkip = skip;
     };
     
     /**
-     * 
+     * @param {Array[]} arrays   The Arrays to be redrawn during refill calls.
      */
     self.setThingArrays = function (arrays) {
-        thing_arrays = arrays;
-    }
+        thingArrays = arrays;
+    };
     
     /**
+     * Sets the currently drawn canvas and context, and recreates 
+     * drawThingOnContextBound.
      * 
+     * @param {HTMLCanvasElement} canvasNew
      */
     self.setCanvas = function (canvasNew) {
         canvas = canvasNew;
         context = canvas.getContext("2d");
         self.drawThingOnContextBound = self.drawThingOnContext.bind(self, context);
-    }
+    };
     
     /**
-     * 
+     * @param {Boolean} enabled   Whether refills should now skip redrawing the 
+     *                            background each time. 
      */
     self.setNoRefill = function (enabled) {
         noRefill = enabled;
@@ -118,7 +191,8 @@ function PixelDrawr(settings) {
     */
     
     /**
-     * 
+     * Creates a new canvas the size of MapScreener and sets the background
+     * canvas to it, then recreates backgroundContext.
      */
     self.resetBackground = function () {
         backgroundCanvas = createCanvas(MapScreener.width, MapScreener.height);
@@ -126,15 +200,17 @@ function PixelDrawr(settings) {
     };
     
     /**
+     * Refills the background canvas with a new fillStyle.
      * 
+     * @param {Mixed} fillStyle   The new fillStyle for the background context.
      */
-    self.setBackground = function (fill) {
-        backgroundContext.fillStyle = fill;
+    self.setBackground = function (fillStyle) {
+        backgroundContext.fillStyle = fillStyle;
         backgroundContext.fillRect(0, 0, MapScreener.width, MapScreener.height);
     };
     
     /**
-     * 
+     * Draws the background canvas onto the main canvas' context.
      */
     function drawBackground() {
         context.drawImage(backgroundCanvas, 0, 0);
@@ -145,10 +221,10 @@ function PixelDrawr(settings) {
     */
     
     /**
-     * Goes through all the motions of find and parsing a thing's sprite
-     * This should be called whenever the sprite's appearance changes
+     * Goes through all the motions of finding and parsing a Thing's sprite.
+     * This should be called whenever the sprite's appearance changes.
      * 
-     * @param {Thing} thing   A thing whose sprite must be updated
+     * @param {Thing} thing   A Thing whose sprite must be updated.
      * @return {Self}
      */
     self.setThingSprite = function (thing) {
@@ -178,9 +254,7 @@ function PixelDrawr(settings) {
      * Simply draws a thing's sprite to its canvas by getting and setting
      * a canvas::imageData object via context.getImageData(...).
      * 
-     * @param {Thing} thing   A thing whose .canvas must be updated
-     * @return {Self}
-     * @private
+     * @param {Thing} thing   A Thing whose canvas must be updated.
      */
     function refillThingCanvasSingle(thing) {
         if (thing.width < 1 || thing.height < 1) {
@@ -193,8 +267,6 @@ function PixelDrawr(settings) {
         
         PixelRender.memcpyU8(thing.sprite, imageData.data);
         context.putImageData(imageData, 0, 0);
-        
-        return self;
     }
     
     /**
@@ -202,9 +274,7 @@ function PixelDrawr(settings) {
      * sub-sprite into its own canvas, sets thing.sprites, then draws the newly
      * rendered information onto the thing's canvas.
      * 
-     * @param {Thing} thing   A thing whose .canvas and .sprites must be updated
-     * @return {Self}
-     * @private
+     * @param {Thing} thing   A Thing whose canvas and sprites must be updated.
      */
     function refillThingCanvasMultiple(thing) {
         if (thing.width < 1 || thing.height < 1) {
@@ -245,8 +315,6 @@ function PixelDrawr(settings) {
         } else {
             thing.canvas.width = thing.canvas.height = 0;
         }
-      
-        return canvases;
     }
     
     
@@ -256,12 +324,6 @@ function PixelDrawr(settings) {
     /**
      * Called every upkeep to refill the entire main canvas. All Thing arrays
      * are made to call self.refillThingArray in order.
-     * 
-     * @param {string} background   The background to refill the context with
-     *                              before drawing anything, unless noRefill is
-     *                              enabled.
-     * 
-     * @return {Self}
      */
     self.refillGlobalCanvas = function () {
         framesDrawn += 1;
@@ -273,22 +335,24 @@ function PixelDrawr(settings) {
             drawBackground();
         }
         
-        thing_arrays.forEach(self.refillThingArray);
-        
-        return self;
+        thingArrays.forEach(self.refillThingArray);
     };
     
     /**
+     * Calls drawThingOnContext on each Thing in the Array.
      * 
-     * 
-     * 
+     * @param {Thing[]} array   A listing of Things to be drawn onto the canvas.
      */
     self.refillThingArray = function (array) {
         array.forEach(self.drawThingOnContextBound);
     };
     
     /**
+     * Refills the main canvas by calling refillQuadrants on each Quadrant in
+     * the groups.
      * 
+     * @param {QuadrantRow[]} groups   QuadrantRows (or QuadrantCols) to be
+     *                                 redrawn to the canvas.
      */
     self.refillQuadrantGroups = function (groups) {
         var i;
@@ -304,7 +368,10 @@ function PixelDrawr(settings) {
     };
     
     /**
+     * Refills (part of) the main canvas by drawing each Quadrant's canvas onto 
+     * it.
      * 
+     * @param {Quadrant[]} quadrants   
      */
     self.refillQuadrants = function (quadrants) {
         var quadrant, i;
@@ -338,7 +405,11 @@ function PixelDrawr(settings) {
     // }
     
     /**
+     * Refills a Quadrants's canvas by resetting its background and drawing all
+     * its Things onto it.
      * 
+     * @param {Quadrant} quadrant   A quadrant whose Things must be drawn onto
+     *                              its canvas.
      */
     self.refillQuadrant = function (quadrant) {
         var group, i, j;
@@ -346,6 +417,7 @@ function PixelDrawr(settings) {
         // quadrant.context.fillStyle = getRandomColor();
         // quadrant.context.fillRect(0, 0, quadrant.canvas.width, quadrant.canvas.height);
         
+        // This may be what's causing such bad performance.
         if (!noRefill) {
             quadrant.context.drawImage(
                 backgroundCanvas,
@@ -372,13 +444,14 @@ function PixelDrawr(settings) {
     };
     
     /**
-     * General function to draw a Thing to a context
-     * This will call drawThingOnContext[Single/Multiple] with more arguments
+     * General Function to draw a Thing onto a context. This will call
+     * drawThingOnContext[Single/Multiple] with more arguments
      * 
-     * @return {Self}
+     * @param {CanvasRenderingContext2D} context   The context to have the Thing
+     *                                             drawn on it.
+     * @param {Thing} thing   The Thing to be drawn onto the context.
      */
-    // self.drawThingOnContext = function(context, thing) {
-    self.drawThingOnContext = function(context, thing) {
+    self.drawThingOnContext = function (context, thing) {
         if (
             thing.hidden
             || thing.height < 1
@@ -407,7 +480,11 @@ function PixelDrawr(settings) {
     }
     
     /**
+     * Draws a Thing onto a quadrant's canvas. This is a simple wrapper around
+     * drawThingOnContextSingle/Multiple that also bounds checks.
      * 
+     * @param {Thing} thing
+     * @param {Quadrant} quadrant
      */
     self.drawThingOnQuadrant = function (thing, quadrant) {
         if (
@@ -431,45 +508,47 @@ function PixelDrawr(settings) {
     };
     
     /**
-     * Draws a Thing's single canvas onto a context (called by self.drawThingOnContext).
+     * Draws a Thing's single canvas onto a context, commonly called by
+     * self.drawThingOnContext.
      * 
-     * @param {CanvasRenderingContext2D} context    
-     * @param {Canvas} canvas
-     * @param {Thing} thing
-     * @param {Number} leftc
-     * @param {Number} topc
-     * @return {Self}
-     * @private
+     * @param {CanvasRenderingContext2D} context    The context being drawn on.
+     * @param {Canvas} canvas   The Thing's canvas being drawn onto the context.
+     * @param {Thing} thing   The Thing whose canvas is being drawn.
+     * @param {Number} left   The x-position to draw the Thing from.
+     * @param {Number} top   The y-position to draw the Thing from.
      */
-    function drawThingOnContextSingle(context, canvas, thing, leftc, topc) {
+    function drawThingOnContextSingle(context, canvas, thing, left, top) {
         // If the sprite should repeat, use the pattern equivalent
         if (thing.repeat) {
-            drawPatternOnCanvas(context, canvas, leftc, topc, thing.unitwidth, thing.unitheight, thing.opacity || 1);
+            drawPatternOnCanvas(context, canvas, left, top, thing.unitwidth, thing.unitheight, thing.opacity || 1);
         }
         // Opacities not equal to one must reset the context afterwards
         else if (thing.opacity !== 1) {
             context.globalAlpha = thing.opacity;
-            context.drawImage(canvas, leftc, topc);
+            context.drawImage(canvas, left, top);
             context.globalAlpha = 1;
         } else {
-            context.drawImage(canvas, leftc, topc);
+            context.drawImage(canvas, left, top);
         }
-        
-        return self;
     }
     
     /**
-     * Draws a Thing's multiple canvases onto a context (called by self.drawThingOnContext)
+     * Draws a Thing's multiple canvases onto a context, typicall called by
+     * drawThingOnContext. A variety of cases for canvases is allowed:
+     * "vertical", "horizontal", and "corners".
      * 
-     * @return {Self}
-     * @private
+     * @param {CanvasRenderingContext2D} context    The context being drawn on.
+     * @param {Canvas} canvases   The canvases being drawn onto the context.
+     * @param {Thing} thing   The Thing whose canvas is being drawn.
+     * @param {Number} left   The x-position to draw the Thing from.
+     * @param {Number} top   The y-position to draw the Thing from.
      */
-    function drawThingOnContextMultiple(context, canvases, thing, leftc, topc) {
+    function drawThingOnContextMultiple(context, canvases, thing, left, top) {
         var sprite = thing.sprite,
-            topreal = topc,
-            leftreal = leftc,
-            rightreal = leftc + thing.unitwidth,
-            bottomreal = topc + thing.unitheight,
+            topreal = top,
+            leftreal = left,
+            rightreal = left + thing.unitwidth,
+            bottomreal = top + thing.unitheight,
             widthreal = thing.unitwidth,
             heightreal = thing.unitheight,
             spritewidthpixels = thing.spritewidthpixels,
@@ -545,7 +624,7 @@ function PixelDrawr(settings) {
             break;
         }
         
-        // If there's still room/*, and it exists*/, draw the actual canvas
+        // If there's still room, draw the actual canvas
         if ((canvasref = canvases.middle) && topreal < bottomreal && leftreal < rightreal) {
             if (sprite.middleStretch) {
                 context.globalAlpha = opacity;
@@ -555,8 +634,6 @@ function PixelDrawr(settings) {
                 drawPatternOnCanvas(context, canvasref.canvas, leftreal, topreal, widthreal, heightreal, opacity);
             }
         }
-        
-        return self;
     }
     
     
@@ -564,9 +641,19 @@ function PixelDrawr(settings) {
     */
     
     /**
-     * Macro to draw a pattern onto a canvas because of how
-     * often it's used by the regular draw functions.
-     * Not a fan of this lack of control over pattern source coordinates...
+     * Draws a source pattern onto a context. The pattern is clipped to the size
+     * of MapScreener.
+     * 
+     * @param {CanvasRenderingContext2D} context   The context the pattern will
+     *                                             be drawn onto.
+     * @param {Mixed} source   The image being repeated as a pattern. This can
+     *                         be a canvas, an image, or similar.
+     * @param {Number} left   The x-location to draw from.
+     * @param {Number} top   The y-location to draw from.
+     * @param {Number} width   How many pixels wide the drawing area should be.
+     * @param {Number} left   How many pixels high the drawing area should be.
+     * @param {Number} opacity   How transparent the drawing is, in [0,1].
+     * @todo Sprites should store patterns so createPattern isn't repeated.
      */
     function drawPatternOnCanvas(context, source, left, top, width, height, opacity) {
         context.globalAlpha = opacity;
@@ -580,6 +667,7 @@ function PixelDrawr(settings) {
         context.translate(-left, -top);
         context.globalAlpha = 1;
     }
+    
     
     self.reset(settings || {});
 }
