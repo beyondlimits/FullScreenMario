@@ -1379,7 +1379,7 @@ var GameStartr = (function (EightBittr) {
             format = "image/png",
             link = EightBitter.createElement("a", {
                 "download": (name || "FullScreenMario Screenshot") 
-                    + "." + format,
+                    + "." + format.split("/")[1],
                 "href": EightBitter.canvas.toDataURL(format)
                     .replace(format, "image/octet-stream")
             });
