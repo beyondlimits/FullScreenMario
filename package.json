@@ -1,7 +1,7 @@
 {
     "name": "FullScreenMario-JSON",
     "description": "FullScreenMario - An HTML5 remake of the original Super Mario Brothers - expanded for modern browsing.",
-    "version": "0.0.0",
+    "version": "0.9.0",
     "author": {
         "name": "Josh Goldberg",
         "email": "josh@fullscreenmario.com"
