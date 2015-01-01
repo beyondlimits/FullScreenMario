@@ -53,7 +53,7 @@ var FullScreenMario = (function(GameStartr) {
      *    "height": window.innerHeight,
      *    "mods": {
      *         "Luigi": true,
-     *         "parallaxHorizClouds": true,
+     *         "HorizClouds": true,
      *         "High Speed": true,
      *         "Super Fireballs": true
      *     }
@@ -120,7 +120,7 @@ var FullScreenMario = (function(GameStartr) {
     FullScreenMario.prototype = GameStartrProto;
     
     // For the sake of reset functions, store constants as members of the actual
-    // FullScreenMario function itself - this allows prototype setters to use 
+    // FullScreenMario Function itself - this allows prototype setters to use 
     // them regardless of whether the prototype has been instantiated yet.
     FullScreenMario.unitsize = 4;
     FullScreenMario.scale = FullScreenMario.unitsize / 2;
@@ -148,6 +148,26 @@ var FullScreenMario = (function(GameStartr) {
     */
     
     /**
+     * Sets self.AudioPlayer.
+     * 
+     * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
+     * @remarks Requirement(s): AudioPlayr (src/AudioPlayr/AudioPlayr.js)
+     *                          audio.js (settings/audio.js)
+     */
+    function resetAudioPlayer(EightBitter, customs) {
+        GameStartr.prototype.resetAudioPlayer(EightBitter, customs);
+        
+        EightBitter.AudioPlayer.setGetVolumeLocal(
+            EightBitter.getVolumeLocal.bind(EightBitter, EightBitter)
+        );
+        
+        EightBitter.AudioPlayer.setGetThemeDefault(
+            EightBitter.getAudioThemeDefault.bind(EightBitter, EightBitter)
+        );
+    }
+    
+    /**
      * Resets self.StatsHolder via the parent GameStartr resetStatsHolder.
      * 
      * If the screen isn't wide enough to fit the 'lives' display, it's hidden.
@@ -173,19 +193,19 @@ var FullScreenMario = (function(GameStartr) {
      * @param {EightBittr} EightBitter
      * @param {Object} [customs]
      */
-    function resetContainer(self, customs) {
-        GameStartr.prototype.resetContainer(self, customs);
+    function resetContainer(EightBitter, customs) {
+        GameStartr.prototype.resetContainer(EightBitter, customs);
         
-        self.container.style.fontFamily = "Press Start";
+        EightBitter.container.style.fontFamily = "Press Start";
         
-        self.PixelDrawer.setThingArrays([
-            self.GroupHolder.getSceneryGroup(),
-            self.GroupHolder.getSolidGroup(),
-            self.GroupHolder.getCharacterGroup(),
-            self.GroupHolder.getTextGroup()
+        EightBitter.PixelDrawer.setThingArrays([
+            EightBitter.GroupHolder.getSceneryGroup(),
+            EightBitter.GroupHolder.getSolidGroup(),
+            EightBitter.GroupHolder.getCharacterGroup(),
+            EightBitter.GroupHolder.getTextGroup()
         ]);
         
-        self.StatsHolder.getContainer().style.width = customs.width + "px";
+        EightBitter.StatsHolder.getContainer().style.width = customs.width + "px";
     }
     
     
@@ -2369,7 +2389,7 @@ var FullScreenMario = (function(GameStartr) {
         
         thing.activated = true;
         thing.opacity = 1;
-        FSM.AudioPlayer.playTheme();
+        thing.EightBitter.AudioPlayer.playTheme();
         
         thing.EightBitter.TimeHandler.addEventInterval(function () {
             if (other.resting !== thing) {
@@ -8487,6 +8507,7 @@ var FullScreenMario = (function(GameStartr) {
     
     proliferateHard(FullScreenMario.prototype, {
         // Resets
+        "resetAudioPlayer": resetAudioPlayer,
         "resetStatsHolder": resetStatsHolder,
         "resetContainer": resetContainer,
         // Global manipulations

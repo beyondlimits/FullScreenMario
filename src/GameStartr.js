@@ -221,8 +221,6 @@ var GameStartr = (function (EightBittr) {
      */
     function resetAudioPlayer(EightBitter, customs) {
         EightBitter.AudioPlayer = new AudioPlayr(proliferate({
-            "getVolumeLocal": EightBitter.getVolumeLocal.bind(EightBitter, EightBitter),
-            "getThemeDefault": EightBitter.getAudioThemeDefault.bind(EightBitter, EightBitter),
             "statistics": {
                 "proliferate": EightBitter.proliferate
             }
