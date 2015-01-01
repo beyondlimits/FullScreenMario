@@ -103,7 +103,6 @@ function PixelDrawr(settings) {
             return object.toString();
         };
 
-        console.log(thingArrays);
         self.resetBackground();
     };
 
