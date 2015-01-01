@@ -69,9 +69,9 @@ var FullScreenMario = (function(GameStartr) {
      * document.body.appendChild(FSM.container);
      * 
      * FSM.proliferate(document.body, {
-     *     "onkeydown": FSM.InputWriter.makePipe("onkeydown", "keyCode"),
-     *     "onkeyup": FSM.InputWriter.makePipe("onkeyup", "keyCode"),
-     *     "onmousedown": FSM.InputWriter.makePipe("onmousedown", "which"),
+     *     "onkeydown": FSM.InputWriter.makePipe("onkeydown", "keyCode", true),
+     *     "onkeyup": FSM.InputWriter.makePipe("onkeyup", "keyCode", true),
+     *     "onmousedown": FSM.InputWriter.makePipe("onmousedown", "which", true)
      * });
      * 
      * FSM.gameStart();

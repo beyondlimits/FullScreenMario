@@ -304,12 +304,12 @@ function UserWrappr(settings) {
         section.appendChild(GameStarter.container);
         
         GameStarter.proliferate(document.body, {
-            "onkeydown": GameStarter.InputWriter.makePipe("onkeydown", "keyCode"),
-            "onkeyup": GameStarter.InputWriter.makePipe("onkeyup", "keyCode")
+            "onkeydown": GameStarter.InputWriter.makePipe("onkeydown", "keyCode", true),
+            "onkeyup": GameStarter.InputWriter.makePipe("onkeyup", "keyCode", true)
         });
         
         GameStarter.proliferate(section, {
-            "onmousedown": GameStarter.InputWriter.makePipe("onmousedown", "which"),
+            "onmousedown": GameStarter.InputWriter.makePipe("onmousedown", "which", true),
             "oncontextmenu": GameStarter.InputWriter.makePipe("oncontextmenu", null, true)
         });
 
