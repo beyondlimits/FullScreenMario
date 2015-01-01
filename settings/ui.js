@@ -23,7 +23,7 @@ FullScreenMario.prototype.settings.ui = {
             "Hi, thanks for playing FullScreenMario! It looks like you're using the console.",
             "There's not really any way to stop you from messing around so if you'd like to know the common cheats, enter `{%%%%GAME%%%%}.UserWrapper.displayHelpOptions()` here.",
             "If you'd like, go ahead and look around the source code. There are a few surprises you might have fun with... ;)",
-            "http://www.github.com/DiogenesTheCynic/FullScreenMario"
+            "http://www.github.com/DiogenesTheCynic/FullScreenMario-JSON"
         ],
         "options": {
             "Map": [{
