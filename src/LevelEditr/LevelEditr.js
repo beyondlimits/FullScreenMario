@@ -1,6 +1,6 @@
 /**
  * LevelEditr.js 
- * An EightBitter/FullScreenMario module to let the user edit levels
+ * A GameStartr module to let the user edit levels
  */
 var LevelEditr = (function (pageStyles) {
     return function LevelEditr(settings) {

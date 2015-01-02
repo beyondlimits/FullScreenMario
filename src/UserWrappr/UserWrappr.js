@@ -304,8 +304,8 @@ function UserWrappr(settings) {
         section.appendChild(GameStarter.container);
         
         GameStarter.proliferate(document.body, {
-            "onkeydown": GameStarter.InputWriter.makePipe("onkeydown", "keyCode", true),
-            "onkeyup": GameStarter.InputWriter.makePipe("onkeyup", "keyCode", true)
+            "onkeydown": GameStarter.InputWriter.makePipe("onkeydown", "keyCode"),
+            "onkeyup": GameStarter.InputWriter.makePipe("onkeyup", "keyCode")
         });
         
         GameStarter.proliferate(section, {

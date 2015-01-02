@@ -296,11 +296,10 @@
                 "animate": FullScreenMario.prototype.animateEmerge,
                 "onMake": FullScreenMario.prototype.thingProcess,
                 "death": FullScreenMario.prototype.killNormal,
-                "collide": false,
-                "movement": false
+                "collide": undefined,
+                "movement": undefined
             },
             "character": {
-                "libType": "characters",
                 "groupType": "Character",
                 "character": true,
                 "lookleft": true,
@@ -706,7 +705,6 @@
             },
             "solid": {
                 "type": "solid",
-                "libType": "solids",
                 "groupType": "Solid",
                 "spritewidth": 8,
                 "spriteheight": 8,
@@ -861,7 +859,6 @@
                 "movement": FullScreenMario.prototype.spawnDetector
             },
             "scenery": {
-                "libType": "scenery",
                 "groupType": "Scenery",
                 "repeat": true,
                 "nocollide": true, // for when placed in Solid group
@@ -908,7 +905,6 @@
             "Text": {
                 "width": 3.5,
                 "height": 3.5,
-                "libType": "Text",
                 "groupType": "Text",
                 "size": ""
             },
@@ -953,7 +949,6 @@
                 "width": 3.5
             },
             "ScoreText": {
-                "libType": "Text",
                 "groupType": "Text",
             },
             "TextCharacters": [2.5, 4],
