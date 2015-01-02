@@ -10,7 +10,6 @@
                 {
                     "setting": "Overworld",
                     "creation": [
-                        { "location": "0" },
                         { "macro": "Floor", "x": 0, "y": 0, "width": 128 }
                     ]
                 }

@@ -209,7 +209,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Pattern", "pattern": "BackRegular", "repeat": 5 },
                         { "macro": "Floor", "width": 552 },
                         { "thing": "DecorativeBack", "x": 20, "y": 88 },
@@ -321,7 +320,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Underworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 2 },
                         { "macro": "Ceiling", "x": 32, "width": 56 },
                         { "macro": "Floor", "x": 0, "y": 0, "width": 136 },
                         { "macro": "Fill", "thing": "Brick", "x": 0, "y": 8, "ynum": 11, "yheight": 8 },
@@ -348,7 +346,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Pattern", "pattern": "BackCloud", "y": 4, "repeat": 1 },
                         { "macro": "Floor", "width": 192 },
                         { "macro": "CastleSmall" },
@@ -359,7 +356,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Underworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 1 },
                         { "macro": "Floor", "width": 640 },
                         { "macro": "Fill", "thing": "Brick", "y": 8, "ynum": 11 },
                         { "macro": "Ceiling", "x": 48, "width": 664 },
@@ -456,7 +452,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Underworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 2 },
                         { "macro": "Floor", "width": 136 },
                         { "macro": "Fill", "thing": "Brick", "y": 8, "ynum": 11 },
                         { "macro": "Fill", "thing": "Brick", "x": 24, "y": 32, "xnum": 9 },
@@ -472,7 +467,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 4 },
                         { "macro": "Floor", "width": 464 },
                         { "macro": "Pipe", "height": 16, "piranha": true, "entrance": 4 },
                         { "macro": "Pattern", "pattern": "BackRegular", "x": 104, },
@@ -499,7 +493,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Pattern", "pattern": "BackCloud", "x": 0, "y": 4, "repeat": 5 },
                         { "macro": "Floor", "x": 0, "y": 0, "width": 128 },
                         { "macro": "CastleSmall" },
@@ -561,7 +554,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Castle",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "StartInsideCastle", "width": 104 },
                         { "thing": "Stone", "y": 88, "width": 192, "height": 24 },
                         { "macro": "Water", "x": 104, "y": 8, "width": 24 },
@@ -616,7 +608,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Floor", "width": 736 },
                         { "macro": "CastleLarge", "x": -16 },
                         { "macro": "Pattern", "pattern": "BackFence", "repeat": 2 },
@@ -694,7 +685,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Sky",
                     "exit": 1,
                     "creation": [
-                        { "location": 3 },
                         { "thing": "Stone", "width": 32 },
                         { "thing": "Stone", "x": 40, "width": 456 },
                         { "macro": "Fill", "thing": "Coin", "x": 121, "y": 55, "xnum": 16, "xwidth": 8 },
@@ -708,7 +698,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Underworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 4 },
                         { "macro": "Ceiling", "x": 32, "width": 56 },
                         { "macro": "Floor", "width": 136 },
                         { "macro": "Fill", "thing": "Brick", "y": 8, "ynum": 11 },
@@ -732,7 +721,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Pattern", "pattern": "BackCloud", "y": 4, "repeat": 2 },
                         { "macro": "Floor", "width": 192 },
                         { "macro": "CastleSmall" },
@@ -744,7 +732,6 @@ FullScreenMario.prototype.settings.maps = {
                     "blockBoundaries": true,
                     "underwater": true,
                     "creation": [
-                        { "location": 1 },
                         { "macro": "Floor", "width": 536 }, 
                         { "thing": "Coral", "x": 96, "y": 24, "height": 24 },
                         { "macro": "Fill", "thing": "Coin", "x": 121, "y": 7, "xnum": 2, "xwidth": 8 },
@@ -828,7 +815,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 2 },
                         { "macro": "Floor", "width": 464 },
                         { "macro": "Pipe", "height": 16, "piranha": true, "entrance": 2 },
                         { "macro": "Pattern", "pattern": "BackRegular", "x": 104, },
@@ -855,7 +841,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Floor", "width": 56 },
                         { "macro": "CastleSmall" },
                         { "macro": "Pattern", "pattern": "BackCloud", "y": 4, "repeat": 4 },
@@ -918,7 +903,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Castle",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "StartInsideCastle", "width": 128 },
                         { "thing": "Stone", "y": 88, "width": 128, "height": 24 },
                         { "thing": "Podoboo", "x": 128, "y": -32 },
@@ -990,7 +974,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld Night Alt",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Floor", "width": 360 },
                         { "macro": "CastleLarge", "x": -16 },
                         { "macro": "Pattern", "pattern": "BackFence", "repeat": 5 },
@@ -1084,7 +1067,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Underworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 3 },
                         { "macro": "Floor", "width": 136 },
                         { "macro": "Fill", "thing": "Brick", "y": 8, "ynum": 11 },
                         { "macro": "Fill", "thing": "Brick", "x": 24, "y": 40, "xnum": 2, "ynum": 4, "xwidth": 72 },
@@ -1107,7 +1089,6 @@ FullScreenMario.prototype.settings.maps = {
                     "blockBoundaries": false,
                     "exit": 2,
                     "creation": [
-                        { "location": 4 },
                         { "thing": "Stone", "width": 32 },
                         { "thing": "Stone", "x": 40, "width": 624 },
                         { "thing": "Platform", "x": 128, "y": 24, "width": 24, "transport": true },
@@ -1135,7 +1116,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld Night Alt",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Pattern", "pattern": "BackFence",  "x": -384, "repeat": 6 },
                         { "macro": "Floor", "width": 640 },
                         { "macro": "CastleSmall" },
@@ -1194,7 +1174,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld Night",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Pattern", "pattern": "BackCloud", "y": 4, "repeat": 7 },
                         { "macro": "Floor", "width": 128 },
                         { "macro": "CastleSmall" },
@@ -1260,7 +1239,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Castle",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "StartInsideCastle", "width": 128 },
                         { "thing": "Stone", "y": 88, "width": 128, "height": 24 },
                         { "thing": "Stone", "x": 128, "y": 88, "width": 896 },
@@ -1328,7 +1306,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Floor", "width": 256 },
                         { "macro": "CastleLarge", "x": -16 },
                         { "macro": "Pattern", "pattern": "BackRegular", "repeat": 5 },
@@ -1376,7 +1353,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Underworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 2 },
                         { "macro": "Floor", "width": 136 },
                         { "macro": "Fill", "thing": "Brick", "y": 8, "ynum": 11 },
                         { "macro": "Fill", "thing": "Brick", "x": 24, "y": 16, "ynum": 3 },
@@ -1406,7 +1382,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Pattern", "pattern": "BackCloud", "y": 4, "repeat": 1 },
                         { "macro": "Floor", "width": 192 },
                         { "macro": "CastleSmall" },
@@ -1417,7 +1392,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Underworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 1 },
                         { "macro": "Floor", "width": 88 },
                         { "macro": "Fill", "thing": "Brick", "y": 8, "ynum": 11 },
                         { "macro": "Ceiling", "x": 48, "width": 408 },
@@ -1517,7 +1491,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Underworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 3 },
                         { "macro": "Ceiling", "x": 32, "width": 56 },
                         { "macro": "Floor", "width": 136 },
                         { "macro": "Fill", "thing": "Brick", "y": 8, "ynum": 11 },
@@ -1534,7 +1507,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 4 },
                         { "macro": "Pattern", "pattern": "BackRegular", "x": -280, "repeat": 2 },
                         { "macro": "Floor", "width": 464 },
                         { "macro": "Pipe", "height": 16, "piranha": true, "entrance": 4 },
@@ -1552,7 +1524,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 5 },
                         { "macro": "Pattern", "pattern": "BackCloud", "x": -384, "y": 4, "repeat": 3 },
                         { "macro": "Floor", "width": 32 },
                         { "macro": "Floor", "x": 40, "width": 472 },
@@ -1597,7 +1568,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld Shrooms",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Pattern", "pattern": "BackCloud", "x": 0, "y": 4, "repeat": 3 },
                         { "macro": "Floor", "x": 0, "y": 0, "width": 120 },
                         { "macro": "CastleSmall" },
@@ -1659,7 +1629,6 @@ FullScreenMario.prototype.settings.maps = {
                 {
                     "setting": "Castle",
                     "creation": [
-                        { "location": 0 },
                         { "macro": "StartInsideCastle", "width": 48 },
                         { "thing": "Stone", "y": 88, "width": 48, "height": 24 },
                         { "macro": "Floor", "x": 48, "y": 24 },
@@ -1784,7 +1753,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld Alt",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Pattern", "pattern": "BackFence", "x": -384, "repeat": 6 },
                         { "macro": "Floor", "width": 392 },
                         { "macro": "CastleLarge", "x": -16 },
@@ -1835,7 +1803,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Underworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 2 },
                         { "macro": "Floor", "width": 136 },
                         { "macro": "Ceiling", "x": 32, "width": 56 },
                         { "macro": "Fill", "thing": "Brick", "y": 8, "ynum": 11 },
@@ -1864,7 +1831,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld Alt",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Pattern", "pattern": "BackFence", "x": -384, "repeat": 4 },
                         { "macro": "Floor", "width": 208 },
                         { "macro": "CastleSmall" },
@@ -1950,7 +1916,6 @@ FullScreenMario.prototype.settings.maps = {
                     "blockBoundaries": true,
                     "underwater": true,
                     "creation": [
-                        { "location": 3 },
                         { "macro": "Floor", "width": 176 },
                         { "thing": "Stone", "x": 88, "y": 56, "width": 40 },
                         { "thing": "Coral", "x": 96, "y": 24, "height": 24 },
@@ -1994,7 +1959,6 @@ FullScreenMario.prototype.settings.maps = {
                     "blockBoundaries": true,
                     "exit": 2,
                     "creation": [
-                        { "location": 4 },
                         { "thing": "Stone", "width": 32 },
                         { "thing": "Stone", "x": 40, "width": 576 },
                         { "thing": "Platform", "x": 120, "y": 32, "width": 16, "transport": true },
@@ -2016,7 +1980,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Pattern", "pattern": "BackCloud", "x": 0, "y": 4, "repeat": 5 },
                         { "macro": "Floor", "x": 0, "y": 0, "width": 128 },
                         { "macro": "CastleSmall" },
@@ -2080,7 +2043,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Castle",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "StartInsideCastle", "width": 128 },
                         { "thing": "Stone", "y": 88, "width": 128, "height": 24 },
                         { "thing": "Podoboo", "x": 128, "y": -32 },
@@ -2151,7 +2113,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld Night",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Floor", "width": 160 },
                         { "macro": "CastleLarge", "x": -16 },
                         { "macro": "Pattern", "pattern": "BackRegular", "repeat": 4 },
@@ -2240,7 +2201,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld Night",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Floor", "width": 984 },
                         { "macro": "CastleSmall" },
                         { "macro": "Pattern", "pattern": "BackRegular", "repeat": 5 },
@@ -2323,7 +2283,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Underworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 5 },
                         { "macro": "Ceiling", "x": 32, "width": 56 },
                         { "macro": "Floor", "width": 136 },
                         { "macro": "Fill", "thing": "Brick", "y": 8, "ynum": 11 },
@@ -2340,7 +2299,6 @@ FullScreenMario.prototype.settings.maps = {
                     "blockBoundaries": true,
                     "underwater": true,
                     "creation": [
-                        { "location": 6 },
                         { "macro": "Floor", "width": 176 },
                         { "thing": "Stone", "x": 88, "y": 56, "width": 40 },
                         { "thing": "Coral", "x": 96, "y": 24, "height": 24 },
@@ -2384,7 +2342,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Sky Night",
                     "exit": 3,
                     "creation": [
-                        { "location": 7 },
                         { "thing": "Stone", "width": 32 },
                         { "thing": "Stone", "x": 40, "width": 624 },
                         { "thing": "Platform", "x": 128, "y": 24, "width": 24, "transport": true },
@@ -2403,7 +2360,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Underworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 8 },
                         { "macro": "Ceiling", "x": 32, "width": 88 },
                         { "macro": "Floor", "width": 136 },
                         { "macro": "Fill", "thing": "Brick", "y": 8, "ynum": 11 },
@@ -2429,7 +2385,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld Night Alt2",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "CastleSmall" },
                         { "macro": "Pattern", "pattern": "BackCloud", "y": 4, "repeat": 4 },
                         { "macro": "Floor", "width": 128 },
@@ -2497,7 +2452,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Castle",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "StartInsideCastle" },
                         { "thing": "Stone", "y": 88, "width": 192, "height": 24 },
                         { "macro": "Floor", "x": 40, "y": 24, "width": 64 },
@@ -2550,7 +2504,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld Alt",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "CastleLarge", "x": -16 },
                         { "macro": "Pattern", "pattern": "BackFence", "repeat": 5 },
                         { "macro": "Floor", "width": 584 },
@@ -2619,7 +2572,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Underworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 2 },
                         { "macro": "Ceiling", "x": 32, "width": 56 },
                         { "macro": "Floor", "width": 136 },
                         { "macro": "Fill", "thing": "Brick", "y": 8, "ynum": 11 },
@@ -2643,7 +2595,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "CastleSmall" },
                         { "macro": "Pattern", "pattern": "BackCloud", "y": 4, "repeat": 2 },
                         { "macro": "Floor", "width": 192 },
@@ -2656,7 +2607,6 @@ FullScreenMario.prototype.settings.maps = {
                     "blockBoundaries": true,
                     "underwater": true,
                     "creation": [
-                        { "location": 1 },
                         { "macro": "Floor", "width": 536 },
                         { "thing": "Coral", "x": 96, "y": 24, "height": 24 },
                         { "macro": "Fill", "thing": "Coin", "x": 120, "y": 7, "xnum": 2, "xwidth": 8 },
@@ -2746,7 +2696,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 2 },
                         { "macro": "Pattern", "pattern": "BackRegular", "x": 104 },
                         { "macro": "Floor", "width": 336 },
                         { "macro": "Pipe", "height": 16, "piranha": true, "entrance": 2 },
@@ -2774,7 +2723,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Floor", "width": 56 },
                         { "macro": "CastleSmall" },
                         { "macro": "Pattern", "pattern": "BackCloud", "y": 4, "repeat": 4 },
@@ -2844,7 +2792,6 @@ FullScreenMario.prototype.settings.maps = {
                 {
                     "setting": "Castle",
                     "creation": [
-                        { "location": 0 },
                         { "macro": "StartInsideCastle" },
                         { "thing": "Stone", "y": 88, "width": 128, "height": 24 },
                         { "macro": "Floor", "x": 40, "y": 24, "width": 88 },
@@ -3076,7 +3023,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Pattern", "pattern": "BackFence", "repeat": 7 },
                         { "macro": "CastleLarge", "x": -16 },
                         { "macro": "Floor", "width": 368 },
@@ -3181,7 +3127,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Underworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 2 },
                         { "macro": "Floor", "width": 136 },
                         { "macro": "Fill", "thing": "Brick", "y": 8, "ynum": 11 },
                         { "macro": "Fill", "thing": "Brick", "x": 24, "y": 32, "xnum": 9 },
@@ -3207,7 +3152,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Pattern", "pattern": "BackFenceMin2", "repeat": 4 },
                         { "macro": "CastleSmall" },
                         { "macro": "Floor", "width": 120 },
@@ -3300,7 +3244,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Underworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 2 },
                         { "macro": "Ceiling", "x": 32, "width": 7 },
                         { "macro": "Floor", "width": 136 },
                         { "macro": "Fill", "thing": "Brick", "y": 8, "ynum": 11 },
@@ -3326,7 +3269,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Pattern", "pattern": "BackFenceMin3", "repeat": 3 },
                         { "macro": "CastleSmall" },
                         { "macro": "Floor", "width": 552 },
@@ -3414,7 +3356,6 @@ FullScreenMario.prototype.settings.maps = {
                 {
                     "setting": "Castle",
                     "creation": [
-                        { "location": 0 },
                         { "macro": "StartInsideCastle" },
                         { "thing": "Stone", "y": 88, "width": 256 },
                         { "macro": "Floor", "x": 40, "y": 24 },
@@ -3456,7 +3397,6 @@ FullScreenMario.prototype.settings.maps = {
                 }, {
                     "setting": "Castle",
                     "creation": [
-                        { "location": 2 },
                         { "macro": "Pipe", "y": 16, "height": "Infinity", "piranha": true, "entrance": 2 },
                         { "thing": "Stone", "y": 88, "width": 16 },
                         { "macro": "Section", "x": 16 }
@@ -3505,7 +3445,6 @@ FullScreenMario.prototype.settings.maps = {
                 }, {
                     "setting": "Castle",
                     "creation": [
-                        { "location": 3 },
                         { "macro": "Pipe", "y": 16, "height": "Infinity", "piranha": true, "entrance": 3 },
                         { "thing": "Stone", "y": 88, "width": 16 },
                         { "macro": "Section", "x": 16 }
@@ -3552,7 +3491,6 @@ FullScreenMario.prototype.settings.maps = {
                     "blockBoundaries": true,
                     "underwater": true,
                     "creation": [
-                        { "location": 4 },
                         { "macro": "Floor", "y": 88, "width": 16 },
                         { "macro": "Floor", "x": 16 },
                         { "macro": "Pipe", "x": 24, "y": 16, "height": "Infinity", "entrance": 4 },
@@ -3581,7 +3519,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Castle",
                     "blockBoundaries": true,
                     "creation": [
-                        { "location": 5 },
                         { "macro": "Pipe", "y": 16, "height": "Infinity", "piranha": true, "entrance": 5 },
                         { "thing": "Stone", "y": 88, "width": 232 },
                         { "macro": "Floor", "x": 16, "width": 40 },
@@ -3612,7 +3549,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "random": true,
                     "creation": [
-                        { "location": 0 },
                         { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Overworld", "randomTop": 80, "randomWidth": 2800, "randomBottom": -8 }
                     ]
                 },
@@ -3620,7 +3556,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Overworld",
                     "random": true,
                     "creation": [
-                        { "location": 0 },
                         { "macro": "Pipe", "entrance": "OverworldFromPipe", "height": 16 },
                         { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Overworld", "randomTop": 80, "randomWidth": 1520, "randomBottom": -8 }
                     ]
@@ -3629,7 +3564,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Underworld",
                     "random": true,
                     "creation": [
-                        { "location": 0 },
                         { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Underworld", "randomTop": 80, "randomWidth": 2800, "randomBottom": -8 }
                     ]
                 },
@@ -3638,7 +3572,6 @@ FullScreenMario.prototype.settings.maps = {
                     "random": true,
                     "exit": "OverworldFromSky",
                     "creation": [
-                        { "location": 0 },
                         { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Sky", "randomTop": 80, "randomWidth": 2800, "randomBottom": -8 }
                     ]
                 },
@@ -3646,7 +3579,6 @@ FullScreenMario.prototype.settings.maps = {
                     "setting": "Castle",
                     "random": true,
                     "creation": [
-                        { "location": 0 },
                         { "thing": "RandomSpawner", "x": 0, "y": 0, "randomization": "Castle", "randomTop": 80, "randomWidth": 2000, "randomBottom": -8 }
                     ]
                 }

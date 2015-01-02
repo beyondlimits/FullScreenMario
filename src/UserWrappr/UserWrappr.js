@@ -309,7 +309,7 @@ function UserWrappr(settings) {
         });
         
         GameStarter.proliferate(section, {
-            "onmousedown": GameStarter.InputWriter.makePipe("onmousedown", "which", true),
+            "onmousedown": GameStarter.InputWriter.makePipe("onmousedown", "which"),
             "oncontextmenu": GameStarter.InputWriter.makePipe("oncontextmenu", null, true)
         });
 
