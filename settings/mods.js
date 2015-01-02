@@ -560,7 +560,7 @@ FullScreenMario.prototype.settings.mods = {
                 "name": "Josh Goldberg",
                 "email": "josh@fullscreenmario.com"
             },
-            "enabled": true,
+            "enabled": false,
             "events": {
                 "onModEnable": function (mod) {
                     mod.settings.paletteDefaultOld = this.settings.sprites.paletteDefault;
