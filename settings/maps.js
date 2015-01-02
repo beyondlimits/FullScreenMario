@@ -1,6 +1,7 @@
 FullScreenMario.prototype.settings.maps = {
     "mapDefault": "1-1",
     "locationDefault": "0",
+    "groupTypes": ["Character", "Solid", "Scenery", "Text"],
     "requireEntrance": true,
     "screenAttributes": [
         "gravity",

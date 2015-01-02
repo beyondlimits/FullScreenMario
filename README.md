@@ -27,7 +27,7 @@ The root index.html file includes all the raw .js and .css files, and thus shoul
 
 #### Coding
 
-FullScreenMario is built on a modular framework called GameStartr. The [src](src/) directory contains GameStartr, its parent class EightBittr, and the 22 modules used by the GameStartr framework. These all (theoretically) have their own README files, which you should skim before developing for FullScreenMario itself.
+FullScreenMario is built on a modular framework called GameStartr. The [GameStartr](GameStartr/) directory contains GameStartr, its parent class EightBittr, and the 22 modules used by the GameStartr framework. These all (theoretically) have their own README files, which you should skim before developing for FullScreenMario itself.
 
 The main game code outside the framework is stored in FullScreenMario.js. The FullScreenMario class inherits from GameStartr and has a global 'FSM' instance set up by the UserWrappr module in index.js. GameStartr's constructor (its reset function) contains a reset function for each module that stores the modules within it as `FSM.AudioPlayer`, `FSM.ChangeLiner`, etc. 
 
@@ -38,4 +38,4 @@ The FullScreenMario.js class declaration contains class functions and some const
 
 This is released under the [Attribution Non-Commercial Share-Alike License](http://creativecommons.org/licenses/by-nc-sa/3.0/) (see [License.txt](License.txt)). FullScreenMario is meant to be both a proof of concept and an entertaining pasttime, not a source of income. 
 
-The FullScreenMario project started October 21st, 2012. The initial beta release in October 2013 saw the [primary host website](http://www.fullscreenmario.com) receive approximately 2.68 million unique visitors within a month, after which Nintendo shut the site down with a DMCA complaint (no action was taken against GitHub or other hosting websites). The coding project then underwent an extensive rewrite and architecture change to become a modular project centered on the [EightBittr and GameStartr](src/) platform.
+The FullScreenMario project started October 21st, 2012. The initial beta release in October 2013 saw the [primary host website](http://www.fullscreenmario.com) receive approximately 2.68 million unique visitors within a month, after which Nintendo shut the site down with a DMCA complaint (no action was taken against GitHub or other hosting websites). The coding project then underwent an extensive rewrite and architecture change to become a modular project centered on the [EightBittr and GameStartr](GameStartr/) platform.
