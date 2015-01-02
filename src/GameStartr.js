@@ -8,25 +8,33 @@
  * 
  * Descendent classes of GameStartr must put their settings in their prototype
  * under settings. Reset Functions below list their required file names.
+ * 
+ * The following member attributes of child classes are required:
+ * gameStart {Function}
+ * onGamePlay {Function}
+ * onGamePause {Function}
+ * canInputsTrigger {Function}
+ * setMap {Function} 
+ * setLocation {Function}
  */
 var GameStartr = (function (EightBittr) {
     "use strict";
-    
+
     // Use an EightBittr as the class parent, with EightBittr's constructor
     var EightBitterProto = new EightBittr(),
-        
+
         // Used for combining arrays from the prototype to this
         proliferate = EightBitterProto.proliferate,
         proliferateHard = EightBitterProto.proliferateHard;
-    
+
     /**
      * 
      */
     function GameStartr(customs) {
-        if (typeof(customs) === "undefined") {
+        if (typeof (customs) === "undefined") {
             customs = {};
         }
-        
+
         EightBittr.call(this, {
             "constants": customs.constants,
             "constructor": customs.constructor || GameStartr,
@@ -56,9 +64,9 @@ var GameStartr = (function (EightBittr) {
             }
         });
     }
-    
+
     GameStartr.prototype = EightBitterProto;
-    
+
     // Subsequent settings will be stored in GameStartr.prototype.settings
     EightBitterProto.settings = {};
     EightBitterProto.resets = [
@@ -83,11 +91,11 @@ var GameStartr = (function (EightBittr) {
         "startModAttacher",
         "resetContainer"
     ];
-    
-    
+
+
     /* Resets
     */
-    
+
     /**
      * Resets the EightBittr by calling the parent EightBittr.prototype.reset.
      * 
@@ -97,7 +105,7 @@ var GameStartr = (function (EightBittr) {
     function reset(EightBitter, customs) {
         EightBittr.prototype.reset(EightBitter, EightBitter.resets, customs);
     };
-    
+
     /**
      * Resets the EightBittr and records the time by calling the parent 
      * EightBittr.prototype.resetTimed.
@@ -112,7 +120,7 @@ var GameStartr = (function (EightBittr) {
             EightBitter, EightBitter.resets, customs
         );
     };
-    
+
     /**
      * Sets self.ObjectMaker.
      * 
@@ -136,7 +144,7 @@ var GameStartr = (function (EightBittr) {
             }
         }, EightBitter.settings.objects));
     }
-    
+
     /**
      * Sets self.QuadsKeeper.
      * 
@@ -148,7 +156,7 @@ var GameStartr = (function (EightBittr) {
     function resetQuadsKeeper(EightBitter, customs) {
         var quadrantWidth = customs.width / (EightBitter.settings.quadrants.numCols - 3),
             quadrantHeight = customs.height / (EightBitter.settings.quadrants.numRows - 2);
-        
+
         EightBitter.QuadsKeeper = new QuadsKeepr(proliferate({
             "ObjectMaker": EightBitter.ObjectMaker,
             "createCanvas": EightBitter.createCanvas,
@@ -160,7 +168,7 @@ var GameStartr = (function (EightBittr) {
             "onRemove": EightBitter.onAreaUnspawn.bind(EightBitter, EightBitter),
         }, EightBitter.settings.quadrants));
     }
-    
+
     /**
      * Sets self.PixelRender.
      * 
@@ -176,7 +184,7 @@ var GameStartr = (function (EightBittr) {
             "scale": EightBitter.scale
         }, EightBitter.settings.sprites));
     }
-    
+
     /**
      * Sets self.PixelDrawer.
      * 
@@ -195,7 +203,7 @@ var GameStartr = (function (EightBittr) {
             "generateObjectKey": EightBitter.generateObjectKey
         }, EightBitter.settings.renderer));
     }
-    
+
     /**
      * Sets EightBitter.TimeHandler.
      * 
@@ -210,7 +218,7 @@ var GameStartr = (function (EightBittr) {
             "classRemove": EightBitter.removeClass
         }, EightBitter.settings.events));
     }
-    
+
     /**
      * Sets self.AudioPlayer.
      * 
@@ -226,7 +234,7 @@ var GameStartr = (function (EightBittr) {
             }
         }, EightBitter.settings.audio));
     }
-    
+
     /**
      * Sets self.GamesRunner.
      * 
@@ -242,7 +250,7 @@ var GameStartr = (function (EightBittr) {
             "onPause": EightBitter.onGamePause.bind(EightBitter, EightBitter)
         }, EightBitter.settings.runner));
     }
-    
+
     /**
      * Sets self.StatsHolder.
      * 
@@ -258,7 +266,7 @@ var GameStartr = (function (EightBittr) {
             "createElement": EightBitter.createElement
         }, EightBitter.settings.statistics));
     }
-    
+
     /**
      * Sets self.GroupHolder.
      * 
@@ -270,7 +278,7 @@ var GameStartr = (function (EightBittr) {
     function resetGroupHolder(EightBitter, customs) {
         EightBitter.GroupHolder = new GroupHoldr(EightBitter.settings.groups);
     }
-    
+
     /**
      * Sets self.ThingHitter.
      * 
@@ -283,11 +291,11 @@ var GameStartr = (function (EightBittr) {
         EightBitter.ThingHitter = new ThingHittr(proliferate({
             "scope": EightBitter
         }, EightBitter.settings.collisions));
-        
+
         EightBitter.ThingHitter.cacheHitCheckGroup("Solid");
         EightBitter.ThingHitter.cacheHitCheckGroup("Character");
     }
-    
+
     /**
      * Sets self.MapScreener.
      * 
@@ -299,14 +307,14 @@ var GameStartr = (function (EightBittr) {
     function resetMapScreener(EightBitter, customs) {
         EightBitter.MapScreener = new MapScreenr({
             "EightBitter": EightBitter,
-            "unitsize": FullScreenMario.unitsize,
+            "unitsize": EightBitter.unitsize,
             "width": customs.width,
             "height": customs.height,
             "variableArgs": [EightBitter],
             "variables": EightBitter.settings.maps.screenVariables
         });
     }
-    
+
     /**
      * Sets self.NumberMaker.
      * 
@@ -317,7 +325,7 @@ var GameStartr = (function (EightBittr) {
     function resetNumberMaker(EightBitter, customs) {
         EightBitter.NumberMaker = new NumberMakr();
     }
-    
+
     /**
      * Sets self.MapCreator.
      * 
@@ -335,7 +343,7 @@ var GameStartr = (function (EightBittr) {
             "scope": EightBitter
         });
     }
-    
+
     /**
      * Sets self.MapsHandler.
      * 
@@ -348,14 +356,10 @@ var GameStartr = (function (EightBittr) {
         EightBitter.MapsHandler = new MapsHandlr({
             "MapsCreator": EightBitter.MapsCreator,
             "MapScreener": EightBitter.MapScreener,
-            "screenAttributes": EightBitter.settings.maps.screenAttributes,
-            "onSpawn": EightBitter.settings.maps.onSpawn,
-            "stretchAdd": EightBitter.mapAddStretched.bind(EightBitter),
-            "onStretch": EightBitter.mapStretchThing,
-            "afterAdd": EightBitter.mapAddAfter.bind(EightBitter)
+            "screenAttributes": EightBitter.settings.maps.screenAttributes
         });
     }
-    
+
     /**
      * Sets self.InputWriter.
      * 
@@ -369,7 +373,7 @@ var GameStartr = (function (EightBittr) {
             "canTrigger": EightBitter.canInputsTrigger.bind(EightBitter, EightBitter)
         }, EightBitter.settings.input.InputWritrArgs));
     }
-    
+
     /**
      * Sets self.LevelEditor.
      * 
@@ -384,7 +388,7 @@ var GameStartr = (function (EightBittr) {
             "beautifier": js_beautify // Eventually there will be a custom beautifier... maybe
         }, EightBitter.settings.editor));
     }
-    
+
     /**
      * Sets self.WorldSeeder.
      * 
@@ -399,7 +403,7 @@ var GameStartr = (function (EightBittr) {
             "onPlacement": EightBitter.mapPlaceRandomCommands.bind(EightBitter, EightBitter)
         }, EightBitter.settings.generator));
     }
-    
+
     /**
      * Sets self.ModAttacher.
      * 
@@ -416,7 +420,7 @@ var GameStartr = (function (EightBittr) {
             "createElement": EightBitter.createElement
         }, EightBitter.settings.mods));
     }
-    
+
     /** 
      * Starts self.ModAttacher. All mods are enabled, and the "onReady" trigger
      * is fired.
@@ -427,7 +431,7 @@ var GameStartr = (function (EightBittr) {
     function startModAttacher(EightBitter, customs) {
         var mods = customs.mods,
             i;
-        
+
         if (mods) {
             for (i in mods) {
                 if (mods[i]) {
@@ -435,10 +439,10 @@ var GameStartr = (function (EightBittr) {
                 }
             }
         }
-        
+
         EightBitter.ModAttacher.fireEvent("onReady", EightBitter, EightBitter);
     }
-    
+
     /**
      * Resets the parent HTML container. Width and height are set by customs, 
      * and canvas and StatsHolder container elements are added.
@@ -448,54 +452,53 @@ var GameStartr = (function (EightBittr) {
      */
     function resetContainer(EightBitter, customs) {
         EightBitter.container = EightBitter.createElement("div", {
-            "className": "FullScreenMario EightBitter",
+            "className": "EightBitter",
             "style": EightBitter.proliferate({
                 "position": "relative",
                 "width": customs.width + "px",
                 "height": customs.height + "px"
             }, customs.style)
         });
-        
+
         EightBitter.canvas = EightBitter.createCanvas(customs.width, customs.height);
         EightBitter.PixelDrawer.setCanvas(EightBitter.canvas);
-        
+
         EightBitter.container.appendChild(EightBitter.canvas);
-        EightBitter.container.appendChild(EightBitter.StatsHolder.getContainer());
     }
-    
-    
+
+
     /* Global manipulations
     */
-    
+
     /**
      * Scrolls the game window by shifting all Things and checking for quadrant
      * refreshes.
      * 
-     * @this {GameStartr}
+     * @this {EightBittr}
      * @param {Number} dx   How far to scroll horizontally.
      * @param {Number} [dy]   How far to scroll vertically.
      */
     function scrollWindow(dx, dy) {
         var EightBitter = EightBittr.ensureCorrectCaller(this);
-        
+
         dx = dx | 0;
         dy = dy | 0;
-        
+
         if (!dx && !dy) {
             return;
         }
-        
+
         EightBitter.MapScreener.shift(dx, dy);
         EightBitter.shiftAll(-dx, -dy);
-        
+
         EightBitter.QuadsKeeper.shiftQuadrants(-dx, -dy);
     }
-    
+
     /**
      * Scrolls everything but a single Thing.
      * 
      * 
-     * @this {GameStartr}
+     * @this {EightBittr}
      * @param {Thing} thing
      * @param {Number} dx   How far to scroll horizontally.
      * @param {Number} [dy]   How far to scroll vertically.
@@ -503,12 +506,12 @@ var GameStartr = (function (EightBittr) {
     function scrollThing(thing, dx, dy) {
         var saveleft = thing.left,
             savetop = thing.top;
-        
+
         thing.EightBitter.scrollWindow(dx, dy);
         thing.EightBitter.setLeft(thing, saveleft);
         thing.EightBitter.setTop(thing, savetop);
     }
-    
+
     /**
      * Spawns all Things within a given area that should be there. 
      * 
@@ -529,7 +532,7 @@ var GameStartr = (function (EightBittr) {
             (left + EightBitter.MapScreener.left) / EightBitter.unitsize
         );
     }
-    
+
     /**
      * "Unspawns" all Things within a given area that should be gone by marking
      * their PreThings as not in game.
@@ -551,7 +554,7 @@ var GameStartr = (function (EightBittr) {
             (left + EightBitter.MapScreener.left) / EightBitter.unitsize
         );
     }
-    
+
     /**
      * Adds a new Thing to the game at a given position, relative to the top
      * left corner of the screen. 
@@ -563,41 +566,41 @@ var GameStartr = (function (EightBittr) {
      * @param {Number} [top]   Defaults to 0.
      */
     function addThing(thing, left, top) {
-        if (typeof(thing) === "string" || thing instanceof String) {
+        if (typeof (thing) === "string" || thing instanceof String) {
             thing = this.ObjectMaker.make(thing);
         } else if (thing.constructor === Array) {
             thing = this.ObjectMaker.make.apply(this.ObjectMaker, thing);
         }
-        
+
         if (arguments.length > 2) {
             thing.EightBitter.setLeft(thing, left);
             thing.EightBitter.setTop(thing, top);
         } else if (arguments.length > 1) {
             thing.EightBitter.setLeft(thing, left);
         }
-        
+
         thing.EightBitter.updateSize(thing);
-        
+
         thing.EightBitter.GroupHolder.getFunctions().add[thing.groupType](thing);
         thing.placed = true;
-        
+
         // This will typically be a TimeHandler.cycleClass call
         if (thing.onThingAdd) {
             thing.onThingAdd(thing);
         }
-        
+
         thing.EightBitter.PixelDrawer.setThingSprite(thing);
-        
+
         // This will typically be a spawn* call
         if (thing.onThingAdded) {
             thing.onThingAdded(thing);
         }
-        
+
         thing.EightBitter.ModAttacher.fireEvent("onAddThing", thing, left, top);
-        
+
         return thing;
     }
-    
+
     /**
      * Processes a Thing so that it is ready to be placed in gameplay. There are
      * a lot of steps here: width and height must be set with defaults and given
@@ -615,7 +618,7 @@ var GameStartr = (function (EightBittr) {
     function thingProcess(thing, type, settings, defaults) {
         // If the Thing doesn't specify its own title, use the type by default
         thing.title = thing.title || type;
-        
+
         // If a width/height is provided but no spritewidth/height,
         // use the default spritewidth/height
         if (thing.width && !thing.spritewidth) {
@@ -624,18 +627,18 @@ var GameStartr = (function (EightBittr) {
         if (thing.height && !thing.spriteheight) {
             thing.spriteheight = defaults.spriteheight || defaults.height;
         }
-        
+
         // "Infinity" height refers to objects that reach exactly to the bottom
         if (thing.height === "Infinity") {
             thing.height = thing.EightBitter.getAbsoluteHeight(thing.y) / thing.EightBitter.unitsize;
         }
-        
+
         // Each thing has at least 4 maximum quadrants (for the QuadsKeepr)
         var maxquads = 4,
             num;
         num = Math.floor(
             thing.width * (
-                FullScreenMario.unitsize / thing.EightBitter.QuadsKeeper.getQuadrantWidth()
+                thing.EightBitter.unitsize / thing.EightBitter.QuadsKeeper.getQuadrantWidth()
             )
         );
         if (num > 0) {
@@ -643,7 +646,7 @@ var GameStartr = (function (EightBittr) {
         }
         num = Math.floor(
             thing.height * (
-                FullScreenMario.unitsize / thing.EightBitter.QuadsKeeper.getQuadrantHeight()
+                thing.EightBitter.unitsize / thing.EightBitter.QuadsKeeper.getQuadrantHeight()
             )
         );
         if (num > 0) {
@@ -651,42 +654,42 @@ var GameStartr = (function (EightBittr) {
         }
         thing.maxquads = maxquads;
         thing.quadrants = new Array(maxquads);
-        
+
         // Basic sprite information
         thing.spritewidth = thing.spritewidth || thing.width;
         thing.spriteheight = thing.spriteheight || thing.height;
-        
+
         // Sprite sizing
-        thing.spritewidthpixels = thing.spritewidth * FullScreenMario.unitsize;
-        thing.spriteheightpixels = thing.spriteheight * FullScreenMario.unitsize;
-        
+        thing.spritewidthpixels = thing.spritewidth * thing.EightBitter.unitsize;
+        thing.spriteheightpixels = thing.spriteheight * thing.EightBitter.unitsize;
+
         // Canvas, context, imageData
-        thing.canvas = FullScreenMario.prototype.createCanvas(
+        thing.canvas = thing.EightBitter.createCanvas(
             thing.spritewidthpixels, thing.spriteheightpixels
         );
         thing.context = thing.canvas.getContext("2d");
         thing.imageData = thing.context.getImageData(
             0, 0, thing.spritewidthpixels, thing.spriteheightpixels
         );
-        
+
         if (thing.opacity !== 1) {
             thing.EightBitter.setOpacity(thing, thing.opacity);
         }
-        
+
         // Attributes, such as Koopa.smart
         if (thing.attributes) {
             thingProcessAttributes(thing, thing.attributes, settings);
         }
-        
+
         // Important custom functions
         if (thing.onThingMake) {
             thing.onThingMake(thing, settings);
         }
-        
+
         // Initial class / sprite setting
         thing.EightBitter.setSize(thing, thing.width, thing.height);
         thing.EightBitter.setClassInitial(thing, thing.name || thing.title);
-        
+
         // Sprite cycles
         var cycle;
         if (cycle = thing.spriteCycle) {
@@ -699,7 +702,7 @@ var GameStartr = (function (EightBittr) {
                 thing, cycle[0], cycle[1] || null, cycle[2] || null
             );
         }
-        
+
         // flipHoriz and flipVert initially 
         if (thing.flipHoriz) {
             thing.EightBitter.flipHoriz(thing);
@@ -707,7 +710,7 @@ var GameStartr = (function (EightBittr) {
         if (thing.flipVert) {
             thing.EightBitter.flipVert(thing);
         }
-        
+
         // ThingHittr becomes very non-performant if functions aren't generated
         // for each Thing constructor (optimization does not respect prototypal 
         // inheritance, sadly).
@@ -715,13 +718,13 @@ var GameStartr = (function (EightBittr) {
             thing.title,
             thing.groupType
         );
-        
+
         // Mods!
         thing.EightBitter.ModAttacher.fireEvent(
             "onThingMake", thing.EightBitter, thing, type, settings, defaults
         );
     }
-    
+
     /**
      * Processes additional Thing attributes. For each attribute the Thing's
      * class says it may have, if it has it, the attribute's key is appeneded to
@@ -748,11 +751,44 @@ var GameStartr = (function (EightBittr) {
             }
         }
     }
-    
-    
+
+    /**
+     * Runs through commands generated by a WorldSeedr and evaluates all of 
+     * to create PreThings via MapsCreator.analyzePreSwitch. 
+     * 
+     * @param {EightBittr} EightBitter
+     * @param {Object[]} generatedCommands   The commands generated by a
+     *                                       WorldSeedr.generateFull call.
+     */
+    function mapPlaceRandomCommands(EightBitter, generatedCommands) {
+        var MapsCreator = EightBitter.MapsCreator,
+            MapsHandler = EightBitter.MapsHandler,
+            prethings = MapsHandler.getPreThings(),
+            area = MapsHandler.getArea(),
+            map = MapsHandler.getMap(),
+            command, output, i;
+
+        for (i = 0; i < generatedCommands.length; i += 1) {
+            command = generatedCommands[i];
+
+            output = {
+                "thing": command.title,
+                "x": command.left,
+                "y": command.top
+            };
+
+            if (command.arguments) {
+                EightBitter.proliferateHard(output, command.arguments, true);
+            }
+
+            MapsCreator.analyzePreSwitch(output, prethings, area, map);
+        }
+    }
+
+
     /* Physics & similar
     */
-    
+
     /** 
      * Sets a Thing's "changed" flag to true, which indicates to the PixelDrawr
      * to redraw the Thing and its quadrant.
@@ -762,7 +798,7 @@ var GameStartr = (function (EightBittr) {
     function markChanged(thing) {
         thing.changed = true;
     }
-    
+
     /**
      * Shifts a Thing vertically using the EightBittr utility, and marks the
      * Thing as having a changed appearance.
@@ -774,12 +810,12 @@ var GameStartr = (function (EightBittr) {
      */
     function shiftVert(thing, dy, notChanged) {
         EightBittr.prototype.shiftVert(thing, dy);
-        
+
         if (!notChanged) {
             thing.EightBitter.markChanged(thing);
         }
     }
-    
+
     /**
      * Shifts a Thing horizontally using the EightBittr utility, and marks the
      * Thing as having a changed appearance.
@@ -791,12 +827,12 @@ var GameStartr = (function (EightBittr) {
      */
     function shiftHoriz(thing, dx, notChanged) {
         EightBittr.prototype.shiftHoriz(thing, dx);
-        
+
         if (!notChanged) {
             thing.EightBitter.markChanged(thing);
         }
     }
-    
+
     /**
      * Sets a Thing's top using the EightBittr utility, and marks the Thing as
      * having a changed appearance.
@@ -808,7 +844,7 @@ var GameStartr = (function (EightBittr) {
         EightBittr.prototype.setTop(thing, top);
         thing.EightBitter.markChanged(thing);
     }
-    
+
     /**
      * Sets a Thing's right using the EightBittr utility, and marks the Thing as
      * having a changed appearance.
@@ -820,7 +856,7 @@ var GameStartr = (function (EightBittr) {
         EightBittr.prototype.setRight(thing, right);
         thing.EightBitter.markChanged(thing);
     }
-    
+
     /**
      * Sets a Thing's bottom using the EightBittr utility, and marks the Thing
      * as having a changed appearance.
@@ -832,7 +868,7 @@ var GameStartr = (function (EightBittr) {
         EightBittr.prototype.setBottom(thing, bottom);
         thing.EightBitter.markChanged(thing);
     }
-    
+
     /**
      * Sets a Thing's left using the EightBittr utility, and marks the Thing
      * as having a changed appearance.
@@ -844,7 +880,7 @@ var GameStartr = (function (EightBittr) {
         EightBittr.prototype.setLeft(thing, left);
         thing.EightBitter.markChanged(thing);
     }
-    
+
     /**
      * Shifts a thing both horizontally and vertically. If the Thing marks 
      * itself as having a parallax effect (parallaxHoriz or parallaxVert), that
@@ -859,7 +895,7 @@ var GameStartr = (function (EightBittr) {
     function shiftBoth(thing, dx, dy, notChanged) {
         dx = dx || 0;
         dy = dy || 0;
-        
+
         if (!thing.noshiftx) {
             if (thing.parallaxHoriz) {
                 thing.EightBitter.shiftHoriz(
@@ -869,7 +905,7 @@ var GameStartr = (function (EightBittr) {
                 thing.EightBitter.shiftHoriz(thing, dx, notChanged);
             }
         }
-        
+
         if (!thing.noshifty) {
             if (thing.parallaxVert) {
                 thing.EightBitter.shiftVert(
@@ -880,7 +916,7 @@ var GameStartr = (function (EightBittr) {
             }
         }
     }
-    
+
     /**
      * Calls shiftBoth on all members of an Array.
      * 
@@ -894,11 +930,11 @@ var GameStartr = (function (EightBittr) {
             things[i].EightBitter.shiftBoth(things[i], dx, dy, notChanged);
         }
     }
-    
+
     /**
      * Calls shiftBoth on all groups in the calling EightBittr's GroupHoldr.
      * 
-     * @this {GameStartr}
+     * @this {EightBittr}
      * @param {Number} dx
      * @param {Number} dy
      */
@@ -925,19 +961,19 @@ var GameStartr = (function (EightBittr) {
     function setWidth(thing, width, updateSprite, updateSize) {
         thing.width = width;
         thing.unitwidth = width * thing.EightBitter.unitsize;
-        
+
         if (updateSprite) {
             thing.spritewidth = width;
             thing.spritewidthpixels = width * thing.EightBitter.unitsize;
         }
-        
+
         if (updateSize) {
             thing.EightBitter.updateSize(thing);
         }
-        
+
         thing.EightBitter.markChanged(thing);
     }
-    
+
     /**
      * Sets the height and unitheight of a Thing, and optionally updates the
      * Thing's spriteheight and spriteheight pixels, and/or calls updateSize.
@@ -954,19 +990,19 @@ var GameStartr = (function (EightBittr) {
     function setHeight(thing, height, updateSprite, updateSize) {
         thing.height = height;
         thing.unitheight = height * thing.EightBitter.unitsize;
-        
+
         if (updateSprite) {
             thing.spriteheight = height;
             thing.spriteheightpixels = height * thing.EightBitter.unitsize;
         }
-        
+
         if (updateSize) {
             thing.EightBitter.updateSize(thing);
         }
-        
+
         thing.EightBitter.markChanged(thing);
     }
-    
+
     /**
      * Utility to call both setWidth and setHeight on a Thing.
      * 
@@ -985,7 +1021,7 @@ var GameStartr = (function (EightBittr) {
         thing.EightBitter.setWidth(thing, width, updateSprite, updateSize);
         thing.EightBitter.setHeight(thing, height, updateSprite, updateSize);
     }
-    
+
     /**
      * Shifts a Thing horizontally by its xvel and vertically by its yvel, using
      * shiftHoriz and shiftVert.
@@ -996,7 +1032,7 @@ var GameStartr = (function (EightBittr) {
         thing.EightBitter.shiftHoriz(thing, thing.xvel);
         thing.EightBitter.shiftVert(thing, thing.yvel);
     }
-    
+
     /**
      * Completely updates the size measurements of a Thing. That means the
      * unitwidth, unitheight, spritewidthpixels, spriteheightpixels, and
@@ -1010,14 +1046,14 @@ var GameStartr = (function (EightBittr) {
         thing.unitheight = thing.height * thing.EightBitter.unitsize;
         thing.spritewidthpixels = thing.spritewidth * thing.EightBitter.unitsize;
         thing.spriteheightpixels = thing.spriteheight * thing.EightBitter.unitsize;
-        
+
         thing.canvas.width = thing.spritewidthpixels;
         thing.canvas.height = thing.spriteheightpixels;
         thing.EightBitter.PixelDrawer.setThingSprite(thing);
-        
+
         thing.EightBitter.markChanged(thing);
     }
-    
+
     /**
      * Reduces a Thing's width by pushing back its right and decreasing its 
      * width. It is marked as changed in appearance.
@@ -1030,14 +1066,14 @@ var GameStartr = (function (EightBittr) {
     function reduceWidth(thing, dx, see) {
         thing.right -= dx;
         thing.width -= dx / thing.EightBitter.unitsize;
-        
+
         if (see) {
             thing.EightBitter.updateSize(thing);
         } else {
             thing.EightBitter.markChanged(thing);
         }
     }
-    
+
     /**
      * Reduces a Thing's height by pushing down its top and decreasing its 
      * height. It is marked as changed in appearance.
@@ -1050,14 +1086,14 @@ var GameStartr = (function (EightBittr) {
     function reduceHeight(thing, dy, updateSize) {
         thing.top += dy;
         thing.height -= dy / thing.EightBitter.unitsize;
-        
+
         if (updateSize) {
             thing.EightBitter.updateSize(thing);
         } else {
             thing.EightBitter.markChanged(thing);
         }
     }
-    
+
     /**
      * Reduces a Thing's height by pushing down its top and decreasing its 
      * height. It is marked as changed in appearance.
@@ -1073,7 +1109,7 @@ var GameStartr = (function (EightBittr) {
         thing.unitheight = thing.height * thing.EightBitter.unitsize;
         thing.EightBitter.markChanged(thing);
     }
-    
+
     /**
      * Increases a Thing's width by pushing forward its right and decreasing its 
      * width. It is marked as changed in appearance.
@@ -1089,7 +1125,7 @@ var GameStartr = (function (EightBittr) {
         thing.unitwidth = thing.width * thing.EightBitter.unitsize;
         thing.EightBitter.markChanged(thing);
     }
-    
+
     /**
      * Completely pauses a Thing by setting its velocities to zero and disabling
      * it from falling, colliding, or moving. Its old attributes for those are
@@ -1102,19 +1138,19 @@ var GameStartr = (function (EightBittr) {
     function thingPauseVelocity(thing, keepMovement) {
         thing.xvelOld = thing.xvel || 0;
         thing.yvelOld = thing.yvel || 0;
-        
+
         thing.nofallOld = thing.nofall || false;
         thing.nocollideOld = thing.nocollide || false;
         thing.movementOld = thing.movement || thing.movementOld;
-        
+
         thing.nofall = thing.nocollide = true;
         thing.xvel = thing.yvel = false;
-        
+
         if (!keepMovement) {
             thing.movement = undefined;
         }
     }
-    
+
     /**
      * Resumes a Thing's velocity and movements after they were paused by
      * thingPauseVelocity.
@@ -1128,16 +1164,16 @@ var GameStartr = (function (EightBittr) {
             thing.xvel = thing.xvelOld || 0;
             thing.yvel = thing.yvelOld || 0;
         }
-        
+
         thing.movement = thing.movementOld || thing.movement;
         thing.nofall = thing.nofallOld || false;
         thing.nocollide = thing.nocollideOld || false;
     }
-    
-    
+
+
     /* Appearance utilities
     */
-    
+
     /**
      * Generates a key for a Thing based off the current area and the Thing's
      * basic attributes. This key should be used for PixelRender.get calls, to
@@ -1147,11 +1183,11 @@ var GameStartr = (function (EightBittr) {
      * @return {String} A key that to identify the Thing's sprite.
      */
     function generateObjectKey(thing) {
-        return thing.EightBitter.MapsHandler.getArea().setting 
-                + ' ' + thing.libType + ' ' 
+        return thing.EightBitter.MapsHandler.getArea().setting
+                + ' ' + thing.libType + ' '
                 + thing.title + ' ' + thing.className;
     }
-    
+
     /**
      * Sets the class of a Thing, sets the new sprite for it, and marks it as 
      * having changed appearance. The class is stored in the Thing's internal
@@ -1165,7 +1201,7 @@ var GameStartr = (function (EightBittr) {
         thing.EightBitter.PixelDrawer.setThingSprite(thing);
         thing.EightBitter.markChanged(thing);
     }
-    
+
     /**
      * A version of setClass to be used before the Thing's sprite attributes
      * have been set. This just sets the internal .className.
@@ -1176,7 +1212,7 @@ var GameStartr = (function (EightBittr) {
     function setClassInitial(thing, string) {
         thing.className = string;
     }
-    
+
     /**
      * Adds a string to a Thing's class after a ' ', updates the Thing's 
      * sprite, and marks it as having changed appearance.
@@ -1189,7 +1225,7 @@ var GameStartr = (function (EightBittr) {
         thing.EightBitter.PixelDrawer.setThingSprite(thing);
         thing.EightBitter.markChanged(thing);
     }
-    
+
     /**
      * Adds multiple strings to a Thing's class after a ' ', updates the Thing's 
      * sprite, and marks it as having changed appearance. Strings may be given 
@@ -1203,17 +1239,17 @@ var GameStartr = (function (EightBittr) {
         var strings, arr, i, j;
         for (i = 1; i < arguments.length; i += 1) {
             arr = arguments[i];
-            
+
             if (!(arr instanceof Array)) {
                 arr = arr.split(' ');
             }
-            
+
             for (j = arr.length - 1; j >= 0; j -= 1) {
                 thing.EightBitter.addClass(thing, arr[j]);
             }
         }
     }
-    
+
     /**
      * Removes a string from a Thing's class, updates the Thing's sprite, and
      * marks it as having changed appearance.
@@ -1231,7 +1267,7 @@ var GameStartr = (function (EightBittr) {
         thing.className = thing.className.replace(new RegExp(" " + string, "gm"), "");
         thing.EightBitter.PixelDrawer.setThingSprite(thing);
     }
-    
+
     /**
      * Removes multiple strings from a Thing's class, updates the Thing's 
      * sprite, and marks it as having changed appearance. Strings may be given 
@@ -1248,13 +1284,13 @@ var GameStartr = (function (EightBittr) {
             if (!(arr instanceof Array)) {
                 arr = arr.split(" ");
             }
-            
+
             for (j = arr.length - 1; j >= 0; --j) {
                 thing.EightBitter.removeClass(thing, arr[j]);
             }
         }
     }
-    
+
     /**
      * @param {Thing} thing
      * @param {String} string
@@ -1263,7 +1299,7 @@ var GameStartr = (function (EightBittr) {
     function hasClass(thing, string) {
         return thing.className.indexOf(string) !== -1;
     }
-    
+
     /**
      * Removes the first class from a Thing and adds the second. All typical
      * sprite updates are called.
@@ -1276,7 +1312,7 @@ var GameStartr = (function (EightBittr) {
         thing.EightBitter.removeClass(thing, stringOut);
         thing.EightBitter.addClass(thing, stringIn);
     }
-    
+
     /**
      * Marks a Thing as being flipped horizontally by setting its .flipHoriz
      * attribute to true and giving it a "flipped" class.
@@ -1287,7 +1323,7 @@ var GameStartr = (function (EightBittr) {
         thing.flipHoriz = true;
         thing.EightBitter.addClass(thing, "flipped");
     }
-    
+
     /**
      * Marks a Thing as being flipped vertically by setting its .flipVert
      * attribute to true and giving it a "flipped" class.
@@ -1298,7 +1334,7 @@ var GameStartr = (function (EightBittr) {
         thing.flipVert = true;
         thing.EightBitter.addClass(thing, "flip-vert");
     }
-    
+
     /**
      * Marks a Thing as not being flipped horizontally by setting its .flipHoriz
      * attribute to false and giving it a "flipped" class.
@@ -1309,7 +1345,7 @@ var GameStartr = (function (EightBittr) {
         thing.flipHoriz = false;
         thing.EightBitter.removeClass(thing, "flipped");
     }
-    
+
     /**
      * Marks a Thing as not being flipped vertically by setting its .flipVert
      * attribute to true and giving it a "flipped" class.
@@ -1320,7 +1356,7 @@ var GameStartr = (function (EightBittr) {
         thing.flipVert = false;
         thing.EightBitter.removeClass(thing, "flip-vert");
     }
-    
+
     /**
      * Sets the opacity of the Thing and marks its appearance as changed.
      * 
@@ -1331,11 +1367,11 @@ var GameStartr = (function (EightBittr) {
         thing.opacity = opacity;
         thing.EightBitter.markChanged(thing);
     }
-    
-    
+
+
     /* Miscellaneous utilities
     */
-    
+
     /**
      * Removes a Thing from an Array using Array.splice. If the thing has an 
      * onDelete, that is called.
@@ -1353,14 +1389,14 @@ var GameStartr = (function (EightBittr) {
                 return;
             }
         }
-        
+
         array.splice(location, 1);
-        
-        if (typeof(thing.onDelete) === "function") {
+
+        if (typeof (thing.onDelete) === "function") {
             thing.onDelete(thing);
         }
     }
-    
+
     /**
      * Takes a snapshot of the current screen canvas by simulating a click event
      * on a dummy link.
@@ -1376,15 +1412,16 @@ var GameStartr = (function (EightBittr) {
         var EightBitter = EightBittr.ensureCorrectCaller(this),
             format = "image/png",
             link = EightBitter.createElement("a", {
-                "download": (name || "FullScreenMario Screenshot") 
-                    + "." + format.split("/")[1],
+                "download": (
+                        name || (EightBitter.settings.ui.globalName + " Screenshot") 
+                    ) + "." + format.split("/")[1],
                 "href": EightBitter.canvas.toDataURL(format)
                     .replace(format, "image/octet-stream")
             });
-            
+
         link.click();
     }
-    
+
     /**
      * 
      */
@@ -1394,7 +1431,7 @@ var GameStartr = (function (EightBittr) {
                 "type": "text/css"
             }),
             compiled = "", i, j;
-        
+
         for (i in styles) {
             compiled += i + " { \r\n";
             for (j in styles[i]) {
@@ -1402,17 +1439,17 @@ var GameStartr = (function (EightBittr) {
             }
             compiled += "}\r\n";
         }
-        
+
         if (sheet.styleSheet) {
             sheet.styleSheet.cssText = compiled;
         } else {
             sheet.appendChild(document.createTextNode(compiled));
         }
-        
+
         document.querySelector("head").appendChild(sheet);
     }
-    
-    
+
+
     proliferateHard(EightBitterProto, {
         // Resets
         "reset": reset,
@@ -1445,6 +1482,7 @@ var GameStartr = (function (EightBittr) {
         "addThing": addThing,
         "thingProcess": thingProcess,
         "thingProcessAttributes": thingProcessAttributes,
+        "mapPlaceRandomCommands": mapPlaceRandomCommands,
         // Physics & similar
         "markChanged": markChanged,
         "shiftVert": shiftVert,
@@ -1487,6 +1525,6 @@ var GameStartr = (function (EightBittr) {
         "takeScreenshot": takeScreenshot,
         "addPageStyles": addPageStyles
     });
-    
+
     return GameStartr;
 })(EightBittr);

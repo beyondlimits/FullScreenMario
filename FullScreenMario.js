@@ -1,6 +1,54 @@
 /**
  * More documentation to come: this is only one part of the full FullScreenMario
  * source.
+ * 
+ * @example 
+ * // Creating a 15 x 14.5 blocks sized FullScreenMario object.
+ * var FSM = new FullScreenMario({
+ *     "width": 480, 
+ *     "height": 464
+ * });
+ * 
+ * @example
+ * // Creating a 15 x 14.5 blocks sized FullScreenMario object and logging the 
+ * // amount of time each reset function took.
+ * var FSM = new FullScreenMario({
+ *     "width": 480, 
+ *     "height": 464,
+ *     "resetTimed": true
+ * });
+ * console.log(FSM.resetTimes);
+ * 
+ * @example
+ * // Creating a full-screen FullScreenMario object with a few mods.
+ * var FSM = new FullScreenMario({
+ *    "width": window.innerWidth,
+ *    "height": window.innerHeight,
+ *    "mods": {
+ *         "Luigi": true,
+ *         "HorizClouds": true,
+ *         "High Speed": true,
+ *         "Super Fireballs": true
+ *     }
+ * });
+ * 
+ * @example
+ * // Binding the FullScreenMario object controls to the body's mouse and key 
+ * // events, and starting the game.
+ * window.FSM = new FullScreenMario({
+ *    "width": window.innerWidth, 
+ *    "height": window.innerHeight
+ * });
+ * 
+ * document.body.appendChild(FSM.container);
+ * 
+ * FSM.proliferate(document.body, {
+ *     "onkeydown": FSM.InputWriter.makePipe("onkeydown", "keyCode", true),
+ *     "onkeyup": FSM.InputWriter.makePipe("onkeyup", "keyCode", true),
+ *     "onmousedown": FSM.InputWriter.makePipe("onmousedown", "which", true)
+ * });
+ * 
+ * FSM.gameStart();
  */
 var FullScreenMario = (function(GameStartr) {
     "use strict";
@@ -11,7 +59,7 @@ var FullScreenMario = (function(GameStartr) {
         // Used for combining arrays from the prototype to this
         proliferate = GameStartrProto.proliferate,
         proliferateHard = GameStartrProto.proliferateHard;
-        
+    
     // Subsequent settings will be stored in FullScreenMario.prototype.settings
     GameStartrProto.settings = {};
     
@@ -22,59 +70,16 @@ var FullScreenMario = (function(GameStartr) {
      * Dynamic game settings may be given as members of the "customs" argument.
      * On typical machines, game startup time is approximately 500-700ms.
      * 
+     * @constructor
      * @param {Number} width   Width of the game viewport: at least 480.
      * @param {Number} height   Height of the game viewport: at least 464.
-     * @param {Boolean} resetTimes   Whether the amount of time in milliseconds
-     *                               of each reset function should be stored as
-     *                               a member .resetTimes.
+     * @param {Boolean} [resetTimes]   Whether the amount of time in of each
+     *                               reset function (in millseconds) should be 
+     *                               stored as a member .resetTimes (by default,
+     *                               false).
      * @param {Object} [style]   Additional CSS styles to be given to the
      *                           game's container <div> element.
-     * @param {} 
      * @return {FullScreenMario}
-     * 
-     * @example Creating a 15 x 14.5 blocks sized FullScreenMario object.
-     * var FSM = new FullScreenMario({
-     *     "width": 480, 
-     *     "height": 464
-     * });
-     * 
-     * @example Creating a 15 x 14.5 blocks sized FullScreenMario object and
-     *          logging the amount of time each reset function took.
-     * var FSM = new FullScreenMario({
-     *     "width": 480, 
-     *     "height": 464,
-     *     "resetTimed": true
-     * });
-     * console.log(FSM.resetTimes);
-     * 
-     * @example Creating a full-screen FullScreenMario object with a few mods.
-     * var FSM = new FullScreenMario({
-     *    "width": window.innerWidth,
-     *    "height": window.innerHeight,
-     *    "mods": {
-     *         "Luigi": true,
-     *         "HorizClouds": true,
-     *         "High Speed": true,
-     *         "Super Fireballs": true
-     *     }
-     * });
-     * 
-     * @example Binding the FullScreenMario object controls to the body's mouse
-     *          and key events, and starting the game.
-     * window.FSM = new FullScreenMario({
-     *    "width": window.innerWidth, 
-     *    "height": window.innerHeight
-     * });
-     * 
-     * document.body.appendChild(FSM.container);
-     * 
-     * FSM.proliferate(document.body, {
-     *     "onkeydown": FSM.InputWriter.makePipe("onkeydown", "keyCode", true),
-     *     "onkeyup": FSM.InputWriter.makePipe("onkeyup", "keyCode", true),
-     *     "onmousedown": FSM.InputWriter.makePipe("onmousedown", "which", true)
-     * });
-     * 
-     * FSM.gameStart();
      */
     function FullScreenMario(customs) {
         // Call the parent GameStartr constructor to set the base settings and
@@ -168,6 +173,26 @@ var FullScreenMario = (function(GameStartr) {
     }
     
     /**
+     * Sets self.MapsHandler.
+     * 
+     * @param {EightBittr} EightBitter
+     * @param {Object} [customs]
+     * @remarks Requirement(s): MapsHandlr (src/MapsHandlr/MapsHandlr.js)
+     *                          maps.js (settings/maps.js)
+     */
+    function resetMapsHandler(EightBitter, customs) {
+        EightBitter.MapsHandler = new MapsHandlr({
+            "MapsCreator": EightBitter.MapsCreator,
+            "MapScreener": EightBitter.MapScreener,
+            "screenAttributes": EightBitter.settings.maps.screenAttributes,
+            "onSpawn": EightBitter.settings.maps.onSpawn,
+            "stretchAdd": EightBitter.mapAddStretched.bind(EightBitter),
+            "onStretch": EightBitter.mapStretchThing,
+            "afterAdd": EightBitter.mapAddAfter.bind(EightBitter)
+        });
+    }
+    
+    /**
      * Resets self.StatsHolder via the parent GameStartr resetStatsHolder.
      * 
      * If the screen isn't wide enough to fit the 'lives' display, it's hidden.
@@ -197,6 +222,7 @@ var FullScreenMario = (function(GameStartr) {
         GameStartr.prototype.resetContainer(EightBitter, customs);
         
         EightBitter.container.style.fontFamily = "Press Start";
+        EightBitter.container.className += " FullScreenMario";
         
         EightBitter.PixelDrawer.setThingArrays([
             EightBitter.GroupHolder.getSceneryGroup(),
@@ -206,6 +232,7 @@ var FullScreenMario = (function(GameStartr) {
         ]);
         
         EightBitter.StatsHolder.getContainer().style.width = customs.width + "px";
+        EightBitter.container.appendChild(EightBitter.StatsHolder.getContainer());
     }
     
     
@@ -5820,6 +5847,7 @@ var FullScreenMario = (function(GameStartr) {
         thing.movement = undefined;
         
         if (thing.power > 1) {
+            thing.EightBitter.animatePlayerRemoveCrouch(thing);
             thing.EightBitter.setPlayerSizeLarge(thing);
         } else {
             thing.EightBitter.setPlayerSizeSmall(thing);
@@ -7078,39 +7106,6 @@ var FullScreenMario = (function(GameStartr) {
         
         prething.x = boundaries.right;
         MapsCreator.analyzePreSwitch(prething, prethings, area, map);
-    }
-    
-    /**
-     * Runs through commands generated by a WorldSeedr and evaluates all of 
-     * to create PreThings via MapsCreator.analyzePreSwitch. 
-     * 
-     * @param {EightBittr} EightBitter
-     * @param {Object[]} generatedCommands   The commands generated by a
-     *                                       WorldSeedr.generateFull call.
-     */
-    function mapPlaceRandomCommands(EightBitter, generatedCommands) {
-        var MapsCreator = EightBitter.MapsCreator,
-            MapsHandler = EightBitter.MapsHandler,
-            prethings = MapsHandler.getPreThings(),
-            area = MapsHandler.getArea(),
-            map = MapsHandler.getMap(),
-            command, output, i;
-        
-        for (i = 0; i < generatedCommands.length; i += 1) {
-            command = generatedCommands[i];
-            
-            output = {
-                "thing": command.title,
-                "x": command.left,
-                "y": command.top
-            };
-            
-            if (command.arguments) {
-                EightBitter.proliferateHard(output, command.arguments, true);
-            }
-            
-            MapsCreator.analyzePreSwitch(output, prethings, area, map);
-        }
     }
 
 
@@ -8508,6 +8503,7 @@ var FullScreenMario = (function(GameStartr) {
     proliferateHard(FullScreenMario.prototype, {
         // Resets
         "resetAudioPlayer": resetAudioPlayer,
+        "resetMapsHandler": resetMapsHandler,
         "resetStatsHolder": resetStatsHolder,
         "resetContainer": resetContainer,
         // Global manipulations
@@ -8762,7 +8758,6 @@ var FullScreenMario = (function(GameStartr) {
         "getAbsoluteHeight": getAbsoluteHeight,
         "mapAddStretched": mapAddStretched,
         "mapAddAfter": mapAddAfter,
-        "mapPlaceRandomCommands": mapPlaceRandomCommands,
         // Map macros
         "macroExample": macroExample,
         "macroFillPreThings": macroFillPreThings,
