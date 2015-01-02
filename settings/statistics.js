@@ -68,7 +68,7 @@ FullScreenMario.prototype.settings.statistics = {
             "hasElement": true,
             "modularity": 100,
             "onModular": function (EightBitter) {
-                EightBitter.player.gainLife();
+                EightBitter.gainLife();
             }
         },
         "lives": {

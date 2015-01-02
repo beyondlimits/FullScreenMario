@@ -554,6 +554,72 @@ FullScreenMario.prototype.settings.mods = {
                 "y": undefined
             }
         }, {
+            "name": "Palette Swap",
+            "description": "Swaps the color palette around randomly for each area.",
+            "author": {
+                "name": "Josh Goldberg",
+                "email": "josh@fullscreenmario.com"
+            },
+            "enabled": true,
+            "events": {
+                "onModEnable": function (mod) {
+                    mod.settings.paletteDefaultOld = this.settings.sprites.paletteDefault;
+                    
+                    if (this.MapsHandler.getMapName()) {
+                        mod.events.onPreSetLocation.call(this, mod);
+                    }
+                },
+                "onModDisable": function (mod) {
+                    this.settings.sprites.paletteDefault = mod.settings.paletteDefaultOld;
+                    
+                    mod.resetVisuals(this);
+                    mod.resetThingSprites(this);
+                },
+                "onPreSetLocation": function (mod, location) {
+                    this.settings.sprites.paletteDefault = mod.shufflePalette(
+                        Array.prototype.slice.call(mod.settings.paletteDefaultOld)
+                    );
+                    
+                    mod.resetVisuals(this);
+                    mod.resetThingSprites(this);
+                }
+            },
+            "settings": {
+                "paletteOld": undefined
+            },
+            "resetVisuals": function (EightBitter) {
+                EightBitter.resetPixelRender(EightBitter, EightBitter.customs);
+                EightBitter.resetPixelDrawer(EightBitter, EightBitter.customs);
+                EightBitter.PixelDrawer.setCanvas(EightBitter.canvas);
+                EightBitter.PixelDrawer.setThingArrays([
+                    EightBitter.GroupHolder.getSceneryGroup(),
+                    EightBitter.GroupHolder.getSolidGroup(),
+                    EightBitter.GroupHolder.getCharacterGroup(),
+                    EightBitter.GroupHolder.getTextGroup()
+                ]);
+                EightBitter.PixelDrawer.setBackground(
+                    EightBitter.MapsHandler.getArea().background
+                );
+            },
+            "resetThingSprites": function (EightBitter) {
+                EightBitter.GroupHolder.callOnAll(undefined, function (thing) {
+                    thing.numSprites = undefined;
+                    // EightBitter.PixelDrawer.setThingSprite(thing);
+                });
+            },
+            "shufflePalette": function shufflePalette(array) {
+                var i, j, temp;
+                
+                for (i = 0; i < array.length - 1; i += 1) {
+                    j = Math.floor(Math.random() * i);
+                    temp = array[i + 1];
+                    array[i + 1] = array[j + 1];
+                    array[j + 1] = temp;
+                }
+                
+                return array;
+            }
+        }, {
             "name": "QCount",
             "description": "QQQQQQQ",
             "author": {

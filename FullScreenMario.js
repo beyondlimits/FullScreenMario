@@ -187,6 +187,7 @@ var FullScreenMario = (function(GameStartr) {
         GameStartr.prototype.resetThingHitter(EightBitter, customs);
         
         EightBitter.ThingHitter.cacheHitCheckGroup("Solid");
+        EightBitter.ThingHitter.cacheHitCheckGroup("Character");
     }
     
     /**
