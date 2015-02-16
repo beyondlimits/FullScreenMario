@@ -389,9 +389,9 @@ var FullScreenMario = (function(GameStartr) {
             player;
         
         player = EightBitter.player = EightBitter.ObjectMaker.make("Player", {
-            "power": EightBitter.StatsHolder.get("power"),
-            "keys": EightBitter.ObjectMaker.getProperties().Player.getKeys()
+            "power": EightBitter.StatsHolder.get("power")
         });
+        player.keys = player.getKeys();
         
         EightBitter.InputWriter.setEventInformation(player);
         
@@ -3694,6 +3694,11 @@ var FullScreenMario = (function(GameStartr) {
             numFireworks = 0;
         }
         
+        if (thing.EightBitter.StatsHolder.get("time") === Infinity) {
+            thing.EightBitter.animateEndLevelFireworks(thing, other, numFireworks);
+            return;
+        }
+
         thing.EightBitter.TimeHandler.addEventInterval(function () {
             thing.EightBitter.StatsHolder.decrease("time");
             thing.EightBitter.StatsHolder.increase("score", 50);

@@ -254,7 +254,7 @@
                     },
                     "blockBoundaries": {
                         "afters": [{
-                            "thing": "ScrollBlocker"
+                            "thing": "ScrollBlocker", "noBoundaryStretch": true
                         }]
                     },
                     "random": {
@@ -292,6 +292,7 @@
                 "sprite": "",
                 "spriteType": "neither",
                 "opacity": 1,
+                "scale": 1,
                 // Triggered functions
                 "animate": FullScreenMario.prototype.animateEmerge,
                 "onMake": FullScreenMario.prototype.thingProcess,
