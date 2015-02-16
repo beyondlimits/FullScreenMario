@@ -691,6 +691,7 @@ FullScreenMario.prototype.settings.sprites = {
                 }],
                 "Alt2": ["same", ["Solid", "TreeTop", "Alt"]]
             },
+            "TreeTrunk": ["same", ["Scenery", "TreeTrunk"]],
             "WaterBlock": "20"
         },
         "Scenery": {

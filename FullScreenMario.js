@@ -4192,12 +4192,15 @@ var FullScreenMario = (function(GameStartr) {
         if (thing.EightBitter.player.resting === thing) {
             thing.yvel += thing.EightBitter.unitsize / 16;
         }
-        // If this still has velocity from a player, fall less
-        else if (this.yvel > 0) {
-            thing.yvel = Math.max(
-                thing.yvel - thing.EightBitter.unitsize / 16,
-                0
-            );
+        // If this still has velocity from a player, stop or fall less
+        else if (thing.yvel > 0) {
+            if (!thing.partners) {
+                thing.yvel = 0;
+            } else {
+                thing.yvel = Math.max(
+                    thing.yvel - thing.EightBitter.unitsize / 16, 0
+                );
+            }
         }
         // Not being rested upon or having a yvel means nothing happens
         else {
@@ -4205,6 +4208,13 @@ var FullScreenMario = (function(GameStartr) {
         }
         
         thing.tension += thing.yvel;
+        thing.EightBitter.shiftVert(thing, thing.yvel);
+
+        // The rest of the logic is for the platform's partner(s)
+        if (!thing.partners) {
+            return;
+        }
+
         thing.partners.partnerPlatform.tension -= thing.yvel;
         
         // If the partner has fallen off, everybody falls!
@@ -4219,14 +4229,13 @@ var FullScreenMario = (function(GameStartr) {
             );
         }
         
-        
-        thing.EightBitter.shiftVert(thing, thing.yvel);
-        
+        // The partner has yvel equal and opposite to this platform's
         thing.EightBitter.shiftVert(
             thing.partners.partnerPlatform,
             -thing.yvel
         );
         
+        // This platform's string grows with its yvel
         thing.EightBitter.setHeight(
             thing.partners.ownString,
             thing.partners.ownString.height + (
@@ -4234,6 +4243,7 @@ var FullScreenMario = (function(GameStartr) {
             )
         );
         
+        // The partner's string shrinks while this platform's string grows
         thing.EightBitter.setHeight(
             thing.partners.partnerString, 
             Math.max(
