@@ -56,7 +56,7 @@
 var FullScreenMario = (function(GameStartr) {
     "use strict";
     
-    // Use an GameStartr as the class parent, with GameStartr's constructor
+    // Use a GameStartr as the class parent, with GameStartr's constructor
     var GameStartrProto = new GameStartr(),
         
         // Used for combining arrays from the prototype to this
