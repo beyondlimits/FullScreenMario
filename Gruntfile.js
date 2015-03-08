@@ -30,7 +30,7 @@ module.exports = function (grunt) {
                 "src": [
                     "<%= meta.GameStartrPath %>/*.js",
                     "<%= meta.GameStartrPath %>/*/*.js",
-                    "<%= pkg.name %>.js",
+                    "FullScreenMario.js",
                     "settings/*.js"
                 ],
                 "dest": "<%= meta.deployPath %>/<%= pkg.name %>.js"
@@ -84,7 +84,7 @@ module.exports = function (grunt) {
             }
         }
     });
-    
+
     grunt.loadNpmTasks("grunt-contrib-copy");
     grunt.loadNpmTasks("grunt-contrib-concat");
     grunt.loadNpmTasks("grunt-contrib-uglify");
