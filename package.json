@@ -1,6 +1,6 @@
 {
-    "name": "FullScreenMario-JSON",
-    "description": "FullScreenMario - An HTML5 remake of the original Super Mario Brothers - expanded for modern browsing.",
+    "name": "FullScreenMario",
+    "description": "An HTML5 remake of the original Super Mario Brothers - expanded for modern browsing.",
     "version": "0.9.0",
     "author": {
         "name": "Josh Goldberg",
@@ -8,14 +8,14 @@
     },
     "repository": {
         "type": "git",
-        "url": "ssh://git@github.com:DiogenesTheCynic/FullScreenMario-JSON.git"
+        "url": "ssh://git@github.com:FullScreenShenanigans/FullScreenMario.git"
     },
     "bugs": {
-        "url": "https://github.com/DiogenesTheCynic/FullScreenMario-JSON/issues"
+        "url": "https://github.com/FullScreenShenanigans/FullScreenMario/issues"
     },
     "licenses": [{
         "type": "Attribution Non-Commercial Share-Alike",
-        "url": "https://github.com/DiogenesTheCynic/FullScreenMario-JSON/blob/master/LICENSE.txt"
+        "url": "https://github.com/FullScreenShenanigans/FullScreenMario/blob/master/LICENSE.txt"
     }],
     "devDependencies": {
         "grunt": "~0.4.1",
