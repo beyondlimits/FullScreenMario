@@ -4992,6 +4992,8 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Player} other
      * @remarks If the contents are "Mushroom" and a large player hits the 
      *          solid, they turn into "FireFlower".
+     * @remarks For the level editor, if thing.contents is false, the prototype
+     *          is tried (so false becomes Coin in Blocks).
      */
     function animateSolidContents(thing, other) {
         var output;
@@ -5005,7 +5007,9 @@ var FullScreenMario = (function(GameStartr) {
             thing.contents = "FireFlower";
         }
         
-        output = thing.EightBitter.addThing(thing.contents);
+        output = thing.EightBitter.addThing(
+            thing.contents || thing.constructor.prototype.contents
+        );
         thing.EightBitter.setMidXObj(output, thing);
         thing.EightBitter.setTop(output, thing.top);
         output.blockparent = thing;
