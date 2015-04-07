@@ -536,7 +536,7 @@ var LevelEditr = (function (pageStyles) {
                     child = children[i];
                     labeler = child.getElementsByClassName("VisualOptionLabel")[0];
                     valuer = child.getElementsByClassName("VisualOptionValue")[0];
-                    
+
                     switch (valuer["data:type"]) {
                         case "Boolean":
                             value = valuer.value === "true" ? true : false;
@@ -548,7 +548,7 @@ var LevelEditr = (function (pageStyles) {
                             value = valuer.value;
                             break;
                     }
-                    
+
                     if (value !== keyUndefined) {
                         args[labeler.textContent] = value;
                     }
@@ -1494,7 +1494,7 @@ var LevelEditr = (function (pageStyles) {
                     };
                     break;
             }
-            
+
             switch (option.type) {
                 case "Boolean":
                     return createSelect([
@@ -1562,14 +1562,21 @@ var LevelEditr = (function (pageStyles) {
                             return children;
                         })()
                     });
-                
+
                 case "Select":
                     return createSelect(option["options"], {
                         "className": "VisualOptionValue",
                         "data:type": "Boolean",
                         "onchange": setCurrentArgs
                     });
-                
+
+                case "String":
+                    return createSelect(option["options"], {
+                        "className": "VisualOptionValue",
+                        "data:type": "String",
+                        "onchange": setCurrentArgs
+                    });
+
                 case "Location":
                     var map = getMapObject(),
                         locations;

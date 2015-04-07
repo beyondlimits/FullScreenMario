@@ -49,9 +49,12 @@
         "Lakitu": undefined,
         "HammerBro": undefined,
         "Bowser": {
-            "contents": [ 
-                "Gooma", "Koopa", "HammerBro", "Bowser"
-            ]
+            "contents": {
+                "type": "String",
+                "options": [
+                    "Gooma", "Koopa", "HammerBro", "Bowser"
+                ]
+            }
         }
     },
     "Items": {
@@ -68,15 +71,21 @@
     },
     "Solids": {
         "Block": {
-            "contents": [
-                "Coin", "Mushroom", "Star", "Mushroom1Up", "MushroomDeathly"
-            ],
+            "contents": {
+                "type": "String",
+                "options": [
+                    "Coin", "Mushroom", "Star", "Mushroom1Up", "MushroomDeathly"
+                ]
+            },
             "hidden": "Boolean"
         },
         "Brick": {
-            "contents": [
-                "Coin", "Mushroom", "Star", "Mushroom1Up", "MushroomDeathly"
-            ]
+            "contents": {
+                "type": "String",
+                "options": [
+                    "", "Coin", "Mushroom", "Star", "Mushroom1Up", "MushroomDeathly"
+                ]
+            }
         },
         "Pipe": {
             "height": {
