@@ -2,16 +2,16 @@ This is the general getting started guide for FullScreenMario. You'll want to re
 
 ### Table of Contents
 
-1. [General Usage](#GeneralUsage)
-2. [Things](#Things)
-    1. [ObjectMakr](#ObjectMakr)
+1. [General Usage](#general-usage)
+2. [Things](#things)
+    1. [ObjectMakr](#objectmakr)
     2. [GroupHoldr](#GroupHoldr)
-    3. [Spawning](#Spawning)
-    4. [Movements](#Movements)
+    3. [Spawning](#spawning)
+    4. [Movements](#movements)
 3. [Maps](#Maps)
-    1. [MapsCreatr](#MapsCreatr)
-    2. [MapsHandlr](#MapsHandlr)
-    3. [MapScreenr](#MapScreenr)
+    1. [MapsCreatr](#mapscreatr)
+    2. [MapsHandlr](#mapshandlr)
+    3. [MapScreenr](#mapscreenr)
 
 ## General Usage
 
@@ -23,5 +23,20 @@ The base GameStartr engine includes a large number of modules, all of which are 
 
 Everything you see in the game (trees, blocks, the player, etc.) is a Thing. The Thing class is subclassed by a new class for everything (Tree class, Block class, Player class, etc.). When added to the game, a Thing has a number of properties filled out. These include velocities (xvel and yvel), positioning (top, right, bottom, left), and so on.
 
+Coordinates are relative to the top-right part of the screen. If you have experience with CSS, this is the same as positioning HTML elements absolutely. To add a new Thing to the game, use `FSM.addThing("type", #left, #top)`:
+
+```javascript
+FSM.addThing("Block") // Creates a new Cloud and adds it at x=0, y=0
+FSM.addThing("Brick", 32, 64) // Creates a new Brick and adds it at x=32, y=64
+```
+
 ### ObjectMakr
 
+All of FullScreenMario's non-GameStartr classes, including Thing and its subclasses, are defined in `settings/objects.js`. In short, the class hierarchy is stored under `FullScreenMario.prototype.settings.objects.inheritance` and the attributes for each class are stored under `FullScreenMario.prototype.settings.objects.properties`. You may read [ObjectMakr's readme](/blob/GameStartr/ObjectMakr/README.md) for a full explanation.
+
+`FSM.ObjectMakr.make("type")` is how you make a new Thing in the game. It takes in a string for the class name, and optionally an object containing additional properties for it. For example:
+
+```javascript
+FSM.ObjectMakr.make("Block") // Creates a new Block
+FSM.ObjectMakr.make("
+```
