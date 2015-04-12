@@ -38,5 +38,26 @@ All of FullScreenMario's non-GameStartr classes, including Thing and its subclas
 
 ```javascript
 FSM.ObjectMakr.make("Block") // Creates a new Block
-FSM.ObjectMakr.make("
+// Creates a new Brick with a Mushroom inside
+FSM.ObjectMakr.make("Brick", {
+    "contents": "Mushroom"
+});
+```
+
+### GroupHoldr
+
+Each Thing has a groupType string property that determines what group it's considered to be in. These are, in order from visible top to bottom:
+
+* Text
+* Character
+* Solid
+* Scenery
+
+`FSM.GroupHoldr` contains an Array for each of the groups; each Array contains all the Things of that type currently in the game. Things are added to their respective group when added to the game, and removed when they die. The groups are accessible both by static name and via passing in a String:
+
+```javascript
+// These all return the Array of Solids
+FSM.GroupHolder.getSolidGroup(); 
+FSM.GroupHolder.getGroup("Solid");
+FSM.GroupHolder.getGroups()["Solid"]; 
 ```
