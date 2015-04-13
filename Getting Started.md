@@ -87,7 +87,7 @@ FullScreenMario uses the GameStartr way of storing maps, areas, and locations:
 
 ### MapsCreatr
 
-Each Area's creation instructions are stored as an Array of Objects. You can see examples of maps in  [settings/maps.js](../blob/settings/maps.js). You may read [MapScreenr's readme](../blob/GameStartr/MapScreenr/README.md) for a full explanation. MapScreenr is the equivalent to ObjectMakr for maps in that it creates them when asked.
+Each Area's creation instructions are stored as an Array of Objects. You can see examples of maps in  [settings/maps.js](../settings/maps.js). You may read [MapScreenr's readme](../GameStartr/MapScreenr/README.md) for a full explanation. MapScreenr is the equivalent to ObjectMakr for maps in that it creates them when asked.
 
 ### MapScreenr
 
