@@ -10,7 +10,6 @@ This is the general getting started guide for FullScreenMario. You'll want to re
     4. [Movements](#movements)
 3. [Maps](#Maps)
     1. [MapsCreatr](#mapscreatr)
-    2. [MapsHandlr](#mapshandlr)
     3. [MapScreenr](#mapscreenr)
 
 ## General Usage
@@ -32,7 +31,7 @@ FSM.addThing("Brick", 32, 64) // Creates a new Brick and adds it at x=32, y=64
 
 ### ObjectMakr
 
-All of FullScreenMario's non-GameStartr classes, including Thing and its subclasses, are defined in `settings/objects.js`. In short, the class hierarchy is stored under `FullScreenMario.prototype.settings.objects.inheritance` and the attributes for each class are stored under `FullScreenMario.prototype.settings.objects.properties`. You may read [ObjectMakr's readme](/blob/GameStartr/ObjectMakr/README.md) for a full explanation.
+All of FullScreenMario's non-GameStartr classes, including Thing and its subclasses, are defined in `settings/objects.js`. In short, the class hierarchy is stored under `FullScreenMario.prototype.settings.objects.inheritance` and the attributes for each class are stored under `FullScreenMario.prototype.settings.objects.properties`. You may read [ObjectMakr's readme](../blob/GameStartr/ObjectMakr/README.md) for a full explanation.
 
 `FSM.ObjectMakr.make("type")` is how you make a new Thing in the game. It takes in a string for the class name, and optionally an object containing additional properties for it. For example:
 
@@ -75,3 +74,21 @@ The objects and map systems provide hooks for Things to have certain member func
 In order to progress game state and repaint the screen, the game calls `FullScreenMario.prototype.upkeep()` every 16 milliseconds (while running at 60fps). This is governed by FSM.GamesRunnr.
 
 Inside upkeep, a maintenance function is called for characters and solids. These are `FullScreenMario.prototype.maintainCharacters`, and `FullScreenMario.prototype.maintainSolids`. During these maintenance calls, for each character and solid, if they have a .movement property, it's called as a Function on the Thing. These will typically be `FullScreenMario.prototype.moveSimple` (such as Goombas) or `FullScreenMario.prototype.moveSmart` (such as smart Koopas).
+
+## Maps
+
+FullScreenMario uses the GameStartr way of storing maps, areas, and locations:
+
+* Maps store a collection of Areas and Locations
+* Areas store a setting type (Overworld, Underworld, etc.) and a creation list of commands for creation (next session).
+* Locations reference an Area and a x- and y- location in that Area.
+
+`FSM.setMap("map", #location)` may be used to go to a specific map (and, optionally, location number). `FSM.setLocation(#location)` may be used to go to a location in the current map.
+
+### MapsCreatr
+
+Each Area's creation instructions are stored as an Array of Objects. You can see examples of maps in  [settings/maps.js](../blob/settings/maps.js). You may read [MapScreenr's readme](../blob/GameStartr/MapScreenr/README.md) for a full explanation. MapScreenr is the equivalent to ObjectMakr for maps in that it creates them when asked.
+
+### MapScreenr
+
+Information on the current visible screen are stored in `FSM.MapScreenr`. It's the closest thing to a global variable store in FullScreenMario; it stores the offsetX and offsetY of the current screen (from moving to the right). the current map's setting ("Overworld", "Underworld", etc.) and many more, which you can see during gameplay.
