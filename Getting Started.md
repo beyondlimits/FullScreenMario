@@ -6,7 +6,7 @@ This is the general getting started guide for FullScreenMario. You'll want to re
 2. [Things](#things)
     1. [ObjectMakr](#objectmakr)
     2. [GroupHoldr](#GroupHoldr)
-    3. [Spawning](#spawning)
+    3. [Triggers](#triggers)
     4. [Movements](#movements)
 3. [Maps](#Maps)
     1. [MapsCreatr](#mapscreatr)
@@ -38,6 +38,7 @@ All of FullScreenMario's non-GameStartr classes, including Thing and its subclas
 
 ```javascript
 FSM.ObjectMakr.make("Block") // Creates a new Block
+
 // Creates a new Brick with a Mushroom inside
 FSM.ObjectMakr.make("Brick", {
     "contents": "Mushroom"
@@ -61,3 +62,16 @@ FSM.GroupHolder.getSolidGroup();
 FSM.GroupHolder.getGroup("Solid");
 FSM.GroupHolder.getGroups()["Solid"]; 
 ```
+
+### Triggers
+
+The objects and map systems provide hooks for Things to have certain member functions called on them. Currently, these are:
+
+* onMake - When the Thing is created (generally FullScreenMario.prototype.thingProcess)
+* onThingAdded - When the Thing is first added to the game state
+
+### Movements
+
+In order to progress game state and repaint the screen, the game calls `FullScreenMario.prototype.upkeep()` every 16 milliseconds (while running at 60fps). This is governed by FSM.GamesRunnr.
+
+Inside upkeep, a maintenance function is called for characters and solids. These are `FullScreenMario.prototype.maintainCharacters`, and `FullScreenMario.prototype.maintainSolids`. During these maintenance calls, for each character and solid, if they have a .movement property, it's called as a Function on the Thing. These will typically be `FullScreenMario.prototype.moveSimple` (such as Goombas) or `FullScreenMario.prototype.moveSmart` (such as smart Koopas).
