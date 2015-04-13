@@ -31,7 +31,7 @@ FSM.addThing("Brick", 32, 64) // Creates a new Brick and adds it at x=32, y=64
 
 ### ObjectMakr
 
-All of FullScreenMario's non-GameStartr classes, including Thing and its subclasses, are defined in `settings/objects.js`. In short, the class hierarchy is stored under `FullScreenMario.prototype.settings.objects.inheritance` and the attributes for each class are stored under `FullScreenMario.prototype.settings.objects.properties`. You may read [ObjectMakr's readme](../blob/GameStartr/ObjectMakr/README.md) for a full explanation.
+All of FullScreenMario's non-GameStartr classes, including Thing and its subclasses, are defined in `settings/objects.js`. In short, the class hierarchy is stored under `FullScreenMario.prototype.settings.objects.inheritance` and the attributes for each class are stored under `FullScreenMario.prototype.settings.objects.properties`. You may read ObjectMakr's readme for a full explanation.
 
 `FSM.ObjectMakr.make("type")` is how you make a new Thing in the game. It takes in a string for the class name, and optionally an object containing additional properties for it. For example:
 
@@ -87,7 +87,7 @@ FullScreenMario uses the GameStartr way of storing maps, areas, and locations:
 
 ### MapsCreatr
 
-Each Area's creation instructions are stored as an Array of Objects. You can see examples of maps in  [settings/maps.js](../settings/maps.js). You may read [MapScreenr's readme](../GameStartr/MapScreenr/README.md) for a full explanation. MapScreenr is the equivalent to ObjectMakr for maps in that it creates them when asked.
+Each Area's creation instructions are stored as an Array of Objects. You can see examples of maps in  settings/maps.js. You may read MapScreenr's readme for a full explanation. MapScreenr is the equivalent to ObjectMakr for maps in that it creates them when asked.
 
 ### MapScreenr
 
