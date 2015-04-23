@@ -9,19 +9,19 @@ module.exports = function (grunt) {
             "default": {
                 "files": [{
                     "src": "Sounds/**",
-                    "dest": "<%= meta.deployPath %>/"
+                    "dest": "<%= meta.deployPath %>/Sounds"
                 }, {
                     "src": "Theme/**",
-                    "dest": "<%= meta.deployPath %>/"
+                    "dest": "<%= meta.deployPath %>/Theme"
                 }, {
                     "src": "Fonts/**",
-                    "dest": "<%= meta.deployPath %>/"
+                    "dest": "<%= meta.deployPath %>/Fonts"
                 }, {
                     "src": "README.md",
-                    "dest": "<%= meta.deployPath %>/"
+                    "dest": "<%= meta.deployPath %>/README.md"
                 }, {
                     "src": "LICENSE.txt",
-                    "dest": "<%= meta.deployPath %>/"
+                    "dest": "<%= meta.deployPath %>/LICENSE.txt"
                 }]
             }
         },
