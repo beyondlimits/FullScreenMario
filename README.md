@@ -16,7 +16,6 @@ Although you may no longer play on [fullscreenmario.com](http://www.fullscreenma
 Upload the latest release of FullScreenMario (or your built version) to your FTP server. 
 
 
-
 ## Developing
 
 #### Build Process
@@ -32,6 +31,8 @@ FullScreenMario is built on a modular framework called GameStartr. The [GameStar
 The main game code outside the framework is stored in FullScreenMario.js. The FullScreenMario class inherits from GameStartr and has a global 'FSM' instance set up by the UserWrappr module in index.js. GameStartr's constructor (its reset function) contains a reset function for each module that stores the modules within it as `FSM.AudioPlayer`, `FSM.ChangeLiner`, etc. 
 
 The FullScreenMario.js class declaration contains class functions and some constants, while static settings to be added to the FullScreenMario prototype, such as map layouts and object attributes, are stored in files under [settings](settings), such as audio.js and collisions.js.
+
+See [Getting Started.md](Getting Started.md) for an in-depth guide on getting started programming with FullScreenMario.
 
 
 ## Legal
