@@ -13,19 +13,23 @@
     "bugs": {
         "url": "https://github.com/FullScreenShenanigans/FullScreenMario/issues"
     },
-    "licenses": [{
-        "type": "Attribution Non-Commercial Share-Alike",
-        "url": "https://github.com/FullScreenShenanigans/FullScreenMario/blob/master/LICENSE.txt"
-    }],
+    "licenses": [
+        {
+            "type": "Attribution Non-Commercial Share-Alike",
+            "url": "https://github.com/FullScreenShenanigans/FullScreenMario/blob/master/LICENSE.txt"
+        }
+    ],
     "devDependencies": {
-        "grunt": "~0.4.1",
-        "grunt-contrib-copy": "~0.7.0",
-        "grunt-contrib-concat": "~0.1.3",
-        "grunt-contrib-uglify": "~0.2.2",
-        "grunt-contrib-cssmin": "~0.11.0",
-        "grunt-processhtml": "~0.3.3",
-        "grunt-contrib-htmlmin": "~0.3.0",
-        "grunt-contrib-clean": "~0.6.0",
-        "grunt-zip": "~0.16.2"
+        "chai": "~2.2.X",
+        "grunt": "~0.4.X",
+        "grunt-contrib-copy": "~0.7.X",
+        "grunt-contrib-concat": "~0.1.X",
+        "grunt-contrib-uglify": "~0.2.X",
+        "grunt-contrib-cssmin": "~0.11.X",
+        "grunt-contrib-htmlmin": "~0.3.X",
+        "grunt-contrib-clean": "~0.6.X",
+        "grunt-mocha": "~0.4.X",
+        "grunt-processhtml": "~0.3.X",
+        "grunt-zip": "~0.16.X"
     }
 }

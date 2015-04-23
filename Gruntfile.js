@@ -85,6 +85,14 @@ module.exports = function (grunt) {
                 "src": ["**"],
                 "dest": "<%= pkg.name %>-v<%= pkg.version %>.zip"
             }
+        },
+        "mocha": {
+            "test": {
+                "src": ["Tests/*.html"],
+                "options": {
+                    "run": true
+                }
+            }
         }
     });
 
@@ -96,7 +104,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-contrib-htmlmin");
     grunt.loadNpmTasks("grunt-contrib-clean");
     grunt.loadNpmTasks("grunt-zip");
+    grunt.loadNpmTasks("grunt-mocha");
     grunt.registerTask("default", [
-        "copy", "concat", "uglify", "cssmin", "processhtml", "htmlmin", "clean", "zip"
+        "copy", "concat", "uglify", "cssmin", "processhtml", "htmlmin", "clean", "zip", "mocha"
     ]);
 };
