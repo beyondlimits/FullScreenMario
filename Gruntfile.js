@@ -10,15 +10,15 @@ module.exports = function (grunt) {
                 "files": [{
                     "expand": true,
                     "src": "Sounds/**",
-                    "dest": "<%= meta.deployPath %>/Sounds"
+                    "dest": "<%= meta.deployPath %>"
                 }, {
                     "expand": true,
                     "src": "Theme/**",
-                    "dest": "<%= meta.deployPath %>/Theme"
+                    "dest": "<%= meta.deployPath %>"
                 }, {
                     "expand": true,
                     "src": "Fonts/**",
-                    "dest": "<%= meta.deployPath %>/Fonts"
+                    "dest": "<%= meta.deployPath %>"
                 }, {
                     "src": "README.md",
                     "dest": "<%= meta.deployPath %>/README.md"
