@@ -87,7 +87,7 @@ module.exports = function (grunt) {
             }
         },
         "mocha_phantomjs": {
-            "all": ["Tests/*.html"]
+            "all": ["tests.html"]
         }
     });
 
