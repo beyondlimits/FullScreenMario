@@ -8,12 +8,15 @@ module.exports = function (grunt) {
         "copy": {
             "default": {
                 "files": [{
+                    "expand": true,
                     "src": "Sounds/**",
                     "dest": "<%= meta.deployPath %>/Sounds"
                 }, {
+                    "expand": true,
                     "src": "Theme/**",
                     "dest": "<%= meta.deployPath %>/Theme"
                 }, {
+                    "expand": true,
                     "src": "Fonts/**",
                     "dest": "<%= meta.deployPath %>/Fonts"
                 }, {
