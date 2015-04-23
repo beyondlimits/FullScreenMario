@@ -28,8 +28,9 @@
         "grunt-contrib-cssmin": "~0.11.X",
         "grunt-contrib-htmlmin": "~0.3.X",
         "grunt-contrib-clean": "~0.6.X",
-        "grunt-mocha": "~0.4.X",
+        "grunt-mocha-phantomjs": "~0.6.X",
         "grunt-processhtml": "~0.3.X",
-        "grunt-zip": "~0.16.X"
+        "grunt-zip": "~0.16.X",
+        "mocha": "~2.2.X"
     }
 }
