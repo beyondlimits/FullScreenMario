@@ -105,7 +105,7 @@ function AudioPlayr(settings) {
 
         // Storage container for settings like volume and muted status.
         StatsHolder;
-    
+
     /**
      * Resets the AudioPlayr.
      * 
@@ -139,7 +139,7 @@ function AudioPlayr(settings) {
         directory = settings.directory;
         fileTypes = settings.fileTypes;
         getThemeDefault = settings.getThemeDefault || "Theme";
-        getVolumeLocal = typeof settings.getVolumeLocal === "undefined" 
+        getVolumeLocal = typeof settings.getVolumeLocal === "undefined"
             ? 1 : settings.getVolumeLocal;
 
         // Sounds should always start blank
@@ -147,45 +147,45 @@ function AudioPlayr(settings) {
 
         // Preload everything!
         libraryLoad();
-        
+
         StatsHolder = new StatsHoldr(settings.statistics);
-        
+
         self.setVolume(StatsHolder.get("volume"));
         self.setMuted(StatsHolder.get("muted"));
     };
-    
-    
+
+
     /* Simple getters
     */
-    
+
     /**
      * @return {Object} The listing of <audio> Elements, keyed by name.
      */
     self.getLibrary = function () {
         return library;
     };
-    
+
     /**
      * @return {String[]} The allowed filetypes for audio files.
      */
     self.getfileTypes = function () {
         return fileTypes;
     };
-    
+
     /**
      * @return {Object} The currently playing <audio> Elements, keyed by name.
      */
     self.getSounds = function () {
         return sounds;
     };
-    
+
     /**
      * @return {HTMLAudioElement} The current playing theme's <audio> Element.
      */
     self.getTheme = function () {
         return theme;
     };
-    
+
     /**
      * @return {String} The directory under which all filetype directories are 
      *                  to be located.
@@ -193,11 +193,11 @@ function AudioPlayr(settings) {
     self.getDirectory = function () {
         return directory;
     };
-    
-    
+
+
     /* Playback modifiers
     */
-    
+
     /**
      * @return {Number} The current volume, which is a Number in [0,1],
      *                  retrieved by the StatsHoldr.
@@ -205,7 +205,7 @@ function AudioPlayr(settings) {
     self.getVolume = function () {
         return StatsHolder.get("volume");
     };
-    
+
     /**
      * Sets the current volume. If not muted, all sounds will have their volume
      * updated.
@@ -218,17 +218,17 @@ function AudioPlayr(settings) {
                 sounds[i].volume = sounds[i].volumeReal * volume;
             }
         }
-        
+
         StatsHolder.set("volume", volume);
     };
-    
+
     /**
      * @return {Boolean} whether this is currently muted.
      */
     self.getMuted = function () {
         return Boolean(StatsHolder.get("muted"));
     };
-    
+
     /**
      * Calls either setMutedOn or setMutedOff as is appropriate.
      * 
@@ -237,14 +237,14 @@ function AudioPlayr(settings) {
     self.setMuted = function (muted) {
         muted ? self.setMutedOn() : self.setMutedOff();
     }
-    
+
     /**
      * Calls either setMutedOn or setMutedOff to toggle whether this is muted.
      */
     self.toggleMuted = function () {
         self.setMuted(!self.getMuted());
     };
-    
+
     /**
      * Sets volume to 0 in all currently playing sounds and stores the muted
      * status as on in the internal StatsHoldr.
@@ -257,7 +257,7 @@ function AudioPlayr(settings) {
         }
         StatsHolder.set("muted", 1);
     };
-    
+
     /**
      * Sets sound volumes to their actual volumes and stores the muted status
      * as off in the internal StatsHoldr.
@@ -265,21 +265,21 @@ function AudioPlayr(settings) {
     self.setMutedOff = function () {
         var volume = self.getVolume(),
             sound, i;
-        
+
         for (i in sounds) {
             if (sounds.hasOwnProperty(i)) {
                 sound = sounds[i];
                 sound.volume = sound.volumeReal * volume;
             }
         }
-        
+
         StatsHolder.set("muted", 0);
     };
-    
-    
+
+
     /* Other modifiers
     */
-    
+
     /**
      * @return {Mixed} The Function or Number used as the volume setter for
      *                 "local" sounds.    
@@ -287,7 +287,7 @@ function AudioPlayr(settings) {
     self.getGetVolumeLocal = function () {
         return getVolumeLocal;
     };
-    
+
     /**
      * @param {Mixed} getVolumeLocal   A new Function or Number to use as the
      *                                 volume setter for "local" sounds.
@@ -295,7 +295,7 @@ function AudioPlayr(settings) {
     self.setGetVolumeLocal = function (getVolumeLocalNew) {
         getVolumeLocal = getVolumeLocalNew;
     };
-    
+
     /**
      * @return {Mixed} The Function or String used to get the default theme for
      *                 playTheme calls.
@@ -303,7 +303,7 @@ function AudioPlayr(settings) {
     self.getGetThemeDefault = function () {
         return getThemeDefault;
     };
-    
+
     /**
      * @param {Mixed} A new Function or String to use as the source for theme
      *                names in default playTheme calls.
@@ -311,11 +311,11 @@ function AudioPlayr(settings) {
     self.setGetThemeDefault = function (getThemeDefaultNew) {
         getThemeDefault = getThemeDefaultNew;
     };
-    
-    
+
+
     /* Playback
     */
-    
+
     /**
      * @param {String} name   The name of the sound to play.
      * 
@@ -329,41 +329,41 @@ function AudioPlayr(settings) {
      */
     self.play = function (name) {
         var sound;
-        
+
         // If the sound isn't yet being played, see if it's in the library
         if (!sounds.hasOwnProperty(name)) {
             // If the sound also isn't in the library, it's unknown
             if (!library.hasOwnProperty(name)) {
                 throw new Error(
                     "Unknown name given to AudioPlayr.play: '" + name + "'."
-                ); 
+                );
             }
             sounds[name] = sound = library[name];
         } else {
             sound = sounds[name];
         }
-        
+
         soundStop(sound);
-        
+
         if (self.getMuted()) {
             sound.volume = 0;
         } else {
             sound.volumeReal = 1;
             sound.volume = self.getVolume();
         }
-        
-        sound.play();
-        
+
+        playSound(sound);
+
         // If this is the song's first play, let it know how to stop
         if (!sound.used) {
             sound.used += 1;
             sound.addEventListener("ended", soundFinish.bind(undefined, name));
         }
-        
+
         sound.setAttribute("name", name);
         return sound;
     };
-    
+
     /**
      * Pauses all currently playing sounds.
      */
@@ -374,7 +374,7 @@ function AudioPlayr(settings) {
             }
         }
     };
-    
+
     /**
      * Un-pauses (resumes) all currently paused sounds.
      */
@@ -386,7 +386,7 @@ function AudioPlayr(settings) {
             sounds[i].play();
         }
     };
-    
+
     /**
      * Pauses the currently playing theme, if there is one.
      */
@@ -395,7 +395,7 @@ function AudioPlayr(settings) {
             theme.pause();
         }
     };
-    
+
     /**
      * Resumes the theme, if there is one and it's paused.
      */
@@ -404,7 +404,7 @@ function AudioPlayr(settings) {
             theme.play();
         }
     };
-    
+
     /**
      * Stops all sounds and any theme, and removes all references to them.
      */
@@ -413,7 +413,7 @@ function AudioPlayr(settings) {
         self.clearTheme();
         sounds = {};
     };
-    
+
     /**
      * Pauses and removes the theme, if there is one.
      */
@@ -421,12 +421,12 @@ function AudioPlayr(settings) {
         if (!theme) {
             return;
         }
-        
+
         self.pauseTheme();
         delete sounds[theme.getAttribute("name")];
         self.theme = undefined;
     };
-    
+
     /**
      * "Local" version of play that changes the output sound's volume depending
      * on the result of a getVolumeLocal call. This defaults to 1, but may be
@@ -452,7 +452,7 @@ function AudioPlayr(settings) {
                 sound.volumeReal = Number(volumeReal) || 1;
                 break;
         }
-        
+
         if (self.getMuted()) {
             sound.volume = 0;
         } else {
@@ -461,7 +461,7 @@ function AudioPlayr(settings) {
 
         return sound;
     };
-    
+
     /**
      * Pauses any previously playing theme and starts playback of a new theme
      * sound. This is different from normal sounds in that it normally loops and
@@ -477,12 +477,12 @@ function AudioPlayr(settings) {
      */
     self.playTheme = function (name, loop) {
         self.pauseTheme();
-        
+
         // Loop defaults to true
         loop = typeof loop !== 'undefined' ? loop : true;
 
         // If name isn't given, use the default getter
-        if (typeof(name) === "undefined") {
+        if (typeof (name) === "undefined") {
             switch (getThemeDefault.constructor) {
                 case Function:
                     name = getThemeDefault();
@@ -492,12 +492,12 @@ function AudioPlayr(settings) {
                     break;
             }
         }
-        
+
         // If a theme already exists, kill it
         if (typeof theme !== "undefined" && theme.hasAttribute("name")) {
             delete sounds[theme.getAttribute("name")];
         }
-        
+
         sounds[name] = theme = self.play(name);
         theme.loop = loop;
 
@@ -508,7 +508,7 @@ function AudioPlayr(settings) {
 
         return theme;
     };
-    
+
     /**
      * Wrapper around playTheme that plays a sound, then a theme. This is 
      * implemented using an event listener on the sound's ending.
@@ -523,9 +523,9 @@ function AudioPlayr(settings) {
     self.playThemePrefixed = function (prefix, name, loop) {
         var sound = self.play(prefix);
         self.pauseTheme();
-        
+
         // If name isn't given, use the default getter
-        if (typeof(name) === "undefined") {
+        if (typeof (name) === "undefined") {
             switch (getThemeDefault.constructor) {
                 case Function:
                     name = getThemeDefault();
@@ -535,13 +535,13 @@ function AudioPlayr(settings) {
                     break;
             }
         }
-        
+
         self.addEventListener(
             prefix,
-            "ended", 
+            "ended",
             self.playTheme.bind(self, prefix + " " + name, loop)
         );
-        
+
         return sound;
     };
 
@@ -558,28 +558,28 @@ function AudioPlayr(settings) {
      * @param {String} event   The name of the event, such as "ended".
      * @param {Function} callback   The Function to be called by the event.
      */
-    self.addEventListener = function(name, event, callback) {
+    self.addEventListener = function (name, event, callback) {
         var sound = library[name];
-        
+
         if (!sound) {
             throw new Error(
                 "Unknown name given to addEventListener: '" + name + "'."
             );
         }
-        
+
         if (!sound.addedEvents) {
             sound.addedEvents = {};
         }
-        
+
         if (!sound.addedEvents[event]) {
             sound.addedEvents[event] = [callback];
         } else {
             sound.addedEvents[event].push(callback);
         }
-        
+
         sound.addEventListener(event, callback);
     };
-    
+
     /**
      * Clears all events added by self.addEventListener to a sound under a given
      * event. 
@@ -590,28 +590,28 @@ function AudioPlayr(settings) {
     self.removeEventListeners = function (name, event) {
         var sound = library[name],
             events, i;
-        
+
         if (!sound) {
             throw new Error(
                 "Unknown name given to removeEventListeners: '" + name + "'."
             );
         }
-        
+
         if (!sound.addedEvents) {
             return;
         }
-        
+
         events = sound.addedEvents[event];
         if (!events) {
             return;
         }
-        
+
         for (i = 0; i < events.length; i += 1) {
             sound.removeEventListener(event, events[i]);
         }
-        
+
         events.length = 0;
-    };  
+    };
 
     /**
      * Adds an event listener to a sound. If the sound doesn't exist or has 
@@ -621,15 +621,15 @@ function AudioPlayr(settings) {
      * @param {String} event   The name of the event, such as "onended".
      * @param {Function} callback   The Function to be called by the event.
      */
-    self.addEventImmediate = function(name, event, callback) {
+    self.addEventImmediate = function (name, event, callback) {
         if (!sounds.hasOwnProperty(name) || sounds[name].paused) {
             callback();
             return;
         }
-        
+
         sounds[name].addEventListener(event, callback);
     };
-    
+
 
     /* Private utilities
     */
@@ -694,7 +694,7 @@ function AudioPlayr(settings) {
             child = document.createElement("source");
             child.type = "audio/" + type;
             child.src = directory + "/" + sectionName + "/" + type + "/" + name + "." + type;
-            
+
             sound.appendChild(child);
         }
 
@@ -702,11 +702,23 @@ function AudioPlayr(settings) {
         sound.volume = 0;
         sound.volumeReal = 1;
         sound.used = 0;
-        sound.play();
-        
+        playSound(sound);
+
         return sound;
     }
-     
-    
+
+    /**
+     * Utility to try to play a sound, which may not be possible in headless
+     * environments like PhantomJS.
+     * 
+     * @param {HTMLAudioElement} sound
+     */
+    function playSound(sound) {
+        if (sound && sound.play) {
+            sound.play();
+        }
+    }
+
+
     self.reset(settings || {});
 }
