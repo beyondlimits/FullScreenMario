@@ -85,6 +85,14 @@ var FullScreenMario = (function(GameStartr) {
      * @return {FullScreenMario}
      */
     function FullScreenMario(customs) {
+        if (typeof customs === "undefined") {
+            throw new Error("No arguments Object given to FullScreenMario.")
+        }
+
+        if (!customs.width || !customs.height) {
+            throw new Error("FullScreenMario requires both width and height.");
+        }
+
         // Call the parent GameStartr constructor to set the base settings and
         // verify the prototype requirements
         GameStartr.call(this, {
