@@ -1,4 +1,4 @@
-var FullScreenMario;
+var FSM;
 
 describe("constructor", function () {
     it("requires an arguments Object", function () {
@@ -14,14 +14,14 @@ describe("constructor", function () {
     });
 
     it("runs with a small screen size", function () {
-        FullScreenMario = new FullScreenMario({
+        FSM = new FullScreenMario({
             "width": 512,
             "height": 464
         });
     });
 
     it("runs with a large screen size", function () {
-        FullScreenMario = new FullScreenMario({
+        FSM = new FullScreenMario({
             "width": 2048,
             "height": 1152
         });
