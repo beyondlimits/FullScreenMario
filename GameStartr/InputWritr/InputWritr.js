@@ -139,7 +139,7 @@ var InputWritr = (function () {
      *                      input names, such as "a" or "left".
      */
     InputWritr.prototype.getAliasAsKeyStrings = function (alias) {
-        return this.aliases[alias].map(this.convertAliasToKeyString);
+        return this.aliases[alias].map(this.convertAliasToKeyString.bind(this));
     };
     /**
      * @param {Mixed} alias   The alias of an input, typically a character
@@ -450,9 +450,8 @@ var InputWritr = (function () {
      *
      * @param {String} trigger   The label for the Array of functions that the
      *                           pipe function should choose from.
-     * @param {String} [codeLabel]   An optional mapping String for the alias:
-     *                                if provided, it changes the alias to a
-     *                                listed alias keyed by codeLabel.
+     * @param {String} codeLabel   A mapping String for the alias to get the
+     *                             alias from the event.
      * @param {Boolean} [preventDefaults]   Whether the input to the pipe
      *                                       function will be an HTML-style
      *                                       event, where .preventDefault()
@@ -466,27 +465,23 @@ var InputWritr = (function () {
      *            InputWriter.makePipe("onmousedown", null, true);
      */
     InputWritr.prototype.makePipe = function (trigger, codeLabel, preventDefaults) {
-        if (codeLabel === void 0) { codeLabel = undefined; }
         if (preventDefaults === void 0) { preventDefaults = undefined; }
-        var functions = this.triggers[trigger], useLabel = arguments.length >= 2;
+        var functions = this.triggers[trigger], InputWriter = this;
         if (!functions) {
             throw new Error("No trigger of label '" + trigger + "' defined.");
         }
-        return function Pipe(alias) {
+        return function Pipe(event) {
+            var alias = event[codeLabel];
             // Typical usage means alias will be an event from a key/mouse input
-            if (preventDefaults && alias.preventDefault instanceof Function) {
-                alias.preventDefault();
-            }
-            // If a codeLabel is needed, replace the alias with it
-            if (useLabel) {
-                alias = alias[codeLabel];
+            if (preventDefaults && event.preventDefault instanceof Function) {
+                event.preventDefault();
             }
             // If there's a function under that alias, run it
             if (functions.hasOwnProperty(alias)) {
-                if (this.isRecording) {
-                    history[this.getTimestamp() | 0] = [trigger, alias];
+                if (InputWriter.isRecording) {
+                    InputWriter.history[InputWriter.getTimestamp() | 0] = [trigger, alias];
                 }
-                this.callEvent(functions[alias], undefined, arguments[0]);
+                InputWriter.callEvent(functions[alias], alias, event);
             }
         };
     };
