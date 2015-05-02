@@ -1,299 +1,222 @@
 /**
- * ChangeLinr.js
- * 
- * A general utility for transforming raw input to processed output. This is 
- * done by keeping an Array of transform Functions to process input on.  
- * Outcomes for inputs are cached so repeat runs are O(1).
- * 
- * @example 
- * // Creating and using a ChangeLinr to square numbers.
- * var ChangeLiner = new ChangeLinr({
- *     "transforms": {
- *          "square": function (number) {
- *              return number * number;
- *          }    
- *      },
- *     "pipeline": ["square"]
- * });
- * console.log(ChangeLiner.process(7), "Test"); // 49
- * console.log(ChangeLiner.getCached("Test")); // 49
- * 
- * @example
- * // Creating and using a ChangeLinr to calculate Fibonacci numbers.
- * var ChangeLiner = new ChangeLinr({
- *     "transforms": {
- *         "fibonacci": function (number, key, attributes, ChangeLiner) {
- *             if (!number) {
- *                 return 0;
- *             } else if (number === 1) {
- *                 return 1;
- *             }
- *             return ChangeLiner.process(number - 1) + ChangeLiner.process(number - 2);
- *         }
- *     },
- *     "pipeline": ["fibonacci"]
- * });
- * console.log(ChangeLiner.process(7)); // 13
- * console.log(ChangeLiner.getCache()); // {0: 0, 1: 1, ... 6: 8, 7: 13}
- * 
- * @example
- * // Creating and using a ChangeLinr to lowercase a string, remove whitespace,
- * // and sum the character codes of the result. 
- * var ChangeLiner = new ChangeLinr({
- *     "transforms": {
- *         "toLowerCase": function (string) {
- *             return string.toLowerCase();
- *         },
- *         "removeWhitespace": function (string) {
- *             return string.replace(/\s/g, '');
- *         },
- *         "sum": function (string) {
- *             var total = 0,
- *                 i;
- *             for (i = 0; i < string.length; i += 1) {
- *                 total += string.charCodeAt(i);
- *             }
- *             return total;
- *         }
- *     },
- *     "pipeline": ["toLowerCase", "removeWhitespace", "sum"]
- * });
- * console.log(ChangeLiner.process("Hello world!", "Test")); // 1117
- * console.log(ChangeLiner.getCached("Test")); // 1117
- * 
- * @author "Josh Goldberg" <josh@fullscreenmario.com>
- */
-function ChangeLinr(settings) {
-    "use strict";
-    if (!this || this === window) {
-        return new ChangeLinr(settings);
-    }
-    var self = this,
-
-        // Associative array of functions ("name"=>function)
-        transforms,
-
-        // Ordered array of function names to be applied to raw input
-        pipeline,
-        pipelineLength,
-
-        // Cached output of the pipeline: out-facing and inward, respectively
-        cache,
-        cacheFull,
-        
-        // Whether this should be caching responses
-        doMakeCache,
-
-        // Whether this should be retrieving cached results
-        doUseCache,
-
-        // Whether global functions are allowed in the pipeline (normally true)
-        doUseGlobals;
-
+* ChangeLinr.js
+* A general utility for transforming raw input to processed output. This is
+* done by keeping an Array of transform Functions to process input on.
+* Outcomes for inputs are cached so repeat runs are O(1).
+* @example
+* // Creating and using a ChangeLinr to square numbers.
+* var ChangeLiner = new ChangeLinr({
+*     "transforms": {
+*          "square": function (number) {
+*              return number * number;
+*          }
+*      },
+*     "pipeline": ["square"]
+* });
+* console.log(ChangeLiner.process(7), "Test"); // 49
+* console.log(ChangeLiner.getCached("Test")); // 49
+* @example
+* // Creating and using a ChangeLinr to calculate Fibonacci numbers.
+* var ChangeLiner = new ChangeLinr({
+*     "transforms": {
+*         "fibonacci": function (number, key, attributes, ChangeLiner) {
+*             if (!number) {
+*                 return 0;
+*             } else if (number === 1) {
+*                 return 1;
+*             }
+*             return ChangeLiner.process(number - 1) + ChangeLiner.process(number - 2);
+*         }
+*     },
+*     "pipeline": ["fibonacci"]
+* });
+* console.log(ChangeLiner.process(7)); // 13
+* console.log(ChangeLiner.getCache()); // {0: 0, 1: 1, ... 6: 8, 7: 13}
+* @example
+* // Creating and using a ChangeLinr to lowercase a string, remove whitespace,
+* // and sum the character codes of the result.
+* var ChangeLiner = new ChangeLinr({
+*     "transforms": {
+*         "toLowerCase": function (string) {
+*             return string.toLowerCase();
+*         },
+*         "removeWhitespace": function (string) {
+*             return string.replace(/\s/g, '');
+*         },
+*         "sum": function (string) {
+*             var total = 0,
+*                 i;
+*             for (i = 0; i < string.length; i += 1) {
+*                 total += string.charCodeAt(i);
+*             }
+*             return total;
+*         }
+*     },
+*     "pipeline": ["toLowerCase", "removeWhitespace", "sum"]
+* });
+* console.log(ChangeLiner.process("Hello world!", "Test")); // 1117
+* console.log(ChangeLiner.getCached("Test")); // 1117
+* @author "Josh Goldberg" <josh@fullscreenmario.com>
+*/
+var ChangeLinr = (function () {
     /**
-     * Resets the ChangeLinr.
-     * 
-     * @constructor
-     * @param {String[]} pipeline   The ordered pipeline of String names of the
-     *                              transforms to call.
-     * @param {Object} [transforms]   An Object containing Functions keyed by
-     *                                their String name.
-     * @param {Boolean} [doMakeCache]   Whether a cache should be constructed
-     *                                  from inputs (defaults to true).
-     * @param {Boolean} [doUseCache]   Whether the cache should be used to 
-     *                                 cache outputs (defaults to true).
-     * @param {Boolean} [doUseGlobals]   Whether global Functions may be 
-     *                                   referenced by the pipeline Strings,
-     *                                   rather than just ones in transforms
-     *                                   (defaults to false).
-     */
-    self.reset = function (settings) {
+    * Resets the ChangeLinr.
+    * @constructor
+    * @param {String[]} pipeline   The ordered pipeline of String names of the
+    *                              transforms to call.
+    * @param {Object} [transforms]   An Object containing Functions keyed by
+    *                                their String name.
+    * @param {Boolean} [doMakeCache]   Whether a cache should be constructed
+    *                                  from inputs (defaults to true).
+    * @param {Boolean} [doUseCache]   Whether the cache should be used to
+    *                                 cache outputs (defaults to true).
+    * @param {Boolean} [doUseGlobals]   Whether global Functions may be
+    *                                   referenced by the pipeline Strings,
+    *                                   rather than just ones in transforms
+    *                                   (defaults to false).
+    */
+    function ChangeLinr(settings) {
         var i;
-        
+
         if (typeof settings.pipeline === "undefined") {
             throw new Error("No pipeline given to ChangeLinr.");
         }
-        
-        if (!settings.pipeline.length) {
-            throw new Error("Empty or invalid pipeline given to ChangeLinr.");
-        }
-        
-        pipeline = settings.pipeline || [];
-        transforms = settings.transforms || {};
-        
-        doMakeCache = (typeof settings.doMakeCache === "undefined") 
-            ? true : settings.doMakeCache;
-        
-        doUseCache = (typeof settings.doUseCache === "undefined")
-            ? true : settings.doUseCache;
-        
-        doUseGlobals = settings.hasOwnProperty("doUseGlobals")
-            ? false : settings.doUseGlobals;
-        
-        pipelineLength = pipeline.length;
-        
-        cache = {};
-        cacheFull = {};
+        this.pipeline = settings.pipeline || [];
 
-        // Ensure the pipeline is formatted correctly
-        for (i = 0; i < pipelineLength; ++i) {
+        if (typeof settings.transforms === "undefined") {
+            throw new Error("No transforms given to ChangeLinr.");
+        }
+        this.transforms = settings.transforms || {};
+
+        this.doMakeCache = typeof settings.doMakeCache === "undefined" ? true : settings.doMakeCache;
+
+        this.doUseCache = typeof settings.doUseCache === "undefined" ? true : settings.doUseCache;
+
+        this.cache = {};
+        this.cacheFull = {};
+
+        for (i = 0; i < this.pipeline.length; ++i) {
             // Don't allow null/false transforms
-            if (!pipeline[i]) {
+            if (!this.pipeline[i]) {
                 throw new Error("Pipe[" + i + "] is invalid.");
             }
 
             // Make sure each part of the pipeline exists
-            if (!transforms.hasOwnProperty(pipeline[i])) {
-                if (doUseGlobals) {
-                    transforms[pipeline[i]] = window[pipeline[i]];
-                }
-                if (!transforms.hasOwnProperty(pipeline[i])) {
-                    throw new Error("Pipe[" + i + "] (" + pipeline[i] + ") "
-                        + "not found in transforms.");
+            if (!this.transforms.hasOwnProperty(this.pipeline[i])) {
+                if (!this.transforms.hasOwnProperty(this.pipeline[i])) {
+                    throw new Error("Pipe[" + i + "] (\"" + this.pipeline[i] + "\") " + "not found in transforms.");
                 }
             }
 
-            // Also make sure each part of the pipeline is a function
-            if (!(transforms[pipeline[i]] instanceof Function)) {
-                throw new Error("Pipe[" + i + "] (" + pipeline[i] + ") "
-                    + "is not a valid function from transforms.");
+            // Also make sure each part of the pipeline is a Function
+            if (!(this.transforms[this.pipeline[i]] instanceof Function)) {
+                throw new Error("Pipe[" + i + "] (\"" + this.pipeline[i] + "\") " + "is not a valid Function from transforms.");
             }
 
-            cacheFull[i] = cacheFull[pipeline[i]] = {};
+            this.cacheFull[i] = this.cacheFull[this.pipeline[i]] = {};
         }
-    };
-    
-    
+    }
     /* Simple gets
     */
+    /**
+    * @return {Object} The cached output of self.process and self.processFull.
+    */
+    ChangeLinr.prototype.getCache = function () {
+        return this.cache;
+    };
 
     /**
-     * @return {Object} The cached output of self.process and self.processFull.
-     */
-    self.getCache = function () {
-        return cache;
-    };
-    
-    /**
-     * @param {String} key   The key under which the output was processed
-     * @return {Mixed} The cached output filed under the given key.
-     */
-    self.getCached = function (key) {
-        return cache[key];
-    };
-    
-    /**
-     * @return {Object} A complete listing of the cached outputs from all 
-     *                  processed information, from each pipeline transform.
-     */
-    self.getCacheFull = function () {
-        return cacheFull;
-    };
-    
-    /**
-     * @return {Boolean} Whether the cache object is being kept.
-     */
-    self.getDoMakeCache = function () {
-        return doMakeCache;
-    };
-    
-    /**
-     * @return {Boolean} Whether previously cached output is being used in new
-     *                   process requests.
-     */
-    self.getDoUseCache = function () {
-        return doUseCache;
-    };
-    
-    
-    /* Simple sets
+    * @param {String} key   The key under which the output was processed
+    * @return {Mixed} The cached output filed under the given key.
     */
-    
-    /**
-     * Sets whether the cache object is being kept.
-     * 
-     * @param {Boolean} value
-     */
-    self.setDoMakeCache = function (value) {
-        doMakeCache = value;
+    ChangeLinr.prototype.getCached = function (key) {
+        return this.cache[key];
     };
-    
+
     /**
-     * Sets whether previously cached output is being used in new process 
-     * requests.
-     * 
-     * @param {Boolean} value
-     */
-    self.setDoUseCache = function (value) {
-        doUseCache = value;
+    * @return {Object} A complete listing of the cached outputs from all
+    *                  processed information, from each pipeline transform.
+    */
+    ChangeLinr.prototype.getCacheFull = function () {
+        return this.cacheFull;
     };
-    
-    
+
+    /**
+    * @return {Boolean} Whether the cache object is being kept.
+    */
+    ChangeLinr.prototype.getDoMakeCache = function () {
+        return this.doMakeCache;
+    };
+
+    /**
+    * @return {Boolean} Whether previously cached output is being used in new
+    *                   process requests.
+    */
+    ChangeLinr.prototype.getDoUseCache = function () {
+        return this.doUseCache;
+    };
+
     /* Core processing
     */
-
     /**
-     * Applies a series of transforms to input data. If doMakeCache is on, the
-     * outputs of this are stored in cache and cacheFull.
-     * 
-     * @param {Mixed} data   The data to be transformed.
-     * @param {String} [key]   They key under which the data is to be stored.
-     *                         If needed but not provided, defaults to data.
-     * @param {Object} [attributes]   Any extra attributes to be given to the
-     *                                transform Functions.
-     * @return {Mixed} The final output of the pipeline.
-     */
-    self.process = function (data, key, attributes) {
+    * Applies a series of transforms to input data. If doMakeCache is on, the
+    * outputs of this are stored in cache and cacheFull.
+    *
+    * @param {Mixed} data   The data to be transformed.
+    * @param {String} [key]   They key under which the data is to be stored.
+    *                         If needed but not provided, defaults to data.
+    * @param {Object} [attributes]   Any extra attributes to be given to the
+    *                                transform Functions.
+    * @return {Mixed} The final output of the pipeline.
+    */
+    ChangeLinr.prototype.process = function (data, key, attributes) {
         var i;
-        
-        if ((doMakeCache || doUseCache) && typeof key === "undefined") {
+
+        if (typeof key === "undefined" && (this.doMakeCache || this.doUseCache)) {
             key = data;
         }
 
         // If this keyed input was already processed, get that
-        if (doUseCache && cache.hasOwnProperty(key)) {
-            return cache[key];
+        if (this.doUseCache && this.cache.hasOwnProperty(key)) {
+            return this.cache[key];
         }
-        
-        // Apply (and optionally cache) each transform in order
-        for (i = 0; i < pipelineLength; ++i) {
-            data = transforms[pipeline[i]](data, key, attributes, self);
-            
-            if (doMakeCache) {
-                cacheFull[pipeline[i]][key] = data;
+
+        for (i = 0; i < this.pipeline.length; ++i) {
+            data = this.transforms[this.pipeline[i]](data, key, attributes, self);
+
+            if (this.doMakeCache) {
+                this.cacheFull[this.pipeline[i]][key] = data;
             }
         }
-        
-        if (doMakeCache) {
-            cache[key] = data;
+
+        if (this.doMakeCache) {
+            this.cache[key] = data;
         }
 
         return data;
     };
 
     /**
-     * A version of self.process that returns the complete output from each 
-     * pipelined transform Function in an Object.
-     * 
-     * @param {Mixed} data   The data to be transformed.
-     * @param {String} [key]   They key under which the data is to be stored.
-     *                         If needed but not provided, defaults to data.
-     * @param {Object} [attributes]   Any extra attributes to be given to the
-     *                                transform Functions.
-     * @return {Object} The complete output of the transforms.
-     */
-    self.processFull = function (raw, key, attributes) {
-        var output = {},
-            i;
-        
-        self.process(raw, key, attributes);
-        
-        for (i = 0; i < pipelineLength; ++i) {
-            output[i] = output[pipeline[i]] = cacheFull[pipeline[i]][key];
+    * A version of self.process that returns the complete output from each
+    * pipelined transform Function in an Object.
+    *
+    * @param {Mixed} data   The data to be transformed.
+    * @param {String} [key]   They key under which the data is to be stored.
+    *                         If needed but not provided, defaults to data.
+    * @param {Object} [attributes]   Any extra attributes to be given to the
+    *                                transform Functions.
+    * @return {Object} The complete output of the transforms.
+    */
+    ChangeLinr.prototype.processFull = function (raw, key, attributes) {
+        var output = {}, i;
+
+        this.process(raw, key, attributes);
+
+        for (i = 0; i < this.pipeline.length; ++i) {
+            output[i] = output[this.pipeline[i]] = this.cacheFull[this.pipeline[i]][key];
         }
-        
+
         return output;
     };
-
-    self.reset(settings || {});
-}
+    return ChangeLinr;
+})();
