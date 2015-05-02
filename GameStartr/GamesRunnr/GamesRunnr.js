@@ -374,8 +374,8 @@ var GamesRunnr = (function () {
         }
         else {
             this.upkeepNext = this.upkeepScheduler(this.upkeepBound, this.intervalReal);
+            this.games.forEach(this.run);
         }
-        this.games.forEach(this.run);
         this.FPSAnalyzer.measure();
     };
     /**

@@ -257,9 +257,9 @@ class GamesRunnr {
             this.upkeepNext = this.upkeepScheduler(this.upkeepBound, this.intervalReal - (this.upkeepTimed() | 0));
         } else {
             this.upkeepNext = this.upkeepScheduler(this.upkeepBound, this.intervalReal);
+            this.games.forEach(this.run);
         }
 
-        this.games.forEach(this.run);
 
         this.FPSAnalyzer.measure();
     }
