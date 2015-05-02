@@ -642,7 +642,7 @@ FullScreenMario.prototype.settings.mods = {
                             mod.settings.events.push(EightBitter.TimeHandler.addEventInterval(function () {
                                 if (charactersEightBitter.length < 210) {
                                     var num = Math.floor(Math.random() * level.length),
-                                        lul = EightBitter.ObjectMaker.make.apply(EightBitter, level[num]);
+                                        lul = EightBitter.ObjectMaker.make.apply(EightBitter.ObjectMaker, level[num]);
                                     
                                     lul.yvel = Math.random() * EightBitter.unitsize / 4;
                                     lul.xvel = lul.speed = Math.random() * EightBitter.unitsize * 2;
