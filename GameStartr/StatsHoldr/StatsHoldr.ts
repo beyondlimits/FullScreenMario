@@ -2,7 +2,7 @@ interface IStatsValueSettings {
     value?: any;
     valueDefault?: any;
     hasElement?: boolean;
-    element?: string;
+    elementTag?: string;
     storeLocally?: boolean;
     triggers?: any;
     modularity?: number;
@@ -40,6 +40,8 @@ class StatsValue {
     private hasElement: boolean;
 
     private element: HTMLElement;
+
+    private elementTag: string;
 
     private minimum: number;
 
@@ -79,7 +81,7 @@ class StatsValue {
         }
 
         if (this.hasElement) {
-            this.element = StatsHolder.createElement(settings.element || "div", {
+            this.element = StatsHolder.createElement(this.elementTag || "div", {
                 className: StatsHolder.getPrefix() + "_value " + key
             });
             this.element.appendChild(StatsHolder.createElement("div", {

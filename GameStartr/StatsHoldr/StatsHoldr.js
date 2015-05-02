@@ -17,7 +17,7 @@ var StatsValue = (function () {
             this.value = this.valueDefault;
         }
         if (this.hasElement) {
-            this.element = StatsHolder.createElement(settings.element || "div", {
+            this.element = StatsHolder.createElement(this.elementTag || "div", {
                 className: StatsHolder.getPrefix() + "_value " + key
             });
             this.element.appendChild(StatsHolder.createElement("div", {

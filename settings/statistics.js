@@ -24,7 +24,7 @@ FullScreenMario.prototype.settings.statistics = {
         }]
     ],
     "defaults": {
-        "element": "td"
+        "elementTag": "td"
     },
     "values": {
         "power": {
@@ -56,7 +56,7 @@ FullScreenMario.prototype.settings.statistics = {
                 }
             },
             "onMinimum": function (EightBitter) {
-                EightBitter.killPlayer(FSM.player, true);
+                EightBitter.killPlayer(EightBitter.player, true);
             }
         },
         "world": {
