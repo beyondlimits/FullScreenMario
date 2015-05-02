@@ -49,8 +49,6 @@ class StatsValue {
 
     private triggers: any;
 
-    private callbackArgs: any[];
-
     private onModular: Function;
 
     private onMinimum: Function;
@@ -113,12 +111,12 @@ class StatsValue {
         if (this.hasOwnProperty("minimum") && Number(this.value) <= Number(this.minimum)) {
             this.value = this.minimum;
             if (this.onMinimum) {
-                this.onMinimum.apply(this, this.callbackArgs);
+                this.onMinimum.apply(this, this.StatsHolder.getCallbackArgs());
             }
         } else if (this.hasOwnProperty("maximum") && Number(this.value) <= Number(this.maximum)) {
             this.value = this.maximum;
             if (this.onMaximum) {
-                this.onMaximum.apply(this, this.callbackArgs);
+                this.onMaximum.apply(this, this.StatsHolder.getCallbackArgs());
             }
         }
 
@@ -147,7 +145,7 @@ class StatsValue {
      */
     checkTriggers(): void {
         if (this.triggers.hasOwnProperty(this.value)) {
-            this.triggers[this.value].apply(this, this.callbackArgs);
+            this.triggers[this.value].apply(this, this.StatsHolder.getCallbackArgs());
         }
     }
 
@@ -166,7 +164,7 @@ class StatsValue {
         while (this.value >= this.modularity) {
             this.value = Math.max(0, this.value - this.modularity);
             if (this.onModular) {
-                this.onModular.apply(this, this.callbackArgs);
+                this.onModular.apply(this, this.StatsHolder.getCallbackArgs());
             }
         }
     }

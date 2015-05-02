@@ -48,13 +48,13 @@ var StatsValue = (function () {
         if (this.hasOwnProperty("minimum") && Number(this.value) <= Number(this.minimum)) {
             this.value = this.minimum;
             if (this.onMinimum) {
-                this.onMinimum.apply(this, this.StatsHolder.getCallbackArgs());
+                this.onMinimum.apply(this, this.callbackArgs);
             }
         }
         else if (this.hasOwnProperty("maximum") && Number(this.value) <= Number(this.maximum)) {
             this.value = this.maximum;
             if (this.onMaximum) {
-                this.onMaximum.apply(this, this.StatsHolder.getCallbackArgs());
+                this.onMaximum.apply(this, this.callbackArgs);
             }
         }
         if (this.modularity) {
@@ -78,7 +78,7 @@ var StatsValue = (function () {
      */
     StatsValue.prototype.checkTriggers = function () {
         if (this.triggers.hasOwnProperty(this.value)) {
-            this.triggers[this.value].apply(this, this.StatsHolder.getCallbackArgs());
+            this.triggers[this.value].apply(this, this.callbackArgs);
         }
     };
     /**
@@ -95,7 +95,7 @@ var StatsValue = (function () {
         while (this.value >= this.modularity) {
             this.value = Math.max(0, this.value - this.modularity);
             if (this.onModular) {
-                this.onModular.apply(this, this.StatsHolder.getCallbackArgs());
+                this.onModular.apply(this, this.callbackArgs);
             }
         }
     };

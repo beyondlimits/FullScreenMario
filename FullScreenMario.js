@@ -3586,7 +3586,10 @@ var FullScreenMario = (function(GameStartr) {
             -thing.EightBitter.unitsize
         );
         thing.EightBitter.TimeHandler.addEvent(
-            thing.EightBitter.StatsHolder.increase, 72, "score", scoreAmount
+            thing.EightBitter.StatsHolder.increase.bind(thing.EightBitter.StatsHolder),
+            72,
+            "score",
+            scoreAmount
         );
         
         // All audio stops, and the flagpole clip is played
