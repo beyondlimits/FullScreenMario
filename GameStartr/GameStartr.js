@@ -21,24 +21,24 @@ var GameStartr = (function (EightBittr) {
     "use strict";
 
     // Use an EightBittr as the class parent, with EightBittr's constructor
-    var EightBitterProto = new EightBittr(),
-
-        // Used for combining arrays from the prototype to this
-        proliferate = EightBitterProto.proliferate,
-        proliferateHard = EightBitterProto.proliferateHard;
+    var EightBitterProto = new EightBittr();
 
     /**
      * 
      */
     function GameStartr(customs) {
-        if (typeof (customs) === "undefined") {
+        if (typeof customs === "undefined") {
             customs = {};
         }
 
+        if (typeof this.settings === "undefined") {
+            this.settings = {};
+        }
+        
         EightBittr.call(this, {
-            "constants": customs.constants,
-            "constructor": customs.constructor || GameStartr,
             "customs": customs,
+            "constantsSource": customs.constantsSource,
+            "constants": customs.constants,
             "requirements": {
                 "global": {
                     "AudioPlayr": "src/AudioPlayr/AudioPlayr.js",
@@ -133,7 +133,7 @@ var GameStartr = (function (EightBittr) {
      *                          objects.js (settings/objects.js)
      */
     function resetObjectMaker(EightBitter, customs) {
-        EightBitter.ObjectMaker = new ObjectMakr(proliferate({
+        EightBitter.ObjectMaker = new ObjectMakr(EightBitter.proliferate({
             "properties": {
                 "Quadrant": {
                     "EightBitter": EightBitter
@@ -157,7 +157,7 @@ var GameStartr = (function (EightBittr) {
         var quadrantWidth = customs.width / (EightBitter.settings.quadrants.numCols - 3),
             quadrantHeight = customs.height / (EightBitter.settings.quadrants.numRows - 2);
 
-        EightBitter.QuadsKeeper = new QuadsKeepr(proliferate({
+        EightBitter.QuadsKeeper = new QuadsKeepr(EightBitter.proliferate({
             "ObjectMaker": EightBitter.ObjectMaker,
             "createCanvas": EightBitter.createCanvas,
             "quadrantWidth": quadrantWidth,
@@ -178,7 +178,7 @@ var GameStartr = (function (EightBittr) {
      *                          sprites.js (settings/sprites.js)
      */
     function resetPixelRender(EightBitter, customs) {
-        EightBitter.PixelRender = new PixelRendr(proliferate({
+        EightBitter.PixelRender = new PixelRendr(EightBitter.proliferate({
             "QuadsKeeper": EightBitter.QuadsKeeper,
             "unitsize": EightBitter.unitsize,
             "scale": EightBitter.scale
@@ -194,7 +194,7 @@ var GameStartr = (function (EightBittr) {
      *                          renderer.js (settings/renderer.js)
      */
     function resetPixelDrawer(EightBitter, customs) {
-        EightBitter.PixelDrawer = new PixelDrawr(proliferate({
+        EightBitter.PixelDrawer = new PixelDrawr(EightBitter.proliferate({
             "PixelRender": EightBitter.PixelRender,
             "MapScreener": EightBitter.MapScreener,
             "createCanvas": EightBitter.createCanvas,
@@ -213,7 +213,7 @@ var GameStartr = (function (EightBittr) {
      *                          events.js (settings/events.js)
      */
     function resetTimeHandler(EightBitter, customs) {
-        EightBitter.TimeHandler = new TimeHandlr(proliferate({
+        EightBitter.TimeHandler = new TimeHandlr(EightBitter.proliferate({
             "classAdd": EightBitter.addClass,
             "classRemove": EightBitter.removeClass
         }, EightBitter.settings.events));
@@ -228,7 +228,7 @@ var GameStartr = (function (EightBittr) {
      *                          audio.js (settings/audio.js)
      */
     function resetAudioPlayer(EightBitter, customs) {
-        EightBitter.AudioPlayer = new AudioPlayr(proliferate({
+        EightBitter.AudioPlayer = new AudioPlayr(EightBitter.proliferate({
             "statistics": {
                 "proliferate": EightBitter.proliferate
             }
@@ -244,7 +244,7 @@ var GameStartr = (function (EightBittr) {
      *                          runner.js (settings/runner.js)
      */
     function resetGamesRunner(EightBitter, customs) {
-        EightBitter.GamesRunner = new GamesRunnr(proliferate({
+        EightBitter.GamesRunner = new GamesRunnr(EightBitter.proliferate({
             "scope": EightBitter,
             "onPlay": EightBitter.onGamePlay.bind(EightBitter, EightBitter),
             "onPause": EightBitter.onGamePause.bind(EightBitter, EightBitter)
@@ -260,7 +260,7 @@ var GameStartr = (function (EightBittr) {
      *                          statistics.js (settings/statistics.js)
      */
     function resetStatsHolder(EightBitter, customs) {
-        EightBitter.StatsHolder = new StatsHoldr(proliferate({
+        EightBitter.StatsHolder = new StatsHoldr(EightBitter.proliferate({
             "callbackArgs": [EightBitter],
             "proliferate": EightBitter.proliferate,
             "createElement": EightBitter.createElement
@@ -288,7 +288,7 @@ var GameStartr = (function (EightBittr) {
      *                          collisions.js (settings/collisions.js)
      */
     function resetThingHitter(EightBitter, customs) {
-        EightBitter.ThingHitter = new ThingHittr(proliferate({
+        EightBitter.ThingHitter = new ThingHittr(EightBitter.proliferate({
             "scope": EightBitter
         }, EightBitter.settings.collisions));
     }
@@ -367,7 +367,7 @@ var GameStartr = (function (EightBittr) {
      *                          input.js (settings/input.js)
      */
     function resetInputWriter(EightBitter, customs) {
-        EightBitter.InputWriter = new InputWritr(proliferate({
+        EightBitter.InputWriter = new InputWritr(EightBitter.proliferate({
             "canTrigger": EightBitter.canInputsTrigger.bind(EightBitter, EightBitter)
         }, EightBitter.settings.input.InputWritrArgs));
     }
@@ -381,7 +381,7 @@ var GameStartr = (function (EightBittr) {
      *                          editor.js (settings/editor.js)
      */
     function resetLevelEditor(EightBitter, customs) {
-        EightBitter.LevelEditor = new LevelEditr(proliferate({
+        EightBitter.LevelEditor = new LevelEditr(EightBitter.proliferate({
             "GameStarter": EightBitter,
             "beautifier": js_beautify // Eventually there will be a custom beautifier... maybe
         }, EightBitter.settings.editor));
@@ -396,7 +396,7 @@ var GameStartr = (function (EightBittr) {
      *                          generator.js (settings/generator.js)
      */
     function resetWorldSeeder(EightBitter, customs) {
-        EightBitter.WorldSeeder = new WorldSeedr(proliferate({
+        EightBitter.WorldSeeder = new WorldSeedr(EightBitter.proliferate({
             "random": EightBitter.NumberMaker.random,
             "onPlacement": EightBitter.mapPlaceRandomCommands.bind(EightBitter, EightBitter)
         }, EightBitter.settings.generator));
@@ -411,7 +411,7 @@ var GameStartr = (function (EightBittr) {
      *                          mods.js (settings/mods.js)
      */
     function resetModAttacher(EightBitter, customs) {
-        EightBitter.ModAttacher = new ModAttachr(proliferate({
+        EightBitter.ModAttacher = new ModAttachr(EightBitter.proliferate({
             "scopeDefault": EightBitter,
             "StatsHoldr": StatsHoldr,
             "proliferate": EightBitter.proliferate,
@@ -477,7 +477,7 @@ var GameStartr = (function (EightBittr) {
      * @param {Number} [dy]   How far to scroll vertically.
      */
     function scrollWindow(dx, dy) {
-        var EightBitter = EightBittr.ensureCorrectCaller(this);
+        var EightBitter =  EightBittr.prototype.ensureCorrectCaller(this);
 
         dx = dx | 0;
         dy = dy | 0;
@@ -676,7 +676,7 @@ var GameStartr = (function (EightBittr) {
 
         // Attributes, such as Koopa.smart
         if (thing.attributes) {
-            thingProcessAttributes(thing, thing.attributes, settings);
+            thingProcessAttributes(thing, thing.attributes);
         }
 
         // Important custom functions
@@ -731,7 +731,8 @@ var GameStartr = (function (EightBittr) {
             // If the thing has that attribute as true:
             if (thing[attribute]) {
                 // Add the extra options
-                proliferate(thing, attributes[attribute]);
+                thing.EightBitter.proliferate(thing, attributes[attribute]);
+                
                 // Also add a marking to the name, which will go into the className
                 if (thing.name) {
                     thing.name += ' ' + attribute;
@@ -929,7 +930,7 @@ var GameStartr = (function (EightBittr) {
      * @param {Number} dy
      */
     function shiftAll(dx, dy) {
-        var EightBitter = EightBittr.ensureCorrectCaller(this);
+        var EightBitter =  EightBittr.prototype.ensureCorrectCaller(this);
         EightBitter.GroupHolder.callAll(
             EightBitter, EightBitter.shiftThings, dx, dy, true
         );
@@ -1399,7 +1400,7 @@ var GameStartr = (function (EightBittr) {
      *          called within a callback of a genuine user-triggered event.
      */
     function takeScreenshot(name, format) {
-        var EightBitter = EightBittr.ensureCorrectCaller(this),
+        var EightBitter =  EightBittr.prototype.ensureCorrectCaller(this),
             format = "image/png",
             link = EightBitter.createElement("a", {
                 "download": (
@@ -1416,7 +1417,7 @@ var GameStartr = (function (EightBittr) {
      * 
      */
     function addPageStyles(styles) {
-        var EightBitter = EightBittr.ensureCorrectCaller(this),
+        var EightBitter =  EightBittr.prototype.ensureCorrectCaller(this),
             sheet = EightBitter.createElement("style", {
                 "type": "text/css"
             }),
@@ -1440,7 +1441,7 @@ var GameStartr = (function (EightBittr) {
     }
 
 
-    proliferateHard(EightBitterProto, {
+    EightBitterProto.proliferateHard(EightBitterProto, {
         // Resets
         "reset": reset,
         "resetTimed": resetTimed,
