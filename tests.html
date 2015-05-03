@@ -60,10 +60,9 @@
     <script src="tests.js"></script>
 
     <script>
-        if (window.mochaPhantomJS) {
+        if (typeof mochaPhantomJS !== "undefined") {
             mochaPhantomJS.run();
-        }
-        else {
+        } else {
             mocha.run();
         }
     </script>
