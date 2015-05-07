@@ -48,11 +48,9 @@ class EightBittr {
             requirements: any = settings.requirements,
             i: number;
 
-        console.log("Working with", constants, constantsSource);
         EightBitter.constants = constants;
         if (constants) {
             for (i = 0; i < constants.length; i += 1) {
-                console.log("Setting", constants[i], constantsSource[constants[i]]);
                 EightBitter[constants[i]] = constantsSource[constants[i]];
             }
         }

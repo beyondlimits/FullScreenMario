@@ -18,11 +18,9 @@ var EightBittr = (function () {
     function EightBittr(settings) {
         if (settings === void 0) { settings = {}; }
         var EightBitter = EightBittr.prototype.ensureCorrectCaller(this), constants = settings.constants, constantsSource = settings.constantsSource || EightBitter, requirements = settings.requirements, i;
-        console.log("Working with", constants, constantsSource);
         EightBitter.constants = constants;
         if (constants) {
             for (i = 0; i < constants.length; i += 1) {
-                console.log("Setting", constants[i], constantsSource[constants[i]]);
                 EightBitter[constants[i]] = constantsSource[constants[i]];
             }
         }
