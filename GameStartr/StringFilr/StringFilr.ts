@@ -1,105 +1,147 @@
+interface IStringFilrSettings {
+    // An Object containing data stored as children of sub-Objects.
+    library: any;
+
+    // A String to use as a default key to rescue on, if provided.
+    normal?: string;
+
+    // Whether it's ok for the library to have Objects that don't contain the
+    // normal key (by default, false).
+    requireNormalKey?: boolean;
+}
+
 /**
  * A general utility for retrieving data from an Object based on nested class
  * names. You can think of the internal "library" Object as a tree structure,
- * such that you can pass in a listing (in any order) of the path to data for
+ * such that you can pass in a listing (in any order) of the path to data for 
  * retrieval.
- *
+ * 
  * @author "Josh Goldberg" <josh@fullscreenmario.com>
  */
-var StringFilr = (function () {
+class StringFilr {
+    // The library of data.
+    private library: any;
+
+    // Listing of previously found lookups, for speed's sake.
+    private cache: any;
+
+    // Optional default class to use when no suitable option is found.
+    private normal: string;
+
+    // Whether to crash when a sub-object in reset has no normal child.
+    private requireNormalKey: boolean;
+
     /**
      * Resets the StringFilr.
-     *
+     * 
      * @constructor
      * @param {IStringFilrSettings} settings
      */
-    function StringFilr(settings) {
+    constructor(settings: IStringFilrSettings) {
         if (!settings) {
             throw new Error("No settings given to StringFilr.");
         }
+
         if (!settings.library) {
             throw new Error("No library given to StringFilr.");
         }
         this.library = settings.library;
+
         this.normal = settings.normal;
         this.requireNormalKey = settings.requireNormalKey;
+
         this.cache = {};
+
         if (this.requireNormalKey) {
             if (typeof this.normal === "undefined") {
                 throw new Error("StringFilr is given requireNormalKey, but no normal class.");
             }
+
             this.ensureLibraryNormal();
         }
     }
+
     /**
      * @return {Object} The base library of stored information.
      */
-    StringFilr.prototype.getLibrary = function () {
+    getLibrary(): any {
         return this.library;
-    };
+    }
+
     /**
      * @return {String} The optional normal class String.
      */
-    StringFilr.prototype.getNormal = function () {
+    getNormal(): string {
         return this.normal;
-    };
+    }
+
     /**
      * @return {Object} The complete cache of cached output.
      */
-    StringFilr.prototype.getCache = function () {
+    getCache(): any {
         return this.cache;
-    };
+    }
+
     /**
      * @return {Mixed} A cached value, if it exists/
      */
-    StringFilr.prototype.getCached = function (key) {
+    getCached(key: string): any {
         return this.cache[key];
-    };
+    }
+
     /**
-     * Completely clears the cache Object.
+     * Completely clears the cache Object.  
      */
-    StringFilr.prototype.clearCache = function () {
+    clearCache(): void {
         this.cache = {};
-    };
+    }
+
     /**
      * Clears the cached entry for a key.
-     *
+     * 
      * @param {String} key
      */
-    StringFilr.prototype.clearCached = function (key) {
+    clearCached(key: string): void {
         if (this.normal) {
             key = key.replace(this.normal, "");
         }
+
         delete this.cache[key];
-    };
+    }
+
     /**
-     * Retrieves the deepest matching data in the library for a key.
-     *
+     * Retrieves the deepest matching data in the library for a key. 
+     * 
      * @param {String} keyRaw
      * @return {Mixed}
      */
-    StringFilr.prototype.get = function (keyRaw) {
-        var key, result;
+    get(keyRaw: string): any {
+        var key: string,
+            result: any;
+
         if (this.normal) {
             key = keyRaw.replace(this.normal, "");
-        }
-        else {
+        } else {
             key = keyRaw;
         }
+
         // Quickly return a cached result if it exists
         if (this.cache.hasOwnProperty(key)) {
             return this.cache[key];
         }
+
         // Since no existed, it must be found deep within the library
         result = this.followClass(key.split(/\s+/g), this.library);
+
         this.cache[key] = this.cache[keyRaw] = result;
         return result;
-    };
+    }
+
     /**
-     * Utility helper to recursively check for tree branches in the library
+     * Utility helper to recursively check for tree branches in the library 
      * that don't have a key equal to the normal. For each sub-directory that
      * is caught, the path to it is added to output.
-     *
+     * 
      * @param {Object} current   The current location being searched within
      *                           the library.
      * @param {String} path   The current path within the library.
@@ -107,11 +149,13 @@ var StringFilr = (function () {
      *                           don't have a matching key.
      * @return {String[]} output
      */
-    StringFilr.prototype.findLackingNormal = function (current, path, output) {
-        var i;
+    findLackingNormal(current: any, path: string, output: string[]): string[] {
+        var i: string;
+
         if (!current.hasOwnProperty(this.normal)) {
             output.push(path);
         }
+
         if (typeof current[i] === "object") {
             for (i in current) {
                 if (current.hasOwnProperty(i)) {
@@ -119,45 +163,57 @@ var StringFilr = (function () {
                 }
             }
         }
+
         return output;
-    };
+    }
+
     /**
-     * Utility function to follow a path into the library (this is the driver
+     * Utility function to follow a path into the library (this is the driver 
      * for searching into the library). For each available key, if it matches
      * a key in current, it is removed from keys and recursion happens on the
      * sub-directory in current.
-     *
+     * 
      * @param {String[]} keys   The currently available keys to search within.
      * @param {Object} current   The current location being searched within
      *                           the library.
      * @return {Mixed} The most deeply matched part of the library.
      */
-    StringFilr.prototype.followClass = function (keys, current) {
-        var key, i;
+    private followClass(keys: string[], current: any): any {
+        var key: string,
+            i: number;
+
         // If keys runs out, we're done
         if (!keys || !keys.length) {
             return current;
         }
+
+        // For each key in the current array...
         for (i = 0; i < keys.length; i += 1) {
             key = keys[i];
+
             // ...if it matches, recurse on the other keys
             if (current.hasOwnProperty(key)) {
                 keys.splice(i, 1);
                 return this.followClass(keys, current[key]);
             }
         }
+
         // If no key matched, try the normal (default)
         if (this.normal && current.hasOwnProperty(this.normal)) {
             return this.followClass(keys, current[this.normal]);
         }
+
         // Nothing matches anything; we're done.
         return current;
-    };
-    StringFilr.prototype.ensureLibraryNormal = function () {
-        var caught = this.findLackingNormal(this.library, "base", []);
+    }
+
+    private ensureLibraryNormal(): void {
+        var caught: string[] = this.findLackingNormal(this.library, "base", []);
+
         if (caught.length) {
-            throw new Error("Found " + caught.length + " library " + "sub-directories missing the normal: " + "\r\n  " + caught.join("\r\n  "));
+            throw new Error("Found " + caught.length + " library "
+                + "sub-directories missing the normal: "
+                + "\r\n  " + caught.join("\r\n  "));
         }
-    };
-    return StringFilr;
-})();
+    }
+}
