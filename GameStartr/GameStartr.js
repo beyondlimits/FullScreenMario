@@ -397,7 +397,7 @@ var GameStartr = (function (EightBittr) {
      */
     function resetWorldSeeder(EightBitter, customs) {
         EightBitter.WorldSeeder = new WorldSeedr(EightBitter.proliferate({
-            "random": EightBitter.NumberMaker.random,
+            "random": EightBitter.NumberMaker.random.bind(EightBitter.NumberMaker),
             "onPlacement": EightBitter.mapPlaceRandomCommands.bind(EightBitter, EightBitter)
         }, EightBitter.settings.generator));
     }

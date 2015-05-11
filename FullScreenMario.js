@@ -6722,7 +6722,10 @@ var FullScreenMario = (function(GameStartr) {
         
         EightBitter.ModAttacher.fireEvent("onPreSetMap", map);
         
-        EightBitter.NumberMaker.resetFromSeed(map.seed);
+        if (map.seed) {
+            EightBitter.NumberMaker.resetFromSeed(map.seed);
+        }
+
         EightBitter.StatsHolder.set("world", name);
         EightBitter.InputWriter.restartHistory();
 
