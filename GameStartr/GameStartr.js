@@ -413,9 +413,6 @@ var GameStartr = (function (EightBittr) {
     function resetModAttacher(EightBitter, customs) {
         EightBitter.ModAttacher = new ModAttachr(EightBitter.proliferate({
             "scopeDefault": EightBitter,
-            "StatsHoldr": StatsHoldr,
-            "proliferate": EightBitter.proliferate,
-            "createElement": EightBitter.createElement
         }, EightBitter.settings.mods));
     }
 
