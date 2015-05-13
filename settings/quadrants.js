@@ -3,5 +3,5 @@ FullScreenMario.prototype.settings.quadrants = {
     "numCols": 6,
     "tolerance": FullScreenMario.unitsize / 2,
     "groupNames": ["Solid", "Character", "Scenery", "Text"],
-    "thingGroupName": "groupType"
+    "keyGroupName": "groupType"
 }
