@@ -2097,6 +2097,7 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Thing} thing
      */
     function spawnMoveFloating(thing) {
+        console.log("Moving", thing.title);
         // Make sure thing.begin <= thing.end
         thing.EightBitter.setMovementEndpoints(thing);
         
@@ -7733,7 +7734,7 @@ var FullScreenMario = (function(GameStartr) {
                 "x": x - (widthLeft / 2), 
                 "y": y - dropLeft, 
                 "width": widthLeft,
-                "scale": true,
+                "inScale": true,
                 "tension": (dropLeft - 1.5) * unitsize,
                 "onThingAdd": spawnScalePlatform,
                 "collectionName": collectionName,
@@ -7744,7 +7745,7 @@ var FullScreenMario = (function(GameStartr) {
                 "x": x + between - (widthRight / 2),
                 "y": y - dropRight, 
                 "width": widthRight,
-                "scale": true,
+                "inScale": true,
                 "tension": (dropRight - 1.5) * unitsize,
                 "onThingAdd": spawnScalePlatform,
                 "collectionName": collectionName,
