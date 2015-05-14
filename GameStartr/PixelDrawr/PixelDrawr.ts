@@ -331,7 +331,7 @@ class PixelDrawr {
      * @param {Boolean} noRefill   Whether refills should now skip redrawing the 
      *                             background each time. 
      */
-    setNoRefill(noRefill: boolean) {
+    setNoRefill(noRefill: boolean): void {
         this.noRefill = noRefill;
     }
 
@@ -360,7 +360,7 @@ class PixelDrawr {
      * 
      * @param {Mixed} fillStyle   The new fillStyle for the background context.
      */
-    setBackground(fillStyle) {
+    setBackground(fillStyle: any): void {
         this.backgroundContext.fillStyle = fillStyle;
         this.backgroundContext.fillRect(0, 0, this.MapScreener[this.keyWidth], this.MapScreener[this.keyHeight]);
     }
@@ -419,7 +419,7 @@ class PixelDrawr {
         // Retrieve the imageData from the Thing's canvas & renderingContext
         var canvas: HTMLCanvasElement = thing.canvas,
             context: CanvasRenderingContext2D = thing.context,
-            imageData = context.getImageData(0, 0, canvas[this.keyWidth], canvas[this.keyHeight]);
+            imageData: ImageData = context.getImageData(0, 0, canvas[this.keyWidth], canvas[this.keyHeight]);
 
         // Copy the thing's sprite to that imageData and into the contextz
         this.PixelRender.memcpyU8(<Uint8ClampedArray>thing.sprite, imageData.data);
@@ -451,6 +451,10 @@ class PixelDrawr {
         thing.numSprites = 1;
 
         for (i in spritesRaw.sprites) {
+            if (!spritesRaw.sprites.hasOwnProperty(i)) {
+                continue;
+            }
+
             // Make a new sprite for this individual component
             canvas = this.createCanvas(thing.spritewidth * this.unitsize, thing.spriteheight * this.unitsize);
             context = canvas.getContext("2d");
@@ -464,7 +468,7 @@ class PixelDrawr {
             canvases[i] = {
                 "canvas": canvas,
                 "context": context
-            }
+            };
             thing.numSprites += 1;
         }
 
@@ -506,8 +510,8 @@ class PixelDrawr {
      * 
      * @param {Thing[]} array   A listing of Things to be drawn onto the canvas.
      */
-    refillThingArray(array: IThing[]) {
-        for (var i = 0; i < array.length; i += 1) {
+    refillThingArray(array: IThing[]): void {
+        for (var i: number = 0; i < array.length; i += 1) {
             this.drawThingOnContext(this.context, array[i]);
         }
     }
@@ -540,7 +544,8 @@ class PixelDrawr {
      *                                 refilled.
      */
     refillQuadrants(quadrants: IQuadrant[]): void {
-        var quadrant, i;
+        var quadrant: IQuadrant,
+            i: number;
 
         for (i = 0; i < quadrants.length; i += 1) {
             quadrant = quadrants[i];
@@ -653,10 +658,22 @@ class PixelDrawr {
 
         // If there's just one sprite, it's pretty simple
         if (thing.numSprites === 1) {
-            return this.drawThingOnContextSingle(quadrant.context, thing.canvas, thing, this.getLeft(thing) - quadrant[this.keyLeft], this.getTop(thing) - quadrant[this.keyTop]);
+            return this.drawThingOnContextSingle(
+                quadrant.context,
+                thing.canvas,
+                thing,
+                this.getLeft(thing) - quadrant[this.keyLeft],
+                this.getTop(thing) - quadrant[this.keyTop]
+                );
         } else {
             // For multiple sprites, some calculations will be needed
-            return this.drawThingOnContextMultiple(quadrant.context, thing.canvases, thing, this.getLeft(thing) - quadrant[this.keyLeft], this.getTop(thing) - quadrant[this.keyTop]);
+            return this.drawThingOnContextMultiple(
+                quadrant.context,
+                thing.canvases,
+                thing,
+                this.getLeft(thing) - quadrant[this.keyLeft],
+                this.getTop(thing) - quadrant[this.keyTop]
+                );
         }
     }
 
@@ -695,7 +712,13 @@ class PixelDrawr {
      * @param {Number} left   The x-position to draw the Thing from.
      * @param {Number} top   The y-position to draw the Thing from.
      */
-    drawThingOnContextMultiple(context: CanvasRenderingContext2D, canvases: IThingCanvases, thing: IThing, left: number, top: number) {
+    drawThingOnContextMultiple(
+        context: CanvasRenderingContext2D,
+        canvases: IThingCanvases,
+        thing: IThing,
+        left: number,
+        top: number
+        ): void {
         var sprite: ISpriteMultiple = <ISpriteMultiple>thing.sprite,
             topreal: number = top,
             leftreal: number = left,
@@ -753,24 +776,88 @@ class PixelDrawr {
                 // topLeft, left, bottomLeft
                 diffvert = sprite.topheight ? sprite.topheight * this.unitsize : spriteheightpixels;
                 diffhoriz = sprite.leftwidth ? sprite.leftwidth * this.unitsize : spritewidthpixels;
-                this.drawPatternOnCanvas(context, canvases.topLeft.canvas, leftreal, topreal, widthdrawn, heightdrawn, opacity);
-                this.drawPatternOnCanvas(context, canvases[this.keyLeft].canvas, leftreal, topreal + diffvert, widthdrawn, heightreal - diffvert * 2, opacity);
-                this.drawPatternOnCanvas(context, canvases.bottomLeft.canvas, leftreal, bottomreal - diffvert, widthdrawn, heightdrawn, opacity);
+                this.drawPatternOnCanvas(
+                    context,
+                    canvases.topLeft.canvas,
+                    leftreal,
+                    topreal,
+                    widthdrawn,
+                    heightdrawn,
+                    opacity
+                    );
+                this.drawPatternOnCanvas(
+                    context,
+                    canvases[this.keyLeft].canvas,
+                    leftreal,
+                    topreal + diffvert,
+                    widthdrawn,
+                    heightreal - diffvert * 2,
+                    opacity
+                    );
+                this.drawPatternOnCanvas(
+                    context,
+                    canvases.bottomLeft.canvas,
+                    leftreal,
+                    bottomreal - diffvert,
+                    widthdrawn,
+                    heightdrawn,
+                    opacity
+                    );
                 leftreal += diffhoriz;
                 widthreal -= diffhoriz;
 
                 // top, topRight
                 diffhoriz = sprite.rightwidth ? sprite.rightwidth * this.unitsize : spritewidthpixels;
-                this.drawPatternOnCanvas(context, canvases[this.keyTop].canvas, leftreal, topreal, widthreal - diffhoriz, heightdrawn, opacity);
-                this.drawPatternOnCanvas(context, canvases.topRight.canvas, rightreal - diffhoriz, topreal, widthdrawn, heightdrawn, opacity);
+                this.drawPatternOnCanvas(
+                    context,
+                    canvases[this.keyTop].canvas,
+                    leftreal,
+                    topreal,
+                    widthreal - diffhoriz,
+                    heightdrawn,
+                    opacity
+                    );
+                this.drawPatternOnCanvas(
+                    context,
+                    canvases.topRight.canvas,
+                    rightreal - diffhoriz,
+                    topreal,
+                    widthdrawn,
+                    heightdrawn,
+                    opacity
+                    );
                 topreal += diffvert;
                 heightreal -= diffvert;
 
                 // right, bottomRight, bottom
                 diffvert = sprite.bottomheight ? sprite.bottomheight * this.unitsize : spriteheightpixels;
-                this.drawPatternOnCanvas(context, canvases[this.keyRight].canvas, rightreal - diffhoriz, topreal, widthdrawn, heightreal - diffvert, opacity);
-                this.drawPatternOnCanvas(context, canvases.bottomRight.canvas, rightreal - diffhoriz, bottomreal - diffvert, widthdrawn, heightdrawn, opacity);
-                this.drawPatternOnCanvas(context, canvases[this.keyBottom].canvas, leftreal, bottomreal - diffvert, widthreal - diffhoriz, heightdrawn, opacity);
+                this.drawPatternOnCanvas(
+                    context,
+                    canvases[this.keyRight].canvas,
+                    rightreal - diffhoriz,
+                    topreal,
+                    widthdrawn,
+                    heightreal - diffvert,
+                    opacity
+                    );
+                this.drawPatternOnCanvas(
+                    context,
+                    canvases.bottomRight.canvas,
+                    rightreal - diffhoriz,
+                    bottomreal - diffvert,
+                    widthdrawn,
+                    heightdrawn,
+                    opacity
+                    );
+                this.drawPatternOnCanvas(
+                    context,
+                    canvases[this.keyBottom].canvas,
+                    leftreal,
+                    bottomreal - diffvert,
+                    widthreal - diffhoriz,
+                    heightdrawn,
+                    opacity
+                    );
                 rightreal -= diffhoriz;
                 widthreal -= diffhoriz;
                 bottomreal -= diffvert;
@@ -866,7 +953,15 @@ class PixelDrawr {
      * @param {Number} opacity   How transparent the drawing is, in [0,1].
      * @todo Sprites should store patterns so createPattern isn't repeated.
      */
-    private drawPatternOnCanvas(context: CanvasRenderingContext2D, source: any, left: number, top: number, width: number, height: number, opacity: number) {
+    private drawPatternOnCanvas(
+        context: CanvasRenderingContext2D,
+        source: any,
+        left: number,
+        top: number,
+        width: number,
+        height: number,
+        opacity: number
+        ): void {
         context.globalAlpha = opacity;
         context.translate(left, top);
         context.fillStyle = context.createPattern(source, "repeat");
