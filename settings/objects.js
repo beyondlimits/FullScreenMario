@@ -785,7 +785,7 @@
                     "falling": {
                         "movement": FullScreenMario.prototype.moveFalling
                     },
-                    "scale": {
+                    "inScale": {
                         "movement": FullScreenMario.prototype.movePlatformScale
                     }
                 }
