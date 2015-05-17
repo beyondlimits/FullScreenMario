@@ -31,24 +31,24 @@ appropriate hit Function is called.
 
 #### Important Member Variables
 
-* **globalChecks** *`Object<String, Function>`* - Check functions for Things
+* **globalChecks** *`Object<Function>`* - Check functions for Things
 within groups to see if they're able to collide in the first place.
 
-* **hitChecks** *`Object<String, Object<String, Function>>`* - Collision
+* **hitChecks** *`Object<Object<Function>>`* - Collision
 detection Functions to check two Things for collision.
 
-* **hitFunctions** *`Object<String, Object<String, Function>>`* - Hit function
+* **hitFunctions** *`Object<Object<Function>>`* - Hit function
 callbacks for when two Things do collide.
 
 #### Constructor Arguments
 
-* **globalCheckGenerators** *`Object<String, Function>`* - Generators for
+* **globalCheckGenerators** *`Object<Function>`* - Generators for
 the cached globalChecks.
 
-* **hitCheckGenerators** *`Object<String, Object<String, Function>>`* - 
+* **hitCheckGenerators** *`Object<Object<Function>>`* - 
 Generators for the cached hitChecks.
 
-* **hitFunctions** *`Object<String, Object<String, Function>>`* - Generators
+* **hitFunctions** *`Object<Object<Function>>`* - Generators
 for the cached hitFunctions.
 
 

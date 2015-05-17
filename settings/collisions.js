@@ -1,5 +1,6 @@
 FullScreenMario.prototype.settings.collisions = {
     "groupNames": ["Solid", "Character"],
+    "keyGroupName": "groupType",
     "globalCheckGenerators": {
         "Character": FullScreenMario.prototype.generateCanThingCollide,
         "Solid": FullScreenMario.prototype.generateCanThingCollide
