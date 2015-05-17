@@ -549,8 +549,6 @@ class TimeHandlr {
     addClassCycleSynched(thing: any, settings: any, name: string, timing: number | Function): ITimeCycle {
         var cycle: ITimeCycle;
 
-        console.log("Adding", thing.title, settings, name, timing);
-
         // Make sure the object has a holder for keyCycles...
         if (!thing[this.keyCycles]) {
             thing[this.keyCycles] = {};

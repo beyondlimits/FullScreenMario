@@ -328,7 +328,6 @@ var TimeHandlr = (function () {
      */
     TimeHandlr.prototype.addClassCycleSynched = function (thing, settings, name, timing) {
         var cycle;
-        console.log("Adding", thing.title, settings, name, timing);
         // Make sure the object has a holder for keyCycles...
         if (!thing[this.keyCycles]) {
             thing[this.keyCycles] = {};
