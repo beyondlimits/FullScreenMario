@@ -413,6 +413,7 @@ var PixelRendr = (function () {
         this.flipHoriz = settings.flipHoriz || "flip-horiz";
         this.spriteWidth = settings.spriteWidth || "spriteWidth";
         this.spriteHeight = settings.spriteHeight || "spriteHeight";
+        this.Uint8ClampedArray = (settings.Uint8ClampedArray || window.Uint8ClampedArray || window.Uint8Array);
         // The first ChangeLinr does the raw processing of Strings to sprites
         // This is used to load & parse sprites into memory on startup
         this.ProcessorBase = new ChangeLinr({
@@ -538,7 +539,7 @@ var PixelRendr = (function () {
         }
         else {
             // Single (actual) sprites process for size (row) scaling, and flipping
-            if (!(sprite instanceof Uint8ClampedArray)) {
+            if (!(sprite instanceof this.Uint8ClampedArray)) {
                 throw new Error("No single raw sprite found for: '" + key + "'");
             }
             sprite = this.ProcessorDims.process(sprite, key, attributes);
@@ -642,7 +643,7 @@ var PixelRendr = (function () {
             }
         });
         if (forceZeroColor) {
-            output = [new Uint8ClampedArray([0, 0, 0, 0])].concat(colorsGrayscale).concat(colorsGeneral);
+            output = [new this.Uint8ClampedArray([0, 0, 0, 0])].concat(colorsGrayscale).concat(colorsGeneral);
         }
         else {
             output = colorsGrayscale.concat(colorsGeneral);
@@ -654,6 +655,38 @@ var PixelRendr = (function () {
             output[i] = Array.prototype.slice.call(output[i]);
         }
         return output;
+    };
+    /**
+     * Copies a stretch of members from one Uint8ClampedArray or number[] to
+     * another. This is a useful utility Function for code that may use this
+     * PixelRendr to draw its output sprites, such as PixelDrawr.
+     *
+     * @param {Uint8ClampedArray} source
+     * @param {Uint8ClampedArray} destination
+     * @param {Number} readloc   Where to start reading from in the source.
+     * @param {Number} writeloc   Where to start writing to in the source.
+     * @param {Number} writelength   How many members to copy over.
+     * @see http://www.html5rocks.com/en/tutorials/webgl/typed_arrays/
+     * @see http://www.javascripture.com/Uint8ClampedArray
+     */
+    PixelRendr.prototype.memcpyU8 = function (source, destination, readloc, writeloc, writelength) {
+        if (readloc === void 0) { readloc = 0; }
+        if (writeloc === void 0) { writeloc = 0; }
+        if (writelength === void 0) { writelength = Math.max(0, Math.min(source.length, destination.length)); }
+        if (!source || !destination || readloc < 0 || writeloc < 0 || writelength <= 0) {
+            return;
+        }
+        if (readloc >= source.length || writeloc >= destination.length) {
+            // console.log("Alert: memcpyU8 requested out of bounds!");
+            // console.log("source, destination, readloc, writeloc, writelength");
+            // console.log(arguments);
+            return;
+        }
+        // JIT compilcation help
+        var lwritelength = writelength + 0, lwriteloc = writeloc + 0, lreadloc = readloc + 0;
+        while (lwritelength--) {
+            destination[lwriteloc++] = source[lreadloc++];
+        }
     };
     /* Library parsing
      */
@@ -811,7 +844,7 @@ var PixelRendr = (function () {
      */
     PixelRendr.prototype.processSpriteMultiple = function (sprite, key, attributes) {
         for (var i in sprite.sprites) {
-            if (sprite.sprites[i] instanceof Uint8ClampedArray) {
+            if (sprite.sprites[i] instanceof this.Uint8ClampedArray) {
                 sprite.sprites[i] = this.ProcessorDims.process(sprite.sprites[i], key + " " + i, attributes);
             }
         }
@@ -931,7 +964,7 @@ var PixelRendr = (function () {
      * @return {Uint8ClampedArray}
      */
     PixelRendr.prototype.spriteGetArray = function (colors) {
-        var clength = colors.length, numcolors = clength / this.digitsizeDefault, split = colors.match(this.digitsplit), olength = numcolors * 4, output = new Uint8ClampedArray(olength), reference, i, j, k;
+        var clength = colors.length, numcolors = clength / this.digitsizeDefault, split = colors.match(this.digitsplit), olength = numcolors * 4, output = new this.Uint8ClampedArray(olength), reference, i, j, k;
         for (i = 0, j = 0; i < numcolors; ++i) {
             // Grab its RGBA ints
             reference = this.paletteDefault[Number(split[i])];
@@ -956,7 +989,7 @@ var PixelRendr = (function () {
      * @return {Uint8ClampedArray}
      */
     PixelRendr.prototype.spriteRepeatRows = function (sprite, key, attributes) {
-        var parsed = new Uint8ClampedArray(sprite.length * this.scale), rowsize = attributes[this.spriteWidth] * 4, heightscale = attributes[this.spriteHeight] * this.scale, readloc = 0, writeloc = 0, si, sj;
+        var parsed = new this.Uint8ClampedArray(sprite.length * this.scale), rowsize = attributes[this.spriteWidth] * 4, heightscale = attributes[this.spriteHeight] * this.scale, readloc = 0, writeloc = 0, si, sj;
         for (si = 0; si < heightscale; ++si) {
             for (sj = 0; sj < this.scale; ++sj) {
                 this.memcpyU8(sprite, parsed, readloc, writeloc, rowsize);
@@ -999,7 +1032,7 @@ var PixelRendr = (function () {
      * @return {Uint8ClampedArray}
      */
     PixelRendr.prototype.flipSpriteArrayHoriz = function (sprite, attributes) {
-        var length = sprite.length, width = attributes[this.spriteWidth] + 0, newsprite = new Uint8ClampedArray(length), rowsize = width * 4, newloc, oldloc, i, j, k;
+        var length = sprite.length, width = attributes[this.spriteWidth] + 0, newsprite = new this.Uint8ClampedArray(length), rowsize = width * 4, newloc, oldloc, i, j, k;
         for (i = 0; i < length; i += rowsize) {
             newloc = i;
             oldloc = i + rowsize - 4;
@@ -1022,7 +1055,7 @@ var PixelRendr = (function () {
      * @return {Uint8ClampedArray}
      */
     PixelRendr.prototype.flipSpriteArrayVert = function (sprite, attributes) {
-        var length = sprite.length, width = attributes[this.spriteWidth] + 0, newsprite = new Uint8ClampedArray(length), rowsize = width * 4, newloc = 0, oldloc = length - rowsize, i, j;
+        var length = sprite.length, width = attributes[this.spriteWidth] + 0, newsprite = new this.Uint8ClampedArray(length), rowsize = width * 4, newloc = 0, oldloc = length - rowsize, i, j;
         while (newloc < length) {
             for (i = 0; i < rowsize; i += 4) {
                 for (j = 0; j < 4; ++j) {
@@ -1042,7 +1075,7 @@ var PixelRendr = (function () {
      * @return {Uint8ClampedArray}
      */
     PixelRendr.prototype.flipSpriteArrayBoth = function (sprite) {
-        var length = sprite.length, newsprite = new Uint8ClampedArray(length), oldloc = sprite.length - 4, newloc = 0, i;
+        var length = sprite.length, newsprite = new this.Uint8ClampedArray(length), oldloc = sprite.length - 4, newloc = 0, i;
         while (newloc < length) {
             for (i = 0; i < 4; ++i) {
                 newsprite[newloc + i] = sprite[oldloc + i];
@@ -1307,42 +1340,6 @@ var PixelRendr = (function () {
             return this.followPath(obj[path[num]], path, num + 1);
         }
         return obj;
-    };
-    /**
-     * Copies a stretch of members from one Uint8ClampedArray to another.
-     *
-     * @param {Uint8ClampedArray} source
-     * @param {Uint8ClampedArray} destination
-     * @param {Number} readloc   Where to start reading from in the source.
-     * @param {Number} writeloc   Where to start writing to in the source.
-     * @param {Number} writelength   How many members to copy over.
-     * @see http://www.html5rocks.com/en/tutorials/webgl/typed_arrays/
-     * @see http://www.javascripture.com/Uint8ClampedArray
-     */
-    PixelRendr.prototype.memcpyU8 = function (source, destination, readloc, writeloc, writelength) {
-        if (!source || !destination || readloc < 0 || writeloc < 0 || writelength <= 0) {
-            return;
-        }
-        if (readloc >= source.length || writeloc >= destination.length) {
-            // console.log("Alert: memcpyU8 requested out of bounds!");
-            // console.log("source, destination, readloc, writeloc, writelength");
-            // console.log(arguments);
-            return;
-        }
-        if (readloc == null) {
-            readloc = 0;
-        }
-        if (writeloc == null) {
-            writeloc = 0;
-        }
-        if (writelength == null) {
-            writelength = Math.max(0, Math.min(source.length, destination.length));
-        }
-        // JIT compilcation help
-        var lwritelength = writelength + 0, lwriteloc = writeloc + 0, lreadloc = readloc + 0;
-        while (lwritelength--) {
-            destination[lwriteloc++] = source[lreadloc++];
-        }
     };
     return PixelRendr;
 })();
