@@ -1,7 +1,7 @@
 # TimeHandlr.js
 
-A timed events library intended to provide a flexible alternative to setTimeout
-and setInterval that respects pauses and resumes. Events (which are really
+A timed events library that provides flexible alternatives to setTimeout and
+setInterval that respect pauses resumes, and extensibility. Events (which are
 Functions with arguments pre-set) are assigned integer timestamps, and can be
 set to repeat a number of times determined by a number or callback Function.
 Functionality to automatically "cycle" between certain classes of an Object is
@@ -16,31 +16,30 @@ also provided, similar to jQuery's class toggling.
 millisecond passing in real life, so any events that are scheduled for that 
 millisecond will be called. 
 
-* **addEvent(***`callback`***, ***`timeDelay`***, [...])** - Adds an event in
+* **addEvent(***`callback`, `timeDelay`, [...]***)** - Adds an event in
 a manner similar to setTimeout, though any arguments past the timeDelay will be 
 passed to the event callback.
 
-* **addEventInterval(***`callback`***, ***`timeDelay`***, ***`numRepeats`***, 
-[...])** - Adds an event in a manner similar to setInterval, though any 
-arguments past the numRepeats will be passed to the event callback. The added 
-event is inserted into the events container and is set to repeat a numRepeat 
-amount of times, though if the callback returns true, it will stop.
+* **addEventInterval(***`callback`, `timeDelay`, `numRepeats`, [...]***)** -
+Adds an event in a manner similar to setInterval, though any arguments past the
+numRepeats will be passed to the event callback. The added event is inserted 
+into the events container and is set to repeat a numRepeat amount of times, 
+though if the callback returns true, it will stop.
 
-* **addEventIntervalSynched(***`callback`***, ***`timeDelay`***, 
-***`numRepeats`***, [...])** - Wrapper for addEventInterval that waits to start
-callback until the timeDelay is modular with the internal time. This causes all
-synched calls to be in unison.
+* **addEventIntervalSynched(***`callback`, `timeDelay`, `numRepeats`, 
+[...]***)** - Wrapper for addEventInterval that waits to start callback until 
+the timeDelay is modular with the internal time. This causes all synched calls 
+to be in unison.
 
-* **addClassCycle(***`thing`***, ***`settings`***, ***`name`***, ***`timing`***)
-- Adds a sprite cycle (settings) for a thing, to be referenced by the given name 
-in the thing's cycles Object. The sprite cycle switches the thing's class using 
-addClass and removeClass (which can be given by the user in reset, but default 
-to internally defined Functions).
+* **addClassCycle(***`thing`, `settings`, `name`, `timing`)** - Adds a sprite
+cycle (settings) for a thing, to be referenced by the given name in the thing's
+cycles Object. The sprite cycle switches the thing's class using addClass and 
+removeClass (which can be given by the user in reset, but default to internally
+defined Functions).
 
-* **addClassCycleSynched(***`thing`***, ***`settings`***, ***`name`***, 
-***`timing`***) - Wrapper for addClassCycle that waits to start callback until 
-the timing is modular with the internal time. This causes all synched calls to 
-be in unison.
+* **addClassCycleSynched(***`thing`, `settings`, `name`, `timing`***)** -
+Wrapper for addClassCycle that waits to start callback until the timing is
+modular with the internal time. This causes all synched calls to be in unison.
 
 #### Constructor Arguments
 
@@ -76,7 +75,6 @@ internal one that just replaces the string with '' is used).
 
 
 ## Sample usage
-
 
 1. Using a TimeHandler to simulate setTimeout (albeit slowly).
     

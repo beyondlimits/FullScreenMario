@@ -9,7 +9,7 @@
     <script src="node_modules/mocha/mocha.js"></script>
     <script src="node_modules/chai/chai.js"></script>
 
-    <script src="GameStartr/EightBittr.js"></script>
+    <script src="GameStartr/EightBittr/EightBittr.js"></script>
     <script src="GameStartr/GameStartr.js"></script>
     <script src="GameStartr/AudioPlayr/AudioPlayr.js"></script>
     <script src="GameStartr/ChangeLinr/ChangeLinr.js"></script>
@@ -60,10 +60,9 @@
     <script src="tests.js"></script>
 
     <script>
-        if (window.mochaPhantomJS) {
+        if (typeof mochaPhantomJS !== "undefined") {
             mochaPhantomJS.run();
-        }
-        else {
+        } else {
             mocha.run();
         }
     </script>

@@ -1,14 +1,582 @@
+var StatsValue = (function () {
+    /**
+     * Creates a new StatsValue with the given key and settings. Defaults are given
+     * to the value via proliferate before the settings.
+     *
+     * @constructor
+     * @param {StatsHoldr} StatsHolder   The container for this value.
+     * @param {String} key   The key to reference this new StatsValue by.
+     * @param {IStatsValueSettings} settings   Any optional custom settings.
+     */
+    function StatsValue(StatsHolder, key, settings) {
+        this.StatsHolder = StatsHolder;
+        StatsHolder.proliferate(this, StatsHolder.getDefaults());
+        StatsHolder.proliferate(this, settings);
+        this.key = key;
+        if (!this.hasOwnProperty("value")) {
+            this.value = this.valueDefault;
+        }
+        if (this.hasElement) {
+            this.element = StatsHolder.createElement(settings.element || "div", {
+                className: StatsHolder.getPrefix() + "_value " + key
+            });
+            this.element.appendChild(StatsHolder.createElement("div", {
+                "textContent": key
+            }));
+            this.element.appendChild(StatsHolder.createElement("div", {
+                "textContent": this.value
+            }));
+        }
+        if (this.storeLocally) {
+            // If there exists an old version of this property, get it 
+            if (StatsHolder.getLocalStorage().hasOwnProperty(StatsHolder.getPrefix() + key)) {
+                this.value = this.retrieveLocalStorage();
+            }
+            else {
+                // Otherwise save the new version to memory
+                this.updateLocalStorage();
+            }
+        }
+    }
+    /**
+     * General update Function to be run whenever the internal value is changed.
+     * It runs all the trigger, modular, etc. checks, updates the HTML element
+     * if there is one, and updates localStorage if needed.
+     */
+    StatsValue.prototype.update = function () {
+        // Mins and maxes must be obeyed before any other considerations
+        if (this.hasOwnProperty("minimum") && Number(this.value) <= Number(this.minimum)) {
+            this.value = this.minimum;
+            if (this.onMinimum) {
+                this.onMinimum.apply(this, this.callbackArgs);
+            }
+        }
+        else if (this.hasOwnProperty("maximum") && Number(this.value) <= Number(this.maximum)) {
+            this.value = this.maximum;
+            if (this.onMaximum) {
+                this.onMaximum.apply(this, this.callbackArgs);
+            }
+        }
+        if (this.modularity) {
+            this.checkModularity();
+        }
+        if (this.triggers) {
+            this.checkTriggers();
+        }
+        if (this.hasElement) {
+            this.updateElement();
+        }
+        if (this.storeLocally) {
+            this.updateLocalStorage();
+        }
+    };
+    /**
+     * Checks if the current value should trigger a callback, and if so calls
+     * it.
+     *
+     * @this {StatsValue}
+     */
+    StatsValue.prototype.checkTriggers = function () {
+        if (this.triggers.hasOwnProperty(this.value)) {
+            this.triggers[this.value].apply(this, this.callbackArgs);
+        }
+    };
+    /**
+     * Checks if the current value is greater than the modularity (assuming
+     * modular is a non-zero Numbers), and if so, continuously reduces value and
+     * calls this.onModular.
+     *
+     * @this {StatsValue}
+     */
+    StatsValue.prototype.checkModularity = function () {
+        if (this.value.constructor !== Number || !this.modularity) {
+            return;
+        }
+        while (this.value >= this.modularity) {
+            this.value = Math.max(0, this.value - this.modularity);
+            if (this.onModular) {
+                this.onModular.apply(this, this.callbackArgs);
+            }
+        }
+    };
+    /**
+     * Updates the StatsValue's element's second child to be the StatsValue's value.
+     *
+     * @this {StatsValue}
+     */
+    StatsValue.prototype.updateElement = function () {
+        if (this.StatsHolder.hasDisplayChange(this.value)) {
+            this.element.children[1].textContent = this.StatsHolder.getDisplayChange(this.value);
+        }
+        else {
+            this.element.children[1].textContent = this.value;
+        }
+    };
+    /**
+     * Retrieves a StatsValue's value from localStorage, making sure not to try to
+     * JSON.parse an undefined or null value.
+     *
+     * @return {Mixed}
+     */
+    StatsValue.prototype.retrieveLocalStorage = function () {
+        var value = localStorage.getItem(this.StatsHolder.getPrefix() + this.key);
+        switch (value) {
+            case "undefined":
+                return undefined;
+            case "null":
+                return null;
+        }
+        if (value.constructor !== String) {
+            return value;
+        }
+        return JSON.parse(value);
+    };
+    /**
+     * Stores a StatsValue's value in localStorage under the prefix plus its key.
+     *
+     * @param {Boolean} [overrideAutoSave]   Whether the policy on saving should
+     *                                       be ignored (so saving happens
+     *                                       regardless). By default, false.
+     */
+    StatsValue.prototype.updateLocalStorage = function (overrideAutoSave) {
+        if (overrideAutoSave === void 0) { overrideAutoSave = false; }
+        if (this.StatsHolder.getAutoSave() || overrideAutoSave) {
+            this.StatsHolder.getLocalStorage()[this.StatsHolder.getPrefix() + this.key] = JSON.stringify(this.value);
+        }
+    };
+    return StatsValue;
+})();
 /**
- * AudioPlayr.js
- * 
+ * StatsHoldr
+ * A versatile container to store and manipulate values in localStorage, and
+ * optionally keep an updated HTML container showing these values. Operations
+ * such as setting, increasing/decreasing, and default values are all abstracted
+ * automatically. StatsValues are stored in memory as well as in localStorage for
+ * fast lookups.
+ * Each StatsHoldr instance requires proliferate and createElement functions
+ * (such as those given by the EightBittr prototype).
+ *
+ * @example
+ * // Creating and using a StatsHoldr to store user statistics.
+ * var StatsHolder = new StatsHoldr({
+ *     "prefix": "MyStatsHoldr",
+ *     "values": {
+ *         "bestStage": {
+ *             "valueDefault": "Beginning",
+ *             "storeLocally": true
+ *         },
+ *         "bestScore": {
+ *             "valueDefault": 0,
+ *             "storeLocally": true
+ *         }
+ *     },
+ *     "proliferate": EightBittr.prototype.proliferate,
+ *     "createElement": EightBittr.prototype.createElement
+ * });
+ * StatsHolder.set("bestStage", "Middle");
+ * StatsHolder.set("bestScore", 9001);
+ * console.log(StatsHolder.get("bestStage")); // "Middle"
+ * console.log(StatsHolder.get("bestScore")); // "9001"
+ * @example
+ * // Creating and using a StatsHoldr to show user statistics in HTML elements.
+ * var StatsHolder = new StatsHoldr({
+ *     "prefix": "MyStatsHoldr",
+ *     "doMakeContainer": true,
+ *     "containers": [
+ *         ["table", {
+ *             "id": "StatsOutside",
+ *             "style": {
+ *                 "textTransform": "uppercase"
+ *             }
+ *         }],
+ *         ["tr", {
+ *             "id": "StatsInside"
+ *         }]
+ *     ],
+ *     "defaults": {
+ *         "element": "td"
+ *     },
+ *     "values": {
+ *         "bestStage": {
+ *             "valueDefault": "Beginning",
+ *             "hasElement": true,
+ *             "storeLocally": true
+ *         },
+ *         "bestScore": {
+ *             "valueDefault": 0,
+ *             "hasElement": true,
+ *             "storeLocally": true
+ *         }
+ *     },
+ *     "proliferate": EightBittr.prototype.proliferate,
+ *     "createElement": EightBittr.prototype.createElement
+ * });
+ * document.body.appendChild(StatsHolder.getContainer());
+ * StatsHolder.set("bestStage", "Middle");
+ * StatsHolder.set("bestScore", 9001);
+ * @author "Josh Goldberg" <josh@fullscreenmario.com>
+ */
+var StatsHoldr = (function () {
+    /**
+     * Resets the StatsHoldr.
+     *
+     * @constructor
+     * @param {String} prefix   A String prefix to prepend to key names in
+     *                          localStorage.
+     * @param {Function} proliferate   A Function that takes in a recipient
+     *                                 Object and a donor Object, and copies
+     *                                 attributes over. Generally given by
+     *                                 EightBittr.prototype to minimize
+     *                                 duplicate code.
+     * @param {Function} createElement   A Function to create an Element of a
+     *                                   given String type and apply attributes
+     *                                   from subsequent Objects. Generally
+     *                                   given by EightBittr.prototype to reduce
+     *                                   duplicate code.
+     * @param {Object} [values]   The keyed values to be stored, as well as all
+     *                            associated information with them. The names of
+     *                            values are keys in the values Object.
+     * @param {Object} [localStorage]   A substitute for localStorage, generally
+     *                                  used as a shim (defaults to window's
+     *                                  localStorage, or a new Object if that
+     *                                  does not exist).
+     * @param {Boolean} [autoSave]   Whether this should save changes to
+     *                               localStorage automatically (by default,
+     *                               false).
+     * @param {Boolean} [doMakeContainer]   Whether an HTML container with
+     *                                      children for each value should be
+     *                                      made (defaults to false).
+     * @param {Object} [defaults]   Default attributes for each value.
+     * @param {Array} [callbackArgs]   Arguments to pass via Function.apply to
+     *                                 triggered callbacks (defaults to []).
+     */
+    function StatsHoldr(settings) {
+        if (settings === void 0) { settings = {}; }
+        var key;
+        this.prefix = settings.prefix || "";
+        this.autoSave = settings.autoSave;
+        this.callbackArgs = settings.callbackArgs || [];
+        if (settings.localStorage) {
+            this.localStorage = settings.localStorage;
+        }
+        else if (typeof localStorage === "undefined") {
+            this.localStorage = {};
+        }
+        else {
+            this.localStorage = localStorage;
+        }
+        this.defaults = settings.defaults || {};
+        this.displayChanges = settings.displayChanges || {};
+        this.values = {};
+        if (settings.values) {
+            for (key in settings.values) {
+                if (settings.values.hasOwnProperty(key)) {
+                    this.addStatistic(key, settings.values[key]);
+                }
+            }
+        }
+        if (settings.doMakeContainer) {
+            this.containersArguments = settings.containersArguments || [
+                ["div", {
+                    "className": this.prefix + "_container"
+                }]
+            ];
+            this.container = this.makeContainer(settings.containersArguments);
+        }
+    }
+    /* Simple gets
+    */
+    /**
+     * @return {Mixed} The values contained within, keyed by their keys.
+     */
+    StatsHoldr.prototype.getValues = function () {
+        return this.values;
+    };
+    /**
+     * @return {Mixed} Default attributes for values.
+     */
+    StatsHoldr.prototype.getDefaults = function () {
+        return this.defaults;
+    };
+    /**
+     * @return {Mixed} A reference to localStorage or a replacment object.
+     */
+    StatsHoldr.prototype.getLocalStorage = function () {
+        return this.localStorage;
+    };
+    /**
+     * @return {Boolean} Whether this should save changes to localStorage
+     *                   automatically.
+     */
+    StatsHoldr.prototype.getAutoSave = function () {
+        return this.autoSave;
+    };
+    /**
+     * @return {String} The prefix to store thigns under in localStorage.
+     */
+    StatsHoldr.prototype.getPrefix = function () {
+        return this.prefix;
+    };
+    /**
+     * @return {HTMLElement} The container HTML element, if it exists.
+     */
+    StatsHoldr.prototype.getContainer = function () {
+        return this.container;
+    };
+    /**
+     * @return {Mixed[][]} The createElement arguments for the HTML container
+     *                     elements, outside-to-inside.
+     */
+    StatsHoldr.prototype.getContainersArguments = function () {
+        return this.containersArguments;
+    };
+    /**
+     * @return {Mixed} Any hard-coded changes to element content.
+     */
+    StatsHoldr.prototype.getDisplayChanges = function () {
+        return this.displayChanges;
+    };
+    /**
+     * @return {Mixed[]} Arguments to be passed to triggered events.
+     */
+    StatsHoldr.prototype.getCallbackArgs = function () {
+        return this.callbackArgs;
+    };
+    /* Retrieval
+    */
+    /**
+     * @return {String[]} The names of all value's keys.
+     */
+    StatsHoldr.prototype.getKeys = function () {
+        return Object.keys(this.values);
+    };
+    /**
+     * @param {String} key   The key for a known value.
+     * @return {Mixed} The known value of a key, assuming that key exists.
+     */
+    StatsHoldr.prototype.get = function (key) {
+        this.checkExistence(key);
+        return this.values[key].value;
+    };
+    /**
+     * @param {String} key   The key for a known value.
+     * @return {Object} The settings for that particular key.
+     */
+    StatsHoldr.prototype.getObject = function (key) {
+        return this.values[key];
+    };
+    /**
+     * @param {String} key   The key for a potentially known value.
+     * @return {Boolean} Whether there is a value under that key.
+     */
+    StatsHoldr.prototype.hasKey = function (key) {
+        return this.values.hasOwnProperty(key);
+    };
+    /**
+     * @return {Object} The objects being stored.
+     */
+    StatsHoldr.prototype.getStatsValues = function () {
+        return this.values;
+    };
+    /**
+     * @return {Object} A mapping of key names to the actual values of all
+     *                  objects being stored.
+     */
+    StatsHoldr.prototype.export = function () {
+        var output = {}, i;
+        for (i in this.values) {
+            if (this.values.hasOwnProperty(i)) {
+                output[i] = this.values[i].value;
+            }
+        }
+        return output;
+    };
+    /* StatsValues
+    */
+    /**
+     * Adds a new key & value pair to by linking to a newly created StatsValue.
+     *
+     * @param {String} key   The key to reference by new StatsValue by.
+     * @param {Object} settings   The settings for the new StatsValue.
+     * @return {StatsValue} The newly created StatsValue.
+     */
+    StatsHoldr.prototype.addStatistic = function (key, settings) {
+        return this.values[key] = new StatsValue(this, key, settings);
+    };
+    /* Updating values
+    */
+    /**
+     * Sets the value for the StatsValue under the given key, then updates the StatsValue
+     * (including the StatsValue's element and localStorage, if needed).
+     *
+     * @param {String} key   The key of the StatsValue.
+     * @param {Mixed} value   The new value for the StatsValue.
+     */
+    StatsHoldr.prototype.set = function (key, value) {
+        this.checkExistence(key);
+        this.values[key].value = value;
+        this.values[key].update();
+    };
+    /**
+     * Increases the value for the StatsValue under the given key, via addition for
+     * Numbers or concatenation for Strings.
+     *
+     * @param {String} key   The key of the StatsValue.
+     * @param {Mixed} [amount]   The amount to increase by (by default, 1).
+     */
+    StatsHoldr.prototype.increase = function (key, amount) {
+        if (amount === void 0) { amount = 1; }
+        this.checkExistence(key);
+        this.values[key].value += arguments.length > 1 ? amount : 1;
+        this.values[key].update();
+    };
+    /**
+     * Increases the value for the StatsValue under the given key, via addition for
+     * Numbers or concatenation for Strings.
+     *
+     * @param {String} key   The key of the StatsValue.
+     * @param {Number} [amount]   The amount to increase by (by default, 1).
+     */
+    StatsHoldr.prototype.decrease = function (key, amount) {
+        if (amount === void 0) { amount = 1; }
+        this.checkExistence(key);
+        this.values[key].value -= amount;
+        this.values[key].update();
+    };
+    /**
+     * Toggles whether a value is 1 or 0.
+     *
+     * @param {String} key   The key of the StatsValue.
+     */
+    StatsHoldr.prototype.toggle = function (key) {
+        this.checkExistence(key);
+        this.values[key].value = this.values[key].value ? 0 : 1;
+        this.values[key].update();
+    };
+    /**
+     * Ensures a key exists in values, and throws an Error if it doesn't.
+     *
+     * @param {String} key
+     */
+    StatsHoldr.prototype.checkExistence = function (key) {
+        if (!this.values.hasOwnProperty(key)) {
+            throw new Error("Unknown key given to StatsHoldr: '" + key + "'.");
+        }
+    };
+    /**
+     * Manually saves all values to localStorage, ignoring the autoSave flag.
+     */
+    StatsHoldr.prototype.saveAll = function () {
+        for (var key in this.values) {
+            if (this.values.hasOwnProperty(key)) {
+                this.values[key].updateLocalStorage(true);
+            }
+        }
+    };
+    /* HTML helpers
+    */
+    /**
+     * Hides the container Element by setting its visibility to hidden.
+     */
+    StatsHoldr.prototype.hideContainer = function () {
+        this.container.style.visibility = "hidden";
+    };
+    /**
+     * Shows the container Element by setting its visibility to visible.
+     */
+    StatsHoldr.prototype.displayContainer = function () {
+        this.container.style.visibility = "visible";
+    };
+    /**
+     * Creates the container Element, which contains a child for each StatsValue that
+     * specifies hasElement to be true.
+     *
+     * @param {Mixed[][]} containers   An Array representing the Element to be
+     *                                 created and the children between it and
+     *                                 the contained StatsValues. Each contained
+     *                                 Mixed[]  has a String tag name as its
+     *                                 first member, followed by any number of
+     *                                 Objects to apply via createElement.
+     * @return {HTMLElement}
+     */
+    StatsHoldr.prototype.makeContainer = function (containers) {
+        var output = this.createElement.apply(this, containers[0]), current = output, child, key, i;
+        for (i = 1; i < containers.length; ++i) {
+            child = this.createElement.apply(this, containers[i]);
+            current.appendChild(child);
+            current = child;
+        }
+        for (key in this.values) {
+            if (this.values[key].hasElement) {
+                child.appendChild(this.values[key].element);
+            }
+        }
+        return output;
+    };
+    /**
+     * @return {Boolean} Whether displayChanges has an entry for a particular
+     *                   value.
+     */
+    StatsHoldr.prototype.hasDisplayChange = function (value) {
+        return this.displayChanges.hasOwnProperty(value);
+    };
+    /**
+     * @return {String} The displayChanges entry for a particular value.
+     */
+    StatsHoldr.prototype.getDisplayChange = function (value) {
+        return this.displayChanges[value];
+    };
+    /* Utilities
+    */
+    StatsHoldr.prototype.createElement = function (tag) {
+        if (tag === void 0) { tag = undefined; }
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
+        }
+        var element = document.createElement(tag), i;
+        for (i = 0; i < args.length; i += 1) {
+            this.proliferate(element, args[i]);
+        }
+        return element;
+    };
+    StatsHoldr.prototype.proliferate = function (recipient, donor, noOverride) {
+        if (noOverride === void 0) { noOverride = false; }
+        var setting, i;
+        for (i in donor) {
+            if (donor.hasOwnProperty(i)) {
+                // If noOverride, don't override already existing properties
+                if (noOverride && recipient.hasOwnProperty(i)) {
+                    continue;
+                }
+                // If it's an object, recurse on a new version of it
+                setting = donor[i];
+                if (typeof setting === "object") {
+                    if (!recipient.hasOwnProperty(i)) {
+                        recipient[i] = new setting.constructor();
+                    }
+                    this.proliferate(recipient[i], setting, noOverride);
+                }
+                else {
+                    // Regular primitives are easy to copy otherwise
+                    recipient[i] = setting;
+                }
+            }
+        }
+        return recipient;
+    };
+    return StatsHoldr;
+})();
+/// <reference path="External/StatsHoldr.ts" />
+/**
+ * AudioPlayr
  * An audio library to automate preloading and controlled playback of multiple
- * audio tracks, with support for different browsers' preferred fileTypes.
+ * audio tracks, with support for different browsers' preferred file types.
  * Volume and mute status are stored locally using a StatsHoldr, which in turn
  * requires proliferate and createElement functions (such as those given by the
  * EightBittr prototype).
- * 
  * @example
- * // Creating and using an AudioPlayr to load and play audio files. The 
+ * // Creating and using an AudioPlayr to load and play audio files. The
  * // 'Sounds/Samples/mp3' directory should have Coin.mp3 and Bump.mp3 in it.
  * var AudioPlayer = new AudioPlayr({
  *     "directory": "Sounds",
@@ -36,10 +604,9 @@
  *     }
  * });
  * AudioPlayer.play("Coin"); // Returns an <audio> playing Coin.mp3
- * 
  * @example
- * // Creating and using an AudioPlayr to load and play audio files. A theme 
- * // track is kept looping in the background, and the Coin sound is played 
+ * // Creating and using an AudioPlayr to load and play audio files. A theme
+ * // track is kept looping in the background, and the Coin sound is played
  * // every seven seconds.
  * var AudioPlayer = new AudioPlayr({
  *     "directory": "Sounds",
@@ -72,653 +639,533 @@
  * setInterval(function () {
  *     AudioPlayer.play("Coin");
  * }, 7000);
- * 
  * @author "Josh Goldberg" <josh@fullscreenmario.com>
  */
-function AudioPlayr(settings) {
-    "use strict";
-    if (!this || this === window) {
-        return new AudioPlayr(settings);
-    }
-    var self = this,
-
-        // A listing of filenames to be turned into <audio> objects.
-        library,
-
-        // What file types to add as sources to sounds.
-        fileTypes,
-
-        // Currently playing sound objects, keyed by name (no extensions).
-        sounds,
-
-        // The currently playing theme.
-        theme,
-
-        // Directory from which audio files are AJAXed upon startup.
-        directory,
-
-        // The Function or Number used to determine what playLocal's volume is.
-        getVolumeLocal,
-
-        // The Function or String used to get a default theme name.
-        getThemeDefault,
-
-        // Storage container for settings like volume and muted status.
-        StatsHolder;
-
+var AudioPlayr = (function () {
     /**
      * Resets the AudioPlayr.
-     * 
-     * @constructor
-     * @param {Object} library   The names of the audio files to be preloaded so
-     *                           they can later be played by the AudioPlayr. The
-     *                           library Object stores Objects inside it, 
-     *                           representing the paths within each filetype's
-     *                           directory.
-     * @param {String} directory   The directory in which all directories of 
-     *                             audio files are stored.
-     * @param {String[]} filetypes   The allowed filetypes for each audio file.
-     *                               Each of these should have a directory of
-     *                               their name under the main directory, which
-     *                               should contain each file of the filetype.
-     * @param {Object} statistics   The arguments to be passed to the internal
-     *                              StatsHoldr. This must contain values for 
-     *                              "volume" and "muted".
-     * @param {Mixed} [getThemeDefault]   A Function or String to get the 
-     *                                    default theme for playTheme calls.
-     *                                    Functions are called for a return
-     *                                    value, and Strings are constant
-     *                                    (defaults to "Theme").
-     * @param {Mixed} [getVolumeLocal]   A Function or Number to get the "local"
-     *                                   volume for playLocal calls. Functions
-     *                                   are called for a return value, and 
-     *                                   Numbers are constant (defaults to 1).
+     *
+     * @param {IAudioPlayrSettings} settings
      */
-    self.reset = function (settings) {
-        library = settings.library;
-        directory = settings.directory;
-        fileTypes = settings.fileTypes;
-        getThemeDefault = settings.getThemeDefault || "Theme";
-        getVolumeLocal = typeof settings.getVolumeLocal === "undefined"
-            ? 1 : settings.getVolumeLocal;
-
+    function AudioPlayr(settings) {
+        if (typeof settings.library === "undefined") {
+            throw new Error("No library given to AudioPlayr.");
+        }
+        if (typeof settings.directory === "undefined") {
+            throw new Error("No directory given to AudioPlayr.");
+        }
+        if (typeof settings.fileTypes === "undefined") {
+            throw new Error("No fileTypes given to AudioPlayr.");
+        }
+        if (!settings.statistics || !settings.statistics.values) {
+            throw new Error("No statistics with values given to AudioPlayr.");
+        }
+        if (!settings.statistics.values.volume || !settings.statistics.values.muted) {
+            throw new Error("Statistics given to AudioPlayr must include volume and muted.");
+        }
+        this.library = settings.library;
+        this.directory = settings.directory;
+        this.fileTypes = settings.fileTypes;
+        this.getThemeDefault = settings.getThemeDefault || "Theme";
+        this.getVolumeLocal = typeof settings.getVolumeLocal === "undefined" ? 1 : settings.getVolumeLocal;
         // Sounds should always start blank
-        sounds = {};
-
+        this.sounds = {};
         // Preload everything!
-        libraryLoad();
-
-        StatsHolder = new StatsHoldr(settings.statistics);
-
-        self.setVolume(StatsHolder.get("volume"));
-        self.setMuted(StatsHolder.get("muted"));
-    };
-
-
+        this.libraryLoad();
+        this.StatsHolder = new StatsHoldr(settings.statistics);
+        this.setVolume(this.StatsHolder.get("volume"));
+        this.setMuted(this.StatsHolder.get("muted"));
+    }
     /* Simple getters
     */
-
     /**
      * @return {Object} The listing of <audio> Elements, keyed by name.
      */
-    self.getLibrary = function () {
-        return library;
+    AudioPlayr.prototype.getLibrary = function () {
+        return this.library;
     };
-
     /**
      * @return {String[]} The allowed filetypes for audio files.
      */
-    self.getfileTypes = function () {
-        return fileTypes;
+    AudioPlayr.prototype.getfileTypes = function () {
+        return this.fileTypes;
     };
-
     /**
      * @return {Object} The currently playing <audio> Elements, keyed by name.
      */
-    self.getSounds = function () {
-        return sounds;
+    AudioPlayr.prototype.getSounds = function () {
+        return this.sounds;
     };
-
     /**
      * @return {HTMLAudioElement} The current playing theme's <audio> Element.
      */
-    self.getTheme = function () {
-        return theme;
+    AudioPlayr.prototype.getTheme = function () {
+        return this.theme;
     };
-
     /**
-     * @return {String} The directory under which all filetype directories are 
+     * @return {String} The directory under which all filetype directories are
      *                  to be located.
      */
-    self.getDirectory = function () {
-        return directory;
+    AudioPlayr.prototype.getDirectory = function () {
+        return this.directory;
     };
-
-
     /* Playback modifiers
     */
-
     /**
      * @return {Number} The current volume, which is a Number in [0,1],
      *                  retrieved by the StatsHoldr.
      */
-    self.getVolume = function () {
-        return StatsHolder.get("volume");
+    AudioPlayr.prototype.getVolume = function () {
+        return this.StatsHolder.get("volume");
     };
-
     /**
      * Sets the current volume. If not muted, all sounds will have their volume
      * updated.
-     * 
+     *
      * @param {Number} volume   A Number in [0,1] to set as the current volume.
      */
-    self.setVolume = function (volume) {
-        if (!self.getMuted()) {
-            for (var i in sounds) {
-                sounds[i].volume = sounds[i].volumeReal * volume;
+    AudioPlayr.prototype.setVolume = function (volume) {
+        var i;
+        if (!this.getMuted()) {
+            for (i in this.sounds) {
+                if (this.sounds.hasOwnProperty(i)) {
+                    this.sounds[i].volume = this.sounds[i].volumeReal * volume;
+                }
             }
         }
-
-        StatsHolder.set("volume", volume);
+        this.StatsHolder.set("volume", volume);
     };
-
     /**
      * @return {Boolean} whether this is currently muted.
      */
-    self.getMuted = function () {
-        return Boolean(StatsHolder.get("muted"));
+    AudioPlayr.prototype.getMuted = function () {
+        return Boolean(this.StatsHolder.get("muted"));
     };
-
     /**
      * Calls either setMutedOn or setMutedOff as is appropriate.
-     * 
+     *
      * @param {Boolean} muted   The new status for muted.
      */
-    self.setMuted = function (muted) {
-        muted ? self.setMutedOn() : self.setMutedOff();
-    }
-
+    AudioPlayr.prototype.setMuted = function (muted) {
+        this.getMuted() ? this.setMutedOn() : this.setMutedOff();
+    };
     /**
      * Calls either setMutedOn or setMutedOff to toggle whether this is muted.
      */
-    self.toggleMuted = function () {
-        self.setMuted(!self.getMuted());
+    AudioPlayr.prototype.toggleMuted = function () {
+        this.setMuted(!this.getMuted());
     };
-
     /**
      * Sets volume to 0 in all currently playing sounds and stores the muted
      * status as on in the internal StatsHoldr.
      */
-    self.setMutedOn = function () {
-        for (var i in sounds) {
-            if (sounds.hasOwnProperty(i)) {
-                sounds[i].volume = 0;
+    AudioPlayr.prototype.setMutedOn = function () {
+        for (var i in this.sounds) {
+            if (this.sounds.hasOwnProperty(i)) {
+                this.sounds[i].volume = 0;
             }
         }
-        StatsHolder.set("muted", 1);
+        this.StatsHolder.set("muted", 1);
     };
-
     /**
      * Sets sound volumes to their actual volumes and stores the muted status
      * as off in the internal StatsHoldr.
      */
-    self.setMutedOff = function () {
-        var volume = self.getVolume(),
-            sound, i;
-
-        for (i in sounds) {
-            if (sounds.hasOwnProperty(i)) {
-                sound = sounds[i];
-                sound.volume = sound.volumeReal * volume;
+    AudioPlayr.prototype.setMutedOff = function () {
+        var volume = this.getVolume(), sound, i;
+        for (i in this.sounds) {
+            if (this.sounds.hasOwnProperty(i)) {
+                sound = this.sounds[i];
+                sound.volume = Number(sound.getAttribute("volumeReal")) * volume;
             }
         }
-
-        StatsHolder.set("muted", 0);
+        this.StatsHolder.set("muted", 0);
     };
-
-
     /* Other modifiers
     */
-
     /**
      * @return {Mixed} The Function or Number used as the volume setter for
-     *                 "local" sounds.    
+     *                 "local" sounds.
      */
-    self.getGetVolumeLocal = function () {
-        return getVolumeLocal;
+    AudioPlayr.prototype.getGetVolumeLocal = function () {
+        return this.getVolumeLocal;
     };
-
     /**
      * @param {Mixed} getVolumeLocal   A new Function or Number to use as the
      *                                 volume setter for "local" sounds.
      */
-    self.setGetVolumeLocal = function (getVolumeLocalNew) {
-        getVolumeLocal = getVolumeLocalNew;
+    AudioPlayr.prototype.setGetVolumeLocal = function (getVolumeLocalNew) {
+        this.getVolumeLocal = getVolumeLocalNew;
     };
-
     /**
      * @return {Mixed} The Function or String used to get the default theme for
      *                 playTheme calls.
      */
-    self.getGetThemeDefault = function () {
-        return getThemeDefault;
+    AudioPlayr.prototype.getGetThemeDefault = function () {
+        return this.getThemeDefault;
     };
-
     /**
      * @param {Mixed} A new Function or String to use as the source for theme
      *                names in default playTheme calls.
      */
-    self.setGetThemeDefault = function (getThemeDefaultNew) {
-        getThemeDefault = getThemeDefaultNew;
+    AudioPlayr.prototype.setGetThemeDefault = function (getThemeDefaultNew) {
+        this.getThemeDefault = getThemeDefaultNew;
     };
-
-
     /* Playback
     */
-
     /**
      * @param {String} name   The name of the sound to play.
-     * 
+     *
      * Plays the sound of the given name. Internally, this stops any previously
      * playing sound of that name and starts a new one, with volume set to the
-     * current volume and muted status. If the name wasn't previously being 
+     * current volume and muted status. If the name wasn't previously being
      * played (and therefore a new Element has been created), an event listener
      * is added to delete it from sounds after.
-     * 
+     *
      * @return {HTMLAudioElement} The sound's <audio> element, now playing.
      */
-    self.play = function (name) {
-        var sound;
-
+    AudioPlayr.prototype.play = function (name) {
+        var sound, used;
         // If the sound isn't yet being played, see if it's in the library
-        if (!sounds.hasOwnProperty(name)) {
+        if (!this.sounds.hasOwnProperty(name)) {
             // If the sound also isn't in the library, it's unknown
-            if (!library.hasOwnProperty(name)) {
-                throw new Error(
-                    "Unknown name given to AudioPlayr.play: '" + name + "'."
-                );
+            if (!this.library.hasOwnProperty(name)) {
+                throw new Error("Unknown name given to AudioPlayr.play: '" + name + "'.");
             }
-            sounds[name] = sound = library[name];
-        } else {
-            sound = sounds[name];
+            sound = this.sounds[name] = this.library[name];
         }
-
-        soundStop(sound);
-
-        if (self.getMuted()) {
+        else {
+            sound = this.sounds[name];
+        }
+        this.soundStop(sound);
+        if (this.getMuted()) {
             sound.volume = 0;
-        } else {
-            sound.volumeReal = 1;
-            sound.volume = self.getVolume();
         }
-
-        playSound(sound);
-
+        else {
+            sound.setAttribute("volumeReal", "1");
+            sound.volume = this.getVolume();
+        }
+        this.playSound(sound);
+        used = Number(sound.getAttribute("used"));
         // If this is the song's first play, let it know how to stop
-        if (!sound.used) {
-            sound.used += 1;
-            sound.addEventListener("ended", soundFinish.bind(undefined, name));
+        if (!used) {
+            sound.setAttribute("used", String(used + 1));
+            sound.addEventListener("ended", this.soundFinish.bind(this, name));
         }
-
         sound.setAttribute("name", name);
         return sound;
     };
-
     /**
      * Pauses all currently playing sounds.
      */
-    self.pauseAll = function () {
-        for (var i in sounds) {
-            if (sounds.hasOwnProperty(i)) {
-                sounds[i].pause();
+    AudioPlayr.prototype.pauseAll = function () {
+        for (var i in this.sounds) {
+            if (this.sounds.hasOwnProperty(i)) {
+                this.sounds[i].pause();
             }
         }
     };
-
     /**
      * Un-pauses (resumes) all currently paused sounds.
      */
-    self.resumeAll = function () {
-        for (var i in sounds) {
-            if (!sounds.hasOwnProperty(i)) {
+    AudioPlayr.prototype.resumeAll = function () {
+        for (var i in this.sounds) {
+            if (!this.sounds.hasOwnProperty(i)) {
                 continue;
             }
-            sounds[i].play();
+            this.sounds[i].play();
         }
     };
-
     /**
      * Pauses the currently playing theme, if there is one.
      */
-    self.pauseTheme = function () {
-        if (theme) {
-            theme.pause();
+    AudioPlayr.prototype.pauseTheme = function () {
+        if (this.theme) {
+            this.theme.pause();
         }
     };
-
     /**
      * Resumes the theme, if there is one and it's paused.
      */
-    self.resumeTheme = function () {
-        if (theme) {
-            theme.play();
+    AudioPlayr.prototype.resumeTheme = function () {
+        if (this.theme) {
+            this.theme.play();
         }
     };
-
     /**
      * Stops all sounds and any theme, and removes all references to them.
      */
-    self.clearAll = function () {
-        self.pauseAll();
-        self.clearTheme();
-        sounds = {};
+    AudioPlayr.prototype.clearAll = function () {
+        this.pauseAll();
+        this.clearTheme();
+        this.sounds = {};
     };
-
     /**
      * Pauses and removes the theme, if there is one.
      */
-    self.clearTheme = function () {
-        if (!theme) {
+    AudioPlayr.prototype.clearTheme = function () {
+        if (!this.theme) {
             return;
         }
-
-        self.pauseTheme();
-        delete sounds[theme.getAttribute("name")];
-        self.theme = undefined;
+        this.pauseTheme();
+        delete this.sounds[this.theme.getAttribute("name")];
+        this.theme = undefined;
     };
-
     /**
      * "Local" version of play that changes the output sound's volume depending
      * on the result of a getVolumeLocal call. This defaults to 1, but may be
      * less. For example, in a video game, sounds further from the viewpoint
      * should have lessened volume.
-     * 
+     *
      * @param {String} name   The name of the sound to play.
      * @param {Mixed} [location]   An argument for getVolumeLocal, if that's a
      *                             Function.
      * @return {HTMLAudioElement} The sound's <audio> element, now playing.
      */
-    self.playLocal = function (name, location) {
-        var sound = self.play(name);
-
-        switch (getVolumeLocal.constructor) {
+    AudioPlayr.prototype.playLocal = function (name, location) {
+        if (location === void 0) { location = undefined; }
+        var sound = this.play(name), volumeReal;
+        switch (this.getVolumeLocal.constructor) {
             case Function:
-                sound.volumeReal = getVolumeLocal(location);
+                volumeReal = this.getVolumeLocal(location);
                 break;
             case Number:
-                sound.volumeReal = getVolumeLocal;
+                volumeReal = this.getVolumeLocal;
                 break;
             default:
-                sound.volumeReal = Number(volumeReal) || 1;
+                volumeReal = Number(this.getVolumeLocal) || 1;
                 break;
         }
-
-        if (self.getMuted()) {
+        sound.setAttribute("volumeReal", String(volumeReal));
+        if (this.getMuted()) {
             sound.volume = 0;
-        } else {
-            sound.volume = sound.volumeReal * self.getVolume();
         }
-
+        else {
+            sound.volume = volumeReal * this.getVolume();
+        }
         return sound;
     };
-
     /**
      * Pauses any previously playing theme and starts playback of a new theme
      * sound. This is different from normal sounds in that it normally loops and
      * is controlled by pauseTheme and co. If loop is on and the sound wasn't
      * already playing, an event listener is added for when it ends.
-     * 
+     *
      * @param {String} [name]   The name of the sound to be used as the theme.
-     *                          If not provided, getThemeDefault is used to 
+     *                          If not provided, getThemeDefault is used to
      *                          provide one.
-     * @param {Boolean} [loop]   Whether the theme should always loop (by 
+     * @param {Boolean} [loop]   Whether the theme should always loop (by
      *                           default, true).
      * @return {HTMLAudioElement} The theme's <audio> element, now playing.
      */
-    self.playTheme = function (name, loop) {
-        self.pauseTheme();
-
+    AudioPlayr.prototype.playTheme = function (name, loop) {
+        if (name === void 0) { name = undefined; }
+        if (loop === void 0) { loop = undefined; }
+        this.pauseTheme();
         // Loop defaults to true
-        loop = typeof loop !== 'undefined' ? loop : true;
-
+        loop = typeof loop !== "undefined" ? loop : true;
         // If name isn't given, use the default getter
         if (typeof (name) === "undefined") {
-            switch (getThemeDefault.constructor) {
+            switch (this.getThemeDefault.constructor) {
                 case Function:
-                    name = getThemeDefault();
-                    break
+                    name = this.getThemeDefault();
+                    break;
                 case String:
-                    name = getThemeDefault;
+                    name = this.getThemeDefault;
                     break;
             }
         }
-
         // If a theme already exists, kill it
-        if (typeof theme !== "undefined" && theme.hasAttribute("name")) {
-            delete sounds[theme.getAttribute("name")];
+        if (typeof this.theme !== "undefined" && this.theme.hasAttribute("name")) {
+            delete this.sounds[this.theme.getAttribute("name")];
         }
-
-        sounds[name] = theme = self.play(name);
-        theme.loop = loop;
-
+        this.theme = this.sounds[name] = this.play(name);
+        this.theme.loop = loop;
         // If it's used (no repeat), add the event listener to resume theme
-        if (theme.used === 1) {
-            theme.addEventListener("ended", self.playTheme);
+        if (this.theme.used === 1) {
+            this.theme.addEventListener("ended", this.playTheme);
         }
-
-        return theme;
+        return this.theme;
     };
-
     /**
-     * Wrapper around playTheme that plays a sound, then a theme. This is 
+     * Wrapper around playTheme that plays a sound, then a theme. This is
      * implemented using an event listener on the sound's ending.
-     * 
+     *
+     * @param {String} [prefix]    A prefix for the sound? Not sure...
      * @param {String} [name]   The name of the sound to be used as the theme.
-     *                          If not provided, getThemeDefault is used to 
+     *                          If not provided, getThemeDefault is used to
      *                          provide one.
-     * @param {Boolean} [loop]   Whether the theme should always loop (by 
+     * @param {Boolean} [loop]   Whether the theme should always loop (by
      *                           default, false).
      * @return {HTMLAudioElement} The sound's <audio> element, now playing.
      */
-    self.playThemePrefixed = function (prefix, name, loop) {
-        var sound = self.play(prefix);
-        self.pauseTheme();
-
+    AudioPlayr.prototype.playThemePrefixed = function (prefix, name, loop) {
+        if (prefix === void 0) { prefix = undefined; }
+        if (name === void 0) { name = undefined; }
+        if (loop === void 0) { loop = undefined; }
+        var sound = this.play(prefix);
+        this.pauseTheme();
         // If name isn't given, use the default getter
         if (typeof (name) === "undefined") {
-            switch (getThemeDefault.constructor) {
+            switch (this.getThemeDefault.constructor) {
                 case Function:
-                    name = getThemeDefault();
-                    break
+                    name = this.getThemeDefault();
+                    break;
                 case String:
-                    name = getThemeDefault;
+                    name = this.getThemeDefault;
                     break;
             }
         }
-
-        self.addEventListener(
-            prefix,
-            "ended",
-            self.playTheme.bind(self, prefix + " " + name, loop)
-        );
-
+        this.addEventListener(prefix, "ended", this.playTheme.bind(self, prefix + " " + name, loop));
         return sound;
     };
-
-
     /* Public utilities
     */
-
     /**
      * Adds an event listener to a currently playing sound. The sound will keep
      * track of event listeners via an .addedEvents attribute, so they can be
      * cancelled later.
-     * 
+     *
      * @param {String} name   The name of the sound.
      * @param {String} event   The name of the event, such as "ended".
      * @param {Function} callback   The Function to be called by the event.
      */
-    self.addEventListener = function (name, event, callback) {
-        var sound = library[name];
-
+    AudioPlayr.prototype.addEventListener = function (name, event, callback) {
+        var sound = this.library[name];
         if (!sound) {
-            throw new Error(
-                "Unknown name given to addEventListener: '" + name + "'."
-            );
+            throw new Error("Unknown name given to addEventListener: '" + name + "'.");
         }
-
         if (!sound.addedEvents) {
             sound.addedEvents = {};
         }
-
         if (!sound.addedEvents[event]) {
             sound.addedEvents[event] = [callback];
-        } else {
+        }
+        else {
             sound.addedEvents[event].push(callback);
         }
-
         sound.addEventListener(event, callback);
     };
-
     /**
-     * Clears all events added by self.addEventListener to a sound under a given
-     * event. 
-     * 
+     * Clears all events added by this.addEventListener to a sound under a given
+     * event.
+     *
      * @param {String} name   The name of the sound.
      * @param {String} event   The name of the event, such as "ended".
      */
-    self.removeEventListeners = function (name, event) {
-        var sound = library[name],
-            events, i;
-
+    AudioPlayr.prototype.removeEventListeners = function (name, event) {
+        var sound = this.library[name], events, i;
         if (!sound) {
-            throw new Error(
-                "Unknown name given to removeEventListeners: '" + name + "'."
-            );
+            throw new Error("Unknown name given to removeEventListeners: '" + name + "'.");
         }
-
         if (!sound.addedEvents) {
             return;
         }
-
         events = sound.addedEvents[event];
         if (!events) {
             return;
         }
-
         for (i = 0; i < events.length; i += 1) {
             sound.removeEventListener(event, events[i]);
         }
-
         events.length = 0;
     };
-
     /**
-     * Adds an event listener to a sound. If the sound doesn't exist or has 
+     * Adds an event listener to a sound. If the sound doesn't exist or has
      * finished playing, it's called immediately.
-     * 
+     *
      * @param {String} name   The name of the sound.
      * @param {String} event   The name of the event, such as "onended".
      * @param {Function} callback   The Function to be called by the event.
      */
-    self.addEventImmediate = function (name, event, callback) {
-        if (!sounds.hasOwnProperty(name) || sounds[name].paused) {
+    AudioPlayr.prototype.addEventImmediate = function (name, event, callback) {
+        if (!this.sounds.hasOwnProperty(name) || this.sounds[name].paused) {
             callback();
             return;
         }
-
-        sounds[name].addEventListener(event, callback);
+        this.sounds[name].addEventListener(event, callback);
     };
-
-
     /* Private utilities
     */
-
     /**
      * Called when a sound has completed to get it out of sounds.
+     *
+     * @param {String} name   The name of the sound that just finished.
      */
-    function soundFinish(name) {
-        if (sounds.hasOwnProperty(name)) {
-            delete sounds[name];
+    AudioPlayr.prototype.soundFinish = function (name) {
+        if (this.sounds.hasOwnProperty(name)) {
+            delete this.sounds[name];
         }
-    }
-
+    };
     /**
      * Carefully stops a sound. HTMLAudioElement don't natively have a .stop()
      * function, so this is the shim to do that.
      */
-    function soundStop(sound) {
+    AudioPlayr.prototype.soundStop = function (sound) {
         sound.pause();
         if (sound.readyState) {
             sound.currentTime = 0;
         }
-    }
-
-
+    };
     /* Private loading / resetting
-     */
-
+    */
     /**
      * Loads every sound defined in the library via AJAX. Sounds are loaded
      * into <audio> elements via createAudio and stored in the library.
      */
-    function libraryLoad() {
+    AudioPlayr.prototype.libraryLoad = function () {
         var section, name, sectionName, j;
-
-        // For each given section (e.g. names, themes):
-        for (sectionName in library) {
-            section = library[sectionName];
-            // For each thing in that section:
+        for (sectionName in this.library) {
+            if (!this.library.hasOwnProperty(sectionName)) {
+                continue;
+            }
+            section = this.library[sectionName];
             for (j in section) {
+                if (!section.hasOwnProperty(j)) {
+                    continue;
+                }
                 name = section[j];
                 // Create the sound and store it in the container
-                library[name] = createAudio(name, sectionName);
+                this.library[name] = this.createAudio(name, sectionName);
             }
         }
-    }
-
+    };
     /**
      * Creates an audio element, gives it sources, and starts preloading.
-     * 
+     *
      * @param {String} name
      * @param {String} sectionName
      * @return {HTMLAudioElement}
      */
-    function createAudio(name, sectionName) {
-        var sound = document.createElement("audio"),
-            type, child, i;
-
-        // Create an audio source for each child
-        for (i in fileTypes) {
-            type = fileTypes[i];
+    AudioPlayr.prototype.createAudio = function (name, sectionName) {
+        var sound = document.createElement("audio"), sourceType, child, i;
+        for (i = 0; i < this.fileTypes.length; i += 1) {
+            sourceType = this.fileTypes[i];
             child = document.createElement("source");
-            child.type = "audio/" + type;
-            child.src = directory + "/" + sectionName + "/" + type + "/" + name + "." + type;
-
+            child.type = "audio/" + sourceType;
+            child.src = this.directory + "/" + sectionName + "/" + sourceType + "/" + name + "." + sourceType;
             sound.appendChild(child);
         }
-
         // This preloads the sound.
         sound.volume = 0;
-        sound.volumeReal = 1;
-        sound.used = 0;
-        playSound(sound);
-
+        sound.setAttribute("volumeReal", "1");
+        sound.setAttribute("used", "0");
+        this.playSound(sound);
         return sound;
-    }
-
+    };
     /**
      * Utility to try to play a sound, which may not be possible in headless
      * environments like PhantomJS.
-     * 
+     *
      * @param {HTMLAudioElement} sound
+     * @return {Boolean} Whether the sound was able to play.
      */
-    function playSound(sound) {
+    AudioPlayr.prototype.playSound = function (sound) {
         if (sound && sound.play) {
             sound.play();
+            return true;
         }
-    }
-
-
-    self.reset(settings || {});
-}
+        return false;
+    };
+    return AudioPlayr;
+})();

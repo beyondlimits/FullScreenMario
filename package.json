@@ -1,7 +1,7 @@
 {
     "name": "FullScreenMario",
     "description": "An HTML5 remake of the original Super Mario Brothers - expanded for modern browsing.",
-    "version": "0.9.0",
+    "version": "0.9.1",
     "author": {
         "name": "Josh Goldberg",
         "email": "josh@fullscreenmario.com"
@@ -15,22 +15,27 @@
     },
     "licenses": [
         {
-            "type": "Attribution Non-Commercial Share-Alike",
+            "type": "MIT",
             "url": "https://github.com/FullScreenShenanigans/FullScreenMario/blob/master/LICENSE.txt"
         }
     ],
-    "devDependencies": {
+    "dependencies": {
         "chai": "~2.2.X",
         "grunt": "~0.4.X",
-        "grunt-contrib-copy": "~0.7.X",
-        "grunt-contrib-concat": "~0.1.X",
-        "grunt-contrib-uglify": "~0.2.X",
-        "grunt-contrib-cssmin": "~0.11.X",
-        "grunt-contrib-htmlmin": "~0.3.X",
+        "grunt-cli": "~0.1.X",
+        "grunt-contrib-concat": "~0.5.X",
         "grunt-contrib-clean": "~0.6.X",
+        "grunt-contrib-cssmin": "~0.12.X",
+        "grunt-contrib-copy": "~0.8.X",
+        "grunt-contrib-htmlmin": "~0.4.X",
+        "grunt-contrib-uglify": "~0.8.X",
         "grunt-mocha-phantomjs": "~0.6.X",
         "grunt-processhtml": "~0.3.X",
+        "grunt-tslint": "~2.0.X",
+        "grunt-typescript": "~0.6.X",
         "grunt-zip": "~0.16.X",
-        "mocha": "~2.2.X"
+        "mocha": "~2.2.X",
+        "tslint": "~2.0.X",
+        "typescript": "~1.4.X"
     }
 }

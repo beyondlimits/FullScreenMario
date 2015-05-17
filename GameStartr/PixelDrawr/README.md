@@ -6,7 +6,7 @@ MapScreenr maintains boundary information on the screen. Global screen
 refills may be done by drawing every Thing in the thingArrays, or by 
 Quadrants as a form of dirty rectangles.
 
-Examples are not available for MapsHandlr, as the required code would be very
+Examples are not available for PixelDrawr, as the required code would be very
 substantial. Instead see GameStartr.js and its rendering code.
 
 
@@ -70,3 +70,30 @@ every time).
 
 * **[generateObjectKey]** *`Function`* - How to generate keys to retrieve
 sprites from PixelRender (by default, Object.toString).
+
+* **[epsilon]** *`Number`* - An arbitrarily small minimum opacity to draw (by 
+default, .00000007).
+
+* **[keyWidth]** *`Number`* - The attribute name for a Thing's width (by 
+default, "width").
+
+* **[keyHeight]** *`Number`* - The attribute name for a Thing's height (by 
+default, "width").
+
+* **[keyTop]** *`Number`* - The attribute name for a Thing's top (by 
+default, "width").
+
+* **[keyRight]** *`Number`* - The attribute name for a Thing's right (by
+default, "width").
+
+* **[keyBottom]** *`Number`* - The attribute name for a Thing's bottom (by
+default, "width").
+
+* **[keyLeft]** *`Number`* - The attribute name for a Thing's left (by default,
+"width").
+
+* **[keyOffsetX]** *`Number`* - The attribute name for a Thing's horizontal
+offset (by default, "width").
+
+* **[keyOffsetY]** *`Number`* - The attribute name for a Thing's vertical
+(by default, "width").

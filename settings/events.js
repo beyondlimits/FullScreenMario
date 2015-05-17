@@ -1,6 +1,6 @@
 FullScreenMario.prototype.settings.events = {
-    "keyOnSpriteCycleStart": "onThingAdd",
-    "keyDoSpriteCycleStart": "placed",
+    "keyOnClassCycleStart": "onThingAdd",
+    "keyDoClassCycleStart": "placed",
     "keyCycleCheckValidity": "alive",
     "timingDefault": 9
 };
