@@ -315,7 +315,7 @@ document.onreadystatechange = (function (settings) {
      */
     var parseBase64Image = function (file, string, callback) {
         var image = document.createElement("img");
-        image.onload = PixelRender.encode.bind(undefined, image, callback);
+        image.onload = PixelRender.encode.bind(PixelRender, image, callback);
         image.src = string;
     };
     
