@@ -260,7 +260,7 @@ var GameStartr = (function (EightBittr) {
      *                          statistics.js (settings/statistics.js)
      */
     function resetStatsHolder(EightBitter, customs) {
-        EightBitter.StatsHolder = new StatsHoldr(EightBitter.proliferate({
+        EightBitter.StatsHolder = new StatsHoldr.StatsHoldr(EightBitter.proliferate({
             "callbackArgs": [EightBitter],
             "proliferate": EightBitter.proliferate,
             "createElement": EightBitter.createElement
@@ -276,7 +276,7 @@ var GameStartr = (function (EightBittr) {
      *                          groups.js (settings/groups.js)
      */
     function resetGroupHolder(EightBitter, customs) {
-        EightBitter.GroupHolder = new GroupHoldr(EightBitter.settings.groups);
+        EightBitter.GroupHolder = new GroupHoldr.GroupHoldr(EightBitter.settings.groups);
     }
 
     /**
@@ -367,7 +367,7 @@ var GameStartr = (function (EightBittr) {
      *                          input.js (settings/input.js)
      */
     function resetInputWriter(EightBitter, customs) {
-        EightBitter.InputWriter = new InputWritr(EightBitter.proliferate({
+        EightBitter.InputWriter = new InputWritr.InputWritr(EightBitter.proliferate({
             "canTrigger": EightBitter.canInputsTrigger.bind(EightBitter, EightBitter)
         }, EightBitter.settings.input.InputWritrArgs));
     }
@@ -381,7 +381,7 @@ var GameStartr = (function (EightBittr) {
      *                          editor.js (settings/editor.js)
      */
     function resetLevelEditor(EightBitter, customs) {
-        EightBitter.LevelEditor = new LevelEditr(EightBitter.proliferate({
+        EightBitter.LevelEditor = new LevelEditr.LevelEditr(EightBitter.proliferate({
             "GameStarter": EightBitter,
             "beautifier": js_beautify // Eventually there will be a custom beautifier... maybe
         }, EightBitter.settings.editor));

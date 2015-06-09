@@ -17,7 +17,7 @@
         },
         "mapSettingDefault": "Overworld",
         "mapEntryDefault": "Plain",
-        "things": things,
+        "prethings": things,
         "thingGroups": ["Text", "Character", "Solid", "Scenery"],
         "thingKeys": (function () {
             var keys = [];
