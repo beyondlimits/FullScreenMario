@@ -584,12 +584,12 @@ var EightBittr = (function () {
      *                              className or style.
      * @return {HTMLElement}
      */
-    EightBittr.prototype.createElement = function (tag) {
+    EightBittr.prototype.createElement = function (type) {
         var args = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             args[_i - 1] = arguments[_i];
         }
-        var EightBitter = EightBittr.prototype.ensureCorrectCaller(this), element = document.createElement(tag || "div"), i;
+        var EightBitter = EightBittr.prototype.ensureCorrectCaller(this), element = document.createElement(type || "div"), i;
         for (i = 1; i < arguments.length; i += 1) {
             EightBitter.proliferateElement(element, arguments[i]);
         }

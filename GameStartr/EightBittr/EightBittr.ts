@@ -715,9 +715,9 @@ class EightBittr {
      *                              className or style.
      * @return {HTMLElement}
      */
-    createElement(tag: string, ...args: any[]): HTMLElement {
+    createElement(type: string, ...args: any[]): HTMLElement {
         var EightBitter: EightBittr = EightBittr.prototype.ensureCorrectCaller(this),
-            element: any = document.createElement(tag || "div"),
+            element: any = document.createElement(type || "div"),
             i: number;
 
         // For each provided object, add those settings to the element
