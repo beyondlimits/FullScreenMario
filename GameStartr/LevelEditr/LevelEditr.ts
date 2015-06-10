@@ -305,7 +305,7 @@ module LevelEditr {
          */
         maximize(): void {
             this.display.minimizer.innerText = "-";
-            this.display.minimizer.onclick = this.minimize;
+            this.display.minimizer.onclick = this.minimize.bind(this);
 
             if (this.display.container.className.indexOf("minimized") !== -1) {
                 this.display.container.className = this.display.container.className.replace(/ minimized/g, "");
@@ -570,13 +570,14 @@ module LevelEditr {
             var x: number = event.x || event.clientX || 0,
                 y: number = event.y || event.clientY || 0,
                 target: IThingIcon = (<HTMLDivElement>event.target).nodeName === "DIV"
-                    ? <IThingIcon>event.target : <IThingIcon>(<HTMLElement>event.target).parentNode;
+                    ? <IThingIcon>event.target : <IThingIcon>(<HTMLElement>event.target).parentNode,
+                scope: LevelEditr = this;
 
             this.cancelEvent(event);
             this.killCurrentPreThings();
 
             setTimeout(function (): void {
-                this.setCurrentThing(title, this.getCurrentArgs(), x, y);
+                scope.setCurrentThing(title, scope.getCurrentArgs(), x, y);
             });
 
             this.setVisualOptions(target.getAttribute("name"), undefined, target.options);
@@ -645,7 +646,7 @@ module LevelEditr {
             for (i = 0; i < children.length; i += 1) {
                 child = <HTMLDivElement>children[i];
                 labeler = <HTMLDivElement>child.querySelector(".VisualOptionLabel");
-                valuer = <any>child.querySelector("VisualOptionValue");
+                valuer = <HTMLInputElement>child.querySelector(".VisualOptionValue");
 
                 switch (valuer.getAttribute("data:type")) {
                     case "Boolean":
@@ -1173,29 +1174,31 @@ module LevelEditr {
         }
 
         private resetDisplayOptionsListSubOptionsMenu(): void {
-            this.display.sections.ClickToPlace.container = this.GameStarter.createElement("div", {
+            var holder = this.GameStarter.createElement("div", {
                 "className": "EditorSubOptionsListsMenu",
-                "children": [
-                    this.display.sections.buttons.ClickToPlace.Things = this.GameStarter.createElement("div", {
-                        "className": "EditorMenuOption EditorSubOptionsListChooser EditorMenuOptionHalf",
-                        "textContent": "Things",
-                        "onclick": this.setSectionClickToPlaceThings.bind(this),
-                        "style": {
-                            "background": "#CCC"
-                        }
-                    }),
-                    this.display.sections.buttons.ClickToPlace.Macros = this.GameStarter.createElement("div", {
-                        "className": "EditorMenuOption EditorSubOptionsListChooser EditorMenuOptionHalf",
-                        "textContent": "Macros",
-                        "onclick": this.setSectionClickToPlaceMacros.bind(this),
-                        "style": {
-                            "background": "#777"
-                        }
-                    })
-                ]
             });
 
-            //this.display.sections.ClickToPlace.container.appendChild(this.display.sections.ClickToPlace.container);
+            this.display.sections.buttons.ClickToPlace.Things = this.GameStarter.createElement("div", {
+                "className": "EditorMenuOption EditorSubOptionsListChooser EditorMenuOptionHalf",
+                "textContent": "Things",
+                "onclick": this.setSectionClickToPlaceThings.bind(this),
+                "style": {
+                    "background": "#CCC"
+                }
+            });
+
+            this.display.sections.buttons.ClickToPlace.Macros = this.display.sections.buttons.ClickToPlace.Macros = this.GameStarter.createElement("div", {
+                "className": "EditorMenuOption EditorSubOptionsListChooser EditorMenuOptionHalf",
+                "textContent": "Macros",
+                "onclick": this.setSectionClickToPlaceMacros.bind(this),
+                "style": {
+                    "background": "#777"
+                }
+            });
+
+            holder.appendChild(this.display.sections.buttons.ClickToPlace.Things);
+            holder.appendChild(this.display.sections.buttons.ClickToPlace.Macros);
+            this.display.sections.ClickToPlace.container.appendChild(holder);
         }
 
         private resetDisplayMapSettings(): void {
@@ -1487,6 +1490,8 @@ module LevelEditr {
                     return containers;
                 })()
             });
+
+            this.display.sections.ClickToPlace.container.appendChild(this.display.sections.ClickToPlace.Things);
         }
 
         /**
@@ -1516,6 +1521,8 @@ module LevelEditr {
                     });
                 })
             });
+
+            this.display.sections.ClickToPlace.container.appendChild(this.display.sections.ClickToPlace.Macros);
         }
 
         /**
@@ -1653,6 +1660,7 @@ module LevelEditr {
         private createVisualOption(optionRaw: number | string | any | any[]): HTMLDivElement | HTMLSelectElement {
             var option: any = this.createVisualOptionObject(optionRaw);
 
+
             switch (option.type) {
                 case "Boolean":
                     return this.createVisualOptionBoolean();
@@ -1681,24 +1689,24 @@ module LevelEditr {
             var option: any;
 
             // If the option isn't already an Object, make it one
-            switch (option.constructor) {
+            switch (optionRaw.constructor) {
                 case Number:
                     option = {
                         "type": "Number",
-                        "mod": option
+                        "mod": optionRaw
                     };
                     break;
 
                 case String:
                     option = {
-                        "type": option
+                        "type": optionRaw
                     };
                     break;
 
                 case Array:
                     option = {
                         "type": "Select",
-                        "options": option
+                        "options": optionRaw
                     };
                     break;
 
@@ -2259,6 +2267,9 @@ module LevelEditr {
                 },
                 ".EditorScrollerLeft": {
                     "left": "0"
+                },
+                ".LevelEditor.minimized .EditorGui": {
+                    "width": "117px"
                 },
                 ".LevelEditor.minimized .EditorMenuContainer": {
                     "width": "117px"

@@ -557,8 +557,12 @@ var EightBittr = (function () {
                         }
                         break;
                     default:
-                        // If it's an object, recurse on a new version of it
-                        if (typeof setting === "object") {
+                        // If it's null, don't do anything (like .textContent)
+                        if (setting === null) {
+                            recipient[i] = null;
+                        }
+                        else if (typeof setting === "object") {
+                            // If it's an object, recurse on a new version of it
                             if (!recipient.hasOwnProperty(i)) {
                                 recipient[i] = new setting.constructor();
                             }
