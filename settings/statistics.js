@@ -27,6 +27,12 @@ FullScreenMario.prototype.settings.statistics = {
         "elementTag": "td"
     },
     "values": {
+        "volume": {
+            "valueDefault": 1
+        },
+        "muted": {
+            "valueDefault": false
+        },
         "power": {
             "valueDefault": 1,
             "storeLocally": false

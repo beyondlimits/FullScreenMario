@@ -1,9 +1,5 @@
 FullScreenMario.prototype.settings.mods = {
     "storeLocally": true,
-    "storageSettings": {
-        "prefix": "FullScreenMario::Mods::",
-        "autoSave": true
-    },
     "mods": [
         {
             "name": "Bouncy Bounce",

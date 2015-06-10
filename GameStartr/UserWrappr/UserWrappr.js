@@ -325,7 +325,7 @@ function UserWrappr(settings) {
             length = schemas.length,
             i;
         
-        StatsHolder = new StatsHoldr({
+        StatsHolder = new StatsHoldr.StatsHoldr({
             "prefix": globalName + "::UserWrapper::StatsHolder",
             "proliferate": GameStarter.proliferate,
             "createElement": GameStarter.createElement
@@ -862,12 +862,12 @@ function UserWrappr(settings) {
             value;
         
         child.setAttribute("localStorageKey", key);
-        StatsHolder.addStatistic(key, {
+        StatsHolder.addItem(key, {
             "storeLocally": true,
             "valueDefault": valueDefault
         });
         
-        value = StatsHolder.get(key);
+        value = StatsHolder.getItem(key);
         if (value !== "" && value !== child.value) {
             child.value = value;
                 
@@ -897,12 +897,12 @@ function UserWrappr(settings) {
             child = children[i];
             child.setAttribute("localStorageKey", key);
             
-            StatsHolder.addStatistic(key, {
+            StatsHolder.addItem(key, {
                 "storeLocally": true,
                 "valueDefault": values[i]
             });
             
-            value = StatsHolder.get(key);
+            value = StatsHolder.getItem(key);
             if (value !== "" && value !== child.value) {
                 child.value = value;
                 
@@ -921,7 +921,7 @@ function UserWrappr(settings) {
     function storeLocalStorageValue(child, value) {
         var key = child.getAttribute("localStorageKey");
         if (key) {
-            StatsHolder.set(key, value);
+            StatsHolder.setItem(key, value);
         }
     }
     

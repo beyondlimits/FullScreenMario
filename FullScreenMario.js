@@ -274,7 +274,7 @@ var FullScreenMario = (function(GameStartr) {
             EightBitter.settings.maps.mapDefault,
             EightBitter.settings.maps.locationDefault
         );
-        EightBitter.StatsHolder.set(
+        EightBitter.StatsHolder.setItem(
             "lives", EightBitter.settings.statistics.values.lives.valueDefault
         );
         
@@ -393,7 +393,7 @@ var FullScreenMario = (function(GameStartr) {
             player;
         
         player = EightBitter.player = EightBitter.ObjectMaker.make("Player", {
-            "power": EightBitter.StatsHolder.get("power")
+            "power": EightBitter.StatsHolder.getItem("power")
         });
         player.keys = player.getKeys();
         
@@ -3690,7 +3690,7 @@ var FullScreenMario = (function(GameStartr) {
      * @param {DetectCollision} other
      */
     function collideCastleDoor(thing, other) {
-        var time = String(thing.EightBitter.StatsHolder.get("time")),
+        var time = String(thing.EightBitter.StatsHolder.getItem("time")),
             numFireworks = Number(time[time.length - 1]);
         
         thing.EightBitter.killNormal(thing);
@@ -3702,7 +3702,7 @@ var FullScreenMario = (function(GameStartr) {
             numFireworks = 0;
         }
         
-        if (thing.EightBitter.StatsHolder.get("time") === Infinity) {
+        if (thing.EightBitter.StatsHolder.getItem("time") === Infinity) {
             thing.EightBitter.animateEndLevelFireworks(thing, other, numFireworks);
             return;
         }
@@ -3712,7 +3712,7 @@ var FullScreenMario = (function(GameStartr) {
             thing.EightBitter.StatsHolder.increase("score", 50);
             thing.EightBitter.AudioPlayer.play("Coin");
             
-            if (thing.EightBitter.StatsHolder.get("time") <= 0) {
+            if (thing.EightBitter.StatsHolder.getItem("time") <= 0) {
                 thing.EightBitter.TimeHandler.addEvent(function () {
                     thing.EightBitter.animateEndLevelFireworks(thing, other, numFireworks);
                 }, 35);
@@ -6418,7 +6418,7 @@ var FullScreenMario = (function(GameStartr) {
             // If the player can survive this, just power down
             if (!big && thing.power > 1) {
                 thing.power = 1;
-                EightBitter.StatsHolder.set("power", 1);
+                EightBitter.StatsHolder.setItem("power", 1);
                 EightBitter.AudioPlayer.play("Power Down");
                 EightBitter.playerGetsSmall(thing);
                 return;
@@ -6454,9 +6454,9 @@ var FullScreenMario = (function(GameStartr) {
         EightBitter.AudioPlayer.clearAll();
         EightBitter.AudioPlayer.play("Player Dies");
         EightBitter.StatsHolder.decrease("lives");
-        EightBitter.StatsHolder.set("power", 1);
+        EightBitter.StatsHolder.setItem("power", 1);
         
-        if (EightBitter.StatsHolder.get("lives") > 0) {
+        if (EightBitter.StatsHolder.getItem("lives") > 0) {
             EightBitter.TimeHandler.addEvent(
                 area.onPlayerDeath.bind(
                     EightBitter
@@ -6727,7 +6727,7 @@ var FullScreenMario = (function(GameStartr) {
             EightBitter.NumberMaker.resetFromSeed(map.seed);
         }
 
-        EightBitter.StatsHolder.set("world", name);
+        EightBitter.StatsHolder.setItem("world", name);
         EightBitter.InputWriter.restartHistory();
 
         EightBitter.ModAttacher.fireEvent("onSetMap", map);
@@ -6773,12 +6773,12 @@ var FullScreenMario = (function(GameStartr) {
             if (!EightBitter.MapScreener.notime) {
                 EightBitter.StatsHolder.decrease("time", 1);
             }
-            if (!EightBitter.StatsHolder.get("time")) {
+            if (!EightBitter.StatsHolder.getItem("time")) {
                 return true;
             }
         }, 25, Infinity);
         
-        EightBitter.StatsHolder.set(
+        EightBitter.StatsHolder.setItem(
             "time", EightBitter.MapsHandler.getArea().time
         );
   

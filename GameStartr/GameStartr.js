@@ -73,10 +73,10 @@ var GameStartr = (function (EightBittr) {
         "resetObjectMaker",
         "resetPixelRender",
         "resetTimeHandler",
+        "resetStatsHolder",
         "resetAudioPlayer",
         "resetQuadsKeeper",
         "resetGamesRunner",
-        "resetStatsHolder",
         "resetGroupHolder",
         "resetThingHitter",
         "resetMapScreener",
@@ -228,10 +228,8 @@ var GameStartr = (function (EightBittr) {
      *                          audio.js (settings/audio.js)
      */
     function resetAudioPlayer(EightBitter, customs) {
-        EightBitter.AudioPlayer = new AudioPlayr(EightBitter.proliferate({
-            "statistics": {
-                "proliferate": EightBitter.proliferate
-            }
+        EightBitter.AudioPlayer = new AudioPlayr.AudioPlayr(EightBitter.proliferate({
+            "StatsHolder": EightBitter.StatsHolder
         }, EightBitter.settings.audio));
     }
 
@@ -260,10 +258,8 @@ var GameStartr = (function (EightBittr) {
      *                          statistics.js (settings/statistics.js)
      */
     function resetStatsHolder(EightBitter, customs) {
-        EightBitter.StatsHolder = new StatsHoldr(EightBitter.proliferate({
-            "callbackArgs": [EightBitter],
-            "proliferate": EightBitter.proliferate,
-            "createElement": EightBitter.createElement
+        EightBitter.StatsHolder = new StatsHoldr.StatsHoldr(EightBitter.proliferate({
+            "callbackArgs": [EightBitter]
         }, EightBitter.settings.statistics));
     }
 
@@ -381,7 +377,7 @@ var GameStartr = (function (EightBittr) {
      *                          editor.js (settings/editor.js)
      */
     function resetLevelEditor(EightBitter, customs) {
-        EightBitter.LevelEditor = new LevelEditr(EightBitter.proliferate({
+        EightBitter.LevelEditor = new LevelEditr.LevelEditr(EightBitter.proliferate({
             "GameStarter": EightBitter,
             "beautifier": js_beautify // Eventually there will be a custom beautifier... maybe
         }, EightBitter.settings.editor));
@@ -411,8 +407,9 @@ var GameStartr = (function (EightBittr) {
      *                          mods.js (settings/mods.js)
      */
     function resetModAttacher(EightBitter, customs) {
-        EightBitter.ModAttacher = new ModAttachr(EightBitter.proliferate({
+        EightBitter.ModAttacher = new ModAttachr.ModAttachr(EightBitter.proliferate({
             "scopeDefault": EightBitter,
+            "StatsHoldr": EightBitter.StatsHolder
         }, EightBitter.settings.mods));
     }
 
@@ -1446,9 +1443,9 @@ var GameStartr = (function (EightBittr) {
         "resetQuadsKeeper": resetQuadsKeeper,
         "resetPixelRender": resetPixelRender,
         "resetTimeHandler": resetTimeHandler,
+        "resetStatsHolder": resetStatsHolder,
         "resetAudioPlayer": resetAudioPlayer,
         "resetGamesRunner": resetGamesRunner,
-        "resetStatsHolder": resetStatsHolder,
         "resetGroupHolder": resetGroupHolder,
         "resetThingHitter": resetThingHitter,
         "resetMapScreener": resetMapScreener,
