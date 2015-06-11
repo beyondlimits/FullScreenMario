@@ -268,7 +268,7 @@ var FullScreenMario = (function(GameStartr) {
      * @this {EightBittr}
      */
     function gameStart() {
-        var EightBitter = EightBittr.prototype.ensureCorrectCaller(this);
+        var EightBitter = EightBittr.EightBittr.prototype.ensureCorrectCaller(this);
         
         EightBitter.setMap(
             EightBitter.settings.maps.mapDefault,
@@ -287,7 +287,7 @@ var FullScreenMario = (function(GameStartr) {
      * while, the game restarts again via gameStart.
      */
     function gameOver() {
-        var EightBitter = EightBittr.prototype.ensureCorrectCaller(this),
+        var EightBitter = EightBittr.EightBittr.prototype.ensureCorrectCaller(this),
             text = EightBitter.ObjectMaker.make("CustomText", {
                 "texts": [{
                     "text": "GAME OVER"
@@ -389,7 +389,7 @@ var FullScreenMario = (function(GameStartr) {
      *                            (by default, unitsize * 16).         
      */
     function addPlayer(left, bottom) {
-        var EightBitter = EightBittr.prototype.ensureCorrectCaller(this),
+        var EightBitter = EightBittr.EightBittr.prototype.ensureCorrectCaller(this),
             player;
         
         player = EightBitter.player = EightBitter.ObjectMaker.make("Player", {
@@ -444,7 +444,7 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Number} dy
      */
     function scrollPlayer(dx, dy) {
-        var EightBitter = EightBittr.prototype.ensureCorrectCaller(this);
+        var EightBitter = EightBittr.EightBittr.prototype.ensureCorrectCaller(this);
         
         EightBitter.scrollThing(EightBitter.player, dx, dy);
         
@@ -1434,7 +1434,7 @@ var FullScreenMario = (function(GameStartr) {
      *                              default, false).
      */
     function gainLife(amount, nosound) {
-        var EightBitter = EightBittr.prototype.ensureCorrectCaller(this);
+        var EightBitter = EightBittr.EightBittr.prototype.ensureCorrectCaller(this);
         
         amount = Number(amount) || 1;
         
@@ -1562,7 +1562,7 @@ var FullScreenMario = (function(GameStartr) {
             "Powerup",
             "ended",
             thing.EightBitter.AudioPlayer.playTheme.bind(
-                undefined, "Star", true
+                EightBitter.AudioPlayer, "Star", true
             )
         );
         
@@ -6326,7 +6326,7 @@ var FullScreenMario = (function(GameStartr) {
      * @todo   Rename .killonend to be more accurate
      */
     function killNPCs() {
-        var EightBitter = EightBittr.prototype.ensureCorrectCaller(this),
+        var EightBitter = EightBittr.EightBittr.prototype.ensureCorrectCaller(this),
             group, thing, i;
         
         // Characters: they must opt out of being killed with .nokillonend, and
@@ -6487,7 +6487,7 @@ var FullScreenMario = (function(GameStartr) {
      *                    maximum points were passed and gainLife was called).
      */
     function findScore(level) {
-        var EightBitter = EightBittr.prototype.ensureCorrectCaller(this);
+        var EightBitter = EightBittr.EightBittr.prototype.ensureCorrectCaller(this);
 
         if (level < EightBitter.pointLevels.length) {
             return EightBitter.pointLevels[level];
@@ -6512,7 +6512,7 @@ var FullScreenMario = (function(GameStartr) {
      *                score -> scoreOn -> scoreAnimateOn -> scoreAnimate          
      */
     function score(value, continuation) {
-        var EightBitter = EightBittr.prototype.ensureCorrectCaller(this);
+        var EightBitter = EightBittr.EightBittr.prototype.ensureCorrectCaller(this);
         
         if (!value) {
             return;
@@ -6712,10 +6712,10 @@ var FullScreenMario = (function(GameStartr) {
      * @remarks Most of the work here is done by setLocation.
      */
     function setMap(name, location) {
-        var EightBitter = EightBittr.prototype.ensureCorrectCaller(this),
+        var EightBitter = EightBittr.EightBittr.prototype.ensureCorrectCaller(this),
             map;
         
-        if (typeof name === "undefined" || name instanceof EightBittr) {
+        if (typeof name === "undefined" || name instanceof EightBittr.EightBittr) {
             name = EightBitter.MapsHandler.getMapName();
         }
         
@@ -6749,7 +6749,7 @@ var FullScreenMario = (function(GameStartr) {
      *                             default 0 for the first in Array form).
      */
     function setLocation(name) {
-        var EightBitter = EightBittr.prototype.ensureCorrectCaller(this),
+        var EightBitter = EightBittr.EightBittr.prototype.ensureCorrectCaller(this),
             location;
         
         EightBitter.MapScreener.nokeys = false;
@@ -7101,7 +7101,7 @@ var FullScreenMario = (function(GameStartr) {
             for (i in this.attributes) {
                 if (this[i]) {
                     // Add the extra options
-                    EightBittr.prototype.proliferate(this, this.attributes[i]);
+                    EightBittr.EightBittr.prototype.proliferate(this, this.attributes[i]);
                 }
             }
         }
@@ -7146,7 +7146,7 @@ var FullScreenMario = (function(GameStartr) {
      *                  floor).
      */
     function getAbsoluteHeight(yloc, correctUnitsize) {
-        var EightBitter = EightBittr.prototype.ensureCorrectCaller(this),
+        var EightBitter = EightBittr.EightBittr.prototype.ensureCorrectCaller(this),
             height = yloc + EightBitter.MapScreener.height;
         
         if (!correctUnitsize) {
@@ -7165,7 +7165,7 @@ var FullScreenMario = (function(GameStartr) {
      * @return {Thing} A strethed Thing, newly added via addThing.
      */
     function mapAddStretched(prething) {
-        var EightBitter = EightBittr.prototype.ensureCorrectCaller(this),
+        var EightBitter = EightBittr.EightBittr.prototype.ensureCorrectCaller(this),
             boundaries = EightBitter.MapsHandler.getArea().boundaries,
             y = (
                 (EightBitter.MapScreener.floor - prething.y) 
@@ -7189,7 +7189,7 @@ var FullScreenMario = (function(GameStartr) {
      * @param {PreThing} prething
      */
     function mapAddAfter(prething) {
-        var EightBitter = EightBittr.prototype.ensureCorrectCaller(this),
+        var EightBitter = EightBittr.EightBittr.prototype.ensureCorrectCaller(this),
             MapsCreator = EightBitter.MapsCreator,
             MapsHandler = EightBitter.MapsHandler,
             prethings = MapsHandler.getPreThings(),
@@ -7274,7 +7274,7 @@ var FullScreenMario = (function(GameStartr) {
                     "y": y,
                     "macro": undefined
                 };
-                outputs.push(EightBittr.prototype.proliferate(output, reference, true));
+                outputs.push(EightBittr.EightBittr.prototype.proliferate(output, reference, true));
                 o += 1;
                 y += yheight;
             }
@@ -7364,7 +7364,7 @@ var FullScreenMario = (function(GameStartr) {
     function macroFloor(reference, prethings, area, map, scope) {
         var x = reference.x || 0,
             y = reference.y || 0,
-            floor = EightBittr.prototype.proliferate({
+            floor = EightBittr.EightBittr.prototype.proliferate({
                 "thing": "Floor",
                 "x": x,
                 "y": y,
@@ -7396,7 +7396,7 @@ var FullScreenMario = (function(GameStartr) {
         var x = reference.x || 0,
             y = reference.y || 0,
             height = reference.height || 16,
-            pipe = EightBittr.prototype.proliferate({
+            pipe = EightBittr.EightBittr.prototype.proliferate({
                 "thing": "Pipe",
                 "x": x,
                 "y": y,
@@ -7582,7 +7582,7 @@ var FullScreenMario = (function(GameStartr) {
     function macroWater(reference, prethings, area, map, scope) {
         var x = reference.x || 0,
             y = (reference.y || 0) + 2, // water is 3.5 x 5.5
-            output = EightBittr.prototype.proliferate({
+            output = EightBittr.EightBittr.prototype.proliferate({
                 "thing": "Water",
                 "x": x,
                 "y": y,
@@ -8593,7 +8593,7 @@ var FullScreenMario = (function(GameStartr) {
         };
     }
     
-    EightBittr.prototype.proliferateHard(FullScreenMario.prototype, {
+    EightBittr.EightBittr.prototype.proliferateHard(FullScreenMario.prototype, {
         // Resets
         "resetAudioPlayer": resetAudioPlayer,
         "resetThingHitter": resetThingHitter,

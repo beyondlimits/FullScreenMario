@@ -21,7 +21,7 @@ var GameStartr = (function (EightBittr) {
     "use strict";
 
     // Use an EightBittr as the class parent, with EightBittr's constructor
-    var EightBitterProto = new EightBittr();
+    var EightBitterProto = new EightBittr.EightBittr();
 
     /**
      * 
@@ -35,7 +35,7 @@ var GameStartr = (function (EightBittr) {
             this.settings = {};
         }
         
-        EightBittr.call(this, {
+        EightBittr.EightBittr.call(this, {
             "customs": customs,
             "constantsSource": customs.constantsSource,
             "constants": customs.constants,
@@ -97,18 +97,18 @@ var GameStartr = (function (EightBittr) {
     */
 
     /**
-     * Resets the EightBittr by calling the parent EightBittr.prototype.reset.
+     * Resets the EightBittr by calling the parent EightBittr.EightBittr.prototype.reset.
      * 
      * @param {EightBittr} EightBitter
      * @param {Object} [customs]
      */
     function reset(EightBitter, customs) {
-        EightBittr.prototype.reset(EightBitter, EightBitter.resets, customs);
+        EightBittr.EightBittr.prototype.reset(EightBitter, EightBitter.resets, customs);
     };
 
     /**
      * Resets the EightBittr and records the time by calling the parent 
-     * EightBittr.prototype.resetTimed.
+     * EightBittr.EightBittr.prototype.resetTimed.
      * 
      * @param {EightBittr} EightBitter
      * @param {Object} [customs]
@@ -116,7 +116,7 @@ var GameStartr = (function (EightBittr) {
      * operation, in milliseconds.
      */
     function resetTimed(EightBitter, customs) {
-        return EightBittr.prototype.resetTimed(
+        return EightBittr.EightBittr.prototype.resetTimed(
             EightBitter, EightBitter.resets, customs
         );
     };
@@ -471,7 +471,7 @@ var GameStartr = (function (EightBittr) {
      * @param {Number} [dy]   How far to scroll vertically.
      */
     function scrollWindow(dx, dy) {
-        var EightBitter =  EightBittr.prototype.ensureCorrectCaller(this);
+        var EightBitter =  EightBittr.EightBittr.prototype.ensureCorrectCaller(this);
 
         dx = dx | 0;
         dy = dy | 0;
@@ -794,7 +794,7 @@ var GameStartr = (function (EightBittr) {
      *                                 changed (by default, false).
      */
     function shiftVert(thing, dy, notChanged) {
-        EightBittr.prototype.shiftVert(thing, dy);
+        EightBittr.EightBittr.prototype.shiftVert(thing, dy);
 
         if (!notChanged) {
             thing.EightBitter.markChanged(thing);
@@ -811,7 +811,7 @@ var GameStartr = (function (EightBittr) {
      *                                 changed (by default, false).
      */
     function shiftHoriz(thing, dx, notChanged) {
-        EightBittr.prototype.shiftHoriz(thing, dx);
+        EightBittr.EightBittr.prototype.shiftHoriz(thing, dx);
 
         if (!notChanged) {
             thing.EightBitter.markChanged(thing);
@@ -826,7 +826,7 @@ var GameStartr = (function (EightBittr) {
      * @param {Number} top
      */
     function setTop(thing, top) {
-        EightBittr.prototype.setTop(thing, top);
+        EightBittr.EightBittr.prototype.setTop(thing, top);
         thing.EightBitter.markChanged(thing);
     }
 
@@ -838,7 +838,7 @@ var GameStartr = (function (EightBittr) {
      * @param {Number} right
      */
     function setRight(thing, right) {
-        EightBittr.prototype.setRight(thing, right);
+        EightBittr.EightBittr.prototype.setRight(thing, right);
         thing.EightBitter.markChanged(thing);
     }
 
@@ -850,7 +850,7 @@ var GameStartr = (function (EightBittr) {
      * @param {Number} bottom
      */
     function setBottom(thing, bottom) {
-        EightBittr.prototype.setBottom(thing, bottom);
+        EightBittr.EightBittr.prototype.setBottom(thing, bottom);
         thing.EightBitter.markChanged(thing);
     }
 
@@ -862,7 +862,7 @@ var GameStartr = (function (EightBittr) {
      * @param {Number} left
      */
     function setLeft(thing, left) {
-        EightBittr.prototype.setLeft(thing, left);
+        EightBittr.EightBittr.prototype.setLeft(thing, left);
         thing.EightBitter.markChanged(thing);
     }
 
@@ -924,7 +924,7 @@ var GameStartr = (function (EightBittr) {
      * @param {Number} dy
      */
     function shiftAll(dx, dy) {
-        var EightBitter =  EightBittr.prototype.ensureCorrectCaller(this);
+        var EightBitter =  EightBittr.EightBittr.prototype.ensureCorrectCaller(this);
         EightBitter.GroupHolder.callAll(
             EightBitter, EightBitter.shiftThings, dx, dy, true
         );
@@ -1394,7 +1394,7 @@ var GameStartr = (function (EightBittr) {
      *          called within a callback of a genuine user-triggered event.
      */
     function takeScreenshot(name, format) {
-        var EightBitter =  EightBittr.prototype.ensureCorrectCaller(this),
+        var EightBitter =  EightBittr.EightBittr.prototype.ensureCorrectCaller(this),
             format = "image/png",
             link = EightBitter.createElement("a", {
                 "download": (
@@ -1411,7 +1411,7 @@ var GameStartr = (function (EightBittr) {
      * 
      */
     function addPageStyles(styles) {
-        var EightBitter =  EightBittr.prototype.ensureCorrectCaller(this),
+        var EightBitter =  EightBittr.EightBittr.prototype.ensureCorrectCaller(this),
             sheet = EightBitter.createElement("style", {
                 "type": "text/css"
             }),
