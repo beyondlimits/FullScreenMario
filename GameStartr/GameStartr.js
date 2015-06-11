@@ -133,7 +133,7 @@ var GameStartr = (function (EightBittr) {
      *                          objects.js (settings/objects.js)
      */
     function resetObjectMaker(EightBitter, customs) {
-        EightBitter.ObjectMaker = new ObjectMakr(EightBitter.proliferate({
+        EightBitter.ObjectMaker = new ObjectMakr.ObjectMakr(EightBitter.proliferate({
             "properties": {
                 "Quadrant": {
                     "EightBitter": EightBitter
@@ -157,7 +157,7 @@ var GameStartr = (function (EightBittr) {
         var quadrantWidth = customs.width / (EightBitter.settings.quadrants.numCols - 3),
             quadrantHeight = customs.height / (EightBitter.settings.quadrants.numRows - 2);
 
-        EightBitter.QuadsKeeper = new QuadsKeepr(EightBitter.proliferate({
+        EightBitter.QuadsKeeper = new QuadsKeepr.QuadsKeepr(EightBitter.proliferate({
             "ObjectMaker": EightBitter.ObjectMaker,
             "createCanvas": EightBitter.createCanvas,
             "quadrantWidth": quadrantWidth,
@@ -285,7 +285,7 @@ var GameStartr = (function (EightBittr) {
      *                          collisions.js (settings/collisions.js)
      */
     function resetThingHitter(EightBitter, customs) {
-        EightBitter.ThingHitter = new ThingHittr(EightBitter.proliferate({
+        EightBitter.ThingHitter = new ThingHittr.ThingHittr(EightBitter.proliferate({
             "scope": EightBitter
         }, EightBitter.settings.collisions));
     }
