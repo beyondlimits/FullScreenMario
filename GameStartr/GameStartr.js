@@ -213,7 +213,7 @@ var GameStartr = (function (EightBittr) {
      *                          events.js (settings/events.js)
      */
     function resetTimeHandler(EightBitter, customs) {
-        EightBitter.TimeHandler = new TimeHandlr(EightBitter.proliferate({
+        EightBitter.TimeHandler = new TimeHandlr.TimeHandlr(EightBitter.proliferate({
             "classAdd": EightBitter.addClass,
             "classRemove": EightBitter.removeClass
         }, EightBitter.settings.events));
