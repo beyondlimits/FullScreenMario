@@ -178,7 +178,7 @@ var GameStartr = (function (EightBittr) {
      *                          sprites.js (settings/sprites.js)
      */
     function resetPixelRender(EightBitter, customs) {
-        EightBitter.PixelRender = new PixelRendr(EightBitter.proliferate({
+        EightBitter.PixelRender = new PixelRendr.PixelRendr(EightBitter.proliferate({
             "QuadsKeeper": EightBitter.QuadsKeeper,
             "unitsize": EightBitter.unitsize,
             "scale": EightBitter.scale
@@ -194,7 +194,7 @@ var GameStartr = (function (EightBittr) {
      *                          renderer.js (settings/renderer.js)
      */
     function resetPixelDrawer(EightBitter, customs) {
-        EightBitter.PixelDrawer = new PixelDrawr(EightBitter.proliferate({
+        EightBitter.PixelDrawer = new PixelDrawr.PixelDrawr(EightBitter.proliferate({
             "PixelRender": EightBitter.PixelRender,
             "MapScreener": EightBitter.MapScreener,
             "createCanvas": EightBitter.createCanvas,
@@ -242,10 +242,11 @@ var GameStartr = (function (EightBittr) {
      *                          runner.js (settings/runner.js)
      */
     function resetGamesRunner(EightBitter, customs) {
-        EightBitter.GamesRunner = new GamesRunnr(EightBitter.proliferate({
+        EightBitter.GamesRunner = new GamesRunnr.GamesRunnr(EightBitter.proliferate({
             "scope": EightBitter,
             "onPlay": EightBitter.onGamePlay.bind(EightBitter, EightBitter),
-            "onPause": EightBitter.onGamePause.bind(EightBitter, EightBitter)
+            "onPause": EightBitter.onGamePause.bind(EightBitter, EightBitter),
+            "FPSAnalyzer": new FPSAnalyzr.FPSAnalyzr()
         }, EightBitter.settings.runner));
     }
 
@@ -272,7 +273,7 @@ var GameStartr = (function (EightBittr) {
      *                          groups.js (settings/groups.js)
      */
     function resetGroupHolder(EightBitter, customs) {
-        EightBitter.GroupHolder = new GroupHoldr(EightBitter.settings.groups);
+        EightBitter.GroupHolder = new GroupHoldr.GroupHoldr(EightBitter.settings.groups);
     }
 
     /**
@@ -298,7 +299,7 @@ var GameStartr = (function (EightBittr) {
      *                          maps.js (settings/maps.js)
      */
     function resetMapScreener(EightBitter, customs) {
-        EightBitter.MapScreener = new MapScreenr({
+        EightBitter.MapScreener = new MapScreenr.MapScreenr({
             "EightBitter": EightBitter,
             "unitsize": EightBitter.unitsize,
             "width": customs.width,
@@ -316,7 +317,7 @@ var GameStartr = (function (EightBittr) {
      * @remarks Requirement(s): NumberMaker (src/NumberMakr/NumberMakr.js)
      */
     function resetNumberMaker(EightBitter, customs) {
-        EightBitter.NumberMaker = new NumberMakr();
+        EightBitter.NumberMaker = new NumberMakr.NumberMakr();
     }
 
     /**
@@ -327,7 +328,7 @@ var GameStartr = (function (EightBittr) {
      *                          maps.js (settings/maps.js)
      */
     function resetMapsCreator(EightBitter, customs) {
-        EightBitter.MapsCreator = new MapsCreatr({
+        EightBitter.MapsCreator = new MapsCreatr.MapsCreatr({
             "ObjectMaker": EightBitter.ObjectMaker,
             "groupTypes": EightBitter.settings.maps.groupTypes,
             "macros": EightBitter.settings.maps.macros,
@@ -346,7 +347,7 @@ var GameStartr = (function (EightBittr) {
      *                          maps.js (settings/maps.js)
      */
     function resetMapsHandler(EightBitter, customs) {
-        EightBitter.MapsHandler = new MapsHandlr({
+        EightBitter.MapsHandler = new MapsHandlr.MapsHandlr({
             "MapsCreator": EightBitter.MapsCreator,
             "MapScreener": EightBitter.MapScreener,
             "screenAttributes": EightBitter.settings.maps.screenAttributes,
@@ -363,7 +364,7 @@ var GameStartr = (function (EightBittr) {
      *                          input.js (settings/input.js)
      */
     function resetInputWriter(EightBitter, customs) {
-        EightBitter.InputWriter = new InputWritr(EightBitter.proliferate({
+        EightBitter.InputWriter = new InputWritr.InputWritr(EightBitter.proliferate({
             "canTrigger": EightBitter.canInputsTrigger.bind(EightBitter, EightBitter)
         }, EightBitter.settings.input.InputWritrArgs));
     }

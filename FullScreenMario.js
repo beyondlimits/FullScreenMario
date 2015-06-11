@@ -203,7 +203,7 @@ var FullScreenMario = (function(GameStartr) {
      *                          maps.js (settings/maps.js)
      */
     function resetMapsHandler(EightBitter, customs) {
-        EightBitter.MapsHandler = new MapsHandlr({
+        EightBitter.MapsHandler = new MapsHandlr.MapsHandlr({
             "MapsCreator": EightBitter.MapsCreator,
             "MapScreener": EightBitter.MapScreener,
             "screenAttributes": EightBitter.settings.maps.screenAttributes,
