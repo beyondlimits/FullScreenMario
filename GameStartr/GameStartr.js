@@ -393,7 +393,7 @@ var GameStartr = (function (EightBittr) {
      *                          generator.js (settings/generator.js)
      */
     function resetWorldSeeder(EightBitter, customs) {
-        EightBitter.WorldSeeder = new WorldSeedr(EightBitter.proliferate({
+        EightBitter.WorldSeeder = new WorldSeedr.WorldSeedr(EightBitter.proliferate({
             "random": EightBitter.NumberMaker.random.bind(EightBitter.NumberMaker),
             "onPlacement": EightBitter.mapPlaceRandomCommands.bind(EightBitter, EightBitter)
         }, EightBitter.settings.generator));
