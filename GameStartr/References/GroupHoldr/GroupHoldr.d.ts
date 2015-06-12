@@ -42,15 +42,15 @@ declare module GroupHoldr {
     }
 
     export interface IGroupHoldrAddFunction extends IGroupHoldrFunction {
-        (key: string, value?: any): void;
+        (value: any, key?: string | number): void;
     }
 
     export interface IGroupHoldrObjectAddFunction extends IGroupHoldrAddFunction {
-        (key: string, value: any): void;
+        (value: any, key: string): void;
     }
 
     export interface IGroupHoldrArrayAddFunction extends IGroupHoldrAddFunction {
-        (value: any): void;
+        (value: any, key: number): void;
     }
 
     export interface IGroupHoldrDeleteFunction extends IGroupHoldrFunction {
@@ -86,8 +86,8 @@ declare module GroupHoldr {
         switchObjectGroup(value: any, groupOld: string, groupNew: string, keyNew?: string): void;
         applyAll(scope: any, func: (...args: any[]) => any, args?: any[]): void;
         applyOnAll(scope: any, func: (...args: any[]) => any, args?: any[]): void;
-        callAll(scope: any, func: (...args: any[]) => any): void;
-        callOnAll(scope: any, func: (...args: any[]) => any): void;
+        callAll(scope: any, func: (...args: any[]) => any, ...args: any[]): void;
+        callOnAll(scope: any, func: (...args: any[]) => any, ...args: any[]): void;
         clearArrays(): void;
     }
 }

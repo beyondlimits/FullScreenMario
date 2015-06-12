@@ -190,6 +190,10 @@ var GroupHoldr;
          * @param {Function} func   A function to apply to each group.
          */
         GroupHoldr.prototype.callAll = function (scope, func) {
+            var args = [];
+            for (var _i = 2; _i < arguments.length; _i++) {
+                args[_i - 2] = arguments[_i];
+            }
             var args = Array.prototype.slice.call(arguments, 1), i;
             if (!scope) {
                 scope = this;
@@ -421,7 +425,7 @@ var GroupHoldr;
                  *                       added.
                  * @param value
                  */
-                this.functions.add[name] = this["add" + name] = function (key, value) {
+                this.functions.add[name] = this["add" + name] = function (value, key) {
                     group[key] = value;
                 };
             }
@@ -431,8 +435,13 @@ var GroupHoldr;
                  *
                  * @param {String} value
                  */
-                this.functions.add[name] = this["add" + name] = function (value) {
-                    group.push(value);
+                this.functions.add[name] = this["add" + name] = function (value, key) {
+                    if (key !== undefined) {
+                        group[key] = value;
+                    }
+                    else {
+                        group.push(value);
+                    }
                 };
             }
         };

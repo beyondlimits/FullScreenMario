@@ -219,6 +219,10 @@ var ModAttachr;
          * @param {String} event   The name of the event to fire.
          */
         ModAttachr.prototype.fireEvent = function (event) {
+            var extraArgs = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                extraArgs[_i - 1] = arguments[_i];
+            }
             var fires = this.events[event], args = Array.prototype.splice.call(arguments, 0), mod, i;
             // If no triggers were defined for this event, that's ok: just stop.
             if (!fires) {

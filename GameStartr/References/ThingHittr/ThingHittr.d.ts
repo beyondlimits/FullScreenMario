@@ -176,6 +176,10 @@ declare module ThingHittr {
     }
 
     export interface IThingHittr {
-
+        checkHitsOf: IThingHitsCheckContainer;
+        cacheHitCheckGroup(groupName: string): void;
+        cacheHitCheckType(typeName: string, groupName: string): void;
+        generateHitsCheck(typeName: string): IThingHitsCheck;
+        checkHit(thing: QuadsKeepr.IThing, other: QuadsKeepr.IThing, thingType: string, otherGroup: string): boolean;
     }
 }

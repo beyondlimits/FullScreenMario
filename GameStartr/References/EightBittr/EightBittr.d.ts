@@ -19,6 +19,7 @@ declare module EightBittr {
 
     export interface IEightBittr {
         unitsize: number;
+        resetTimes: any[];
         checkRequirements(scope: any, requirements: any, name: string): void;
         reset(EightBitter: IEightBittr, resets: string[], customs?: any): void;
         resetTimed(EightBitter: IEightBittr, resets: string[], customs?: any): any[];

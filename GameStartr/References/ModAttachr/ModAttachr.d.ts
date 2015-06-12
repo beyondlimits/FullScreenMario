@@ -41,7 +41,7 @@ declare module ModAttachr {
         disableMods(...names: string[]): void;
         toggleMod(name: string): void;
         toggleMods(...names: string[]): void;
-        fireEvent(event: string): void;
+        fireEvent(event: string, ...extraArgs: any[]): void;
         fireModEvent(eventName: string, modName: string, ...extraArgs: any[]): void;
     }
 }

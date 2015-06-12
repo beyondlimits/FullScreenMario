@@ -1,5 +1,5 @@
-(function (things, macros) {
-    FullScreenMario.prototype.settings.editor = {
+FullScreenMario.prototype.settings.editor = (function (things, macros) {
+    return {
         "blocksize": FullScreenMario.unitsize * 4,
         "mapDefault": {
             "name": "New Map",
@@ -28,7 +28,6 @@
         })(),
         "macros": macros
     };
-    
 })({
     "Characters": {
         "Goomba": undefined,

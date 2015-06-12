@@ -1,5 +1,4 @@
 FullScreenMario.prototype.settings.sprites = {
-    "scale": FullScreenMario.scale,
     "spriteWidth": "spritewidthpixels",
     "spriteHeight": "spriteheightpixels",
     "flipVert": "flip-vert",

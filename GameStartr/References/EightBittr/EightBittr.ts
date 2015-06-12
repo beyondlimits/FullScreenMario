@@ -17,6 +17,8 @@ module EightBittr {
 
         protected requirements: any;
 
+        public resetTimes: any[];
+
         /**
          * EightBittr constructor. Settings arguments are used to initialize 
          * "constant" values and check for requirements.
@@ -50,6 +52,12 @@ module EightBittr {
                 if (requirements.self) {
                     EightBitter.checkRequirements(EightBitter, requirements.self, "self");
                 }
+            }
+
+            if (settings.resetTimed) {
+                this.resetTimes = this.resetTimed(this, settings);
+            } else {
+                this.reset(this, settings);
             }
         }
 
@@ -542,7 +550,7 @@ module EightBittr {
          */
         ensureCorrectCaller(current: any): EightBittr {
             if (!(current instanceof EightBittr)) {
-                throw new Error("A function requires the caller ('this') to be the "
+                throw new Error("A function requires the scope ('this') to be the "
                     + "manipulated EightBittr object. Unfortunately, 'this' is a "
                     + typeof (this) + ".");
             }

@@ -35,6 +35,12 @@ var EightBittr;
                     EightBitter.checkRequirements(EightBitter, requirements.self, "self");
                 }
             }
+            if (settings.resetTimed) {
+                this.resetTimes = this.resetTimed(this, settings);
+            }
+            else {
+                this.reset(this, settings);
+            }
         }
         /* Resets
         */
@@ -449,7 +455,7 @@ var EightBittr;
          */
         EightBittr.prototype.ensureCorrectCaller = function (current) {
             if (!(current instanceof EightBittr)) {
-                throw new Error("A function requires the caller ('this') to be the " + "manipulated EightBittr object. Unfortunately, 'this' is a " + typeof (this) + ".");
+                throw new Error("A function requires the scope ('this') to be the " + "manipulated EightBittr object. Unfortunately, 'this' is a " + typeof (this) + ".");
             }
             return current;
         };

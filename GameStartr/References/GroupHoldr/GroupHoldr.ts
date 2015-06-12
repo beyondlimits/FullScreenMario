@@ -229,7 +229,7 @@ module GroupHoldr {
          *                          defaults to this).
          * @param {Function} func   A function to apply to each group.
          */
-        callAll(scope: any, func: (...args: any[]) => any): void {
+        callAll(scope: any, func: (...args: any[]) => any, ...args: any[]): void {
             var args: any[] = Array.prototype.slice.call(arguments, 1),
                 i: number;
 
@@ -501,7 +501,7 @@ module GroupHoldr {
                  *                       added.
                  * @param value
                  */
-                this.functions.add[name] = this["add" + name] = function (key: string, value: any): void {
+                this.functions.add[name] = this["add" + name] = function (value: any, key: string): void {
                     group[key] = value;
                 };
             } else {
@@ -510,8 +510,12 @@ module GroupHoldr {
                  * 
                  * @param {String} value
                  */
-                this.functions.add[name] = this["add" + name] = function (value: any): void {
-                    group.push(value);
+                this.functions.add[name] = this["add" + name] = function (value: any, key?: number): void {
+                    if (key !== undefined) {
+                        group[key] = value;
+                    } else {
+                        group.push(value);
+                    }
                 };
             }
         }

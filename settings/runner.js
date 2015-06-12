@@ -1,6 +1,4 @@
 FullScreenMario.prototype.settings.runner = {
-    "interval": 1000 / 60,
-    "adjustFramerate": true,
     "games": [
         function () {
             this.QuadsKeeper.determineAllQuadrants("Scenery", this.GroupHolder.getSceneryGroup());

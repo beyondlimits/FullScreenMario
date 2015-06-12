@@ -7,21 +7,21 @@ declare module MapsHandlr {
         MapScreener: MapScreenr.IMapScreenr;
 
         // A callback for when a PreThing should be spawned.
-        onSpawn: (prething: MapsCreatr.IPreThing) => void;
+        onSpawn?: (prething: MapsCreatr.IPreThing) => void;
 
         // A callback for when a PreThing should be un-spawned.
-        onUnspawn: (prething: MapsCreatr.IPreThing) => void;
+        onUnspawn?: (prething: MapsCreatr.IPreThing) => void;
 
         // The property names to copy from Areas to MapScreenr (by default, []).
         screenAttributes?: string[];
 
         // A callback for when an Area provides an "afters" command to add PreThings
         // to the end of an Area.
-        afterAdd: (title: string, index: number) => void;
+        afterAdd?: (title: string, index: number) => void;
 
         // A callback for when an Area provides a "stretch" command to add PreThings
         // to stretch across an Area.
-        stretchAdd: (title: string, index: number) => void;
+        stretchAdd?: (title: string, index: number) => void;
     }
 
     export interface IMapsHandlr {

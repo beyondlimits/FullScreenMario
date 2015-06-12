@@ -332,6 +332,11 @@ var FullScreenMario = (function(GameStartr) {
      * @see GameStartr::thingProcess
      */
     function thingProcess(thing, type, settings, defaults) {
+        // "Infinity" height refers to objects that reach exactly to the bottom
+        if (thing.height === "Infinity") {
+            thing.height = thing.EightBitter.getAbsoluteHeight(thing.y) / thing.EightBitter.unitsize;
+        }
+
         GameStartr.prototype.thingProcess(thing, type, settings, defaults);
 
         // ThingHittr becomes very non-performant if functions aren't generated

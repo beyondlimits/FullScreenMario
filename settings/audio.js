@@ -1,19 +1,6 @@
 FullScreenMario.prototype.settings.audio = {
     "directory": "Sounds",
     "fileTypes": ["mp3", "ogg"],
-    "statistics": {
-        "prefix": "FullScreenMario::AudioPlayer::",
-        "values": {
-            "volume": {
-                "valueDefault": 0.5,
-                "storeLocally": true
-            },
-            "muted": {
-                "valueDefault": 0,
-                "storeLocally": true
-            }
-        }
-    },
     "library": {
         "Sounds": [
             "Bowser Falls",

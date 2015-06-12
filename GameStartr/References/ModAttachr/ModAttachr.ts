@@ -263,7 +263,7 @@ module ModAttachr {
          * 
          * @param {String} event   The name of the event to fire.
          */
-        fireEvent(event: string): void {
+        fireEvent(event: string, ...extraArgs: any[]): void {
             var fires: any[] = this.events[event],
                 args: any[] = Array.prototype.splice.call(arguments, 0),
                 mod: IModAttachrMod,
