@@ -13957,7 +13957,7 @@ var GameStartr;
             }
             var adder, i, j;
             for (i = 0; i < classes.length; i += 1) {
-                adder = arguments[i];
+                adder = classes[i];
                 if (adder.constructor === String || typeof adder === "string") {
                     adder = adder.split(" ");
                 }
@@ -13998,7 +13998,7 @@ var GameStartr;
             }
             var adder, i, j;
             for (i = 0; i < classes.length; i += 1) {
-                adder = arguments[i];
+                adder = classes[i];
                 if (adder.constructor === String || typeof adder === "string") {
                     adder = adder.split(" ");
                 }
