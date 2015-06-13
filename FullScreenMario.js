@@ -57,7 +57,7 @@ var FullScreenMario = (function(GameStartr) {
     "use strict";
     
     // Use a GameStartr as the class parent, with GameStartr's constructor
-    var GameStartrProto = new GameStartr();
+    var GameStartrProto = new GameStartr.GameStartr();
     
     // Subsequent settings will be stored in FullScreenMario.prototype.settings
     GameStartrProto.settings = {};
@@ -91,7 +91,7 @@ var FullScreenMario = (function(GameStartr) {
 
         // Call the parent GameStartr constructor to set the base settings and
         // verify the prototype requirements
-        GameStartr.call(this, {
+        GameStartr.GameStartr.call(this, {
             "customs": customs,
             "requirements": {
                 "settings": {
@@ -168,7 +168,7 @@ var FullScreenMario = (function(GameStartr) {
      *                          audio.js (settings/audio.js)
      */
     function resetAudioPlayer(EightBitter, customs) {
-        GameStartr.prototype.resetAudioPlayer(EightBitter, customs);
+        GameStartr.GameStartr.prototype.resetAudioPlayer(EightBitter, customs);
         
         EightBitter.AudioPlayer.setGetVolumeLocal(
             EightBitter.getVolumeLocal.bind(EightBitter, EightBitter)
@@ -188,7 +188,7 @@ var FullScreenMario = (function(GameStartr) {
      *                          collisions.js (settings/collisions.js)
      */
     function resetThingHitter(EightBitter, customs) {
-        GameStartr.prototype.resetThingHitter(EightBitter, customs);
+        GameStartr.GameStartr.prototype.resetThingHitter(EightBitter, customs);
         
         EightBitter.ThingHitter.cacheHitCheckGroup("Solid");
         EightBitter.ThingHitter.cacheHitCheckGroup("Character");
@@ -223,7 +223,7 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Object} [customs]
      */
     function resetStatsHolder(EightBitter, customs) {
-        GameStartr.prototype.resetStatsHolder(EightBitter, customs);
+        GameStartr.GameStartr.prototype.resetStatsHolder(EightBitter, customs);
         
         if (customs.width < 560) {
             EightBitter.StatsHolder.getContainer().children[0].cells[4].style.display = "none";
@@ -241,7 +241,7 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Object} [customs]
      */
     function resetContainer(EightBitter, customs) {
-        GameStartr.prototype.resetContainer(EightBitter, customs);
+        GameStartr.GameStartr.prototype.resetContainer(EightBitter, customs);
         
         EightBitter.container.style.fontFamily = "Press Start";
         EightBitter.container.className += " FullScreenMario";
@@ -337,7 +337,7 @@ var FullScreenMario = (function(GameStartr) {
             thing.height = thing.EightBitter.getAbsoluteHeight(thing.y) / thing.EightBitter.unitsize;
         }
 
-        GameStartr.prototype.thingProcess(thing, type, settings, defaults);
+        GameStartr.GameStartr.prototype.thingProcess(thing, type, settings, defaults);
 
         // ThingHittr becomes very non-performant if functions aren't generated
         // for each Thing constructor (optimization does not respect prototypal 
