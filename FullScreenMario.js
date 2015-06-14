@@ -2102,7 +2102,6 @@ var FullScreenMario = (function(GameStartr) {
      * @param {Thing} thing
      */
     function spawnMoveFloating(thing) {
-        console.log("Moving", thing.title);
         // Make sure thing.begin <= thing.end
         thing.EightBitter.setMovementEndpoints(thing);
         

@@ -4,7 +4,7 @@ document.onreadystatechange = function (event) {
     }
     
     var timeStart = Date.now(),
-        UserWrapper = new UserWrappr(FullScreenMario.prototype.proliferate({
+        UserWrapper = new UserWrappr.UserWrappr(FullScreenMario.prototype.proliferate({
             "GameStartrConstructor": FullScreenMario
         }, FullScreenMario.prototype.settings.ui, true));
     

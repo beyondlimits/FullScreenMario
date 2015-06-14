@@ -265,7 +265,7 @@ FullScreenMario.prototype.settings.ui = {
                 {
                     "title": "Screenshot",
                     "action": function (GameStarter) {
-                        GameStarter.takeScreenshot();
+                        GameStarter.takeScreenshot("FullScreenMario " + new Date().getTime());
                     }
                 }
             ]
