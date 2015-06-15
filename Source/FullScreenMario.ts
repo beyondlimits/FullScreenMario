@@ -22,7 +22,24 @@ module FullScreenMario {
         /**
          * 
          */
-        public static settings: { [i: string]: GameStartr.IGameStartrStoredSettings; } = {};
+        public static settings: GameStartr.IGameStartrStoredSettings = {
+            "audio": undefined,
+            "collisions": undefined,
+            "editor": undefined,
+            "generator": undefined,
+            "groups": undefined,
+            "events": undefined,
+            "input": undefined,
+            "maps": undefined,
+            "mods": undefined,
+            "objects": undefined,
+            "quadrants": undefined,
+            "renderer": undefined,
+            "runner": undefined,
+            "sprites": undefined,
+            "statistics": undefined,
+            "ui": undefined
+        };
 
         // For the sake of reset functions, store constants as members of the actual
         // FullScreenMario Function itself - this allows prototype setters to use 
@@ -65,7 +82,7 @@ module FullScreenMario {
         /**
          * 
          */
-        public settings: { [i: string]: GameStartr.IGameStartrStoredSettings; } = FullScreenMario.settings;
+        public settings: GameStartr.IGameStartrStoredSettings = FullScreenMario.settings;
 
         /**
          * 
@@ -173,7 +190,7 @@ module FullScreenMario {
          *                          collisions.js (settings/collisions.js)
          */
         resetThingHitter(FSM: FullScreenMario, customs: GameStartr.IGameStartrCustoms): void {
-            super.resetThingHitter(FSM, customs);
+            super.resetThingHitter(<GameStartr.GameStartr>FSM, customs);
 
             FSM.ThingHitter.cacheHitCheckGroup("Solid");
             FSM.ThingHitter.cacheHitCheckGroup("Character");
@@ -191,14 +208,11 @@ module FullScreenMario {
             FSM.MapsHandler = new MapsHandlr.MapsHandlr({
                 "MapsCreator": FSM.MapsCreator,
                 "MapScreener": FSM.MapScreener,
-                "screenAttributes": FSM.settings.maps.screenAttributes,
-                "onSpawn": FSM.settings.maps.onSpawn.bind(FSM),
+                "screenAttributes": (<any>FSM.settings["maps"]).screenAttributes,
+                "onSpawn": (<any>FSM.settings["maps"]).onSpawn.bind(FSM),
                 "stretchAdd": FSM.mapAddStretched.bind(FSM),
-                // "onStretch": FSM.mapStretchThing,
                 "afterAdd": FSM.mapAddAfter.bind(FSM)
             });
-
-            console.warn("What is onStretch?");
         }
     
         /**
@@ -310,8 +324,8 @@ module FullScreenMario {
          * @see GameStartr::thingProcess
          */
         thingProcess(thing, type, settings, defaults) {
-            // "Infinity" height refers to objects that reach exactly to the bottom
-            if (thing.height === "Infinity") {
+            // Infinite height refers to objects that reach exactly to the bottom
+            if (thing.height === "Infinity" || thing.height === Infinity) {
                 thing.height = thing.GameStarter.getAbsoluteHeight(thing.y) / thing.GameStarter.unitsize;
             }
 

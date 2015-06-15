@@ -228,11 +228,11 @@ FullScreenMario.FullScreenMario.settings.objects = {
             "floor": 104,
             "time": 400,
             "jumpmod": 1.056,
-            "maxyvel": FullScreenMario.unitsize * 2,
-            "maxyvelinv": FullScreenMario.unitsize * -3.5,
+            "maxyvel": FullScreenMario.FullScreenMario.unitsize * 2,
+            "maxyvelinv": FullScreenMario.FullScreenMario.unitsize * -3.5,
             "onPlayerDeathTimeout": 280,
             "onGameOverTimeout": 280,
-            "gravity": FullScreenMario.gravity,
+            "gravity": FullScreenMario.FullScreenMario.gravity,
             "canscroll": true,
             "underwater": false,
             "notime": false,
@@ -241,7 +241,7 @@ FullScreenMario.FullScreenMario.settings.objects = {
             "onGameOver": FullScreenMario.FullScreenMario.prototype.gameOver,
             "attributes": {
                 "underwater": {
-                    "gravity": FullScreenMario.gravity / 2.8,
+                    "gravity": FullScreenMario.FullScreenMario.gravity / 2.8,
                     "stretches": [{
                         "thing": "WaterBlocker",
                         "y": 104,
@@ -271,7 +271,7 @@ FullScreenMario.FullScreenMario.settings.objects = {
             "width": 8,
             "height": 8,
             "tolx": 0,
-            "toly": FullScreenMario.unitsize / 8,
+            "toly": FullScreenMario.FullScreenMario.unitsize / 8,
             // Velocity
             "xvel": 0,
             "yvel": 0,
@@ -324,12 +324,12 @@ FullScreenMario.FullScreenMario.settings.objects = {
             "paddling": 0,
             "jumpers": 0,
             "landing": 0,
-            "tolx": FullScreenMario.unitsize * 2,
+            "tolx": FullScreenMario.FullScreenMario.unitsize * 2,
             "toly": 0,
-            "walkspeed": FullScreenMario.unitsize / 2,
-            "maxspeed": FullScreenMario.unitsize * 1.35, // Really only used for timed animations
-            "maxspeedsave": FullScreenMario.unitsize * 1.35,
-            "scrollspeed": FullScreenMario.unitsize * 1.75,
+            "walkspeed": FullScreenMario.FullScreenMario.unitsize / 2,
+            "maxspeed": FullScreenMario.FullScreenMario.unitsize * 1.35, // Really only used for timed animations
+            "maxspeedsave": FullScreenMario.FullScreenMario.unitsize * 1.35,
+            "scrollspeed": FullScreenMario.FullScreenMario.unitsize * 1.75,
             "running": '', // Evaluates to false for cycle checker
             "fire": FullScreenMario.FullScreenMario.prototype.animatePlayerFire,
             "movement": FullScreenMario.FullScreenMario.prototype.movePlayer,
@@ -350,7 +350,7 @@ FullScreenMario.FullScreenMario.settings.objects = {
         },
         "enemy": {
             "type": "enemy",
-            "speed": FullScreenMario.unitsize * .21,
+            "speed": FullScreenMario.FullScreenMario.unitsize * .21,
             "collide": FullScreenMario.FullScreenMario.prototype.collideEnemy,
             "death": FullScreenMario.FullScreenMario.prototype.killFlip
         },
@@ -358,7 +358,7 @@ FullScreenMario.FullScreenMario.settings.objects = {
             "scoreFire": 100,
             "scoreStar": 100,
             "spawnType": "DeadGoomba",
-            "toly": FullScreenMario.unitsize,
+            "toly": FullScreenMario.FullScreenMario.unitsize,
             "death": FullScreenMario.FullScreenMario.prototype.killGoomba,
             "spriteCycleSynched": [
                 [FullScreenMario.FullScreenMario.prototype.unflipHoriz, FullScreenMario.FullScreenMario.prototype.flipHoriz]
@@ -369,7 +369,7 @@ FullScreenMario.FullScreenMario.settings.objects = {
             "shellspawn": true,
             "spawnType": "Shell",
             "shelltype": "Shell",
-            "toly": FullScreenMario.unitsize * 2,
+            "toly": FullScreenMario.FullScreenMario.unitsize * 2,
             "death": FullScreenMario.FullScreenMario.prototype.killKoopa,
             "spriteCycle": [
                 ["one", "two"]
@@ -383,23 +383,23 @@ FullScreenMario.FullScreenMario.settings.objects = {
                 },
                 "jumping": {
                     "movement": FullScreenMario.FullScreenMario.prototype.moveJumping,
-                    "jumpheight": FullScreenMario.unitsize * 1.17,
-                    "gravity": FullScreenMario.gravity / 2.8,
+                    "jumpheight": FullScreenMario.FullScreenMario.unitsize * 1.17,
+                    "gravity": FullScreenMario.FullScreenMario.gravity / 2.8,
                     "scoreStomp": 400
                 },
                 "floating": {
                     "onThingAdded": FullScreenMario.FullScreenMario.prototype.spawnMoveFloating,
                     "movement": FullScreenMario.FullScreenMario.prototype.moveFloating,
                     "nofall": true,
-                    "yvel": FullScreenMario.unitsize / 8,
-                    "maxvel": FullScreenMario.unitsize / 4,
+                    "yvel": FullScreenMario.FullScreenMario.unitsize / 8,
+                    "maxvel": FullScreenMario.FullScreenMario.unitsize / 4,
                     "scoreStomp": 400
                 }
             }
         },
         "Beetle": {
-            "speed": FullScreenMario.unitsize * .21,
-            "xvel": FullScreenMario.unitsize * .21,
+            "speed": FullScreenMario.FullScreenMario.unitsize * .21,
+            "xvel": FullScreenMario.FullScreenMario.unitsize * .21,
             "height": 8,
             "nofire": 2,
             "shellspawn": true,
@@ -413,7 +413,7 @@ FullScreenMario.FullScreenMario.settings.objects = {
         },
         "Piranha": {
             "height": 12,
-            "toly": FullScreenMario.unitsize * 8,
+            "toly": FullScreenMario.FullScreenMario.unitsize * 8,
             "countermax": 49,
             // nofall": true,
             "deadly": true,
@@ -430,7 +430,7 @@ FullScreenMario.FullScreenMario.settings.objects = {
             "height": 12,
             "nofall": true,
             "nocollidesolid": true,
-            "speed": FullScreenMario.unitsize / 2,
+            "speed": FullScreenMario.FullScreenMario.unitsize / 2,
             "onThingAdded": FullScreenMario.FullScreenMario.prototype.spawnBlooper,
             "movement": FullScreenMario.FullScreenMario.prototype.moveBlooper,
             "death": FullScreenMario.FullScreenMario.prototype.killFlip
@@ -440,27 +440,27 @@ FullScreenMario.FullScreenMario.settings.objects = {
             "nocollidesolid": true,
             "nocollidechar": true,
             "movement": FullScreenMario.FullScreenMario.prototype.moveCheepCheep,
-            "xvel": FullScreenMario.unitsize / -6,
-            "yvel": FullScreenMario.unitsize / -32,
+            "xvel": FullScreenMario.FullScreenMario.unitsize / -6,
+            "yvel": FullScreenMario.FullScreenMario.unitsize / -32,
             "death": FullScreenMario.FullScreenMario.prototype.killFlip,
             "spriteCycleSynched": [
                 ["one", "two"]
             ],
             "attributes": {
                 "red": {
-                    "xvel": FullScreenMario.unitsize / -4,
-                    "yvel": FullScreenMario.unitsize / -24
+                    "xvel": FullScreenMario.FullScreenMario.unitsize / -4,
+                    "yvel": FullScreenMario.FullScreenMario.unitsize / -24
                 },
                 "flying": {
                     "movement": FullScreenMario.FullScreenMario.prototype.moveCheepCheepFlying,
-                    "gravity": FullScreenMario.gravity / 3.5
+                    "gravity": FullScreenMario.FullScreenMario.gravity / 3.5
                 }
             }
         },
         "Podoboo": {
             "width": 7,
-            "speed": FullScreenMario.unitsize * 1.75,
-            "acceleration": FullScreenMario.unitsize / 24,
+            "speed": FullScreenMario.FullScreenMario.unitsize * 1.75,
+            "acceleration": FullScreenMario.FullScreenMario.unitsize / 24,
             "jumpHeight": 28,
             "frequency": 245,
             "deadly": true,
@@ -480,7 +480,7 @@ FullScreenMario.FullScreenMario.settings.objects = {
             "nocollidesolid": true,
             "grounded": true,
             "movement": undefined,
-            "xvel": FullScreenMario.unitsize / 2,
+            "xvel": FullScreenMario.FullScreenMario.unitsize / 2,
         },
         "Lakitu": {
             "height": 12,
@@ -519,8 +519,8 @@ FullScreenMario.FullScreenMario.settings.objects = {
         "Bowser": {
             "width": 16,
             "height": 16,
-            "speed": FullScreenMario.unitsize * .14,
-            "gravity": FullScreenMario.gravity / 2.8,
+            "speed": FullScreenMario.FullScreenMario.unitsize * .14,
+            "gravity": FullScreenMario.FullScreenMario.gravity / 2.8,
             "jumpTimes": [117],
             "fireTimes": [280, 350, 490],
             "throwAmount": 7,
@@ -561,7 +561,7 @@ FullScreenMario.FullScreenMario.settings.objects = {
             "deadly": true,
             "nofire": true,
             "movement": FullScreenMario.FullScreenMario.prototype.moveBowserFire,
-            "xvel": FullScreenMario.unitsize * -.63,
+            "xvel": FullScreenMario.FullScreenMario.unitsize * -.63,
             "spriteCycle": [
                 [
                     FullScreenMario.FullScreenMario.prototype.flipVert,
@@ -578,7 +578,7 @@ FullScreenMario.FullScreenMario.settings.objects = {
         },
         "Mushroom": {
             "action": FullScreenMario.FullScreenMario.prototype.playerShroom,
-            "speed": FullScreenMario.unitsize * .42
+            "speed": FullScreenMario.FullScreenMario.unitsize * .42
         },
         "Mushroom1Up": {
             "action": FullScreenMario.FullScreenMario.prototype.playerShroom1Up
@@ -623,18 +623,18 @@ FullScreenMario.FullScreenMario.settings.objects = {
             "name": "star item", // Item class so player's star isn't confused with this
             "width": 7,
             "grounded": true,
-            "speed": FullScreenMario.unitsize * .56,
+            "speed": FullScreenMario.FullScreenMario.unitsize * .56,
             "action": FullScreenMario.FullScreenMario.prototype.collideStar,
             "movement": FullScreenMario.FullScreenMario.prototype.moveJumping,
-            "jumpheight": FullScreenMario.unitsize * 1.17,
-            "gravity": FullScreenMario.gravity / 2.8,
+            "jumpheight": FullScreenMario.FullScreenMario.unitsize * 1.17,
+            "gravity": FullScreenMario.FullScreenMario.gravity / 2.8,
             "spriteCycle": [
                 ["one", "two", "three", "four"], 0, 7
             ]
         },
         "Shell": {
             "height": 7,
-            "speed": FullScreenMario.unitsize * 2,
+            "speed": FullScreenMario.FullScreenMario.unitsize * 2,
             "collidePrimary": true,
             "nofire": false,
             "moveleft": 0,
@@ -665,7 +665,7 @@ FullScreenMario.FullScreenMario.settings.objects = {
             "nocollide": true,
             "nocollidesolid": true,
             "grounded": true,
-            "speed": FullScreenMario.unitsize / 4,
+            "speed": FullScreenMario.FullScreenMario.unitsize / 4,
             "movement": FullScreenMario.FullScreenMario.prototype.moveVine,
             "collide": FullScreenMario.FullScreenMario.prototype.collideVine,
             "animate": FullScreenMario.FullScreenMario.prototype.animateEmergeVine
@@ -686,7 +686,7 @@ FullScreenMario.FullScreenMario.settings.objects = {
             "nocollide": true,
             "nofall": true,
             "movement": FullScreenMario.FullScreenMario.prototype.moveBubble,
-            "yvel": FullScreenMario.unitsize / -4
+            "yvel": FullScreenMario.FullScreenMario.unitsize / -4
         },
         "Coin": {
             "width": 5,
@@ -760,22 +760,22 @@ FullScreenMario.FullScreenMario.settings.objects = {
         "Platform": {
             "height": 4,
             "spritewidth": 4,
-            "fallThresholdStart": FullScreenMario.unitsize * 2.8,
-            "fallThresholdEnd": FullScreenMario.unitsize * 2,
-            "acceleration": FullScreenMario.unitsize / 16,
+            "fallThresholdStart": FullScreenMario.FullScreenMario.unitsize * 2.8,
+            "fallThresholdEnd": FullScreenMario.FullScreenMario.unitsize * 2,
+            "acceleration": FullScreenMario.FullScreenMario.unitsize / 16,
             "repeat": true,
             "killonend": false,
-            "maxvel": FullScreenMario.unitsize / 4 * 1.5,
+            "maxvel": FullScreenMario.FullScreenMario.unitsize / 4 * 1.5,
             "attributes": {
                 "floating": {
                     "onThingAdded": FullScreenMario.FullScreenMario.prototype.spawnMoveFloating,
                     "movement": FullScreenMario.FullScreenMario.prototype.moveFloating,
-                    "yvel": FullScreenMario.unitsize / 4 * 1.5
+                    "yvel": FullScreenMario.FullScreenMario.unitsize / 4 * 1.5
                 },
                 "sliding": {
                     "onThingAdded": FullScreenMario.FullScreenMario.prototype.spawnMoveSliding,
                     "movement": FullScreenMario.FullScreenMario.prototype.moveSliding,
-                    "xvel": FullScreenMario.unitsize / 4 * 1.5
+                    "xvel": FullScreenMario.FullScreenMario.unitsize / 4 * 1.5
                 },
                 "transport": {
                     "movement": undefined,
