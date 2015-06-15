@@ -1026,7 +1026,7 @@ var AudioPlayr;
                         break;
                 }
             }
-            this.addEventListener(prefix, "ended", this.playTheme.bind(self, prefix + " " + name, loop));
+            this.addEventListener(prefix, "ended", this.playTheme.bind(this, prefix + " " + name, loop));
             return sound;
         };
         /* Public utilities
@@ -13987,6 +13987,8 @@ var UserWrappr;
             this.globalName = settings.globalName;
             this.importSizes(settings.sizes);
             this.gameNameAlias = this.helpSettings.globalNameAlias || "{%%%%GAME%%%%}";
+            this.gameElementSelector = settings.gameElementSelector || "#game";
+            this.gameControlsSelector = settings.gameControlsSelector || "#controls";
             this.log = settings.log || console.log.bind(console);
             this.isFullScreen = false;
             this.setCurrentSize(this.sizes[settings.sizeDefault]);
@@ -14043,7 +14045,7 @@ var UserWrappr;
             window[settings.globalName || "GameStarter"] = this.GameStarter;
             this.GameStarter.UserWrapper = this;
             this.loadGenerators();
-            this.loadControls(settings);
+            this.loadControls(settings.schemas);
             if (settings.styleSheet) {
                 this.GameStarter.addPageStyles(settings.styleSheet);
             }
@@ -14198,13 +14200,15 @@ var UserWrappr;
         /* Help dialog
         */
         /**
-         *
+         * Displays the root help menu dialog, which contains all the openings
+         * for each help settings opening.
          */
         UserWrappr.prototype.displayHelpMenu = function () {
             this.helpSettings.openings.forEach(this.logHelpText.bind(this));
         };
         /**
-         *
+         * Displays the texts of each help settings options, all surrounded by
+         * instructions on how to focus on a group.
          */
         UserWrappr.prototype.displayHelpOptions = function () {
             this.logHelpText("To focus on a group, enter `" + this.globalName + ".UserWrapper.displayHelpOption(\"<group-name>\");`");
@@ -14212,7 +14216,9 @@ var UserWrappr;
             this.logHelpText("\nTo focus on a group, enter `" + this.globalName + ".UserWrapper.displayHelpOption(\"<group-name>\");`");
         };
         /**
+         * Displays the summary for a help group of the given optionName.
          *
+         * @param {String} optionName   The help group to display the summary of.
          */
         UserWrappr.prototype.displayHelpGroupSummary = function (optionName) {
             var actions = this.helpSettings.options[optionName], action, maxTitleLength = 0, i;
@@ -14226,7 +14232,9 @@ var UserWrappr;
             }
         };
         /**
+         * Displays the full information on a help group of the given optionName.
          *
+         * @param {String} optionName   The help group to display the information of.
          */
         UserWrappr.prototype.displayHelpOption = function (optionName) {
             var actions = this.helpSettings.options[optionName], action, example, maxExampleLength, i, j;
@@ -14251,19 +14259,26 @@ var UserWrappr;
             }
         };
         /**
+         * Logs a bit of help text, filtered by this.filterHelpText.
          *
+         * @param {String} text   The text to be filtered and logged.
          */
         UserWrappr.prototype.logHelpText = function (text) {
             this.log(this.filterHelpText(text));
         };
         /**
-         *
+         * @param {String} text
+         * @return {String} The text, with gamenameAlias replaced by globalName.
          */
         UserWrappr.prototype.filterHelpText = function (text) {
             return text.replace(new RegExp(this.gameNameAlias, "g"), this.globalName);
         };
         /**
+         * Ensures a bit of text is of least a certain length.
          *
+         * @param {String} text   The text to pad.
+         * @param {Number} length   How wide the text must be, at minimum.
+         * @return {String} The text with spaces padded to the right.
          */
         UserWrappr.prototype.padTextRight = function (text, length) {
             var diff = 1 + length - text.length;
@@ -14272,47 +14287,14 @@ var UserWrappr;
             }
             return text + Array.call(Array, diff).join(" ");
         };
-        /* Page visibility
+        /* Settings parsing
         */
         /**
+         * Sets the internal this.sizes as a copy of the given sizes, but with
+         * names as members of every size summary.
          *
+         * @param {Object} sizes   The listing of preset sizes to go by.
          */
-        UserWrappr.prototype.resetPageVisibilityHandlers = function () {
-            document.addEventListener("visibilitychange", this.handleVisibilityChange.bind(this));
-        };
-        /**
-         *
-         */
-        UserWrappr.prototype.handleVisibilityChange = function (event) {
-            switch (document.visibilityState) {
-                case "hidden":
-                    this.onPageHidden();
-                    return;
-                case "visible":
-                    this.onPageVisible();
-                    return;
-                default:
-                    return;
-            }
-        };
-        /**
-         *
-         */
-        UserWrappr.prototype.onPageHidden = function () {
-            if (!this.GameStarter.GamesRunner.getPaused()) {
-                this.isPageHidden = true;
-                this.GameStarter.GamesRunner.pause();
-            }
-        };
-        /**
-         *
-         */
-        UserWrappr.prototype.onPageVisible = function () {
-            if (this.isPageHidden) {
-                this.isPageHidden = false;
-                this.GameStarter.GamesRunner.play();
-            }
-        };
         UserWrappr.prototype.importSizes = function (sizes) {
             var i;
             this.sizes = this.GameStartrConstructor.prototype.proliferate({}, sizes);
@@ -14321,77 +14303,6 @@ var UserWrappr;
                     this.sizes[i].name = this.sizes[i].name || i;
                 }
             }
-        };
-        /* Control section loaders
-        */
-        /**
-         *
-         */
-        UserWrappr.prototype.loadGameStarter = function (customs) {
-            var section = document.getElementById("game");
-            if (this.GameStarter) {
-                this.GameStarter.GamesRunner.pause();
-            }
-            this.GameStarter = new this.GameStartrConstructor(customs);
-            section.textContent = "";
-            section.appendChild(this.GameStarter.container);
-            this.GameStarter.proliferate(document.body, {
-                "onkeydown": this.GameStarter.InputWriter.makePipe("onkeydown", "keyCode"),
-                "onkeyup": this.GameStarter.InputWriter.makePipe("onkeyup", "keyCode")
-            });
-            this.GameStarter.proliferate(section, {
-                "onmousedown": this.GameStarter.InputWriter.makePipe("onmousedown", "which"),
-                "oncontextmenu": this.GameStarter.InputWriter.makePipe("oncontextmenu", null, true)
-            });
-        };
-        /**
-         *
-         */
-        UserWrappr.prototype.loadGenerators = function () {
-            this.generators = {
-                OptionsButtons: new UISchemas.OptionsButtonsGenerator(this),
-                OptionsTable: new UISchemas.OptionsTableGenerator(this),
-                LevelEditor: new UISchemas.LevelEditorGenerator(this),
-                MapsGrid: new UISchemas.MapsGridGenerator(this)
-            };
-        };
-        /**
-         *
-         */
-        UserWrappr.prototype.loadControls = function (settings) {
-            var section = document.getElementById("controls"), schemas = settings.schemas, length = schemas.length, i;
-            this.StatsHolder = new StatsHoldr.StatsHoldr({
-                "prefix": this.globalName + "::UserWrapper::StatsHolder",
-                "proliferate": this.GameStarter.proliferate,
-                "createElement": this.GameStarter.createElement
-            });
-            section.textContent = "";
-            section.className = "length-" + length;
-            for (i = 0; i < length; i += 1) {
-                section.appendChild(this.loadControlDiv(schemas[i]));
-            }
-        };
-        /**
-         *
-         */
-        UserWrappr.prototype.loadControlDiv = function (schema) {
-            var control = document.createElement("div"), heading = document.createElement("h4"), inner = document.createElement("div");
-            control.className = "control";
-            control.id = "control-" + schema.title;
-            heading.textContent = schema.title;
-            inner.className = "control-inner";
-            inner.appendChild(this.generators[schema.generator].generate(schema));
-            control.appendChild(heading);
-            control.appendChild(inner);
-            // Touch events often propogate to children before the control div has
-            // been fully extended. Setting the "active" attribute fixes that.
-            control.onmouseover = setTimeout.bind(undefined, function () {
-                control.setAttribute("active", "on");
-            }, 35);
-            control.onmouseout = function () {
-                control.setAttribute("active", "off");
-            };
-            return control;
         };
         /**
          *
@@ -14419,13 +14330,139 @@ var UserWrappr;
             }
             return customs;
         };
+        /* Page visibility
+        */
+        /**
+         * Adds a "visibilitychange" handler to the document bound to
+         * this.handleVisibilityChange.
+         */
+        UserWrappr.prototype.resetPageVisibilityHandlers = function () {
+            document.addEventListener("visibilitychange", this.handleVisibilityChange.bind(this));
+        };
+        /**
+         * Handles a visibility change event by calling either this.onPageHidden
+         * or this.onPageVisible.
+         *
+         * @param {Event} event
+         */
+        UserWrappr.prototype.handleVisibilityChange = function (event) {
+            switch (document.visibilityState) {
+                case "hidden":
+                    this.onPageHidden();
+                    return;
+                case "visible":
+                    this.onPageVisible();
+                    return;
+                default:
+                    return;
+            }
+        };
+        /**
+         * Reacts to the page becoming hidden by pausing the GameStartr.
+         */
+        UserWrappr.prototype.onPageHidden = function () {
+            if (!this.GameStarter.GamesRunner.getPaused()) {
+                this.isPageHidden = true;
+                this.GameStarter.GamesRunner.pause();
+            }
+        };
+        /**
+         * Reacts to the page becoming visible by unpausing the GameStartr.
+         */
+        UserWrappr.prototype.onPageVisible = function () {
+            if (this.isPageHidden) {
+                this.isPageHidden = false;
+                this.GameStarter.GamesRunner.play();
+            }
+        };
+        /* Control section loaders
+        */
+        /**
+         * Loads the internal GameStarter, resetting it with the given customs
+         * and attaching handlers to document.body and the holder elements.
+         *
+         * @param {Object} customs   Custom arguments to pass to this.GameStarter.
+         */
+        UserWrappr.prototype.loadGameStarter = function (customs) {
+            var section = document.querySelector(this.gameElementSelector);
+            if (this.GameStarter) {
+                this.GameStarter.GamesRunner.pause();
+            }
+            this.GameStarter = new this.GameStartrConstructor(customs);
+            section.textContent = "";
+            section.appendChild(this.GameStarter.container);
+            this.GameStarter.proliferate(document.body, {
+                "onkeydown": this.GameStarter.InputWriter.makePipe("onkeydown", "keyCode"),
+                "onkeyup": this.GameStarter.InputWriter.makePipe("onkeyup", "keyCode")
+            });
+            this.GameStarter.proliferate(section, {
+                "onmousedown": this.GameStarter.InputWriter.makePipe("onmousedown", "which"),
+                "oncontextmenu": this.GameStarter.InputWriter.makePipe("oncontextmenu", null, true)
+            });
+        };
+        /**
+         * Loads the internal OptionsGenerator instances under this.generators.
+         */
+        UserWrappr.prototype.loadGenerators = function () {
+            this.generators = {
+                OptionsButtons: new UISchemas.OptionsButtonsGenerator(this),
+                OptionsTable: new UISchemas.OptionsTableGenerator(this),
+                LevelEditor: new UISchemas.LevelEditorGenerator(this),
+                MapsGrid: new UISchemas.MapsGridGenerator(this)
+            };
+        };
+        /**
+         * Loads the externally facing UI controls and the internal StatsHolder,
+         * appending the controls to the controls HTML element.
+         *
+         * @param {Object[]} schemas   The schemas each a UI control to be made.
+         */
+        UserWrappr.prototype.loadControls = function (schemas) {
+            var section = document.querySelector(this.gameControlsSelector), length = schemas.length, i;
+            this.StatsHolder = new StatsHoldr.StatsHoldr({
+                "prefix": this.globalName + "::UserWrapper::StatsHolder",
+                "proliferate": this.GameStarter.proliferate,
+                "createElement": this.GameStarter.createElement
+            });
+            section.textContent = "";
+            section.className = "length-" + length;
+            for (i = 0; i < length; i += 1) {
+                section.appendChild(this.loadControlDiv(schemas[i]));
+            }
+        };
+        /**
+         * Creates an individual UI control element based on a UI schema.
+         *
+         * @param {Object} schema
+         * @return {HTMLDivElement}
+         */
+        UserWrappr.prototype.loadControlDiv = function (schema) {
+            var control = document.createElement("div"), heading = document.createElement("h4"), inner = document.createElement("div");
+            control.className = "control";
+            control.id = "control-" + schema.title;
+            heading.textContent = schema.title;
+            inner.className = "control-inner";
+            inner.appendChild(this.generators[schema.generator].generate(schema));
+            control.appendChild(heading);
+            control.appendChild(inner);
+            // Touch events often propogate to children before the control div has
+            // been fully extended. Setting the "active" attribute fixes that.
+            control.onmouseover = setTimeout.bind(undefined, function () {
+                control.setAttribute("active", "on");
+            }, 35);
+            control.onmouseout = function () {
+                control.setAttribute("active", "off");
+            };
+            return control;
+        };
         return UserWrappr;
     })();
     _UserWrappr.UserWrappr = UserWrappr;
     var UISchemas;
     (function (UISchemas) {
         /**
-         *
+         * Base class for options generators. These all store a UserWrapper and
+         * its GameStartr, along with a generate Function
          */
         var AbstractOptionsGenerator = (function () {
             /**
@@ -14436,7 +14473,17 @@ var UserWrappr;
                 this.GameStarter = this.UserWrapper.getGameStarter();
             }
             /**
+             * Generates a control element based on the provided schema.
+             */
+            AbstractOptionsGenerator.prototype.generate = function (schema) {
+                throw new Error("AbstractOptionsGenerator is abstract. Subclass it.");
+            };
+            /**
+             * Recursively searches for an element with the "control" class
+             * that's a parent of the given element.
              *
+             * @param {HTMLElement} element
+             * @return {HTMLElement}
              */
             AbstractOptionsGenerator.prototype.getParentControlDiv = function (element) {
                 if (element.className === "control") {
@@ -14448,7 +14495,15 @@ var UserWrappr;
                 return this.getParentControlDiv(element.parentElement);
             };
             /**
+             * Ensures a child's required local storage value is being stored,
+             * and adds it to the internal GameStarter.StatsHolder if not. If it
+             * is, and the child's value isn't equal to it, the value is set.
              *
+             * @param {Mixed} childRaw   An input or select element, or an Array
+             *                           thereof.
+             * @param {Object} details   Details containing the title of the item
+             *                           and the source Function to get its value.
+             * @param {Object} schema   The container schema this child is within.
              */
             AbstractOptionsGenerator.prototype.ensureLocalStorageValue = function (childRaw, details, schema) {
                 if (childRaw.constructor === Array) {
@@ -14476,7 +14531,13 @@ var UserWrappr;
                 }
             };
             /**
+             * The equivalent of ensureLocalStorageValue for an entire set of
+             * elements, running the equivalent logic on all of them.
              *
+             * @param {Mixed} childRaw   An Array of input or select elements.
+             * @param {Object} details   Details containing the title of the item
+             *                           and the source Function to get its value.
+             * @param {Object} schema   The container schema this child is within.
              */
             AbstractOptionsGenerator.prototype.ensureLocalStorageValues = function (children, details, schema) {
                 var keyGeneral = schema.title + "::" + details.title, values = details.source.call(this, this.GameStarter), key, value, child, i;
@@ -14501,7 +14562,11 @@ var UserWrappr;
                 }
             };
             /**
+             * Stores an element's value in the internal GameStarter.StatsHolder,
+             * if it has the "localStorageKey" attribute.
              *
+             * @param {HTMLElement} child   An element with a value to store.
+             * @param {Mixed} value   What value is to be stored under the key.
              */
             AbstractOptionsGenerator.prototype.storeLocalStorageValue = function (child, value) {
                 var key = child.getAttribute("localStorageKey");
@@ -14513,7 +14578,8 @@ var UserWrappr;
         })();
         UISchemas.AbstractOptionsGenerator = AbstractOptionsGenerator;
         /**
-         *
+         * A buttons generator for an options section that contains any number
+         * of general buttons.
          */
         var OptionsButtonsGenerator = (function (_super) {
             __extends(OptionsButtonsGenerator, _super);
@@ -14561,7 +14627,7 @@ var UserWrappr;
         })(AbstractOptionsGenerator);
         UISchemas.OptionsButtonsGenerator = OptionsButtonsGenerator;
         /**
-         *
+         * An options generator for a table of options,.
          */
         var OptionsTableGenerator = (function (_super) {
             __extends(OptionsTableGenerator, _super);
@@ -14715,7 +14781,7 @@ var UserWrappr;
         })(AbstractOptionsGenerator);
         UISchemas.OptionsTableGenerator = OptionsTableGenerator;
         /**
-         *
+         * Options generator for a LevelEditr dialog.
          */
         var LevelEditorGenerator = (function (_super) {
             __extends(LevelEditorGenerator, _super);
@@ -14800,7 +14866,7 @@ var UserWrappr;
         })(AbstractOptionsGenerator);
         UISchemas.LevelEditorGenerator = LevelEditorGenerator;
         /**
-         *
+         * Options generator for a grid of maps, along with other options.
          */
         var MapsGridGenerator = (function (_super) {
             __extends(MapsGridGenerator, _super);
