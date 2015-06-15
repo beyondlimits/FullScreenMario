@@ -12,7 +12,7 @@ FullScreenMario.prototype.settings.ui = {
                     "url('Fonts/pressstart2p-webfont.woff') format('woff')",
                     "url('Fonts/pressstart2p-webfont.ttf') format('truetype')",
                     "url('Fonts/pressstart2p-webfont.svg') format('svg')"
-                ].join(", "),
+            ].join(", "),
             "font-weight": "normal",
             "font-style": "normal"
         }
@@ -23,7 +23,7 @@ FullScreenMario.prototype.settings.ui = {
             "Hi, thanks for playing FullScreenMario! It looks like you're using the console.",
             "There's not really any way to stop you from messing around so if you'd like to know the common cheats, enter `{%%%%GAME%%%%}.UserWrapper.displayHelpOptions()` here.",
             "If you'd like, go ahead and look around the source code. There are a few surprises you might have fun with... ;)",
-            "http://www.github.com/DiogenesTheCynic/FullScreenMario-JSON"
+            "http://www.github.com/FullScreenShenanigans/FullScreenMario"
         ],
         "options": {
             "Map": [{
@@ -126,7 +126,7 @@ FullScreenMario.prototype.settings.ui = {
                 "usage": "{%%%%GAME%%%%}.playerStar({%%%%GAME%%%%}.player)"
             }],
             "Statistics": [{
-                    "title": "{%%%%GAME%%%%}.StatsHolder.set('coins')",
+                "title": "{%%%%GAME%%%%}.StatsHolder.set('coins')",
                 "description": "Sets the number of coins you have.",
                 "usage": "{%%%%GAME%%%%}.StatsHolder.set('coins', <number>);",
                 "examples": [{
@@ -326,26 +326,26 @@ FullScreenMario.prototype.settings.ui = {
                             .reverse()
                             .join('');
                     };
-                    
+
                     var getNewSeed = function () {
                         return shuffle(String(new Date().getTime()));
                     };
-                    
+
                     return {
                         "title": "Map Generator!",
                         "callback": function (GameStarter, schema, button, event) {
                             var parent = event.target.parentNode,
                                 randomizer = parent.querySelector(".randomInput");
-                                
+
                             randomizer.value = randomizer.value.replace(/[^\d]/g, '');
                             if (!randomizer.value) {
                                 randomizer.value = getNewSeed();
                             }
-                            
+
                             GameStarter.LevelEditor.disable();
                             GameStarter.NumberMaker.resetFromSeed(randomizer.value);
                             GameStarter.setMap("Random");
-                            
+
                             if (!randomizer.getAttribute("custom")) {
                                 randomizer.value = getNewSeed();
                             }

@@ -58,10 +58,7 @@ FullScreenMario.prototype.settings.mods = {
                     area.setBackground(area);
                     
                     this.PixelDrawer.setBackground(area.background);
-                    this.GroupHolder.callOnAll(
-                        undefined,
-                        this.PixelDrawer.setThingSprite
-                    );
+                    this.GroupHolder.callOnAll(this, this.PixelDrawer.setThingSprite.bind(this.PixelDrawer));
                     
                     this.ModAttacher.fireEvent(
                         "onSetLocation",
@@ -75,10 +72,7 @@ FullScreenMario.prototype.settings.mods = {
                     area.setBackground(area);
                     
                     this.PixelDrawer.setBackground(area.background);
-                    this.GroupHolder.callOnAll(
-                        undefined,
-                        this.PixelDrawer.setThingSprite
-                    );
+                    this.GroupHolder.callOnAll(this, this.PixelDrawer.setThingSprite.bind(this.PixelDrawer));
                     
                     this.ModAttacher.fireEvent(
                         "onSetLocation",

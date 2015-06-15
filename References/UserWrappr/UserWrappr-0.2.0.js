@@ -734,13 +734,11 @@ var AudioPlayr;
          * @param {Number} volume   A Number in [0,1] to set as the current volume.
          */
         AudioPlayr.prototype.setVolume = function (volume) {
-            console.log("Setting volume to", volume);
             var i;
             if (!this.getMuted()) {
                 for (i in this.sounds) {
                     if (this.sounds.hasOwnProperty(i)) {
                         this.sounds[i].volume = Number(this.sounds[i].getAttribute("volumeReal")) * volume;
-                        console.log("    ", i, "has volume", this.sounds[i].volume, "(from", this.sounds[i].getAttribute("volumeReal"), ")");
                     }
                 }
             }
@@ -13958,7 +13956,8 @@ var UserWrappr;
 (function (_UserWrappr) {
     "use strict";
     /**
-     *
+     * A user interface manager made to work on top of GameStartr implementations
+     * and provide a configurable HTML display of options.
      */
     var UserWrappr = (function () {
         /**
@@ -13983,13 +13982,14 @@ var UserWrappr;
             }).bind(document);
             this.customs = settings.customs || {};
             this.GameStartrConstructor = settings.GameStartrConstructor;
-            this.helpSettings = settings.helpSettings;
+            this.settings = settings;
+            this.helpSettings = this.settings.helpSettings;
             this.globalName = settings.globalName;
-            this.sizes = settings.sizes;
+            this.importSizes(settings.sizes);
             this.gameNameAlias = this.helpSettings.globalNameAlias || "{%%%%GAME%%%%}";
-            this.currentSize = this.sizes[settings.sizeDefault];
             this.log = settings.log || console.log.bind(console);
             this.isFullScreen = false;
+            this.setCurrentSize(this.sizes[settings.sizeDefault]);
             this.allPossibleKeys = settings.allPossibleKeys || [
                 "a",
                 "b",
@@ -14031,23 +14031,21 @@ var UserWrappr;
         }
         /**
          * Resets the internal GameStarter by storing it under window, adding
-         * InputWritr pipes for input to the page, and setting additional CSS
-         * styles and page visiblity.
+         * InputWritr pipes for input to the page, creating the HTML buttons,
+         * and setting additional CSS styles and page visiblity.
          *
          * @param {IUserWrapprSettings} settings
          * @param {GameStartr.IGameStartrCustoms} customs
          */
         UserWrappr.prototype.resetGameStarter = function (settings, customs) {
             if (customs === void 0) { customs = {}; }
-            var interfaceSettings;
             this.loadGameStarter(this.fixCustoms(customs || {}));
             window[settings.globalName || "GameStarter"] = this.GameStarter;
             this.GameStarter.UserWrapper = this;
             this.loadGenerators();
             this.loadControls(settings);
-            interfaceSettings = this.GameStarter.settings["ui"];
-            if (interfaceSettings.styleSheet) {
-                this.GameStarter.addPageStyles(interfaceSettings.styleSheet);
+            if (settings.styleSheet) {
+                this.GameStarter.addPageStyles(settings.styleSheet);
             }
             this.resetPageVisibilityHandlers();
             this.GameStarter.gameStart();
@@ -14055,109 +14053,112 @@ var UserWrappr;
         /* Simple gets
         */
         /**
-         *
+         * @return {IGameStartrConstructor} The GameStartr implementation this
+         *                                  is wrapping around.
          */
         UserWrappr.prototype.getGameStartrConstructor = function () {
             return this.GameStartrConstructor;
         };
         /**
-         *
+         * @return {GameStartr} The GameStartr instance created by GameStartrConstructor
+         *                      and stored under window.
          */
         UserWrappr.prototype.getGameStarter = function () {
             return this.GameStarter;
         };
         /**
-         *
+         * @return {StatsHoldr} The StatsHoldr used to store UI settings.
          */
         UserWrappr.prototype.getStatsHolder = function () {
             return this.StatsHolder;
         };
         /**
-         *
+         * @return {Object} The settings used to construct this UserWrappr.
          */
         UserWrappr.prototype.getSettings = function () {
             return this.settings;
         };
         /**
-         *
+         * @return {Object} The customs used to construct the GameStartr.
          */
         UserWrappr.prototype.getCustoms = function () {
             return this.customs;
         };
         /**
-         *
+         * @return {Object} The help settings from settings.helpSettings.
          */
         UserWrappr.prototype.getHelpSettings = function () {
             return this.helpSettings;
         };
         /**
-         *
+         * @return {String} What the global object is called, such as "window".
          */
         UserWrappr.prototype.getGlobalName = function () {
             return this.globalName;
         };
         /**
-         *
+         * @return {String} What to replace with the name of the game in help
+         *                  text settings.
          */
         UserWrappr.prototype.getGameNameAlias = function () {
             return this.gameNameAlias;
         };
         /**
-         *
+         * @return {String} All the keys the user is allowed to pick from.
          */
         UserWrappr.prototype.getAllPossibleKeys = function () {
             return this.allPossibleKeys;
         };
         /**
-         *
+         * @return {Object} The allowed sizes for the game.
          */
         UserWrappr.prototype.getSizes = function () {
             return this.sizes;
         };
         /**
-         *
+         * @return {Object} The currently selected size for the game.
          */
         UserWrappr.prototype.getCurrentSize = function () {
             return this.currentSize;
         };
         /**
-         *
+         * @return {Boolean} Whether the game is currently in full screen mode.
          */
         UserWrappr.prototype.getIsFullScreen = function () {
             return this.isFullScreen;
         };
         /**
-         *
+         * @return {Boolean} Whether the page is currently known to be hidden.
          */
         UserWrappr.prototype.getIsPageHidden = function () {
             return this.isPageHidden;
         };
         /**
-         *
+         * @return {Function} A utility Function to log messages, commonly console.log.
          */
         UserWrappr.prototype.getLog = function () {
             return this.log;
         };
         /**
-         *
-         */
-        UserWrappr.prototype.getDocumentElement = function () {
-            return this.documentElement;
-        };
-        /**
-         *
+         * @return {Object} Generators used to generate HTML controls for the user.
          */
         UserWrappr.prototype.getGenerators = function () {
             return this.generators;
         };
         /**
-         *
+         * @return {HTMLHtmlElement} The document element that contains the game.
+         */
+        UserWrappr.prototype.getDocumentElement = function () {
+            return this.documentElement;
+        };
+        /**
+         * @return {Function} The method to request to enter full screen mode.
          */
         UserWrappr.prototype.getRequestFullScreen = function () {
             return this.requestFullScreen;
         };
         /**
-         *
+         * @return {Function} The method to request to exit full screen mode.
          */
         UserWrappr.prototype.getCancelFullScreen = function () {
             return this.cancelFullScreen;
@@ -14165,7 +14166,12 @@ var UserWrappr;
         /* Externally allowed sets
         */
         /**
+         * Sets the size of the GameStartr by resetting the game with the size
+         * information as part of its customs object. Full screen status is
+         * changed accordingly.
          *
+         * @param {Mixed} The size to set, as a String to retrieve the size from
+         *                known info, or a container of settings.
          */
         UserWrappr.prototype.setCurrentSize = function (size) {
             if (typeof size === "string" || size.constructor === String) {
@@ -14183,46 +14189,10 @@ var UserWrappr;
                 this.cancelFullScreen();
                 this.isFullScreen = false;
             }
-            this.GameStarter.container.parentNode.removeChild(this.GameStarter.container);
-            this.resetGameStarter(this.settings, this.customs);
-        };
-        /* Page visibility
-        */
-        /**
-         *
-         */
-        UserWrappr.prototype.resetPageVisibilityHandlers = function () {
-            document.addEventListener("visibilitychange", this.handleVisibilityChange.bind(this));
-        };
-        /**
-         *
-         */
-        UserWrappr.prototype.handleVisibilityChange = function (event) {
-            switch (document.visibilityState) {
-                case "hidden":
-                    this.onPageHidden();
-                    return;
-                case "visible":
-                    this.onPageVisible();
-                    return;
-            }
-        };
-        /**
-         *
-         */
-        UserWrappr.prototype.onPageHidden = function () {
-            if (!this.GameStarter.GamesRunner.getPaused()) {
-                this.isPageHidden = true;
-                this.GameStarter.GamesRunner.pause();
-            }
-        };
-        /**
-         *
-         */
-        UserWrappr.prototype.onPageVisible = function () {
-            if (this.isPageHidden) {
-                this.isPageHidden = false;
-                this.GameStarter.GamesRunner.play();
+            this.currentSize = size;
+            if (this.GameStarter) {
+                this.GameStarter.container.parentNode.removeChild(this.GameStarter.container);
+                this.resetGameStarter(this.settings, this.customs);
             }
         };
         /* Help dialog
@@ -14237,15 +14207,15 @@ var UserWrappr;
          *
          */
         UserWrappr.prototype.displayHelpOptions = function () {
-            this.logHelpText("To focus on a group, enter `" + this.globalName + ".UserWrapper.displayHelpOption(<group-name>);`");
+            this.logHelpText("To focus on a group, enter `" + this.globalName + ".UserWrapper.displayHelpOption(\"<group-name>\");`");
             Object.keys(this.helpSettings.options).forEach(this.displayHelpGroupSummary.bind(this));
-            this.logHelpText("\nTo focus on a group, enter `" + this.globalName + ".UserWrapper.displayHelpOption(<group-name>);`");
+            this.logHelpText("\nTo focus on a group, enter `" + this.globalName + ".UserWrapper.displayHelpOption(\"<group-name>\");`");
         };
         /**
          *
          */
         UserWrappr.prototype.displayHelpGroupSummary = function (optionName) {
-            var actions = this.helpSettings.options[optionName], strings = [], maxTitleLength = 0, action, i;
+            var actions = this.helpSettings.options[optionName], action, maxTitleLength = 0, i;
             this.log("\n" + optionName);
             for (i = 0; i < actions.length; i += 1) {
                 maxTitleLength = Math.max(maxTitleLength, this.filterHelpText(actions[i].title).length);
@@ -14259,18 +14229,23 @@ var UserWrappr;
          *
          */
         UserWrappr.prototype.displayHelpOption = function (optionName) {
-            var actions = this.helpSettings.options[optionName], action, maxExampleLength, example, i, j;
+            var actions = this.helpSettings.options[optionName], action, example, maxExampleLength, i, j;
             for (i = 0; i < actions.length; i += 1) {
                 action = actions[i];
                 maxExampleLength = 0;
-                this.logHelpText(action.title);
-                for (j = 0; j < action.examples.length; j += 1) {
-                    example = action.examples[j];
-                    maxExampleLength = Math.max(maxExampleLength, this.filterHelpText("    " + example.code).length);
+                this.logHelpText(action.title + " -- " + action.description);
+                if (action.usage) {
+                    this.logHelpText(action.usage);
                 }
-                for (j = 0; j < action.examples.length; j += 1) {
-                    example = action.examples[j];
-                    this.logHelpText(this.padTextRight(this.filterHelpText("    " + example.code), maxExampleLength) + "  // " + example.comment);
+                if (action.examples) {
+                    for (j = 0; j < action.examples.length; j += 1) {
+                        example = action.examples[j];
+                        maxExampleLength = Math.max(maxExampleLength, this.filterHelpText("    " + example.code).length);
+                    }
+                    for (j = 0; j < action.examples.length; j += 1) {
+                        example = action.examples[j];
+                        this.logHelpText(this.padTextRight(this.filterHelpText("    " + example.code), maxExampleLength) + "  // " + example.comment);
+                    }
                 }
                 this.log("\n");
             }
@@ -14297,6 +14272,56 @@ var UserWrappr;
             }
             return text + Array.call(Array, diff).join(" ");
         };
+        /* Page visibility
+        */
+        /**
+         *
+         */
+        UserWrappr.prototype.resetPageVisibilityHandlers = function () {
+            document.addEventListener("visibilitychange", this.handleVisibilityChange.bind(this));
+        };
+        /**
+         *
+         */
+        UserWrappr.prototype.handleVisibilityChange = function (event) {
+            switch (document.visibilityState) {
+                case "hidden":
+                    this.onPageHidden();
+                    return;
+                case "visible":
+                    this.onPageVisible();
+                    return;
+                default:
+                    return;
+            }
+        };
+        /**
+         *
+         */
+        UserWrappr.prototype.onPageHidden = function () {
+            if (!this.GameStarter.GamesRunner.getPaused()) {
+                this.isPageHidden = true;
+                this.GameStarter.GamesRunner.pause();
+            }
+        };
+        /**
+         *
+         */
+        UserWrappr.prototype.onPageVisible = function () {
+            if (this.isPageHidden) {
+                this.isPageHidden = false;
+                this.GameStarter.GamesRunner.play();
+            }
+        };
+        UserWrappr.prototype.importSizes = function (sizes) {
+            var i;
+            this.sizes = this.GameStartrConstructor.prototype.proliferate({}, sizes);
+            for (i in this.sizes) {
+                if (this.sizes.hasOwnProperty(i)) {
+                    this.sizes[i].name = this.sizes[i].name || i;
+                }
+            }
+        };
         /* Control section loaders
         */
         /**
@@ -14304,10 +14329,12 @@ var UserWrappr;
          */
         UserWrappr.prototype.loadGameStarter = function (customs) {
             var section = document.getElementById("game");
+            if (this.GameStarter) {
+                this.GameStarter.GamesRunner.pause();
+            }
             this.GameStarter = new this.GameStartrConstructor(customs);
             section.textContent = "";
             section.appendChild(this.GameStarter.container);
-            // @todo Should everything go onto the section (not document.body)?
             this.GameStarter.proliferate(document.body, {
                 "onkeydown": this.GameStarter.InputWriter.makePipe("onkeydown", "keyCode"),
                 "onkeyup": this.GameStarter.InputWriter.makePipe("onkeyup", "keyCode")
@@ -14322,10 +14349,10 @@ var UserWrappr;
          */
         UserWrappr.prototype.loadGenerators = function () {
             this.generators = {
-                OptionsButtons: new OptionsButtonsGenerator(this),
-                OptionsTable: new OptionsTableGenerator(this),
-                LevelEditor: new LevelEditorGenerator(this),
-                MapsGrid: new MapsGridGenerator(this)
+                OptionsButtons: new UISchemas.OptionsButtonsGenerator(this),
+                OptionsTable: new UISchemas.OptionsTableGenerator(this),
+                LevelEditor: new UISchemas.LevelEditorGenerator(this),
+                MapsGrid: new UISchemas.MapsGridGenerator(this)
             };
         };
         /**
@@ -14371,6 +14398,7 @@ var UserWrappr;
          */
         UserWrappr.prototype.fixCustoms = function (customsRaw) {
             var customs = this.GameStartrConstructor.prototype.proliferate({}, customsRaw);
+            this.GameStartrConstructor.prototype.proliferate(customs, this.currentSize);
             if (!isFinite(customs.width)) {
                 customs.width = document.body.clientWidth;
             }
@@ -14394,428 +14422,444 @@ var UserWrappr;
         return UserWrappr;
     })();
     _UserWrappr.UserWrappr = UserWrappr;
-    /**
-     *
-     */
-    var AbstractOptionsGenerator = (function () {
-        function AbstractOptionsGenerator(UserWrapper) {
-            this.UserWrapper = UserWrapper;
-            this.GameStarter = this.UserWrapper.getGameStarter();
-        }
-        AbstractOptionsGenerator.prototype.getParentControlDiv = function (element) {
-            if (element.className === "control") {
-                return element;
-            }
-            else if (!element.parentNode) {
-                return undefined;
-            }
-            return this.getParentControlDiv(element.parentNode);
-        };
+    var UISchemas;
+    (function (UISchemas) {
         /**
          *
          */
-        AbstractOptionsGenerator.prototype.ensureLocalStorageValue = function (child, details, schema) {
-            if (child.constructor === Array) {
-                this.ensureLocalStorageValues(child, details, schema);
-                return;
+        var AbstractOptionsGenerator = (function () {
+            /**
+             * @param {UserWrappr} UserWrappr
+             */
+            function AbstractOptionsGenerator(UserWrapper) {
+                this.UserWrapper = UserWrapper;
+                this.GameStarter = this.UserWrapper.getGameStarter();
             }
-            var key = schema.title + "::" + details.title, valueDefault = details.source.call(this, this.GameStarter).toString(), value;
-            child.setAttribute("localStorageKey", key);
-            this.GameStarter.StatsHolder.addItem(key, {
-                "storeLocally": true,
-                "valueDefault": valueDefault
-            });
-            value = this.GameStarter.StatsHolder.getItem(key);
-            if (value !== "" && value !== child.value) {
-                child.value = value;
-                if (child.setValue) {
-                    child.setValue(value);
+            /**
+             *
+             */
+            AbstractOptionsGenerator.prototype.getParentControlDiv = function (element) {
+                if (element.className === "control") {
+                    return element;
                 }
-                else if (child.onchange) {
-                    child.onchange();
+                else if (!element.parentNode) {
+                    return undefined;
                 }
-                else if (child.onclick) {
-                    child.onclick();
+                return this.getParentControlDiv(element.parentElement);
+            };
+            /**
+             *
+             */
+            AbstractOptionsGenerator.prototype.ensureLocalStorageValue = function (childRaw, details, schema) {
+                if (childRaw.constructor === Array) {
+                    this.ensureLocalStorageValues(childRaw, details, schema);
+                    return;
                 }
-            }
-        };
-        /**
-         *
-         */
-        AbstractOptionsGenerator.prototype.ensureLocalStorageValues = function (children, details, schema) {
-            var keyGeneral = schema.title + "::" + details.title, values = details.source.call(this, this.GameStarter), settings = {
-                "storeLocally": true
-            }, key, child, value, i;
-            for (i = 0; i < children.length; i += 1) {
-                key = keyGeneral + "::" + i;
-                child = children[i];
+                var child = childRaw, key = schema.title + "::" + details.title, valueDefault = details.source.call(this, this.GameStarter).toString(), value;
                 child.setAttribute("localStorageKey", key);
                 this.GameStarter.StatsHolder.addItem(key, {
                     "storeLocally": true,
-                    "valueDefault": values[i]
+                    "valueDefault": valueDefault
                 });
                 value = this.GameStarter.StatsHolder.getItem(key);
                 if (value !== "" && value !== child.value) {
                     child.value = value;
-                    if (child.onchange) {
-                        child.onchange();
+                    if (child.setValue) {
+                        child.setValue(value);
+                    }
+                    else if (child.onchange) {
+                        child.onchange(undefined);
                     }
                     else if (child.onclick) {
-                        child.onclick();
+                        child.onclick(undefined);
                     }
                 }
-            }
-        };
+            };
+            /**
+             *
+             */
+            AbstractOptionsGenerator.prototype.ensureLocalStorageValues = function (children, details, schema) {
+                var keyGeneral = schema.title + "::" + details.title, values = details.source.call(this, this.GameStarter), key, value, child, i;
+                for (i = 0; i < children.length; i += 1) {
+                    key = keyGeneral + "::" + i;
+                    child = children[i];
+                    child.setAttribute("localStorageKey", key);
+                    this.GameStarter.StatsHolder.addItem(key, {
+                        "storeLocally": true,
+                        "valueDefault": values[i]
+                    });
+                    value = this.GameStarter.StatsHolder.getItem(key);
+                    if (value !== "" && value !== child.value) {
+                        child.value = value;
+                        if (child.onchange) {
+                            child.onchange(undefined);
+                        }
+                        else if (child.onclick) {
+                            child.onclick(undefined);
+                        }
+                    }
+                }
+            };
+            /**
+             *
+             */
+            AbstractOptionsGenerator.prototype.storeLocalStorageValue = function (child, value) {
+                var key = child.getAttribute("localStorageKey");
+                if (key) {
+                    this.GameStarter.StatsHolder.setItem(key, value);
+                }
+            };
+            return AbstractOptionsGenerator;
+        })();
+        UISchemas.AbstractOptionsGenerator = AbstractOptionsGenerator;
         /**
          *
          */
-        AbstractOptionsGenerator.prototype.storeLocalStorageValue = function (child, value) {
-            var key = child.getAttribute("localStorageKey");
-            if (key) {
-                this.GameStarter.StatsHolder.setItem(key, value);
+        var OptionsButtonsGenerator = (function (_super) {
+            __extends(OptionsButtonsGenerator, _super);
+            function OptionsButtonsGenerator() {
+                _super.apply(this, arguments);
             }
-        };
-        return AbstractOptionsGenerator;
-    })();
-    /**
-     *
-     */
-    var OptionsButtonsGenerator = (function (_super) {
-        __extends(OptionsButtonsGenerator, _super);
-        function OptionsButtonsGenerator() {
-            _super.apply(this, arguments);
-        }
-        OptionsButtonsGenerator.prototype.generate = function (schema) {
-            var output = document.createElement("div"), options = schema.options instanceof Function ? schema.options.call(self, this.GameStarter) : schema.options, optionKeys = Object.keys(options), keyActive = schema.keyActive || "active", classNameStart = "select-option options-button-option", scope = this, option, element, i;
-            output.className = "select-options select-options-buttons";
-            for (i = 0; i < optionKeys.length; i += 1) {
-                option = options[optionKeys[i]];
-                element = document.createElement("div");
-                element.className = classNameStart;
-                element.textContent = optionKeys[i];
-                element.onclick = function (schema, element) {
-                    if (scope.getParentControlDiv(element).getAttribute("active") !== "on") {
-                        return;
+            OptionsButtonsGenerator.prototype.generate = function (schema) {
+                var output = document.createElement("div"), options = schema.options instanceof Function ? schema.options.call(self, this.GameStarter) : schema.options, optionKeys = Object.keys(options), keyActive = schema.keyActive || "active", classNameStart = "select-option options-button-option", scope = this, option, element, i;
+                output.className = "select-options select-options-buttons";
+                for (i = 0; i < optionKeys.length; i += 1) {
+                    option = options[optionKeys[i]];
+                    element = document.createElement("div");
+                    element.className = classNameStart;
+                    element.textContent = optionKeys[i];
+                    element.onclick = function (schema, element) {
+                        if (scope.getParentControlDiv(element).getAttribute("active") !== "on") {
+                            return;
+                        }
+                        schema.callback.call(scope, scope.GameStarter, schema, element);
+                        if (element.getAttribute("option-enabled") === "true") {
+                            element.setAttribute("option-enabled", "0");
+                            element.className = classNameStart + " option-disabled";
+                        }
+                        else {
+                            element.setAttribute("option-enabled", "1");
+                            element.className = classNameStart + " option-enabled";
+                        }
+                    }.bind(undefined, schema, element);
+                    if (option[keyActive]) {
+                        element.className += " option-enabled";
+                        element.setAttribute("option-enabled", "1");
                     }
-                    schema.callback.call(scope, scope.GameStarter, schema, element);
-                    if (element.getAttribute("option-enabled") == "true") {
-                        element.setAttribute("option-enabled", false);
-                        element.className = classNameStart + " option-disabled";
+                    else if (schema.assumeInactive) {
+                        element.className += " option-disabled";
+                        element.setAttribute("option-enabled", "0");
                     }
                     else {
-                        element.setAttribute("option-enabled", true);
-                        element.className = classNameStart + " option-enabled";
+                        element.setAttribute("option-enabled", "1");
                     }
-                }.bind(undefined, schema, element);
-                if (option[keyActive]) {
-                    element.className += " option-enabled";
-                    element.setAttribute("option-enabled", true);
+                    output.appendChild(element);
                 }
-                else if (schema.assumeInactive) {
-                    element.className += " option-disabled";
-                    element.setAttribute("option-enabled", false);
-                }
-                else {
-                    element.setAttribute("option-enabled", true);
-                }
-                output.appendChild(element);
-            }
-            return output;
-        };
-        return OptionsButtonsGenerator;
-    })(AbstractOptionsGenerator);
-    /**
-     *
-     */
-    var OptionsTableGenerator = (function (_super) {
-        __extends(OptionsTableGenerator, _super);
-        function OptionsTableGenerator() {
-            _super.apply(this, arguments);
-            this.optionTypes = {
-                "Boolean": this.setBooleanInput,
-                "Keys": this.setKeyInput,
-                "Number": this.setNumberInput,
-                "Select": this.setSelectInput,
-                "ScreenSize": this.setScreenSizeInput
+                return output;
             };
-        }
-        OptionsTableGenerator.prototype.generate = function (schema) {
-            var output = document.createElement("div"), table = document.createElement("table"), details, row, label, input, child, i;
-            output.className = "select-options select-options-table";
-            if (schema.options) {
-                for (i = 0; i < schema.options.length; i += 1) {
-                    row = document.createElement("tr");
-                    label = document.createElement("td");
-                    input = document.createElement("td");
-                    details = schema.options[i], label.className = "options-label-" + details.type;
-                    label.textContent = details.title;
-                    input.className = "options-cell-" + details.type;
-                    row.appendChild(label);
-                    row.appendChild(input);
-                    child = this.optionTypes[schema.options[i].type].call(this, input, details, schema);
+            return OptionsButtonsGenerator;
+        })(AbstractOptionsGenerator);
+        UISchemas.OptionsButtonsGenerator = OptionsButtonsGenerator;
+        /**
+         *
+         */
+        var OptionsTableGenerator = (function (_super) {
+            __extends(OptionsTableGenerator, _super);
+            function OptionsTableGenerator() {
+                _super.apply(this, arguments);
+                this.optionTypes = {
+                    "Boolean": this.setBooleanInput,
+                    "Keys": this.setKeyInput,
+                    "Number": this.setNumberInput,
+                    "Select": this.setSelectInput,
+                    "ScreenSize": this.setScreenSizeInput
+                };
+            }
+            OptionsTableGenerator.prototype.generate = function (schema) {
+                var output = document.createElement("div"), table = document.createElement("table"), option, action, row, label, input, child, i;
+                output.className = "select-options select-options-table";
+                if (schema.options) {
+                    for (i = 0; i < schema.options.length; i += 1) {
+                        row = document.createElement("tr");
+                        label = document.createElement("td");
+                        input = document.createElement("td");
+                        option = schema.options[i];
+                        label.className = "options-label-" + option.type;
+                        label.textContent = option.title;
+                        input.className = "options-cell-" + option.type;
+                        row.appendChild(label);
+                        row.appendChild(input);
+                        child = this.optionTypes[schema.options[i].type].call(this, input, option, schema);
+                        if (option.storeLocally) {
+                            this.ensureLocalStorageValue(child, option, schema);
+                        }
+                        table.appendChild(row);
+                    }
+                }
+                output.appendChild(table);
+                if (schema.actions) {
+                    for (i = 0; i < schema.actions.length; i += 1) {
+                        row = document.createElement("div");
+                        action = schema.actions[i];
+                        row.className = "select-option options-button-option";
+                        row.textContent = action.title;
+                        row.onclick = action.action.bind(this, this.GameStarter);
+                        output.appendChild(row);
+                    }
+                }
+                return output;
+            };
+            OptionsTableGenerator.prototype.setBooleanInput = function (input, details, schema) {
+                var status = details.source.call(this, this.GameStarter), statusClass = status ? "enabled" : "disabled", scope = this;
+                input.className = "select-option options-button-option option-" + statusClass;
+                input.textContent = status ? "on" : "off";
+                input.onclick = function () {
+                    input.setValue(input.textContent === "off");
+                };
+                input.setValue = function (newStatus) {
+                    if (newStatus.constructor === String) {
+                        if (newStatus === "false" || newStatus === "off") {
+                            newStatus = false;
+                        }
+                        else if (newStatus === "true" || newStatus === "on") {
+                            newStatus = true;
+                        }
+                    }
+                    if (newStatus) {
+                        details.enable.call(scope, scope.GameStarter);
+                        input.textContent = "on";
+                        input.className = input.className.replace("disabled", "enabled");
+                    }
+                    else {
+                        details.disable.call(scope, scope.GameStarter);
+                        input.textContent = "off";
+                        input.className = input.className.replace("enabled", "disabled");
+                    }
                     if (details.storeLocally) {
-                        this.ensureLocalStorageValue(child, details, schema);
+                        scope.storeLocalStorageValue(input, newStatus.toString());
+                    }
+                };
+                return input;
+            };
+            OptionsTableGenerator.prototype.setKeyInput = function (input, details, schema) {
+                var values = details.source.call(this, this.GameStarter), children = [], child, scope = this, i, j;
+                for (i = 0; i < values.length; i += 1) {
+                    child = document.createElement("select");
+                    child.className = "options-key-option";
+                    for (j = 0; j < this.UserWrapper.getAllPossibleKeys().length; j += 1) {
+                        child.appendChild(new Option(this.UserWrapper.getAllPossibleKeys()[j]));
+                    }
+                    child.value = child.valueOld = values[i].toLowerCase();
+                    child.onchange = (function (child) {
+                        details.callback.call(scope, scope.GameStarter, child.valueOld, child.value);
+                        if (details.storeLocally) {
+                            scope.storeLocalStorageValue(child, child.value);
+                        }
+                    }).bind(undefined, child);
+                    children.push(child);
+                    input.appendChild(child);
+                }
+                return children;
+            };
+            OptionsTableGenerator.prototype.setNumberInput = function (input, details, schema) {
+                var child = document.createElement("input"), scope = this;
+                child.type = "number";
+                child.value = Number(details.source.call(scope, scope.GameStarter)).toString();
+                child.min = (details.minimum || 0).toString();
+                child.max = (details.maximum || Math.max(details.minimum + 10, 10)).toString();
+                child.onchange = child.oninput = function () {
+                    if (child.checkValidity()) {
+                        details.update.call(scope, scope.GameStarter, child.value);
+                    }
+                    if (details.storeLocally) {
+                        scope.storeLocalStorageValue(child, child.value);
+                    }
+                };
+                input.appendChild(child);
+                return child;
+            };
+            OptionsTableGenerator.prototype.setSelectInput = function (input, details, schema) {
+                var child = document.createElement("select"), options = details.options(this.GameStarter), scope = this, i;
+                for (i = 0; i < options.length; i += 1) {
+                    child.appendChild(new Option(options[i]));
+                }
+                child.value = details.source.call(scope, scope.GameStarter);
+                child.onchange = function () {
+                    details.update.call(scope, scope.GameStarter, child.value);
+                    child.blur();
+                    if (details.storeLocally) {
+                        scope.storeLocalStorageValue(child, child.value);
+                    }
+                };
+                input.appendChild(child);
+                return child;
+            };
+            OptionsTableGenerator.prototype.setScreenSizeInput = function (input, details, schema) {
+                var scope = this, child;
+                details.options = function () {
+                    return Object.keys(scope.UserWrapper.getSizes());
+                };
+                details.source = function () {
+                    return scope.UserWrapper.getCurrentSize().name;
+                };
+                details.update = function (GameStarter, value) {
+                    if (value === scope.UserWrapper.getCurrentSize()) {
+                        return undefined;
+                    }
+                    scope.UserWrapper.setCurrentSize(value);
+                };
+                child = scope.setSelectInput(input, details, schema);
+                return child;
+            };
+            return OptionsTableGenerator;
+        })(AbstractOptionsGenerator);
+        UISchemas.OptionsTableGenerator = OptionsTableGenerator;
+        /**
+         *
+         */
+        var LevelEditorGenerator = (function (_super) {
+            __extends(LevelEditorGenerator, _super);
+            function LevelEditorGenerator() {
+                _super.apply(this, arguments);
+            }
+            LevelEditorGenerator.prototype.generate = function (schema) {
+                var output = document.createElement("div"), title = document.createElement("div"), button = document.createElement("div"), between = document.createElement("div"), uploader = this.createUploaderDiv(), scope = this;
+                output.className = "select-options select-options-level-editor";
+                title.className = "select-option-title";
+                title.textContent = "Create your own custom levels:";
+                button.className = "select-option select-option-large options-button-option";
+                button.innerHTML = "Start the <br /> Level Editor!";
+                button.onclick = function () {
+                    scope.GameStarter.LevelEditor.enable();
+                };
+                between.className = "select-option-title";
+                between.innerHTML = "<em>- or -</em><br />";
+                output.appendChild(title);
+                output.appendChild(button);
+                output.appendChild(between);
+                output.appendChild(uploader);
+                return output;
+            };
+            LevelEditorGenerator.prototype.createUploaderDiv = function () {
+                var uploader = document.createElement("div"), input = document.createElement("input");
+                uploader.className = "select-option select-option-large options-button-option";
+                uploader.textContent = "Click to upload and continue your editor files!";
+                uploader.setAttribute("textOld", uploader.textContent);
+                input.type = "file";
+                input.className = "select-upload-input";
+                input.onchange = this.handleFileDrop.bind(this, input, uploader);
+                uploader.ondragenter = this.handleFileDragEnter.bind(this, uploader);
+                uploader.ondragover = this.handleFileDragOver.bind(this, uploader);
+                uploader.ondragleave = input.ondragend = this.handleFileDragLeave.bind(this, uploader);
+                uploader.ondrop = this.handleFileDrop.bind(this, input, uploader);
+                uploader.onclick = input.click.bind(input);
+                uploader.appendChild(input);
+                return uploader;
+            };
+            LevelEditorGenerator.prototype.handleFileDragEnter = function (uploader, event) {
+                if (event.dataTransfer) {
+                    event.dataTransfer.dropEffect = "copy";
+                }
+                uploader.className += " hovering";
+            };
+            LevelEditorGenerator.prototype.handleFileDragOver = function (uploader, event) {
+                event.preventDefault();
+                return false;
+            };
+            LevelEditorGenerator.prototype.handleFileDragLeave = function (element, event) {
+                if (event.dataTransfer) {
+                    event.dataTransfer.dropEffect = "none";
+                }
+                element.className = element.className.replace(" hovering", "");
+            };
+            LevelEditorGenerator.prototype.handleFileDrop = function (input, uploader, event) {
+                var files = input.files || event.dataTransfer.files, file = files[0], reader = new FileReader();
+                this.handleFileDragLeave(input, event);
+                event.preventDefault();
+                event.stopPropagation();
+                reader.onprogress = this.handleFileUploadProgress.bind(this, file, uploader);
+                reader.onloadend = this.handleFileUploadCompletion.bind(this, file, uploader);
+                reader.readAsText(file);
+            };
+            LevelEditorGenerator.prototype.handleFileUploadProgress = function (file, uploader, event) {
+                var percent;
+                if (!event.lengthComputable) {
+                    return;
+                }
+                percent = Math.round((event.loaded / event.total) * 100);
+                if (percent > 100) {
+                    percent = 100;
+                }
+                uploader.innerText = "Uploading '" + file.name + "' (" + percent + "%)...";
+            };
+            LevelEditorGenerator.prototype.handleFileUploadCompletion = function (file, uploader, event) {
+                this.GameStarter.LevelEditor.handleUploadCompletion(event);
+                uploader.innerText = uploader.getAttribute("textOld");
+            };
+            return LevelEditorGenerator;
+        })(AbstractOptionsGenerator);
+        UISchemas.LevelEditorGenerator = LevelEditorGenerator;
+        /**
+         *
+         */
+        var MapsGridGenerator = (function (_super) {
+            __extends(MapsGridGenerator, _super);
+            function MapsGridGenerator() {
+                _super.apply(this, arguments);
+            }
+            MapsGridGenerator.prototype.generate = function (schema) {
+                var output = document.createElement("div");
+                output.className = "select-options select-options-maps-grid";
+                if (schema.rangeX && schema.rangeY) {
+                    output.appendChild(this.generateRangedTable(schema));
+                }
+                if (schema.extras) {
+                    this.appendExtras(output, schema);
+                }
+                return output;
+            };
+            MapsGridGenerator.prototype.generateRangedTable = function (schema) {
+                var scope = this, table = document.createElement("table"), rangeX = schema.rangeX, rangeY = schema.rangeY, row, cell, i, j;
+                for (i = rangeY[0]; i <= rangeY[1]; i += 1) {
+                    row = document.createElement("tr");
+                    row.className = "maps-grid-row";
+                    for (j = rangeX[0]; j <= rangeX[1]; j += 1) {
+                        cell = document.createElement("td");
+                        cell.className = "select-option maps-grid-option maps-grid-option-range";
+                        cell.textContent = i + "-" + j;
+                        cell.onclick = (function (callback) {
+                            if (scope.getParentControlDiv(cell).getAttribute("active") === "on") {
+                                callback();
+                            }
+                        }).bind(scope, schema.callback.bind(scope, scope.GameStarter, schema, cell));
+                        row.appendChild(cell);
                     }
                     table.appendChild(row);
                 }
-            }
-            output.appendChild(table);
-            if (schema.actions) {
-                for (i = 0; i < schema.actions.length; i += 1) {
-                    row = document.createElement("div");
-                    details = schema.actions[i];
-                    row.className = "select-option options-button-option";
-                    row.textContent = details.title;
-                    row.onclick = details.action.bind(this, this.GameStarter);
-                    output.appendChild(row);
-                }
-            }
-            return output;
-        };
-        OptionsTableGenerator.prototype.setBooleanInput = function (input, details, schema) {
-            var status = details.source.call(this, this.GameStarter) ? "on" : "off", statusString = status === "on" ? "enabled" : "disabled", scope = this;
-            input.className = "select-option options-button-option option-" + statusString;
-            input.textContent = status;
-            input.onclick = function () {
-                input.setValue(input.textContent === "off");
+                return table;
             };
-            input.setValue = function (newStatus) {
-                if (newStatus.constructor === String) {
-                    if (newStatus === "false" || newStatus === "off") {
-                        newStatus = false;
+            MapsGridGenerator.prototype.appendExtras = function (output, schema) {
+                var element, extra, i, j;
+                for (i in schema.extras) {
+                    if (!schema.extras.hasOwnProperty(i)) {
+                        continue;
                     }
-                    else if (newStatus === "true" || newStatus === "on") {
-                        newStatus = true;
-                    }
-                }
-                if (newStatus) {
-                    details.enable.call(scope, scope.GameStarter);
-                    input.textContent = "on";
-                    input.className = input.className.replace("disabled", "enabled");
-                }
-                else {
-                    details.disable.call(scope, scope.GameStarter);
-                    input.textContent = "off";
-                    input.className = input.className.replace("enabled", "disabled");
-                }
-                if (details.storeLocally) {
-                    scope.storeLocalStorageValue(input, newStatus.toString());
-                }
-            };
-            return input;
-        };
-        OptionsTableGenerator.prototype.setKeyInput = function (input, details, schema) {
-            var values = details.source.call(this, this.GameStarter), children = [], child, i, j;
-            for (i = 0; i < values.length; i += 1) {
-                child = document.createElement("select");
-                child.className = "options-key-option";
-                for (j = 0; j < this.UserWrapper.getAllPossibleKeys().length; j += 1) {
-                    child.appendChild(new Option(this.UserWrapper.getAllPossibleKeys()[j]));
-                }
-                child.value = child.valueOld = values[i].toLowerCase();
-                child.onchange = (function (child) {
-                    details.callback.call(this, this.GameStarter, child.valueOld, child.value);
-                    if (details.storeLocally) {
-                        this.storeLocalStorageValue(child, child.value);
-                    }
-                }).bind(undefined, child);
-                children.push(child);
-                input.appendChild(child);
-            }
-            return children;
-        };
-        OptionsTableGenerator.prototype.setNumberInput = function (input, details, schema) {
-            var child = document.createElement("input"), scope = this;
-            child.type = "number";
-            child.value = Number(details.source.call(scope, scope.GameStarter)).toString();
-            child.min = details.minimum || 0;
-            child.max = details.maximum || Math.max(details.minimum + 10, 10);
-            child.onchange = child.oninput = function () {
-                if (child.checkValidity()) {
-                    details.update.call(scope, scope.GameStarter, child.value);
-                }
-                if (details.storeLocally) {
-                    scope.storeLocalStorageValue(child, child.value);
-                }
-            };
-            input.appendChild(child);
-            return child;
-        };
-        OptionsTableGenerator.prototype.setSelectInput = function (input, details, schema) {
-            var child = document.createElement("select"), options = details.options(), scope = this, i;
-            for (i = 0; i < options.length; i += 1) {
-                child.appendChild(new Option(options[i]));
-            }
-            child.value = details.source.call(scope, scope.GameStarter);
-            child.onchange = function () {
-                details.update.call(scope, scope.GameStarter, child.value);
-                child.blur();
-                if (details.storeLocally) {
-                    scope.storeLocalStorageValue(child, child.value);
-                }
-            };
-            input.appendChild(child);
-            return child;
-        };
-        OptionsTableGenerator.prototype.setScreenSizeInput = function (input, details, schema) {
-            var scope = this, child;
-            details.options = function () {
-                return Object.keys(scope.UserWrapper.getSizes());
-            };
-            details.source = function () {
-                return scope.UserWrapper.getCurrentSize();
-            };
-            details.update = function (GameStarter, value) {
-                if (value === scope.UserWrapper.getCurrentSize()) {
-                    return;
-                }
-                scope.UserWrapper.setCurrentSize(value);
-            };
-            child = scope.setSelectInput(input, details, schema);
-            return child;
-        };
-        return OptionsTableGenerator;
-    })(AbstractOptionsGenerator);
-    /**
-     *
-     */
-    var LevelEditorGenerator = (function (_super) {
-        __extends(LevelEditorGenerator, _super);
-        function LevelEditorGenerator() {
-            _super.apply(this, arguments);
-        }
-        LevelEditorGenerator.prototype.generate = function (schema) {
-            var output = document.createElement("div"), title = document.createElement("div"), button = document.createElement("div"), between = document.createElement("div"), uploader = this.createUploaderDiv(), scope = this;
-            output.className = "select-options select-options-level-editor";
-            title.className = "select-option-title";
-            title.textContent = "Create your own custom levels:";
-            button.className = "select-option select-option-large options-button-option";
-            button.innerHTML = "Start the <br /> Level Editor!";
-            button.onclick = function () {
-                scope.GameStarter.LevelEditor.enable();
-            };
-            between.className = "select-option-title";
-            between.innerHTML = "<em>- or -</em><br />";
-            output.appendChild(title);
-            output.appendChild(button);
-            output.appendChild(between);
-            output.appendChild(uploader);
-            return output;
-        };
-        LevelEditorGenerator.prototype.createUploaderDiv = function () {
-            var uploader = document.createElement("div"), input = document.createElement("input");
-            uploader.className = "select-option select-option-large options-button-option";
-            uploader.textContent = "Click to upload and continue your editor files!";
-            uploader.setAttribute("textOld", uploader.textContent);
-            input.type = "file";
-            input.className = "select-upload-input";
-            input.onchange = this.handleFileDrop.bind(this, input, uploader);
-            uploader.ondragenter = this.handleFileDragEnter.bind(this, uploader);
-            uploader.ondragover = this.handleFileDragOver.bind(this, uploader);
-            uploader.ondragleave = input.ondragend = this.handleFileDragLeave.bind(this, uploader);
-            uploader.ondrop = this.handleFileDrop.bind(this, input, uploader);
-            uploader.onclick = input.click.bind(input);
-            uploader.appendChild(input);
-            return uploader;
-        };
-        LevelEditorGenerator.prototype.handleFileDragEnter = function (uploader, event) {
-            if (event.dataTransfer) {
-                event.dataTransfer.dropEFfect = "copy";
-            }
-            uploader.className += " hovering";
-        };
-        LevelEditorGenerator.prototype.handleFileDragOver = function (uploader, event) {
-            event.preventDefault();
-            return false;
-        };
-        LevelEditorGenerator.prototype.handleFileDragLeave = function (uploader, event) {
-            if (event.dataTransfer) {
-                event.dataTransfer.dropEffect = "none";
-            }
-            uploader.className = uploader.className.replace(" hovering", "");
-        };
-        LevelEditorGenerator.prototype.handleFileDrop = function (input, uploader, event) {
-            var files = input.files || event.dataTransfer.files, file = files[0], reader = new FileReader();
-            this.handleFileDragLeave(input, event);
-            event.preventDefault();
-            event.stopPropagation();
-            reader.onprogress = this.handleFileUploadProgress.bind(this, file, uploader);
-            reader.onloadend = this.handleFileUploadCompletion.bind(this, file, uploader);
-            reader.readAsText(file);
-        };
-        LevelEditorGenerator.prototype.handleFileUploadProgress = function (file, uploader, event) {
-            var percent;
-            if (!event.lengthComputable) {
-                return;
-            }
-            percent = Math.round((event.loaded / event.total) * 100);
-            if (percent > 100) {
-                percent = 100;
-            }
-            uploader.innerText = "Uploading '" + file.name + "' (" + percent + "%)...";
-        };
-        LevelEditorGenerator.prototype.handleFileUploadCompletion = function (file, uploader, event) {
-            this.GameStarter.LevelEditor.handleUploadCompletion(event);
-            uploader.innerText = uploader.getAttribute("textOld");
-        };
-        return LevelEditorGenerator;
-    })(AbstractOptionsGenerator);
-    /**
-     *
-     */
-    var MapsGridGenerator = (function (_super) {
-        __extends(MapsGridGenerator, _super);
-        function MapsGridGenerator() {
-            _super.apply(this, arguments);
-        }
-        MapsGridGenerator.prototype.generateRangedTable = function (schema) {
-            var scope = this, table = document.createElement("table"), rangeX = schema.rangeX, rangeY = schema.rangeY, row, element, i, j;
-            for (i = rangeY[0]; i <= rangeY[1]; i += 1) {
-                row = document.createElement("tr");
-                row.className = "maps-grid-row";
-                for (j = rangeX[0]; j <= rangeX[1]; j += 1) {
-                    element = document.createElement("td");
-                    element.className = "select-option maps-grid-option maps-grid-option-range";
-                    element.textContent = i + "-" + j;
-                    element.onclick = (function (callback) {
-                        if (scope.getParentControlDiv(element).getAttribute("active") === "on") {
-                            callback();
+                    extra = schema.extras[i];
+                    element = document.createElement("div");
+                    element.className = "select-option maps-grid-option maps-grid-option-extra";
+                    element.textContent = extra.title;
+                    element.setAttribute("value", extra.title);
+                    element.onclick = extra.callback.bind(this, this.GameStarter, schema, element);
+                    output.appendChild(element);
+                    if (extra.extraElements) {
+                        for (j = 0; j < extra.extraElements.length; j += 1) {
+                            output.appendChild(this.GameStarter.createElement.apply(this.GameStarter, extra.extraElements[j]));
                         }
-                    }).bind(scope, schema.callback.bind(scope, scope.GameStarter, schema, element));
-                    row.appendChild(element);
-                }
-                table.appendChild(row);
-            }
-            return table;
-        };
-        MapsGridGenerator.prototype.appendExtras = function (output, schema) {
-            var element, extra, i, j;
-            for (i in schema.extras) {
-                extra = schema.extras[i];
-                element = document.createElement("div");
-                element.className = "select-option maps-grid-option maps-grid-option-extra";
-                element.textContent = extra.title;
-                element.setAttribute("value", extra.title);
-                element.onclick = extra.callback.bind(this, this.GameStarter, schema, element);
-                output.appendChild(element);
-                if (extra.extraElements) {
-                    for (j = 0; j < extra.extraElements.length; j += 1) {
-                        output.appendChild(this.GameStarter.createElement.apply(this.GameStarter, extra.extraElements[j]));
                     }
                 }
-            }
-        };
-        MapsGridGenerator.prototype.generate = function (schema) {
-            var output = document.createElement("div");
-            output.className = "select-options select-options-maps-grid";
-            if (schema.rangeX && schema.rangeY) {
-                output.appendChild(this.generateRangedTable(schema));
-            }
-            if (schema.extras) {
-                this.appendExtras(output, schema);
-            }
-            return output;
-        };
-        return MapsGridGenerator;
-    })(AbstractOptionsGenerator);
+            };
+            return MapsGridGenerator;
+        })(AbstractOptionsGenerator);
+        UISchemas.MapsGridGenerator = MapsGridGenerator;
+    })(UISchemas = _UserWrappr.UISchemas || (_UserWrappr.UISchemas = {}));
 })(UserWrappr || (UserWrappr = {}));

@@ -1567,7 +1567,7 @@ var FullScreenMario = (function(GameStartr) {
             "Powerup",
             "ended",
             thing.EightBitter.AudioPlayer.playTheme.bind(
-                EightBitter.AudioPlayer, "Star", true
+                thing.EightBitter.AudioPlayer, "Star", true
             )
         );
         
