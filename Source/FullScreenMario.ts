@@ -392,7 +392,7 @@ module FullScreenMario {
          * @param {Number} [bottom]   A bottom coordinate to place the Thing upon
          *                            (by default, unitsize * 16).         
          */
-        addPlayer(left: number = this.unitsize * 16, bottom = this.unitsize * 16): void {
+        addPlayer(left: number = this.unitsize * 16, bottom = this.unitsize * 16): IPlayer {
             var FSM: FullScreenMario = FullScreenMario.prototype.ensureCorrectCaller(this),
                 player: IPlayer;
 
@@ -411,7 +411,7 @@ module FullScreenMario {
                 ], "swimming", 5);
 
                 FSM.TimeHandler.addEventInterval(
-                    player.GameStarter.animatePlayerBubbling,
+                    player.FSM.animatePlayerBubbling,
                     96, Infinity,
                     player);
             }
@@ -477,13 +477,13 @@ module FullScreenMario {
          * @param {Player} player
          */
         keyDownLeft(player: IPlayer, event: Event): void {
-            if (player.GameStarter.GamesRunner.getPaused()) {
+            if (player.FSM.GamesRunner.getPaused()) {
                 return;
             }
 
             player.keys.run = -1;
             player.keys.leftDown = true; // independent of changes to keys.run
-            player.GameStarter.ModAttacher.fireEvent("onKeyDownLeft");
+            player.FSM.ModAttacher.fireEvent("onKeyDownLeft");
         }
     
         /**
@@ -493,13 +493,13 @@ module FullScreenMario {
          * @param {Player} player
          */
         keyDownRight(player: IPlayer, event: Event): void {
-            if (player.GameStarter.GamesRunner.getPaused()) {
+            if (player.FSM.GamesRunner.getPaused()) {
                 return;
             }
 
             player.keys.run = 1;
             player.keys.rightDown = true; // independent of changes to keys.run
-            player.GameStarter.ModAttacher.fireEvent("onKeyDownRight");
+            player.FSM.ModAttacher.fireEvent("onKeyDownRight");
 
             event.preventDefault();
         }
@@ -511,33 +511,33 @@ module FullScreenMario {
          * @param {Player} player
          */
         keyDownUp(player: IPlayer, event: Event): void {
-            if (player.GameStarter.GamesRunner.getPaused()) {
+            if (player.FSM.GamesRunner.getPaused()) {
                 return;
             }
 
             player.keys.up = true;
 
             if (player.canjump && (
-                player.resting || player.GameStarter.MapScreener.underwater)
+                player.resting || player.FSM.MapScreener.underwater)
                 ) {
                 player.keys.jump = true;
                 player.canjump = false;
                 player.keys.jumplev = 0;
 
                 if (player.power > 1) {
-                    player.GameStarter.AudioPlayer.play("Jump Super");
+                    player.FSM.AudioPlayer.play("Jump Super");
                 } else {
-                    player.GameStarter.AudioPlayer.play("Jump Small");
+                    player.FSM.AudioPlayer.play("Jump Small");
                 }
 
-                if (player.GameStarter.MapScreener.underwater) {
-                    player.GameStarter.TimeHandler.addEvent(function () {
+                if (player.FSM.MapScreener.underwater) {
+                    player.FSM.TimeHandler.addEvent(function () {
                         player.jumping = player.keys.jump = false;
                     }, 14);
                 }
             }
 
-            player.GameStarter.ModAttacher.fireEvent("onKeyDownUp");
+            player.FSM.ModAttacher.fireEvent("onKeyDownUp");
 
             event.preventDefault();
         }
@@ -549,12 +549,12 @@ module FullScreenMario {
          * @param {Player} player
          */
         keyDownDown(player: IPlayer, event: Event): void {
-            if (player.GameStarter.GamesRunner.getPaused()) {
+            if (player.FSM.GamesRunner.getPaused()) {
                 return;
             }
 
             player.keys.crouch = true;
-            player.GameStarter.ModAttacher.fireEvent("onKeyDownDown");
+            player.FSM.ModAttacher.fireEvent("onKeyDownDown");
 
             event.preventDefault();
         }
@@ -566,7 +566,7 @@ module FullScreenMario {
          * @param {Player} player
          */
         keyDownSprint(player: IPlayer, event: Event): void {
-            if (player.GameStarter.GamesRunner.getPaused()) {
+            if (player.FSM.GamesRunner.getPaused()) {
                 return;
             }
 
@@ -574,7 +574,7 @@ module FullScreenMario {
                 player.fire(player);
             }
             player.keys.sprint = true;
-            player.GameStarter.ModAttacher.fireEvent("onKeyDownSprint");
+            player.FSM.ModAttacher.fireEvent("onKeyDownSprint");
 
             event.preventDefault();
         }
@@ -586,11 +586,11 @@ module FullScreenMario {
          * @param {Player} player
          */
         keyDownPause(player: IPlayer, event: Event): void {
-            if (!player.GameStarter.GamesRunner.getPaused()) {
-                player.GameStarter.TimeHandler.addEvent(
-                    player.GameStarter.GamesRunner.pause, 7, true);
+            if (!player.FSM.GamesRunner.getPaused()) {
+                player.FSM.TimeHandler.addEvent(
+                    player.FSM.GamesRunner.pause, 7, true);
             }
-            player.GameStarter.ModAttacher.fireEvent("onKeyDownPause");
+            player.FSM.ModAttacher.fireEvent("onKeyDownPause");
 
             event.preventDefault();
         }
@@ -602,12 +602,12 @@ module FullScreenMario {
          * @param {Player} player
          */
         keyDownMute(player: IPlayer, event: Event): void {
-            if (player.GameStarter.GamesRunner.getPaused()) {
+            if (player.FSM.GamesRunner.getPaused()) {
                 return;
             }
 
-            player.GameStarter.AudioPlayer.toggleMuted();
-            player.GameStarter.ModAttacher.fireEvent("onKeyDownMute");
+            player.FSM.AudioPlayer.toggleMuted();
+            player.FSM.ModAttacher.fireEvent("onKeyDownMute");
 
             event.preventDefault();
         }
@@ -622,7 +622,7 @@ module FullScreenMario {
             player.keys.run = 0;
             player.keys.leftDown = false;
 
-            player.GameStarter.ModAttacher.fireEvent("onKeyUpLeft");
+            player.FSM.ModAttacher.fireEvent("onKeyUpLeft");
 
             event.preventDefault();
         }
@@ -637,7 +637,7 @@ module FullScreenMario {
             player.keys.run = 0;
             player.keys.rightDown = false;
 
-            player.GameStarter.ModAttacher.fireEvent("onKeyUpRight");
+            player.FSM.ModAttacher.fireEvent("onKeyUpRight");
 
             event.preventDefault();
         }
@@ -649,11 +649,11 @@ module FullScreenMario {
          * @param {Player} player
          */
         keyUpUp(player: IPlayer, event: Event): void {
-            if (!player.GameStarter.MapScreener.underwater) {
+            if (!player.FSM.MapScreener.underwater) {
                 player.keys.jump = player.keys.up = false;
             }
             player.canjump = true;
-            player.GameStarter.ModAttacher.fireEvent("onKeyUpUp");
+            player.FSM.ModAttacher.fireEvent("onKeyUpUp");
 
             event.preventDefault();
         }
@@ -667,9 +667,9 @@ module FullScreenMario {
         keyUpDown(player: IPlayer, event: Event): void {
             player.keys.crouch = false;
             if (!player.piping) {
-                player.GameStarter.animatePlayerRemoveCrouch(player);
+                player.FSM.animatePlayerRemoveCrouch(player);
             }
-            player.GameStarter.ModAttacher.fireEvent("onKeyUpDown");
+            player.FSM.ModAttacher.fireEvent("onKeyUpDown");
 
             event.preventDefault();
         }
@@ -682,7 +682,7 @@ module FullScreenMario {
          */
         keyUpSprint(player: IPlayer, event: Event): void {
             player.keys.sprint = false;
-            player.GameStarter.ModAttacher.fireEvent("onKeyUpSprint");
+            player.FSM.ModAttacher.fireEvent("onKeyUpSprint");
 
             event.preventDefault();
         }
@@ -694,10 +694,10 @@ module FullScreenMario {
          * @param {Player} player
          */
         keyUpPause(player: IPlayer, event: Event): void {
-            if (player.GameStarter.GamesRunner.getPaused()) {
-                player.GameStarter.GamesRunner.play();
+            if (player.FSM.GamesRunner.getPaused()) {
+                player.FSM.GamesRunner.play();
             }
-            player.GameStarter.ModAttacher.fireEvent("onKeyUpPause");
+            player.FSM.ModAttacher.fireEvent("onKeyUpPause");
 
             event.preventDefault();
         }
@@ -709,8 +709,8 @@ module FullScreenMario {
          * @param {Player} player
          */
         mouseDownRight(player: IPlayer, event: Event): void {
-            player.GameStarter.GamesRunner.togglePause();
-            player.GameStarter.ModAttacher.fireEvent("onMouseDownRight");
+            player.FSM.GamesRunner.togglePause();
+            player.FSM.ModAttacher.fireEvent("onMouseDownRight");
 
             event.preventDefault();
         }
@@ -724,7 +724,7 @@ module FullScreenMario {
          * @param {DeviceMotionEvent} event
          */
         deviceMotion(player, event: DeviceMotionEvent): void {
-            var FSM: FullScreenMario = player.GameStarter,
+            var FSM: FullScreenMario = player.FSM,
                 deviceMotionStatus: IDeviceMotionStatus = FSM.deviceMotionStatus,
                 acceleration: DeviceAcceleration = event.accelerationIncludingGravity;
 
@@ -733,9 +733,9 @@ module FullScreenMario {
             if (deviceMotionStatus.y !== undefined) {
                 deviceMotionStatus.dy = acceleration.y - deviceMotionStatus.y;
                 if (deviceMotionStatus.dy > 0.21) {
-                    player.GameStarter.keyDownUp(player);
+                    player.FSM.keyDownUp(player);
                 } else if (deviceMotionStatus.dy < -0.14) {
-                    player.GameStarter.keyUpUp(player);
+                    player.FSM.keyUpUp(player);
                 }
             }
 
@@ -744,21 +744,21 @@ module FullScreenMario {
 
             if (deviceMotionStatus.x > 2.1) {
                 if (!deviceMotionStatus.motionLeft) {
-                    player.GameStarter.keyDownLeft(player);
+                    player.FSM.keyDownLeft(player);
                     deviceMotionStatus.motionLeft = true;
                 }
             } else if (deviceMotionStatus.x < -2.1) {
                 if (!deviceMotionStatus.motionRight) {
-                    player.GameStarter.keyDownRight(player);
+                    player.FSM.keyDownRight(player);
                     deviceMotionStatus.motionRight = true;
                 }
             } else {
                 if (deviceMotionStatus.motionLeft) {
-                    player.GameStarter.keyUpLeft(player);
+                    player.FSM.keyUpLeft(player);
                     deviceMotionStatus.motionLeft = false;
                 }
                 if (deviceMotionStatus.motionRight) {
-                    player.GameStarter.keyUpRight(player);
+                    player.FSM.keyUpRight(player);
                     deviceMotionStatus.motionRight = false;
                 }
             }
@@ -2261,7 +2261,7 @@ module FullScreenMario {
          * @param {Thing} thing   A member of the collection being spawned.
          * @remarks This should be bound in prethings as ".bind(scope, collection)"
          */
-        spawnCollectionPartner(collection: any, thing: IThing) {
+        spawnCollectionPartner(collection: any, thing: IThing): void {
             var partnerNames = thing.collectionPartnerNames,
                 partners = {},
                 collection = thing.collection,
@@ -2283,7 +2283,7 @@ module FullScreenMario {
          * 
          * @param {RandomSpawner} thing
          */
-        spawnRandomSpawner(thing: IRandomSpawner) {
+        spawnRandomSpawner(thing: IRandomSpawner): void {
             var EightBitter = thing.FSM,
                 left = (thing.left + EightBitter.MapScreener.left) / EightBitter.unitsize;
 
@@ -2374,7 +2374,7 @@ module FullScreenMario {
          * @param {Thing} player
          * @param {DetectCollision} other
          */
-        activateWarpWorld(thing: ICharacter, other: IDetectCollision) {
+        activateWarpWorld(thing: ICharacter, other: IDetectCollision): void {
             var collection = other.collection,
                 key = 0,
                 keyString, scenery, texts, j;
@@ -2418,7 +2418,7 @@ module FullScreenMario {
          * @param {RestingStone} thing
          * @param {Player} other
          */
-        activateRestingStone(thing: IRestingStone, other: IPlayer) {
+        activateRestingStone(thing: IRestingStone, other: IPlayer): void {
             if (thing.activated) {
                 return;
             }
@@ -2443,7 +2443,7 @@ module FullScreenMario {
          * 
          * @param {DetectWindow} thing
          */
-        activateWindowDetector(thing: IDetectWindow) {
+        activateWindowDetector(thing: IDetectWindow): void {
             if (thing.FSM.MapScreener.right - thing.FSM.MapScreener.left < thing.left) {
                 return;
             }
@@ -2937,7 +2937,7 @@ module FullScreenMario {
          * @param {Character} thing
          * @param {Fireball} other
          */
-        collideFireball(thing: ICharacter, other: IFireball) {
+        collideFireball(thing: ICharacter, other: IFireball): void {
             if (
                 !thing.FSM.isThingAlive(thing)
                 || thing.height < thing.FSM.unitsize
@@ -3051,7 +3051,7 @@ module FullScreenMario {
          * @param {Player} thing
          * @param {Shell} other
          */
-        collideShellPlayer(thing: IPlayer, other: IShell) {
+        collideShellPlayer(thing: IPlayer, other: IShell): void {
             var shelltoleft = thing.FSM.objectToLeft(other, thing),
                 playerjump = thing.yvel > 0 && (
                     thing.bottom <= other.top + thing.FSM.unitsize * 2);
@@ -3227,7 +3227,7 @@ module FullScreenMario {
                 var player: IPlayer = thing;
 
                 // Enforces toly (not touching means stop)
-                if (player.GameStarter.isCharacterAboveEnemy(player, other)) {
+                if (player.FSM.isCharacterAboveEnemy(player, other)) {
                     return;
                 }
             
@@ -3235,27 +3235,27 @@ module FullScreenMario {
                 if (player.star) {
                     other.nocollide = true;
                     other.death(other, 2);
-                    player.GameStarter.scoreOn(other.scoreStar, other);
-                    player.GameStarter.AudioPlayer.play("Kick");
+                    player.FSM.scoreOn(other.scoreStar, other);
+                    player.FSM.AudioPlayer.play("Kick");
                 }
                 // A non-star player kills the enemy with spawn, and hops
                 else {
-                    player.GameStarter.setBottom(
+                    player.FSM.setBottom(
                         player,
-                        Math.min(player.bottom, other.top + player.GameStarter.unitsize)
+                        Math.min(player.bottom, other.top + player.FSM.unitsize)
                         );
-                    player.GameStarter.TimeHandler.addEvent(player.GameStarter.jumpEnemy, 0, player, other);
+                    player.FSM.TimeHandler.addEvent(player.FSM.jumpEnemy, 0, player, other);
 
                     other.death(other, player.star ? 2 : 0);
 
-                    player.GameStarter.addClass(player, "hopping");
-                    player.GameStarter.removeClasses(
+                    player.FSM.addClass(player, "hopping");
+                    player.FSM.removeClasses(
                         player, "running skidding jumping one two three"
                         );
                     player.hopping = true;
 
                     if (player.power === 1) {
-                        player.GameStarter.setPlayerSizeSmall(player);
+                        player.FSM.setPlayerSizeSmall(player);
                     }
                 }
             }
@@ -3358,7 +3358,7 @@ module FullScreenMario {
          * @param {Player} thing
          * @param {Solid} other
          */
-        collideVine(thing: IPlayer, other: ISolid) {
+        collideVine(thing: IPlayer, other: ISolid): void {
             if (!thing.player || thing.attachedSolid || thing.climbing) {
                 return;
             }
@@ -3905,7 +3905,12 @@ module FullScreenMario {
         }
     
         /**
+         * Movement Function for Bowser's spewed fire. It has a ylev stored from
+         * creation that will tell it when to stop changing its vertical 
+         * velocity from this Function; otherwise, it shifts its vertical 
+         * position to move to the ylev.
          * 
+         * @param {BowserFire} thing
          */
         moveBowserFire(thing: IBowserFire): void {
             if (Math.round(thing.bottom) === Math.round(thing.ylev)) {
@@ -4567,7 +4572,7 @@ module FullScreenMario {
          * @param {Coin} thing
          * @param {Solid} [parent]
          */
-        moveCoinEmerge(thing: ICoin, parent?: ISolid) {
+        moveCoinEmerge(thing: ICoin, parent?: ISolid): void {
             thing.FSM.shiftVert(thing, thing.yvel);
 
             if (parent && thing.bottom >= thing.blockparent.bottom) {
@@ -4909,7 +4914,7 @@ module FullScreenMario {
          * @remarks For the level editor, if thing.contents is false, the prototype
          *          is tried (so false becomes Coin in Blocks).
          */
-        animateSolidContents(thing: IBrick | IBlock, other: IPlayer) {
+        animateSolidContents(thing: IBrick | IBlock, other: IPlayer): void {
             var output: ICharacter;
 
             if (
@@ -5338,7 +5343,7 @@ module FullScreenMario {
          * 
          * @param {Thing} thing
          */
-        animateJump(thing: IHammerBro) {
+        animateJump(thing: IHammerBro): void {
             // Finish
             if (!thing.FSM.isThingAlive(thing)) {
                 return true;
@@ -5462,7 +5467,7 @@ module FullScreenMario {
          * 
          * @param {Fireball} thing
          */
-        animateFireballEmerge(thing) {
+        animateFireballEmerge(thing): void {
             thing.FSM.AudioPlayer.play("Fireball");
         }
     
@@ -5475,7 +5480,7 @@ module FullScreenMario {
          * @param {Number} [big]   The "level" of death this is (a 2 implies this is
          *                         a sudden death, without animations).
          */
-        animateFireballExplode(thing: IFireball, big?: number) {
+        animateFireballExplode(thing: IFireball, big?: number): void {
             thing.nocollide = true;
             thing.FSM.killNormal(thing);
             if (big === 2) {
@@ -5521,7 +5526,7 @@ module FullScreenMario {
          * @remarks The left of other is the right of player, and is 4 units away 
          *          from the center of the door.
          */
-        animateEndLevelFireworks(thing: IPlayer, other: IDetectCollision, numFireworks: number) {
+        animateEndLevelFireworks(thing: IPlayer, other: IDetectCollision, numFireworks: number): void {
             var doorRight = other.left,
                 doorLeft = doorRight - thing.FSM.unitsize * 8,
                 doorBottom = other.bottom,
@@ -6064,7 +6069,7 @@ module FullScreenMario {
          *                                        to copy from the original Thing
          *                                        (by default, none).
          */
-        killReplace(thing: IThing, title: string, attributes: any, attributesCopied?: string[]) {
+        killReplace(thing: IThing, title: string, attributes: any, attributesCopied?: string[]): void {
             var spawn, i;
 
             if (typeof attributes === "undefined") {
@@ -6101,7 +6106,7 @@ module FullScreenMario {
          * @param {Boolean} [big]   Whether to call killFlip on the Thing instead of
          *                          killSpawn, such as when a Shell hits it.
          */
-        killGoomba(thing: IGoomba, big?: boolean) {
+        killGoomba(thing: IGoomba, big?: boolean): void {
             if (big) {
                 thing.FSM.killFlip(thing);
                 return;
@@ -6143,7 +6148,7 @@ module FullScreenMario {
          * @param {Boolean} [big]   Whether this should default to killFlip, as in
          *                          an EndInsideCastle cutscene.
          */
-        killBowser(thing: IBowser, big?: boolean) {
+        killBowser(thing: IBowser, big?: boolean): void {
             if (big) {
                 thing.nofall = false;
                 thing.movement = undefined;
@@ -6264,7 +6269,7 @@ module FullScreenMario {
          * @param {Thing} [other]   An optional Thing to mark as the cause of the
          *                          Brick's death (its up attribute). 
          */
-        killBrick(thing: IBrick, other?: ICharacter) {
+        killBrick(thing: IBrick, other?: ICharacter): void {
             thing.FSM.AudioPlayer.play("Break Block");
             thing.FSM.TimeHandler.addEvent(
                 thing.FSM.animateBrickShards, 1, thing
@@ -6294,7 +6299,7 @@ module FullScreenMario {
          * @param {Number} [big]   The severity of this death: 0 for normal, 1 for
          *                         not survivable, 2 for immediate death.
          */
-        killPlayer(thing: IPlayer, big?: number) {
+        killPlayer(thing: IPlayer, big?: number): void {
             if (!thing.alive || thing.flickering || thing.dying) {
                 return;
             }
@@ -6533,7 +6538,7 @@ module FullScreenMario {
          * @return {Number}
          * @remarks See http://themushroomkingdom.net/smb_breakdown.shtml
          */
-        scorePlayerFlag(thing: IThing, difference: number) {
+        scorePlayerFlag(thing: IThing, difference: number): void {
             var amount: number;
 
             if (difference < 28) {
@@ -6637,7 +6642,7 @@ module FullScreenMario {
          * @param {Mixed} [name]   The name of the location within the map (by
          *                         default 0 for the first in Array form).
          */
-        setLocation(name: string | number = 0) {
+        setLocation(name: string | number = 0): void {
             var FSM: FullScreenMario = FullScreenMario.prototype.ensureCorrectCaller(this),
                 location;
 
@@ -6743,7 +6748,7 @@ module FullScreenMario {
          * 
          * @param {FullScreenMario} FSM
          */
-        mapEntranceCastle(FSM): void {
+        mapEntranceCastle(FSM: FullScreenMario): void {
             FSM.addPlayer(FSM.unitsize * 2, FSM.unitsize * 56);
         }
     
@@ -6755,7 +6760,7 @@ module FullScreenMario {
          * 
          * @param {FullScreenMario} FSM
          */
-        mapEntranceVine(FSM: FullScreenMario) {
+        mapEntranceVine(FSM: FullScreenMario): void {
             var threshold: number = (
                 FSM.MapScreener.bottom - FSM.unitsize * 40
                 ),
@@ -6782,7 +6787,7 @@ module FullScreenMario {
          * @param {FullScreenMario} FSM
          * @param {Vine} vine
          */
-        mapEntranceVinePlayer(FSM, vine: IVine): void {
+        mapEntranceVinePlayer(FSM: FullScreenMario, vine: IVine): void {
             var threshold: number = (
                 FSM.MapScreener.bottom - FSM.unitsize * 24
                 ),
@@ -6817,7 +6822,7 @@ module FullScreenMario {
          * @param {Location} [location]   The calling Location entering into (by
          *                                default, not used).
          */
-        mapEntrancePipeVertical(FSM: FullScreenMario, location?: ILocation) {
+        mapEntrancePipeVertical(FSM: FullScreenMario, location?: ILocation): void {
             if (location && location.xloc) {
                 FSM.scrollWindow(location.xloc * FSM.unitsize);
             }
@@ -6892,7 +6897,7 @@ module FullScreenMario {
          * @param {Player} thing
          * @param {Pipe} other
          */
-        mapExitPipeVertical(thing: IPlayer, other: IPipe) {
+        mapExitPipeVertical(thing: IPlayer, other: IPipe): void {
             if (!thing.resting || typeof (other.transport) === "undefined"
                 || thing.right + thing.FSM.unitsize * 2 > other.right
                 || thing.left - thing.FSM.unitsize * 2 < other.left) {
@@ -6934,7 +6939,7 @@ module FullScreenMario {
          * @remarks The shouldTransport argument was added because the "Bouncy 
          *          Bounce!" mod rendered some areas unenterable without it.
          */
-        mapExitPipeHorizontal(thing: IPlayer, other: IPipe, shouldTransport?: boolean) {
+        mapExitPipeHorizontal(thing: IPlayer, other: IPipe, shouldTransport?: boolean): void {
             if (!shouldTransport && !thing.resting && !thing.paddling) {
                 return;
             }
