@@ -37,7 +37,7 @@ declare module FullScreenMario {
     }
 
     export interface IThing extends GameStartr.IThing {
-        GameStarter: IFullScreenMario;
+        FSM: IFullScreenMario;
         alive: boolean;
         collectionPartnerNames?: string[];
         dead?: boolean;
@@ -390,9 +390,78 @@ declare module FullScreenMario {
     }
 
     export interface IFullScreenMario extends GameStartr.IGameStartr {
+        settings: GameStartr.IGameStartrStoredSettings;
         unitsize: number;
         pointLevels: number[];
         resetTimes: any[];
         player: IPlayer;
+        deviceMotionStatus: IDeviceMotionStatus;
+        thingProcess(thing: IThing, title: string, settings: any, defaults: any): void;
+        addPreThing(prething: IPreThing): void;
+        addPlayer(left?: number, bottom?: number): void;
+        onGamePause(FSM: FullScreenMario): void;
+        onGamePlay(FSM: FullScreenMario): void;
+        keyDownLeft(player: IPlayer, event: Event): void;
+        keyDownRight(player: IPlayer, event: Event): void;
+        keyDownUp(player: IPlayer, event: Event): void;
+        keyDownDown(player: IPlayer, event: Event): void;
+        keyDownSprint(player: IPlayer, event: Event): void;
+        keyDownPause(player: IPlayer, event: Event): void;
+        keyDOwnMute(player: IPlayer, event: Event): void;
+        keyUpLeft(player: IPlayer, event: Event): void;
+        keyUpRight(player: IPlayer, event: Event): void;
+        keyUpUp(player: IPlayer, event: Event): void;
+        keyUpDown(player: IPlayer, event: Event): void;
+        keyUpSprint(player: IPlayer, event: Event): void;
+        keyUpPause(player: IPlayer, event: Event): void;
+        mouseDownRight(player: IPlayer, event: Event): void;
+        deviceMotion(player: IPlayer, event: DeviceMotionEvent): void;
+        canInputsTrigger(FSM: FullScreenMario): boolean;
+        maintainSolids(FSM: FullScreenMario, solids: IThing[]): void;
+        maintainCharacters(FSM, characters: ICharacter[]): void;
+        maintainOverlaps(character: ICharacterOverlapping): void;
+        setOverlapBoundaries(thing: ICharacterOverlapping): void;
+        maintainPlayer(FSM: FullScreenMario): void;
+        generateCanThingCollide(): (thing: IThing) => boolean;
+        isThingAlive(thing: IThing): boolean;
+        isThingTouchingThing(thing: IThing, other: IThing): boolean;
+        isThingOnThing(thing: IThing, other: IThing): boolean;
+        isThingOnSolid(thing: IThing, other: IThing): boolean;
+        isCharacterOnSolid(thing: ICharacter, other: ISolid): boolean;
+        isCharacterOnResting(thing: ICharacter, other: ISolid): boolean;
+        generateIsCharacterTouchingCharacter(): (thing: ICharacter, other: ICharacter) => boolean;
+        generateIsCharacterTouchingSolid(): (thing: ICharacter, other: ISolid) => boolean;
+        isCharacterAboveEnemy(thing: ICharacter, other: ICharacter): boolean;
+        isCharacterBumpingSolid(thing: ICharacter, other: ISolid): boolean;
+        isCharacterOverlappingSolid(thing: ICharacter, other: ISolid): boolean;
+        isSolidOnCharacter(thing: ICharacter, other: ISolid): boolean;
+        gainLife(amount: number, nosound?: boolean): void;
+        itemJump(thing: IThing): void;
+        jumpEnemy(thing: IPlayer, other: IEnemy): void;
+        playerShroom(thing: IPlayer, other: IItem): void;
+        playerShroom1Up(thing: ICharacter, other: IItem): void;
+        playerStarUp(thing: IPlayer, timeout?: number): void;
+        playerStarDown(thing: IPlayer): void;
+        playerStarOffCycle(thing: IPlayer): void;
+        playerStarOffFinal(thing: IPlayer): void;
+        playerGetsBig(thing: IPlayer, noAnimation?: boolean): void;
+        playerGetsBigAnimation(thing: IPlayer): void;
+        playerGetsSmall(thing: IPlayer): void;
+        playerGetsFire(thing: IPlayer): void;
+        setPlayerSizeSmall(thing: IPlayer): void;
+        setPlayerSizeLarge(thing: IPlayer): void;
+        animatePlayerRemoveCrouch(thing: IPlayer): void;
+        unattachPlayer(thing: IPlayer, other: ISolid): void;
+        playerAddRestingStone(thing: IPlayer): void;
+        markOverlap(thing: ICharacterOverlapping, other: ISolid): void;
+        spawnDeadGoomba(thing: IThing): void;
+        spawnHammerBro(thing: IHammerBro): void;
+        spawnBowser(thing: IBowser): void;
+
+
+
+
+
+
     }
 }
