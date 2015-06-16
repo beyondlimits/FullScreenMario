@@ -79,6 +79,11 @@ module FullScreenMario {
         };
 
         /**
+         * Overriden MapScreenr refers to the IMapScreenr defined in FullScreenMario.d.ts.
+         */
+        public MapScreener: IMapScreenr;
+
+        /**
          * Internal reference to the static settings.
          */
         public settings: GameStartr.IGameStartrStoredSettings = FullScreenMario.settings;
@@ -895,28 +900,28 @@ module FullScreenMario {
         maintainOverlaps(character: ICharacterOverlapping): void {
             // If checkOverlaps is still true, this is the first maintain call
             if (character.checkOverlaps) {
-                if (!character.GameStarter.setOverlapBoundaries(<ICharacterOverlapping>character)) {
+                if (!character.FSM.setOverlapBoundaries(<ICharacterOverlapping>character)) {
                     return;
                 }
             }
 
-            character.GameStarter.slideToX(
+            character.FSM.slideToX(
                 character,
                 character.overlapGoal,
-                character.GameStarter.unitsize
+                character.FSM.unitsize
                 );
         
             // Goal to the right: has the thing gone far enough to the right?
             if (character.overlapGoRight) {
                 if (character.left >= character.overlapCheck) {
-                    character.GameStarter.setLeft(character, character.overlapCheck);
+                    character.FSM.setLeft(character, character.overlapCheck);
                 } else {
                     return;
                 }
             } else {
                 // Goal to the left: has the thing gone far enough to the left?
                 if (character.right <= character.overlapCheck) {
-                    character.GameStarter.setRight(character, character.overlapCheck);
+                    character.FSM.setRight(character, character.overlapCheck);
                 } else {
                     return;
                 }
@@ -938,7 +943,7 @@ module FullScreenMario {
          * @return {Boolean}   Whether the Thing's overlaps were successfully 
          *                     recorded (if there was only one, not so).
          */
-        setOverlapBoundaries(thing: ICharacterOverlapping): void {
+        setOverlapBoundaries(thing: ICharacterOverlapping): boolean {
             // Only having one overlap means nothing should be done
             if (thing.overlaps.length === 1) {
                 thing.overlaps.length = 0;
@@ -6236,8 +6241,8 @@ module FullScreenMario {
                 character = <ICharacter>group[i];
 
                 if (!character.nokillend) {
-                    character.GameStarter.killNormal(character);
-                    character.GameStarter.arrayDeleteThing(character, group, i);
+                    character.FSM.killNormal(character);
+                    character.FSM.arrayDeleteThing(character, group, i);
                 } else if (character.killonend) {
                     character.killonend(character);
                 }
@@ -6252,7 +6257,7 @@ module FullScreenMario {
                     if (solid.killonend.constructor === Function) {
                         (<any>solid.killonend)(solid, group, i);
                     } else {
-                        solid.GameStarter.arrayDeleteThing(solid, group, i);
+                        solid.FSM.arrayDeleteThing(solid, group, i);
                     }
                 }
             }

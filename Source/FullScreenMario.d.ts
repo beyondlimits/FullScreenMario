@@ -205,6 +205,7 @@ declare module FullScreenMario {
         nomove?: boolean;
         onCollideUp? (thing: ICharacter, other: ISolid): void;
         onResting? (thing: ICharacter, other: ISolid): void;
+        overlaps?: ISolid[];
         resting?: ISolid;
         scoreBelow: number;
         scoreFire: number;
@@ -226,7 +227,6 @@ declare module FullScreenMario {
         overlapCheck: number;
         overlapGoal: number;
         overlapGoRight: boolean;
-        overlaps: ISolid[];
     }
 
     export interface IBrickShard extends ICharacter { }
@@ -392,6 +392,7 @@ declare module FullScreenMario {
     }
 
     export interface IFullScreenMario extends GameStartr.IGameStartr {
+        MapScreener: IMapScreenr;
         settings: GameStartr.IGameStartrStoredSettings;
         unitsize: number;
         pointLevels: number[];
@@ -422,7 +423,7 @@ declare module FullScreenMario {
         maintainSolids(FSM: FullScreenMario, solids: IThing[]): void;
         maintainCharacters(FSM, characters: ICharacter[]): void;
         maintainOverlaps(character: ICharacterOverlapping): void;
-        setOverlapBoundaries(thing: ICharacterOverlapping): void;
+        setOverlapBoundaries(thing: ICharacterOverlapping): boolean;
         maintainPlayer(FSM: FullScreenMario): void;
         generateCanThingCollide(): (thing: IThing) => boolean;
         isThingAlive(thing: IThing): boolean;
@@ -659,7 +660,5 @@ declare module FullScreenMario {
         macroSectionFail(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any;
         macroSectionDecider(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any;
         ensureCorrectCaller(current: any): FullScreenMario;
-
-
     }
 }
