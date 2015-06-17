@@ -23,7 +23,7 @@ declare module LevelEditr {
         PixelDrawer: PixelDrawr.IPixelDrawr;
         ItemsHolder: ItemsHoldr.IItemsHoldr;
         TimeHandler: TimeHandlr.ITimeHandlr;
-        player: IThing;
+        player: IPlayer;
         container: HTMLDivElement;
         unitsize: number;
         addPageStyles(styles: any): void;
@@ -51,6 +51,10 @@ declare module LevelEditr {
         width: number;
         height: number;
         outerok: boolean;
+    }
+
+    export interface IPlayer extends IThing {
+        dead: boolean;
     }
 
     export interface IPreThing {
@@ -2204,6 +2208,9 @@ module LevelEditr {
                     });
                 }
             }
+
+            // Helps prevent triggers such as Bowser jumping
+            this.GameStarter.player.dead = true;
 
             this.GameStarter.ItemsHolder.setItem("time", Infinity);
         }

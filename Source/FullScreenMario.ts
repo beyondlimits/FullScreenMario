@@ -5221,6 +5221,7 @@ module FullScreenMario {
         animateThrowingHammer(thing: IHammerBro, count: number): boolean {
             if (
                 !thing.FSM.isThingAlive(thing)
+                || !thing.FSM.isThingAlive(thing.FSM.player)
                 || thing.right < thing.FSM.unitsize * -32
                 ) {
                 return true;
@@ -5460,7 +5461,7 @@ module FullScreenMario {
          */
         animateJump(thing: IHammerBro): boolean {
             // Finish
-            if (!thing.FSM.isThingAlive(thing)) {
+            if (!thing.FSM.isThingAlive(thing) || !thing.FSM.isThingAlive(thing.FSM.player)) {
                 return true;
             }
 

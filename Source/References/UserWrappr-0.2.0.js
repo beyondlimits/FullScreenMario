@@ -9153,6 +9153,8 @@ var LevelEditr;
                     });
                 }
             }
+            // Helps prevent triggers such as Bowser jumping
+            this.GameStarter.player.dead = true;
             this.GameStarter.ItemsHolder.setItem("time", Infinity);
         };
         /**
