@@ -53,19 +53,19 @@ module FullScreenMario {
          * Static scale of 2, to exand to two pixels per one game pixel.
          */
         public static scale: number = 2;
-    
+
         /**
          * Gravity is always a function of unitsize (and about .48).
          */
         public static gravity: number = Math.round(12 * FullScreenMario.unitsize) / 100;
-    
+
         /**
          * Levels of points to award for hopping on / shelling enemies.
          */
         public static pointLevels: number[] = [
             100, 200, 400, 500, 800, 1000, 2000, 4000, 5000, 8000
         ];
-    
+
         /**
          * Useful for custom text Things, where "text!" cannot be a Function name.
          */
@@ -153,7 +153,7 @@ module FullScreenMario {
                         "runner": "settings/runner.js",
                         "sprites": "settings/sprites.js",
                         "statistics": "settings/statistics.js",
-                        "ui": "settings/ui.js",
+                        "ui": "settings/ui.js"
                     }
                 },
                 "constantsSource": FullScreenMario,
@@ -172,27 +172,30 @@ module FullScreenMario {
                 this.reset(this, customs);
             }
         }
-    
-    
+
+
         /* Resets
         */
         resetObjectMaker(FSM: FullScreenMario, customs: GameStartr.IGameStartrCustoms): void {
-            FSM.ObjectMaker = new ObjectMakr.ObjectMakr(FSM.proliferate({
-                "properties": {
-                    "Quadrant": {
-                        "EightBitter": FSM,
-                        "GameStarter": FSM,
-                        "FSM": FSM
+            FSM.ObjectMaker = new ObjectMakr.ObjectMakr(
+                FSM.proliferate(
+                    {
+                        "properties": {
+                            "Quadrant": {
+                                "EightBitter": FSM,
+                                "GameStarter": FSM,
+                                "FSM": FSM
+                            },
+                            "Thing": {
+                                "EightBitter": FSM,
+                                "GameStarter": FSM,
+                                "FSM": FSM
+                            }
+                        }
                     },
-                    "Thing": {
-                        "EightBitter": FSM,
-                        "GameStarter": FSM,
-                        "FSM": FSM
-                    }
-                }
-            }, FSM.settings.objects));
+                    FSM.settings.objects));
         }
-    
+
         /**
          * Sets this.AudioPlayer.
          * 
@@ -206,7 +209,7 @@ module FullScreenMario {
 
             FSM.AudioPlayer.setGetThemeDefault(FSM.getAudioThemeDefault.bind(FSM, FSM));
         }
-    
+
         /**
          * Sets this.ThingHitter.
          * 
@@ -219,7 +222,7 @@ module FullScreenMario {
             FSM.ThingHitter.cacheHitCheckGroup("Solid");
             FSM.ThingHitter.cacheHitCheckGroup("Character");
         }
-    
+
         /**
          * Sets this.MapsHandler.
          * 
@@ -230,13 +233,13 @@ module FullScreenMario {
             FSM.MapsHandler = new MapsHandlr.MapsHandlr({
                 "MapsCreator": FSM.MapsCreator,
                 "MapScreener": FSM.MapScreener,
-                "screenAttributes": (<any>FSM.settings["maps"]).screenAttributes,
-                "onSpawn": (<any>FSM.settings["maps"]).onSpawn.bind(FSM),
+                "screenAttributes": (<any>FSM.settings.maps).screenAttributes,
+                "onSpawn": (<any>FSM.settings.maps).onSpawn.bind(FSM),
                 "stretchAdd": FSM.mapAddStretched.bind(FSM),
                 "afterAdd": FSM.mapAddAfter.bind(FSM)
             });
         }
-    
+
         /**
          * ReSets this.StatsHolder via the parent GameStartr resetStatsHolder.
          * 
@@ -252,7 +255,7 @@ module FullScreenMario {
                 (<HTMLElement>(<HTMLTableRowElement>FSM.StatsHolder.getContainer().children[0]).cells[4]).style.display = "none";
             }
         }
-    
+
         /**
          * Sets this.container via the parent GameStartr resetContaienr.
          * 
@@ -279,11 +282,11 @@ module FullScreenMario {
             FSM.StatsHolder.getContainer().style.width = customs.width + "px";
             FSM.container.appendChild(FSM.StatsHolder.getContainer());
         }
-    
-    
+
+
         /* Global manipulations
         */
-    
+
         /**
          * Completely restarts the game. Lives are reset to 3, the map goes back
          * to default, and the onGameStart mod trigger is fired.
@@ -292,11 +295,13 @@ module FullScreenMario {
             var FSM: FullScreenMario = FullScreenMario.prototype.ensureCorrectCaller(this);
 
             FSM.setMap(FSM.settings.maps.mapDefault, FSM.settings.maps.locationDefault);
-            FSM.StatsHolder.setItem("lives", FSM.settings.statistics.values["lives"].valueDefault);
+            FSM.StatsHolder.setItem(
+                "lives",
+                (<any>FSM.settings.statistics.values).lives.valueDefault);
 
             FSM.ModAttacher.fireEvent("onGameStart");
         }
-    
+
         /**
          * Completely ends the game. All Thing groups are clared, sounds are 
          * stopped, the screen goes to black, "GAME OVER" is displayed. After a 
@@ -311,7 +316,6 @@ module FullScreenMario {
                 }),
                 texts: IThing[],
                 textWidth: number,
-                dx: number,
                 i: number;
 
             FSM.killNPCs();
@@ -332,14 +336,16 @@ module FullScreenMario {
                 FSM.shiftHoriz(texts[i], textWidth);
             }
 
-            FSM.TimeHandler.addEvent(function () {
-                FSM.gameStart();
-                FSM.StatsHolder.displayContainer();
-            }, 420);
+            FSM.TimeHandler.addEvent(
+                function (): void {
+                    FSM.gameStart();
+                    FSM.StatsHolder.displayContainer();
+                },
+                420);
 
             FSM.ModAttacher.fireEvent("onGameOver");
         }
-    
+
         /**
          * Slight addition to the GameStartr thingProcess Function. The Thing's hit
          * check type is cached immediately.
@@ -357,7 +363,7 @@ module FullScreenMario {
             // inheritance, sadly).
             thing.FSM.ThingHitter.cacheHitCheckType(thing.title, thing.groupType);
         }
-    
+
         /**
          * Adds a Thing via addPreThing based on the specifications in a PreThing.
          * This is done relative to MapScreener.left and MapScreener.floor.
@@ -372,11 +378,11 @@ module FullScreenMario {
                 thing,
                 prething.left * thing.FSM.unitsize - thing.FSM.MapScreener.left,
                 ((<IMapScreenr>thing.FSM.MapScreener).floor - prething.top) * thing.FSM.unitsize);
-        
+
             // Either the prething or thing, in that order, may request to be in the
             // front or back of its container using the "position" attribute
             if (position) {
-                thing.FSM.TimeHandler.addEvent(function () {
+                thing.FSM.TimeHandler.addEvent(function (): void {
                     switch (position) {
                         case "beginning":
                             thing.FSM.arrayToBeginning(thing, <any[]>thing.FSM.GroupHolder.getGroup(thing.groupType));
@@ -384,13 +390,15 @@ module FullScreenMario {
                         case "end":
                             thing.FSM.arrayToEnd(thing, <any[]>thing.FSM.GroupHolder.getGroup(thing.groupType));
                             break;
+                        default:
+                            break;
                     }
                 });
             }
 
             thing.FSM.ModAttacher.fireEvent("onAddPreThing", prething);
         }
-    
+
         /**
          * Adds a new Player Thing to the game and sets it as EightBitter.play. Any
          * required additional settings (namely keys, power/size, and swimming) are
@@ -402,7 +410,7 @@ module FullScreenMario {
          * @param {Number} [bottom]   A bottom coordinate to place the Thing upon
          *                            (by default, unitsize * 16).         
          */
-        addPlayer(left: number = this.unitsize * 16, bottom = this.unitsize * 16): IPlayer {
+        addPlayer(left: number = this.unitsize * 16, bottom: number = this.unitsize * 16): IPlayer {
             var FSM: FullScreenMario = FullScreenMario.prototype.ensureCorrectCaller(this),
                 player: IPlayer;
 
@@ -416,9 +424,13 @@ module FullScreenMario {
             if ((<IMapScreenr>FSM.MapScreener).underwater) {
                 player.swimming = true;
 
-                FSM.TimeHandler.addClassCycle(player, [
-                    "swim1", "swim2"
-                ], "swimming", 5);
+                FSM.TimeHandler.addClassCycle(
+                    player,
+                    [
+                        "swim1", "swim2"
+                    ],
+                    "swimming",
+                    5);
 
                 FSM.TimeHandler.addEventInterval(
                     player.FSM.animatePlayerBubbling,
@@ -441,7 +453,7 @@ module FullScreenMario {
 
             return player;
         }
-    
+
         /**
          * Shortcut to call scrollThing on the player.
          * 
@@ -456,7 +468,7 @@ module FullScreenMario {
 
             FSM.ModAttacher.fireEvent("onScrollPlayer", dx, dy);
         }
-    
+
         /**
          * Triggered Function for when the game is paused. Music stops, the pause
          * bleep is played, and the mod event is fired.
@@ -466,7 +478,7 @@ module FullScreenMario {
             FSM.AudioPlayer.play("Pause");
             FSM.ModAttacher.fireEvent("onGamePause");
         }
-    
+
         /**
          * Triggered Function for when the game is played or unpause. Music resumes 
          * and the mod event is fired.
@@ -475,18 +487,18 @@ module FullScreenMario {
             FSM.AudioPlayer.resumeAll();
             FSM.ModAttacher.fireEvent("onGamePlay");
         }
-    
-    
+
+
         /* Input
         */
-    
+
         /**
          * Reacts to the left key being pressed. keys.run and leftDown are marked 
          * and the mod event is fired.
          * 
          * @param {Player} player
          */
-        keyDownLeft(player: IPlayer, event: Event): void {
+        keyDownLeft(player: IPlayer, event?: Event): void {
             if (player.FSM.GamesRunner.getPaused()) {
                 return;
             }
@@ -495,14 +507,14 @@ module FullScreenMario {
             player.keys.leftDown = true; // independent of changes to keys.run
             player.FSM.ModAttacher.fireEvent("onKeyDownLeft");
         }
-    
+
         /**
          * Reacts to the right key being pressed. keys.run and keys.rightDown are
          * marked and the mod event is fired.
          * 
          * @param {Player} player
          */
-        keyDownRight(player: IPlayer, event: Event): void {
+        keyDownRight(player: IPlayer, event?: Event): void {
             if (player.FSM.GamesRunner.getPaused()) {
                 return;
             }
@@ -513,14 +525,14 @@ module FullScreenMario {
 
             event.preventDefault();
         }
-    
+
         /**
          * Reacts to the up key being pressed. If the player can jump, it does, and
          * underwater paddling is checked. The mod event is fired.
          * 
          * @param {Player} player
          */
-        keyDownUp(player: IPlayer, event: Event): void {
+        keyDownUp(player: IPlayer, event?: Event): void {
             if (player.FSM.GamesRunner.getPaused()) {
                 return;
             }
@@ -541,9 +553,11 @@ module FullScreenMario {
                 }
 
                 if (player.FSM.MapScreener.underwater) {
-                    player.FSM.TimeHandler.addEvent(function () {
-                        player.jumping = player.keys.jump = false;
-                    }, 14);
+                    player.FSM.TimeHandler.addEvent(
+                        function (): void {
+                            player.jumping = player.keys.jump = false;
+                        },
+                        14);
                 }
             }
 
@@ -551,14 +565,14 @@ module FullScreenMario {
 
             event.preventDefault();
         }
-    
+
         /**
          * Reacts to the down key being pressed. The player's keys.crouch is marked 
          * and the mod event is fired.
          * 
          * @param {Player} player
          */
-        keyDownDown(player: IPlayer, event: Event): void {
+        keyDownDown(player: IPlayer, event?: Event): void {
             if (player.FSM.GamesRunner.getPaused()) {
                 return;
             }
@@ -568,14 +582,14 @@ module FullScreenMario {
 
             event.preventDefault();
         }
-    
+
         /**
          * Reacts to the sprint key being pressed. Firing happens if the player is
          * able, keys.spring is marked, and the mod event is fired.
          * 
          * @param {Player} player
          */
-        keyDownSprint(player: IPlayer, event: Event): void {
+        keyDownSprint(player: IPlayer, event?: Event): void {
             if (player.FSM.GamesRunner.getPaused()) {
                 return;
             }
@@ -588,14 +602,14 @@ module FullScreenMario {
 
             event.preventDefault();
         }
-    
+
         /**
          * Reacts to the pause key being pressed. Pausing happens almost immediately
          * (the delay helps prevent accidental pauses) and the mod event fires.
          * 
          * @param {Player} player
          */
-        keyDownPause(player: IPlayer, event: Event): void {
+        keyDownPause(player: IPlayer, event?: Event): void {
             if (!player.FSM.GamesRunner.getPaused()) {
                 player.FSM.TimeHandler.addEvent(
                     player.FSM.GamesRunner.pause, 7, true);
@@ -604,14 +618,14 @@ module FullScreenMario {
 
             event.preventDefault();
         }
-    
+
         /**
          * Reacts to the mute key being lifted. Muting is toggled and the mod event
          * is fired.
          * 
          * @param {Player} player
          */
-        keyDownMute(player: IPlayer, event: Event): void {
+        keyDownMute(player: IPlayer, event?: Event): void {
             if (player.FSM.GamesRunner.getPaused()) {
                 return;
             }
@@ -621,14 +635,14 @@ module FullScreenMario {
 
             event.preventDefault();
         }
-    
+
         /**
          * Reacts to the left key being lifted. keys.run and keys.leftDown are 
          * marked and the mod event is fired.
          * 
          * @param {Player} player
          */
-        keyUpLeft(player: IPlayer, event: Event): void {
+        keyUpLeft(player: IPlayer, event?: Event): void {
             player.keys.run = 0;
             player.keys.leftDown = false;
 
@@ -636,14 +650,14 @@ module FullScreenMario {
 
             event.preventDefault();
         }
-    
+
         /**
          * Reacts to the right key being lifted. keys.run and keys.rightDown are 
          * marked and the mod event is fired.
          * 
          * @param {Player} player
          */
-        keyUpRight(player: IPlayer, event: Event): void {
+        keyUpRight(player: IPlayer, event?: Event): void {
             player.keys.run = 0;
             player.keys.rightDown = false;
 
@@ -651,14 +665,14 @@ module FullScreenMario {
 
             event.preventDefault();
         }
-    
+
         /**
          * Reacts to the up key being lifted. Jumping stops and the mod event is
          * fired.
          * 
          * @param {Player} player
          */
-        keyUpUp(player: IPlayer, event: Event): void {
+        keyUpUp(player: IPlayer, event?: Event): void {
             if (!player.FSM.MapScreener.underwater) {
                 player.keys.jump = player.keys.up = false;
             }
@@ -667,14 +681,14 @@ module FullScreenMario {
 
             event.preventDefault();
         }
-    
+
         /**
          * Reacts to the down key being lifted. keys.crouch is marked, crouch
          * removal happens if necessary, and the mod event is fired.
          * 
          * @param {Player} player
          */
-        keyUpDown(player: IPlayer, event: Event): void {
+        keyUpDown(player: IPlayer, event?: Event): void {
             player.keys.crouch = false;
             if (!player.piping) {
                 player.FSM.animatePlayerRemoveCrouch(player);
@@ -683,27 +697,27 @@ module FullScreenMario {
 
             event.preventDefault();
         }
-    
+
         /**
          * Reacts to the spring key being lifted. keys.sprint is marked and the mod
          * event is fired.
          * 
          * @param {Player} player
          */
-        keyUpSprint(player: IPlayer, event: Event): void {
+        keyUpSprint(player: IPlayer, event?: Event): void {
             player.keys.sprint = false;
             player.FSM.ModAttacher.fireEvent("onKeyUpSprint");
 
             event.preventDefault();
         }
-    
+
         /**
          * Reacts to the pause key being lifted. The game is unpaused if necessary
          * and the mod event is fired.
          * 
          * @param {Player} player
          */
-        keyUpPause(player: IPlayer, event: Event): void {
+        keyUpPause(player: IPlayer, event?: Event): void {
             if (player.FSM.GamesRunner.getPaused()) {
                 player.FSM.GamesRunner.play();
             }
@@ -711,20 +725,20 @@ module FullScreenMario {
 
             event.preventDefault();
         }
-    
+
         /**
          * Reacts to a right click being pressed. Pausing is toggled and the mod
          * event is fired.
          * 
          * @param {Player} player
          */
-        mouseDownRight(player: IPlayer, event: Event): void {
+        mouseDownRight(player: IPlayer, event?: Event): void {
             player.FSM.GamesRunner.togglePause();
             player.FSM.ModAttacher.fireEvent("onMouseDownRight");
 
             event.preventDefault();
         }
-    
+
         /**
          * Reacts to a regularly caused device motion event. Acceleration is checked
          * for changed tilt horizontally (to trigger left or right key statuses) or
@@ -733,7 +747,7 @@ module FullScreenMario {
          * @param {Player} player
          * @param {DeviceMotionEvent} event
          */
-        deviceMotion(player, event: DeviceMotionEvent): void {
+        deviceMotion(player: IPlayer, event: DeviceMotionEvent): void {
             var FSM: FullScreenMario = player.FSM,
                 deviceMotionStatus: IDeviceMotionStatus = FSM.deviceMotionStatus,
                 acceleration: DeviceAcceleration = event.accelerationIncludingGravity;
@@ -773,7 +787,7 @@ module FullScreenMario {
                 }
             }
         }
-    
+
         /**
          * Checks whether inputs can be fired, which is equivalent to the status of
          * the MapScreener's nokeys variable (an inverse value).
@@ -783,11 +797,11 @@ module FullScreenMario {
         canInputsTrigger(FSM: FullScreenMario): boolean {
             return !FSM.MapScreener.nokeys;
         }
-    
-    
+
+
         /* Upkeep maintenence
         */
-    
+
         /**
          * Regular maintenance Function called on the Solids group every upkeep.  
          * Things are checked for being alive and to the right of QuadsKeeper.left; 
@@ -828,14 +842,14 @@ module FullScreenMario {
          * @param {Character[]} characters   EightBittr's GroupHolder's Characters
          *                                   group.
          */
-        maintainCharacters(FSM, characters: ICharacter[]): void {
+        maintainCharacters(FSM: FullScreenMario, characters: ICharacter[]): void {
             var delx: number = FSM.QuadsKeeper.right,
                 character: ICharacter,
                 i: number;
 
             for (i = 0; i < characters.length; ++i) {
                 character = characters[i];
-            
+
                 // Gravity
                 if (character.resting) {
                     character.yvel = 0;
@@ -851,10 +865,10 @@ module FullScreenMario {
                 FSM.updatePosition(character);
                 FSM.QuadsKeeper.determineThingQuadrants(character);
                 FSM.ThingHitter.checkHitsOf[character.title](character);
-            
+
                 // Overlaps
                 if (character.overlaps && character.overlaps.length) {
-                    FSM.maintainOverlaps(character);
+                    FSM.maintainOverlaps(<ICharacterOverlapping>character);
                 }
 
                 // Resting tests
@@ -892,7 +906,7 @@ module FullScreenMario {
                 }
             }
         }
-    
+
         /**
          * Maintenance Function only triggered for Things that are known to have 
          * overlapping Solids stored in their overlaps attribute. This will slide
@@ -915,7 +929,7 @@ module FullScreenMario {
                 character.overlapGoal,
                 character.FSM.unitsize
                 );
-        
+
             // Goal to the right: has the thing gone far enough to the right?
             if (character.overlapGoRight) {
                 if (character.left >= character.overlapCheck) {
@@ -931,12 +945,12 @@ module FullScreenMario {
                     return;
                 }
             }
-        
+
             // A check above didn't fail into a return, so overlapping is solved
             character.overlaps.length = 0;
             character.checkOverlaps = true;
         }
-    
+
         /**
          * Sets the overlapping properties of a Thing when it is first detected as
          * overlapping in maintainOverlaps. All solids in its overlaps Array are
@@ -1029,9 +1043,8 @@ module FullScreenMario {
                     // If the map has an exit (e.g. cloud world), transport there
                     if ((<IArea>FSM.MapsHandler.getArea()).exit) {
                         FSM.setLocation((<IArea>FSM.MapsHandler.getArea()).exit);
-                    }
-                    // Otherwise, since Player is below the screen, kill him dead
-                    else {
+                    } else {
+                        // Otherwise, since Player is below the screen, kill him dead
                         FSM.killPlayer(player, 2);
                     }
 
@@ -1047,9 +1060,8 @@ module FullScreenMario {
                         player.xvel = Math.min(0, player.xvel);
                     }
                 }
-            }
-            // Player is moving to the left
-            else if (player.left < 0) {
+            } else if (player.left < 0) {
+                // Player is moving to the left
                 // Stop Player from going to the left.
                 player.xvel = Math.max(0, player.xvel);
             }
@@ -1061,14 +1073,14 @@ module FullScreenMario {
 
             // Scrolloffset is how far over the middle player's right is
             if (FSM.MapScreener.canscroll) {
-                var scrolloffset = player.right - FSM.MapScreener.middleX;
+                var scrolloffset: number = player.right - FSM.MapScreener.middleX;
                 if (scrolloffset > 0) {
                     FSM.scrollWindow(Math.min(player.scrollspeed, scrolloffset));
                 }
             }
         }
-    
-    
+
+
         /* Collision detectors
         */
 
@@ -1088,11 +1100,11 @@ module FullScreenMario {
              * @param {Thing} thing
              * @return {Boolean}
              */
-            return function canThingCollide(thing: IThing) {
+            return function canThingCollide(thing: IThing): boolean {
                 return thing.alive && !thing.nocollide;
             };
         }
-    
+
         /**
          * @param {Thing} thing
          * @return {Boolean} Whether the Thing is alive, meaning it has a true alive
@@ -1119,7 +1131,7 @@ module FullScreenMario {
                 && thing.bottom >= other.top
                 && thing.top <= other.bottom);
         }
-    
+
         /**
          * General top collision detection Function for two Things to determine if
          * one Thing is on top of another. This takes into consideration factors
@@ -1135,13 +1147,13 @@ module FullScreenMario {
             if (thing.groupType === "Solid" && other.yvel > 0) {
                 return false;
             }
-        
+
             // If other is falling faster than thing, and isn't a solid,
             // thing can't be on top (if anything, the opposite is true)
             if (thing.yvel < other.yvel && other.groupType !== "Solid") {
                 return false;
             }
-        
+
             // If thing is the player, and it's on top of an enemy, that's true
             if (
                 (<ICharacter>thing).player && thing.bottom < other.bottom
@@ -1149,34 +1161,34 @@ module FullScreenMario {
                 ) {
                 return true;
             }
-        
+
             // If thing is too far to the right, it can't be touching other
             if (thing.left + thing.FSM.unitsize >= other.right) {
                 return false;
             }
-        
+
             // If thing is too far to the left, it can't be touching other
             if (thing.right - thing.FSM.unitsize <= other.left) {
                 return false;
             }
-        
+
             // If thing's bottom is below other's top, factoring tolerance and
             // other's vertical velocity, they're touching
             if (thing.bottom <= other.top + other.toly + other.yvel) {
                 return true;
             }
-        
+
             // Same as before, but with velocity as the absolute difference between
             // their two velocities
             if (thing.bottom <= other.top + other.toly + Math.abs(thing.yvel - other.yvel)) {
                 return true;
             }
-        
+
             // None of the above checks passed for true, so this is false (thing's
             // bottom is above other's top
             return false;
         }
-    
+
         /**
          * Top collision Function to determine if one Thing is on top of a solid.
          * 
@@ -1190,29 +1202,29 @@ module FullScreenMario {
             if (thing.left + thing.FSM.unitsize >= other.right) {
                 return false;
             }
-        
+
             // If thing is too far to the left, they're not touching
             if (thing.right - thing.FSM.unitsize <= other.left) {
                 return false;
             }
-        
+
             // If thing's bottom is below other's top, factoring thing's velocity
             // and other's tolerance, they're touching
             if (thing.bottom - thing.yvel <= other.top + other.toly + thing.yvel) {
                 return true;
             }
-        
+
             // Same as before, but with velocity as the absolute difference between
             // their two velocities
             if (thing.bottom <= other.top + other.toly + Math.abs(thing.yvel - other.yvel)) {
                 return true;
             }
-        
+
             // None of the above checks passed for true, so this is false (thing's
             // bottom is above other's top
             return false;
         }
-    
+
         /**
          * Top collision Function to determine if a character is on top of a solid.
          * This is always true for resting (since resting checks happen before when
@@ -1227,33 +1239,33 @@ module FullScreenMario {
             if (thing.resting === other) {
                 return true;
             }
-        
+
             // If the character is jumping upwards, it's not on a solid
             // (removing this check would cause Mario to have "sticky" behavior when
             // jumping at the corners of solids)
             if (thing.yvel < 0) {
                 return false;
             }
-        
+
             // The character and solid must be touching appropriately
             if (!thing.FSM.isThingOnSolid(thing, other)) {
                 return false;
             }
-        
+
             // Corner case: when character is exactly falling off the right (false)
             if (thing.left + thing.xvel + thing.FSM.unitsize === other.right) {
                 return false;
             }
-        
+
             // Corner case: when character is exactly falling off the left (false)
             if (thing.right - thing.xvel - thing.FSM.unitsize === other.left) {
                 return false;
             }
-        
+
             // None of the above checks caught a falsity, so this must be true
             return true;
         }
-    
+
         /**
          * Top collision Function to determine if a character should be considered 
          * resting on a solid. This mostly uses isThingOnSolid, but also checks for
@@ -1268,21 +1280,21 @@ module FullScreenMario {
             if (!thing.FSM.isThingOnSolid(thing, other)) {
                 return false;
             }
-        
+
             // Corner case: when character is exactly falling off the right (false)
             if (thing.left + thing.xvel + thing.FSM.unitsize === other.right) {
                 return false;
             }
-        
+
             // Corner case: when character is exactly falling off the left (false)
             if (thing.right - thing.xvel - thing.FSM.unitsize === other.left) {
                 return false;
             }
-        
+
             // None of the above checks caught a falsity, so this must be true
             return true;
         }
-    
+
         /**
          * Function generator for the generic isCharacterTouchingCharacter checker.
          * This is used repeatedly by ThingHittr to generate separately optimized
@@ -1312,7 +1324,7 @@ module FullScreenMario {
                 return thing.FSM.isThingTouchingThing(thing, other);
             };
         }
-    
+
         /**
          * Function generator for the generic isCharacterTouchingSolid checker. This
          * is used repeatedly by ThingHittr to generate separately optimized 
@@ -1344,7 +1356,7 @@ module FullScreenMario {
                 return thing.FSM.isThingTouchingThing(thing, other);
             };
         }
-    
+
         /**
          * @param {Character} thing
          * @param {Enemy} other
@@ -1354,7 +1366,7 @@ module FullScreenMario {
         isCharacterAboveEnemy(thing: ICharacter, other: ICharacter): boolean {
             return thing.bottom < other.top + other.toly;
         }
-    
+
         /**
          * @param {Character} thing
          * @param {Solid} other
@@ -1364,7 +1376,7 @@ module FullScreenMario {
         isCharacterBumpingSolid(thing: ICharacter, other: ISolid): boolean {
             return thing.top + thing.toly + Math.abs(thing.yvel) > other.bottom;
         }
-    
+
         /**
          * @param {Character} thing
          * @param {Solid} other
@@ -1374,7 +1386,7 @@ module FullScreenMario {
         isCharacterOverlappingSolid(thing: ICharacter, other: ISolid): boolean {
             return thing.top <= other.top && thing.bottom > other.bottom;
         }
-    
+
         /**
          * @param {Solid} thing
          * @param {Character} other
@@ -1388,29 +1400,29 @@ module FullScreenMario {
             if (other.yvel >= 0) {
                 return false;
             }
-        
+
             // Horizontally, all that's required is for the other's midpoint to
             // be within the thing's left and right
-            var midx = thing.FSM.getMidX(other);
+            var midx: number = thing.FSM.getMidX(other);
             if (midx <= thing.left || midx >= thing.right) {
                 return false;
             }
-        
+
             // If the thing's bottom is below the other's top, factoring
             // tolerance and velocity, that's false (this function assumes they're
             // already touching)
             if (thing.bottom - thing.yvel > other.top + other.toly - other.yvel) {
                 return false;
             }
-        
+
             // The above checks never caught falsities, so this must be true
             return true;
         }
-    
-    
+
+
         /* Collision reactions
         */
-    
+
         /**
          * Externally facing Function to gain some number of lives. StatsHolder 
          * increases the "score" statistic, an audio is played, and the mod event is 
@@ -1422,7 +1434,7 @@ module FullScreenMario {
          *                              default, false).
          */
         gainLife(amount: number, nosound?: boolean): void {
-            var FSM = FullScreenMario.prototype.ensureCorrectCaller(this);
+            var FSM: FullScreenMario = FullScreenMario.prototype.ensureCorrectCaller(this);
 
             amount = Number(amount) || 1;
 
@@ -1434,7 +1446,7 @@ module FullScreenMario {
 
             FSM.ModAttacher.fireEvent("onGainLife", amount);
         }
-    
+
         /**
          * Basic Function for an item to jump slightly into the air, such as from 
          * the player hitting a solid below it. 
@@ -1447,7 +1459,7 @@ module FullScreenMario {
             thing.yvel -= FullScreenMario.unitsize * 1.4;
             this.shiftVert(thing, -FullScreenMario.unitsize);
         }
-    
+
         /**
          * Generic Function for when the player jumps on top of an enemy. The enemy
          * is killed, the player's velocity points upward, and score is gained.
@@ -1471,11 +1483,14 @@ module FullScreenMario {
             }
 
             thing.jumpers += 1;
-            thing.FSM.TimeHandler.addEvent(function (thing) {
-                thing.jumpers -= 1;
-            }, 1, thing);
+            thing.FSM.TimeHandler.addEvent(
+                function (thing: IPlayer): void {
+                    thing.jumpers -= 1;
+                },
+                1,
+                thing);
         }
-    
+
         /**
          * Callback for the player hitting a Mushroom or FireFlower. The player's
          * power and the StatsHolder's "power" statistic both go up, and the
@@ -1509,7 +1524,7 @@ module FullScreenMario {
 
             thing.FSM.ModAttacher.fireEvent("onPlayerShroom", thing, other);
         }
-    
+
         /**
          * Callback for the player hitting a Mushroom1Up. The game simply calls 
          * gainLife and triggers the mod event.
@@ -1525,7 +1540,7 @@ module FullScreenMario {
             thing.FSM.gainLife(1);
             thing.FSM.ModAttacher.fireEvent("onPlayerShroom1Up", thing, other);
         }
-    
+
         /**
          * Callback for the player hitting a Star. A set of animation loops and 
          * sounds play, and the mod event is triggered. After some long period time,
@@ -1548,9 +1563,13 @@ module FullScreenMario {
                     thing.FSM.AudioPlayer, "Star", true
                     ));
 
-            thing.FSM.TimeHandler.addClassCycle(thing, [
-                "star1", "star2", "star3", "star4"
-            ], "star", 2);
+            thing.FSM.TimeHandler.addClassCycle(
+                thing,
+                [
+                    "star1", "star2", "star3", "star4"
+                ],
+                "star",
+                2);
 
             thing.FSM.TimeHandler.addEvent(
                 thing.FSM.playerStarDown,
@@ -1559,7 +1578,7 @@ module FullScreenMario {
 
             thing.FSM.ModAttacher.fireEvent("onPlayerStarUp", thing);
         }
-    
+
         /**
          * Trigger to commence reducing the player's star power. This slows the
          * class cycle, times a playerStarOffCycle trigger, and fires the mod event.
@@ -1572,9 +1591,13 @@ module FullScreenMario {
             }
 
             thing.FSM.TimeHandler.cancelClassCycle(thing, "star");
-            thing.FSM.TimeHandler.addClassCycle(thing, [
-                "star1", "star2", "star3", "star4"
-            ], "star", 5);
+            thing.FSM.TimeHandler.addClassCycle(
+                thing,
+                [
+                    "star1", "star2", "star3", "star4"
+                ],
+                "star",
+                5);
 
             thing.FSM.TimeHandler.addEvent(
                 thing.FSM.playerStarOffCycle,
@@ -1586,7 +1609,7 @@ module FullScreenMario {
 
             thing.FSM.ModAttacher.fireEvent("onPlayerStarDown", thing);
         }
-    
+
         /**
          * Trigger to continue reducing the player's star power. This resumes 
          * playing the regular theme, times a playerStarOffFinal trigger, and fires
@@ -1612,7 +1635,7 @@ module FullScreenMario {
 
             thing.FSM.ModAttacher.fireEvent("onPlayerStarOffCycle", thing);
         }
-    
+
         /**
          * Trigger to finish reducing the player's star power. This actually reduces
          * the player's star attribute, cancels the sprite cycle, adds the previous 
@@ -1636,7 +1659,7 @@ module FullScreenMario {
 
             thing.FSM.ModAttacher.fireEvent("onPlayerStarOffFinal", thing);
         }
-    
+
         /**
          * Sizing modifier for the player, typically called when entering a location
          * or colliding with a Mushroom. This sets the player's size to the large 
@@ -1660,7 +1683,7 @@ module FullScreenMario {
 
             thing.FSM.ModAttacher.fireEvent("onPlayerGetsBig", thing);
         }
-    
+
         /**
          * Animation scheduler for the player getting big. The shrooming classes are
          * cycled through rapidly while the player's velocity is paused.
@@ -1676,7 +1699,7 @@ module FullScreenMario {
 
             thing.FSM.addClass(thing, "shrooming");
             thing.FSM.thingPauseVelocity(thing);
-        
+
             // The last stage in the events clears it, resets movement, and stops
             stages.push(function (thing: IPlayer, stages: string[]): boolean {
                 thing.shrooming = false;
@@ -1691,7 +1714,7 @@ module FullScreenMario {
 
             thing.FSM.TimeHandler.addClassCycle(thing, stages, "shrooming", 6);
         }
-    
+
         /**
          * Sizing modifier for the player, typically called when going down to 
          * normal size after being large. This containst eha nimation scheduling
@@ -1704,7 +1727,7 @@ module FullScreenMario {
             var bottom: number = thing.bottom;
 
             thing.FSM.thingPauseVelocity(thing);
-        
+
             // Step one
             thing.nocollidechar = true;
             thing.FSM.animateFlicker(thing);
@@ -1712,34 +1735,43 @@ module FullScreenMario {
                 thing, "running skidding jumping fiery"
                 );
             thing.FSM.addClasses(thing, "paddling small");
-        
+
             // Step two (t+21)
-            thing.FSM.TimeHandler.addEvent(function (thing) {
-                thing.FSM.removeClass(thing, "large");
-                thing.FSM.setPlayerSizeSmall(thing);
-                thing.FSM.setBottom(
-                    thing, bottom - FullScreenMario.unitsize
-                    );
-            }, 21, thing);
-        
+            thing.FSM.TimeHandler.addEvent(
+                function (thing: IPlayer): void {
+                    thing.FSM.removeClass(thing, "large");
+                    thing.FSM.setPlayerSizeSmall(thing);
+                    thing.FSM.setBottom(
+                        thing, bottom - FullScreenMario.unitsize
+                        );
+                },
+                21,
+                thing);
+
             // Step three (t+42)
-            thing.FSM.TimeHandler.addEvent(function (thing) {
-                thing.FSM.thingResumeVelocity(thing, false);
-                thing.FSM.removeClass(thing, "paddling");
-                if (thing.running || thing.xvel) {
-                    thing.FSM.addClass(thing, "running");
-                }
-                thing.FSM.PixelDrawer.setThingSprite(thing);
-            }, 42, thing);
-        
+            thing.FSM.TimeHandler.addEvent(
+                function (thing: IPlayer): void {
+                    thing.FSM.thingResumeVelocity(thing, false);
+                    thing.FSM.removeClass(thing, "paddling");
+                    if (thing.running || thing.xvel) {
+                        thing.FSM.addClass(thing, "running");
+                    }
+                    thing.FSM.PixelDrawer.setThingSprite(thing);
+                },
+                42,
+                thing);
+
             // Step four (t+70)
-            thing.FSM.TimeHandler.addEvent(function (thing) {
-                thing.nocollidechar = false;
-            }, 70, thing);
+            thing.FSM.TimeHandler.addEvent(
+                function (thing: IPlayer): void {
+                    thing.nocollidechar = false;
+                },
+                70,
+                thing);
 
             thing.FSM.ModAttacher.fireEvent("onPlayerGetsSmall");
         }
-    
+
         /**
          * Visual changer for when the player collides with a FireFlower. The 
          * "fiery" class is added, and the mod event is fired.
@@ -1755,7 +1787,7 @@ module FullScreenMario {
 
             thing.FSM.ModAttacher.fireEvent("onPlayerGetsFire");
         }
-    
+
         /**
          * Actually sets the size for a player to small (8x8) via setSize and 
          * updateSize.
@@ -1766,7 +1798,7 @@ module FullScreenMario {
             thing.FSM.setSize(thing, 8, 8, true);
             thing.FSM.updateSize(thing);
         }
-    
+
         /**
          * Actually sets the size for a player to large (8x16) via setSize and 
          * updateSize.
@@ -1777,7 +1809,7 @@ module FullScreenMario {
             thing.FSM.setSize(thing, 8, 16, true);
             thing.FSM.updateSize(thing);
         }
-    
+
         /**
          * Removes the crouching flag from the player and re-adds the running cycle. 
          * If the player is large (has power > 1), size and classes must be set.
@@ -1797,7 +1829,7 @@ module FullScreenMario {
 
             thing.FSM.animatePlayerRunningCycle(thing);
         }
-    
+
         /**
          * Officially unattaches a player from a solid. The thing's physics flags
          * are reset to normal, the two have their attachment flags set, and the 
@@ -1819,7 +1851,7 @@ module FullScreenMario {
 
             other.attachedCharacter = undefined;
         }
-    
+
         /**
          * Adds an invisible RestingStone underneath the player. It is hidden and
          * unable to collide until the player falls to its level, at which point the
@@ -1828,26 +1860,28 @@ module FullScreenMario {
          * @param {Player} thing
          */
         playerAddRestingStone(thing: IPlayer): void {
-            var stone = thing.FSM.addThing(
+            var stone: IRestingStone = <IRestingStone>thing.FSM.addThing(
                 "RestingStone",
                 thing.left,
-                thing.top + thing.FSM.unitsize * 48
-                );
+                thing.top + thing.FSM.unitsize * 48);
 
             thing.nocollide = true;
 
-            thing.FSM.TimeHandler.addEventInterval(function (): boolean {
-                if (thing.bottom < stone.top) {
-                    return false;
-                }
+            thing.FSM.TimeHandler.addEventInterval(
+                function (): boolean {
+                    if (thing.bottom < stone.top) {
+                        return false;
+                    }
 
-                thing.nocollide = false;
-                thing.FSM.setMidXObj(stone, thing);
-                thing.FSM.setBottom(thing, stone.top);
-                return true;
-            }, 1, Infinity);
+                    thing.nocollide = false;
+                    thing.FSM.setMidXObj(stone, thing);
+                    thing.FSM.setBottom(thing, stone.top);
+                    return true;
+                },
+                1,
+                Infinity);
         }
-    
+
         /**
          * Marks a new overlapping Thing in the first Thing's overlaps Array, 
          * creating the Array if needed.
@@ -1862,11 +1896,11 @@ module FullScreenMario {
                 thing.overlaps.push(other);
             }
         }
-    
-    
+
+
         /* Spawn / activate functions
         */
-    
+
         /**
          * Spawn callback for DeadGoombas. They simply disappear after 21 steps.
          * 
@@ -1875,7 +1909,7 @@ module FullScreenMario {
         spawnDeadGoomba(thing: IThing): void {
             thing.FSM.TimeHandler.addEvent(FullScreenMario.prototype.killNormal, 21, thing);
         }
-    
+
         /**
          * Spawn callback for HammerBros. Gravity is reduced, and the hammer and
          * jump event intervals are started. The cyclical movement counter is set to
@@ -1891,7 +1925,7 @@ module FullScreenMario {
             thing.FSM.TimeHandler.addEvent(thing.FSM.animateThrowingHammer, 35, thing, 7);
             thing.FSM.TimeHandler.addEventInterval(thing.FSM.animateJump, 140, Infinity, thing);
         }
-    
+
         /** 
          * Spawn callback for Bowsers. The cyclical movement counter is set to 0 and
          * the firing and jumping event intervals are started. If it also specifies 
@@ -1923,17 +1957,19 @@ module FullScreenMario {
 
             if (thing.throwing) {
                 for (i = 0; i < thing.throwAmount; i += 1) {
-                    thing.FSM.TimeHandler.addEvent(function () {
-                        thing.FSM.TimeHandler.addEventInterval(
-                            thing.FSM.animateBowserThrow,
-                            thing.throwPeriod,
-                            Infinity,
-                            thing);
-                    }, thing.throwDelay + i * thing.throwBetween);
+                    thing.FSM.TimeHandler.addEvent(
+                        function (): void {
+                            thing.FSM.TimeHandler.addEventInterval(
+                                thing.FSM.animateBowserThrow,
+                                thing.throwPeriod,
+                                Infinity,
+                                thing);
+                        },
+                        thing.throwDelay + i * thing.throwBetween);
                 }
             }
         }
-    
+
         /**
          * Spawn callback for Piranhas. The movement counter and direction are
          * reset, and if the Piranha is on a pipe, it has a reduced height (6).
@@ -1952,7 +1988,7 @@ module FullScreenMario {
                 thing.FSM.setBottom(thing, bottom);
             }
         }
-    
+
         /**
          * Spawn callback for Bloopers. Its squeeze and movement counters are set to
          * 0.
@@ -1963,7 +1999,7 @@ module FullScreenMario {
             thing.squeeze = 0;
             thing.counter = 0;
         }
-    
+
         /**
          * Spawn callback for Podoboos. The jumping interval is set to the Thing's
          * frequency.
@@ -1977,7 +2013,7 @@ module FullScreenMario {
                 Infinity,
                 thing);
         }
-    
+
         /**
          * Spawn callback for Lakitus. These are only allowed to exist if there 
          * isn't already one registered in the MapScreener. If there isn't, it is
@@ -1996,7 +2032,7 @@ module FullScreenMario {
             thing.FSM.TimeHandler.addEventInterval(
                 thing.FSM.animateLakituThrowingSpiny, 140, Infinity, thing);
         }
-    
+
         /**
          * Spawning callback for Cannons. Unless specified by the noBullets flag,
          * the firing interval is set to the Thing's frequency.
@@ -2014,7 +2050,7 @@ module FullScreenMario {
                 thing.frequency,
                 thing);
         }
-    
+
         /**
          * Spawning callback for CastleBlocks. If the Thing has fireballs, an Array
          * of them are made and animated to tick around the block like a clock, set
@@ -2054,7 +2090,7 @@ module FullScreenMario {
                 thing,
                 balls);
         }
-    
+
         /**
          * Spawning callback for floating Things, such as Koopas and Platforms. The
          * Thing's begin and end attributes are set relative to the MapScreener's
@@ -2065,7 +2101,7 @@ module FullScreenMario {
         spawnMoveFloating(thing: IThingFloating): void {
             // Make sure thing.begin <= thing.end
             thing.FSM.setMovementEndpoints(thing);
-        
+
             // Make thing.begin and thing.end relative to the area's floor
             thing.begin = (
                 thing.FSM.MapScreener.floor
@@ -2074,7 +2110,7 @@ module FullScreenMario {
                 thing.FSM.MapScreener.floor
                 * thing.FSM.unitsize - thing.end);
         }
-    
+
         /**
          * Spawning callback for sliding Things, such as Platforms. The Thing's 
          * begin and end attributes do not need to be relative to anything.
@@ -2085,7 +2121,7 @@ module FullScreenMario {
             // Make sure thing.begin <= thing.end
             thing.FSM.setMovementEndpoints(thing);
         }
-    
+
         /**
          * Spawning callback for a Platform that's a part of a Scale. ???
          * 
@@ -2102,7 +2138,7 @@ module FullScreenMario {
                 "partnerPlatform": collection["platform" + partnerKey]
             };
         }
-    
+
         /**
          * Generator callback to create a random CheepCheep. The spawn is given a
          * random x-velocity, is placed at a random point just below the screen, and
@@ -2133,7 +2169,7 @@ module FullScreenMario {
 
             return false;
         }
-    
+
         /**
          * Generator callback to create a BulleBill. The spawn moves horizontally
          * at a constant rate towards the left side of the bill, and is placed at a
@@ -2165,7 +2201,7 @@ module FullScreenMario {
 
             return false;
         }
-    
+
         /**
          * Spawns a CustomText by killing it and placing the contents of its texts
          * member variable. These are written with a determined amount of spacing
@@ -2226,7 +2262,7 @@ module FullScreenMario {
 
             thing.FSM.killNormal(thing);
         }
-    
+
         /**
          * Spawning callback for generic detectors, activated as soon as they are 
          * placed. The Thing's activate trigger is called, then it is killed.
@@ -2237,7 +2273,7 @@ module FullScreenMario {
             thing.activate(thing);
             thing.FSM.killNormal(thing);
         }
-    
+
         /**
          * Spawning callback for ScrollBlockers. If the Thing is too the right of 
          * the visible viewframe, it should limit scrolling when triggered.
@@ -2249,7 +2285,7 @@ module FullScreenMario {
                 thing.setEdge = true;
             }
         }
-    
+
         /** 
          * Used by Things in a collection to register themselves as a part of their
          * container collection Object. This is called by onThingMake, so they're 
@@ -2264,7 +2300,7 @@ module FullScreenMario {
             thing.collection = collection;
             collection[thing.collectionName] = thing;
         }
-    
+
         /** 
          * Used by Things in a collection to get direct references to other Things
          * ("partners") in that collection. This is called by onThingAdd, so it's
@@ -2276,10 +2312,9 @@ module FullScreenMario {
          * @remarks This should be bound in prethings as ".bind(scope, collection)"
          */
         spawnCollectionPartner(collection: any, thing: IThing): void {
-            var partnerNames = thing.collectionPartnerNames,
-                partners = {},
-                collection = thing.collection,
-                name;
+            var partnerNames: any = thing.collectionPartnerNames,
+                partners: any = {},
+                name: string;
 
             for (name in partnerNames) {
                 if (partnerNames.hasOwnProperty(name)) {
@@ -2289,7 +2324,7 @@ module FullScreenMario {
 
             thing.partners = {};
         }
-    
+
         /**
          * Spawning callback for RandomSpawner Things, which generate a set of 
          * commands using the WorldSeeder to be piped into the MapsHandlr, then 
@@ -2298,11 +2333,11 @@ module FullScreenMario {
          * @param {RandomSpawner} thing
          */
         spawnRandomSpawner(thing: IRandomSpawner): void {
-            var EightBitter = thing.FSM,
-                left = (thing.left + EightBitter.MapScreener.left) / EightBitter.unitsize;
+            var FSM: FullScreenMario = thing.FSM,
+                left: number = (thing.left + FSM.MapScreener.left) / FSM.unitsize;
 
-            EightBitter.WorldSeeder.clearGeneratedCommands();
-            EightBitter.WorldSeeder.generateFull({
+            FSM.WorldSeeder.clearGeneratedCommands();
+            FSM.WorldSeeder.generateFull({
                 "title": thing.randomization,
                 "top": thing.randomTop,
                 "right": left + thing.randomWidth,
@@ -2311,16 +2346,16 @@ module FullScreenMario {
                 "width": thing.randomWidth,
                 "height": thing.randomTop - thing.randomBottom
             });
-            EightBitter.WorldSeeder.runGeneratedCommands();
+            FSM.WorldSeeder.runGeneratedCommands();
 
-            EightBitter.MapsHandler.spawnMap(
+            FSM.MapsHandler.spawnMap(
                 "xInc",
-                EightBitter.QuadsKeeper.top / EightBitter.unitsize,
-                EightBitter.QuadsKeeper.right / EightBitter.unitsize,
-                EightBitter.QuadsKeeper.bottom / EightBitter.unitsize,
-                EightBitter.QuadsKeeper.left / EightBitter.unitsize);
+                FSM.QuadsKeeper.top / FSM.unitsize,
+                FSM.QuadsKeeper.right / FSM.unitsize,
+                FSM.QuadsKeeper.bottom / FSM.unitsize,
+                FSM.QuadsKeeper.left / FSM.unitsize);
         }
-    
+
         /**
          * Activation callback for starting spawnRandomCheep on an interval.
          * MapScreener is notified that spawningCheeps is true.
@@ -2331,7 +2366,7 @@ module FullScreenMario {
             thing.FSM.MapScreener.spawningCheeps = true;
             thing.FSM.TimeHandler.addEventInterval(thing.FSM.spawnRandomCheep, 21, Infinity, thing.FSM);
         }
-    
+
         /**
          * Activation callback to stop spawning CheepCheeps. MapScreener is notified
          * that spawningCheeps is false.
@@ -2341,7 +2376,7 @@ module FullScreenMario {
         activateCheepsStop(thing: IDetector): void {
             thing.FSM.MapScreener.spawningCheeps = false;
         }
-    
+
         /**
          * Activation callback for starting spawnRandomBulletBill on an interval.
          * MapScreener is notified that spawningBulletBills is true.
@@ -2352,7 +2387,7 @@ module FullScreenMario {
             thing.FSM.MapScreener.spawningBulletBills = true;
             thing.FSM.TimeHandler.addEventInterval(thing.FSM.spawnRandomBulletBill, 210, Infinity, thing.FSM);
         }
-    
+
         /**
          * Activation callback to stop spawning BulletBills. MapScreener is notified
          * that spawningBulletBills is false.
@@ -2362,7 +2397,7 @@ module FullScreenMario {
         activateBulletBillsStop(thing: IDetector): void {
             thing.FSM.MapScreener.spawningBulletBills = false;
         }
-    
+
         /**
          * Activation callback to tell the area's Lakitu, if it exists, to start 
          * fleeing the scene.
@@ -2379,7 +2414,7 @@ module FullScreenMario {
             lakitu.fleeing = true;
             lakitu.movement = thing.FSM.moveLakituFleeing;
         }
-    
+
         /**
          * Activation callback for a warp world area, triggered by the player 
          * touching a collider on top of it. Piranhas disappear and texts are
@@ -2389,15 +2424,17 @@ module FullScreenMario {
          * @param {DetectCollision} other
          */
         activateWarpWorld(thing: ICharacter, other: IDetectCollision): void {
-            var collection = other.collection,
-                key = 0,
-                keyString, scenery, texts, j;
+            var collection: any = other.collection,
+                key: number = 0,
+                keyString: string,
+                texts: IThing[],
+                j: number;
 
             if (!thing.player) {
                 return;
             }
 
-            texts = collection["Welcomer"].children;
+            texts = collection.Welcomer.children;
             for (j = 0; j < texts.length; j += 1) {
                 if (texts[j].title !== "TextSpace") {
                     texts[j].hidden = false;
@@ -2422,7 +2459,7 @@ module FullScreenMario {
                 key += 1;
             }
         }
-    
+
         /**
          * Activation callback for when the player lands on a RestingStone. The 
          * stone "appears" (via opacity), the regular theme plays if it wasn't 
@@ -2441,14 +2478,19 @@ module FullScreenMario {
             thing.opacity = 1;
             thing.FSM.AudioPlayer.playTheme();
 
-            thing.FSM.TimeHandler.addEventInterval(function () {
-                if (other.resting !== thing) {
+            thing.FSM.TimeHandler.addEventInterval(
+                function (): boolean {
+                    if (other.resting === thing) {
+                        return false;
+                    }
+
                     thing.FSM.killNormal(thing);
                     return true;
-                }
-            }, 1, Infinity);
+                },
+                1,
+                Infinity);
         }
-    
+
         /**
          * Generic activation callback for DetectWindow Things. This is typically 
          * set as a .movement Function, so it waits until the calling Thing is 
@@ -2465,7 +2507,7 @@ module FullScreenMario {
             thing.activate(thing);
             thing.FSM.killNormal(thing);
         }
-    
+
         /**
          * Activation callback for ScrollBlocker Things. These are WindowDetectors
          * that set MapScreener.canscroll to false when they're triggered. If the
@@ -2475,14 +2517,14 @@ module FullScreenMario {
          * @param {ScrollBlocker} thing
          */
         activateScrollBlocker(thing: IScrollBlocker): void {
-            var dx = thing.FSM.MapScreener.width - thing.left;
+            var dx: number = thing.FSM.MapScreener.width - thing.left;
 
             thing.FSM.MapScreener.canscroll = false;
             if (thing.setEdge && dx > 0) {
                 thing.FSM.scrollWindow(-dx);
             }
         }
-    
+
         /**
          * Activation callback for ScrollBlocker Things. These are DetectCollision
          * that set MapScreener.canscroll to true when they're triggered. 
@@ -2492,7 +2534,7 @@ module FullScreenMario {
         activateScrollEnabler(thing: IDetectCollision): void {
             thing.FSM.MapScreener.canscroll = true;
         }
-    
+
         /**
          * Activates the "before" component of a stretchable section. The creation
          * commands of the section are loaded onto the screen as is and a 
@@ -2509,24 +2551,25 @@ module FullScreenMario {
                 area: IArea = <IArea>MapsHandler.getArea(),
                 map: MapsCreatr.IMapsCreatrMap = MapsHandler.getMap(),
                 prethings: { [i: string]: MapsCreatr.IPreThing[] } = MapsHandler.getPreThings(),
-                section = area.sections[thing.section || 0],
-                left = (thing.left + MapScreener.left) / FSM.unitsize,
-                before = section.before ? section.before.creation : undefined,
-                command, i;
-        
+                section: any = area.sections[thing.section || 0],
+                left: number = (thing.left + MapScreener.left) / FSM.unitsize,
+                before: any[] = section.before ? section.before.creation : undefined,
+                command: any,
+                i: number;
+
             // If there is a before, parse each command into the prethings array
             if (before) {
                 for (i = 0; i < before.length; i += 1) {
                     // A copy of the command must be used to not modify the original 
                     command = FSM.proliferate({}, before[i]);
-                
+
                     // The command's x must be shifted by the thing's placement
                     if (!command.x) {
                         command.x = left;
                     } else {
                         command.x += left;
                     }
-                
+
                     // For Platforms that slide around, start and end are dynamic
                     if (command.sliding) {
                         command.begin += left;
@@ -2536,7 +2579,7 @@ module FullScreenMario {
                     MapsCreator.analyzePreSwitch(command, prethings, area, map);
                 }
             }
-            
+
             // Add a prething at the end of all this to trigger the stretch part
             command = {
                 "thing": "DetectWindow",
@@ -2546,7 +2589,7 @@ module FullScreenMario {
             };
 
             MapsCreator.analyzePreSwitch(command, prethings, area, map);
-        
+
             // Spawn new Things that should be placed for being nearby
             MapsHandler.spawnMap(
                 "xInc",
@@ -2555,7 +2598,7 @@ module FullScreenMario {
                 MapScreener.bottom / FSM.unitsize,
                 left);
         }
-    
+
         /**
          * Activates the "stretch" component of a stretchable section. The creation
          * commands of the section are loaded onto the screen and have their widths
@@ -2573,25 +2616,25 @@ module FullScreenMario {
                 area: IArea = <IArea>MapsHandler.getArea(),
                 map: MapsCreatr.IMapsCreatrMap = MapsHandler.getMap(),
                 prethings: { [i: string]: MapsCreatr.IPreThing[] } = MapsHandler.getPreThings(),
-                section = area.sections[thing.section || 0],
-                stretch = section.stretch ? section.stretch.creation : undefined,
+                section: any = area.sections[thing.section || 0],
+                stretch: any[] = section.stretch ? section.stretch.creation : undefined,
                 left: number = (thing.left + MapScreener.left) / FSM.unitsize,
                 width: number = MapScreener.width / FSM.unitsize,
                 command: IPreThingSettings,
                 i: number;
-        
+
             // If there is a stretch, parse each command into the current prethings array
             if (stretch) {
                 for (i = 0; i < stretch.length; i += 1) {
                     // A copy of the command must be used, so the original isn't modified
                     command = FSM.proliferate({}, stretch[i]);
                     command.x = left;
-                
+
                     // "stretch" the command by making its width equal to the screen
                     command.width = width;
                     MapsCreator.analyzePreSwitch(command, prethings, area, map);
                 }
-            
+
                 // Add a prething at the end of all this to trigger the after part
                 command = {
                     "thing": "DetectWindow",
@@ -2602,7 +2645,7 @@ module FullScreenMario {
                 };
                 MapsCreator.analyzePreSwitch(command, prethings, area, map);
             }
-        
+
             // Spawn the map, so new Things that should be placed will be spawned if nearby
             MapsHandler.spawnMap(
                 "xInc",
@@ -2611,7 +2654,7 @@ module FullScreenMario {
                 MapScreener.bottom / FSM.unitsize,
                 left);
         }
-    
+
         /**
          * Activates the "after" component of a stretchable sectin. The creation
          * commands of the stretch are loaded onto the screen as is.
@@ -2627,25 +2670,25 @@ module FullScreenMario {
                 area: IArea = <IArea>MapsHandler.getArea(),
                 map: MapsCreatr.IMapsCreatrMap = MapsHandler.getMap(),
                 prethings: { [i: string]: MapsCreatr.IPreThing[] } = MapsHandler.getPreThings(),
-                section = area.sections[thing.section || 0],
+                section: any = area.sections[thing.section || 0],
                 left: number = (thing.left + MapScreener.left) / FSM.unitsize,
-                after = section.after ? section.after.creation : undefined,
+                after: any[] = section.after ? section.after.creation : undefined,
                 command: any,
                 i: number;
-        
+
             // If there is an after, parse each command into the current prethings array
             if (after) {
                 for (i = 0; i < after.length; i += 1) {
                     // A copy of the command must be used, so the original isn't modified
                     command = FSM.proliferate({}, after[i]);
-                
+
                     // The command's x-location must be shifted by the thing's placement
                     if (!command.x) {
                         command.x = left;
                     } else {
                         command.x += left;
                     }
-                
+
                     // For Platforms that slide around, start and end are dynamic
                     if (command.sliding) {
                         command.begin += left;
@@ -2655,7 +2698,7 @@ module FullScreenMario {
                     MapsCreator.analyzePreSwitch(command, prethings, area, map);
                 }
             }
-        
+
             // Spawn the map, so new Things that should be placed will be spawned if nearby
             MapsHandler.spawnMap(
                 "xInc",
@@ -2664,8 +2707,8 @@ module FullScreenMario {
                 MapScreener.bottom / FSM.unitsize,
                 left);
         }
-    
-    
+
+
         /* Collision functions
         */
 
@@ -2693,17 +2736,16 @@ module FullScreenMario {
                 }
 
                 other.collide(thing, other);
-            
+
                 // If a character is bumping into the bottom, call that
                 if (thing.undermid) {
                     if (thing.undermid.bottomBump) {
                         thing.undermid.bottomBump(thing.undermid, thing);
                     }
-                }
-                else if (thing.under && thing.under && (<any>thing.under).bottomBump) {
+                } else if (thing.under && thing.under && (<any>thing.under).bottomBump) {
                     (<any>thing.under).bottomBump(thing.under[0], thing);
                 }
-            
+
                 // If the character is overlapping the solid, call that too
                 if (
                     thing.checkOverlaps
@@ -2741,7 +2783,7 @@ module FullScreenMario {
                 }
             };
         }
-    
+
         /**
          * Collision callback used by most Items. The item's action callback will
          * be called only if the first Thing is a player.
@@ -2760,7 +2802,7 @@ module FullScreenMario {
 
             other.death(other);
         }
-    
+
         /**
          * General callback for when a character touches a solid. This mostly 
          * determines if the character is on top (it should rest on the solid), to
@@ -2774,7 +2816,7 @@ module FullScreenMario {
             if (other.up === thing) {
                 return;
             }
-        
+
             // Character on top of solid
             if (thing.FSM.isCharacterOnSolid(thing, other)) {
                 if (other.hidden && !other.collideHidden) {
@@ -2790,10 +2832,9 @@ module FullScreenMario {
                         other.onRestedUpon(other, thing);
                     }
                 }
-            }
-            // Solid on top of character
-            else if (thing.FSM.isSolidOnCharacter(other, thing)) {
-                var midx = thing.FSM.getMidX(thing);
+            } else if (thing.FSM.isSolidOnCharacter(other, thing)) {
+                // Solid on top of character
+                var midx: number = thing.FSM.getMidX(thing);
 
                 if (midx > other.left && midx < other.right) {
                     thing.undermid = other;
@@ -2818,7 +2859,7 @@ module FullScreenMario {
             if (other.hidden && !other.collideHidden) {
                 return;
             }
-        
+
             // Character bumping into the side of the solid
             if (
                 thing.resting !== other
@@ -2837,9 +2878,8 @@ module FullScreenMario {
                             thing.FSM.unitsize / -2
                             )
                         );
-                }
-                // Character to the right of the solid
-                else {
+                } else {
+                    // Character to the right of the solid
                     thing.xvel = Math.max(thing.xvel, 0);
                     thing.FSM.shiftHoriz(
                         thing,
@@ -2849,7 +2889,7 @@ module FullScreenMario {
                             )
                         );
                 }
-            
+
                 // Non-players flip horizontally
                 if (!thing.player) {
                     if (!thing.noflip) {
@@ -2859,15 +2899,14 @@ module FullScreenMario {
                     if (thing.group === "item") {
                         thing.collide(other, thing);
                     }
-                }
-                // Players trigger other actions (e.g. Pipe's mapExitPipeHorizontal)
-                else if (other.actionLeft) {
+                } else if (other.actionLeft) {
+                    // Players trigger other actions (e.g. Pipe's mapExitPipeHorizontal)
                     thing.FSM.ModAttacher.fireEvent("onPlayerActionLeft", thing, other);
                     other.actionLeft(thing, other, other.transport);
                 }
             }
         }
-    
+
         /**
          * Collision callback for a character hitting an "up" solid. If it has an
          * onCollideUp callback, that is called; otherwise, it is killed.
@@ -2883,7 +2922,7 @@ module FullScreenMario {
                 thing.death(thing, 2);
             }
         }
-    
+
         /**
          * Collision callback for an item hitting an "up" solid. Items just hop
          * and switch direction.
@@ -2895,7 +2934,7 @@ module FullScreenMario {
             thing.FSM.animateCharacterHop(thing);
             thing.moveleft = thing.FSM.objectToLeft(thing, other);
         }
-    
+
         /**
          * Collision callback for a floating coin being hit by an "up" solid. It is
          * animated, as if it were hit as the contents of a solid.
@@ -2907,7 +2946,7 @@ module FullScreenMario {
             thing.blockparent = other;
             thing.animate(thing, other);
         }
-    
+
         /**
          * Collision callback for a player hitting a regular Coin. The Coin
          * disappears but points and Coin totals are both increased, along with
@@ -2926,7 +2965,7 @@ module FullScreenMario {
             thing.FSM.StatsHolder.increase("coins", 1);
             thing.FSM.killNormal(other);
         }
-    
+
         /**
          * Collision callback for a player hitting a Star. The Star is killed, and
          * the playerStarUp trigger is called on the Thing.
@@ -2942,7 +2981,7 @@ module FullScreenMario {
             thing.FSM.playerStarUp(thing);
             thing.FSM.ModAttacher.fireEvent("onCollideStar", thing, other);
         }
-    
+
         /**
          * Collision callback for a character being hit by a fireball. It will
          * most likely be killed with an explosion unless it has the nofiredeath 
@@ -2979,7 +3018,7 @@ module FullScreenMario {
 
             other.death(other);
         }
-    
+
         /**
          * Collision callback for hitting a CastleFireball. The character is killed
          * unless it has the star flag, in which case the CastleFireball is.
@@ -2994,7 +3033,7 @@ module FullScreenMario {
                 thing.death(thing);
             }
         }
-    
+
         /**
          * Collision callback for when a character hits a Shell. This covers various
          * cases, such as deaths, side-to-side Shell collisions, player stomps, and
@@ -3011,17 +3050,17 @@ module FullScreenMario {
                 }
                 return thing.FSM.collideShell(thing, other);
             }
-        
+
             // Hitting a solid (e.g. wall) 
             if (thing.groupType === "Solid") {
                 return thing.FSM.collideShellSolid(<any>thing, other);
             }
-        
+
             // Hitting the player
             if (thing.player) {
                 return thing.FSM.collideShellPlayer(<any>thing, <any>other);
             }
-        
+
             // Assume anything else to be an enemy, which only moving shells kill
             if (other.xvel) {
                 thing.FSM.killFlip(thing);
@@ -3036,7 +3075,7 @@ module FullScreenMario {
                 thing.moveleft = thing.FSM.objectToLeft(thing, other);
             }
         }
-    
+
         /**
          * Collision callback for a solid being hit by a Shell. The Shell will 
          * bounce the opposition direction.
@@ -3057,7 +3096,7 @@ module FullScreenMario {
                 other.moveleft = false;
             }
         }
-    
+
         /**
          * Collision callback for when the player hits a Shell. This covers all the
          * possible scenarios, and is much larger than common sense dictates.
@@ -3066,17 +3105,17 @@ module FullScreenMario {
          * @param {Shell} other
          */
         collideShellPlayer(thing: IPlayer, other: IShell): void {
-            var shelltoleft = thing.FSM.objectToLeft(other, thing),
-                playerjump = thing.yvel > 0 && (
+            var shelltoleft: boolean = thing.FSM.objectToLeft(other, thing),
+                playerjump: boolean = thing.yvel > 0 && (
                     thing.bottom <= other.top + thing.FSM.unitsize * 2);
-        
+
             // Star players kill the shell no matter what
             if (thing.star) {
                 thing.FSM.scorePlayerShell(thing, other);
                 other.death(other, 2);
                 return;
             }
-        
+
             // If the shell is already being landed on by the player, see if it's
             // still being pushed to the side, or has reversed direction (is deadly)
             if (other.landing) {
@@ -3088,23 +3127,25 @@ module FullScreenMario {
                     if (other.landing === 1) {
                         thing.FSM.scorePlayerShell(thing, other);
                     }
-                    thing.FSM.TimeHandler.addEvent(function (other) {
-                        other.landing -= 1;
-                    }, 2, other);
-                }
-                // Different shelltoleft measurements: it's deadly
-                else {
+                    thing.FSM.TimeHandler.addEvent(
+                        function (other: IShell): void {
+                            other.landing -= 1;
+                        },
+                        2,
+                        other);
+                } else {
+                    // Different shelltoleft measurements: it's deadly
                     thing.death(thing);
                 }
                 return;
             }
-        
+
             // If the shell is being kicked by the player, either by hitting a still
             // shell or jumping onto an already moving one
             if (other.xvel === 0 || playerjump) {
                 // Reset any signs of peeking from the shell
                 other.counting = 0;
-            
+
                 // If the shell is standing still, make it move
                 if (other.xvel === 0) {
                     thing.FSM.AudioPlayer.play("Kick");
@@ -3117,12 +3158,14 @@ module FullScreenMario {
                         other.xvel = other.speed;
                     }
                     other.hitcount += 1;
-                    thing.FSM.TimeHandler.addEvent(function (other) {
-                        other.hitcount -= 1;
-                    }, 2, other);
-                }
-                // Otherwise it was moving, but should now be still
-                else {
+                    thing.FSM.TimeHandler.addEvent(
+                        function (other: IShell): void {
+                            other.hitcount -= 1;
+                        },
+                        2,
+                        other);
+                } else {
+                    // Otherwise it was moving, but should now be still
                     other.xvel = 0;
                 }
 
@@ -3132,7 +3175,7 @@ module FullScreenMario {
                     other.height -= thing.FSM.unitsize / 8;
                     thing.FSM.updateSize(other);
                 }
-            
+
                 // If the player is landing on the shell (with movements and xvels
                 // already set), the player should then jump up a bit
                 if (playerjump) {
@@ -3149,14 +3192,16 @@ module FullScreenMario {
 
                     other.landing += 1;
                     other.shelltoleft = shelltoleft;
-                    thing.FSM.TimeHandler.addEvent(function (other) {
-                        other.landing -= 1;
-                    }, 2, other);
+                    thing.FSM.TimeHandler.addEvent(
+                        function (other: IShell): void {
+                            other.landing -= 1;
+                        },
+                        2,
+                        other);
                 }
-            } 
-            // Since the player is touching the shell normally, that's a death if
-            // the shell isn't moving away
-            else {
+            } else {
+                // Since the player is touching the shell normally, that's a death if
+                // the shell isn't moving away
                 if (!other.hitcount && (
                     (shelltoleft && other.xvel > 0)
                     || (!shelltoleft && other.xvel < 0)
@@ -3165,7 +3210,7 @@ module FullScreenMario {
                 }
             }
         }
-    
+
         /**
          * Collision callback for two Shells. If one is moving, it kills the other;
          * otherwise, they bounce off.
@@ -3176,7 +3221,7 @@ module FullScreenMario {
         collideShellShell(thing: IShell, other: IShell): void {
             if (thing.xvel !== 0) {
                 if (other.xvel !== 0) {
-                    var temp = thing.xvel;
+                    var temp: number = thing.xvel;
                     thing.xvel = other.xvel;
                     other.xvel = temp;
 
@@ -3191,7 +3236,7 @@ module FullScreenMario {
                 thing.death(thing);
             }
         }
-    
+
         /**
          * Collision callback for a general character hitting an enemy. This covers
          * many general cases, most of which involve a player and an enemy.
@@ -3204,7 +3249,7 @@ module FullScreenMario {
             if (!thing.player && other.player) {
                 return thing.FSM.collideEnemy(thing, other);
             }
-        
+
             // Death: nothing happens
             if (
                 !thing.FSM.isThingAlive(thing)
@@ -3212,7 +3257,7 @@ module FullScreenMario {
                 ) {
                 return;
             }
-        
+
             // Items
             if (thing.group === "item") {
                 if (thing.collidePrimary) {
@@ -3220,14 +3265,14 @@ module FullScreenMario {
                 }
                 return;
             }
-        
+
             // For non-players, it's just to characters colliding: they bounce
             if (!thing.player) {
                 thing.moveleft = thing.FSM.objectToLeft(thing, other);
                 other.moveleft = !thing.moveleft;
                 return;
             }
-        
+
             // Player landing on top of an enemy
             if (
                 ((<IStar>thing).star && !other.nostar)
@@ -3243,16 +3288,15 @@ module FullScreenMario {
                 if (player.FSM.isCharacterAboveEnemy(player, other)) {
                     return;
                 }
-            
+
                 // A star player just kills the enemy, no matter what
                 if (player.star) {
                     other.nocollide = true;
                     other.death(other, 2);
                     player.FSM.scoreOn(other.scoreStar, other);
                     player.FSM.AudioPlayer.play("Kick");
-                }
-                // A non-star player kills the enemy with spawn, and hops
-                else {
+                } else {
+                    // A non-star player kills the enemy with spawn, and hops
                     player.FSM.setBottom(
                         player,
                         Math.min(player.bottom, other.top + player.FSM.unitsize)
@@ -3271,14 +3315,13 @@ module FullScreenMario {
                         player.FSM.setPlayerSizeSmall(player);
                     }
                 }
-            }
-            // Player being landed on by an enemy
-            else if (!thing.FSM.isCharacterAboveEnemy(thing, other)) {
+            } else if (!thing.FSM.isCharacterAboveEnemy(thing, other)) {
+                // Player being landed on by an enemy
                 thing.death(thing);
             }
         }
-    
-    
+
+
         /**
          * Collision callback for a character bumping into the bottom of a solid.
          * Only players cause the solid to jump and be considered "up", though large
@@ -3313,24 +3356,28 @@ module FullScreenMario {
             thing.FSM.animateSolidBump(thing);
 
             if (thing.contents) {
-                thing.FSM.TimeHandler.addEvent(function () {
-                    var output = thing.FSM.animateSolidContents(thing, <any>other);
+                thing.FSM.TimeHandler.addEvent(
+                    function (): void {
+                        thing.FSM.animateSolidContents(thing, <any>other);
 
-                    if (thing.contents !== "Coin") {
-                        thing.FSM.animateBlockBecomesUsed(<any>thing);
-                    } else {
-                        if (thing.lastcoin) {
+                        if (thing.contents !== "Coin") {
                             thing.FSM.animateBlockBecomesUsed(<any>thing);
                         } else {
-                            thing.FSM.TimeHandler.addEvent(function () {
-                                thing.lastcoin = true;
-                            }, 245);
+                            if (thing.lastcoin) {
+                                thing.FSM.animateBlockBecomesUsed(<any>thing);
+                            } else {
+                                thing.FSM.TimeHandler.addEvent(
+                                    function (): void {
+                                        thing.lastcoin = true;
+                                    },
+                                    245);
+                            }
                         }
-                    }
-                }, 7);
+                    },
+                    7);
             }
         }
-    
+
         /**
          * Collision callback for the player hitting the bottom of a Block. Unused
          * Blocks have their contents emerge (by default a Coin), while used Blocks
@@ -3363,7 +3410,7 @@ module FullScreenMario {
             thing.FSM.TimeHandler.addEvent(
                 thing.FSM.animateSolidContents, 7, thing, other);
         }
-    
+
         /**
          * Collision callback for Vines. The player becomes "attached" to the Vine
          * and starts climbing it, with movement set to movePlayerVine.
@@ -3386,16 +3433,15 @@ module FullScreenMario {
             thing.nofall = true;
             thing.checkOverlaps = false;
             thing.resting = undefined;
-        
+
             // To the left of the vine
             if (thing.right < other.right) {
                 thing.lookleft = false;
                 thing.moveleft = false;
                 thing.attachedDirection = -1;
                 thing.FSM.unflipHoriz(thing);
-            }
-            // To the right of the vine
-            else {
+            } else {
+                // To the right of the vine
                 thing.lookleft = true;
                 thing.moveleft = true;
                 thing.attachedDirection = 1;
@@ -3417,7 +3463,7 @@ module FullScreenMario {
 
             thing.movement = thing.FSM.movePlayerVine;
         }
-    
+
         /**
          * Collision callback for a character hitting a Springboard. This acts as a
          * normal solid to non-players, and only acts as a spring if the player is
@@ -3442,7 +3488,7 @@ module FullScreenMario {
                 thing.FSM.collideCharacterSolid(thing, other);
             }
         }
-    
+
         /**
          * Collision callback for a character hitting a WaterBlocker on the top of
          * an underwater area. It simply stops them from moving up.
@@ -3453,7 +3499,7 @@ module FullScreenMario {
         collideWaterBlocker(thing: ICharacter, other: ISolid): void {
             thing.FSM.collideCharacterSolid(thing, other);
         }
-    
+
         /**
          * Collision callback for the DetectCollision on a flagpole at the end of an
          * EndOutsideCastle. The player becomes invincible and starts sliding down
@@ -3474,14 +3520,14 @@ module FullScreenMario {
                 scoreAmount: number = thing.FSM.scorePlayerFlag(
                     thing, height / thing.FSM.unitsize),
                 scoreThing: IText = thing.FSM.ObjectMaker.make("Text" + scoreAmount);
-        
+
             // This is a cutscene. No movement, no deaths, no scrolling.
             thing.star = 1;
             thing.nocollidechar = true;
             thing.FSM.MapScreener.nokeys = true;
             thing.FSM.MapScreener.notime = true;
             thing.FSM.MapScreener.canscroll = false;
-        
+
             // Kill all other characters and pause the player next to the pole
             thing.FSM.killNPCs();
             thing.FSM.thingPauseVelocity(thing);
@@ -3489,13 +3535,13 @@ module FullScreenMario {
                 thing, other.left + thing.FSM.unitsize * 3
                 );
             thing.FSM.killNormal(other);
-        
+
             // The player is now climbing down the pole
             thing.FSM.removeClasses(thing, "running jumping skidding");
             thing.FSM.addClass(thing, "climbing animated");
             thing.FSM.TimeHandler.addClassCycle(
                 thing, ["one", "two"], "climbing", 0);
-        
+
             // Animate the Flag to the base of the pole
             thing.FSM.TimeHandler.addEventInterval(
                 thing.FSM.shiftVert,
@@ -3503,7 +3549,7 @@ module FullScreenMario {
                 64,
                 other.collection.Flag,
                 thing.FSM.unitsize);
-        
+
             // Add a ScoreText element at the bottom of the flag and animate it up
             thing.FSM.addThing(scoreThing, other.right, other.bottom);
             thing.FSM.TimeHandler.addEventInterval(
@@ -3517,38 +3563,43 @@ module FullScreenMario {
                 72,
                 "score",
                 scoreAmount);
-        
+
             // All audio stops, and the flagpole clip is played
             thing.FSM.AudioPlayer.clearAll();
             thing.FSM.AudioPlayer.clearTheme();
             thing.FSM.AudioPlayer.play("Flagpole");
 
-            thing.FSM.TimeHandler.addEventInterval(function (): boolean {
-                // While the player hasn't reached the bottom yet, slide down
-                if (thing.bottom < other.bottom) {
-                    thing.FSM.shiftVert(thing, thing.FSM.unitsize);
-                    return false;
-                }
-            
-                // If the flag hasn't reached it but the player has, don't move yet
-                if ((other.collection.Flag.bottom | 0) < (other.bottom | 0)) {
-                    return false;
-                }
-            
-                // The player is done climbing: trigger the flag bottom collision
-                thing.movement = undefined;
-                thing.FSM.setBottom(thing, other.bottom);
-                thing.FSM.TimeHandler.cancelClassCycle(
-                    thing, "climbing"
-                    );
-                thing.FSM.TimeHandler.addEvent(function () {
-                    thing.FSM.collideFlagBottom(thing, other);
-                }, 21);
+            thing.FSM.TimeHandler.addEventInterval(
+                function (): boolean {
+                    // While the player hasn't reached the bottom yet, slide down
+                    if (thing.bottom < other.bottom) {
+                        thing.FSM.shiftVert(thing, thing.FSM.unitsize);
+                        return false;
+                    }
 
-                return true;
-            }, 1, Infinity);
+                    // If the flag hasn't reached it but the player has, don't move yet
+                    if ((other.collection.Flag.bottom | 0) < (other.bottom | 0)) {
+                        return false;
+                    }
+
+                    // The player is done climbing: trigger the flag bottom collision
+                    thing.movement = undefined;
+                    thing.FSM.setBottom(thing, other.bottom);
+                    thing.FSM.TimeHandler.cancelClassCycle(
+                        thing, "climbing"
+                        );
+                    thing.FSM.TimeHandler.addEvent(
+                        function (): void {
+                            thing.FSM.collideFlagBottom(thing, other);
+                        },
+                        21);
+
+                    return true;
+                },
+                1,
+                Infinity);
         }
-    
+
         /**
          * Collision callback for when a player hits the bottom of a flagpole. It is
          * flipped horizontally, shifted to the other side of the pole, and the
@@ -3566,12 +3617,14 @@ module FullScreenMario {
                 thing,
                 (thing.width + 1) * thing.FSM.unitsize);
 
-            thing.FSM.TimeHandler.addEvent(function () {
-                thing.FSM.AudioPlayer.play("Stage Clear");
-                thing.FSM.animatePlayerOffPole(thing, true);
-            }, 14);
+            thing.FSM.TimeHandler.addEvent(
+                function (): void {
+                    thing.FSM.AudioPlayer.play("Stage Clear");
+                    thing.FSM.animatePlayerOffPole(thing, true);
+                },
+                14);
         }
-    
+
         /**
          * Collision callback for the player hitting a CastleAxe. The player and
          * screen are paused for 140 steps (other callbacks should be animating
@@ -3600,16 +3653,18 @@ module FullScreenMario {
             thing.FSM.MapScreener.nokeys = true;
             thing.FSM.MapScreener.notime = true;
 
-            thing.FSM.TimeHandler.addEvent(function () {
-                thing.keys.run = 1;
-                thing.maxspeed = thing.walkspeed;
-                thing.FSM.thingResumeVelocity(thing);
-                thing.yvel = 0;
-                thing.FSM.MapScreener.canscroll = true;
-                thing.FSM.AudioPlayer.play("World Clear");
-            }, 140);
+            thing.FSM.TimeHandler.addEvent(
+                function (): void {
+                    thing.keys.run = 1;
+                    thing.maxspeed = thing.walkspeed;
+                    thing.FSM.thingResumeVelocity(thing);
+                    thing.yvel = 0;
+                    thing.FSM.MapScreener.canscroll = true;
+                    thing.FSM.AudioPlayer.play("World Clear");
+                },
+                140);
         }
-    
+
         /**
          * Collision callback for a player hitting the DetectCollision placed next 
          * a CastleDoor in EndOutsideCastle. Time is converted one step at a time to
@@ -3619,8 +3674,8 @@ module FullScreenMario {
          * @param {DetectCollision} other
          */
         collideCastleDoor(thing: IPlayer, other: IDetectCollision): void {
-            var time = String(thing.FSM.StatsHolder.getItem("time")),
-                numFireworks = Number(time[time.length - 1]);
+            var time: string = String(thing.FSM.StatsHolder.getItem("time")),
+                numFireworks: number = Number(time[time.length - 1]);
 
             thing.FSM.killNormal(thing);
             if (!thing.player) {
@@ -3636,20 +3691,25 @@ module FullScreenMario {
                 return;
             }
 
-            thing.FSM.TimeHandler.addEventInterval(function () {
-                thing.FSM.StatsHolder.decrease("time");
-                thing.FSM.StatsHolder.increase("score", 50);
-                thing.FSM.AudioPlayer.play("Coin");
+            thing.FSM.TimeHandler.addEventInterval(
+                function (): boolean {
+                    thing.FSM.StatsHolder.decrease("time");
+                    thing.FSM.StatsHolder.increase("score", 50);
+                    thing.FSM.AudioPlayer.play("Coin");
 
-                if (thing.FSM.StatsHolder.getItem("time") <= 0) {
-                    thing.FSM.TimeHandler.addEvent(function () {
-                        thing.FSM.animateEndLevelFireworks(thing, other, numFireworks);
-                    }, 35);
-                    return true;
-                }
-            }, 1, Infinity);
+                    if (thing.FSM.StatsHolder.getItem("time") <= 0) {
+                        thing.FSM.TimeHandler.addEvent(
+                            function (): void {
+                                thing.FSM.animateEndLevelFireworks(thing, other, numFireworks);
+                            },
+                            35);
+                        return true;
+                    }
+                },
+                1,
+                Infinity);
         }
-    
+
         /** 
          * Collision callback for a player reaching a castle's NPC. The ending text
          * chunks are revealed in turn, after which collideLevelTransport is called.
@@ -3658,31 +3718,37 @@ module FullScreenMario {
          * @param {DetectCollision} other
          */
         collideCastleNPC(thing: IPlayer, other: IDetectCollision): void {
-            var keys = other.collection.npc.collectionKeys,
-                interval = 140,
-                i = 0,
-                letters, j;
+            var keys: any[] = other.collection.npc.collectionKeys,
+                interval: number = 140,
+                i: number = 0,
+                j: number,
+                letters: IThing[];
 
             thing.keys.run = 0;
             thing.FSM.killNormal(other);
 
-            thing.FSM.TimeHandler.addEventInterval(function () {
-                letters = other.collection[keys[i]].children;
+            thing.FSM.TimeHandler.addEventInterval(
+                function (): void {
+                    letters = other.collection[keys[i]].children;
 
-                for (j = 0; j < letters.length; j += 1) {
-                    if (letters[j].title !== "TextSpace") {
-                        letters[j].hidden = false;
+                    for (j = 0; j < letters.length; j += 1) {
+                        if (letters[j].title !== "TextSpace") {
+                            letters[j].hidden = false;
+                        }
                     }
-                }
 
-                i += 1;
-            }, interval, keys.length);
+                    i += 1;
+                },
+                interval,
+                keys.length);
 
-            thing.FSM.TimeHandler.addEvent(function () {
-                thing.FSM.collideLevelTransport(thing, other);
-            },(interval * keys.length) + 280);
+            thing.FSM.TimeHandler.addEvent(
+                function (): void {
+                    thing.FSM.collideLevelTransport(thing, other);
+                },
+                280 + interval * keys.length);
         }
-    
+
         /**
          * Collision callback for a player hitting the transportation Platform in
          * cloud worlds. The player collides with it as normal for solids, but if
@@ -3706,7 +3772,7 @@ module FullScreenMario {
             other.movement = thing.FSM.movePlatform;
             other.collide = thing.FSM.collideCharacterSolid;
         }
-    
+
         /**
          * General collision callback for DetectCollision Things. The real activate
          * callback is only hit if the Thing is a player; otherwise, an optional
@@ -3730,7 +3796,7 @@ module FullScreenMario {
                 thing.FSM.killNormal(other);
             }
         }
-    
+
         /**
          * Collision callback for level transports (any Thing with a .transport 
          * attribute). Depending on the transport, either the map or location are 
@@ -3740,7 +3806,7 @@ module FullScreenMario {
          * @param {Thing} other
          */
         collideLevelTransport(thing: IPlayer, other: ISolid): void {
-            var transport = other.transport;
+            var transport: any = other.transport;
 
             if (!thing.player) {
                 return;
@@ -3759,12 +3825,12 @@ module FullScreenMario {
             } else {
                 throw new Error("Unknown transport type:" + transport);
             }
-        }   
-    
-    
+        }
+
+
         /* Movement functions
         */
-    
+
         /**
          * Base, generic movement Function for simple characters. The Thing moves
          * at a constant rate in either the x or y direction, and switches direction
@@ -3776,16 +3842,15 @@ module FullScreenMario {
          */
         moveSimple(thing: ICharacter): void {
             // If the thing is looking away from the intended direction, flip it
-            if (thing.direction != thing.moveleft) {
+            if (thing.direction !== thing.moveleft) {
                 // thing.moveleft is truthy: it should now be looking to the right
                 if (thing.moveleft) {
                     thing.xvel = -thing.speed;
                     if (!thing.noflip) {
                         thing.FSM.unflipHoriz(thing);
                     }
-                }
-                // thing.moveleft is falsy: it should now be looking to the left
-                else {
+                } else {
+                    // thing.moveleft is falsy: it should now be looking to the left
                     thing.xvel = thing.speed;
                     if (!thing.noflip) {
                         thing.FSM.flipHoriz(thing);
@@ -3794,7 +3859,7 @@ module FullScreenMario {
                 thing.direction = thing.moveleft;
             }
         }
-    
+
         /**
          * Extension of the moveSimple movement Function for Things that shouldn't
          * fall off the edge of their resting blocks
@@ -3804,7 +3869,7 @@ module FullScreenMario {
         moveSmart(thing: ICharacter): void {
             // Start off by calling moveSimple for normal movement
             thing.FSM.moveSimple(thing);
-        
+
             // If this isn't resting, it's the same as moveSimple
             if (thing.yvel !== 0) {
                 return;
@@ -3819,7 +3884,7 @@ module FullScreenMario {
                 thing.moveleft = !thing.moveleft;
             }
 
-        
+
             // // Check for being over the edge in the direction of movement
             // if (thing.moveleft) {
             // if (thing.left + thing.FSM.unitsize <= thing.resting.left) {
@@ -3833,7 +3898,7 @@ module FullScreenMario {
             // }
             // }
         }
-    
+
         /**
          * Extension of the moveSimple movement Function for Things that should
          * jump whenever they start resting.
@@ -3844,14 +3909,14 @@ module FullScreenMario {
         moveJumping(thing: ICharacter): void {
             // Start off by calling moveSimple for normal movement
             thing.FSM.moveSimple(thing);
-        
+
             // If .resting, jump!
             if (thing.resting) {
                 thing.yvel = -Math.abs(thing.jumpheight);
                 thing.resting = undefined;
             }
         }
-    
+
         /**
          * Movement Function for Things that slide back and forth, such as 
          * HammerBros and Lakitus.
@@ -3863,7 +3928,7 @@ module FullScreenMario {
             thing.counter += .007;
             thing.xvel = Math.sin(Math.PI * thing.counter) / 2.1;
         }
-    
+
         /**
          * Movement Function for HammerBros. They movePacing, look towards the 
          * player, and have the nocollidesolid flag if they're jumping up or 
@@ -3876,7 +3941,7 @@ module FullScreenMario {
             thing.FSM.lookTowardsPlayer(thing);
             thing.nocollidesolid = thing.yvel < 0 || thing.falling;
         }
-    
+
         /**
          * Movement Function for Bowser. Bowser always faces the player and 
          * movePaces if he's to the right of the player, or moves to the right if
@@ -3892,16 +3957,14 @@ module FullScreenMario {
                     thing.FSM.objectToLeft(thing, thing.FSM.player)
                     ) {
                     thing.FSM.moveSimple(thing);
-                }
-                // To the right of player: look to the left and movePacing as normal
-                else {
+                } else {
+                    // To the right of player: look to the left and movePacing as normal
                     thing.lookleft = thing.moveleft = true;
                     thing.FSM.unflipHoriz(thing);
                     thing.FSM.movePacing(thing);
                 }
-            } 
-            // Facing to the left
-            else {
+            } else {
+                // Facing to the left
                 // To the left of player: look and walk to the right
                 if (
                     thing.FSM.objectToLeft(thing, thing.FSM.player)
@@ -3909,14 +3972,13 @@ module FullScreenMario {
                     thing.lookleft = thing.moveleft = false;
                     thing.FSM.flipHoriz(thing);
                     thing.FSM.moveSimple(thing);
-                }
-                // To the right of the player: movePacing as normal
-                else {
+                } else {
+                    // To the right of the player: movePacing as normal
                     thing.FSM.movePacing(thing);
                 }
             }
         }
-    
+
         /**
          * Movement Function for Bowser's spewed fire. It has a ylev stored from
          * creation that will tell it when to stop changing its vertical 
@@ -3935,7 +3997,7 @@ module FullScreenMario {
                 thing,
                 Math.min(Math.max(0, thing.ylev - thing.bottom), thing.FSM.unitsize));
         }
-    
+
         /**
          * Movement function for Things that float up and down (vertically).
          * If the Thing has reached thing.begin or thing.end, it gradually switches
@@ -3950,20 +4012,19 @@ module FullScreenMario {
             // If above the endpoint:
             if (thing.top <= thing.end) {
                 thing.yvel = Math.min(thing.yvel + thing.FSM.unitsize / 64, thing.maxvel);
-            }
-            // If below the endpoint:
-            else if (thing.bottom >= thing.begin) {
+            } else if (thing.bottom >= thing.begin) {
+                // If below the endpoint:
                 thing.yvel = Math.max(thing.yvel - thing.FSM.unitsize / 64, -thing.maxvel);
             }
-        
+
             // Deal with velocities and whether the player is resting on this
             thing.FSM.movePlatform(<any>thing);
         }
-    
+
         /**
          * Actual movement Function for Things that float sideways (horizontally).
          * If the Thing has reached thing.begin or thing.end, it gradually switches
-         * thing.xvel
+         * thing.xvel.
          * 
          * @param {Thing} thing
          * @remarks thing.maxvel is used as the maximum absolute speed horizontally
@@ -3975,17 +4036,16 @@ module FullScreenMario {
             if (thing.FSM.MapScreener.left + thing.left <= thing.begin) {
                 thing.xvel = Math.min(
                     thing.xvel + thing.FSM.unitsize / 64, thing.maxvel);
-            }
-            // If to the right of the endpoint:
-            else if (thing.FSM.MapScreener.left + thing.right > thing.end) {
+            } else if (thing.FSM.MapScreener.left + thing.right > thing.end) {
+                // If to the right of the endpoint:
                 thing.xvel = Math.max(
                     thing.xvel - thing.FSM.unitsize / 64, -thing.maxvel);
             }
-        
+
             // Deal with velocities and whether the player is resting on this
             thing.FSM.movePlatform(<any>thing);
         }
-    
+
         /**
          * Ensures thing.begin <= thing.end (so there won't be glitches pertaining
          * to them in functions like moveFloating and moveSliding
@@ -3994,7 +4054,7 @@ module FullScreenMario {
          */
         setMovementEndpoints(thing: IThingFloating | IThingSliding): void {
             if (thing.begin > thing.end) {
-                var temp = thing.begin;
+                var temp: number = thing.begin;
                 thing.begin = thing.end;
                 thing.end = temp;
             }
@@ -4002,7 +4062,7 @@ module FullScreenMario {
             thing.begin *= thing.FSM.unitsize;
             thing.end *= thing.FSM.unitsize;
         }
-    
+
         /**
          * General movement Function for Platforms. Moves a Platform by its 
          * velocities, and checks for whether a Thing is resting on it (if so, 
@@ -4013,12 +4073,12 @@ module FullScreenMario {
         movePlatform(thing: IPlatform): void {
             thing.FSM.shiftHoriz(thing, thing.xvel);
             thing.FSM.shiftVert(thing, thing.yvel);
-        
+
             // If the player is resting on this and this is alive, move the player
             if (thing === thing.FSM.player.resting && thing.FSM.player.alive) {
                 thing.FSM.setBottom(thing.FSM.player, thing.top);
                 thing.FSM.shiftHoriz(thing.FSM.player, thing.xvel);
-            
+
                 // If the player is too far to the right or left, stop that overlap
                 if (thing.FSM.player.right > thing.FSM.MapScreener.width) {
                     thing.FSM.setRight(
@@ -4029,7 +4089,7 @@ module FullScreenMario {
                 }
             }
         }
-    
+
         /**
          * Movement Function for platforms that are in a PlatformGenerator. They
          * have the typical movePlatform applied to them, but if they reach the
@@ -4108,7 +4168,7 @@ module FullScreenMario {
                 thing.movement = thing.FSM.movePlatform;
             }
         }
-    
+
         /**
          * Movement Function for Platforms that are a part of a scale.  Nothing
          * happens if a Platform isn't being rested and doesn't have a y-velocity. 
@@ -4124,9 +4184,8 @@ module FullScreenMario {
             // If the Player is resting on this, fall hard
             if (thing.FSM.player.resting === thing) {
                 thing.yvel += thing.FSM.unitsize / 16;
-            }
-            // If this still has velocity from a player, stop or fall less
-            else if (thing.yvel > 0) {
+            } else if (thing.yvel > 0) {
+                // If this still has velocity from a player, stop or fall less
                 if (!thing.partners) {
                     thing.yvel = 0;
                 } else {
@@ -4134,9 +4193,8 @@ module FullScreenMario {
                         thing.yvel - thing.FSM.unitsize / 16, 0
                         );
                 }
-            }
-            // Not being rested upon or having a yvel means nothing happens
-            else {
+            } else {
+                // Not being rested upon or having a yvel means nothing happens
                 return;
             }
 
@@ -4149,7 +4207,7 @@ module FullScreenMario {
             }
 
             thing.partners.partnerPlatform.tension -= thing.yvel;
-        
+
             // If the partner has fallen off, everybody falls!
             if (thing.partners.partnerPlatform.tension <= 0) {
                 thing.FSM.scoreOn(1000, thing);
@@ -4159,17 +4217,17 @@ module FullScreenMario {
                 thing.movement = thing.partners.partnerPlatform.movement = (
                     thing.FSM.moveFreeFalling);
             }
-        
+
             // The partner has yvel equal and opposite to this platform's
             thing.FSM.shiftVert(
                 thing.partners.partnerPlatform,
                 -thing.yvel);
-        
+
             // This platform's string grows with its yvel
             thing.FSM.setHeight(
                 thing.partners.ownString,
                 thing.partners.ownString.height + thing.yvel / thing.FSM.unitsize);
-        
+
             // The partner's string shrinks while this platform's string grows
             thing.FSM.setHeight(
                 thing.partners.partnerString,
@@ -4181,7 +4239,7 @@ module FullScreenMario {
                     )
                 );
         }
-    
+
         /**
          * Movement Function for Vines. They are constantly growing upward, until
          * some trigger (generally from animateEmergeVine) sets movement to 
@@ -4202,7 +4260,7 @@ module FullScreenMario {
                 thing.FSM.shiftVert(thing.attachedCharacter, -thing.speed);
             }
         }
-    
+
         /**
          * Movement Function for Springboards that are "pushing up" during or after
          * being hit by a player. The Springboard changes its height based on its
@@ -4216,7 +4274,7 @@ module FullScreenMario {
 
             thing.FSM.reduceHeight(thing, -thing.tension, true);
             thing.tension *= 2;
-            
+
             // If the spring height is past the normal, it's done moving
             if (thing.height > thing.heightNormal) {
                 thing.FSM.reduceHeight(
@@ -4244,7 +4302,7 @@ module FullScreenMario {
                 }
             }
         }
-    
+
         /**
          * Movement Function for Shells. This actually does nothing for moving 
          * Shells (since they only interact unusually on collision). For Shells with
@@ -4275,7 +4333,7 @@ module FullScreenMario {
                 thing.FSM.killSpawn(thing);
             }
         }
-    
+
         /**
          * Movement Function for Piranhas. These constantly change their height 
          * except when they reach 0 or full height (alternating direction), at which
@@ -4285,9 +4343,9 @@ module FullScreenMario {
          * @param {Piranha} thing
          */
         movePiranha(thing: IPiranha): void {
-            var bottom = thing.bottom,
-                height = thing.height + thing.direction,
-                atEnd = false;
+            var bottom: number = thing.bottom,
+                height: number = thing.height + thing.direction,
+                atEnd: boolean = false;
 
             if (thing.resting && !thing.FSM.isThingAlive(thing.resting)) {
                 bottom = thing.top + (
@@ -4322,27 +4380,29 @@ module FullScreenMario {
          * @param {Piranha} thing
          */
         movePiranhaLatent(thing: IPiranha): void {
-            var playerx = thing.FSM.getMidX(thing.FSM.player);
+            var playerX: number = thing.FSM.getMidX(thing.FSM.player);
 
             if (
                 thing.counter >= thing.countermax
                 && (
                     thing.height > 0
-                    || playerx < thing.left - thing.FSM.unitsize * 8
-                    || playerx > thing.right + thing.FSM.unitsize * 8
+                    || playerX < thing.left - thing.FSM.unitsize * 8
+                    || playerX > thing.right + thing.FSM.unitsize * 8
                     )
                 ) {
                 thing.movement = undefined;
                 thing.direction *= -1;
 
-                thing.FSM.TimeHandler.addEvent(function () {
-                    thing.movement = thing.FSM.movePiranha;
-                }, 7);
+                thing.FSM.TimeHandler.addEvent(
+                    function (): void {
+                        thing.movement = thing.FSM.movePiranha;
+                    },
+                    7);
             } else {
                 thing.counter += 1;
             }
         }
-    
+
         /**
          * Movement Function for the Bubbles that come out of a player's mouth
          * underwater. They die when they reach a top threshold of unitsize * 16.
@@ -4359,7 +4419,7 @@ module FullScreenMario {
                 thing.FSM.killNormal(thing);
             }
         }
-    
+
         /**
          * Movement Function for typical CheepCheeps, which are underwater. They
          * move according to their native velocities except that they cannot travel
@@ -4374,7 +4434,7 @@ module FullScreenMario {
                 return;
             }
         }
-    
+
         /**
          * Movement Function for flying CheepCheeps, like in bridge areas. They 
          * lose a movement Function (and therefore just fall) at a unitsize * 28 top
@@ -4388,7 +4448,7 @@ module FullScreenMario {
                 thing.nofall = false;
             }
         }
-    
+
         /**
          * Movement Function for Bloopers. These switch between "squeezing" (moving
          * down) and moving up ("unsqueezing"). They always try to unsqueeze if the 
@@ -4440,8 +4500,7 @@ module FullScreenMario {
                     thing.xvel = Math.min(
                         thing.speed, thing.xvel + thing.FSM.unitsize / 32
                         );
-                }
-                else if (
+                } else if (
                     thing.FSM.player.right
                     < thing.left - thing.FSM.unitsize * 8
                     ) {
@@ -4453,7 +4512,7 @@ module FullScreenMario {
                 }
             }
         }
-    
+
         /**
          * Additional movement Function for Bloopers that are "squeezing". Squeezing
          * Bloopers travel downard at a gradual pace until they reach either the
@@ -4483,7 +4542,7 @@ module FullScreenMario {
                 thing.FSM.animateBlooperUnsqueezing(thing);
             }
         }
-    
+
         /**
          * Movement Function for Podoboos that is only used when they are falling.
          * Podoboo animations trigger this when they reach a certain height, and
@@ -4512,7 +4571,7 @@ module FullScreenMario {
 
             thing.yvel += thing.acceleration;
         }
-    
+
         /**
          * Movement Function for Lakitus that have finished their moveLakituInitial
          * run. This is similar to movePacing in that it makes the Lakitu pace to 
@@ -4547,7 +4606,7 @@ module FullScreenMario {
                     );
             }
         }
-    
+
         /**
          * Initial entry movement Function for Lakitus. They enter by sliding across
          * the top of the screen until they reach the player, and then switch to
@@ -4565,7 +4624,7 @@ module FullScreenMario {
 
             thing.FSM.shiftHoriz(thing, -thing.FSM.unitsize);
         }
-    
+
         /**
          * Alternate movement Function for Lakitus. This is used when the player
          * reaches the ending flagpole in a level and the Lakitu just flies to the 
@@ -4576,7 +4635,7 @@ module FullScreenMario {
         moveLakituFleeing(thing: ILakitu): void {
             thing.FSM.shiftHoriz(thing, -thing.FSM.unitsize);
         }
-    
+
         /**
          * Movement Function for Coins that have been animated. They move based on
          * their yvel, and if they have a parent, die when they go below the parent.
@@ -4591,7 +4650,7 @@ module FullScreenMario {
                 thing.FSM.killNormal(thing);
             }
         }
-    
+
         /**
          * Movement Function for the player. It reacts to almost all actions that 
          * to be done, but is horribly written so that is all the documentation you
@@ -4605,9 +4664,8 @@ module FullScreenMario {
             // Not jumping
             if (!thing.keys.up) {
                 thing.keys.jump = false;
-            }
-            // Jumping
-            else if (
+            } else if (
+                // Jumping
                 thing.keys.jump
                 && (thing.yvel <= 0 || thing.FSM.MapScreener.underwater)
                 ) {
@@ -4621,9 +4679,8 @@ module FullScreenMario {
                         thing.xvel += thing.resting.xvel;
                     }
                     thing.resting = undefined;
-                }
-                // Jumping, not resting
-                else {
+                } else {
+                    // Jumping, not resting
                     if (!thing.jumping && !thing.FSM.MapScreener.underwater) {
                         thing.FSM.switchClass(thing, "running skidding", "jumping");
                     }
@@ -4635,11 +4692,13 @@ module FullScreenMario {
                 }
                 if (!thing.FSM.MapScreener.underwater) {
                     thing.keys.jumplev += 1;
-                    var dy = FullScreenMario.unitsize / (Math.pow(thing.keys.jumplev, thing.FSM.MapScreener.jumpmod - .0014 * thing.xvel));
+                    var dy: number = FullScreenMario.unitsize / (Math.pow(
+                        thing.keys.jumplev,
+                        thing.FSM.MapScreener.jumpmod - .0014 * thing.xvel));
                     thing.yvel = Math.max(thing.yvel - dy, thing.FSM.MapScreener.maxyvelinv);
                 }
             }
-      
+
             // Crouching
             if (thing.keys.crouch && !thing.crouching && thing.resting) {
                 if (thing.power > 1) {
@@ -4659,35 +4718,33 @@ module FullScreenMario {
                     thing.resting.actionTop(thing, thing.resting);
                 }
             }
-      
+
             // Running
             // If a button is pressed, hold/increase speed
-            if (thing.keys.run != 0 && !thing.crouching) {
-                var dir = thing.keys.run,
+            if (thing.keys.run !== 0 && !thing.crouching) {
+                var dir: number = thing.keys.run,
                     // No sprinting underwater
-                    sprinting = (thing.keys.sprint && !thing.FSM.MapScreener.underwater) || 0,
-                    adder = dir * (.098 * (Number(sprinting) + 1));
-            
+                    sprinting: number = Number(thing.keys.sprint && !thing.FSM.MapScreener.underwater) || 0,
+                    adder: number = dir * (.098 * (Number(sprinting) + 1));
+
                 // Reduce the speed, both by subtracting and dividing a little
                 thing.xvel += adder || 0;
                 thing.xvel *= .98;
                 decel = .0007;
-            
+
                 // If you're accelerating in the opposite direction from your current velocity, that's a skid
-                if ((thing.keys.run > 0) == thing.moveleft) {
+                if ((thing.keys.run > 0) === thing.moveleft) {
                     if (!thing.skidding) {
                         thing.FSM.addClass(thing, "skidding");
                         thing.skidding = true;
                     }
-                }
-                // Not accelerating: make sure you're not skidding
-                else if (thing.skidding) {
+                } else if (thing.skidding) {
+                    // Not accelerating: make sure you're not skidding
                     thing.FSM.removeClass(thing, "skidding");
                     thing.skidding = false;
                 }
-            }
-            // Otherwise slow down a bit
-            else {
+            } else {
+                // Otherwise slow down a bit
                 thing.xvel *= .98;
                 decel = .035;
             }
@@ -4696,9 +4753,9 @@ module FullScreenMario {
                 thing.xvel -= decel;
             } else if (thing.xvel < -decel) {
                 thing.xvel += decel;
-            } else if (thing.xvel != 0) {
+            } else if (thing.xvel !== 0) {
                 thing.xvel = 0;
-                if (!thing.FSM.MapScreener.nokeys && thing.keys.run == 0) {
+                if (!thing.FSM.MapScreener.nokeys && thing.keys.run === 0) {
                     if (thing.keys.leftDown) {
                         thing.keys.run = -1;
                     } else if (thing.keys.rightDown) {
@@ -4706,25 +4763,24 @@ module FullScreenMario {
                     }
                 }
             }
-      
+
             // Movement mods
             // Slowing down
             if (Math.abs(thing.xvel) < .14) {
                 if (thing.running) {
                     thing.running = false;
-                    if (thing.power == 1) {
+                    if (thing.power === 1) {
                         thing.FSM.setPlayerSizeSmall(thing);
                     }
                     thing.FSM.removeClasses(thing, "running skidding one two three");
                     thing.FSM.addClass(thing, "still");
                     thing.FSM.TimeHandler.cancelClassCycle(thing, "running");
                 }
-            }
-            // Not moving slowly
-            else if (!thing.running) {
+            } else if (!thing.running) {
+                // Not moving slowly
                 thing.running = true;
                 thing.FSM.animatePlayerRunningCycle(thing);
-                if (thing.power == 1) {
+                if (thing.power === 1) {
                     thing.FSM.setPlayerSizeSmall(thing);
                 }
             }
@@ -4734,15 +4790,14 @@ module FullScreenMario {
                     thing.FSM.unflipHoriz(thing);
                     thing.moveleft = false;
                 }
-            }
-            else if (thing.xvel < 0) {
+            } else if (thing.xvel < 0) {
                 thing.xvel = Math.max(thing.xvel, thing.maxspeed * -1);
                 if (!thing.moveleft && (thing.resting || thing.FSM.MapScreener.underwater)) {
                     thing.moveleft = true;
                     thing.FSM.flipHoriz(thing);
                 }
             }
-      
+
             // Resting stops a bunch of other stuff
             if (thing.resting) {
                 // Hopping
@@ -4758,7 +4813,7 @@ module FullScreenMario {
                 if (thing.jumping) {
                     thing.jumping = false;
                     thing.FSM.removeClass(thing, "jumping");
-                    if (thing.power == 1) {
+                    if (thing.power === 1) {
                         thing.FSM.setPlayerSizeSmall(thing);
                     }
                     thing.FSM.addClass(thing, Math.abs(thing.xvel) < .14 ? "still" : "running");
@@ -4772,7 +4827,7 @@ module FullScreenMario {
                 }
             }
         }
-    
+
         /**
          * Alternate movement Function for players attached to a Vine. They may 
          * climb up or down the Vine, or jump off. 
@@ -4792,29 +4847,27 @@ module FullScreenMario {
                 thing.FSM.unattachPlayer(thing, thing.attachedSolid);
                 return;
             }
-        
+
             // Running away from the vine means dropping off
             if (thing.keys.run !== 0 && thing.keys.run === thing.attachedDirection) {
                 // Leaving to the left
                 if (thing.attachedDirection === -1) {
                     thing.FSM.setRight(thing, attachedSolid.left - thing.FSM.unitsize);
-                }
-                // Leaving to the right
-                else if (thing.attachedDirection === 1) {
+                } else if (thing.attachedDirection === 1) {
+                    // Leaving to the right
                     thing.FSM.setLeft(thing, attachedSolid.right + thing.FSM.unitsize);
                 }
 
                 thing.FSM.unattachPlayer(thing, attachedSolid);
                 return;
             }
-        
+
             // If the player is moving up, simply move up
             if (thing.keys.up) {
                 animatedClimbing = true;
                 thing.FSM.shiftVert(thing, thing.FSM.unitsize / -4);
-            }
-            // If the thing is moving down, move down and check for unattachment
-            else if (thing.keys.crouch) {
+            } else if (thing.keys.crouch) {
+                // If the thing is moving down, move down and check for unattachment
                 animatedClimbing = true;
                 thing.FSM.shiftVert(thing, thing.FSM.unitsize / 2);
                 if (thing.top > attachedSolid.bottom) {
@@ -4837,7 +4890,7 @@ module FullScreenMario {
                 thing.FSM.setLocation(thing.attachedSolid.transport);
             }
         }
-    
+
         /**
          * Movement Function for players pressing down onto a Springboard. This does
          * basically nothing except check for when the player is off the spring or
@@ -4848,7 +4901,7 @@ module FullScreenMario {
          */
         movePlayerSpringboardDown(thing: IPlayer): void {
             var other: ISpringboard = thing.spring;
-        
+
             // If the player has moved off the spring, get outta here
             if (!thing.FSM.isThingTouchingThing(thing, other)) {
                 thing.movement = thing.FSM.movePlayer;
@@ -4856,7 +4909,7 @@ module FullScreenMario {
                 thing.spring = undefined;
                 return;
             }
-        
+
             // If the spring is fully contracted, go back up
             if (
                 other.height < thing.FSM.unitsize * 2.5
@@ -4866,7 +4919,7 @@ module FullScreenMario {
                 other.movement = thing.FSM.moveSpringboardUp;
                 return;
             }
-        
+
             // Make sure it's hard to slide off
             if (
                 thing.left < other.left + thing.FSM.unitsize * 2
@@ -4880,11 +4933,11 @@ module FullScreenMario {
             thing.FSM.setBottom(thing, other.top);
             thing.FSM.updateSize(other);
         }
-    
-    
+
+
         /* Animations
         */
-    
+
         /**
          * Animates a solid that has just had its bottom "bumped" by a player. It
          * moves with a dx that is initially negative (up) and increases (to down).
@@ -4894,17 +4947,21 @@ module FullScreenMario {
         animateSolidBump(thing: ISolid): void {
             var dx: number = -3;
 
-            thing.FSM.TimeHandler.addEventInterval(function (thing: ISolid): boolean {
-                thing.FSM.shiftVert(thing, dx);
-                dx += .5;
-                if (dx === 3.5) {
-                    thing.up = undefined;
-                    return true;
-                }
-                return false;
-            }, 1, Infinity, thing);
+            thing.FSM.TimeHandler.addEventInterval(
+                function (thing: ISolid): boolean {
+                    thing.FSM.shiftVert(thing, dx);
+                    dx += .5;
+                    if (dx === 3.5) {
+                        thing.up = undefined;
+                        return true;
+                    }
+                    return false;
+                },
+                1,
+                Infinity,
+                thing);
         }
-    
+
         /**
          * Animates a Block to switch from unused to used.
          * 
@@ -4914,7 +4971,7 @@ module FullScreenMario {
             thing.used = true;
             thing.FSM.switchClass(thing, "unused", "used");
         }
-    
+
         /**
          * Animates a solid to have its contents emerge. A new Thing based on the 
          * contents is spawned directly on top of (visually behind) the solid, and
@@ -4948,7 +5005,7 @@ module FullScreenMario {
 
             return output;
         }
-    
+
         /**
          * Animates a Brick turning into four rotating shards flying out of it. The
          * shards have an initial x- and y-velocities, and die after 70 steps.
@@ -4974,7 +5031,7 @@ module FullScreenMario {
                     thing.FSM.killNormal, 70, shard);
             }
         }
-    
+
         /**
          * Standard animation Function for Things emerging from a solid as contents.
          * They start at inside the solid, slowly move up, then moveSimple until 
@@ -4989,47 +5046,58 @@ module FullScreenMario {
 
             thing.FSM.flipHoriz(thing);
             thing.FSM.AudioPlayer.play("Powerup Appears");
-            thing.FSM.arraySwitch(thing,
-                <any[]>thing.FSM.GroupHolder.getGroup("Character"),
-                <any[]>thing.FSM.GroupHolder.getGroup("Scenery")
-                );
+            thing.FSM.arraySwitch(
+                thing,
+                <IThing[]>thing.FSM.GroupHolder.getGroup("Character"),
+                <IThing[]>thing.FSM.GroupHolder.getGroup("Scenery"));
 
-            thing.FSM.TimeHandler.addEventInterval(function (): boolean {
-                thing.FSM.shiftVert(thing, thing.FSM.unitsize / -8);
-            
-                // Only stop once the bottom has reached the solid's top
-                if (thing.bottom > other.top) {
-                    return false;
-                }
+            thing.FSM.TimeHandler.addEventInterval(
+                function (): boolean {
+                    thing.FSM.shiftVert(thing, thing.FSM.unitsize / -8);
 
-                thing.FSM.setBottom(thing, other.top);
-                thing.FSM.GroupHolder.switchObjectGroup(
-                    thing, "Scenery", "Character");
-                thing.nomove = thing.nocollide = thing.nofall = thing.moveleft = false;
+                    // Only stop once the bottom has reached the solid's top
+                    if (thing.bottom > other.top) {
+                        return false;
+                    }
 
-                if (thing.emergeOut) {
-                    thing.emergeOut(thing, other);
-                }
-            
-                // Wait for movement until moveSimple moves this off the solid
-                if (thing.movement) {
-                    thing.movementOld = thing.movement;
-                    thing.movement = thing.FSM.moveSimple;
+                    thing.FSM.setBottom(thing, other.top);
+                    thing.FSM.GroupHolder.switchObjectGroup(
+                        thing, "Scenery", "Character");
+                    thing.nomove = thing.nocollide = thing.nofall = thing.moveleft = false;
 
-                    thing.FSM.TimeHandler.addEventInterval(function () {
-                        if (thing.resting !== other) {
-                            thing.FSM.TimeHandler.addEvent(function () {
-                                thing.movement = thing.movementOld;
-                            }, 1);
-                            return true;
-                        }
-                    }, 1, Infinity);
-                }
+                    if (thing.emergeOut) {
+                        thing.emergeOut(thing, other);
+                    }
 
-                return true;
-            }, 1, Infinity);
+                    // Wait for movement until moveSimple moves this off the solid
+                    if (thing.movement) {
+                        thing.movementOld = thing.movement;
+                        thing.movement = thing.FSM.moveSimple;
+
+                        thing.FSM.TimeHandler.addEventInterval(
+                            function (): boolean {
+                                if (thing.resting === other) {
+                                    return false;
+                                }
+
+                                thing.FSM.TimeHandler.addEvent(
+                                    function (): void {
+                                        thing.movement = thing.movementOld;
+                                    },
+                                    1);
+
+                                return true;
+                            },
+                            1,
+                            Infinity);
+                    }
+
+                    return true;
+                },
+                1,
+                Infinity);
         }
-    
+
         /**
          * Animation Function for Coins emerging from (or being hit by) a solid. The
          * Coin switches to the Scenery group, rotates between animation classes, 
@@ -5051,24 +5119,35 @@ module FullScreenMario {
             thing.FSM.StatsHolder.increase("score", 200);
 
             thing.FSM.TimeHandler.cancelClassCycle(thing, "0");
-            thing.FSM.TimeHandler.addClassCycle(thing, [
-                "anim1", "anim2", "anim3", "anim4", "anim3", "anim2"
-            ], "0", 5);
+            thing.FSM.TimeHandler.addClassCycle(
+                thing,
+                [
+                    "anim1", "anim2", "anim3", "anim4", "anim3", "anim2"
+                ],
+                "0",
+                5);
 
-            thing.FSM.TimeHandler.addEventInterval(function () {
-                thing.FSM.moveCoinEmerge(thing, other);
-                return !thing.FSM.isThingAlive(thing);
-            }, 1, Infinity);
+            thing.FSM.TimeHandler.addEventInterval(
+                function (): boolean {
+                    thing.FSM.moveCoinEmerge(thing, other);
+                    return !thing.FSM.isThingAlive(thing);
+                },
+                1,
+                Infinity);
 
-            thing.FSM.TimeHandler.addEvent(function () {
-                thing.FSM.killNormal(thing);
-            }, 49);
+            thing.FSM.TimeHandler.addEvent(
+                function (): void {
+                    thing.FSM.killNormal(thing);
+                },
+                49);
 
-            thing.FSM.TimeHandler.addEvent(function () {
-                thing.yvel *= -1;
-            }, 25);
+            thing.FSM.TimeHandler.addEvent(
+                function (): void {
+                    thing.yvel *= -1;
+                },
+                25);
         }
-    
+
         /**
          * Animation Function for a Vine emerging from a solid. It continues to grow
          * as normal via moveVine for 700 steps, then has its movement erased to 
@@ -5083,15 +5162,19 @@ module FullScreenMario {
 
             thing.FSM.setHeight(thing, 0);
             thing.FSM.AudioPlayer.play("Vine Emerging");
-            thing.FSM.TimeHandler.addEvent(function () {
-                thing.nocollide = false;
-            }, 14);
+            thing.FSM.TimeHandler.addEvent(
+                function (): void {
+                    thing.nocollide = false;
+                },
+                14);
 
-            thing.FSM.TimeHandler.addEvent(function () {
-                thing.movement = undefined;
-            }, 700);
+            thing.FSM.TimeHandler.addEvent(
+                function (): void {
+                    thing.movement = undefined;
+                },
+                700);
         }
-    
+
         /**
          * Animates a "flicker" effect on a Thing by repeatedly toggling its hidden
          * flag for a little while.
@@ -5108,17 +5191,22 @@ module FullScreenMario {
 
             thing.flickering = true;
 
-            thing.FSM.TimeHandler.addEventInterval(function (): void {
-                thing.hidden = !thing.hidden;
-                thing.FSM.PixelDrawer.setThingSprite(thing);
-            }, interval, cleartime);
+            thing.FSM.TimeHandler.addEventInterval(
+                function (): void {
+                    thing.hidden = !thing.hidden;
+                    thing.FSM.PixelDrawer.setThingSprite(thing);
+                },
+                interval,
+                cleartime);
 
-            thing.FSM.TimeHandler.addEvent(function (): void {
-                thing.flickering = thing.hidden = false;
-                thing.FSM.PixelDrawer.setThingSprite(thing);
-            }, cleartime * interval + 1);
+            thing.FSM.TimeHandler.addEvent(
+                function (): void {
+                    thing.flickering = thing.hidden = false;
+                    thing.FSM.PixelDrawer.setThingSprite(thing);
+                },
+                cleartime * interval + 1);
         }
-    
+
         /**
          * Animate Function for a HammerBro to throw a hammer. The HammerBro 
          * switches to the "throwing" class, waits and throws a few repeats, then
@@ -5142,45 +5230,47 @@ module FullScreenMario {
                 thing.FSM.switchClass(thing, "thrown", "throwing");
             }
 
-            thing.FSM.TimeHandler.addEvent(function () {
-                if (!thing.FSM.isThingAlive(thing)) {
-                    return;
-                }
-            
-                // Throw the hammer...
-                if (count !== 3) {
-                    thing.FSM.switchClass(thing, "throwing", "thrown");
-                    thing.FSM.addThing(
-                        ["Hammer", {
-                            "xvel": thing.lookleft
-                                ? thing.FSM.unitsize / -1.4
-                                : thing.FSM.unitsize / 1.4,
-                            "yvel": thing.FSM.unitsize * -1.4,
-                            "gravity": thing.FSM.MapScreener.gravity / 2.1
-                        }],
-                        thing.left - thing.FSM.unitsize * 2,
-                        thing.top - thing.FSM.unitsize * 2
-                        );
-                }
-            
-                // ...and go again
-                if (count > 0) {
-                    thing.FSM.TimeHandler.addEvent(
-                        thing.FSM.animateThrowingHammer,
-                        7, thing, count - 1
-                        );
-                } else {
-                    thing.FSM.TimeHandler.addEvent(
-                        thing.FSM.animateThrowingHammer,
-                        70, thing, 7
-                        );
-                    thing.FSM.removeClass(thing, "thrown");
-                }
-            }, 14);
+            thing.FSM.TimeHandler.addEvent(
+                function (): boolean {
+                    if (!thing.FSM.isThingAlive(thing)) {
+                        return false;
+                    }
+
+                    // Throw the hammer...
+                    if (count !== 3) {
+                        thing.FSM.switchClass(thing, "throwing", "thrown");
+                        thing.FSM.addThing(
+                            ["Hammer", {
+                                "xvel": thing.lookleft
+                                    ? thing.FSM.unitsize / -1.4
+                                    : thing.FSM.unitsize / 1.4,
+                                "yvel": thing.FSM.unitsize * -1.4,
+                                "gravity": thing.FSM.MapScreener.gravity / 2.1
+                            }],
+                            thing.left - thing.FSM.unitsize * 2,
+                            thing.top - thing.FSM.unitsize * 2
+                            );
+                    }
+
+                    // ...and go again
+                    if (count > 0) {
+                        thing.FSM.TimeHandler.addEvent(
+                            thing.FSM.animateThrowingHammer,
+                            7, thing, count - 1
+                            );
+                    } else {
+                        thing.FSM.TimeHandler.addEvent(
+                            thing.FSM.animateThrowingHammer,
+                            70, thing, 7
+                            );
+                        thing.FSM.removeClass(thing, "thrown");
+                    }
+                },
+                14);
 
             return false;
         }
-    
+
         /**
          * Animation Function for when Bowser jumps. This will only trigger if he is
          * facing left and a player exists. If either Bowser or the player die, it
@@ -5203,20 +5293,23 @@ module FullScreenMario {
 
             thing.resting = undefined;
             thing.yvel = thing.FSM.unitsize * -1.4;
-        
+
             // If there is a platform, don't bump into it
             thing.nocollidesolid = true;
-            thing.FSM.TimeHandler.addEventInterval(function (): boolean {
-                if (thing.dead || thing.yvel > thing.FSM.unitsize) {
-                    thing.nocollidesolid = false;
-                    return true;
-                }
-                return false;
-            }, 3, Infinity);
+            thing.FSM.TimeHandler.addEventInterval(
+                function (): boolean {
+                    if (thing.dead || thing.yvel > thing.FSM.unitsize) {
+                        thing.nocollidesolid = false;
+                        return true;
+                    }
+                    return false;
+                },
+                3,
+                Infinity);
 
             return false;
         }
-    
+
         /**
          * Animation Function for when Bowser fires. This will only trigger if he is
          * facing left and a player exists. If either Bowser or the player die, it
@@ -5236,17 +5329,17 @@ module FullScreenMario {
                 ) {
                 return true;
             }
-        
+
             // Close the mouth
             thing.FSM.addClass(thing, "firing");
             thing.FSM.AudioPlayer.playLocal("Bowser Fires", thing.left);
-        
+
             // After a bit, re-open and fire
             thing.FSM.TimeHandler.addEvent(thing.FSM.animateBowserFireOpen, 14, thing);
 
             return false;
         }
-    
+
         /**
          * Animation Function for when Bowser actually fires. A BowserFire Thing is
          * placed at his mouth, given a (rounded to unitsize * 8) destination y, and
@@ -5276,7 +5369,7 @@ module FullScreenMario {
 
             return false;
         }
-    
+
         /**
          * Animation Function for when Bowser throws a Hammer. It's similar to a
          * HammerBro, but the hammer appears on top of Bowser for a few steps
@@ -5295,40 +5388,47 @@ module FullScreenMario {
                 thing.left + thing.FSM.unitsize * 2,
                 thing.top - thing.FSM.unitsize * 2);
 
-            thing.FSM.TimeHandler.addEventInterval(function () {
-                if (!thing.FSM.isThingAlive(thing)) {
-                    thing.FSM.killNormal(hammer);
+            thing.FSM.TimeHandler.addEventInterval(
+                function (): boolean {
+                    if (!thing.FSM.isThingAlive(thing)) {
+                        thing.FSM.killNormal(hammer);
+                        return true;
+                    }
+
+                    thing.FSM.setTop(
+                        hammer, thing.top - thing.FSM.unitsize * 2
+                        );
+                    if (thing.lookleft) {
+                        thing.FSM.setLeft(
+                            hammer,
+                            thing.left + thing.FSM.unitsize * 2
+                            );
+                    } else {
+                        thing.FSM.setLeft(
+                            hammer,
+                            thing.right - thing.FSM.unitsize * 2
+                            );
+                    }
+
                     return true;
-                }
+                },
+                1,
+                14);
 
-                thing.FSM.setTop(
-                    hammer, thing.top - thing.FSM.unitsize * 2
-                    );
-                if (thing.lookleft) {
-                    thing.FSM.setLeft(
-                        hammer,
-                        thing.left + thing.FSM.unitsize * 2
-                        );
-                } else {
-                    thing.FSM.setLeft(
-                        hammer,
-                        thing.right - thing.FSM.unitsize * 2
-                        );
-                }
-            }, 1, 14);
-
-            thing.FSM.TimeHandler.addEvent(function () {
-                hammer.xvel = thing.FSM.unitsize * 1.17;
-                hammer.yvel = thing.FSM.unitsize * -2.1;
-                // hammer.gravity = thing.FSM.MapScreener.gravity / 1.4;
-                if (thing.lookleft) {
-                    hammer.xvel *= -1;
-                }
-            }, 14);
+            thing.FSM.TimeHandler.addEvent(
+                function (): void {
+                    hammer.xvel = thing.FSM.unitsize * 1.17;
+                    hammer.yvel = thing.FSM.unitsize * -2.1;
+                    // hammer.gravity = thing.FSM.MapScreener.gravity / 1.4;
+                    if (thing.lookleft) {
+                        hammer.xvel *= -1;
+                    }
+                },
+                14);
 
             return false;
         }
-    
+
         /**
          * Animation Function for when Bowser freezes upon the player hitting a 
          * CastleAxe. Velocity and movement are paused, then nofall is disabled 
@@ -5343,11 +5443,13 @@ module FullScreenMario {
             thing.dead = true;
             thing.FSM.thingPauseVelocity(thing);
 
-            thing.FSM.TimeHandler.addEvent(function (): void {
-                thing.nofall = false;
-            }, 70);
+            thing.FSM.TimeHandler.addEvent(
+                function (): void {
+                    thing.nofall = false;
+                },
+                70);
         }
-    
+
         /**
          * Animation Function for a standard jump, such as what HammerBros do. The
          * jump may be in either up or down, chosen at random by the NumberMaker.
@@ -5361,12 +5463,12 @@ module FullScreenMario {
             if (!thing.FSM.isThingAlive(thing)) {
                 return true;
             }
-        
+
             // Skip
             if (!thing.resting) {
                 return false;
             }
-        
+
             // Jump up?
             if (
                 thing.FSM.MapScreener.floor - (
@@ -5377,24 +5479,27 @@ module FullScreenMario {
                 ) {
                 thing.falling = true;
                 thing.yvel = thing.FSM.unitsize * -.7;
-                thing.FSM.TimeHandler.addEvent(function () {
-                    thing.falling = false;
-                }, 42);
-            }
-            // Jump down
-            else {
+                thing.FSM.TimeHandler.addEvent(
+                    function (): void {
+                        thing.falling = false;
+                    },
+                    42);
+            } else {
+                // Jump down
                 thing.nocollidesolid = true;
                 thing.yvel = thing.FSM.unitsize * -2.1;
-                thing.FSM.TimeHandler.addEvent(function () {
-                    thing.nocollidesolid = false;
-                }, 42);
+                thing.FSM.TimeHandler.addEvent(
+                    function (): void {
+                        thing.nocollidesolid = false;
+                    },
+                    42);
             }
 
             thing.resting = undefined;
 
             return false;
         }
-    
+
         /**
          * Animation Function for Bloopers starting to "unsqueeze". The "squeeze"
          * class is removed, their height is reset to 12, and their counter reset.
@@ -5408,7 +5513,7 @@ module FullScreenMario {
             thing.FSM.removeClass(thing, "squeeze");
             thing.FSM.setHeight(thing, 12, true, true);
         }
-    
+
         /**
          * Animation Function for Podoboos jumping up. Their top is recorded and a 
          * large negative yvel is given; after the jumpheight number of steps, they
@@ -5425,7 +5530,7 @@ module FullScreenMario {
                 thing.jumpHeight,
                 thing);
         }
-    
+
         /**
          * Animation Function for when a Podoboo needs to stop jumping. It obtains 
          * the movePodobooFalling movement to track its descent.
@@ -5435,7 +5540,7 @@ module FullScreenMario {
         animatePodobooJumpDown(thing: IPodoboo): void {
             thing.movement = thing.FSM.movePodobooFalling;
         }
-    
+
         /**
          * Animation Function for a Lakitu throwing a SpinyEgg. The Lakitu hides
          * behind its cloud ("hiding" class), waits 21 steps, then throws an egg up
@@ -5449,17 +5554,19 @@ module FullScreenMario {
             }
 
             thing.FSM.switchClass(thing, "out", "hiding");
-            thing.FSM.TimeHandler.addEvent(function () {
-                if (thing.dead) {
-                    return;
-                }
+            thing.FSM.TimeHandler.addEvent(
+                function (): void {
+                    if (thing.dead) {
+                        return;
+                    }
 
-                var spawn: ISpinyEgg = <ISpinyEgg>thing.FSM.addThing("SpinyEgg", thing.left, thing.top);
-                spawn.yvel = thing.FSM.unitsize * -2.1;
-                thing.FSM.switchClass(thing, "hiding", "out");
-            }, 21);
+                    var spawn: ISpinyEgg = <ISpinyEgg>thing.FSM.addThing("SpinyEgg", thing.left, thing.top);
+                    spawn.yvel = thing.FSM.unitsize * -2.1;
+                    thing.FSM.switchClass(thing, "hiding", "out");
+                },
+                21);
         }
-    
+
         /**
          * Animation Function for when a SpinyEgg hits the ground. The SpinyEgg is
          * killed and a Spiny is put in its place, moving towards the player.
@@ -5475,17 +5582,17 @@ module FullScreenMario {
             spawn.moveleft = thing.FSM.objectToLeft(thing.FSM.player, spawn);
             thing.FSM.killNormal(thing);
         }
-    
+
         /**
          * Animation Function for when a Fireball emerges from a player. All that
          * happens is the "Fireball" sound plays.
          * 
          * @param {Fireball} thing
          */
-        animateFireballEmerge(thing): void {
+        animateFireballEmerge(thing: IThing): void {
             thing.FSM.AudioPlayer.play("Fireball");
         }
-    
+
         /**
          * Animation Function for when a Fireball explodes. It is deleted and, 
          * unless big is === 2 (as this is used as a kill Function), a Firework is
@@ -5507,7 +5614,7 @@ module FullScreenMario {
             thing.FSM.setMidYObj(output, thing);
             output.animate(output);
         }
-    
+
         /**
          * Animation Function for a Firework, triggered immediately upon spawning.
          * The Firework cycles between "n1" through "n3", then dies.
@@ -5519,18 +5626,23 @@ module FullScreenMario {
                 i: number;
 
             for (i = 0; i < 3; i += 1) {
-                thing.FSM.TimeHandler.addEvent(function (i) {
-                    thing.FSM.setClass(thing, name + String(i + 1));
-                }, i * 7, i);
+                thing.FSM.TimeHandler.addEvent(
+                    function (i: number): void {
+                        thing.FSM.setClass(thing, name + String(i + 1));
+                    },
+                    i * 7,
+                    i);
             }
 
             thing.FSM.AudioPlayer.play("Firework");
 
-            thing.FSM.TimeHandler.addEvent(function () {
-                thing.FSM.killNormal(thing);
-            }, i * 7);
+            thing.FSM.TimeHandler.addEvent(
+                function (): void {
+                    thing.FSM.killNormal(thing);
+                },
+                i * 7);
         }
-    
+
         /**
          * Animation Function for the Fireworks found at the end of 
          * EndOutsideCastle. numFireworks dicatates how many to place, and positions
@@ -5542,16 +5654,16 @@ module FullScreenMario {
          *          from the center of the door.
          */
         animateEndLevelFireworks(thing: IPlayer, other: IDetectCollision, numFireworks: number): void {
-            var doorRight = other.left,
-                doorLeft = doorRight - thing.FSM.unitsize * 8,
-                doorBottom = other.bottom,
-                doorTop = doorBottom - thing.FSM.unitsize * 16,
-                flag = thing.FSM.ObjectMaker.make("CastleFlag", {
+            var doorRight: number = other.left,
+                doorLeft: number = doorRight - thing.FSM.unitsize * 8,
+                doorBottom: number = other.bottom,
+                doorTop: number = doorBottom - thing.FSM.unitsize * 16,
+                flag: IThing = thing.FSM.ObjectMaker.make("CastleFlag", {
                     "position": "beginning"
                 }),
-                flagMovements = 28,
-                fireInterval = 28,
-                fireworkPositions = [
+                flagMovements: number = 28,
+                fireInterval: number = 28,
+                fireworkPositions: number[][] = [
                     [0, -48],
                     [-8, -40],
                     [8, -40],
@@ -5559,8 +5671,9 @@ module FullScreenMario {
                     [0, -48],
                     [-8, -40]
                 ],
-                i = 0,
-                firework, position;
+                i: number = 0,
+                firework: IFirework,
+                position: number[];
 
             thing.FSM.addThing(
                 flag,
@@ -5568,32 +5681,39 @@ module FullScreenMario {
                 doorTop - thing.FSM.unitsize * 24);
             thing.FSM.arrayToBeginning(flag, <any[]>thing.FSM.GroupHolder.getGroup(flag.groupType));
 
-            thing.FSM.TimeHandler.addEventInterval(function () {
-                thing.FSM.shiftVert(flag, thing.FSM.unitsize * -.25);
-            }, 1, flagMovements);
+            thing.FSM.TimeHandler.addEventInterval(
+                function (): void {
+                    thing.FSM.shiftVert(flag, thing.FSM.unitsize * -.25);
+                },
+                1,
+                flagMovements);
 
             if (numFireworks > 0) {
-                thing.FSM.TimeHandler.addEventInterval(function () {
-                    position = fireworkPositions[i];
-                    firework = thing.FSM.addThing(
-                        "Firework",
-                        thing.left + position[0] * thing.FSM.unitsize,
-                        thing.top + position[1] * thing.FSM.unitsize
-                        );
-                    firework.animate(firework);
-                    i += 1;
-                }, fireInterval, numFireworks);
+                thing.FSM.TimeHandler.addEventInterval(
+                    function (): void {
+                        position = fireworkPositions[i];
+                        firework = <IFirework>thing.FSM.addThing(
+                            "Firework",
+                            thing.left + position[0] * thing.FSM.unitsize,
+                            thing.top + position[1] * thing.FSM.unitsize
+                            );
+                        firework.animate(firework);
+                        i += 1;
+                    },
+                    fireInterval,
+                    numFireworks);
             }
 
-            thing.FSM.TimeHandler.addEvent(function () {
-                thing.FSM.AudioPlayer.addEventImmediate(
-                    "Stage Clear", "ended", function () {
-                        thing.FSM.collideLevelTransport(thing, other);
-                    }
-                    );
-            }, i * fireInterval + 420);
+            thing.FSM.TimeHandler.addEvent(
+                function (): void {
+                    thing.FSM.AudioPlayer.addEventImmediate(
+                        "Stage Clear", "ended", function (): void {
+                            thing.FSM.collideLevelTransport(thing, other);
+                        });
+                },
+                i * fireInterval + 420);
         }
-    
+
         /**
          * Animation Function for a Cannon outputting a BulletBill. This will only
          * happen if the Cannon isn't within 8 units of the player. The spawn flies
@@ -5605,7 +5725,7 @@ module FullScreenMario {
             if (!thing.FSM.isThingAlive(thing)) {
                 return;
             }
-        
+
             // Don't fire if Player is too close
             if (
                 thing.FSM.player.right > (
@@ -5618,21 +5738,20 @@ module FullScreenMario {
                 return;
             }
 
-            var spawn = thing.FSM.ObjectMaker.make("BulletBill");
+            var spawn: IBulletBill = thing.FSM.ObjectMaker.make("BulletBill");
+
             if (thing.FSM.objectToLeft(thing.FSM.player, thing)) {
                 spawn.direction = spawn.moveleft = true;
                 spawn.xvel *= -1;
                 thing.FSM.flipHoriz(spawn);
                 thing.FSM.addThing(spawn, thing.left, thing.top);
             } else {
-                thing.FSM.addThing(
-                    spawn, thing.left + thing.width, thing.top
-                    );
+                thing.FSM.addThing(spawn, thing.left + thing.width, thing.top);
             }
 
             thing.FSM.AudioPlayer.playLocal("Bump", thing.right);
         }
-    
+
         /**
          * Animation Function for a fiery player throwing a Fireball. The player may
          * only do so if fewer than 2 other thrown Fireballs exist. A new Fireball
@@ -5647,34 +5766,34 @@ module FullScreenMario {
                 return;
             }
 
-            var ball = thing.FSM.ObjectMaker.make("Fireball", {
-                "moveleft": thing.moveleft,
-                "speed": thing.FSM.unitsize * 1.75,
-                "jumpheight": thing.FSM.unitsize * 1.56,
-                "gravity": thing.FSM.MapScreener.gravity * 1.56,
-                "yvel": thing.FSM.unitsize,
-                "movement": thing.FSM.moveJumping
-            }),
-                xloc = thing.moveleft
-                    ? (thing.left - thing.FSM.unitsize / 4)
-                    : (thing.right + thing.FSM.unitsize / 4);
+            var xloc: number = thing.moveleft
+                ? (thing.left - thing.FSM.unitsize / 4)
+                : (thing.right + thing.FSM.unitsize / 4),
+                ball: IFireball = thing.FSM.ObjectMaker.make("Fireball", {
+                    "moveleft": thing.moveleft,
+                    "speed": thing.FSM.unitsize * 1.75,
+                    "jumpheight": thing.FSM.unitsize * 1.56,
+                    "gravity": thing.FSM.MapScreener.gravity * 1.56,
+                    "yvel": thing.FSM.unitsize,
+                    "movement": thing.FSM.moveJumping
+                });
 
-            thing.FSM.addThing(
-                ball, xloc, thing.top + thing.FSM.unitsize * 8
-                );
+            thing.FSM.addThing(ball, xloc, thing.top + thing.FSM.unitsize * 8);
             ball.animate(ball);
-            ball.onDelete = function () {
+            ball.onDelete = function (): void {
                 thing.numballs -= 1;
             };
 
             thing.numballs += 1;
             thing.FSM.addClass(thing, "firing");
 
-            thing.FSM.TimeHandler.addEvent(function () {
-                thing.FSM.removeClass(thing, "firing");
-            }, 7);
+            thing.FSM.TimeHandler.addEvent(
+                function (): void {
+                    thing.FSM.removeClass(thing, "firing");
+                },
+                7);
         }
-    
+
         /**
          * Animation Function that regularly spings CastleFireballs around their
          * parent CastleBlock. The CastleBlock's location and angle determine the
@@ -5696,7 +5815,7 @@ module FullScreenMario {
 
             thing.angle += thing.dt * thing.direction;
         }
-    
+
         /**
          * Animation Function to close a CastleBridge when the player triggers its
          * killonend after hitting the CastleAxe in EndInsideCastle. Its width is
@@ -5705,22 +5824,27 @@ module FullScreenMario {
          * @param {CastleBridge} thing
          */
         animateCastleBridgeOpen(thing: ISolid): void {
-            thing.FSM.TimeHandler.addEvent(function (): void {
-                thing.FSM.TimeHandler.addEventInterval(function (): boolean {
-                    thing.right -= thing.FSM.unitsize * 2;
-                    thing.FSM.setWidth(thing, thing.width - 2);
-                    thing.FSM.AudioPlayer.play("Break Block");
+            thing.FSM.TimeHandler.addEvent(
+                function (): void {
+                    thing.FSM.TimeHandler.addEventInterval(
+                        function (): boolean {
+                            thing.right -= thing.FSM.unitsize * 2;
+                            thing.FSM.setWidth(thing, thing.width - 2);
+                            thing.FSM.AudioPlayer.play("Break Block");
 
-                    if (thing.width <= 0) {
-                        thing.FSM.AudioPlayer.play("Bowser Falls");
-                        return true;
-                    }
+                            if (thing.width <= 0) {
+                                thing.FSM.AudioPlayer.play("Bowser Falls");
+                                return true;
+                            }
 
-                    return false;
-                }, 1, Infinity);
-            }, 7);
+                            return false;
+                        },
+                        1,
+                        Infinity);
+                },
+                7);
         }
-    
+
         /**
          * Animation Function for when a CastleChain opens, which just delays a
          * killNormal call for 7 steps.
@@ -5730,7 +5854,7 @@ module FullScreenMario {
         animateCastleChainOpen(thing: ISolid): void {
             thing.FSM.TimeHandler.addEvent(thing.FSM.killNormal, 7, thing);
         }
-    
+
         /**
          * Animation Function for when the player paddles underwater. Any previous
          * Any previous paddling classes and cycle are removed, and a new one is 
@@ -5763,7 +5887,7 @@ module FullScreenMario {
             thing.paddling = thing.paddlingCycle = thing.swimming = true;
             thing.yvel = thing.FSM.unitsize * -.84;
         }
-    
+
         /**
          * Animation Function for when a player lands to reset size and remove 
          * hopping (and if underwater, paddling) classes. The mod event is fired.
@@ -5785,7 +5909,7 @@ module FullScreenMario {
 
             thing.FSM.ModAttacher.fireEvent("onPlayerLanding", thing, thing.resting);
         }
-    
+
         /**
          * Animation Function for when the player moves off a resting solid. It
          * sets resting to undefined, and if underwater, switches the "running" and
@@ -5799,7 +5923,7 @@ module FullScreenMario {
                 thing.FSM.switchClass(thing, "running", "paddling");
             }
         }
-    
+
         /**
          * Animation Function for when a player breathes a underwater. This creates
          * a Bubble, which slowly rises to the top of the screen.
@@ -5809,7 +5933,7 @@ module FullScreenMario {
         animatePlayerBubbling(thing: IPlayer): void {
             thing.FSM.addThing("Bubble", thing.right, thing.top);
         }
-    
+
         /**
          * Animation Function to give the player a cycle of running classes. The 
          * cycle auto-updates its time as a function of how fast the player is 
@@ -5820,13 +5944,17 @@ module FullScreenMario {
         animatePlayerRunningCycle(thing: IPlayer): void {
             thing.FSM.switchClass(thing, "still", "running");
 
-            (<any>thing).running = thing.FSM.TimeHandler.addClassCycle(thing, [
-                "one", "two", "three", "two"
-            ], "running", function (event) {
+            (<any>thing).running = thing.FSM.TimeHandler.addClassCycle(
+                thing,
+                [
+                    "one", "two", "three", "two"
+                ],
+                "running",
+                function (event: any): void {
                     event.timeout = 5 + Math.ceil(thing.maxspeedsave - Math.abs(thing.xvel));
                 });
         }
-    
+
         /**
          * Animation Function for when a player hops on an enemy. Resting is set to
          * undefined, and a small vertical yvel is given.
@@ -5837,7 +5965,7 @@ module FullScreenMario {
             thing.resting = undefined;
             thing.yvel = thing.FSM.unitsize * -1.4;
         }
-    
+
         /**
          * Animation Function to start a player transferring through a Pipe. This is
          * generic for entrances and exists horizontally and vertically: movement
@@ -5864,7 +5992,7 @@ module FullScreenMario {
             thing.FSM.TimeHandler.cancelAllCycles(thing);
             thing.FSM.GroupHolder.switchObjectGroup(thing, "Character", "Scenery");
         }
-    
+
         /**
          * Animation Function for when a player is done passing through a Pipe. This
          * is abstracted for exits both horizontally and vertically, typically after
@@ -5879,7 +6007,7 @@ module FullScreenMario {
             thing.FSM.AudioPlayer.resumeTheme();
             thing.FSM.GroupHolder.switchObjectGroup(thing, "Scenery", "Character");
         }
-    
+
         /**
          * Animation Function for when a player is hopping off a pole. It hops off
          * and faces the opposite direction.
@@ -5898,18 +6026,20 @@ module FullScreenMario {
             thing.nocollide = thing.nofall = false;
             thing.gravity = thing.FSM.MapScreener.gravity / 14;
 
-            thing.FSM.TimeHandler.addEvent(function () {
-                thing.movement = thing.FSM.movePlayer;
-                thing.gravity = thing.FSM.MapScreener.gravity;
+            thing.FSM.TimeHandler.addEvent(
+                function (): void {
+                    thing.movement = thing.FSM.movePlayer;
+                    thing.gravity = thing.FSM.MapScreener.gravity;
 
-                thing.FSM.unflipHoriz(thing);
+                    thing.FSM.unflipHoriz(thing);
 
-                if (doRun) {
-                    thing.FSM.animatePlayerRunningCycle(thing);
-                }
-            }, 21);
+                    if (doRun) {
+                        thing.FSM.animatePlayerRunningCycle(thing);
+                    }
+                },
+                21);
         }
-    
+
         /**
          * Animation Function for when a player must hop off a Vine during an area's
          * opening cutscene. The player switches sides, waits 14 steps, then calls
@@ -5926,11 +6056,11 @@ module FullScreenMario {
 
             thing.FSM.TimeHandler.addEvent(thing.FSM.animatePlayerOffPole, 14, thing);
         }
-    
-    
+
+
         /* Appearance utilities
         */
-    
+
         /**
          * Makes one Thing look towards another, chainging lookleft and moveleft in
          * the process.
@@ -5944,15 +6074,14 @@ module FullScreenMario {
                 thing.lookleft = true;
                 thing.moveleft = true;
                 thing.FSM.unflipHoriz(thing);
-            }
-            // Case: other is to the right
-            else if (other.left >= thing.right) {
+            } else if (other.left >= thing.right) {
+                // Case: other is to the right
                 thing.lookleft = false;
                 thing.moveleft = false;
                 thing.FSM.flipHoriz(thing);
             }
         }
-    
+
         /**
          * Makes one Thing look towards the player, chainging lookleft and moveleft 
          * in the process.
@@ -5970,9 +6099,8 @@ module FullScreenMario {
                     thing.moveleft = false;
                     thing.FSM.unflipHoriz(thing);
                 }
-            }
-            // Case: Player is to the right
-            else if (thing.FSM.player.left >= thing.right) {
+            } else if (thing.FSM.player.left >= thing.right) {
+                // Case: Player is to the right
                 if (thing.lookleft || big) {
                     thing.lookleft = false;
                     thing.moveleft = true;
@@ -5980,11 +6108,11 @@ module FullScreenMario {
                 }
             }
         }
-    
-    
+
+
         /* Death functions
         */
-    
+
         /**
          * Standard Function to kill a Thing, which means marking it as dead and
          * clearing its numquads, resting, movement, and cycles. It will later be
@@ -6012,7 +6140,7 @@ module FullScreenMario {
 
             thing.FSM.ModAttacher.fireEvent("onKillNormal", thing);
         }
-    
+
         /**
          * Death Function commonly called on characters to animate a small flip
          * before killNormal is called.
@@ -6038,7 +6166,7 @@ module FullScreenMario {
             thing.FSM.TimeHandler.addEvent(
                 thing.FSM.killNormal, 70 + extra, thing);
         }
-    
+
         /**
          * Kill Function to replace a Thing with a spawned Thing, determined by the
          * thing's spawnType, in the same location.
@@ -6057,10 +6185,9 @@ module FullScreenMario {
                 throw new Error("Thing " + thing.title + " has no .spawnType.");
             }
 
-            var spawn = thing.FSM.ObjectMaker.make(
+            var spawn: IThing = thing.FSM.ObjectMaker.make(
                 thing.spawnType,
-                thing.spawnSettings || {}
-                );
+                thing.spawnSettings || {});
             thing.FSM.addThing(spawn);
             thing.FSM.setBottom(spawn, thing.bottom);
             thing.FSM.setMidXObj(spawn, thing);
@@ -6069,7 +6196,7 @@ module FullScreenMario {
 
             return spawn;
         }
-    
+
         /**
          * A kill Function similar to killSpawn but more configurable. A spawned 
          * Thing is created with the given attributes and copies over any specified
@@ -6083,8 +6210,9 @@ module FullScreenMario {
          *                                        to copy from the original Thing
          *                                        (by default, none).
          */
-        killReplace(thing: IThing, title: string, attributes: any, attributesCopied?: string[]): void {
-            var spawn, i;
+        killReplace(thing: IThing, title: string, attributes: any, attributesCopied?: string[]): IThing {
+            var spawn: IThing,
+                i: number;
 
             if (typeof attributes === "undefined") {
                 attributes = {};
@@ -6111,7 +6239,7 @@ module FullScreenMario {
 
             return spawn;
         }
-    
+
         /**
          * Kill Function for Goombas. If big isn't specified, it replaces the 
          * killed Goomba with a DeadGoomba via killSpawn.
@@ -6128,7 +6256,7 @@ module FullScreenMario {
 
             thing.FSM.killSpawn(thing);
         }
-    
+
         /**
          * Kill Function for Koopas. Jumping and floating Koopas are replacing with
          * an equivalent Koopa that's just walking, while walking Koopas become
@@ -6138,11 +6266,11 @@ module FullScreenMario {
          * @param {Boolean} [big]   Whether shells should be immediately killed.
          * @remarks This isn't called when a Shell hits a Koopa.
          */
-        killKoopa(thing: IKoopa, big?: boolean): void {
-            var spawn;
+        killKoopa(thing: IKoopa, big?: boolean): ICharacter {
+            var spawn: ICharacter;
 
             if (thing.jumping || thing.floating) {
-                spawn = thing.FSM.killReplace(
+                spawn = <ICharacter>thing.FSM.killReplace(
                     thing, "Koopa", undefined, ["smart", "direction", "moveleft"]
                     );
                 spawn.xvel = spawn.moveleft ? -spawn.speed : spawn.speed;
@@ -6152,7 +6280,7 @@ module FullScreenMario {
 
             return spawn;
         }
-    
+
         /**
          * Kill Function for Bowsers. In reality this is only called when the player
          * Fireballs him or all NPCs are to be killed. It takes five Fireballs to 
@@ -6178,7 +6306,7 @@ module FullScreenMario {
                 thing.FSM.scoreOn(5000, thing);
             }
         }
-    
+
         /**
          * Kills a Thing by replacing it with another Thing, typically a Shell or
          * BeetleShell (determined by thing.shelltype). The spawn inherits smartness
@@ -6189,7 +6317,7 @@ module FullScreenMario {
          * @param {Number} [big]   Whether the spawned Shell should be killed
          *                         immediately (by default, false).
          */
-        killToShell(thing: ICharacter, big?: number): void {
+        killToShell(thing: ICharacter, big?: number): IShell {
             var spawn: IShell,
                 nocollidecharold: boolean,
                 nocollideplayerold: boolean;
@@ -6214,18 +6342,22 @@ module FullScreenMario {
             spawn.nocollidechar = true;
             spawn.nocollideplayer = true;
 
-            thing.FSM.TimeHandler.addEvent(function () {
-                spawn.nocollidechar = nocollidecharold;
-                spawn.nocollideplayer = nocollideplayerold;
-            }, 7);
+            thing.FSM.TimeHandler.addEvent(
+                function (): void {
+                    spawn.nocollidechar = nocollidecharold;
+                    spawn.nocollideplayer = nocollideplayerold;
+                },
+                7);
 
             thing.FSM.killNormal(thing);
 
             if (big === 2) {
                 thing.FSM.killFlip(spawn);
             }
+
+            return spawn;
         }
-    
+
         /**
          * Wipes the screen of any characters or solids that should be gone during
          * an important cutscene, such as hitting an end-of-level flag.
@@ -6242,7 +6374,7 @@ module FullScreenMario {
                 character: ICharacter,
                 solid: ISolid,
                 i: number;
-        
+
             // Characters: they must opt out of being killed with .nokillonend, and
             // may opt into having a function called instead (such as Lakitus).
             group = <ICharacter[]>FSM.GroupHolder.getGroup("Character");
@@ -6256,7 +6388,7 @@ module FullScreenMario {
                     character.killonend(character);
                 }
             }
-        
+
             // Solids: they may opt into being deleted
             group = <ISolid[]>FSM.GroupHolder.getGroup("Solid");
             for (i = group.length - 1; i >= 0; --i) {
@@ -6271,7 +6403,7 @@ module FullScreenMario {
                 }
             }
         }
-    
+
         /**
          * Kill Function for Bricks. The Brick is killed an an animateBrickShards
          * animation is timed. If other is provided, it's also marked as the Brick's
@@ -6298,7 +6430,7 @@ module FullScreenMario {
                 thing.up = undefined;
             }
         }
-    
+
         /**
          * Kill Function for the player. It's big and complicated, but in general...
          * 1. If big === 2, just kill it altogether
@@ -6320,15 +6452,14 @@ module FullScreenMario {
 
             var FSM: FullScreenMario = thing.FSM,
                 area: IArea = <IArea>thing.FSM.MapsHandler.getArea();
-        
+
             // Large big: real, no-animation death
             if (big === 2) {
                 thing.dead = thing.dying = true;
                 thing.alive = false;
                 FSM.MapScreener.notime = true;
-            }
-            // Regular big: regular (enemy, time, etc.) kill
-            else {
+            } else {
+                // Regular big: regular (enemy, time, etc.) kill
                 // If the player can survive this, just power down
                 if (!big && thing.power > 1) {
                     thing.power = 1;
@@ -6336,9 +6467,8 @@ module FullScreenMario {
                     FSM.AudioPlayer.play("Power Down");
                     FSM.playerGetsSmall(thing);
                     return;
-                }
-                // The player can't survive this: animate a death
-                else {
+                } else {
+                    // The player can't survive this: animate a death
                     thing.dying = true;
 
                     FSM.setSize(thing, 7.5, 7, true);
@@ -6352,13 +6482,15 @@ module FullScreenMario {
                     FSM.MapScreener.nokeys = true;
 
                     FSM.TimeHandler.cancelAllCycles(thing);
-                    FSM.TimeHandler.addEvent(function () {
-                        FSM.thingResumeVelocity(thing, true);
-                        thing.nocollide = true;
-                        thing.movement = thing.resting = undefined;
-                        thing.gravity = FSM.MapScreener.gravity / 2.1;
-                        thing.yvel = FullScreenMario.unitsize * -1.4;
-                    }, 7);
+                    FSM.TimeHandler.addEvent(
+                        function (): void {
+                            FSM.thingResumeVelocity(thing, true);
+                            thing.nocollide = true;
+                            thing.movement = thing.resting = undefined;
+                            thing.gravity = FSM.MapScreener.gravity / 2.1;
+                            thing.yvel = FullScreenMario.unitsize * -1.4;
+                        },
+                        7);
                 }
             }
 
@@ -6382,11 +6514,11 @@ module FullScreenMario {
                     FSM);
             }
         }
-    
-    
+
+
         /* Scoring
         */
-    
+
         /**
          * @this {EightBittr}
          * @param {Number} level   What number call this is in a chain of scoring
@@ -6404,7 +6536,7 @@ module FullScreenMario {
             FSM.gainLife(1);
             return 0;
         }
-    
+
         /**
          * Driver function to score some number of points for the player and show
          * the gains via an animation.
@@ -6431,7 +6563,7 @@ module FullScreenMario {
                 this.StatsHolder.increase("score", value);
             }
         }
-    
+
         /**
          * Scores a given number of points for the player, and shows the gains via
          * an animation centered at the top of a thing.
@@ -6449,7 +6581,7 @@ module FullScreenMario {
             if (!value) {
                 return;
             }
-            var text = thing.FSM.addThing("Text" + value);
+            var text: IText = <IText>thing.FSM.addThing("Text" + value);
 
             thing.FSM.scoreAnimateOn(<IText>text, thing);
 
@@ -6459,7 +6591,7 @@ module FullScreenMario {
 
             thing.FSM.ModAttacher.fireEvent("onScoreOn", value, thing, continuation);
         }
-    
+
         /**
          * Centers a text associated with some points gain on the top of a Thing,
          * and animates it updward, setting an event for it to die.
@@ -6475,7 +6607,7 @@ module FullScreenMario {
             thing.FSM.setBottom(text, thing.top);
             thing.FSM.scoreAnimate(text);
         }
-    
+
         /**
          * Animates a score on top of a Thing.
          * 
@@ -6497,7 +6629,7 @@ module FullScreenMario {
                 thing.FSM.killNormal, timeout, thing
                 );
         }
-    
+
         /**
          * Inelegant catch-all Function for when the player has hit a shell and 
          * needs points to be scored. This takes into account player star status and
@@ -6514,29 +6646,29 @@ module FullScreenMario {
                 thing.FSM.scoreOn(200, other);
                 return;
             }
-        
+
             // Shells in the air: 8000 points (see guide)
             if (!other.resting) {
                 thing.FSM.scoreOn(8000, other);
                 return;
             }
-        
+
             // Peeking shells: 1000 points
             if (other.peeking) {
                 thing.FSM.scoreOn(1000, other);
                 return;
             }
-        
+
             // Already hopping: 500 points
             if (thing.jumpcount) {
                 thing.FSM.scoreOn(500, other);
                 return;
             }
-        
+
             // All other cases: the shell's default
             thing.FSM.scoreOn(400, other);
         }
-    
+
         /**
          * Determines the amount a player should score upon hitting a flag, based on
          * the player's y-position.
@@ -6561,11 +6693,11 @@ module FullScreenMario {
 
             return amount;
         }
-    
-    
+
+
         /* Audio
         */
-    
+
         /**
          * @param {FullScreenMario} FSM
          * @param {Number} xloc   The x-location of the sound's source.
@@ -6590,7 +6722,7 @@ module FullScreenMario {
                     )
                 );
         }
-    
+
         /**
          * @param {FullScreenMario} FSM
          * @return {String} The name of the default audio for the current area,
@@ -6598,13 +6730,13 @@ module FullScreenMario {
          *                  spaces).
          */
         getAudioThemeDefault(FSM: FullScreenMario): string {
-            return FSM.MapsHandler.getArea().setting.split(' ')[0];
+            return FSM.MapsHandler.getArea().setting.split(" ")[0];
         }
-    
-    
+
+
         /* Map sets
         */
-    
+
         /**
          * Sets the game state to a new map, resetting all Things and inputs in the
          * process. The mod events are fired.
@@ -6616,7 +6748,7 @@ module FullScreenMario {
          * @remarks Most of the work here is done by setLocation.
          */
         setMap(name?: string | IFullScreenMario, location?: string | number): void {
-            var FSM = FullScreenMario.prototype.ensureCorrectCaller(this),
+            var FSM: FullScreenMario = FullScreenMario.prototype.ensureCorrectCaller(this),
                 time: number,
                 map: IMap;
 
@@ -6642,7 +6774,7 @@ module FullScreenMario {
             time = (<IArea>FSM.MapsHandler.getArea()).time || (<IMap>FSM.MapsHandler.getMap()).time;
             FSM.StatsHolder.setItem("time", Number(time));
         }
-    
+
         /**
          * Sets the game state to a location within the current map, resetting all
          * Things, inputs, the current Area, PixelRender, and MapScreener in the
@@ -6671,14 +6803,17 @@ module FullScreenMario {
 
             FSM.PixelDrawer.setBackground((<IArea>FSM.MapsHandler.getArea()).background);
 
-            FSM.TimeHandler.addEventInterval(function (): boolean {
-                if (!(<IMapScreenr>FSM.MapScreener).notime) {
-                    FSM.StatsHolder.decrease("time", 1);
-                }
-                if (!FSM.StatsHolder.getItem("time")) {
-                    return true;
-                }
-            }, 25, Infinity);
+            FSM.TimeHandler.addEventInterval(
+                function (): boolean {
+                    if (!(<IMapScreenr>FSM.MapScreener).notime) {
+                        FSM.StatsHolder.decrease("time", 1);
+                    }
+                    if (!FSM.StatsHolder.getItem("time")) {
+                        return true;
+                    }
+                },
+                25,
+                Infinity);
 
             FSM.AudioPlayer.clearAll();
             FSM.AudioPlayer.playTheme();
@@ -6691,10 +6826,10 @@ module FullScreenMario {
 
             FSM.GamesRunner.play();
         }
-    
+
         /* Map entrances
         */
-     
+
         /**
          * Standard map entrance Function for dropping from the ceiling. A new 
          * player is placed 16x16 units away from the top-left corner, with
@@ -6711,7 +6846,7 @@ module FullScreenMario {
 
             FSM.addPlayer(FSM.unitsize * 16, FSM.unitsize * 16);
         }
-    
+
         /**
          * Standard map entrance Function for starting on the ground. A new player
          * is placed 16x16 units away from the top-left corner, with location.xloc
@@ -6729,7 +6864,7 @@ module FullScreenMario {
             FSM.addPlayer(FSM.unitsize * 16, FSM.MapScreener.floor * FSM.unitsize);
 
         }
-     
+
         /**
          * Map entrance Function for starting on the ground and immediately walking
          * as if in a cutscene. mapEntrancePlain is immediately called, and the 
@@ -6749,7 +6884,7 @@ module FullScreenMario {
             FSM.MapScreener.nokeys = true;
             FSM.MapScreener.notime = true;
         }
-     
+
         /**
          * Map entrance Function for entering a castle area. The player is simply
          * added at 2 x 56.
@@ -6759,7 +6894,7 @@ module FullScreenMario {
         mapEntranceCastle(FSM: FullScreenMario): void {
             FSM.addPlayer(FSM.unitsize * 2, FSM.unitsize * 56);
         }
-    
+
         /**
          * Map entrance Function for entering an area climbing a Vine. The Vine 
          * enters first by growing, then the player climbs it and hops off. The 
@@ -6778,15 +6913,20 @@ module FullScreenMario {
                     FSM.MapScreener.bottom + FSM.unitsize * 8
                     );
 
-            FSM.TimeHandler.addEventInterval(function () {
-                if (vine.top < threshold) {
+            FSM.TimeHandler.addEventInterval(
+                function (): boolean {
+                    if (vine.top >= threshold) {
+                        return false;
+                    }
+
                     vine.movement = undefined;
                     FSM.mapEntranceVinePlayer(FSM, vine);
                     return true;
-                }
-            }, 1, Infinity);
+                },
+                1,
+                Infinity);
         }
-    
+
         /**
          * Continuation of mapEntranceVine for the player's actions. The player
          * climbs up the Vine; once it reaches the threshold, it hops off using
@@ -6809,18 +6949,21 @@ module FullScreenMario {
 
             FSM.collideVine(player, vine);
 
-            FSM.TimeHandler.addEventInterval(function (): boolean {
-                FSM.shiftVert(player, speed);
-                if (player.top < threshold) {
-                    FSM.TimeHandler.addEvent(
-                        FSM.animatePlayerOffVine, 49, player
-                        );
-                    return true;
-                }
-                return false;
-            }, 1, Infinity);
+            FSM.TimeHandler.addEventInterval(
+                function (): boolean {
+                    FSM.shiftVert(player, speed);
+                    if (player.top < threshold) {
+                        FSM.TimeHandler.addEvent(
+                            FSM.animatePlayerOffVine, 49, player
+                            );
+                        return true;
+                    }
+                    return false;
+                },
+                1,
+                Infinity);
         }
-    
+
         /**
          * Map entrance Function for coming in through a vertical Pipe. The player 
          * is added just below the top of the Pipe, and is animated to rise up 
@@ -6849,16 +6992,21 @@ module FullScreenMario {
             FSM.animatePlayerPipingStart(FSM.player);
             FSM.AudioPlayer.play("Pipe");
 
-            FSM.TimeHandler.addEventInterval(function () {
-                FSM.shiftVert(FSM.player, FSM.unitsize / -4);
+            FSM.TimeHandler.addEventInterval(
+                function (): boolean {
+                    FSM.shiftVert(FSM.player, FSM.unitsize / -4);
 
-                if (FSM.player.bottom <= location.entrance.top) {
-                    FSM.animatePlayerPipingEnd(FSM.player);
-                    return true;
-                }
-            }, 1, Infinity);
+                    if (FSM.player.bottom <= location.entrance.top) {
+                        FSM.animatePlayerPipingEnd(FSM.player);
+                        return true;
+                    }
+
+                    return false;
+                },
+                1,
+                Infinity);
         }
-    
+
         /**
          * Map entrance Function for coming in through a horizontal Pipe. The player 
          * is added just to the left of the entrance, and is animated to pass  
@@ -6871,7 +7019,7 @@ module FullScreenMario {
         mapEntrancePipeHorizontal(FSM: FullScreenMario, location?: ILocation): void {
             throw new Error("mapEntrancePipeHorizontal is not yet implemented.");
         }
-    
+
         /**
          * Map entrance Function for the player reincarnating into a level, 
          * typically from a random map. The player is placed at 16 x 0 and a
@@ -6893,11 +7041,11 @@ module FullScreenMario {
 
             FSM.ModAttacher.fireEvent("onPlayerRespawn");
         }
-    
-    
+
+
         /* Map exits
         */
-    
+
         /**
          * Map exit Function for leaving through a vertical Pipe. The player is
          * animated to pass through it and then transfer locations.
@@ -6915,25 +7063,30 @@ module FullScreenMario {
             thing.FSM.animatePlayerPipingStart(thing);
             thing.FSM.AudioPlayer.play("Pipe");
 
-            thing.FSM.TimeHandler.addEventInterval(function (): boolean {
-                thing.FSM.shiftVert(thing, thing.FSM.unitsize / 4);
+            thing.FSM.TimeHandler.addEventInterval(
+                function (): boolean {
+                    thing.FSM.shiftVert(thing, thing.FSM.unitsize / 4);
 
-                if (thing.top <= other.top) {
-                    return false;
-                }
-
-                thing.FSM.TimeHandler.addEvent(function (): void {
-                    if (other.transport.constructor === Object) {
-                        thing.FSM.setMap(other.transport.map);
-                    } else {
-                        thing.FSM.setLocation(other.transport);
+                    if (thing.top <= other.top) {
+                        return false;
                     }
-                }, 42);
 
-                return true;
-            }, 1, Infinity);
+                    thing.FSM.TimeHandler.addEvent(
+                        function (): void {
+                            if (other.transport.constructor === Object) {
+                                thing.FSM.setMap(other.transport.map);
+                            } else {
+                                thing.FSM.setLocation(other.transport);
+                            }
+                        },
+                        42);
+
+                    return true;
+                },
+                1,
+                Infinity);
         }
-    
+
         /**
          * Map exit Function for leaving through a horiontal Pipe. The player is
          * animated to pass through it and then transfer locations.
@@ -6963,25 +7116,30 @@ module FullScreenMario {
             thing.FSM.animatePlayerPipingStart(thing);
             thing.FSM.AudioPlayer.play("Pipe");
 
-            thing.FSM.TimeHandler.addEventInterval(function () {
-                thing.FSM.shiftHoriz(thing, thing.FSM.unitsize / 4);
+            thing.FSM.TimeHandler.addEventInterval(
+                function (): boolean {
+                    thing.FSM.shiftHoriz(thing, thing.FSM.unitsize / 4);
 
-                if (thing.left <= other.left) {
-                    return false;
-                }
+                    if (thing.left <= other.left) {
+                        return false;
+                    }
 
-                thing.FSM.TimeHandler.addEvent(function () {
-                    thing.FSM.setLocation(other.transport);
-                }, 42);
+                    thing.FSM.TimeHandler.addEvent(
+                        function (): void {
+                            thing.FSM.setLocation(other.transport);
+                        },
+                        42);
 
-                return true;
-            }, 1, Infinity);
+                    return true;
+                },
+                1,
+                Infinity);
         }
-    
-    
+
+
         /* Map creation
         */
-    
+
         /**
          * The onMake callback for Areas. Attributes are copied as specified in the
          * prototype, and the background is set based on the setting.
@@ -6990,9 +7148,8 @@ module FullScreenMario {
          */
         initializeArea(): void {
             var scope: IArea = <IArea><any>this,
-                setting: string = scope.setting,
                 i: string;
-        
+
             // Copy all attributes, if they exist
             if (scope.attributes) {
                 for (i in scope.attributes) {
@@ -7004,7 +7161,7 @@ module FullScreenMario {
 
             scope.setBackground(scope);
         }
-    
+
         /**
          * Sets an area's background as a function of its setting.
          * 
@@ -7024,13 +7181,12 @@ module FullScreenMario {
                     )
                 ) {
                 area.background = "#000000";
-            } 
-            // Default (typically Overworld): sky blue background
-            else {
+            } else {
+                // Default (typically Overworld): sky blue background
                 area.background = "#5c94fc";
             }
         }
-    
+
         /**
          * @param {Number} yloc   A height to find the distance to the floor from.
          * @param {Boolean} [correctUnitsize]   Whether the yloc accounts for 
@@ -7042,8 +7198,8 @@ module FullScreenMario {
          *                  floor).
          */
         getAbsoluteHeight(yloc: number, correctUnitsize?: boolean): number {
-            var FSM = FullScreenMario.prototype.ensureCorrectCaller(this),
-                height = yloc + FSM.MapScreener.height;
+            var FSM: FullScreenMario = FullScreenMario.prototype.ensureCorrectCaller(this),
+                height: number = yloc + FSM.MapScreener.height;
 
             if (!correctUnitsize) {
                 height *= FSM.unitsize;
@@ -7051,7 +7207,7 @@ module FullScreenMario {
 
             return height;
         }
-    
+
         /**
          * Adds a PreThing to the map and stretches it to fit a width equal to the 
          * current map's outermost boundaries.
@@ -7062,8 +7218,8 @@ module FullScreenMario {
          */
         mapAddStretched(prething: any): IThing {
             var FSM: FullScreenMario = FullScreenMario.prototype.ensureCorrectCaller(this),
-                boundaries = FSM.MapsHandler.getArea().boundaries,
-                y = (
+                boundaries: any = FSM.MapsHandler.getArea().boundaries,
+                y: number = (
                     ((<IMapScreenr>FSM.MapScreener).floor - prething.y)
                     * FSM.unitsize
                     ),
@@ -7076,7 +7232,7 @@ module FullScreenMario {
 
             return <IThing>FSM.addThing(thing, boundaries.left, y);
         }
-    
+
         /**
          * Analyzes a PreThing to be placed to the right of the current map's
          * boundaries (after everything else).
@@ -7085,7 +7241,7 @@ module FullScreenMario {
          * @param {PreThing} prething
          */
         mapAddAfter(prething: any): void {
-            var FSM = FullScreenMario.prototype.ensureCorrectCaller(this),
+            var FSM: FullScreenMario = FullScreenMario.prototype.ensureCorrectCaller(this),
                 MapsCreator: MapsCreatr.MapsCreatr = FSM.MapsCreator,
                 MapsHandler: MapsHandlr.MapsHandlr = FSM.MapsHandler,
                 prethings: { [i: string]: IPreThing[] } = <{ [i: string]: IPreThing[] }>MapsHandler.getPreThings(),
@@ -7100,7 +7256,7 @@ module FullScreenMario {
 
         /* Map macros
         */
-    
+
         /**
          * Sample macro with no functionality, except to console.log a listing of 
          * the arguments provided to each macro function.
@@ -7119,7 +7275,11 @@ module FullScreenMario {
          * @param {Area} area   The area currently being generated.
          * @param {Map} map   The map containing the area currently being generated.
          */
-        macroExample(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroExample(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             console.log("This is a macro that may be called by a map creation.");
             console.log("The arguments are:\n");
             console.log("Reference (the listing from area.creation):  ", reference);
@@ -7128,7 +7288,7 @@ module FullScreenMario {
             console.log("Map       (the map containing the area):     ", map);
             console.log("Scope     (the custom scope container):      ", scope);
         }
-    
+
         /**
          * Macro to place a single type of Thing multiple times, drawing from a
          * bottom/left corner to a top/right corner.
@@ -7149,7 +7309,12 @@ module FullScreenMario {
          *              "x": 644, "y": 64, "xnum": 5, "xwidth": 8 }
          * @return {Object[]}
          */
-        macroFillPreThings(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroFillPreThings(
+            reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             var defaults: any = scope.ObjectMaker.getFullPropertiesOf(reference.thing),
                 xnum: number = reference.xnum || 1,
                 ynum: number = reference.ynum || 1,
@@ -7157,7 +7322,6 @@ module FullScreenMario {
                 yheight: number = reference.yheight || defaults.height,
                 x: number = reference.x || 0,
                 yref: number = reference.y || 0,
-                ynum: number = reference.ynum || 1,
                 outputs: any[] = [],
                 output: any,
                 o: number = 0,
@@ -7182,7 +7346,7 @@ module FullScreenMario {
 
             return outputs;
         }
-    
+
         /**
          * Macro to continuously place a listing of Things multiple times, from left
          * to right. This is commonly used for repeating background scenery.
@@ -7197,7 +7361,11 @@ module FullScreenMario {
          * @param {Number[]} [skips]   Which numbered items to skip, if any.
          * @return {Object[]}
          */
-        macroFillPrePattern(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroFillPrePattern(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             // Make sure the pattern exists before doing anything
             if (!scope.settings.maps.patterns[reference.pattern]) {
                 console.warn("An unknown pattern is referenced: " + reference);
@@ -7216,14 +7384,14 @@ module FullScreenMario {
                 output: any,
                 i: number,
                 j: number;
-        
+
             // If skips are given, record them in an Object for quick access
             if (typeof reference.skips !== "undefined") {
                 for (i = 0; i < reference.skips.length; i += 1) {
                     skips[reference.skips[i]] = true;
                 }
             }
-        
+
             // For each time the pattern should be repeated:
             for (i = 0; i < repeats; i += 1) {
                 // For each Thing listing in the pattern:
@@ -7242,7 +7410,7 @@ module FullScreenMario {
                     output.y += defaults[prething[0]].height;
 
                     if (prething[3]) {
-                        output["width"] = prething[3];
+                        output.width = prething[3];
                     }
 
                     outputs.push(output);
@@ -7253,7 +7421,7 @@ module FullScreenMario {
 
             return outputs;
         }
-    
+
         /**
          * Macro to place a Floor Thing with infinite height. All settings are 
          * passed in except "macro", which becomes undefined.
@@ -7263,22 +7431,29 @@ module FullScreenMario {
          * @param {Number} [width]   How wide the Floor should be (by default, 8).
          * @return {Object}
          */
-        macroFloor(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroFloor(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             var x: number = reference.x || 0,
                 y: number = reference.y || 0,
-                floor: any = FullScreenMario.prototype.proliferate({
-                    "thing": "Floor",
-                    "x": x,
-                    "y": y,
-                    "width": (reference.width || 8),
-                    "height": "Infinity",
-                }, reference, true);
+                floor: any = FullScreenMario.prototype.proliferate(
+                    {
+                        "thing": "Floor",
+                        "x": x,
+                        "y": y,
+                        "width": (reference.width || 8),
+                        "height": "Infinity"
+                    },
+                    reference,
+                    true);
 
             floor.macro = undefined;
 
             return floor;
         }
-    
+
         /**
          * Macro to place a Pipe, possibly with a pirahna, location hooks, and/or
          * infinite height. All settings are copied to Pipe except for "macro",
@@ -7296,17 +7471,24 @@ module FullScreenMario {
          *                             entrance to (by default, none).
          * @return {Object[]}
          */
-        macroPipe(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroPipe(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             var x: number = reference.x || 0,
                 y: number = reference.y || 0,
                 height: number | string = reference.height || 16,
-                pipe: any = FullScreenMario.prototype.proliferate({
-                    "thing": "Pipe",
-                    "x": x,
-                    "y": y,
-                    "width": 16,
-                    "height": reference.height || 8
-                }, reference, true),
+                pipe: any = FullScreenMario.prototype.proliferate(
+                    {
+                        "thing": "Pipe",
+                        "x": x,
+                        "y": y,
+                        "width": 16,
+                        "height": reference.height || 8
+                    },
+                    reference,
+                    true),
                 output: any[] = [pipe];
 
             pipe.macro = undefined;
@@ -7328,7 +7510,7 @@ module FullScreenMario {
 
             return output;
         }
-    
+
         /**
          * Macro to place a horizontal Pipe with a vertical one, likely with 
          * location hooks.
@@ -7350,7 +7532,11 @@ module FullScreenMario {
          *          take the time (unless you're a volunteer and want something to 
          *          do!). It was introduced for WorldSeedr generation.
          */
-        macroPipeCorner(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroPipeCorner(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             var x: number = reference.x || 0,
                 y: number = reference.y || 0,
                 height: number = reference.height || 16,
@@ -7405,7 +7591,11 @@ module FullScreenMario {
          *          it's ok because the pattern is indistinguishible when placed 
          *          correctly.
          */
-        macroTree(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroTree(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             var x: number = reference.x || 0,
                 y: number = reference.y || 0,
                 width: number = reference.width || 24,
@@ -7427,11 +7617,11 @@ module FullScreenMario {
                     "height": "Infinity",
                     "groupType": reference.solidTrunk ? "Solid" : "Scenery"
                 });
-            };
+            }
 
             return output;
         }
-    
+
         /**
          * Macro to place a large Shroom (a Tree that looks like a large Mushroom). 
          * 
@@ -7448,7 +7638,11 @@ module FullScreenMario {
          *          ones, it's ok because the pattern is indistinguishible when 
          *          placed correctly.
          */
-        macroShroom(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroShroom(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             var x: number = reference.x || 0,
                 y: number = reference.y || 0,
                 width: number = reference.width || 24,
@@ -7473,7 +7667,7 @@ module FullScreenMario {
 
             return output;
         }
-    
+
         /**
          * Macro to place Water of infinite height. All settings are copied to the 
          * Water except for "macro", which becomes undefined.
@@ -7483,20 +7677,27 @@ module FullScreenMario {
          * @param {Number} [y]   The y-location (defaults to 0).
          * @return {Object}
          */
-        macroWater(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroWater(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             var x: number = reference.x || 0,
                 y: number = (reference.y || 0) + 2, // water is 3.5 x 5.5
-                output: any = FullScreenMario.prototype.proliferate({
-                    "thing": "Water",
-                    "x": x,
-                    "y": y,
-                    "height": "Infinity",
-                    "macro": undefined
-                }, reference, true);
+                output: any = FullScreenMario.prototype.proliferate(
+                    {
+                        "thing": "Water",
+                        "x": x,
+                        "y": y,
+                        "height": "Infinity",
+                        "macro": undefined
+                    },
+                    reference,
+                    true);
 
             return output;
         }
-    
+
         /**
          * Macro to place a row of Bricks at y = 88.
          * 
@@ -7515,7 +7716,7 @@ module FullScreenMario {
                 "xwidth": 8
             };
         }
-    
+
         /**
          * Macro to place a bridge, possibly with columns at the start and/or end.
          * 
@@ -7565,7 +7766,7 @@ module FullScreenMario {
 
             return output;
         }
-    
+
         /**
          * Macro to place a scale on the map, which is two Platforms seemingly
          * suspended by Strings.
@@ -7584,7 +7785,11 @@ module FullScreenMario {
          *                               should start (by default, 24).
          * @return {Object[]}
          */
-        macroScale(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroScale(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             var x: number = reference.x || 0,
                 y: number = reference.y || 0,
                 unitsize: number = scope.unitsize,
@@ -7596,16 +7801,13 @@ module FullScreenMario {
                 collectionName: string = "ScaleCollection--" + [
                     x, y, widthLeft, widthRight, dropLeft, dropRight
                 ].join(","),
-                // Tension is always the height from the top to a platform
-                tensionLeft: number = dropLeft * unitsize,
-                tensionRight: number = dropRight * unitsize,
                 stringLeft: any = {
                     "thing": "String",
                     "x": x,
                     "y": y - 4,
                     "height": dropLeft - 4,
                     "collectionName": collectionName,
-                    "collectionKey": "stringLeft",
+                    "collectionKey": "stringLeft"
                 },
                 stringRight: any = {
                     "thing": "String",
@@ -7666,11 +7868,11 @@ module FullScreenMario {
                 platformRight
             ];
         }
-    
+
         /**
          * Macro to place what appears to be a PlatformGenerator on the map (in 
          * actuality, it is multiple Platforms vertically that know how to respawn).
-         *
+         * 
          * @param {Number} [x]   The x-location (defaults to 0).
          * @param {Number} [direction]   What direction to travel (either -1 or 1;
          *                               defaults to 1).
@@ -7678,7 +7880,11 @@ module FullScreenMario {
          *                           16).
          * @return {Object[]}
          */
-        macroPlatformGenerator(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroPlatformGenerator(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             var output: any[] = [],
                 direction: number = reference.direction || 1,
                 levels: number[] = direction > 0 ? [0, 48] : [8, 56],
@@ -7708,7 +7914,7 @@ module FullScreenMario {
 
             return output;
         }
-    
+
         /**
          * Macro to place a Warp World group of Pipes, Texts, Piranhas, and 
          * detectors.
@@ -7721,7 +7927,11 @@ module FullScreenMario {
          * 
          * @return {Object[]}
          */
-        macroWarpWorld(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroWarpWorld(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             var output: any[] = [],
                 x: number = reference.x || 0,
                 y: number = reference.y || 0,
@@ -7796,7 +8006,7 @@ module FullScreenMario {
 
             return output;
         }
-    
+
         /**
          * Macro to place a DetectCollision that will start the map spawning random
          * CheepCheeps intermittently.
@@ -7806,7 +8016,11 @@ module FullScreenMario {
          *                           should be (by default, 8).
          * @return {Object}
          */
-        macroCheepsStart(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroCheepsStart(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             return {
                 "thing": "DetectCollision",
                 "x": reference.x || 0,
@@ -7816,7 +8030,7 @@ module FullScreenMario {
                 "activate": scope.activateCheepsStart
             };
         }
-    
+
         /**
          * Macro to place a DetectCollision that will stop the map spawning random
          * CheepCheeps intermittently.
@@ -7826,7 +8040,11 @@ module FullScreenMario {
          *                           should be (by default, 8).
          * @return {Object}
          */
-        macroCheepsStop(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroCheepsStop(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             return {
                 "thing": "DetectCollision",
                 "x": reference.x || 0,
@@ -7836,7 +8054,7 @@ module FullScreenMario {
                 "activate": scope.activateCheepsStop
             };
         }
-    
+
         /**
          * Macro to place a DetectCollision that will start the map spawning random
          * BulletBills intermittently.
@@ -7846,7 +8064,11 @@ module FullScreenMario {
          *                           should be (by default, 8).
          * @return {Object}
          */
-        macroBulletBillsStart(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroBulletBillsStart(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             return {
                 "thing": "DetectCollision",
                 "x": reference.x || 0,
@@ -7856,7 +8078,7 @@ module FullScreenMario {
                 "activate": scope.activateBulletBillsStart
             };
         }
-    
+
         /**
          * Macro to place a DetectCollision that will stop the map spawning random
          * BulletBills intermittently.
@@ -7866,7 +8088,11 @@ module FullScreenMario {
          *                           should be (by default, 8).
          * @return {Object}
          */
-        macroBulletBillsStop(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroBulletBillsStop(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             return {
                 "thing": "DetectCollision",
                 "x": reference.x || 0,
@@ -7876,7 +8102,7 @@ module FullScreenMario {
                 "activate": scope.activateBulletBillsStop
             };
         }
-    
+
         /**
          * Macro to place a DetectCollision that will tell any current Lakitu to 
          * flee the scene.
@@ -7886,7 +8112,11 @@ module FullScreenMario {
          *                           should be (by default, 8).
          * @return {Object}
          */
-        macroLakituStop(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroLakituStop(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             return {
                 "thing": "DetectCollision",
                 "x": reference.x || 0,
@@ -7896,7 +8126,7 @@ module FullScreenMario {
                 "activate": scope.activateLakituStop
             };
         }
-    
+
         /**
          * Macro to place a small castle, which is really a collection of sceneries.
          * 
@@ -7914,7 +8144,7 @@ module FullScreenMario {
                 y: number = reference.y || 0,
                 i: number,
                 j: number;
-        
+
             // Base filling left
             for (i = 0; i < 2; i += 1) { // x
                 output.push({
@@ -7933,7 +8163,7 @@ module FullScreenMario {
                     });
                 }
             }
-        
+
             // Base filling right
             for (i = 0; i < 2; i += 1) { // x
                 output.push({
@@ -7952,7 +8182,7 @@ module FullScreenMario {
                     });
                 }
             }
-        
+
             // Medium railing left
             output.push({
                 "thing": "CastleRailing",
@@ -7960,7 +8190,7 @@ module FullScreenMario {
                 "y": y + 24,
                 "position": "end"
             });
-        
+
             // Medium railing center
             for (i = 0; i < 3; i += 1) {
                 output.push({
@@ -7970,7 +8200,7 @@ module FullScreenMario {
                     "position": "end"
                 });
             }
-        
+
             // Medium railing right
             output.push({
                 "thing": "CastleRailing",
@@ -7978,7 +8208,7 @@ module FullScreenMario {
                 "y": y + 24,
                 "position": "end"
             });
-        
+
             // Top railing
             for (i = 0; i < 3; i += 1) {
                 output.push({
@@ -7988,7 +8218,7 @@ module FullScreenMario {
                     "position": "end"
                 });
             }
-        
+
             // Top bricking
             for (i = 0; i < 2; i += 1) {
                 output.push({
@@ -7998,7 +8228,7 @@ module FullScreenMario {
                     "position": "end"
                 });
             }
-        
+
             // Door, and detector if required
             output.push({
                 "thing": "CastleDoor",
@@ -8020,7 +8250,7 @@ module FullScreenMario {
 
             return output;
         }
-    
+
         /**
          * Macro to place a large castle, which is really a collection of sceneries
          * underneath a small castle.
@@ -8043,7 +8273,7 @@ module FullScreenMario {
                 "x": x + 16,
                 "y": y + 48
             });
-        
+
             // CastleWalls left
             for (i = 0; i < 2; i += 1) { // x
                 output.push({
@@ -8052,7 +8282,7 @@ module FullScreenMario {
                     "y": y + 48
                 });
             }
-        
+
             // Bottom doors with bricks on top
             for (i = 0; i < 3; i += 1) { // x
                 output.push({
@@ -8074,7 +8304,7 @@ module FullScreenMario {
                     });
                 }
             }
-        
+
             // Bottom bricks with doors on top
             for (i = 0; i < 2; i += 1) { // x
                 for (j = 0; j < 3; j += 1) { // y
@@ -8090,7 +8320,7 @@ module FullScreenMario {
                     "y": y + 44
                 });
             }
-        
+
             // Railing (filled)
             for (i = 0; i < 5; i += 1) { // x
                 output.push({
@@ -8099,7 +8329,7 @@ module FullScreenMario {
                     "y": y + 48
                 });
             }
-        
+
             // CastleWalls right
             j = reference.hasOwnProperty("walls") ? reference.walls : 2;
             for (i = 0; i < j; i += 1) { // x
@@ -8125,7 +8355,7 @@ module FullScreenMario {
 
             return output;
         }
-    
+
         /**
          * Macro to place the typical starting Things for the inside of a castle
          * area.
@@ -8136,7 +8366,11 @@ module FullScreenMario {
          *                           default, 40).
          * @return {Object[]}
          */
-        macroStartInsideCastle(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroStartInsideCastle(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             var x: number = reference.x || 0,
                 y: number = reference.y || 0,
                 width: number = (reference.width || 0) - 40,
@@ -8175,7 +8409,7 @@ module FullScreenMario {
 
             return output;
         }
-    
+
         /**
          * Macro to place the typical ending Things for the inside of an outdoor
          * area.
@@ -8200,7 +8434,7 @@ module FullScreenMario {
                     reference.x, reference.y, reference.large
                 ].join(","),
                 output: any[];
-        
+
             // Output starts off with the general flag & collision detection
             output = [
                 // Initial collision detector
@@ -8210,7 +8444,7 @@ module FullScreenMario {
                     "activateFail": FullScreenMario.prototype.killNormal,
                     "noActivateDeath": true,
                     "collectionName": collectionName,
-                    "collectionKey": "DetectCollision",
+                    "collectionKey": "DetectCollision"
                 },
                 // Flag (scenery)
                 {
@@ -8277,7 +8511,11 @@ module FullScreenMario {
          *                                       default, false).
          * @return {Object[]}
          */
-        macroEndInsideCastle(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroEndInsideCastle(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             var x: number = reference.x || 0,
                 y: number = reference.y || 0,
                 npc: string = reference.npc || "Toad",
@@ -8396,7 +8634,7 @@ module FullScreenMario {
                 },
                 { "thing": npc, "x": x + 200, "y": 13 },
                 { "thing": "ScrollBlocker", "x": x + 256 }
-            ]
+            ];
 
             if (reference.topScrollEnabler) {
                 output.push({
@@ -8414,7 +8652,7 @@ module FullScreenMario {
             output.push.apply(output, texts);
             return output;
         }
-    
+
         /**
          * Macro to place a DetectSpawn that will call activateSectionBefore to 
          * start a stretch section.
@@ -8425,7 +8663,11 @@ module FullScreenMario {
          *                             default, 0).
          * @return {Object}
          */
-        macroSection(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroSection(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             return {
                 "thing": "DetectSpawn",
                 "x": reference.x || 0,
@@ -8434,7 +8676,7 @@ module FullScreenMario {
                 "section": reference.section || 0
             };
         }
-    
+
         /**
          * Macro to place a DetectCollision to mark the current section as passed.
          * 
@@ -8446,19 +8688,23 @@ module FullScreenMario {
          *                            default, 8).
          * @return {Object}
          */
-        macroSectionPass(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroSectionPass(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             return {
                 "thing": "DetectCollision",
                 "x": reference.x || 0,
                 "y": reference.y || 0,
                 "width": reference.width || 8,
                 "height": reference.height || 8,
-                "activate": function (thing) {
+                "activate": function (thing: IThing): void {
                     thing.FSM.MapScreener.sectionPassed = true;
                 }
             };
         }
-    
+
         /**
          * Macro to place a DetectCollision to mark the current section as failed.
          * 
@@ -8470,7 +8716,11 @@ module FullScreenMario {
          *                            default, 8).
          * @return {Object}
          */
-        macroSectionFail(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroSectionFail(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             return [
                 {
                     "thing": "DetectCollision",
@@ -8478,13 +8728,13 @@ module FullScreenMario {
                     "y": reference.y,
                     "width": reference.width || 8,
                     "height": reference.height || 8,
-                    "activate": function (thing) {
+                    "activate": function (thing: IThing): void {
                         thing.FSM.MapScreener.sectionPassed = false;
                     }
                 }
             ];
         }
-    
+
         /**
          * Macro to place a DetectSpawn that will spawn a following section based on
          * whether the current one was marked as passed or failed.
@@ -8497,12 +8747,16 @@ module FullScreenMario {
          *                          0).
          * @return {Object}
          */
-        macroSectionDecider(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any {
+        macroSectionDecider(reference: any,
+            prethings: any[],
+            area: IArea,
+            map: IMap,
+            scope: any): any {
             return {
                 "thing": "DetectSpawn",
                 "x": reference.x || 0,
                 "y": reference.y || 0,
-                "activate": function (thing) {
+                "activate": function (thing: ISectionDetector): void {
                     if (thing.FSM.MapScreener.sectionPassed) {
                         thing.section = reference.pass || 0;
                     } else {
