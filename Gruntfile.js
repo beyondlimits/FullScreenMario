@@ -120,7 +120,11 @@ module.exports = function (grunt) {
             }
         },
         "zip": {
-            "<%= meta.paths.dist %>/FullScreenMario-<%= pkg.version %>.zip": "<%= meta.paths.dist %>/FullScreenMario-<%= pkg.version %>/"
+            "zip": {
+                "cwd": "<%= meta.paths.dist %>/FullScreenMario-<%= pkg.version %>/",
+                "src": "<%= meta.paths.dist %>/FullScreenMario-<%= pkg.version %>/**",
+                "dest": "<%= meta.paths.dist %>/FullScreenMario-<%= pkg.version %>.zip"
+            }
         },
         "mocha_phantomjs": {
             "all": ["Tests/*.html"]
