@@ -176,13 +176,13 @@ FullScreenMario.FullScreenMario.settings.editor = (function (things, macros) {
             "xnum": 1,
             "ynum": 1,
             "xwidth": 8,
-            "ywidth": 8
+            "yheight": 8
         }
     },
     "Pattern": {
         "description": "Fill one of the preset Scenery background patterns.",
         "options": {
-            "Pattern": [
+            "pattern": [
                 "BackRegular", "BackCloud", "BackFence", "BackFenceMin", "BackFenceMin2", "BackFenceMin3"
             ],
             "repeat": "Number"
@@ -299,9 +299,33 @@ FullScreenMario.FullScreenMario.settings.editor = (function (things, macros) {
         }
     },
     "EndOutsideCastle": {
-        "description": "End the map off with an outdoor flag and Castle."
+        "description": "End the map off with an outdoor flag and Castle.",
+        "options": {
+            "transport": "Location",
+            "large": "Boolean",
+            "castleDistance": {
+                "type": "Number",
+                "value": 24,
+                "mod": 1,
+            },
+            "walls": {
+                "type": "Number",
+                "value": 2
+            }
+        }
     },
     "EndInsideCastle": {
-        "description": "End the map off with an indoor bridge, Bowser, and Toad."
+        "description": "End the map off with an indoor bridge, Bowser, and Toad.",
+        "options": {
+            "transport": "Location",
+            "npc": {
+                "type": "String",
+                "options": ["Toad", "Peach"]
+            },
+            "hard": "Boolean",
+            "spawnType": "Everything",
+            "throwing": "Boolean",
+            "topScrollEnabler": "Boolean"
+        }
     }
 });

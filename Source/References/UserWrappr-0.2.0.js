@@ -7971,11 +7971,11 @@ var LevelEditr;
                 child = children[i];
                 labeler = child.querySelector(".VisualOptionLabel");
                 valuer = child.querySelector(".VisualOptionValue");
-                switch (valuer.getAttribute("data:type")) {
-                    case "Boolean":
+                switch ((valuer.getAttribute("data:type") || valuer.type).toLowerCase()) {
+                    case "boolean":
                         value = valuer.value === "true" ? true : false;
                         break;
-                    case "Number":
+                    case "number":
                         value = (Number(valuer.value) || 0) * (Number(valuer.getAttribute("data:mod")) || 1);
                         break;
                     default:
