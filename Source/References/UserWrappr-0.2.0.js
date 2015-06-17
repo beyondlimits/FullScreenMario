@@ -7751,7 +7751,8 @@ var LevelEditr;
          *
          */
         LevelEditr.prototype.downloadCurrentJSON = function () {
-            this.downloadFile(this.getMapName() + ".json", this.display.stringer.textarea.value || "");
+            var link = this.downloadFile(this.getMapName() + ".json", this.display.stringer.textarea.value || "");
+            window.open(link.href);
         };
         /**
          *
