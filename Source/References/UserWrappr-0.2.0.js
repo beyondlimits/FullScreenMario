@@ -8259,9 +8259,9 @@ var LevelEditr;
                 "container": this.GameStarter.createElement("div", {
                     "className": "LevelEditor",
                     "onclick": this.cancelEvent.bind(this),
-                    "ondragenter": this.handleDragEnter,
-                    "ondragover": this.handleDragOver,
-                    "ondrop": this.handleDragDrop
+                    "ondragenter": this.handleDragEnter.bind(this),
+                    "ondragover": this.handleDragOver.bind(this),
+                    "ondrop": this.handleDragDrop.bind(this)
                 }),
                 "scrollers": {},
                 "stringer": {},
@@ -8489,10 +8489,9 @@ var LevelEditr;
                                 "400",
                                 "500",
                                 "1000",
-                                "2000",
                                 "Infinity"
                             ], {
-                                "value": "Infinity",
+                                "value": this.mapTimeDefault.toString(),
                                 "onchange": this.setMapTime.bind(this, true)
                             })
                         ]

@@ -220,13 +220,13 @@ FullScreenMario.FullScreenMario.settings.objects = {
             "toly": 0
         },
         "Map": {
-            "initialized": false
+            "initialized": false,
+            "time": 400
         },
         "Area": {
             "onMake": FullScreenMario.FullScreenMario.prototype.initializeArea,
             "setBackground": FullScreenMario.FullScreenMario.prototype.setAreaBackground,
             "floor": 104,
-            "time": 400,
             "jumpmod": 1.056,
             "maxyvel": FullScreenMario.FullScreenMario.unitsize * 2,
             "maxyvelinv": FullScreenMario.FullScreenMario.unitsize * -3.5,

@@ -3,6 +3,7 @@ FullScreenMario.FullScreenMario.settings.editor = (function (things, macros) {
         "blocksize": FullScreenMario.FullScreenMario.unitsize * 4,
         "mapDefault": {
             "name": "New Map",
+            "time": "Infinity",
             "locations": [
                 { "entry": "Plain" }
             ],

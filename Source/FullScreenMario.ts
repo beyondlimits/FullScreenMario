@@ -6617,7 +6617,8 @@ module FullScreenMario {
          */
         setMap(name?: string | IFullScreenMario, location?: string | number): void {
             var FSM = FullScreenMario.prototype.ensureCorrectCaller(this),
-                map;
+                time: number,
+                map: IMap;
 
             if (typeof name === "undefined" || name.constructor === FullScreenMario) {
                 name = FSM.MapsHandler.getMapName();
@@ -6636,11 +6637,10 @@ module FullScreenMario {
 
             FSM.ModAttacher.fireEvent("onSetMap", map);
 
-            FSM.setLocation(
-                location
-                || map.locationDefault
-                || FSM.settings.maps.locationDefault
-                );
+            FSM.setLocation(location || map.locationDefault || FSM.settings.maps.locationDefault);
+
+            time = (<IArea>FSM.MapsHandler.getArea()).time || (<IMap>FSM.MapsHandler.getMap()).time;
+            FSM.StatsHolder.setItem("time", Number(time));
         }
     
         /**
@@ -6654,7 +6654,7 @@ module FullScreenMario {
          */
         setLocation(name: string | number = 0): void {
             var FSM: FullScreenMario = FullScreenMario.prototype.ensureCorrectCaller(this),
-                location;
+                location: ILocation;
 
             (<IMapScreenr>FSM.MapScreener).nokeys = false;
             (<IMapScreenr>FSM.MapScreener).notime = false;
@@ -6665,9 +6665,9 @@ module FullScreenMario {
 
             FSM.MapsHandler.setLocation((name || 0).toString());
             FSM.MapScreener.setVariables();
-            location = FSM.MapsHandler.getLocation((name || 0).toString());
+            location = <ILocation>FSM.MapsHandler.getLocation((name || 0).toString());
 
-            FSM.ModAttacher.fireEvent("onPreSetLocation", location)
+            FSM.ModAttacher.fireEvent("onPreSetLocation", location);
 
             FSM.PixelDrawer.setBackground((<IArea>FSM.MapsHandler.getArea()).background);
 
@@ -6679,8 +6679,6 @@ module FullScreenMario {
                     return true;
                 }
             }, 25, Infinity);
-
-            FSM.StatsHolder.setItem("time",(<IArea>FSM.MapsHandler.getArea()).time);
 
             FSM.AudioPlayer.clearAll();
             FSM.AudioPlayer.playTheme();

@@ -15,6 +15,12 @@ declare module FullScreenMario {
         underwater?: boolean;
     }
 
+    export interface IMap extends MapsCreatr.IMapsCreatrMap {
+        locationDefault?: string;
+        seed?: number | number[];
+        time?: number;
+    }
+
     export interface IArea extends MapsCreatr.IMapsCreatrArea {
         attributes?: {
             [i: string]: any;
@@ -27,7 +33,7 @@ declare module FullScreenMario {
         onPlayerDeathTimeout: number;
         sections?: any[];
         setBackground: (area: IArea) => void;
-        time: number;
+        time?: number;
     }
 
     export interface ILocation extends MapsCreatr.IMapsCreatrLocation {
