@@ -5050,10 +5050,10 @@ module FullScreenMario {
             thing.FSM.StatsHolder.increase("coins", 1);
             thing.FSM.StatsHolder.increase("score", 200);
 
-            thing.FSM.TimeHandler.cancelClassCycle(thing, 0);
+            thing.FSM.TimeHandler.cancelClassCycle(thing, "0");
             thing.FSM.TimeHandler.addClassCycle(thing, [
                 "anim1", "anim2", "anim3", "anim4", "anim3", "anim2"
-            ], 0, 5);
+            ], "0", 5);
 
             thing.FSM.TimeHandler.addEventInterval(function () {
                 thing.FSM.moveCoinEmerge(thing, other);
@@ -6993,7 +6993,7 @@ module FullScreenMario {
         initializeArea(): void {
             var scope: IArea = <IArea><any>this,
                 setting: string = scope.setting,
-                i: number;
+                i: string;
         
             // Copy all attributes, if they exist
             if (scope.attributes) {
