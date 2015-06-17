@@ -75,6 +75,8 @@ declare module InputWritr {
         removeAliasValues(name: string, values: any[]): void;
         switchAliasValues(name: string, valuesOld: any[], valuesNew: any[]): void;
         addAliases(aliasesRaw: any): void;
+        addEvent(trigger: string, label: any, callback: IInputWritrTriggerCallback): void;
+        removeEvent(trigger: string, label: any): void;
         saveHistory(name?: string): void;
         playHistory(): void;
         playEvents(events: any): void;
@@ -513,7 +515,7 @@ module InputWritr {
          *                        typically either a character code or an alias.
          * @param {Function} callback   The callback Function to be triggered.
          */
-        addEvent(trigger: string, label: any, callback: any): void {
+        addEvent(trigger: string, label: any, callback: IInputWritrTriggerCallback): void {
             var i: number;
 
             if (!this.triggers.hasOwnProperty(trigger)) {

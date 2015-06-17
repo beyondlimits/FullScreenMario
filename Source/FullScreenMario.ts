@@ -241,18 +241,18 @@ module FullScreenMario {
         }
 
         /**
-         * ReSets this.StatsHolder via the parent GameStartr resetStatsHolder.
+         * ReSets this.ItemsHolder via the parent GameStartr resetItemsHolder.
          * 
          * If the screen isn't wide enough to fit the 'lives' display, it's hidden.
          * 
          * @param {FullScreenMario} FSM
          * @param {Object} customs
          */
-        resetStatsHolder(FSM: FullScreenMario, customs: GameStartr.IGameStartrCustoms): void {
-            super.resetStatsHolder(FSM, customs);
+        resetItemsHolder(FSM: FullScreenMario, customs: GameStartr.IGameStartrCustoms): void {
+            super.resetItemsHolder(FSM, customs);
 
             if (customs.width < 560) {
-                (<HTMLElement>(<HTMLTableRowElement>FSM.StatsHolder.getContainer().children[0]).cells[4]).style.display = "none";
+                (<HTMLElement>(<HTMLTableRowElement>FSM.ItemsHolder.getContainer().children[0]).cells[4]).style.display = "none";
             }
         }
 
@@ -279,8 +279,8 @@ module FullScreenMario {
                 <GameStartr.IThing[]>FSM.GroupHolder.getGroup("Text")
             ]);
 
-            FSM.StatsHolder.getContainer().style.width = customs.width + "px";
-            FSM.container.appendChild(FSM.StatsHolder.getContainer());
+            FSM.ItemsHolder.getContainer().style.width = customs.width + "px";
+            FSM.container.appendChild(FSM.ItemsHolder.getContainer());
         }
 
 
@@ -295,7 +295,7 @@ module FullScreenMario {
             var FSM: FullScreenMario = FullScreenMario.prototype.ensureCorrectCaller(this);
 
             FSM.setMap(FSM.settings.maps.mapDefault, FSM.settings.maps.locationDefault);
-            FSM.StatsHolder.setItem(
+            FSM.ItemsHolder.setItem(
                 "lives",
                 (<any>FSM.settings.statistics.values).lives.valueDefault);
 
@@ -324,7 +324,7 @@ module FullScreenMario {
             FSM.AudioPlayer.play("Game Over");
 
             FSM.GroupHolder.clearArrays();
-            FSM.StatsHolder.hideContainer();
+            FSM.ItemsHolder.hideContainer();
             FSM.TimeHandler.cancelAllEvents();
             FSM.PixelDrawer.setBackground("black");
 
@@ -339,7 +339,7 @@ module FullScreenMario {
             FSM.TimeHandler.addEvent(
                 function (): void {
                     FSM.gameStart();
-                    FSM.StatsHolder.displayContainer();
+                    FSM.ItemsHolder.displayContainer();
                 },
                 420);
 
@@ -415,7 +415,7 @@ module FullScreenMario {
                 player: IPlayer;
 
             player = FSM.player = <IPlayer>FSM.ObjectMaker.make("Player", {
-                "power": FSM.StatsHolder.getItem("power")
+                "power": FSM.ItemsHolder.getItem("power")
             });
             player.keys = player.getKeys();
 
@@ -1424,7 +1424,7 @@ module FullScreenMario {
         */
 
         /**
-         * Externally facing Function to gain some number of lives. StatsHolder 
+         * Externally facing Function to gain some number of lives. ItemsHolder 
          * increases the "score" statistic, an audio is played, and the mod event is 
          * fired.
          * 
@@ -1438,7 +1438,7 @@ module FullScreenMario {
 
             amount = Number(amount) || 1;
 
-            FSM.StatsHolder.increase("lives", amount);
+            FSM.ItemsHolder.increase("lives", amount);
 
             if (!nosound) {
                 this.AudioPlayer.play("Gain Life");
@@ -1493,7 +1493,7 @@ module FullScreenMario {
 
         /**
          * Callback for the player hitting a Mushroom or FireFlower. The player's
-         * power and the StatsHolder's "power" statistic both go up, and the
+         * power and the ItemsHolder's "power" statistic both go up, and the
          * corresponding animations and mod event are triggered.
          * 
          * @param {Player} thing
@@ -1508,7 +1508,7 @@ module FullScreenMario {
             thing.FSM.scoreOn(1000, thing.FSM.player);
 
             if (thing.power < 3) {
-                thing.FSM.StatsHolder.increase("power");
+                thing.FSM.ItemsHolder.increase("power");
 
                 if (thing.power < 3) {
                     thing.shrooming = true;
@@ -2961,8 +2961,8 @@ module FullScreenMario {
             }
 
             thing.FSM.AudioPlayer.play("Coin");
-            thing.FSM.StatsHolder.increase("score", 200);
-            thing.FSM.StatsHolder.increase("coins", 1);
+            thing.FSM.ItemsHolder.increase("score", 200);
+            thing.FSM.ItemsHolder.increase("coins", 1);
             thing.FSM.killNormal(other);
         }
 
@@ -3228,11 +3228,11 @@ module FullScreenMario {
                     thing.FSM.shiftHoriz(thing, thing.xvel);
                     thing.FSM.shiftHoriz(other, other.xvel);
                 } else {
-                    thing.FSM.StatsHolder.increase("score", 500);
+                    thing.FSM.ItemsHolder.increase("score", 500);
                     other.death(other);
                 }
             } else {
-                thing.FSM.StatsHolder.increase("score", 500);
+                thing.FSM.ItemsHolder.increase("score", 500);
                 thing.death(thing);
             }
         }
@@ -3559,7 +3559,7 @@ module FullScreenMario {
                 scoreThing,
                 -thing.FSM.unitsize);
             thing.FSM.TimeHandler.addEvent(
-                thing.FSM.StatsHolder.increase.bind(thing.FSM.StatsHolder),
+                thing.FSM.ItemsHolder.increase.bind(thing.FSM.ItemsHolder),
                 72,
                 "score",
                 scoreAmount);
@@ -3674,7 +3674,7 @@ module FullScreenMario {
          * @param {DetectCollision} other
          */
         collideCastleDoor(thing: IPlayer, other: IDetectCollision): void {
-            var time: string = String(thing.FSM.StatsHolder.getItem("time")),
+            var time: string = String(thing.FSM.ItemsHolder.getItem("time")),
                 numFireworks: number = Number(time[time.length - 1]);
 
             thing.FSM.killNormal(thing);
@@ -3686,18 +3686,18 @@ module FullScreenMario {
                 numFireworks = 0;
             }
 
-            if (thing.FSM.StatsHolder.getItem("time") === Infinity) {
+            if (thing.FSM.ItemsHolder.getItem("time") === Infinity) {
                 thing.FSM.animateEndLevelFireworks(thing, other, numFireworks);
                 return;
             }
 
             thing.FSM.TimeHandler.addEventInterval(
                 function (): boolean {
-                    thing.FSM.StatsHolder.decrease("time");
-                    thing.FSM.StatsHolder.increase("score", 50);
+                    thing.FSM.ItemsHolder.decrease("time");
+                    thing.FSM.ItemsHolder.increase("score", 50);
                     thing.FSM.AudioPlayer.play("Coin");
 
-                    if (thing.FSM.StatsHolder.getItem("time") <= 0) {
+                    if (thing.FSM.ItemsHolder.getItem("time") <= 0) {
                         thing.FSM.TimeHandler.addEvent(
                             function (): void {
                                 thing.FSM.animateEndLevelFireworks(thing, other, numFireworks);
@@ -5115,8 +5115,8 @@ module FullScreenMario {
             thing.FSM.GroupHolder.switchObjectGroup(thing, "Character", "Scenery");
 
             thing.FSM.AudioPlayer.play("Coin");
-            thing.FSM.StatsHolder.increase("coins", 1);
-            thing.FSM.StatsHolder.increase("score", 200);
+            thing.FSM.ItemsHolder.increase("coins", 1);
+            thing.FSM.ItemsHolder.increase("score", 200);
 
             thing.FSM.TimeHandler.cancelClassCycle(thing, "0");
             thing.FSM.TimeHandler.addClassCycle(
@@ -6463,7 +6463,7 @@ module FullScreenMario {
                 // If the player can survive this, just power down
                 if (!big && thing.power > 1) {
                     thing.power = 1;
-                    FSM.StatsHolder.setItem("power", 1);
+                    FSM.ItemsHolder.setItem("power", 1);
                     FSM.AudioPlayer.play("Power Down");
                     FSM.playerGetsSmall(thing);
                     return;
@@ -6498,10 +6498,10 @@ module FullScreenMario {
             FSM.MapScreener.nokeys = true;
             FSM.AudioPlayer.clearAll();
             FSM.AudioPlayer.play("Player Dies");
-            FSM.StatsHolder.decrease("lives");
-            FSM.StatsHolder.setItem("power", 1);
+            FSM.ItemsHolder.decrease("lives");
+            FSM.ItemsHolder.setItem("power", 1);
 
-            if (FSM.StatsHolder.getItem("lives") > 0) {
+            if (FSM.ItemsHolder.getItem("lives") > 0) {
                 FSM.TimeHandler.addEvent(
                     area.onPlayerDeath.bind(FSM),
                     area.onPlayerDeathTimeout,
@@ -6544,10 +6544,10 @@ module FullScreenMario {
          * @this {EightBittr}
          * @param {Number} value   How many points the player is receiving.
          * @param {Boolean} [continuation]   Whether the game shouldn't increase the 
-         *                                   score amount in the StatsHoldr (this will
+         *                                   score amount in the ItemsHoldr (this will
          *                                   only be false on the first score() call).
          * @remarks   For point gains that should not have a visual animation, 
-         *            directly call StatsHolder.increase("score", value).
+         *            directly call ItemsHolder.increase("score", value).
          * @remarks   The calling chain will be: 
          *                score -> scoreOn -> scoreAnimateOn -> scoreAnimate          
          */
@@ -6560,7 +6560,7 @@ module FullScreenMario {
             FSM.scoreOn(value, FSM.player, true);
 
             if (!continuation) {
-                this.StatsHolder.increase("score", value);
+                this.ItemsHolder.increase("score", value);
             }
         }
 
@@ -6572,7 +6572,7 @@ module FullScreenMario {
          * @param {Thing} thing   An in-game Thing to place the visual score text
          *                        on top of and centered.
          * @param {Boolean} [continuation]   Whether the game shouldn't increase the 
-         *                                   score amount in the StatsHoldr (this will
+         *                                   score amount in the ItemsHoldr (this will
          *                                   only be false on the first score() call).
          * @remarks   The calling chain will be: 
          *                scoreOn -> scoreAnimateOn -> scoreAnimate     
@@ -6586,7 +6586,7 @@ module FullScreenMario {
             thing.FSM.scoreAnimateOn(<IText>text, thing);
 
             if (!continuation) {
-                this.StatsHolder.increase("score", value);
+                this.ItemsHolder.increase("score", value);
             }
 
             thing.FSM.ModAttacher.fireEvent("onScoreOn", value, thing, continuation);
@@ -6764,7 +6764,7 @@ module FullScreenMario {
                 FSM.NumberMaker.resetFromSeed(map.seed);
             }
 
-            FSM.StatsHolder.setItem("world", name);
+            FSM.ItemsHolder.setItem("world", name);
             FSM.InputWriter.restartHistory();
 
             FSM.ModAttacher.fireEvent("onSetMap", map);
@@ -6772,7 +6772,7 @@ module FullScreenMario {
             FSM.setLocation(location || map.locationDefault || FSM.settings.maps.locationDefault);
 
             time = (<IArea>FSM.MapsHandler.getArea()).time || (<IMap>FSM.MapsHandler.getMap()).time;
-            FSM.StatsHolder.setItem("time", Number(time));
+            FSM.ItemsHolder.setItem("time", Number(time));
         }
 
         /**
@@ -6806,9 +6806,9 @@ module FullScreenMario {
             FSM.TimeHandler.addEventInterval(
                 function (): boolean {
                     if (!(<IMapScreenr>FSM.MapScreener).notime) {
-                        FSM.StatsHolder.decrease("time", 1);
+                        FSM.ItemsHolder.decrease("time", 1);
                     }
-                    if (!FSM.StatsHolder.getItem("time")) {
+                    if (!FSM.ItemsHolder.getItem("time")) {
                         return true;
                     }
                 },

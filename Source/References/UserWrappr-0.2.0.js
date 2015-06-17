@@ -1,39 +1,39 @@
-var StatsHoldr;
-(function (_StatsHoldr) {
+var ItemsHoldr;
+(function (_ItemsHoldr) {
     "use strict";
-    var StatsValue = (function () {
+    var ItemValue = (function () {
         /**
-         * Creates a new StatsValue with the given key and settings. Defaults are given
+         * Creates a new ItemValue with the given key and settings. Defaults are given
          * to the value via proliferate before the settings.
          *
          * @constructor
-         * @param {StatsHoldr} StatsHolder   The container for this value.
-         * @param {String} key   The key to reference this new StatsValue by.
-         * @param {IStatsValueSettings} settings   Any optional custom settings.
+         * @param {ItemsHoldr} ItemsHolder   The container for this value.
+         * @param {String} key   The key to reference this new ItemValue by.
+         * @param {IItemValueSettings} settings   Any optional custom settings.
          */
-        function StatsValue(StatsHolder, key, settings) {
+        function ItemValue(ItemsHolder, key, settings) {
             if (settings === void 0) { settings = {}; }
-            this.StatsHolder = StatsHolder;
-            StatsHolder.proliferate(this, StatsHolder.getDefaults());
-            StatsHolder.proliferate(this, settings);
+            this.ItemsHolder = ItemsHolder;
+            ItemsHolder.proliferate(this, ItemsHolder.getDefaults());
+            ItemsHolder.proliferate(this, settings);
             this.key = key;
             if (!this.hasOwnProperty("value")) {
                 this.value = this.valueDefault;
             }
             if (this.hasElement) {
-                this.element = StatsHolder.createElement(this.elementTag || "div", {
-                    className: StatsHolder.getPrefix() + "_value " + key
+                this.element = ItemsHolder.createElement(this.elementTag || "div", {
+                    className: ItemsHolder.getPrefix() + "_value " + key
                 });
-                this.element.appendChild(StatsHolder.createElement("div", {
+                this.element.appendChild(ItemsHolder.createElement("div", {
                     "textContent": key
                 }));
-                this.element.appendChild(StatsHolder.createElement("div", {
+                this.element.appendChild(ItemsHolder.createElement("div", {
                     "textContent": this.value
                 }));
             }
             if (this.storeLocally) {
                 // If there exists an old version of this property, get it 
-                if (StatsHolder.getLocalStorage().hasOwnProperty(StatsHolder.getPrefix() + key)) {
+                if (ItemsHolder.getLocalStorage().hasOwnProperty(ItemsHolder.getPrefix() + key)) {
                     this.value = this.retrieveLocalStorage();
                 }
                 else {
@@ -47,18 +47,18 @@ var StatsHoldr;
          * It runs all the trigger, modular, etc. checks, updates the HTML element
          * if there is one, and updates localStorage if needed.
          */
-        StatsValue.prototype.update = function () {
+        ItemValue.prototype.update = function () {
             // Mins and maxes must be obeyed before any other considerations
             if (this.hasOwnProperty("minimum") && Number(this.value) <= Number(this.minimum)) {
                 this.value = this.minimum;
                 if (this.onMinimum) {
-                    this.onMinimum.apply(this, this.StatsHolder.getCallbackArgs());
+                    this.onMinimum.apply(this, this.ItemsHolder.getCallbackArgs());
                 }
             }
             else if (this.hasOwnProperty("maximum") && Number(this.value) <= Number(this.maximum)) {
                 this.value = this.maximum;
                 if (this.onMaximum) {
-                    this.onMaximum.apply(this, this.StatsHolder.getCallbackArgs());
+                    this.onMaximum.apply(this, this.ItemsHolder.getCallbackArgs());
                 }
             }
             if (this.modularity) {
@@ -78,11 +78,11 @@ var StatsHoldr;
          * Checks if the current value should trigger a callback, and if so calls
          * it.
          *
-         * @this {StatsValue}
+         * @this {ItemValue}
          */
-        StatsValue.prototype.checkTriggers = function () {
+        ItemValue.prototype.checkTriggers = function () {
             if (this.triggers.hasOwnProperty(this.value)) {
-                this.triggers[this.value].apply(this, this.StatsHolder.getCallbackArgs());
+                this.triggers[this.value].apply(this, this.ItemsHolder.getCallbackArgs());
             }
         };
         /**
@@ -90,40 +90,40 @@ var StatsHoldr;
          * modular is a non-zero Numbers), and if so, continuously reduces value and
          * calls this.onModular.
          *
-         * @this {StatsValue}
+         * @this {ItemValue}
          */
-        StatsValue.prototype.checkModularity = function () {
+        ItemValue.prototype.checkModularity = function () {
             if (this.value.constructor !== Number || !this.modularity) {
                 return;
             }
             while (this.value >= this.modularity) {
                 this.value = Math.max(0, this.value - this.modularity);
                 if (this.onModular) {
-                    this.onModular.apply(this, this.StatsHolder.getCallbackArgs());
+                    this.onModular.apply(this, this.ItemsHolder.getCallbackArgs());
                 }
             }
         };
         /**
-         * Updates the StatsValue's element's second child to be the StatsValue's value.
+         * Updates the ItemValue's element's second child to be the ItemValue's value.
          *
-         * @this {StatsValue}
+         * @this {ItemValue}
          */
-        StatsValue.prototype.updateElement = function () {
-            if (this.StatsHolder.hasDisplayChange(this.value)) {
-                this.element.children[1].textContent = this.StatsHolder.getDisplayChange(this.value);
+        ItemValue.prototype.updateElement = function () {
+            if (this.ItemsHolder.hasDisplayChange(this.value)) {
+                this.element.children[1].textContent = this.ItemsHolder.getDisplayChange(this.value);
             }
             else {
                 this.element.children[1].textContent = this.value;
             }
         };
         /**
-         * Retrieves a StatsValue's value from localStorage, making sure not to try to
+         * Retrieves a ItemValue's value from localStorage, making sure not to try to
          * JSON.parse an undefined or null value.
          *
          * @return {Mixed}
          */
-        StatsValue.prototype.retrieveLocalStorage = function () {
-            var value = localStorage.getItem(this.StatsHolder.getPrefix() + this.key);
+        ItemValue.prototype.retrieveLocalStorage = function () {
+            var value = localStorage.getItem(this.ItemsHolder.getPrefix() + this.key);
             switch (value) {
                 case "undefined":
                     return undefined;
@@ -136,35 +136,35 @@ var StatsHoldr;
             return JSON.parse(value);
         };
         /**
-         * Stores a StatsValue's value in localStorage under the prefix plus its key.
+         * Stores a ItemValue's value in localStorage under the prefix plus its key.
          *
          * @param {Boolean} [overrideAutoSave]   Whether the policy on saving should
          *                                       be ignored (so saving happens
          *                                       regardless). By default, false.
          */
-        StatsValue.prototype.updateLocalStorage = function (overrideAutoSave) {
+        ItemValue.prototype.updateLocalStorage = function (overrideAutoSave) {
             if (overrideAutoSave === void 0) { overrideAutoSave = false; }
-            if (this.StatsHolder.getAutoSave() || overrideAutoSave) {
-                this.StatsHolder.getLocalStorage()[this.StatsHolder.getPrefix() + this.key] = JSON.stringify(this.value);
+            if (this.ItemsHolder.getAutoSave() || overrideAutoSave) {
+                this.ItemsHolder.getLocalStorage()[this.ItemsHolder.getPrefix() + this.key] = JSON.stringify(this.value);
             }
         };
-        return StatsValue;
+        return ItemValue;
     })();
-    _StatsHoldr.StatsValue = StatsValue;
+    _ItemsHoldr.ItemValue = ItemValue;
     /**
      * A versatile container to store and manipulate values in localStorage, and
      * optionally keep an updated HTML container showing these values. Operations
      * such as setting, increasing/decreasing, and default values are all abstracted
-     * automatically. StatsValues are stored in memory as well as in localStorage for
+     * automatically. ItemValues are stored in memory as well as in localStorage for
      * fast lookups.
      *
      * @author "Josh Goldberg" <josh@fullscreenmario.com>
      */
-    var StatsHoldr = (function () {
+    var ItemsHoldr = (function () {
         /**
-         * @param {IStatsHoldrSettings} [settings]
+         * @param {IItemsHoldrSettings} [settings]
          */
-        function StatsHoldr(settings) {
+        function ItemsHoldr(settings) {
             if (settings === void 0) { settings = {}; }
             var key;
             this.prefix = settings.prefix || "";
@@ -208,63 +208,63 @@ var StatsHoldr;
         /**
          *
          */
-        StatsHoldr.prototype.key = function (index) {
+        ItemsHoldr.prototype.key = function (index) {
             return this.itemKeys[index];
         };
         /**
          * @return {Mixed} The values contained within, keyed by their keys.
          */
-        StatsHoldr.prototype.getValues = function () {
+        ItemsHoldr.prototype.getValues = function () {
             return this.items;
         };
         /**
          * @return {Mixed} Default attributes for values.
          */
-        StatsHoldr.prototype.getDefaults = function () {
+        ItemsHoldr.prototype.getDefaults = function () {
             return this.defaults;
         };
         /**
          * @return {Mixed} A reference to localStorage or a replacment object.
          */
-        StatsHoldr.prototype.getLocalStorage = function () {
+        ItemsHoldr.prototype.getLocalStorage = function () {
             return this.localStorage;
         };
         /**
          * @return {Boolean} Whether this should save changes to localStorage
          *                   automatically.
          */
-        StatsHoldr.prototype.getAutoSave = function () {
+        ItemsHoldr.prototype.getAutoSave = function () {
             return this.autoSave;
         };
         /**
          * @return {String} The prefix to store thigns under in localStorage.
          */
-        StatsHoldr.prototype.getPrefix = function () {
+        ItemsHoldr.prototype.getPrefix = function () {
             return this.prefix;
         };
         /**
          * @return {HTMLElement} The container HTML element, if it exists.
          */
-        StatsHoldr.prototype.getContainer = function () {
+        ItemsHoldr.prototype.getContainer = function () {
             return this.container;
         };
         /**
          * @return {Mixed[][]} The createElement arguments for the HTML container
          *                     elements, outside-to-inside.
          */
-        StatsHoldr.prototype.getContainersArguments = function () {
+        ItemsHoldr.prototype.getContainersArguments = function () {
             return this.containersArguments;
         };
         /**
          * @return {Mixed} Any hard-coded changes to element content.
          */
-        StatsHoldr.prototype.getDisplayChanges = function () {
+        ItemsHoldr.prototype.getDisplayChanges = function () {
             return this.displayChanges;
         };
         /**
          * @return {Mixed[]} Arguments to be passed to triggered events.
          */
-        StatsHoldr.prototype.getCallbackArgs = function () {
+        ItemsHoldr.prototype.getCallbackArgs = function () {
             return this.callbackArgs;
         };
         /* Retrieval
@@ -272,14 +272,14 @@ var StatsHoldr;
         /**
          * @return {String[]} The names of all value's keys.
          */
-        StatsHoldr.prototype.getKeys = function () {
+        ItemsHoldr.prototype.getKeys = function () {
             return Object.keys(this.items);
         };
         /**
          * @param {String} key   The key for a known value.
          * @return {Mixed} The known value of a key, assuming that key exists.
          */
-        StatsHoldr.prototype.getItem = function (key) {
+        ItemsHoldr.prototype.getItem = function (key) {
             this.checkExistence(key);
             return this.items[key].value;
         };
@@ -287,21 +287,21 @@ var StatsHoldr;
          * @param {String} key   The key for a known value.
          * @return {Object} The settings for that particular key.
          */
-        StatsHoldr.prototype.getObject = function (key) {
+        ItemsHoldr.prototype.getObject = function (key) {
             return this.items[key];
         };
         /**
          * @param {String} key   The key for a potentially known value.
          * @return {Boolean} Whether there is a value under that key.
          */
-        StatsHoldr.prototype.hasKey = function (key) {
+        ItemsHoldr.prototype.hasKey = function (key) {
             return this.items.hasOwnProperty(key);
         };
         /**
          * @return {Object} A mapping of key names to the actual values of all
          *                  objects being stored.
          */
-        StatsHoldr.prototype.exportItems = function () {
+        ItemsHoldr.prototype.exportItems = function () {
             var output = {}, i;
             for (i in this.items) {
                 if (this.items.hasOwnProperty(i)) {
@@ -310,18 +310,18 @@ var StatsHoldr;
             }
             return output;
         };
-        /* StatsValues
+        /* ItemValues
         */
         /**
-         * Adds a new key & value pair to by linking to a newly created StatsValue.
+         * Adds a new key & value pair to by linking to a newly created ItemValue.
          *
-         * @param {String} key   The key to reference by new StatsValue by.
-         * @param {Object} settings   The settings for the new StatsValue.
-         * @return {StatsValue} The newly created StatsValue.
+         * @param {String} key   The key to reference by new ItemValue by.
+         * @param {Object} settings   The settings for the new ItemValue.
+         * @return {ItemValue} The newly created ItemValue.
          */
-        StatsHoldr.prototype.addItem = function (key, settings) {
+        ItemsHoldr.prototype.addItem = function (key, settings) {
             if (settings === void 0) { settings = {}; }
-            this.items[key] = new StatsValue(this, key, settings);
+            this.items[key] = new ItemValue(this, key, settings);
             this.itemKeys.push(key);
             return this.items[key];
         };
@@ -333,7 +333,7 @@ var StatsHoldr;
          *
          * @param {String} key   The key of the element to remove.
          */
-        StatsHoldr.prototype.removeItem = function (key) {
+        ItemsHoldr.prototype.removeItem = function (key) {
             if (!this.items.hasOwnProperty(key)) {
                 return;
             }
@@ -344,10 +344,10 @@ var StatsHoldr;
             delete this.items[key];
         };
         /**
-         * Completely clears all values from the StatsHoldr, removing their
+         * Completely clears all values from the ItemsHoldr, removing their
          * elements from the container (if they both exist) as well.
          */
-        StatsHoldr.prototype.clear = function () {
+        ItemsHoldr.prototype.clear = function () {
             var i;
             if (this.container) {
                 for (i in this.items) {
@@ -360,38 +360,38 @@ var StatsHoldr;
             this.itemKeys = [];
         };
         /**
-         * Sets the value for the StatsValue under the given key, then updates the StatsValue
-         * (including the StatsValue's element and localStorage, if needed).
+         * Sets the value for the ItemValue under the given key, then updates the ItemValue
+         * (including the ItemValue's element and localStorage, if needed).
          *
-         * @param {String} key   The key of the StatsValue.
-         * @param {Mixed} value   The new value for the StatsValue.
+         * @param {String} key   The key of the ItemValue.
+         * @param {Mixed} value   The new value for the ItemValue.
          */
-        StatsHoldr.prototype.setItem = function (key, value) {
+        ItemsHoldr.prototype.setItem = function (key, value) {
             this.checkExistence(key);
             this.items[key].value = value;
             this.items[key].update();
         };
         /**
-         * Increases the value for the StatsValue under the given key, via addition for
+         * Increases the value for the ItemValue under the given key, via addition for
          * Numbers or concatenation for Strings.
          *
-         * @param {String} key   The key of the StatsValue.
+         * @param {String} key   The key of the ItemValue.
          * @param {Mixed} [amount]   The amount to increase by (by default, 1).
          */
-        StatsHoldr.prototype.increase = function (key, amount) {
+        ItemsHoldr.prototype.increase = function (key, amount) {
             if (amount === void 0) { amount = 1; }
             this.checkExistence(key);
             this.items[key].value += arguments.length > 1 ? amount : 1;
             this.items[key].update();
         };
         /**
-         * Increases the value for the StatsValue under the given key, via addition for
+         * Increases the value for the ItemValue under the given key, via addition for
          * Numbers or concatenation for Strings.
          *
-         * @param {String} key   The key of the StatsValue.
+         * @param {String} key   The key of the ItemValue.
          * @param {Number} [amount]   The amount to increase by (by default, 1).
          */
-        StatsHoldr.prototype.decrease = function (key, amount) {
+        ItemsHoldr.prototype.decrease = function (key, amount) {
             if (amount === void 0) { amount = 1; }
             this.checkExistence(key);
             this.items[key].value -= amount;
@@ -400,9 +400,9 @@ var StatsHoldr;
         /**
          * Toggles whether a value is 1 or 0.
          *
-         * @param {String} key   The key of the StatsValue.
+         * @param {String} key   The key of the ItemValue.
          */
-        StatsHoldr.prototype.toggle = function (key) {
+        ItemsHoldr.prototype.toggle = function (key) {
             this.checkExistence(key);
             this.items[key].value = this.items[key].value ? 0 : 1;
             this.items[key].update();
@@ -413,21 +413,22 @@ var StatsHoldr;
          *
          * @param {String} key
          */
-        StatsHoldr.prototype.checkExistence = function (key) {
+        ItemsHoldr.prototype.checkExistence = function (key) {
             if (!this.items.hasOwnProperty(key)) {
                 if (this.allowNewItems) {
                     this.addItem(key);
                 }
                 else {
-                    throw new Error("Unknown key given to StatsHoldr: '" + key + "'.");
+                    throw new Error("Unknown key given to ItemsHoldr: '" + key + "'.");
                 }
             }
         };
         /**
          * Manually saves all values to localStorage, ignoring the autoSave flag.
          */
-        StatsHoldr.prototype.saveAll = function () {
-            for (var key in this.items) {
+        ItemsHoldr.prototype.saveAll = function () {
+            var key;
+            for (key in this.items) {
                 if (this.items.hasOwnProperty(key)) {
                     this.items[key].updateLocalStorage(true);
                 }
@@ -438,28 +439,28 @@ var StatsHoldr;
         /**
          * Hides the container Element by setting its visibility to hidden.
          */
-        StatsHoldr.prototype.hideContainer = function () {
+        ItemsHoldr.prototype.hideContainer = function () {
             this.container.style.visibility = "hidden";
         };
         /**
          * Shows the container Element by setting its visibility to visible.
          */
-        StatsHoldr.prototype.displayContainer = function () {
+        ItemsHoldr.prototype.displayContainer = function () {
             this.container.style.visibility = "visible";
         };
         /**
-         * Creates the container Element, which contains a child for each StatsValue that
+         * Creates the container Element, which contains a child for each ItemValue that
          * specifies hasElement to be true.
          *
          * @param {Mixed[][]} containers   An Array representing the Element to be
          *                                 created and the children between it and
-         *                                 the contained StatsValues. Each contained
+         *                                 the contained ItemValues. Each contained
          *                                 Mixed[]  has a String tag name as its
          *                                 first member, followed by any number of
          *                                 Objects to apply via createElement.
          * @return {HTMLElement}
          */
-        StatsHoldr.prototype.makeContainer = function (containers) {
+        ItemsHoldr.prototype.makeContainer = function (containers) {
             var output = this.createElement.apply(this, containers[0]), current = output, child, key, i;
             for (i = 1; i < containers.length; ++i) {
                 child = this.createElement.apply(this, containers[i]);
@@ -477,13 +478,13 @@ var StatsHoldr;
          * @return {Boolean} Whether displayChanges has an entry for a particular
          *                   value.
          */
-        StatsHoldr.prototype.hasDisplayChange = function (value) {
+        ItemsHoldr.prototype.hasDisplayChange = function (value) {
             return this.displayChanges.hasOwnProperty(value);
         };
         /**
          * @return {String} The displayChanges entry for a particular value.
          */
-        StatsHoldr.prototype.getDisplayChange = function (value) {
+        ItemsHoldr.prototype.getDisplayChange = function (value) {
             return this.displayChanges[value];
         };
         /* Utilities
@@ -497,7 +498,7 @@ var StatsHoldr;
          *                             onto the new HTMLElement.
          * @return {HTMLElement}
          */
-        StatsHoldr.prototype.createElement = function (tag) {
+        ItemsHoldr.prototype.createElement = function (tag) {
             if (tag === void 0) { tag = "div"; }
             var args = [];
             for (var _i = 1; _i < arguments.length; _i++) {
@@ -518,7 +519,7 @@ var StatsHoldr;
          * @param {Boolean} [noOverride]   If recipient properties may be overriden
          *                                 (by default, false).
          */
-        StatsHoldr.prototype.proliferate = function (recipient, donor, noOverride) {
+        ItemsHoldr.prototype.proliferate = function (recipient, donor, noOverride) {
             if (noOverride === void 0) { noOverride = false; }
             var setting, i;
             for (i in donor) {
@@ -553,7 +554,7 @@ var StatsHoldr;
          * @param {Boolean} [noOverride]
          * @return {HTMLElement}
          */
-        StatsHoldr.prototype.proliferateElement = function (recipient, donor, noOverride) {
+        ItemsHoldr.prototype.proliferateElement = function (recipient, donor, noOverride) {
             if (noOverride === void 0) { noOverride = false; }
             var setting, i, j;
             for (i in donor) {
@@ -598,7 +599,7 @@ var StatsHoldr;
          *
          * @return {Object}
          */
-        StatsHoldr.prototype.createPlaceholderStorage = function () {
+        ItemsHoldr.prototype.createPlaceholderStorage = function () {
             var i, output = {
                 "keys": [],
                 "getItem": function (key) {
@@ -635,18 +636,18 @@ var StatsHoldr;
             });
             return output;
         };
-        return StatsHoldr;
+        return ItemsHoldr;
     })();
-    _StatsHoldr.StatsHoldr = StatsHoldr;
-})(StatsHoldr || (StatsHoldr = {}));
-/// <reference path="StatsHoldr-0.2.1.ts" />
+    _ItemsHoldr.ItemsHoldr = ItemsHoldr;
+})(ItemsHoldr || (ItemsHoldr = {}));
+/// <reference path="ItemsHoldr-0.2.1.ts" />
 var AudioPlayr;
 (function (_AudioPlayr) {
     "use strict";
     /**
      * An audio library to automate preloading and controlled playback of multiple
      * audio tracks, with support for different browsers' preferred file types.
-     * Volume and mute status are stored locally using a StatsHoldr.
+     * Volume and mute status are stored locally using a ItemsHoldr.
      */
     var AudioPlayr = (function () {
         /**
@@ -663,10 +664,10 @@ var AudioPlayr;
             if (typeof settings.fileTypes === "undefined") {
                 throw new Error("No fileTypes given to AudioPlayr.");
             }
-            if (!settings.StatsHolder) {
-                throw new Error("No StatsHoldr given to AudioPlayr.");
+            if (!settings.ItemsHolder) {
+                throw new Error("No ItemsHoldr given to AudioPlayr.");
             }
-            this.StatsHolder = settings.StatsHolder;
+            this.ItemsHolder = settings.ItemsHolder;
             this.library = settings.library;
             this.directory = settings.directory;
             this.fileTypes = settings.fileTypes;
@@ -676,14 +677,14 @@ var AudioPlayr;
             this.sounds = {};
             // Preload everything!
             this.libraryLoad();
-            volumeInitial = this.StatsHolder.getItem("volume");
+            volumeInitial = this.ItemsHolder.getItem("volume");
             if (volumeInitial === undefined) {
                 this.setVolume(1);
             }
             else {
-                this.setVolume(this.StatsHolder.getItem("volume"));
+                this.setVolume(this.ItemsHolder.getItem("volume"));
             }
-            this.setMuted(this.StatsHolder.getItem("muted") || false);
+            this.setMuted(this.ItemsHolder.getItem("muted") || false);
         }
         /* Simple getters
         */
@@ -722,10 +723,10 @@ var AudioPlayr;
         */
         /**
          * @return {Number} The current volume, which is a Number in [0,1],
-         *                  retrieved by the StatsHoldr.
+         *                  retrieved by the ItemsHoldr.
          */
         AudioPlayr.prototype.getVolume = function () {
-            return Number(this.StatsHolder.getItem("volume") || 0);
+            return Number(this.ItemsHolder.getItem("volume") || 0);
         };
         /**
          * Sets the current volume. If not muted, all sounds will have their volume
@@ -742,13 +743,13 @@ var AudioPlayr;
                     }
                 }
             }
-            this.StatsHolder.setItem("volume", volume.toString());
+            this.ItemsHolder.setItem("volume", volume.toString());
         };
         /**
          * @return {Boolean} whether this is currently muted.
          */
         AudioPlayr.prototype.getMuted = function () {
-            return Boolean(Number(this.StatsHolder.getItem("muted")));
+            return Boolean(Number(this.ItemsHolder.getItem("muted")));
         };
         /**
          * Calls either setMutedOn or setMutedOff as is appropriate.
@@ -766,7 +767,7 @@ var AudioPlayr;
         };
         /**
          * Sets volume to 0 in all currently playing sounds and stores the muted
-         * status as on in the internal StatsHoldr.
+         * status as on in the internal ItemsHoldr.
          */
         AudioPlayr.prototype.setMutedOn = function () {
             for (var i in this.sounds) {
@@ -774,11 +775,11 @@ var AudioPlayr;
                     this.sounds[i].volume = 0;
                 }
             }
-            this.StatsHolder.setItem("muted", "1");
+            this.ItemsHolder.setItem("muted", "1");
         };
         /**
          * Sets sound volumes to their actual volumes and stores the muted status
-         * as off in the internal StatsHoldr.
+         * as off in the internal ItemsHoldr.
          */
         AudioPlayr.prototype.setMutedOff = function () {
             var volume = this.getVolume(), sound, i;
@@ -788,7 +789,7 @@ var AudioPlayr;
                     sound.volume = Number(sound.getAttribute("volumeReal")) * volume;
                 }
             }
-            this.StatsHolder.setItem("muted", "0");
+            this.ItemsHolder.setItem("muted", "0");
         };
         /* Other modifiers
         */
@@ -7528,14 +7529,15 @@ var TimeHandlr;
 /// <reference path="PixelDrawr-0.2.0.ts" />
 /// <reference path="PixelRendr-0.2.0.ts" />
 /// <reference path="QuadsKeepr-0.2.1.ts" />
-/// <reference path="StatsHoldr-0.2.1.ts" />
+/// <reference path="ItemsHoldr-0.2.1.ts" />
 /// <reference path="StringFilr-0.2.1.ts" />
 /// <reference path="TimeHandlr-0.2.0.ts" />
 var LevelEditr;
 (function (_LevelEditr) {
     "use strict";
     /**
-     * A GameStartr module to let the user edit levels. Etc. etc.
+     * A level editor designed to work natively on top of an existing GameStartr
+     * sub-class.
      */
     var LevelEditr = (function () {
         /**
@@ -7999,7 +8001,7 @@ var LevelEditr;
                 map.name = name;
                 this.display.namer.value = name;
                 this.setTextareaValue(this.stringifySmart(map), true);
-                this.GameStarter.StatsHolder.setItem("world", name);
+                this.GameStarter.ItemsHolder.setItem("world", name);
             }
         };
         /**
@@ -8023,7 +8025,7 @@ var LevelEditr;
                 this.display.sections.MapSettings.Time.value = time.toString();
             }
             this.setTextareaValue(this.stringifySmart(map), true);
-            this.GameStarter.StatsHolder.setItem("time", time);
+            this.GameStarter.ItemsHolder.setItem("time", time);
             this.GameStarter.TimeHandler.cancelAllEvents();
         };
         /**
@@ -9151,7 +9153,7 @@ var LevelEditr;
                     });
                 }
             }
-            this.GameStarter.StatsHolder.setItem("time", Infinity);
+            this.GameStarter.ItemsHolder.setItem("time", Infinity);
         };
         /**
          *
@@ -9577,7 +9579,7 @@ var LevelEditr;
     })();
     _LevelEditr.LevelEditr = LevelEditr;
 })(LevelEditr || (LevelEditr = {}));
-/// <reference path="StatsHoldr-0.2.1.ts" />
+/// <reference path="ItemsHoldr-0.2.1.ts" />
 var ModAttachr;
 (function (_ModAttachr) {
     "use strict";
@@ -9596,13 +9598,13 @@ var ModAttachr;
                 return;
             }
             this.scopeDefault = settings.scopeDefault;
-            // If a StatsHoldr is provided, use it
-            if (settings.StatsHoldr) {
-                this.StatsHolder = settings.StatsHoldr;
+            // If a ItemsHoldr is provided, use it
+            if (settings.ItemsHoldr) {
+                this.ItemsHolder = settings.ItemsHoldr;
             }
             else if (settings.storeLocally) {
                 // If one isn't provided by storeLocally is still true, make one
-                this.StatsHolder = new StatsHoldr.StatsHoldr();
+                this.ItemsHolder = new ItemsHoldr.ItemsHoldr();
             }
             if (settings.mods) {
                 this.addMods(settings.mods);
@@ -9636,11 +9638,11 @@ var ModAttachr;
             return this.events[name];
         };
         /**
-         * @return {StatsHoldr} The StatsHoldr if storeLocally is true, or undefined
+         * @return {ItemsHoldr} The ItemsHoldr if storeLocally is true, or undefined
          *                      otherwise.
          */
-        ModAttachr.prototype.getStatsHolder = function () {
-            return this.StatsHolder;
+        ModAttachr.prototype.getItemsHolder = function () {
+            return this.ItemsHolder;
         };
         /* Alterations
         */
@@ -9672,14 +9674,14 @@ var ModAttachr;
             if (mod.enabled && mod.events.hasOwnProperty("onModEnable")) {
                 this.fireModEvent("onModEnable", mod.name, arguments);
             }
-            // If there's a StatsHoldr, record the mod in it
-            if (this.StatsHolder) {
-                this.StatsHolder.addItem(mod.name, {
+            // If there's a ItemsHoldr, record the mod in it
+            if (this.ItemsHolder) {
+                this.ItemsHolder.addItem(mod.name, {
                     "valueDefault": 0,
                     "storeLocally": true
                 });
                 // If there was already a (true) value, immediately enable the mod
-                if (this.StatsHolder.getItem(mod.name)) {
+                if (this.ItemsHolder.getItem(mod.name)) {
                     this.enableMod(mod.name);
                 }
             }
@@ -9708,8 +9710,8 @@ var ModAttachr;
             mod.enabled = true;
             args = Array.prototype.slice.call(arguments);
             args[0] = mod;
-            if (this.StatsHolder) {
-                this.StatsHolder.setItem(name, true);
+            if (this.ItemsHolder) {
+                this.ItemsHolder.setItem(name, true);
             }
             if (mod.events.hasOwnProperty("onModEnable")) {
                 return this.fireModEvent("onModEnable", mod.name, arguments);
@@ -9742,8 +9744,8 @@ var ModAttachr;
             this.mods[name].enabled = false;
             args = Array.prototype.slice.call(arguments);
             args[0] = mod;
-            if (this.StatsHolder) {
-                this.StatsHolder.setItem(name, false);
+            if (this.ItemsHolder) {
+                this.ItemsHolder.setItem(name, false);
             }
             if (mod.events.hasOwnProperty("onModDisable")) {
                 return this.fireModEvent("onModDisable", mod.name, args);
@@ -12682,7 +12684,7 @@ var WorldSeedr;
 /// <reference path="PixelDrawr-0.2.0.ts" />
 /// <reference path="PixelRendr-0.2.0.ts" />
 /// <reference path="QuadsKeepr-0.2.1.ts" />
-/// <reference path="StatsHoldr-0.2.1.ts" />
+/// <reference path="ItemsHoldr-0.2.1.ts" />
 /// <reference path="StringFilr-0.2.1.ts" />
 /// <reference path="ThingHittr-0.2.0.ts" />
 /// <reference path="TimeHandlr-0.2.0.ts" />
@@ -12725,7 +12727,7 @@ var GameStartr;
                         "PixelDrawr": "References/PixelDrawr/PixelDrawr.ts",
                         "PixelRendr": "References/PixelRendr/PixelRendr.ts",
                         "QuadsKeepr": "References/QuadsKeepr/QuadsKeepr.ts",
-                        "StatsHoldr": "References/StatsHoldr/StatsHoldr.ts",
+                        "ItemsHoldr": "References/ItemsHoldr/ItemsHoldr.ts",
                         "StringFilr": "References/StringFilr/StringFilr.ts",
                         "ThingHittr": "References/ThingHittr/ThingHittr.ts",
                         "TimeHandlr": "References/TimeHandlr/TimeHandlr.ts"
@@ -12739,7 +12741,7 @@ var GameStartr;
                 "resetObjectMaker",
                 "resetPixelRender",
                 "resetTimeHandler",
-                "resetStatsHolder",
+                "resetItemsHolder",
                 "resetAudioPlayer",
                 "resetQuadsKeeper",
                 "resetGamesRunner",
@@ -12883,7 +12885,7 @@ var GameStartr;
          */
         GameStartr.prototype.resetAudioPlayer = function (GameStarter, customs) {
             GameStarter.AudioPlayer = new AudioPlayr.AudioPlayr(GameStarter.proliferate({
-                "StatsHolder": GameStarter.StatsHolder
+                "ItemsHolder": GameStarter.ItemsHolder
             }, GameStarter.settings.audio));
         };
         /**
@@ -12905,15 +12907,15 @@ var GameStartr;
             }, GameStarter.settings.runner));
         };
         /**
-         * Sets self.StatsHolder.
+         * Sets self.ItemsHolder.
          *
          * @param {GameStartr} GameStarter
          * @param {Object} [customs]
-         * @remarks Requirement(s): StatsHoldr (src/StatsHoldr/StatsHoldr.js)
+         * @remarks Requirement(s): ItemsHoldr (src/ItemsHoldr/ItemsHoldr.js)
          *                          statistics.js (settings/statistics.js)
          */
-        GameStartr.prototype.resetStatsHolder = function (GameStarter, customs) {
-            GameStarter.StatsHolder = new StatsHoldr.StatsHoldr(GameStarter.proliferate({
+        GameStartr.prototype.resetItemsHolder = function (GameStarter, customs) {
+            GameStarter.ItemsHolder = new ItemsHoldr.ItemsHoldr(GameStarter.proliferate({
                 "callbackArgs": [GameStarter]
             }, GameStarter.settings.statistics));
         };
@@ -13055,7 +13057,7 @@ var GameStartr;
         GameStartr.prototype.resetModAttacher = function (GameStarter, customs) {
             GameStarter.ModAttacher = new ModAttachr.ModAttachr(GameStarter.proliferate({
                 "scopeDefault": GameStarter,
-                "StatsHoldr": GameStarter.StatsHolder
+                "ItemsHoldr": GameStarter.ItemsHolder
             }, GameStarter.settings.mods));
         };
         /**
@@ -13078,7 +13080,7 @@ var GameStartr;
         };
         /**
          * Resets the parent HTML container. Width and height are set by customs,
-         * and canvas and StatsHolder container elements are added.
+         * and canvas and ItemsHolder container elements are added.
          *
          * @param {GameStartr} GameStarter
          * @param {Object} [customs]
@@ -13987,10 +13989,10 @@ var GameStartr;
     })(EightBittr.EightBittr);
     _GameStartr.GameStartr = GameStartr;
 })(GameStartr || (GameStartr = {}));
-// @echo '/// <reference path="StatsHoldr-0.2.1.ts" />'
+// @echo '/// <reference path="ItemsHoldr-0.2.1.ts" />'
 // @echo '/// <reference path="GameStartr-0.2.0.ts" />'
 // @ifdef INCLUDE_DEFINITIONS
-/// <reference path="References/StatsHoldr-0.2.1.ts" />
+/// <reference path="References/ItemsHoldr-0.2.1.ts" />
 /// <reference path="References/GameStartr-0.2.0.ts" />
 /// <reference path="UserWrappr.d.ts" />
 // @endif
@@ -14112,10 +14114,10 @@ var UserWrappr;
             return this.GameStarter;
         };
         /**
-         * @return {StatsHoldr} The StatsHoldr used to store UI settings.
+         * @return {ItemsHoldr} The ItemsHoldr used to store UI settings.
          */
-        UserWrappr.prototype.getStatsHolder = function () {
-            return this.StatsHolder;
+        UserWrappr.prototype.getItemsHolder = function () {
+            return this.ItemsHolder;
         };
         /**
          * @return {Object} The settings used to construct this UserWrappr.
@@ -14455,15 +14457,15 @@ var UserWrappr;
             };
         };
         /**
-         * Loads the externally facing UI controls and the internal StatsHolder,
+         * Loads the externally facing UI controls and the internal ItemsHolder,
          * appending the controls to the controls HTML element.
          *
          * @param {Object[]} schemas   The schemas each a UI control to be made.
          */
         UserWrappr.prototype.loadControls = function (schemas) {
             var section = document.querySelector(this.gameControlsSelector), length = schemas.length, i;
-            this.StatsHolder = new StatsHoldr.StatsHoldr({
-                "prefix": this.globalName + "::UserWrapper::StatsHolder",
+            this.ItemsHolder = new ItemsHoldr.ItemsHoldr({
+                "prefix": this.globalName + "::UserWrapper::ItemsHolder",
                 "proliferate": this.GameStarter.proliferate,
                 "createElement": this.GameStarter.createElement
             });
@@ -14539,7 +14541,7 @@ var UserWrappr;
             };
             /**
              * Ensures a child's required local storage value is being stored,
-             * and adds it to the internal GameStarter.StatsHolder if not. If it
+             * and adds it to the internal GameStarter.ItemsHolder if not. If it
              * is, and the child's value isn't equal to it, the value is set.
              *
              * @param {Mixed} childRaw   An input or select element, or an Array
@@ -14555,11 +14557,11 @@ var UserWrappr;
                 }
                 var child = childRaw, key = schema.title + "::" + details.title, valueDefault = details.source.call(this, this.GameStarter).toString(), value;
                 child.setAttribute("localStorageKey", key);
-                this.GameStarter.StatsHolder.addItem(key, {
+                this.GameStarter.ItemsHolder.addItem(key, {
                     "storeLocally": true,
                     "valueDefault": valueDefault
                 });
-                value = this.GameStarter.StatsHolder.getItem(key);
+                value = this.GameStarter.ItemsHolder.getItem(key);
                 if (value !== "" && value !== child.value) {
                     child.value = value;
                     if (child.setValue) {
@@ -14588,11 +14590,11 @@ var UserWrappr;
                     key = keyGeneral + "::" + i;
                     child = children[i];
                     child.setAttribute("localStorageKey", key);
-                    this.GameStarter.StatsHolder.addItem(key, {
+                    this.GameStarter.ItemsHolder.addItem(key, {
                         "storeLocally": true,
                         "valueDefault": values[i]
                     });
-                    value = this.GameStarter.StatsHolder.getItem(key);
+                    value = this.GameStarter.ItemsHolder.getItem(key);
                     if (value !== "" && value !== child.value) {
                         child.value = value;
                         if (child.onchange) {
@@ -14605,7 +14607,7 @@ var UserWrappr;
                 }
             };
             /**
-             * Stores an element's value in the internal GameStarter.StatsHolder,
+             * Stores an element's value in the internal GameStarter.ItemsHolder,
              * if it has the "localStorageKey" attribute.
              *
              * @param {HTMLElement} child   An element with a value to store.
@@ -14614,7 +14616,7 @@ var UserWrappr;
             AbstractOptionsGenerator.prototype.storeLocalStorageValue = function (child, value) {
                 var key = child.getAttribute("localStorageKey");
                 if (key) {
-                    this.GameStarter.StatsHolder.setItem(key, value);
+                    this.GameStarter.ItemsHolder.setItem(key, value);
                 }
             };
             return AbstractOptionsGenerator;
