@@ -1,6 +1,6 @@
 FullScreenMario.FullScreenMario.settings.editor = (function (things, macros) {
     return {
-        "blocksize": FullScreenMario.unitsize * 4,
+        "blocksize": FullScreenMario.FullScreenMario.unitsize * 4,
         "mapDefault": {
             "name": "New Map",
             "locations": [
@@ -21,9 +21,11 @@ FullScreenMario.FullScreenMario.settings.editor = (function (things, macros) {
         "thingGroups": ["Text", "Character", "Solid", "Scenery"],
         "thingKeys": (function () {
             var keys = [];
+
             Object.keys(things).forEach(function (group) {
                 keys.push.apply(keys, Object.keys(things[group]));
             });
+
             return keys;
         })(),
         "macros": macros
