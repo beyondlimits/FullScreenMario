@@ -2,126 +2,84 @@ module.exports = function (grunt) {
     grunt.initConfig({
         "pkg": grunt.file.readJSON("package.json"),
         "meta": {
-            "GameStartrPath": "GameStartr",
-            "deployPath": "dist"
+            "paths": {
+                "source": "Source",
+                "dist": "Distribution"
+            }
         },
+        "tslint": {
+            "options": {
+                "configuration": grunt.file.readJSON("tslint.json")
+            },
+            "files": {
+                "src": ["<%= meta.paths.source %>/<%= pkg.name %>.ts"]
+            }
+        },
+        "typescript": {
+            "base": {
+                "src": "<%= meta.paths.source %>/<%= pkg.name %>.ts",
+                "dest": "<%= meta.paths.source %>/<%= pkg.name %>.js"
+            }
+        },
+        "clean": ["<%= meta.paths.dist %>"],
         "copy": {
             "default": {
                 "files": [{
-                    "expand": true,
-                    "src": "Sounds/**",
-                    "dest": "<%= meta.deployPath %>"
+                    "src": "<%= meta.paths.source %>/<%= pkg.name %>.js",
+                    "dest": "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>.js"
                 }, {
-                    "expand": true,
-                    "src": "Theme/**",
-                    "dest": "<%= meta.deployPath %>"
+                    "src": "<%= meta.paths.source %>/<%= pkg.name %>.ts",
+                    "dest": "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>.ts"
                 }, {
+                    "src": "<%= meta.paths.source %>/References/*.ts",
+                    "dest": "<%= meta.paths.dist %>/",
                     "expand": true,
-                    "src": "Fonts/**",
-                    "dest": "<%= meta.deployPath %>"
+                    "flatten": true
                 }, {
                     "src": "README.md",
-                    "dest": "<%= meta.deployPath %>/README.md"
+                    "dest": "<%= meta.paths.dist %>/"
+                }, {
+                    "src": "README.md",
+                    "dest": "<%= meta.paths.source %>/"
                 }, {
                     "src": "LICENSE.txt",
-                    "dest": "<%= meta.deployPath %>/LICENSE.txt"
+                    "dest": "<%= meta.paths.dist %>/"
+                }, {
+                    "src": "LICENSE.txt",
+                    "dest": "<%= meta.paths.source %>/"
                 }]
-            }
-        },
-        "concat": {
-            "dist": {
-                "src": [
-                    "<%= meta.GameStartrPath %>/EightBittr/*.js",
-                    "<%= meta.GameStartrPath %>/GameStartr.js",
-                    "<%= meta.GameStartrPath %>/AudioPlayr/*.js",
-                    "<%= meta.GameStartrPath %>/ChangeLinr/*.js",
-                    "<%= meta.GameStartrPath %>/FPSAnalyzr/*.js",
-                    "<%= meta.GameStartrPath %>/GamesRunnr/*.js",
-                    "<%= meta.GameStartrPath %>/GroupHoldr/*.js",
-                    "<%= meta.GameStartrPath %>/InputWritr/*.js",
-                    "<%= meta.GameStartrPath %>/LevelEditr/*.js",
-                    "<%= meta.GameStartrPath %>/MapsCreatr/*.js",
-                    "<%= meta.GameStartrPath %>/MapsHandlr/*.js",
-                    "<%= meta.GameStartrPath %>/ModAttachr/*.js",
-                    "<%= meta.GameStartrPath %>/NumberMakr/*.js",
-                    "<%= meta.GameStartrPath %>/ObjectMakr/*.js",
-                    "<%= meta.GameStartrPath %>/PixelDrawr/*.js",
-                    "<%= meta.GameStartrPath %>/PixelRendr/*.js",
-                    "<%= meta.GameStartrPath %>/QuadsKeepr/*.js",
-                    "<%= meta.GameStartrPath %>/StatsHoldr/*.js",
-                    "<%= meta.GameStartrPath %>/StringFilr/*.js",
-                    "<%= meta.GameStartrPath %>/ThingHittr/*.js",
-                    "<%= meta.GameStartrPath %>/TimeHandlr/*.js",
-                    "<%= meta.GameStartrPath %>/UserWrappr/*.js",
-                    "<%= meta.GameStartrPath %>/WorldSeedr/*.js",
-                    "FullScreenMario.js",
-                    "settings/*.js"
-                ],
-                "dest": "<%= meta.deployPath %>/<%= pkg.name %>.js"
             }
         },
         "uglify": {
             "options": {
-                "compress": {}
+                "compress": true,
+                "sourceMap": true
             },
             "dist": {
                 "files": {
-                    "<%= meta.deployPath %>/<%= pkg.name %>.min.js": ["<%= meta.deployPath %>/<%= pkg.name %>.js"],
-                    "<%= meta.deployPath %>/index.min.js": ["index.js"]
+                    "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>.min.js": ["<%= meta.paths.source %>/<%= pkg.name %>.js"],
                 }
             }
         },
-        "cssmin": {
-            "target": {
-                "files": {
-                    "<%= meta.deployPath %>/index.min.css": ["index.css"]
-                }
-            }
-        },
-        "processhtml": {
+        "preprocess": {
             "dist": {
-                "files": {
-                    "<%= meta.deployPath %>/index.html": ["index.html"]
-                }
-            }
-        },
-        "htmlmin": {
-            "dist": {
-                "options": {
-                    "removeComments": true,
-                    "collapseWhitespace": true,
-                    "minifyURLs": true
-                },
-                "files": {
-                    "<%= meta.deployPath %>/index.html": ["<%= meta.deployPath %>/index.html"]
-                }
-            }
-        },
-        "clean": {
-            "js": ["<%= meta.deployPath %>/<%= pkg.name %>.js"]
-        },
-        "zip": {
-            "using-cwd": {
-                "cwd": "<%= meta.deployPath %>/",
-                "src": ["**"],
-                "dest": "<%= pkg.name %>-v<%= pkg.version %>.zip"
+                "src": "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>.ts",
+                "dest": "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>.ts"
             }
         },
         "mocha_phantomjs": {
-            "all": ["tests.html"]
+            "all": ["Tests/*.html"]
         }
     });
-
-    grunt.loadNpmTasks("grunt-contrib-copy");
-    grunt.loadNpmTasks("grunt-contrib-concat");
-    grunt.loadNpmTasks("grunt-contrib-uglify");
-    grunt.loadNpmTasks("grunt-contrib-cssmin");
-    grunt.loadNpmTasks("grunt-processhtml");
-    grunt.loadNpmTasks("grunt-contrib-htmlmin");
+    
     grunt.loadNpmTasks("grunt-contrib-clean");
-    grunt.loadNpmTasks("grunt-zip");
+    grunt.loadNpmTasks("grunt-contrib-copy");
+    grunt.loadNpmTasks("grunt-contrib-uglify");
     grunt.loadNpmTasks("grunt-mocha-phantomjs");
+    grunt.loadNpmTasks("grunt-preprocess");
+    grunt.loadNpmTasks("grunt-tslint");
+    grunt.loadNpmTasks("grunt-typescript");
     grunt.registerTask("default", [
-        "copy", "concat", "uglify", "cssmin", "processhtml", "htmlmin", "clean", "zip", "mocha_phantomjs"
+        "tslint", "typescript", "clean", "copy", "uglify", "preprocess", "mocha_phantomjs"
     ]);
 };
