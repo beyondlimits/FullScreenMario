@@ -53,13 +53,14 @@ declare module UserWrappr {
         }
 
         export interface IChoiceElement extends HTMLElement {
-            setValue: (value: any) => void;
+            setValue(value: any): void;
         }
 
         export interface IInputElement extends HTMLInputElement, IChoiceElement { }
 
-        export interface ISelectElement extends HTMLSelectElement, IChoiceElement {
+        export interface ISelectElement extends HTMLSelectElement {
             valueOld?: string;
+            setValue(value: any): void;
         }
 
         export interface IOptionsButtonsSchema extends ISchema {
@@ -320,7 +321,7 @@ module UserWrappr {
             this.documentElement.requestFullScreen
             || this.documentElement.webkitRequestFullScreen
             || this.documentElement.mozRequestFullScreen
-            || this.documentElement.msRequestFullscreen
+            || (<any>this.documentElement).msRequestFullscreen
             || function (): void {
                 console.warn("Not able to request full screen...");
             }
@@ -333,7 +334,7 @@ module UserWrappr {
             this.documentElement.cancelFullScreen
             || this.documentElement.webkitCancelFullScreen
             || this.documentElement.mozCancelFullScreen
-            || this.documentElement.msCancelFullScreen
+            || (<any>this.documentElement).msCancelFullScreen
             || function (): void {
                 console.warn("Not able to cancel full screen...");
             }
