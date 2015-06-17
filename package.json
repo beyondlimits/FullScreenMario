@@ -21,6 +21,7 @@
         "grunt-contrib-clean": "~0.6.0",
         "grunt-contrib-copy": "~0.8.X",
         "grunt-contrib-cssmin": "~0.12.X",
+        "grunt-contrib-htmlmin": "~0.4.X",
         "grunt-contrib-uglify": "~0.8.X",
         "grunt-mocha-phantomjs": "~0.6.X",
         "grunt-processhtml": "~0.3.X",
