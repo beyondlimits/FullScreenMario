@@ -15,8 +15,8 @@ FullScreenMario.FullScreenMario.settings.mods = {
                     
                     // Don't trigger during cutscenes or small landings
                     if (
-                        player.EightBitter.MapScreener.nokeys
-                        || Math.abs(player.yvel) < player.EightBitter.unitsize / 4
+                        player.FSM.MapScreener.nokeys
+                        || Math.abs(player.yvel) < player.FSM.unitsize / 4
                     ) {
                         return;
                     }
@@ -27,7 +27,7 @@ FullScreenMario.FullScreenMario.settings.mods = {
                     
                     player.jumpcount = 0;
                     player.resting = undefined;
-                    player.yvel = -3 * player.EightBitter.unitsize;
+                    player.yvel = -3 * player.FSM.unitsize;
                 },
                 "onPlayerActionLeft": function (mod, player, other) {
                     other.actionLeft(player, other, true);
@@ -92,17 +92,17 @@ FullScreenMario.FullScreenMario.settings.mods = {
                 "onPlayerLanding": (function () {
                     var shiftLevels = [2, 1.5, 1, .5, 0, -.5, -1, -1.5, -2],
                         shiftCount = 0,
-                        shiftAll = function (EightBitter, texts, solids, scenery, characters) {
+                        shiftAll = function (FSM, texts, solids, scenery, characters) {
                             var dy = shiftLevels[shiftCount];
                             
                             if (dy < 0) {
-                                EightBitter.shiftVert(EightBitter.player, dy);
+                                FSM.shiftVert(FSM.player, dy);
                             }
                             
-                            EightBitter.shiftThings(texts, 0, dy);
-                            EightBitter.shiftThings(solids, 0, dy);
-                            EightBitter.shiftThings(scenery, 0, dy);
-                            EightBitter.shiftThings(characters, 0, dy);
+                            FSM.shiftThings(texts, 0, dy);
+                            FSM.shiftThings(solids, 0, dy);
+                            FSM.shiftThings(scenery, 0, dy);
+                            FSM.shiftThings(characters, 0, dy);
                             
                             shiftCount += 1;
                             if (shiftCount >= shiftLevels.length) {
@@ -117,8 +117,8 @@ FullScreenMario.FullScreenMario.settings.mods = {
                     
                         // Don't trigger during cutscenes or small landings
                         if (
-                            player.EightBitter.MapScreener.nokeys
-                            || Math.abs(player.yvel) < player.EightBitter.unitsize / 4
+                            player.FSM.MapScreener.nokeys
+                            || Math.abs(player.yvel) < player.FSM.unitsize / 4
                         ) {
                             return;
                         }
@@ -142,7 +142,7 @@ FullScreenMario.FullScreenMario.settings.mods = {
                             }
                             
                             character.resting = undefined;
-                            character.yvel = player.EightBitter.unitsize * -1.4;
+                            character.yvel = player.FSM.unitsize * -1.4;
                         }
                         
                         // A copy of each group is made because new Things 
@@ -255,7 +255,7 @@ FullScreenMario.FullScreenMario.settings.mods = {
                 "onAddThing": function (mod, thing) {
                     var spawn;
                     if (thing.title === "Goomba") {
-                        spawn = thing.EightBitter.killReplace(
+                        spawn = thing.FSM.killReplace(
                             thing,
                             "Beetle", 
                             undefined,
@@ -264,8 +264,8 @@ FullScreenMario.FullScreenMario.settings.mods = {
                         spawn.mod = "Hard Mode";
                     }
                     else if (thing.title === "Platform") {
-                        thing.EightBitter.reduceWidth(thing, thing.EightBitter.unitsize * 8, true);
-                        thing.EightBitter.shiftHoriz(thing, thing.EightBitter.unitsize * 4);
+                        thing.FSM.reduceWidth(thing, thing.FSM.unitsize * 8, true);
+                        thing.FSM.shiftHoriz(thing, thing.FSM.unitsize * 4);
                     }
                     
                     if (thing.groupType === "Character") {
@@ -273,16 +273,16 @@ FullScreenMario.FullScreenMario.settings.mods = {
                     }
                 },
                 "onModEnable": function (mod) {
-                    var EightBitter = EightBittr.ensureCorrectCaller(this),
-                        characters = EightBitter.GroupHolder.getCharacterGroup(),
-                        solids = EightBitter.GroupHolder.getSolidGroup(),
+                    var FSM = FullScreenMario.FullScreenMario.prototype.ensureCorrectCaller(this),
+                        characters = FSM.GroupHolder.getCharacterGroup(),
+                        solids = FSM.GroupHolder.getSolidGroup(),
                         attributes = ["direction", "moveleft", "lookleft", "xvel", "yvel", "speed"],
                         spawn, thing, i;
                     
                     for (i = 0; i < characters.length; i += 1) {
                         thing = characters[i];
                         if (thing.title === "Goomba") {
-                            spawn = thing.EightBitter.killReplace(
+                            spawn = thing.FSM.killReplace(
                                 thing, 
                                 "Beetle", 
                                 undefined,
@@ -290,9 +290,9 @@ FullScreenMario.FullScreenMario.settings.mods = {
                             );
                             spawn.mod = "Hard Mode";
                             if (thing.xvel > 0) {
-                                spawn.EightBitter.flipHoriz(spawn);
+                                spawn.FSM.flipHoriz(spawn);
                             } else {
-                                spawn.EightBitter.unflipHoriz(spawn);
+                                spawn.FSM.unflipHoriz(spawn);
                             }
                         }
                         thing.speed *= 1.4;
@@ -301,22 +301,22 @@ FullScreenMario.FullScreenMario.settings.mods = {
                     for(i = 0; i < solids.length; i += 1) {
                         thing = solids[i];
                         if(thing.title === "Platform") {
-                            thing.EightBitter.reduceWidth(thing, thing.EightBitter.unitsize * 8, true);
-                            thing.EightBitter.shiftHoriz(thing, thing.EightBitter.unitsize * 4);
+                            thing.FSM.reduceWidth(thing, thing.FSM.unitsize * 8, true);
+                            thing.FSM.shiftHoriz(thing, thing.FSM.unitsize * 4);
                         }
                     }
                 },
                 "onModDisable": function (mod) {
-                    var EightBitter = EightBittr.ensureCorrectCaller(this),
-                        characters = EightBitter.GroupHolder.getCharacterGroup(),
-                        solids = EightBitter.GroupHolder.getSolidGroup(),
+                    var FSM = FullScreenMario.FullScreenMario.prototype.ensureCorrectCaller(this),
+                        characters = FSM.GroupHolder.getCharacterGroup(),
+                        solids = FSM.GroupHolder.getSolidGroup(),
                         attributes = ["direction", "moveleft", "lookleft", "xvel", "yvel", "speed"],
                         thing, i;
                     
                     for (i = 0; i < characters.length; i += 1) {
                         thing = characters[i];
                         if (thing.title === "Beetle" && thing.mod === "Hard Mode") {
-                            thing.EightBitter.killReplace(
+                            thing.FSM.killReplace(
                                 thing, 
                                 "Goomba", 
                                 undefined,
@@ -330,8 +330,8 @@ FullScreenMario.FullScreenMario.settings.mods = {
                     for (i = 0; i < solids.length; i += 1) {
                         thing = solids[i];
                         if (thing.title === "Platform") {
-                            thing.EightBitter.increaseWidth(thing, thing.EightBitter.unitsize * 8);
-                            thing.EightBitter.shiftHoriz(thing, thing.EightBitter.unitsize * -4);
+                            thing.FSM.increaseWidth(thing, thing.FSM.unitsize * 8);
+                            thing.FSM.shiftHoriz(thing, thing.FSM.unitsize * -4);
                         }
                     }
                 }
@@ -380,25 +380,27 @@ FullScreenMario.FullScreenMario.settings.mods = {
             "enabled": false,
             "events": {
                 "onModEnable": function (mod) {
-                    var proto = this.ObjectMaker.getFunction("Area").prototype,
-                        stats = this.settings.statistics.values.lives;
+                    var FSM = FullScreenMario.FullScreenMario.prototype.ensureCorrectCaller(this),
+                        proto = FSM.ObjectMaker.getFunction("Area").prototype,
+                        stats = FSM.settings.statistics.values.lives;
                     
                     mod.settings.onPlayerDeathOld = proto.onPlayerDeath;
-                    proto.onPlayerDeath = this.mapEntranceRespawn;
+                    proto.onPlayerDeath = FSM.mapEntranceRespawn;
                     
-                    mod.settings.livesOld = this.StatsHolder.get("lives");
+                    mod.settings.livesOld = FSM.StatsHolder.getItem("lives");
                     mod.settings.statsOld = stats;
                     stats.valueDefault = Infinity;
-                    this.StatsHolder.set("lives", Infinity);
+                    FSM.StatsHolder.setItem("lives", Infinity);
                 },
                 "onModDisable": function (mod) {
-                    var proto = this.ObjectMaker.getFunction("Area").prototype,
-                        stats = this.settings.statistics.values.lives;
+                    var FSM = FullScreenMario.FullScreenMario.prototype.ensureCorrectCaller(this),
+                        proto = FSM.ObjectMaker.getFunction("Area").prototype,
+                        stats = FSM.settings.statistics.values.lives;
                     
                     proto.onPlayerDeath = mod.settings.onPlayerDeathOld;
                     
                     stats.valueDefault = mod.settings.statsOld.valueDefault;
-                    this.StatsHolder.set("lives", mod.settings.livesOld);
+                    FSM.StatsHolder.setItem("lives", mod.settings.livesOld);
                 }
             },
             "settings": {
@@ -480,7 +482,7 @@ FullScreenMario.FullScreenMario.settings.mods = {
             "enabled": false,
             "events": {
                 "onModEnable": function () {
-                    this.StatsHolder.set("luigi", true);
+                    this.StatsHolder.setItem("luigi", true);
                     this.ObjectMaker.getFunction("Player").prototype.title = "Luigi";
                     
                     if (this.player) {
@@ -494,7 +496,7 @@ FullScreenMario.FullScreenMario.settings.mods = {
                     }
                 },
                 "onModDisable": function () {
-                    this.StatsHolder.set("luigi", false);
+                    this.StatsHolder.setItem("luigi", false);
                     this.ObjectMaker.getFunction("Player").prototype.title = "Player";
                     
                     if (this.player) {
@@ -580,24 +582,24 @@ FullScreenMario.FullScreenMario.settings.mods = {
             "settings": {
                 "paletteOld": undefined
             },
-            "resetVisuals": function (EightBitter) {
-                EightBitter.resetPixelRender(EightBitter, EightBitter.customs);
-                EightBitter.resetPixelDrawer(EightBitter, EightBitter.customs);
-                EightBitter.PixelDrawer.setCanvas(EightBitter.canvas);
-                EightBitter.PixelDrawer.setThingArrays([
-                    EightBitter.GroupHolder.getSceneryGroup(),
-                    EightBitter.GroupHolder.getSolidGroup(),
-                    EightBitter.GroupHolder.getCharacterGroup(),
-                    EightBitter.GroupHolder.getTextGroup()
+            "resetVisuals": function (FSM) {
+                FSM.resetPixelRender(FSM, FSM.customs);
+                FSM.resetPixelDrawer(FSM, FSM.customs);
+                FSM.PixelDrawer.setCanvas(FSM.canvas);
+                FSM.PixelDrawer.setThingArrays([
+                    FSM.GroupHolder.getSceneryGroup(),
+                    FSM.GroupHolder.getSolidGroup(),
+                    FSM.GroupHolder.getCharacterGroup(),
+                    FSM.GroupHolder.getTextGroup()
                 ]);
-                EightBitter.PixelDrawer.setBackground(
-                    EightBitter.MapsHandler.getArea().background
+                FSM.PixelDrawer.setBackground(
+                    FSM.MapsHandler.getArea().background
                 );
             },
-            "resetThingSprites": function (EightBitter) {
-                EightBitter.GroupHolder.callOnAll(undefined, function (thing) {
+            "resetThingSprites": function (FSM) {
+                FSM.GroupHolder.callOnAll(undefined, function (thing) {
                     thing.numSprites = undefined;
-                    // EightBitter.PixelDrawer.setThingSprite(thing);
+                    // FSM.PixelDrawer.setThingSprite(thing);
                 });
             },
             "shufflePalette": function shufflePalette(array) {
@@ -622,38 +624,38 @@ FullScreenMario.FullScreenMario.settings.mods = {
             "enabled": false,
             "events": {
                 "onModEnable": function (mod) {
-                    var EightBitter = this,
+                    var FSM = FullScreenMario.FullScreenMario.prototype.ensureCorrectCaller(this),
                         characters = mod.settings.characters,
-                        charactersEightBitter = EightBitter.GroupHolder.getCharacterGroup(),
+                        charactersFSM = FSM.GroupHolder.getCharacterGroup(),
                         level;
                     
-                    this.InputWriter.addEvent("onkeydown", "q", function () {
+                    FSM.InputWriter.addEvent("onkeydown", "q", function () {
                         mod.settings.qcount += 1;
                         
                         if (mod.settings.levels[mod.settings.qcount]) {
                             var level = mod.settings.levels[mod.settings.qcount];
-                            mod.settings.events.push(EightBitter.TimeHandler.addEventInterval(function () {
-                                if (charactersEightBitter.length < 210) {
+                            mod.settings.events.push(FSM.TimeHandler.addEventInterval(function () {
+                                if (charactersFSM.length < 210) {
                                     var num = Math.floor(Math.random() * level.length),
-                                        lul = EightBitter.ObjectMaker.make.apply(EightBitter.ObjectMaker, level[num]);
+                                        lul = FSM.ObjectMaker.make.apply(FSM.ObjectMaker, level[num]);
                                     
-                                    lul.yvel = Math.random() * EightBitter.unitsize / 4;
-                                    lul.xvel = lul.speed = Math.random() * EightBitter.unitsize * 2;
+                                    lul.yvel = Math.random() * FSM.unitsize / 4;
+                                    lul.xvel = lul.speed = Math.random() * FSM.unitsize * 2;
                                     if (Math.floor(Math.random() * 2)) {
                                         lul.xvel *= -1;
                                     }
                                     
                                     characters.push(lul);
-                                    EightBitter.addThing(
+                                    FSM.addThing(
                                         lul, 
-                                        (32 * Math.random() + 128) * EightBitter.unitsize,
-                                        88 * Math.random() * EightBitter.unitsize
+                                        (32 * Math.random() + 128) * FSM.unitsize,
+                                        88 * Math.random() * FSM.unitsize
                                     );
                                 }
                             }, 7, Infinity));
                         }
                     });
-                    this.InputWriter.addAliasValues("q", [81]);
+                    FSM.InputWriter.addAliasValues("q", [81]);
                 },
                 "onModDisable": function (mod) {
                     mod.settings.qcount = 0;
