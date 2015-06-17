@@ -99,6 +99,11 @@ module FullScreenMario {
         public pointLevels: number[];
 
         /**
+         * Internal reference to the static customTextMappings.
+         */
+        public customTextMappings: { [i: string]: string };
+
+        /**
          * Timed result summaries of the constructor, if resetTimed was passed
          * as true. Otherwise, this is undefined.
          */
@@ -1022,8 +1027,8 @@ module FullScreenMario {
                 // Player has fallen too far
                 if (!player.dying && player.top > FSM.MapScreener.bottom) {
                     // If the map has an exit (e.g. cloud world), transport there
-                    if (FSM.MapsHandler.getArea().exit) {
-                        FSM.setLocation(FSM.MapsHandler.getArea().exit);
+                    if ((<IArea>FSM.MapsHandler.getArea()).exit) {
+                        FSM.setLocation((<IArea>FSM.MapsHandler.getArea()).exit);
                     }
                     // Otherwise, since Player is below the screen, kill him dead
                     else {
@@ -1378,7 +1383,7 @@ module FullScreenMario {
          * @remarks Similar to isThingOnThing, but more specifically used for
          *          characterTouchedSolid
          */
-        isSolidOnCharacter(thing: ICharacter, other: ISolid): boolean {
+        isSolidOnCharacter(thing: ISolid, other: ICharacter): boolean {
             // This can never be true if other is falling
             if (other.yvel >= 0) {
                 return false;
@@ -1674,7 +1679,7 @@ module FullScreenMario {
         
             // The last stage in the events clears it, resets movement, and stops
             stages.push(function (thing: IPlayer, stages: string[]): boolean {
-                thing.shrooming = true;
+                thing.shrooming = false;
                 stages.length = 0;
 
                 thing.FSM.addClass(thing, "large");
@@ -2135,8 +2140,10 @@ module FullScreenMario {
          * random point to the right side of the screen.
          * 
          * @param {FullScreenMario} FSM
+         * @return {Boolean} Whether the spawn cancelled (FSM.MapScreenr's 
+         *                   spawningBulletBills is false).
          */
-        spawnRandomBulletBill(FSM: FullScreenMario): void {
+        spawnRandomBulletBill(FSM: FullScreenMario): boolean {
             if (!FSM.MapScreener.spawningBulletBills) {
                 return true;
             }
@@ -2155,6 +2162,8 @@ module FullScreenMario {
                 Math.floor(
                     FSM.NumberMaker.randomIntWithin(0, FSM.MapScreener.floor) / 8
                     ) * 8 * FSM.unitsize);
+
+            return false;
         }
     
         /**
@@ -2497,7 +2506,7 @@ module FullScreenMario {
                 MapsCreator: MapsCreatr.MapsCreatr = FSM.MapsCreator,
                 MapScreener: MapScreenr.MapScreenr = FSM.MapScreener,
                 MapsHandler: MapsHandlr.MapsHandlr = FSM.MapsHandler,
-                area: MapsCreatr.IMapsCreatrArea = MapsHandler.getArea(),
+                area: IArea = <IArea>MapsHandler.getArea(),
                 map: MapsCreatr.IMapsCreatrMap = MapsHandler.getMap(),
                 prethings: { [i: string]: MapsCreatr.IPreThing[] } = MapsHandler.getPreThings(),
                 section = area.sections[thing.section || 0],
@@ -2561,7 +2570,7 @@ module FullScreenMario {
                 MapsCreator: MapsCreatr.MapsCreatr = FSM.MapsCreator,
                 MapScreener: MapScreenr.MapScreenr = FSM.MapScreener,
                 MapsHandler: MapsHandlr.MapsHandlr = FSM.MapsHandler,
-                area: MapsCreatr.IMapsCreatrArea = MapsHandler.getArea(),
+                area: IArea = <IArea>MapsHandler.getArea(),
                 map: MapsCreatr.IMapsCreatrMap = MapsHandler.getMap(),
                 prethings: { [i: string]: MapsCreatr.IPreThing[] } = MapsHandler.getPreThings(),
                 section = area.sections[thing.section || 0],
@@ -2615,7 +2624,7 @@ module FullScreenMario {
                 MapsCreator: MapsCreatr.MapsCreatr = FSM.MapsCreator,
                 MapScreener: MapScreenr.MapScreenr = FSM.MapScreener,
                 MapsHandler: MapsHandlr.MapsHandlr = FSM.MapsHandler,
-                area: MapsCreatr.IMapsCreatrArea = MapsHandler.getArea(),
+                area: IArea = <IArea>MapsHandler.getArea(),
                 map: MapsCreatr.IMapsCreatrMap = MapsHandler.getMap(),
                 prethings: { [i: string]: MapsCreatr.IPreThing[] } = MapsHandler.getPreThings(),
                 section = area.sections[thing.section || 0],
@@ -2691,15 +2700,15 @@ module FullScreenMario {
                         thing.undermid.bottomBump(thing.undermid, thing);
                     }
                 }
-                else if (thing.under && thing.under[0] && thing.under[0].bottomBump) {
-                    thing.under[0].bottomBump(thing.under[0], thing);
+                else if (thing.under && thing.under && (<any>thing.under).bottomBump) {
+                    (<any>thing.under).bottomBump(thing.under[0], thing);
                 }
             
                 // If the character is overlapping the solid, call that too
                 if (
                     thing.checkOverlaps
                     && thing.FSM.isCharacterOverlappingSolid(thing, other)) {
-                    thing.FSM.markOverlap(thing, other);
+                    thing.FSM.markOverlap(<ICharacterOverlapping>thing, other);
                 }
             };
         }
@@ -2882,7 +2891,7 @@ module FullScreenMario {
          * @param {Item} thing
          * @param {Solid} other
          */
-        collideUpItem(thing: IItem, other: ISolid): void {
+        collideUpItem(thing: ICharacter, other: ISolid): void {
             thing.FSM.animateCharacterHop(thing);
             thing.moveleft = thing.FSM.objectToLeft(thing, other);
         }
@@ -2979,7 +2988,7 @@ module FullScreenMario {
          * @param {CastleFireball} other
          */
         collideCastleFireball(thing: ICharacter, other: ICastleFireball): void {
-            if (thing.star) {
+            if ((<any>thing).star) {
                 other.death(other);
             } else {
                 thing.death(thing);
@@ -2998,26 +3007,26 @@ module FullScreenMario {
             // If only one is a shell, it should be other, not thing
             if (thing.shell) {
                 if (other.shell) {
-                    return thing.FSM.collideShellShell(thing, other);
+                    return thing.FSM.collideShellShell(<IShell>thing, other);
                 }
                 return thing.FSM.collideShell(thing, other);
             }
         
             // Hitting a solid (e.g. wall) 
             if (thing.groupType === "Solid") {
-                return thing.FSM.collideShellSolid(thing, other);
+                return thing.FSM.collideShellSolid(<any>thing, other);
             }
         
             // Hitting the player
             if (thing.player) {
-                return thing.FSM.collideShellPlayer(thing, other);
+                return thing.FSM.collideShellPlayer(<any>thing, <any>other);
             }
         
             // Assume anything else to be an enemy, which only moving shells kill
             if (other.xvel) {
                 thing.FSM.killFlip(thing);
                 if (thing.shellspawn) {
-                    thing = thing.FSM.killSpawn(thing);
+                    thing = <any>thing.FSM.killSpawn(thing);
                 }
 
                 thing.FSM.AudioPlayer.play("Kick");
@@ -3133,8 +3142,7 @@ module FullScreenMario {
                         thing.FSM.jumpEnemy(thing, other);
                         thing.yvel *= 2;
                         // thing.FSM.scorePlayerShell(thing, other);
-                        thing.FSM.setBottom(
-                            thing, other.top - thing.FSM.unitsize, true);
+                        thing.FSM.setBottom(thing, other.top - thing.FSM.unitsize);
                     } else {
                         // thing.FSM.scorePlayerShell(thing, other);
                     }
@@ -3229,7 +3237,7 @@ module FullScreenMario {
                     )
                 ) {
                 // For the sake of typing. Should be optimized during runtime.
-                var player: IPlayer = thing;
+                var player: IPlayer = <IPlayer>thing;
 
                 // Enforces toly (not touching means stop)
                 if (player.FSM.isCharacterAboveEnemy(player, other)) {
@@ -3281,8 +3289,8 @@ module FullScreenMario {
          * @param {Character} other
          */
         collideBottomBrick(thing: IBrick, other: ICharacter): void {
-            if ((<IBrick><any>other).solid && !thing.solid) {
-                return thing.FSM.collideBottomBrick(other, thing);
+            if ((<any>other).solid && !thing.solid) {
+                return thing.FSM.collideBottomBrick(<any>other, <any>thing);
             }
 
             if (thing.up || !other.player) {
@@ -3306,13 +3314,13 @@ module FullScreenMario {
 
             if (thing.contents) {
                 thing.FSM.TimeHandler.addEvent(function () {
-                    var output = thing.FSM.animateSolidContents(thing, other);
+                    var output = thing.FSM.animateSolidContents(thing, <any>other);
 
                     if (thing.contents !== "Coin") {
-                        thing.FSM.animateBlockBecomesUsed(thing);
+                        thing.FSM.animateBlockBecomesUsed(<any>thing);
                     } else {
                         if (thing.lastcoin) {
-                            thing.FSM.animateBlockBecomesUsed(thing);
+                            thing.FSM.animateBlockBecomesUsed(<any>thing);
                         } else {
                             thing.FSM.TimeHandler.addEvent(function () {
                                 thing.lastcoin = true;
@@ -3333,7 +3341,7 @@ module FullScreenMario {
          */
         collideBottomBlock(thing: IBlock, other: IPlayer): void {
             if ((<any>other).solid && !thing.solid) {
-                return thing.FSM.collideBottomBlock(other, thing);
+                return thing.FSM.collideBottomBlock(<any>other, <any>thing);
             }
 
             if (thing.up || !other.player) {
@@ -3468,7 +3476,7 @@ module FullScreenMario {
                 scoreThing: IText = thing.FSM.ObjectMaker.make("Text" + scoreAmount);
         
             // This is a cutscene. No movement, no deaths, no scrolling.
-            thing.star = true;
+            thing.star = 1;
             thing.nocollidechar = true;
             thing.FSM.MapScreener.nokeys = true;
             thing.FSM.MapScreener.notime = true;
@@ -3949,7 +3957,7 @@ module FullScreenMario {
             }
         
             // Deal with velocities and whether the player is resting on this
-            thing.FSM.movePlatform(thing);
+            thing.FSM.movePlatform(<any>thing);
         }
     
         /**
@@ -3975,7 +3983,7 @@ module FullScreenMario {
             }
         
             // Deal with velocities and whether the player is resting on this
-            thing.FSM.movePlatform(thing);
+            thing.FSM.movePlatform(<any>thing);
         }
     
         /**
@@ -4031,8 +4039,7 @@ module FullScreenMario {
          */
         movePlatformSpawn(thing: IPlatform): void {
             if (thing.bottom < 0) {
-                thing.FSM.setTop(
-                    thing, thing.FSM.MapScreener.bottomPlatformMax);
+                thing.FSM.setTop(thing, thing.FSM.MapScreener.bottomPlatformMax);
             } else if (
                 thing.top > thing.FSM.MapScreener.bottomPlatformMax
                 ) {
@@ -4887,13 +4894,14 @@ module FullScreenMario {
         animateSolidBump(thing: ISolid): void {
             var dx: number = -3;
 
-            thing.FSM.TimeHandler.addEventInterval(function (thing: ISolid): void {
+            thing.FSM.TimeHandler.addEventInterval(function (thing: ISolid): boolean {
                 thing.FSM.shiftVert(thing, dx);
                 dx += .5;
                 if (dx === 3.5) {
                     thing.up = undefined;
                     return true;
                 }
+                return false;
             }, 1, Infinity, thing);
         }
     
@@ -4919,7 +4927,7 @@ module FullScreenMario {
          * @remarks For the level editor, if thing.contents is false, the prototype
          *          is tried (so false becomes Coin in Blocks).
          */
-        animateSolidContents(thing: IBrick | IBlock, other: IPlayer): void {
+        animateSolidContents(thing: IBrick | IBlock, other: IPlayer): ICharacter {
             var output: ICharacter;
 
             if (
@@ -4982,16 +4990,16 @@ module FullScreenMario {
             thing.FSM.flipHoriz(thing);
             thing.FSM.AudioPlayer.play("Powerup Appears");
             thing.FSM.arraySwitch(thing,
-                thing.FSM.GroupHolder.getCharacterGroup(),
-                thing.FSM.GroupHolder.getSceneryGroup()
+                <any[]>thing.FSM.GroupHolder.getGroup("Character"),
+                <any[]>thing.FSM.GroupHolder.getGroup("Scenery")
                 );
 
-            thing.FSM.TimeHandler.addEventInterval(function () {
+            thing.FSM.TimeHandler.addEventInterval(function (): boolean {
                 thing.FSM.shiftVert(thing, thing.FSM.unitsize / -8);
             
                 // Only stop once the bottom has reached the solid's top
                 if (thing.bottom > other.top) {
-                    return;
+                    return false;
                 }
 
                 thing.FSM.setBottom(thing, other.top);
@@ -5348,7 +5356,7 @@ module FullScreenMario {
          * 
          * @param {Thing} thing
          */
-        animateJump(thing: IHammerBro): void {
+        animateJump(thing: IHammerBro): boolean {
             // Finish
             if (!thing.FSM.isThingAlive(thing)) {
                 return true;
@@ -5356,7 +5364,7 @@ module FullScreenMario {
         
             // Skip
             if (!thing.resting) {
-                return;
+                return false;
             }
         
             // Jump up?
@@ -5383,6 +5391,8 @@ module FullScreenMario {
             }
 
             thing.resting = undefined;
+
+            return false;
         }
     
         /**
@@ -5556,8 +5566,7 @@ module FullScreenMario {
                 flag,
                 doorLeft + thing.FSM.unitsize,
                 doorTop - thing.FSM.unitsize * 24);
-            thing.FSM.arrayToBeginning(
-                flag, thing.FSM.GroupHolder.getGroup(flag.groupType));
+            thing.FSM.arrayToBeginning(flag, <any[]>thing.FSM.GroupHolder.getGroup(flag.groupType));
 
             thing.FSM.TimeHandler.addEventInterval(function () {
                 thing.FSM.shiftVert(flag, thing.FSM.unitsize * -.25);
@@ -5824,7 +5833,7 @@ module FullScreenMario {
          * 
          * @param {Player} thing
          */
-        animateCharacterHop(thing: IPlayer): void {
+        animateCharacterHop(thing: ICharacter): void {
             thing.resting = undefined;
             thing.yvel = thing.FSM.unitsize * -1.4;
         }
@@ -6038,7 +6047,7 @@ module FullScreenMario {
          * @param {Boolean} [big]   Whether this should skip creating the spawn (by
          *                          default, false).
          */
-        killSpawn(thing: ICharacter, big?: boolean): void {
+        killSpawn(thing: ICharacter, big?: boolean): IThing {
             if (big) {
                 thing.FSM.killNormal(thing);
                 return;
@@ -6138,7 +6147,7 @@ module FullScreenMario {
                     );
                 spawn.xvel = spawn.moveleft ? -spawn.speed : spawn.speed;
             } else {
-                spawn = thing.FSM.killToShell(thing, big);
+                spawn = thing.FSM.killToShell(thing, Number(big));
             }
 
             return spawn;
@@ -6157,7 +6166,7 @@ module FullScreenMario {
             if (big) {
                 thing.nofall = false;
                 thing.movement = undefined;
-                thing.FSM.killFlip(thing.FSM.killSpawn(thing));
+                thing.FSM.killFlip(<any>thing.FSM.killSpawn(thing));
                 return;
             }
 
@@ -6165,7 +6174,7 @@ module FullScreenMario {
             if (thing.deathcount === 5) {
                 thing.yvel = thing.speed = 0;
                 thing.movement = undefined;
-                thing.FSM.killFlip(thing.FSM.killSpawn(thing), 350);
+                thing.FSM.killFlip(<any>thing.FSM.killSpawn(thing), 350);
                 thing.FSM.scoreOn(5000, thing);
             }
         }
@@ -6199,7 +6208,7 @@ module FullScreenMario {
                 "smart": thing.smart
             };
 
-            spawn = thing.FSM.killSpawn(thing);
+            spawn = <IShell>thing.FSM.killSpawn(thing);
             nocollidecharold = spawn.nocollidechar;
             nocollideplayerold = spawn.nocollideplayer;
             spawn.nocollidechar = true;
@@ -6309,8 +6318,8 @@ module FullScreenMario {
                 return;
             }
 
-            var FSM = thing.FSM,
-                area = thing.FSM.MapsHandler.getArea();
+            var FSM: FullScreenMario = thing.FSM,
+                area: IArea = <IArea>thing.FSM.MapsHandler.getArea();
         
             // Large big: real, no-animation death
             if (big === 2) {
@@ -6337,8 +6346,7 @@ module FullScreenMario {
                     FSM.setClass(thing, "character player dead");
                     FSM.thingPauseVelocity(thing);
                     FSM.arrayToEnd(
-                        thing, FSM.GroupHolder.getGroup(thing.groupType)
-                        );
+                        thing, <any[]>FSM.GroupHolder.getGroup(thing.groupType));
 
                     FSM.MapScreener.notime = true;
                     FSM.MapScreener.nokeys = true;
@@ -6363,9 +6371,7 @@ module FullScreenMario {
 
             if (FSM.StatsHolder.getItem("lives") > 0) {
                 FSM.TimeHandler.addEvent(
-                    area.onPlayerDeath.bind(
-                        FSM
-                        ),
+                    area.onPlayerDeath.bind(FSM),
                     area.onPlayerDeathTimeout,
                     FSM
                     );
@@ -6445,7 +6451,7 @@ module FullScreenMario {
             }
             var text = thing.FSM.addThing("Text" + value);
 
-            thing.FSM.scoreAnimateOn(text, thing);
+            thing.FSM.scoreAnimateOn(<IText>text, thing);
 
             if (!continuation) {
                 this.StatsHolder.increase("score", value);
@@ -6475,12 +6481,11 @@ module FullScreenMario {
          * 
          * @param {Thing} thing   
          * @param {Number} [timeout]   How many game ticks to wait before killing
-         *                             the text (defaults to 35).
+         *                             the text (defaults to 28).
          * @remarks   This is the last function in the score() calling chain:
          *                scoreAnimate <- scoreAnimateOn <- scoreOn <- score
          */
-        scoreAnimate(thing: IThing, timeout: number): void {
-            timeout = timeout || 28;
+        scoreAnimate(thing: IThing, timeout: number = 28): void {
             thing.FSM.TimeHandler.addEventInterval(
                 thing.FSM.shiftVert,
                 1,
@@ -6543,7 +6548,7 @@ module FullScreenMario {
          * @return {Number}
          * @remarks See http://themushroomkingdom.net/smb_breakdown.shtml
          */
-        scorePlayerFlag(thing: IThing, difference: number): void {
+        scorePlayerFlag(thing: IThing, difference: number): number {
             var amount: number;
 
             if (difference < 28) {
@@ -6618,7 +6623,7 @@ module FullScreenMario {
                 name = FSM.MapsHandler.getMapName();
             }
 
-            map = FSM.MapsHandler.setMap(name);
+            map = FSM.MapsHandler.setMap(<string>name);
 
             FSM.ModAttacher.fireEvent("onPreSetMap", map);
 
@@ -7071,7 +7076,7 @@ module FullScreenMario {
                         )
                 });
 
-            return FSM.addThing(thing, boundaries.left, y);
+            return <IThing>FSM.addThing(thing, boundaries.left, y);
         }
     
         /**

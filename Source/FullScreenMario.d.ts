@@ -1,19 +1,33 @@
 declare module FullScreenMario {
     export interface IMapScreenr extends MapScreenr.IMapScreenr {
+        bottomPlatformMax: number;
+        canscroll: boolean;
+        floor: number;
+        gravity: number;
+        jumpmod: number;
+        lakitu?: ILakitu;
+        maxyvel: number;
+        maxyvelinv: number;
         nokeys: boolean;
         notime: boolean;
-        canscroll: boolean;
-        underwater: boolean;
-        floor: number;
+        spawningCheeps?: boolean;
+        spawningBulletBills?: boolean;
+        underwater?: boolean;
     }
 
     export interface IArea extends MapsCreatr.IMapsCreatrArea {
-        background: string;
-        time: number;
         attributes?: {
             [i: string]: any;
         }
+        exit?: string;
+        background: string;
+        onGameOver(FSM: IFullScreenMario): void;
+        onGameOverTimeout: number;
+        onPlayerDeath(FSM: IFullScreenMario): void;
+        onPlayerDeathTimeout: number;
+        sections?: any[];
         setBackground: (area: IArea) => void;
+        time: number;
     }
 
     export interface ILocation extends MapsCreatr.IMapsCreatrLocation {
@@ -37,7 +51,7 @@ declare module FullScreenMario {
     }
 
     export interface IThing extends GameStartr.IThing {
-        FSM: IFullScreenMario;
+        FSM: FullScreenMario;
         alive: boolean;
         collectionPartnerNames?: string[];
         dead?: boolean;
@@ -185,7 +199,7 @@ declare module FullScreenMario {
         collidePrimary?: boolean;
         counter?: number;
         death(thing: IThing, severity?: number): void;
-        direction: boolean;
+        direction: boolean | number;
         emergeOut? (thing: ICharacter, other: ISolid): void;
         gravity?: number;
         group: string;
@@ -275,7 +289,7 @@ declare module FullScreenMario {
         fireTimes: number[];
         jumpTimes: number[];
         nothrow: boolean;
-        throwAmount?: number[];
+        throwAmount?: number;
         throwBetween?: number;
         throwDelay?: number;
         throwPeriod?: number;
@@ -294,6 +308,7 @@ declare module FullScreenMario {
     export interface IPiranha extends IEnemy {
         counter: number;
         countermax: number;
+        direction: number;
         onPipe: boolean;
     }
 
@@ -355,6 +370,7 @@ declare module FullScreenMario {
         jumping?: boolean;
         keys: IPlayerKeys;
         maxspeed: number;
+        maxspeedsave?: number;
         numballs: number;
         paddling?: boolean;
         paddlingCycle?: boolean;
@@ -366,7 +382,7 @@ declare module FullScreenMario {
         skidding?: boolean;
         shrooming?: boolean;
         spring?: ISpringboard;
-        star: boolean;
+        star: number;
         swimming?: boolean;
         tolxOld?: number;
         tolyOld?: number;
@@ -396,12 +412,16 @@ declare module FullScreenMario {
         settings: GameStartr.IGameStartrStoredSettings;
         unitsize: number;
         pointLevels: number[];
+        customTextMappings: { [i: string]: string };
         resetTimes: any[];
         player: IPlayer;
         deviceMotionStatus: IDeviceMotionStatus;
+        gameStart(): void;
+        gameOver(): void;
         thingProcess(thing: IThing, title: string, settings: any, defaults: any): void;
         addPreThing(prething: IPreThing): void;
         addPlayer(left?: number, bottom?: number): IPlayer;
+        scrollPlayer(dx: number, dy?: number): void;
         onGamePause(FSM: FullScreenMario): void;
         onGamePlay(FSM: FullScreenMario): void;
         keyDownLeft(player: IPlayer, event: Event): void;
@@ -437,7 +457,7 @@ declare module FullScreenMario {
         isCharacterAboveEnemy(thing: ICharacter, other: ICharacter): boolean;
         isCharacterBumpingSolid(thing: ICharacter, other: ISolid): boolean;
         isCharacterOverlappingSolid(thing: ICharacter, other: ISolid): boolean;
-        isSolidOnCharacter(thing: ICharacter, other: ISolid): boolean;
+        isSolidOnCharacter(thing: ISolid, other: ICharacter): boolean;
         gainLife(amount: number, nosound?: boolean): void;
         itemJump(thing: IThing): void;
         jumpEnemy(thing: IPlayer, other: IEnemy): void;
@@ -470,7 +490,7 @@ declare module FullScreenMario {
         spawnMoveSliding(thing: IThingSliding): void;
         spawnScalePlatform(thing: IPlatform): void;
         spawnRandomCheep(FSM: FullScreenMario): boolean;
-        spawnRandomBulletBill(FSM: FullScreenMario): void;
+        spawnRandomBulletBill(FSM: FullScreenMario): boolean;
         spawnCustomText(thing: ICustomText): void;
         spawnDetector(thing: IDetector): void;
         spawnScrollBlocker(thing: IScrollBlocker): void;
@@ -554,7 +574,7 @@ declare module FullScreenMario {
         movePlayerSpringboardDown(thing: IPlayer): void;
         animateSolidBump(thing: ISolid): void;
         animateBlockBecomesUsed(thing: IBlock): void;
-        animateSolidContents(thing: IBrick | IBlock, other: IPlayer): void;
+        animateSolidContents(thing: IBrick | IBlock, other: IPlayer): ICharacter;
         animateBrickShards(thing: IBrick): void;
         animateEmerge(thing: ICharacter, other: ISolid): void;
         animateEmergeCoin(thing: ICoin, other: ISolid): void;
@@ -595,7 +615,7 @@ declare module FullScreenMario {
         lookTowardsPlayer(thing: ICharacter, big?: boolean): void;
         killNormal(thing: IThing): void;
         killFlip(thing: ICharacter, extra?: number): void;
-        killSpawn(thing: ICharacter, big?: boolean): void;
+        killSpawn(thing: ICharacter, big?: boolean): IThing;
         killReplace(thing: IThing, title: string, attributes: any, attributesCopied?: string[]): void;
         killGoomba(thing: IGoomba, big?: boolean): void;
         killKoopa(thing: IKoopa, big?: boolean): void;
@@ -608,9 +628,9 @@ declare module FullScreenMario {
         score(value: number, continuation?: boolean): void;
         scoreOn(value: number, thing: IThing, continuation?: boolean): void;
         scoreAnimateOn(text: IText, thing: IThing): void;
-        scoreAnimate(thing: IThing, timeout: number): void;
+        scoreAnimate(thing: IThing, timeout?: number): void;
         scorePlayerShell(thing: IPlayer, other: IShell): void;
-        scorePlayerFlag(thing: IThing, difference: number): void;
+        scorePlayerFlag(thing: IThing, difference: number): number;
         getVolumeLocal(FSM: FullScreenMario, xloc: number): number;
         getAudioThemeDefault(FSM: FullScreenMario): string;
         setMap(name?: string | IFullScreenMario, location?: string | number): void;
