@@ -23,7 +23,7 @@ module.exports = function (grunt) {
         },
         "clean": ["<%= meta.paths.dist %>"],
         "copy": {
-            "default": {
+            "dist": {
                 "files": [{
                     "src": "<%= meta.paths.source %>/<%= pkg.name %>.js",
                     "dest": "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>.js"
@@ -47,6 +47,26 @@ module.exports = function (grunt) {
                 }, {
                     "src": "LICENSE.txt",
                     "dest": "<%= meta.paths.source %>/"
+                }, {
+                    "cwd": "<%= meta.paths.source %>/",
+                    "src": "Fonts/**",
+                    "dest": "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/",
+                    "expand": true
+                }, {
+                    "cwd": "<%= meta.paths.source %>/",
+                    "src": "Sounds/**",
+                    "dest": "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/",
+                    "expand": true
+                }, {
+                    "cwd": "<%= meta.paths.source %>/",
+                    "src": "Theme/**",
+                    "dest": "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/",
+                    "expand": true
+                }, {
+                    "cwd": "<%= meta.paths.source %>/",
+                    "src": "settings/**",
+                    "dest": "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/",
+                    "expand": true
                 }]
             }
         },
@@ -59,6 +79,25 @@ module.exports = function (grunt) {
                 "files": {
                     "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>.min.js": ["<%= meta.paths.source %>/<%= pkg.name %>.js"],
                 }
+            },
+            "zip": {
+                "files": {
+                    "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/<%= pkg.name %>-<%= pkg.version %>.min.js": [
+                        "<%= meta.paths.source %>/<%= pkg.name %>.js",
+                        "<%= meta.paths.source %>/settings/*.js"
+                    ],
+                    "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/index.min.js": ["<%= meta.paths.source %>/index.js"]
+                }
+            }
+        },
+        "cssmin": {
+            "options": {
+                "sourceMap": true
+            },
+            "zip": {
+                "files": {
+                    "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/index.min.css": ["<%= meta.paths.source %>/index.css"]
+                }
             }
         },
         "preprocess": {
@@ -67,19 +106,38 @@ module.exports = function (grunt) {
                 "dest": "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>.ts"
             }
         },
+        "processhtml": {
+            "zip": {
+                "options": {
+                    "process": true,
+                    "data": {
+                        "version": "<%= pkg.version %>"
+                    }
+                },
+                "files": {
+                    "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/index.html": "<%= meta.paths.source %>/index.html"
+                }
+            }
+        },
+        "zip": {
+            "<%= meta.paths.dist %>/FullScreenMario-<%= pkg.version %>.zip": "<%= meta.paths.dist %>/FullScreenMario-<%= pkg.version %>/"
+        },
         "mocha_phantomjs": {
             "all": ["Tests/*.html"]
         }
     });
-    
+
     grunt.loadNpmTasks("grunt-contrib-clean");
     grunt.loadNpmTasks("grunt-contrib-copy");
+    grunt.loadNpmTasks("grunt-contrib-cssmin");
     grunt.loadNpmTasks("grunt-contrib-uglify");
     grunt.loadNpmTasks("grunt-mocha-phantomjs");
     grunt.loadNpmTasks("grunt-preprocess");
+    grunt.loadNpmTasks("grunt-processhtml");
     grunt.loadNpmTasks("grunt-tslint");
     grunt.loadNpmTasks("grunt-typescript");
+    grunt.loadNpmTasks("grunt-zip");
     grunt.registerTask("default", [
-        "tslint", "typescript", "clean", "copy", "uglify", "preprocess", "mocha_phantomjs"
+        "tslint", "typescript", "clean", "copy", "uglify", "cssmin", "preprocess", "processhtml", "mocha_phantomjs", "zip"
     ]);
 };
