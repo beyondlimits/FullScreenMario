@@ -289,7 +289,11 @@ FullScreenMario.FullScreenMario.settings.editor = (function (things, macros) {
     "PlatformGenerator": {
         "description": "Add a columnn of infinitely generated platforms.",
         "options": {
-            "width": 8
+            "width": 8,
+            "direction": {
+                "type": "Number",
+                "options": [1, -1]
+            }
         }
     },
     "StartInsideCastle": {
