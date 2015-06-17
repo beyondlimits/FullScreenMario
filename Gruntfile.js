@@ -119,6 +119,17 @@ module.exports = function (grunt) {
                 }
             }
         },
+        "htmlmin": {
+            "dist": {
+                "options": {
+                    "removeComments": true,
+                    "collapseWhitespace": true
+                },
+                "files": {
+                    "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/index.html": "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/index.html"
+                }
+            },
+        },
         "zip": {
             "zip": {
                 "cwd": "<%= meta.paths.dist %>/FullScreenMario-<%= pkg.version %>/",
@@ -134,6 +145,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-contrib-clean");
     grunt.loadNpmTasks("grunt-contrib-copy");
     grunt.loadNpmTasks("grunt-contrib-cssmin");
+    grunt.loadNpmTasks("grunt-contrib-htmlmin");
     grunt.loadNpmTasks("grunt-contrib-uglify");
     grunt.loadNpmTasks("grunt-mocha-phantomjs");
     grunt.loadNpmTasks("grunt-preprocess");
@@ -142,6 +154,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-typescript");
     grunt.loadNpmTasks("grunt-zip");
     grunt.registerTask("default", [
-        "tslint", "typescript", "clean", "copy", "uglify", "cssmin", "preprocess", "processhtml", "mocha_phantomjs", "zip"
+        "tslint", "typescript", "clean", "copy", "uglify", "cssmin", "preprocess", "processhtml", "htmlmin", "mocha_phantomjs", "zip"
     ]);
 };
