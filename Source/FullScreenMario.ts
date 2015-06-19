@@ -2055,18 +2055,12 @@ module FullScreenMario {
         }
 
         /**
-         * Spawn callback for Lakitus. These are only allowed to exist if there 
-         * isn't already one registered in the MapScreener. If there isn't, it is
-         * registered and its throwing interval is scheduled.
+         * Spawn callback for Lakitus. MapScreenr registers the most recently
+         * added lakitu, as some areas spawn them every once in a while.
          * 
          * @param {Lakitu} thing
          */
         spawnLakitu(thing: ILakitu): void {
-            if (thing.FSM.isThingAlive(thing.FSM.MapScreener.lakitu)) {
-                thing.FSM.killNormal(thing);
-                return;
-            }
-
             thing.FSM.MapScreener.lakitu = thing;
 
             thing.FSM.TimeHandler.addEventInterval(
@@ -6194,7 +6188,6 @@ module FullScreenMario {
         killFlip(thing: ICharacter, extra: number = 0): void {
             thing.FSM.flipVert(thing);
 
-
             if ((<any>thing).bottomBump) {
                 (<any>thing).bottomBump = undefined;
             }
@@ -6320,6 +6313,36 @@ module FullScreenMario {
             }
 
             return spawn;
+        }
+
+        /**
+         * Kill Function for Lakitus. If this is the last Lakitu in Characters,
+         * a new one is scheduled to be spawned at the same y-position.
+         * 
+         * @param {Lakitu} thing
+         */
+        killLakitu(thing: ILakitu): void {
+            var characters: ICharacter[] = <ICharacter[]>thing.FSM.GroupHolder.getGroup("Character"),
+                i: number;
+
+            thing.FSM.killFlip(thing);
+            thing.FSM.MapScreener.lakitu = undefined;
+
+            // If any other Lakitu exists after killNormal, killLakitu is done
+            for (i = 0; i < characters.length; i += 1) {
+                if (characters[i].title === "Lakitu") {
+                    thing.FSM.MapScreener.lakitu = <ILakitu>characters[i];
+                    return;
+                }
+            }
+
+            // The next Lakitu is spawned ~5 seconds later, give or take
+            thing.FSM.TimeHandler.addEvent(
+                thing.FSM.addThing.bind(thing.FSM),
+                350,
+                "Lakitu",
+                thing.FSM.MapScreener.right,
+                thing.top);
         }
 
         /**

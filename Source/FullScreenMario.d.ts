@@ -627,7 +627,8 @@ declare module FullScreenMario {
         killSpawn(thing: ICharacter, big?: boolean): IThing;
         killReplace(thing: IThing, title: string, attributes: any, attributesCopied?: string[]): void;
         killGoomba(thing: IGoomba, big?: boolean): void;
-        killKoopa(thing: IKoopa, big?: boolean): void;
+        killKoopa(thing: IKoopa, big?: boolean): ICharacter;
+        killLakitu(thing: IKoopa): void;
         killBowser(thing: IBowser, big?: boolean): void;
         killToShell(thing: ICharacter, big?: number): void;
         killNPCs(): void;
