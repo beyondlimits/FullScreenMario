@@ -7541,7 +7541,7 @@ var LevelEditr;
      */
     var LevelEditr = (function () {
         /**
-         *
+         * @param {ILevelEditrSettings} settings
          */
         function LevelEditr(settings) {
             this.GameStarter = settings.GameStarter;
@@ -7560,6 +7560,7 @@ var LevelEditr;
             this.currentPreThings = [];
             this.currentMode = "Build";
             this.currentClickMode = "Thing";
+            this.canClick = true;
         }
         /* Simple gets
         */
@@ -7676,6 +7677,12 @@ var LevelEditr;
          */
         LevelEditr.prototype.getKeyUndefined = function () {
             return this.keyUndefined;
+        };
+        /**
+         *
+         */
+        LevelEditr.prototype.getCanClick = function () {
+            return this.canClick;
         };
         /* State resets
         */
@@ -7877,10 +7884,19 @@ var LevelEditr;
             }
         };
         /**
+         * Temporarily disables this.canClick, so double clicking doesn't happen.
+         */
+        LevelEditr.prototype.afterClick = function () {
+            this.canClick = false;
+            setTimeout(function () {
+                this.canClick = true;
+            }, 70);
+        };
+        /**
          *
          */
         LevelEditr.prototype.onClickEditingThing = function (event) {
-            if (this.currentMode !== "Build") {
+            if (!this.canClick || this.currentMode !== "Build") {
                 return;
             }
             var x = this.roundTo(event.x || event.clientX || 0, this.blocksize), y = this.roundTo(event.y || event.clientY || 0, this.blocksize);
@@ -7893,7 +7909,7 @@ var LevelEditr;
          *
          */
         LevelEditr.prototype.onClickEditingMacro = function (event) {
-            if (this.currentMode !== "Build") {
+            if (!this.canClick || this.currentMode !== "Build") {
                 return;
             }
             var x = this.roundTo(event.x || event.clientX || 0, this.blocksize), y = this.roundTo(event.y || event.clientY || 0, this.blocksize), prething, i;
@@ -8286,7 +8302,8 @@ var LevelEditr;
         };
         LevelEditr.prototype.resetDisplayGui = function () {
             this.display.gui = this.GameStarter.createElement("div", {
-                "className": "EditorGui"
+                "className": "EditorGui",
+                "onclick": this.afterClick.bind(this)
             });
             this.display.container.appendChild(this.display.gui);
         };
