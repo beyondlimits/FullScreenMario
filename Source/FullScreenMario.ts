@@ -803,6 +803,48 @@ module FullScreenMario {
         */
 
         /**
+         * Regular maintenance Function called to decrease time every 25 game
+         * ticks. Returns whether time should stop counting, which is only when
+         * it becomes 0.
+         * 
+         * @param {FullScreenMario} FSM
+         */
+        maintainTime(FSM: FullScreenMario): boolean {
+            if (!(<IMapScreenr>FSM.MapScreener).notime) {
+                FSM.ItemsHolder.decrease("time", 1);
+                return false;
+            }
+
+            if (!FSM.ItemsHolder.getItem("time")) {
+                return true;
+            }
+
+            return false;
+        }
+
+        /**
+         * Regular maintenance Function called on the Scenery group every 350
+         * upkeeps (slightly over 5 seconds). Things are checked for being alive
+         * and to the left of QuadsKeeper.left; if they aren't, they are removed.
+         * 
+         * @param {FullScreenMario} FSM
+         */
+        maintainScenery(FSM: FullScreenMario): void {
+            var things: IScenery[] = <IScenery[]>FSM.GroupHolder.getGroup("Scenery"),
+                thing: IThing,
+                delx: number = FSM.QuadsKeeper.left,
+                i: number;
+
+            for (i = things.length - 1; i >= 0; i -= 1) {
+                thing = things[i];
+
+                if (thing.right < delx) {
+                    FSM.arrayDeleteThing(thing, things, i);
+                }
+            }
+        }
+
+        /**
          * Regular maintenance Function called on the Solids group every upkeep.  
          * Things are checked for being alive and to the right of QuadsKeeper.left; 
          * if they aren't, they are removed. Each Thing is also allowed a movement
@@ -811,14 +853,14 @@ module FullScreenMario {
          * @param {FullScreenMario} FSM
          * @param {Solid[]} solids   FSM's GroupHolder's Solid group.
          */
-        maintainSolids(FSM: FullScreenMario, solids: IThing[]): void {
+        maintainSolids(FSM: FullScreenMario, solids: ISolid[]): void {
             var delx: number = FSM.QuadsKeeper.left,
                 solid: IThing,
                 i: number;
 
             FSM.QuadsKeeper.determineAllQuadrants("Solid", solids);
 
-            for (i = 0; i < solids.length; ++i) {
+            for (i = solids.length - 1; i >= 0; i -= 1) {
                 solid = solids[i];
 
                 if (solid.alive && solid.right > delx) {
@@ -827,7 +869,6 @@ module FullScreenMario {
                     }
                 } else {
                     FSM.arrayDeleteThing(solid, solids, i);
-                    i -= 1;
                 }
             }
         }
@@ -847,7 +888,7 @@ module FullScreenMario {
                 character: ICharacter,
                 i: number;
 
-            for (i = 0; i < characters.length; ++i) {
+            for (i = characters.length - 1; i >= 0; i -= 1) {
                 character = characters[i];
 
                 // Gravity
@@ -902,7 +943,6 @@ module FullScreenMario {
                     }
                 } else {
                     FSM.arrayDeleteThing(character, characters, i);
-                    i -= 1;
                 }
             }
         }
@@ -6804,17 +6844,8 @@ module FullScreenMario {
 
             FSM.PixelDrawer.setBackground((<IArea>FSM.MapsHandler.getArea()).background);
 
-            FSM.TimeHandler.addEventInterval(
-                function (): boolean {
-                    if (!(<IMapScreenr>FSM.MapScreener).notime) {
-                        FSM.ItemsHolder.decrease("time", 1);
-                    }
-                    if (!FSM.ItemsHolder.getItem("time")) {
-                        return true;
-                    }
-                },
-                25,
-                Infinity);
+            FSM.TimeHandler.addEventInterval(FSM.maintainTime, 25, Infinity, FSM);
+            FSM.TimeHandler.addEventInterval(FSM.maintainScenery, 350, Infinity, FSM);
 
             FSM.AudioPlayer.clearAll();
             FSM.AudioPlayer.playTheme();
