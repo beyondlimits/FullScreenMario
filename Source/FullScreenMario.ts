@@ -811,7 +811,7 @@ module FullScreenMario {
          * @param {FullScreenMario} FSM
          * @param {Solid[]} solids   FSM's GroupHolder's Solid group.
          */
-        maintainSolids(FSM: FullScreenMario, solids: IThing[]): void {
+        maintainSolids(FSM: FullScreenMario, solids: ISolid[]): void {
             var delx: number = FSM.QuadsKeeper.left,
                 solid: IThing,
                 i: number;
