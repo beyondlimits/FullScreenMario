@@ -888,7 +888,7 @@ module FullScreenMario {
                 character: ICharacter,
                 i: number;
 
-            for (i = 0; i < characters.length; ++i) {
+            for (i = characters.length - 1; i >= 0; i -= 1) {
                 character = characters[i];
 
                 // Gravity
@@ -943,7 +943,6 @@ module FullScreenMario {
                     }
                 } else {
                     FSM.arrayDeleteThing(character, characters, i);
-                    i -= 1;
                 }
             }
         }
