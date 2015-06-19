@@ -488,6 +488,7 @@ FullScreenMario.FullScreenMario.settings.objects = {
             "noshiftx": true,
             "nocollidesolid": true,
             "grounded": true,
+            "death": FullScreenMario.FullScreenMario.prototype.killLakitu,
             "onThingAdded": FullScreenMario.FullScreenMario.prototype.spawnLakitu,
             "movement": FullScreenMario.FullScreenMario.prototype.moveLakituInitial
         },
