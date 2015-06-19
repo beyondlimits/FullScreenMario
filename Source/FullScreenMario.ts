@@ -803,6 +803,49 @@ module FullScreenMario {
         */
 
         /**
+         * Regular maintenance Function called to decrease time every 25 game
+         * ticks. Returns whether time should stop counting, which is only when
+         * it becomes 0.
+         * 
+         * @param {FullScreenMario} FSM
+         */
+        maintainTime(FSM: FullScreenMario): boolean {
+            if (!(<IMapScreenr>FSM.MapScreener).notime) {
+                FSM.ItemsHolder.decrease("time", 1);
+                return false;
+            }
+
+            if (!FSM.ItemsHolder.getItem("time")) {
+                return true;
+            }
+
+            return false;
+        }
+
+        /**
+         * Regular maintenance Function called on the Scenery group every 350
+         * upkeeps (slightly over 5 seconds). Things are checked for being alive
+         * and to the left of QuadsKeeper.left; if they aren't, they are removed.
+         * 
+         * @param {FullScreenMario} FSM
+         */
+        maintainScenery(FSM: FullScreenMario): void {
+            var things: IScenery[] = <IScenery[]>FSM.GroupHolder.getGroup("Scenery"),
+                thing: IThing,
+                delx: number = FSM.QuadsKeeper.left,
+                i: number;
+
+            for (i = 0; i < things.length; ++i) {
+                thing = things[i];
+
+                if (thing.right < delx) {
+                    FSM.arrayDeleteThing(thing, things, i);
+                    i -= 1;
+                }
+            }
+        }
+
+        /**
          * Regular maintenance Function called on the Solids group every upkeep.  
          * Things are checked for being alive and to the right of QuadsKeeper.left; 
          * if they aren't, they are removed. Each Thing is also allowed a movement
@@ -6804,17 +6847,8 @@ module FullScreenMario {
 
             FSM.PixelDrawer.setBackground((<IArea>FSM.MapsHandler.getArea()).background);
 
-            FSM.TimeHandler.addEventInterval(
-                function (): boolean {
-                    if (!(<IMapScreenr>FSM.MapScreener).notime) {
-                        FSM.ItemsHolder.decrease("time", 1);
-                    }
-                    if (!FSM.ItemsHolder.getItem("time")) {
-                        return true;
-                    }
-                },
-                25,
-                Infinity);
+            FSM.TimeHandler.addEventInterval(FSM.maintainTime, 25, Infinity, FSM);
+            FSM.TimeHandler.addEventInterval(FSM.maintainScenery, 350, Infinity, FSM);
 
             FSM.AudioPlayer.clearAll();
             FSM.AudioPlayer.playTheme();

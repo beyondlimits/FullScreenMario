@@ -447,6 +447,8 @@ declare module FullScreenMario {
         mouseDownRight(player: IPlayer, event?: Event): void;
         deviceMotion(player: IPlayer, event: DeviceMotionEvent): void;
         canInputsTrigger(FSM: FullScreenMario): boolean;
+        maintainTime(FSM: FullScreenMario): void;
+        maintainScenery(FSM: FullScreenMario, scenery: IScenery[]): void;
         maintainSolids(FSM: FullScreenMario, solids: ISolid[]): void;
         maintainCharacters(FSM: FullScreenMario, characters: ICharacter[]): void;
         maintainOverlaps(character: ICharacterOverlapping): void;
