@@ -1074,9 +1074,9 @@ module FullScreenMario {
             // Scrolloffset is how far over the middle player's right is
             if (FSM.MapScreener.canscroll) {
                 var scrolloffset: number = player.right - FSM.MapScreener.middleX;
-                if (scrolloffset > 0) {
+                //if (scrolloffset > 0) {
                     FSM.scrollWindow(Math.min(player.scrollspeed, scrolloffset));
-                }
+                //}
             }
         }
 
