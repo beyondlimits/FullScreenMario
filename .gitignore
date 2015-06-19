@@ -2,7 +2,6 @@ Distribution
 Distribution/**
 Source/*.js
 !Source/index.js
-!Source/References/UserWrappr-0.2.0.js
 Source/*.md
 Source/*.txt
 node_modules/

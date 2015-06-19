@@ -1,5 +1,5 @@
 ﻿document.onreadystatechange = function (event) {
-    if (event.target.readySate !== "complete") {
+    if (event.target.readyState !== "complete") {
         return;
     }
 
