@@ -835,12 +835,11 @@ module FullScreenMario {
                 delx: number = FSM.QuadsKeeper.left,
                 i: number;
 
-            for (i = 0; i < things.length; ++i) {
+            for (i = things.length - 1; i >= 0; i -= 1) {
                 thing = things[i];
 
                 if (thing.right < delx) {
                     FSM.arrayDeleteThing(thing, things, i);
-                    i -= 1;
                 }
             }
         }
@@ -861,7 +860,7 @@ module FullScreenMario {
 
             FSM.QuadsKeeper.determineAllQuadrants("Solid", solids);
 
-            for (i = 0; i < solids.length; ++i) {
+            for (i = solids.length - 1; i >= 0; i -= 1) {
                 solid = solids[i];
 
                 if (solid.alive && solid.right > delx) {
@@ -870,7 +869,6 @@ module FullScreenMario {
                     }
                 } else {
                     FSM.arrayDeleteThing(solid, solids, i);
-                    i -= 1;
                 }
             }
         }
