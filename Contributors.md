@@ -10,6 +10,9 @@ Names are sorted within groups by last name. Groups are in order of commit magni
 
 ### Feature Adders
 
+* [Kentucky JavaScript Users Group](http://kyjsug.org/)
+    * November 2013: [Added gamepad support](https://github.com/JoshuaKGoldberg/FullScreenMario/pull/91)
+
 * [Aaron Grant](https://github.com/blamonet)
     * November 2013: [Added loop option to playTheme](https://github.com/JoshuaKGoldberg/FullScreenMario/commit/6f370aa9852a75b45bd80b996b913a31ae0cf3db)
     * November 2013: [Added logic to unset sound.used if resume is false](https://github.com/JoshuaKGoldberg/FullScreenMario/commit/abdf9893414cefb43a8377dd1d671a7a8031d2f4)
