@@ -23,6 +23,9 @@ Names are sorted within groups by last name. Groups are in order of commit magni
     * November 2013: [Added Luigi as sprite option](https://github.com/JoshuaKGoldberg/FullScreenMario/commits?author=aamistak)
     * November 2013: [Bug fix for numFire as int/string](https://github.com/JoshuaKGoldberg/FullScreenMario/commit/4524bbc6c2122fd010d0ab43c9c3ea1beac6ccd4)
 
+* [Joe Pringle](https://github.com/joechip504/)
+    * March 2015: [Supported MapsHandlr expansion](https://github.com/FullScreenShenanigans/FullScreenPokemon/commits?author=joechip504)
+
 * [Umigatsu](https://github.com/Umigatsu)
     * February 2014: [Added initial key mappings menu](https://github.com/JoshuaKGoldberg/FullScreenMario/commits?author=Umigatsu)
 
