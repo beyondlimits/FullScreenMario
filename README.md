@@ -28,11 +28,11 @@ FullScreenMario is built on a modular framework called GameStartr. The [FullScre
 
 All source code is in the [Source](Source/) directory. See [Getting Started.md](Getting Started.md) for an in-depth guide on getting started programming with FullScreenMario.
 
-The FullScreenMario.ts class declaration contains class functions and some constants, while static settings to be added to the FullScreenMario prototype, such as map layouts and object attributes, are stored in files under [settings](Source/settings), such as audio.js and collisions.js.
+The FullScreenMario.ts class declaration contains class functions and some constants, while static settings to be added to the FullScreenMario prototype, such as map layouts and object attributes, are stored in files under [Source/settings](Source/settings), such as audio.js and collisions.js.
 
 
 ## Legal
 
-This is released under the [MIT License](http://mit-license.org/) (see [License.txt](LICENSE.txt)). FullScreenMario is meant to be both a proof of concept and an entertaining pasttime, not a source of income. 
+This is released under the [MIT License](http://mit-license.org/) (see [License.txt](LICENSE.txt)). 
 
 The FullScreenMario project started October 21st, 2012. The initial beta release in October 2013 saw the [primary host website](http://www.fullscreenmario.com) receive approximately 2.68 million unique visitors within a month, after which Nintendo shut the site down with a DMCA complaint (no action was taken against the authors, GitHub, or other hosting websites). The coding project then underwent an extensive rewrite and architecture change to become a modular project centered on the GameStartr platform, followed by a complete conversion to TypeScript.
