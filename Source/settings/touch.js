@@ -2,7 +2,7 @@ FullScreenMario.FullScreenMario.settings.touch = {
     "controls": [
         {
             "name": "Joystick",
-            "control": "joystick",
+            "control": "Joystick",
             "position": {
                 "vertical": "bottom",
                 "horizontal": "left",
