@@ -45,8 +45,9 @@ module TouchPassr {
 
     export interface ITouchPassrSettings {
         InputWriter: InputWritr.IInputWritr;
-        controls?: { [i: string]: IControlSchema };
         prefix?: string;
+        container?: HTMLElement;
+        controls?: { [i: string]: IControlSchema };
     }
 
     export interface ITouchPassr {
@@ -73,6 +74,13 @@ module TouchPassr {
         constructor(schema: IControlSchema) {
             this.schema = schema;
             this.resetElement();
+        }
+
+        /**
+         * 
+         */
+        public getElement(): HTMLElement {
+            return this.element;
         }
 
         /**
@@ -198,7 +206,9 @@ module TouchPassr {
          * 
          */
         protected resetElement() {
-
+            this.element = this.createElement("div", {
+                "class": "control control-joystick"
+            });
         }
     }
     
@@ -220,6 +230,11 @@ module TouchPassr {
          * 
          */
         private controls: any;
+
+        /**
+         * 
+         */
+        private container: HTMLElement;
         
         /**
          * @param {ITouchPassrSettings} settings
@@ -227,6 +242,8 @@ module TouchPassr {
         constructor(settings: ITouchPassrSettings) {
             this.InputWriter = settings.InputWriter;
             this.prefix = settings.prefix || "TouchPasser";
+
+            this.resetContainer(settings.container);
 
             this.controls = {};
             if (settings.controls) {
@@ -287,6 +304,24 @@ module TouchPassr {
             }
 
             this.controls[schema.name] = control;
+            this.container.appendChild(control.getElement());
+        }
+
+
+        /* Container
+        */
+
+        /**
+         * 
+         */
+        private resetContainer(parentContainer?: HTMLElement) {
+            this.container = Control.prototype.createElement("div", {
+                "className": "touch-passer-container"
+            });
+
+            if (parentContainer) {
+                parentContainer.appendChild(this.container);
+            }
         }
     }
 }

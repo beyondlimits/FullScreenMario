@@ -27,6 +27,12 @@ var TouchPassr;
         /**
          *
          */
+        Control.prototype.getElement = function () {
+            return this.element;
+        };
+        /**
+         *
+         */
         Control.prototype.resetElement = function () {
             throw new Error("Control::resetElement is abstract.");
         };
@@ -146,6 +152,9 @@ var TouchPassr;
          *
          */
         JoystickControl.prototype.resetElement = function () {
+            this.element = this.createElement("div", {
+                "class": "control control-joystick"
+            });
         };
         return JoystickControl;
     })(Control);
@@ -160,6 +169,7 @@ var TouchPassr;
         function TouchPassr(settings) {
             this.InputWriter = settings.InputWriter;
             this.prefix = settings.prefix || "TouchPasser";
+            this.resetContainer(settings.container);
             this.controls = {};
             if (settings.controls) {
                 this.addControls(settings.controls);
@@ -206,6 +216,20 @@ var TouchPassr;
                     break;
             }
             this.controls[schema.name] = control;
+            this.container.appendChild(control.getElement());
+        };
+        /* Container
+        */
+        /**
+         *
+         */
+        TouchPassr.prototype.resetContainer = function (parentContainer) {
+            this.container = Control.prototype.createElement("div", {
+                "className": "touch-passer-container"
+            });
+            if (parentContainer) {
+                parentContainer.appendChild(this.container);
+            }
         };
         return TouchPassr;
     })();
