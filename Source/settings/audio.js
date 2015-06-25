@@ -46,4 +46,4 @@ FullScreenMario.FullScreenMario.settings.audio = {
             "Hurry Sky"
         ]
     }
-}
+};
