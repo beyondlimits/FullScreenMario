@@ -5,26 +5,71 @@
  */
 module TouchPassr {
     "use strict";
-    
-    export interface ITouchPassrSettings {
-        
+
+    export interface IPosition {
+        vertical: string;
+        horizontal: string;
+        offset?: {
+            left?: number;
+            top?: number;
+        }
     }
-    
+
+    export interface IControlSchema {
+        name: string;
+        control: string;
+        position: IPosition;
+        label?: string;
+    }
+
+    export interface IPipes {
+        activated?: string[];
+        deactivated?: string[];
+    }
+
+    export interface IButtonControl extends IControlSchema {
+        pipes?: IPipes;
+    }
+
+    export interface IJoystickControl extends IControlSchema {
+        directions: IJoystickDirection[];
+    }
+
+    export interface IJoystickDirection {
+        name: string;
+        neighbors?: string[];
+        pipes?: IPipes;
+    }
+
+    export interface ITouchPassrSettings {
+        controls: { [i: string]: IControlSchema };
+        prefix?: string;
+    }
+
     export interface ITouchPassr {
-        
+
     }
     
     /**
      * 
      */
-    export class TouchPassr {
+    export class TouchPassr implements ITouchPassr {
         
+        /**
+         * 
+         */
+        private prefix: string;
+
+        /**
+         * 
+         */
+        private controls: any;
         
         /**
          * @param {ITouchPassrSettings} settings
          */
-         constructor(settings: ITouchPassrSettings) {
-             
-         }
+        constructor(settings: ITouchPassrSettings) {
+            
+        }
     }
 }

@@ -1,8 +1,8 @@
 FullScreenMario.FullScreenMario.settings.touch = {
-    "inputs": [
+    "controls": [
         {
             "name": "Joystick",
-            "type": "joystick",
+            "control": "joystick",
             "position": {
                 "vertical": "bottom",
                 "horizontal": "left",
@@ -104,7 +104,7 @@ FullScreenMario.FullScreenMario.settings.touch = {
         },
         {
             "name": "A",
-            "type": "Button",
+            "control": "Button",
             "label": "A",
             "position": {
                 "vertical": "bottom",
@@ -125,7 +125,7 @@ FullScreenMario.FullScreenMario.settings.touch = {
         },
         {
             "name": "B",
-            "type": "Button",
+            "control": "Button",
             "label": "B",
             "position": {
                 "vertical": "bottom",
@@ -146,7 +146,7 @@ FullScreenMario.FullScreenMario.settings.touch = {
         },
         {
             "name": "Start",
-            "type": "Button",
+            "control": "Button",
             "label": "Start",
             "position": {
                 "vertical": "bottom",
