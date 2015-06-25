@@ -14,6 +14,9 @@ module TouchPassr {
         
     }
     
+    /**
+     * 
+     */
     export class TouchPassr {
         
         
