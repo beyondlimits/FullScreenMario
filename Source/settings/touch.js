@@ -1,4 +1,38 @@
 FullScreenMario.FullScreenMario.settings.touch = {
+    "styles": {
+        "default": {
+            "elementInner": {
+                "style": {
+                    "cursor": "pointer"
+                }
+            }
+        },
+        "Button": {
+            "element": {
+                "className": "control control-button"
+            },
+            "elementInner": {
+                "className": "control-inner control-button",
+                "style": {
+                    "padding": ".35cm",
+                    "width": "50px",
+                    "height": "50px",
+                    "border": "4px solid rgba(238, 238, 238, .7)",
+                    "borderRadius": "100%",
+                    "background": "rgba(175, 175, 175, .7)",
+                    "textAlign": "center"
+                }
+            }
+        },
+        "Joystick": {
+            "element": {
+                "className": "control control-button"
+            },
+            "elementInner": {
+                "className": "control-inner control-button"
+            }
+        }
+    },
     "controls": [
         {
             "name": "Joystick",
@@ -110,8 +144,8 @@ FullScreenMario.FullScreenMario.settings.touch = {
                 "vertical": "bottom",
                 "horizontal": "right",
                 "offset": {
-                    "left": -28,
-                    "top": -49
+                    "left": "-1.56cm",
+                    "top": "-2.8cm"
                 }
             },
             "pipes": {
@@ -131,8 +165,8 @@ FullScreenMario.FullScreenMario.settings.touch = {
                 "vertical": "bottom",
                 "horizontal": "right",
                 "offset": {
-                    "left": -49,
-                    "top": -28
+                    "left": "-2.8cm",
+                    "top": "-1.56cm"
                 }
             },
             "pipes": {
@@ -148,11 +182,21 @@ FullScreenMario.FullScreenMario.settings.touch = {
             "name": "Start",
             "control": "Button",
             "label": "Start",
+            "styles": {
+                "elementInner": {
+                    "style": {
+                        "width": "7em",
+                        "padding": ".21cm",
+                        "borderRadius": "7px",
+                        "fontSize": "77%"
+                    }
+                }
+            },
             "position": {
                 "vertical": "bottom",
                 "horizontal": "center",
                 "offset": {
-                    "top": -14
+                    "top": "-.84cm"
                 }
             },
             "pipes": {

@@ -12,8 +12,8 @@ module TouchPassr {
         vertical: string;
         horizontal: string;
         offset?: {
-            left?: number;
-            top?: number;
+            left?: number | string;
+            top?: number | string;
         }
     }
 
@@ -22,6 +22,7 @@ module TouchPassr {
         control: string;
         position: IPosition;
         label?: string;
+        styles?: any;
     }
 
     export interface IPipes {
@@ -47,6 +48,7 @@ module TouchPassr {
         InputWriter: InputWritr.IInputWritr;
         prefix?: string;
         container?: HTMLElement;
+        styles?: any;
         controls?: { [i: string]: IControlSchema };
     }
 
@@ -71,9 +73,14 @@ module TouchPassr {
         /**
          * 
          */
-        constructor(schema: IControlSchema) {
+        protected elementInner: HTMLElement;
+
+        /**
+         * 
+         */
+        constructor(schema: IControlSchema, styles) {
             this.schema = schema;
-            this.resetElement();
+            this.resetElement(styles);
         }
 
         /**
@@ -86,8 +93,8 @@ module TouchPassr {
         /**
          * 
          */
-        protected resetElement() {
-            throw new Error("Control::resetElement is abstract.");
+        public getElementInner(): HTMLElement {
+            return this.elementInner;
         }
 
         /**
@@ -100,7 +107,7 @@ module TouchPassr {
          *                              className or style.
          * @return {HTMLElement}
          */
-        createElement(tag: string, ...args: any[]): HTMLElement {
+        public createElement(tag: string, ...args: any[]): HTMLElement {
             var element: any = document.createElement(tag || "div"),
                 i: number;
 
@@ -122,7 +129,7 @@ module TouchPassr {
          * @param {Boolean} [noOverride]
          * @return {HTMLElement}
          */
-        proliferateElement(recipient: HTMLElement, donor: any, noOverride: boolean = false): HTMLElement {
+        public proliferateElement(recipient: HTMLElement, donor: any, noOverride: boolean = false): HTMLElement {
             var setting: any,
                 i: string,
                 j: number;
@@ -174,6 +181,105 @@ module TouchPassr {
             }
             return recipient;
         }
+
+        /**
+         * 
+         */
+        protected resetElement(styles: any, customType?: string): void {
+            var position = this.schema.position,
+                offset = position.offset,
+                customStyles;
+
+            this.element = this.createElement("div", {
+                "className": "control",
+                "style": {
+                    "position": "absolute",
+                    "width": 0,
+                    "height": 0,
+                    "boxSizing": "border-box"
+                }
+            });
+            this.elementInner = this.createElement("div", {
+                "className": "control-inner",
+                "textContent": this.schema.label,
+                "style": {
+                    "position": "absolute",
+                    "boxSizing": "border-box"
+                }
+            });
+            this.element.appendChild(this.elementInner);
+
+
+            if (position.horizontal === "left") {
+                this.element.style.left = "0";
+            } else if (position.horizontal === "right") {
+                this.element.style.right = "0";
+            } else if (position.horizontal === "center") {
+                this.element.style.left = "50%";
+            }
+
+            if (position.vertical === "top") {
+                this.element.style.top = "0";
+            } else if (position.vertical === "bottom") {
+                this.element.style.bottom = "0";
+            } else if (position.vertical === "center") {
+                this.element.style.top = "50%";
+            }
+
+            this.passElementStyles(styles.default);
+            this.passElementStyles(styles[customType]);
+            this.passElementStyles(this.schema.styles);
+
+            if (offset.left) {
+                this.elementInner.style.marginLeft = this.createPixelMeasurement(offset.left);
+            }
+
+            if (offset.top) {
+                this.elementInner.style.marginTop = this.createPixelMeasurement(offset.top);
+            }
+
+            // this glitch doe
+            setTimeout(function () {
+                if (position.horizontal === "center") {
+                    this.elementInner.style.left = Math.round(this.elementInner.offsetWidth / -2) + "px";
+                }
+                if (position.vertical === "center") {
+                    this.elementInner.style.top = Math.round(this.elementInner.offsetHeight / -2) + "px";
+                }
+            }.bind(this));
+        }
+
+        /**
+         * 
+         */
+        protected createPixelMeasurement(raw: string | number): string {
+            if (!raw) {
+                return "0";
+            }
+
+            if (typeof raw === "number" || raw.constructor === Number) {
+                return raw + "px";
+            }
+
+            return <string>raw;
+        }
+
+        /**
+         * 
+         */
+        protected passElementStyles(styles): void {
+            if (!styles) {
+                return;
+            }
+
+            if (styles.element) {
+                this.proliferateElement(this.element, styles.element);
+            }
+
+            if (styles.elementInner) {
+                this.proliferateElement(this.elementInner, styles.elementInner);
+            }
+        }
     }
 
     /**
@@ -183,18 +289,8 @@ module TouchPassr {
         /**
          * 
          */
-        protected resetElement() {
-            this.element = this.createElement("div", {
-                "class": "control control-button",
-                "textContent": this.schema.label,
-                "style": {
-                    "position": "absolute",
-                    "width": "50px",
-                    "height": "50px",
-                    "border-radius": "100%",
-                    "background": "rgba(175, 175, 175, .7)"
-                }
-            });
+        protected resetElement(styles: any): void {
+            super.resetElement(styles, "Button");
         }
     }
 
@@ -205,10 +301,8 @@ module TouchPassr {
         /**
          * 
          */
-        protected resetElement() {
-            this.element = this.createElement("div", {
-                "class": "control control-joystick"
-            });
+        protected resetElement(styles: any): void {
+            super.resetElement(styles, "Joystick");
         }
     }
     
@@ -229,6 +323,11 @@ module TouchPassr {
         /**
          * 
          */
+        private styles: any;
+
+        /**
+         * 
+         */
         private controls: any;
 
         /**
@@ -241,6 +340,7 @@ module TouchPassr {
          */
         constructor(settings: ITouchPassrSettings) {
             this.InputWriter = settings.InputWriter;
+            this.styles = settings.styles || {};
             this.prefix = settings.prefix || "TouchPasser";
 
             this.resetContainer(settings.container);
@@ -295,11 +395,11 @@ module TouchPassr {
             // @todo keep a mapping of control classes, not this switch statement
             switch (schema.control) {
                 case "Button":
-                    control = new ButtonControl(schema);
+                    control = new ButtonControl(schema, this.styles);
                     break;
 
                 case "Joystick":
-                    control = new JoystickControl(schema);
+                    control = new JoystickControl(schema, this.styles);
                     break;
             }
 
@@ -308,7 +408,7 @@ module TouchPassr {
         }
 
 
-        /* Container
+        /* HTML manipulations
         */
 
         /**
@@ -316,7 +416,14 @@ module TouchPassr {
          */
         private resetContainer(parentContainer?: HTMLElement) {
             this.container = Control.prototype.createElement("div", {
-                "className": "touch-passer-container"
+                "className": "touch-passer-container",
+                "style": {
+                    "position": "absolute",
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                }
             });
 
             if (parentContainer) {

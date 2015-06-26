@@ -20,9 +20,9 @@ var TouchPassr;
         /**
          *
          */
-        function Control(schema) {
+        function Control(schema, styles) {
             this.schema = schema;
-            this.resetElement();
+            this.resetElement(styles);
         }
         /**
          *
@@ -33,8 +33,8 @@ var TouchPassr;
         /**
          *
          */
-        Control.prototype.resetElement = function () {
-            throw new Error("Control::resetElement is abstract.");
+        Control.prototype.getElementInner = function () {
+            return this.elementInner;
         };
         /**
          * Creates and returns an HTMLElement of the specified type. Any additional
@@ -110,6 +110,92 @@ var TouchPassr;
             }
             return recipient;
         };
+        /**
+         *
+         */
+        Control.prototype.resetElement = function (styles, customType) {
+            var position = this.schema.position, offset = position.offset, customStyles;
+            this.element = this.createElement("div", {
+                "className": "control",
+                "style": {
+                    "position": "absolute",
+                    "width": 0,
+                    "height": 0,
+                    "boxSizing": "border-box"
+                }
+            });
+            this.elementInner = this.createElement("div", {
+                "className": "control-inner",
+                "textContent": this.schema.label,
+                "style": {
+                    "position": "absolute",
+                    "boxSizing": "border-box"
+                }
+            });
+            this.element.appendChild(this.elementInner);
+            if (position.horizontal === "left") {
+                this.element.style.left = "0";
+            }
+            else if (position.horizontal === "right") {
+                this.element.style.right = "0";
+            }
+            else if (position.horizontal === "center") {
+                this.element.style.left = "50%";
+            }
+            if (position.vertical === "top") {
+                this.element.style.top = "0";
+            }
+            else if (position.vertical === "bottom") {
+                this.element.style.bottom = "0";
+            }
+            else if (position.vertical === "center") {
+                this.element.style.top = "50%";
+            }
+            this.passElementStyles(styles.default);
+            this.passElementStyles(styles[customType]);
+            this.passElementStyles(this.schema.styles);
+            if (offset.left) {
+                this.elementInner.style.marginLeft = this.createPixelMeasurement(offset.left);
+            }
+            if (offset.top) {
+                this.elementInner.style.marginTop = this.createPixelMeasurement(offset.top);
+            }
+            // this glitch doe
+            setTimeout(function () {
+                if (position.horizontal === "center") {
+                    this.elementInner.style.left = Math.round(this.elementInner.offsetWidth / -2) + "px";
+                }
+                if (position.vertical === "center") {
+                    this.elementInner.style.top = Math.round(this.elementInner.offsetHeight / -2) + "px";
+                }
+            }.bind(this));
+        };
+        /**
+         *
+         */
+        Control.prototype.createPixelMeasurement = function (raw) {
+            if (!raw) {
+                return "0";
+            }
+            if (typeof raw === "number" || raw.constructor === Number) {
+                return raw + "px";
+            }
+            return raw;
+        };
+        /**
+         *
+         */
+        Control.prototype.passElementStyles = function (styles) {
+            if (!styles) {
+                return;
+            }
+            if (styles.element) {
+                this.proliferateElement(this.element, styles.element);
+            }
+            if (styles.elementInner) {
+                this.proliferateElement(this.elementInner, styles.elementInner);
+            }
+        };
         return Control;
     })();
     _TouchPassr.Control = Control;
@@ -124,18 +210,8 @@ var TouchPassr;
         /**
          *
          */
-        ButtonControl.prototype.resetElement = function () {
-            this.element = this.createElement("div", {
-                "class": "control control-button",
-                "textContent": this.schema.label,
-                "style": {
-                    "position": "absolute",
-                    "width": "50px",
-                    "height": "50px",
-                    "border-radius": "100%",
-                    "background": "rgba(175, 175, 175, .7)"
-                }
-            });
+        ButtonControl.prototype.resetElement = function (styles) {
+            _super.prototype.resetElement.call(this, styles, "Button");
         };
         return ButtonControl;
     })(Control);
@@ -151,10 +227,8 @@ var TouchPassr;
         /**
          *
          */
-        JoystickControl.prototype.resetElement = function () {
-            this.element = this.createElement("div", {
-                "class": "control control-joystick"
-            });
+        JoystickControl.prototype.resetElement = function (styles) {
+            _super.prototype.resetElement.call(this, styles, "Joystick");
         };
         return JoystickControl;
     })(Control);
@@ -168,6 +242,7 @@ var TouchPassr;
          */
         function TouchPassr(settings) {
             this.InputWriter = settings.InputWriter;
+            this.styles = settings.styles || {};
             this.prefix = settings.prefix || "TouchPasser";
             this.resetContainer(settings.container);
             this.controls = {};
@@ -209,23 +284,30 @@ var TouchPassr;
             var control;
             switch (schema.control) {
                 case "Button":
-                    control = new ButtonControl(schema);
+                    control = new ButtonControl(schema, this.styles);
                     break;
                 case "Joystick":
-                    control = new JoystickControl(schema);
+                    control = new JoystickControl(schema, this.styles);
                     break;
             }
             this.controls[schema.name] = control;
             this.container.appendChild(control.getElement());
         };
-        /* Container
+        /* HTML manipulations
         */
         /**
          *
          */
         TouchPassr.prototype.resetContainer = function (parentContainer) {
             this.container = Control.prototype.createElement("div", {
-                "className": "touch-passer-container"
+                "className": "touch-passer-container",
+                "style": {
+                    "position": "absolute",
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                }
             });
             if (parentContainer) {
                 parentContainer.appendChild(this.container);

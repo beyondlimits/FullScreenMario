@@ -5,7 +5,6 @@
     }, GameStarter.settings.touch));
 };
 
-
 document.onreadystatechange = function (event) {
     if (event.target.readyState !== "complete") {
         return;
