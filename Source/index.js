@@ -1,6 +1,6 @@
 ﻿FullScreenMario.FullScreenMario.prototype.resetTouchPasser = function (GameStarter, customs) {
     GameStarter.TouchPasser = new TouchPassr.TouchPassr(GameStarter.proliferate({
-        "InputWritr": GameStarter.InputWriter,
+        "InputWriter": GameStarter.InputWriter,
         "container": GameStarter.container
     }, GameStarter.settings.touch));
 };

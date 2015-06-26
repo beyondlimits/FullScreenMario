@@ -59,8 +59,8 @@ FullScreenMario.FullScreenMario.settings.touch = {
                 "vertical": "bottom",
                 "horizontal": "left",
                 "offset": {
-                    "left": "1.4cm",
-                    "top": "-2.8cm"
+                    "left": ".56cm",
+                    "top": "-2.45cm"
                 }
             },
             "directions": [
@@ -179,7 +179,7 @@ FullScreenMario.FullScreenMario.settings.touch = {
                     "onkeydown": ["up"]
                 },
                 "deactivated": {
-                    "onkeydown": ["up"]
+                    "onkeyup": ["up"]
                 }
             }
         },

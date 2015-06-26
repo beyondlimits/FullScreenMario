@@ -20,7 +20,8 @@ var TouchPassr;
         /**
          *
          */
-        function Control(schema, styles) {
+        function Control(InputWriter, schema, styles) {
+            this.InputWriter = InputWriter;
             this.schema = schema;
             this.resetElement(styles);
         }
@@ -202,6 +203,23 @@ var TouchPassr;
         Control.prototype.setRotation = function (element, rotation) {
             element.style.transform = "rotate(" + rotation + "deg)";
         };
+        /**
+         *
+         */
+        Control.prototype.onEvent = function (which, event) {
+            var events = this.schema.pipes[which], i, j;
+            if (!events) {
+                return;
+            }
+            for (i in events) {
+                if (!events.hasOwnProperty(i)) {
+                    continue;
+                }
+                for (j = 0; j < events[i].length; j += 1) {
+                    this.InputWriter.callEvent(i, events[i][j], event);
+                }
+            }
+        };
         return Control;
     })();
     _TouchPassr.Control = Control;
@@ -217,7 +235,12 @@ var TouchPassr;
          *
          */
         ButtonControl.prototype.resetElement = function (styles) {
+            var onActivated = this.onEvent.bind(this, "activated"), onDeactivated = this.onEvent.bind(this, "deactivated");
             _super.prototype.resetElement.call(this, styles, "Button");
+            this.element.addEventListener("mousedown", onActivated);
+            this.element.addEventListener("touchstart", onActivated);
+            this.element.addEventListener("mouseup", onDeactivated);
+            this.element.addEventListener("touchend", onDeactivated);
         };
         return ButtonControl;
     })(Control);
@@ -311,10 +334,10 @@ var TouchPassr;
             var control;
             switch (schema.control) {
                 case "Button":
-                    control = new ButtonControl(schema, this.styles);
+                    control = new ButtonControl(this.InputWriter, schema, this.styles);
                     break;
                 case "Joystick":
-                    control = new JoystickControl(schema, this.styles);
+                    control = new JoystickControl(this.InputWriter, schema, this.styles);
                     break;
             }
             this.controls[schema.name] = control;

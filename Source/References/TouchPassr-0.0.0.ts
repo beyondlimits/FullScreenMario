@@ -26,8 +26,8 @@ module TouchPassr {
     }
 
     export interface IPipes {
-        activated?: string[];
-        deactivated?: string[];
+        activated?: { [i: string]: (string | number)[] };
+        deactivated?: { [i: string]: (string | number)[] };
     }
 
     export interface IButtonSchema extends IControlSchema {
@@ -64,6 +64,11 @@ module TouchPassr {
         /**
          * 
          */
+        protected InputWriter: InputWritr.IInputWritr;
+
+        /**
+         * 
+         */
         protected schema: IControlSchema;
 
         /**
@@ -79,7 +84,8 @@ module TouchPassr {
         /**
          * 
          */
-        constructor(schema: IControlSchema, styles) {
+        constructor(InputWriter: InputWritr.IInputWritr, schema: IControlSchema, styles) {
+            this.InputWriter = InputWriter;
             this.schema = schema;
             this.resetElement(styles);
         }
@@ -288,6 +294,29 @@ module TouchPassr {
         protected setRotation(element: HTMLElement, rotation: number): void {
             element.style.transform = "rotate(" + rotation + "deg)";
         }
+
+        /**
+         * 
+         */
+        protected onEvent(which: string, event: Event): void {
+            var events = (<IButtonSchema>this.schema).pipes[which],
+                i: string,
+                j: number;
+
+            if (!events) {
+                return;
+            }
+
+            for (i in events) {
+                if (!events.hasOwnProperty(i)) {
+                    continue;
+                }
+
+                for (j = 0; j < events[i].length; j += 1) {
+                    this.InputWriter.callEvent(i, events[i][j], event);
+                }
+            }
+        }
     }
 
     /**
@@ -298,7 +327,16 @@ module TouchPassr {
          * 
          */
         protected resetElement(styles: any): void {
+            var onActivated = this.onEvent.bind(this, "activated"),
+                onDeactivated = this.onEvent.bind(this, "deactivated");
+
             super.resetElement(styles, "Button");
+
+            this.element.addEventListener("mousedown", onActivated);
+            this.element.addEventListener("touchstart", onActivated);
+
+            this.element.addEventListener("mouseup", onDeactivated);
+            this.element.addEventListener("touchend", onDeactivated);
         }
     }
 
@@ -438,11 +476,11 @@ module TouchPassr {
             // @todo keep a mapping of control classes, not this switch statement
             switch (schema.control) {
                 case "Button":
-                    control = new ButtonControl(schema, this.styles);
+                    control = new ButtonControl(this.InputWriter, schema, this.styles);
                     break;
 
                 case "Joystick":
-                    control = new JoystickControl(schema, this.styles);
+                    control = new JoystickControl(this.InputWriter, schema, this.styles);
                     break;
             }
 
