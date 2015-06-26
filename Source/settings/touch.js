@@ -212,6 +212,7 @@ FullScreenMario.FullScreenMario.settings.touch = {
                 "elementInner": {
                     "style": {
                         "width": "7em",
+                        "height": "auto",
                         "padding": ".21cm",
                         "borderRadius": "7px",
                         "fontSize": "77%"
@@ -222,15 +223,12 @@ FullScreenMario.FullScreenMario.settings.touch = {
                 "vertical": "bottom",
                 "horizontal": "center",
                 "offset": {
-                    "top": "-.84cm"
+                    "top": "-1.12cm"
                 }
             },
             "pipes": {
                 "activated": {
-                    "onkeydown": ["pause"]
-                },
-                "deactivated": {
-                    "onkeydown": ["pause"]
+                    "onmousedown": ["rightclick"]
                 }
             }
         }
