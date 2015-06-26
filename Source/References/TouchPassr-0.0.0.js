@@ -196,6 +196,12 @@ var TouchPassr;
                 this.proliferateElement(this.elementInner, styles.elementInner);
             }
         };
+        /**
+         *
+         */
+        Control.prototype.setRotation = function (element, rotation) {
+            element.style.transform = "rotate(" + rotation + "deg)";
+        };
         return Control;
     })();
     _TouchPassr.Control = Control;
@@ -229,6 +235,27 @@ var TouchPassr;
          */
         JoystickControl.prototype.resetElement = function (styles) {
             _super.prototype.resetElement.call(this, styles, "Joystick");
+            var directions = this.schema.directions, element, degrees, dx, dy, i;
+            for (i = 0; i < directions.length; i += 1) {
+                degrees = directions[i].degrees;
+                dx = Math.cos(degrees * Math.PI / 180) * 50 + 50;
+                dy = Math.sin(degrees * Math.PI / 180) * 50 + 50;
+                element = this.createElement("div", {
+                    "className": "control-joystick-tick",
+                    "style": {
+                        "position": "absolute",
+                        "left": dx + "%",
+                        "top": dy + "%",
+                        "marginLeft": "-4px",
+                        "marginTop": "-1px",
+                        "width": ".21cm",
+                        "height": "2px",
+                    }
+                });
+                this.proliferateElement(element, styles.Joystick.tick);
+                this.setRotation(element, degrees);
+                this.elementInner.appendChild(element);
+            }
         };
         return JoystickControl;
     })(Control);

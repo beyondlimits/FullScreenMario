@@ -40,6 +40,7 @@ module TouchPassr {
 
     export interface IJoystickDirection {
         name: string;
+        degrees: number;
         neighbors?: string[];
         pipes?: IPipes;
     }
@@ -280,6 +281,13 @@ module TouchPassr {
                 this.proliferateElement(this.elementInner, styles.elementInner);
             }
         }
+
+        /**
+         * 
+         */
+        protected setRotation(element: HTMLElement, rotation: number): void {
+            element.style.transform = "rotate(" + rotation + "deg)";
+        }
     }
 
     /**
@@ -303,6 +311,38 @@ module TouchPassr {
          */
         protected resetElement(styles: any): void {
             super.resetElement(styles, "Joystick");
+
+            var directions: IJoystickDirection[] = (<IJoystickSchema>this.schema).directions,
+                element: HTMLDivElement,
+                degrees: number,
+                dx: number,
+                dy: number,
+                i: number;
+
+            for (i = 0; i < directions.length; i += 1) {
+                degrees = directions[i].degrees;
+
+                dx = Math.cos(degrees * Math.PI / 180) * 50 + 50;
+                dy = Math.sin(degrees * Math.PI / 180) * 50 + 50;
+
+                element = <HTMLDivElement>this.createElement("div", {
+                    "className": "control-joystick-tick",
+                    "style": {
+                        "position": "absolute",
+                        "left": dx + "%",
+                        "top": dy + "%",
+                        "marginLeft": "-4px",
+                        "marginTop": "-1px",
+                        "width": ".21cm",
+                        "height": "2px",
+                    }
+                });
+
+                this.proliferateElement(element, styles.Joystick.tick);
+                this.setRotation(element, degrees);
+
+                this.elementInner.appendChild(element);
+            }
         }
     }
     

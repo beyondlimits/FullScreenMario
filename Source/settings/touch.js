@@ -3,7 +3,13 @@ FullScreenMario.FullScreenMario.settings.touch = {
         "default": {
             "elementInner": {
                 "style": {
-                    "cursor": "pointer"
+                    "cursor": "pointer",
+                    "width": "2.1cm",
+                    "height": "2.1cm",
+                    "border": "4px solid rgba(238, 238, 238, .7)",
+                    "borderRadius": "100%",
+                    "background": "rgba(175, 175, 175, .7)",
+                    "textAlign": "center"
                 }
             }
         },
@@ -15,8 +21,8 @@ FullScreenMario.FullScreenMario.settings.touch = {
                 "className": "control-inner control-button",
                 "style": {
                     "padding": ".35cm",
-                    "width": "50px",
-                    "height": "50px",
+                    "width": "1.4cm",
+                    "height": "1.4cm",
                     "border": "4px solid rgba(238, 238, 238, .7)",
                     "borderRadius": "100%",
                     "background": "rgba(175, 175, 175, .7)",
@@ -30,6 +36,11 @@ FullScreenMario.FullScreenMario.settings.touch = {
             },
             "elementInner": {
                 "className": "control-inner control-button"
+            },
+            "tick": {
+                "style": {
+                    "background": "rgba(70, 70, 70, .84)"
+                }
             }
         }
     },
@@ -41,17 +52,19 @@ FullScreenMario.FullScreenMario.settings.touch = {
                 "vertical": "bottom",
                 "horizontal": "left",
                 "offset": {
-                    "left": 35,
-                    "top": -35
+                    "left": "1.4cm",
+                    "top": "-2.1cm"
                 }
             },
             "directions": [
                 {
                     "name": "Up",
+                    "degrees": 0,
                     "neighbors": ["UpLeft", "UpRight"]
                 },
                 {
                     "name": "UpRight",
+                    "degrees": 45,
                     "neighbors": ["Up", "Right"],
                     "pipes": {
                         "activated": {
@@ -64,6 +77,7 @@ FullScreenMario.FullScreenMario.settings.touch = {
                 },
                 {
                     "name": "Right",
+                    "degrees": 90,
                     "neighbors": ["UpRight", "DownRight"],
                     "pipes": {
                         "activated": {
@@ -76,6 +90,7 @@ FullScreenMario.FullScreenMario.settings.touch = {
                 },
                 {
                     "name": "DownRight",
+                    "degrees": 135,
                     "neighbors": ["Right", "Down"],
                     "pipes": {
                         "activated": {
@@ -88,6 +103,7 @@ FullScreenMario.FullScreenMario.settings.touch = {
                 },
                 {
                     "name": "Down",
+                    "degrees": 180,
                     "neighbors": ["DownRight", "DownLeft"],
                     "pipes": {
                         "activated": {
@@ -100,6 +116,7 @@ FullScreenMario.FullScreenMario.settings.touch = {
                 },
                 {
                     "name": "DownLeft",
+                    "degrees": 225,
                     "neighbors": ["Down", "left"],
                     "pipes": {
                         "activated": {
@@ -112,6 +129,7 @@ FullScreenMario.FullScreenMario.settings.touch = {
                 },
                 {
                     "name": "Left",
+                    "degrees": 270,
                     "neighbors": ["DownLeft", "UpLeft"],
                     "pipes": {
                         "activated": {
@@ -124,6 +142,7 @@ FullScreenMario.FullScreenMario.settings.touch = {
                 },
                 {
                     "name": "UpLeft",
+                    "degrees": 315,
                     "neighbors": ["Left", "Up"],
                     "pipes": {
                         "activated": {
