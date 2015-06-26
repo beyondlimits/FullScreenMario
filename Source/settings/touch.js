@@ -1,31 +1,36 @@
 FullScreenMario.FullScreenMario.settings.touch = {
     "styles": {
         "default": {
+            "element": {
+                "style": {
+                    "opacity": ".7"
+                }
+            },
             "elementInner": {
                 "style": {
                     "cursor": "pointer",
                     "width": "2.1cm",
                     "height": "2.1cm",
-                    "border": "4px solid rgba(238, 238, 238, .7)",
+                    "border": "4px solid rgb(238, 238, 238",
                     "borderRadius": "100%",
-                    "background": "rgba(175, 175, 175, .7)",
+                    "background": "rgb(175, 175, 175)",
                     "textAlign": "center"
                 }
             }
         },
         "Button": {
             "element": {
-                "className": "control control-button"
+                "className": "control control-button",
             },
             "elementInner": {
                 "className": "control-inner control-button",
                 "style": {
-                    "padding": ".35cm",
+                    "padding": ".385cm",
                     "width": "1.4cm",
                     "height": "1.4cm",
-                    "border": "4px solid rgba(238, 238, 238, .7)",
+                    "border": "4px solid rgb(238, 238, 238)",
                     "borderRadius": "100%",
-                    "background": "rgba(175, 175, 175, .7)",
+                    "background": "rgb(175, 175, 175)",
                     "textAlign": "center"
                 }
             }
@@ -39,7 +44,9 @@ FullScreenMario.FullScreenMario.settings.touch = {
             },
             "tick": {
                 "style": {
-                    "background": "rgba(70, 70, 70, .84)"
+                    "background": "rgb(238, 238, 238)",
+                    "width": ".28cm",
+                    "height": "4px",
                 }
             }
         }
@@ -53,7 +60,7 @@ FullScreenMario.FullScreenMario.settings.touch = {
                 "horizontal": "left",
                 "offset": {
                     "left": "1.4cm",
-                    "top": "-2.1cm"
+                    "top": "-2.8cm"
                 }
             },
             "directions": [

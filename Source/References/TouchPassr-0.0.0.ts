@@ -315,6 +315,8 @@ module TouchPassr {
             var directions: IJoystickDirection[] = (<IJoystickSchema>this.schema).directions,
                 element: HTMLDivElement,
                 degrees: number,
+                sin: number,
+                cos: number,
                 dx: number,
                 dy: number,
                 i: number;
@@ -322,8 +324,11 @@ module TouchPassr {
             for (i = 0; i < directions.length; i += 1) {
                 degrees = directions[i].degrees;
 
-                dx = Math.cos(degrees * Math.PI / 180) * 50 + 50;
-                dy = Math.sin(degrees * Math.PI / 180) * 50 + 50;
+                sin = Math.sin(degrees * Math.PI / 180);
+                cos = Math.cos(degrees * Math.PI / 180);
+
+                dx = cos * 50 + 50;
+                dy = sin * 50 + 50;
 
                 element = <HTMLDivElement>this.createElement("div", {
                     "className": "control-joystick-tick",
@@ -331,10 +336,8 @@ module TouchPassr {
                         "position": "absolute",
                         "left": dx + "%",
                         "top": dy + "%",
-                        "marginLeft": "-4px",
-                        "marginTop": "-1px",
-                        "width": ".21cm",
-                        "height": "2px",
+                        "marginLeft": (-cos * 5 - 5) + "px",
+                        "marginTop": (-sin * 2 - 1) + "px"
                     }
                 });
 
