@@ -3,7 +3,7 @@ FullScreenMario.FullScreenMario.settings.touch = {
         "default": {
             "element": {
                 "style": {
-                    "opacity": ".7"
+                    "opacity": ".84"
                 }
             },
             "elementInner": {
@@ -37,16 +37,23 @@ FullScreenMario.FullScreenMario.settings.touch = {
         },
         "Joystick": {
             "element": {
-                "className": "control control-button"
+                "className": "control control-joystick"
             },
             "elementInner": {
-                "className": "control-inner control-button"
+                "className": "control-inner control-joystick"
             },
             "tick": {
                 "style": {
-                    "background": "rgb(238, 238, 238)",
                     "width": ".28cm",
                     "height": "4px",
+                    "background": "rgb(238, 238, 238)"
+                }
+            },
+            "dragger": {
+                "style": {
+                    "width": ".49cm",
+                    "height": "4px",
+                    "background": "rgb(210, 210, 210)"
                 }
             }
         }

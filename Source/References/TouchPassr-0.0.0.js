@@ -261,8 +261,10 @@ var TouchPassr;
             var directions = this.schema.directions, element, degrees, sin, cos, dx, dy, i;
             for (i = 0; i < directions.length; i += 1) {
                 degrees = directions[i].degrees;
+                // sin and cos are an amount / 1 the tick is offset from the center
                 sin = Math.sin(degrees * Math.PI / 180);
                 cos = Math.cos(degrees * Math.PI / 180);
+                // dx and dy are measured as percent from the center, based on sin & cos
                 dx = cos * 50 + 50;
                 dy = sin * 50 + 50;
                 element = this.createElement("div", {
@@ -279,6 +281,85 @@ var TouchPassr;
                 this.setRotation(element, degrees);
                 this.elementInner.appendChild(element);
             }
+            // In addition to the ticks, a drag element shows current direction
+            this.elementDragger = this.createElement("div", {
+                "className": "control-joystick-dragger",
+                "style": {
+                    "position": "absolute",
+                    "opacity": "0",
+                    "top": ".77cm",
+                    "left": ".77cm"
+                }
+            });
+            this.proliferateElement(this.elementDragger, styles.Joystick.dragger);
+            this.elementInner.appendChild(this.elementDragger);
+            this.element.addEventListener("touchstart", this.positionDraggerEnable.bind(this));
+            this.element.addEventListener("mousedown", this.positionDraggerEnable.bind(this));
+            this.element.addEventListener("touchend", this.positionDraggerDisable.bind(this));
+            this.element.addEventListener("mouseout", this.positionDraggerDisable.bind(this));
+            this.element.addEventListener("mouseup", this.positionDraggerDisable.bind(this));
+            this.element.addEventListener("click", this.triggerDragger.bind(this));
+            this.element.addEventListener("touchmove", this.triggerDragger.bind(this));
+            this.element.addEventListener("mousemove", this.triggerDragger.bind(this));
+        };
+        /**
+         *
+         */
+        JoystickControl.prototype.positionDraggerEnable = function () {
+            this.dragEnabled = true;
+            this.elementDragger.style.opacity = "1";
+        };
+        /**
+         *
+         */
+        JoystickControl.prototype.positionDraggerDisable = function () {
+            this.dragEnabled = false;
+            this.elementDragger.style.opacity = "0";
+        };
+        /**
+         *
+         */
+        JoystickControl.prototype.triggerDragger = function (event) {
+            if (!this.dragEnabled) {
+                return;
+            }
+            var x = event.x, y = event.y, offsets = this.getOffsets(this.elementInner), midX = offsets[0] + this.elementInner.offsetWidth / 2, midY = offsets[1] + this.elementInner.offsetHeight / 2, dxRaw = x - midX, dyRaw = y - midY, dTotal = Math.sqrt(dxRaw * dxRaw + dyRaw * dyRaw), thetaRaw = Math.atan(dyRaw / dxRaw) * 360 / Math.PI, direction = this.findClosestDirection(thetaRaw), theta = this.schema.directions[direction].degrees, dx = 77 * Math.cos(theta), dy = 77 * Math.sin(theta);
+            this.proliferateElement(this.elementDragger, {
+                "style": {
+                    "marginLeft": dx + "%",
+                    "marginTop": dy + "%"
+                }
+            });
+            this.setRotation(this.elementDragger, theta * 180 / Math.PI);
+        };
+        /**
+         *
+         */
+        JoystickControl.prototype.getOffsets = function (element) {
+            var output;
+            if (element.offsetParent && element !== element.offsetParent) {
+                output = this.getOffsets(element.offsetParent);
+                output[0] += element.offsetLeft;
+                output[1] += element.offsetTop;
+            }
+            else {
+                output = [element.offsetLeft, element.offsetTop];
+            }
+            return output;
+        };
+        /**
+         *
+         */
+        JoystickControl.prototype.findClosestDirection = function (degrees) {
+            var directions = this.schema.directions, difference = Math.abs(directions[0].degrees - degrees), record = 0, differenceTest, i;
+            for (i = 1; i < directions.length; i += 1) {
+                differenceTest = Math.abs(directions[i].degrees - degrees);
+                if (differenceTest < difference) {
+                    difference = differenceTest;
+                    record = i;
+                }
+            }
+            return record;
         };
         return JoystickControl;
     })(Control);
