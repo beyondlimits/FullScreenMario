@@ -220,6 +220,21 @@ var TouchPassr;
                 }
             }
         };
+        /**
+         *
+         */
+        Control.prototype.getOffsets = function (element) {
+            var output;
+            if (element.offsetParent && element !== element.offsetParent) {
+                output = this.getOffsets(element.offsetParent);
+                output[0] += element.offsetLeft;
+                output[1] += element.offsetTop;
+            }
+            else {
+                output = [element.offsetLeft, element.offsetTop];
+            }
+            return output;
+        };
         return Control;
     })();
     _TouchPassr.Control = Control;
@@ -259,6 +274,21 @@ var TouchPassr;
         JoystickControl.prototype.resetElement = function (styles) {
             _super.prototype.resetElement.call(this, styles, "Joystick");
             var directions = this.schema.directions, element, degrees, sin, cos, dx, dy, i;
+            this.proliferateElement(this.elementInner, {
+                "style": {
+                    "border-radius": "100%"
+                }
+            });
+            // The visible circle is what is actually visible to the user
+            this.elementCircle = this.createElement("div", {
+                "className": "control-inner control-joystick-circle",
+                "style": {
+                    "position": "absolute",
+                    "background": "red",
+                    "borderRadius": "100%"
+                }
+            });
+            this.proliferateElement(this.elementCircle, styles.Joystick.circle);
             for (i = 0; i < directions.length; i += 1) {
                 degrees = directions[i].degrees;
                 // sin and cos are an amount / 1 the tick is offset from the center
@@ -279,7 +309,7 @@ var TouchPassr;
                 });
                 this.proliferateElement(element, styles.Joystick.tick);
                 this.setRotation(element, degrees);
-                this.elementInner.appendChild(element);
+                this.elementCircle.appendChild(element);
             }
             // In addition to the ticks, a drag element shows current direction
             this.elementDragger = this.createElement("div", {
@@ -292,60 +322,70 @@ var TouchPassr;
                 }
             });
             this.proliferateElement(this.elementDragger, styles.Joystick.dragger);
-            this.elementInner.appendChild(this.elementDragger);
-            this.element.addEventListener("touchstart", this.positionDraggerEnable.bind(this));
-            this.element.addEventListener("mousedown", this.positionDraggerEnable.bind(this));
-            this.element.addEventListener("touchend", this.positionDraggerDisable.bind(this));
-            this.element.addEventListener("mouseout", this.positionDraggerDisable.bind(this));
-            this.element.addEventListener("mouseup", this.positionDraggerDisable.bind(this));
-            this.element.addEventListener("click", this.triggerDragger.bind(this));
-            this.element.addEventListener("touchmove", this.triggerDragger.bind(this));
-            this.element.addEventListener("mousemove", this.triggerDragger.bind(this));
+            this.elementCircle.appendChild(this.elementDragger);
+            this.elementInner.appendChild(this.elementCircle);
+            this.elementCircle.addEventListener("click", this.triggerDragger.bind(this));
+            this.elementCircle.addEventListener("touchmove", this.triggerDragger.bind(this));
+            this.elementCircle.addEventListener("mousemove", this.triggerDragger.bind(this));
         };
         /**
          *
          */
         JoystickControl.prototype.positionDraggerEnable = function () {
-            this.dragEnabled = true;
             this.elementDragger.style.opacity = "1";
         };
         /**
          *
          */
         JoystickControl.prototype.positionDraggerDisable = function () {
-            this.dragEnabled = false;
             this.elementDragger.style.opacity = "0";
         };
         /**
          *
          */
         JoystickControl.prototype.triggerDragger = function (event) {
-            if (!this.dragEnabled) {
-                return;
-            }
-            var x = event.x, y = event.y, offsets = this.getOffsets(this.elementInner), midX = offsets[0] + this.elementInner.offsetWidth / 2, midY = offsets[1] + this.elementInner.offsetHeight / 2, dxRaw = x - midX, dyRaw = y - midY, dTotal = Math.sqrt(dxRaw * dxRaw + dyRaw * dyRaw), thetaRaw = Math.atan(dyRaw / dxRaw) * 360 / Math.PI, direction = this.findClosestDirection(thetaRaw), theta = this.schema.directions[direction].degrees, dx = 77 * Math.cos(theta), dy = 77 * Math.sin(theta);
+            var x = event.x, y = event.y, offsets = this.getOffsets(this.elementInner), midX = offsets[0] + this.elementInner.offsetWidth / 2, midY = offsets[1] + this.elementInner.offsetHeight / 2, dxRaw = (x - midX) | 0, dyRaw = (midY - y) | 0, dTotal = Math.sqrt(dxRaw * dxRaw + dyRaw * dyRaw), thetaRaw = this.getThetaRaw(dxRaw, dyRaw), direction = this.findClosestDirection(thetaRaw), theta = this.schema.directions[direction].degrees, components = this.getThetaComponents(theta), dx = 100 * components[0] | 0, dy = -100 * components[1] | 0;
             this.proliferateElement(this.elementDragger, {
                 "style": {
                     "marginLeft": dx + "%",
                     "marginTop": dy + "%"
                 }
             });
-            this.setRotation(this.elementDragger, theta * 180 / Math.PI);
+            this.setRotation(this.elementDragger, (theta + 450) % 360);
+            this.positionDraggerEnable();
         };
         /**
          *
          */
-        JoystickControl.prototype.getOffsets = function (element) {
-            var output;
-            if (element.offsetParent && element !== element.offsetParent) {
-                output = this.getOffsets(element.offsetParent);
-                output[0] += element.offsetLeft;
-                output[1] += element.offsetTop;
+        JoystickControl.prototype.getThetaRaw = function (dxRaw, dyRaw) {
+            // Based on the quadrant, theta changes...
+            if (dxRaw > 0) {
+                if (dyRaw > 0) {
+                    // Quadrant I
+                    return Math.atan(dxRaw / dyRaw) * 180 / Math.PI;
+                }
+                else {
+                    // Quadrant II
+                    return -Math.atan(dyRaw / dxRaw) * 180 / Math.PI + 90;
+                }
             }
             else {
-                output = [element.offsetLeft, element.offsetTop];
+                if (dyRaw < 0) {
+                    // Quadrant III
+                    return Math.atan(dxRaw / dyRaw) * 180 / Math.PI + 180;
+                }
+                else {
+                    // Quadrant IV
+                    return -Math.atan(dyRaw / dxRaw) * 180 / Math.PI + 270;
+                }
             }
-            return output;
+        };
+        /**
+         *
+         */
+        JoystickControl.prototype.getThetaComponents = function (thetaRaw) {
+            var theta = thetaRaw * Math.PI / 180;
+            return [Math.sin(theta), Math.cos(theta)];
         };
         /**
          *

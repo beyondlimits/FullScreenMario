@@ -8,22 +8,12 @@ FullScreenMario.FullScreenMario.settings.touch = {
             },
             "elementInner": {
                 "style": {
-                    "cursor": "pointer",
-                    "width": "2.1cm",
-                    "height": "2.1cm",
-                    "border": "4px solid rgb(238, 238, 238",
-                    "borderRadius": "100%",
-                    "background": "rgb(175, 175, 175)",
                     "textAlign": "center"
                 }
             }
         },
         "Button": {
-            "element": {
-                "className": "control control-button",
-            },
             "elementInner": {
-                "className": "control-inner control-button",
                 "style": {
                     "padding": ".385cm",
                     "width": "1.4cm",
@@ -31,16 +21,28 @@ FullScreenMario.FullScreenMario.settings.touch = {
                     "border": "4px solid rgb(238, 238, 238)",
                     "borderRadius": "100%",
                     "background": "rgb(175, 175, 175)",
-                    "textAlign": "center"
+                    "textAlign": "center",
+                    "cursor": "pointer"
                 }
             }
         },
         "Joystick": {
-            "element": {
-                "className": "control control-joystick"
-            },
             "elementInner": {
-                "className": "control-inner control-joystick"
+                "style": {
+                    "width": "3.5cm",
+                    "height": "3.5cm"
+                }
+            },
+            "circle": {
+                "style": {
+                    "top": "21%",
+                    "right": "21%",
+                    "bottom": "21%",
+                    "left": "21%",
+                    "border": "4px solid rgb(238, 238, 238",
+                    "background": "rgb(175, 175, 175)",
+                    "borderRadius": "100%"
+                }
             },
             "tick": {
                 "style": {
@@ -66,8 +68,10 @@ FullScreenMario.FullScreenMario.settings.touch = {
                 "vertical": "bottom",
                 "horizontal": "left",
                 "offset": {
-                    "left": ".56cm",
-                    "top": "-2.45cm"
+                    "left": "10cm",
+                    "top": "-5cm"
+                    //"left": ".56cm",
+                    //"top": "-2.45cm"
                 }
             },
             "directions": [
