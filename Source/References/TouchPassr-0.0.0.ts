@@ -365,10 +365,21 @@ module TouchPassr {
          * 
          */
         protected elementCircle: HTMLDivElement;
+
         /**
          * 
          */
-        protected elementDragger: HTMLDivElement;
+        protected elementDragLine: HTMLDivElement;
+
+        /**
+         * 
+         */
+        protected elementDragShadow: HTMLDivElement;
+
+        /**
+         * 
+         */
+        protected dragEnabled: boolean;
 
         /**
          * 
@@ -432,8 +443,8 @@ module TouchPassr {
             }
 
             // In addition to the ticks, a drag element shows current direction
-            this.elementDragger = <HTMLDivElement>this.createElement("div", {
-                "className": "control-joystick-dragger",
+            this.elementDragLine = <HTMLDivElement>this.createElement("div", {
+                "className": "control-joystick-drag-line",
                 "style": {
                     "position": "absolute",
                     "opacity": "0",
@@ -441,34 +452,68 @@ module TouchPassr {
                     "left": ".77cm"
                 }
             });
-            this.proliferateElement(this.elementDragger, styles.Joystick.dragger);
-            this.elementCircle.appendChild(this.elementDragger);
+            this.proliferateElement(this.elementDragLine, styles.Joystick.dragLine);
+            this.elementCircle.appendChild(this.elementDragLine);
+
+            // A shadow-like circle supports the drag effect
+            this.elementDragShadow = <HTMLDivElement>this.createElement("div", {
+                "className": "control-joystick-drag-shadow",
+                "style": {
+                    "position": "absolute",
+                    "opacity": "1",
+                    "top": "14%",
+                    "right": "14%",
+                    "bottom": "14%",
+                    "left": "14%",
+                    "marginLeft": "0",
+                    "marginTop": "0",
+                    "borderRadius": "100%"
+                }
+            });
+            this.proliferateElement(this.elementDragShadow, styles.Joystick.dragShadow);
+            this.elementCircle.appendChild(this.elementDragShadow);
 
             this.elementInner.appendChild(this.elementCircle);
 
-            this.elementCircle.addEventListener("click", this.triggerDragger.bind(this));
-            this.elementCircle.addEventListener("touchmove", this.triggerDragger.bind(this));
-            this.elementCircle.addEventListener("mousemove", this.triggerDragger.bind(this));
+            this.elementInner.addEventListener("click", this.triggerDragger.bind(this));
+            this.elementInner.addEventListener("touchmove", this.triggerDragger.bind(this));
+            this.elementInner.addEventListener("mousemove", this.triggerDragger.bind(this));
+
+            this.elementInner.addEventListener("mouseover", this.positionDraggerEnable.bind(this));
+            this.elementInner.addEventListener("touchstart", this.positionDraggerEnable.bind(this));
+
+            this.elementInner.addEventListener("mouseout", this.positionDraggerDisable.bind(this));
+            this.elementInner.addEventListener("touchend", this.positionDraggerDisable.bind(this));
         }
 
         /**
          * 
          */
         protected positionDraggerEnable(): void {
-            this.elementDragger.style.opacity = "1";
+            this.dragEnabled = true;
+            this.elementDragLine.style.opacity = "1";
         }
 
         /**
          * 
          */
         protected positionDraggerDisable(): void {
-            this.elementDragger.style.opacity = "0";
+            this.dragEnabled = false;
+            this.elementDragLine.style.opacity = "0";
+            this.elementDragShadow.style.top = "14%";
+            this.elementDragShadow.style.right = "14%";
+            this.elementDragShadow.style.bottom = "14%";
+            this.elementDragShadow.style.left = "14%";
         }
 
         /**
          * 
          */
         protected triggerDragger(event: DragEvent | MouseEvent): void {
+            if (!this.dragEnabled) {
+                return;
+            }
+
             var x = event.x,
                 y = event.y,
                 offsets = this.getOffsets(this.elementInner),
@@ -481,17 +526,26 @@ module TouchPassr {
                 direction = this.findClosestDirection(thetaRaw),
                 theta = (<IJoystickSchema>this.schema).directions[direction].degrees,
                 components = this.getThetaComponents(theta),
-                dx = 100 * components[0] | 0,
-                dy = -100 * components[1] | 0;
+                dx = components[0],
+                dy = -components[1];
 
-            this.proliferateElement(this.elementDragger, {
+            this.proliferateElement(this.elementDragLine, {
                 "style": {
-                    "marginLeft": dx + "%",
-                    "marginTop": dy + "%"
+                    "marginLeft": ((dx * 77) | 0) + "%",
+                    "marginTop": ((dy * 77) | 0) + "%"
                 }
             });
 
-            this.setRotation(this.elementDragger,(theta + 450) % 360);
+            this.proliferateElement(this.elementDragShadow, {
+                "style": {
+                    "top": ((14 + dy * 10) | 0) + "%",
+                    "right": ((14 - dx * 10) | 0) + "%",
+                    "bottom": ((14 - dy * 10) | 0) + "%",
+                    "left": ((14 + dx * 10) | 0) + "%",
+                }
+            });
+            
+            this.setRotation(this.elementDragLine,(theta + 450) % 360);
             this.positionDraggerEnable();
         }
 
@@ -533,19 +587,31 @@ module TouchPassr {
         protected findClosestDirection(degrees: number): number {
             var directions: IJoystickDirection[] = (<IJoystickSchema>this.schema).directions,
                 difference: number = Math.abs(directions[0].degrees - degrees),
+                smallestDegrees = directions[0].degrees,
+                smallestDegreesRecord = 0,
                 record: number = 0,
                 differenceTest: number,
                 i: number;
 
+            // Find the direction with the smallest difference in degrees
             for (i = 1; i < directions.length; i += 1) {
                 differenceTest = Math.abs(directions[i].degrees - degrees);
                 if (differenceTest < difference) {
                     difference = differenceTest;
                     record = i;
                 }
+                if (directions[i].degrees < smallestDegrees) {
+                    smallestDegrees = directions[i].degrees;
+                    smallestDegreesRecord = i;
+                }
             }
 
-
+            // 359 is closer to 360 than 0, so pretend the smallest is above 360
+            differenceTest = Math.abs(smallestDegrees + 360 - degrees);
+            if (differenceTest < difference) {
+                difference = differenceTest;
+                record = smallestDegreesRecord;
+            }
 
             return record;
         }

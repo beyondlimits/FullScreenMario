@@ -39,9 +39,10 @@ FullScreenMario.FullScreenMario.settings.touch = {
                     "right": "21%",
                     "bottom": "21%",
                     "left": "21%",
-                    "border": "4px solid rgb(238, 238, 238",
+                    "boxShadow": "0 0 1px 4px rgb(238, 238, 238)",
                     "background": "rgb(175, 175, 175)",
-                    "borderRadius": "100%"
+                    "borderRadius": "100%",
+                    "cursor": "pointer"
                 }
             },
             "tick": {
@@ -51,11 +52,19 @@ FullScreenMario.FullScreenMario.settings.touch = {
                     "background": "rgb(238, 238, 238)"
                 }
             },
-            "dragger": {
+            "dragLine": {
                 "style": {
                     "width": ".49cm",
                     "height": "4px",
-                    "background": "rgb(210, 210, 210)"
+                    "background": "rgb(210, 210, 210)",
+                    "transition": "117ms opacity"
+                }
+            },
+            "dragShadow": {
+                "style": {
+                    "background": "rgba(231, 231, 231, .84)",
+                    "boxShadow": "0 0 7px 3px rgba(175, 175, 175, .7)",
+                    "transition": "117ms all"
                 }
             }
         }
@@ -68,10 +77,8 @@ FullScreenMario.FullScreenMario.settings.touch = {
                 "vertical": "bottom",
                 "horizontal": "left",
                 "offset": {
-                    "left": "10cm",
-                    "top": "-5cm"
-                    //"left": ".56cm",
-                    //"top": "-2.45cm"
+                    "left": "0",
+                    "top": "-3.5cm"
                 }
             },
             "directions": [
