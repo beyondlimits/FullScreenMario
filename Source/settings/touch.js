@@ -1,4 +1,5 @@
 FullScreenMario.FullScreenMario.settings.touch = {
+    "enabled": false,
     "styles": {
         "default": {
             "element": {

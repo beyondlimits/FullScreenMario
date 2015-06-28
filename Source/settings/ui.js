@@ -247,6 +247,24 @@ FullScreenMario.FullScreenMario.settings.ui = {
                     "storeLocally": true
                 },
                 {
+                    "title": "Touch Controls",
+                    "type": "Boolean",
+                    "storeLocally": true,
+                    "source": function (GameStarter) {
+                        return false;
+                    },
+                    "enable": function (GameStarter) {
+                        setTimeout(function () {
+                            GameStarter.TouchPasser.enable();
+                        });
+                    },
+                    "disable": function (GameStarter) {
+                        setTimeout(function () {
+                            GameStarter.TouchPasser.disable();
+                        });
+                    }
+                },
+                {
                     "title": "Tilt Controls",
                     "type": "Boolean",
                     "storeLocally": true,

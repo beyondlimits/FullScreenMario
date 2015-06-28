@@ -115,8 +115,8 @@ section#game {
     }
 
     #controls .control:hover {
-        margin-top: -288px;
-        height: 316px; /* 288px + 28px */
+        margin-top: -322px;
+        height: 350px; /* 322px + 28px */
         border-color: #99ffcc;
         background: #009966;
         z-index: 70;
@@ -148,7 +148,7 @@ section#game {
 
     #controls .select-options {
         position: relative;
-        max-height: 277px;
+        max-height: 308px; /* 322 - 14*/
         overflow-x: hidden;
         overflow-y: auto;
     }
@@ -264,8 +264,8 @@ section#game {
 
     #controls .maps-grid-option-extra {
         display: block;
-        margin: 7px 2px 0 1px;
-        padding: 3px 0;
+        margin: 7px 2px 3px 1px;
+        padding: 14px 3px;
     }
 
     #controls .maps-grid-input {

@@ -51,6 +51,7 @@ module TouchPassr {
         container?: HTMLElement;
         styles?: any;
         controls?: { [i: string]: IControlSchema };
+        enabled?: boolean;
     }
 
     export interface ITouchPassr {
@@ -298,29 +299,6 @@ module TouchPassr {
         /**
          * 
          */
-        protected onEvent(which: string, event: Event): void {
-            var events = (<IButtonSchema>this.schema).pipes[which],
-                i: string,
-                j: number;
-
-            if (!events) {
-                return;
-            }
-
-            for (i in events) {
-                if (!events.hasOwnProperty(i)) {
-                    continue;
-                }
-
-                for (j = 0; j < events[i].length; j += 1) {
-                    this.InputWriter.callEvent(i, events[i][j], event);
-                }
-            }
-        }
-
-        /**
-         * 
-         */
         protected getOffsets(element: HTMLElement): number[] {
             var output: number[];
 
@@ -355,6 +333,29 @@ module TouchPassr {
             this.element.addEventListener("mouseup", onDeactivated);
             this.element.addEventListener("touchend", onDeactivated);
         }
+
+        /**
+         * 
+         */
+        protected onEvent(which: string, event: Event): void {
+            var events = (<IButtonSchema>this.schema).pipes[which],
+                i: string,
+                j: number;
+
+            if (!events) {
+                return;
+            }
+
+            for (i in events) {
+                if (!events.hasOwnProperty(i)) {
+                    continue;
+                }
+
+                for (j = 0; j < events[i].length; j += 1) {
+                    this.InputWriter.callEvent(i, events[i][j], event);
+                }
+            }
+        }
     }
 
     /**
@@ -380,6 +381,11 @@ module TouchPassr {
          * 
          */
         protected dragEnabled: boolean;
+
+        /**
+         * 
+         */
+        protected currentDirection: IJoystickDirection;
 
         /**
          * 
@@ -504,6 +510,14 @@ module TouchPassr {
             this.elementDragShadow.style.right = "14%";
             this.elementDragShadow.style.bottom = "14%";
             this.elementDragShadow.style.left = "14%";
+
+            if (this.currentDirection) {
+                if (this.currentDirection.pipes && this.currentDirection.pipes.deactivated) {
+                    this.onEvent(this.currentDirection.pipes.deactivated, event);
+                }
+
+                this.currentDirection = undefined;
+            }
         }
 
         /**
@@ -552,7 +566,7 @@ module TouchPassr {
             this.setRotation(this.elementDragLine, (theta + 450) % 360);
             this.positionDraggerEnable();
 
-
+            this.setCurrentDirection(direction, event);
         }
 
         /**
@@ -633,12 +647,52 @@ module TouchPassr {
 
             return record;
         }
+
+        /**
+         * 
+         */
+        protected setCurrentDirection(direction: IJoystickDirection, event?: Event): void {
+            if (this.currentDirection === direction) {
+                return;
+            }
+
+            if (this.currentDirection && this.currentDirection.pipes) {
+                if (this.currentDirection.pipes.deactivated) {
+                    this.onEvent(this.currentDirection.pipes.deactivated, event);
+                }
+            }
+
+            if (direction.pipes && direction.pipes.activated) {
+                this.onEvent(direction.pipes.activated, event);
+            }
+
+            this.currentDirection = direction;
+        }
+
+        /**
+         * 
+         */
+        protected onEvent(pipes, event?: Event): void {
+            var i: string,
+                j: number;
+
+            for (i in pipes) {
+                for (j = 0; j < pipes[i].length; j += 1) {
+                    this.InputWriter.callEvent(i, pipes[i][j], event);
+                }
+            }
+        }
     }
     
     /**
      * 
      */
     export class TouchPassr implements ITouchPassr {
+        /**
+         * 
+         */
+        private enabled: boolean;
+
         /**
          * 
          */
@@ -678,6 +732,14 @@ module TouchPassr {
             if (settings.controls) {
                 this.addControls(settings.controls);
             }
+
+            if (typeof settings.enabled === "undefined") {
+                this.enabled = true;
+            } else {
+                this.enabled = settings.enabled;
+            }
+
+            this.enabled ? this.enable() : this.disable();
         }
 
 
@@ -699,8 +761,24 @@ module TouchPassr {
         }
         
 
-        /* Controls shenanigans
+        /* Core functionality
         */
+
+        /**
+         * 
+         */
+        enable(): void {
+            this.enabled = true;
+            this.container.style.display = "block";
+        }
+
+        /**
+         * 
+         */
+        disable(): void {
+            this.enabled = false;
+            this.container.style.display = "none";
+        }
 
         /**
          * 

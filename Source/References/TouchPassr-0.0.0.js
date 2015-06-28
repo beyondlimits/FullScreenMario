@@ -212,23 +212,6 @@ var TouchPassr;
         /**
          *
          */
-        Control.prototype.onEvent = function (which, event) {
-            var events = this.schema.pipes[which], i, j;
-            if (!events) {
-                return;
-            }
-            for (i in events) {
-                if (!events.hasOwnProperty(i)) {
-                    continue;
-                }
-                for (j = 0; j < events[i].length; j += 1) {
-                    this.InputWriter.callEvent(i, events[i][j], event);
-                }
-            }
-        };
-        /**
-         *
-         */
         Control.prototype.getOffsets = function (element) {
             var output;
             if (element.offsetParent && element !== element.offsetParent) {
@@ -262,6 +245,23 @@ var TouchPassr;
             this.element.addEventListener("touchstart", onActivated);
             this.element.addEventListener("mouseup", onDeactivated);
             this.element.addEventListener("touchend", onDeactivated);
+        };
+        /**
+         *
+         */
+        ButtonControl.prototype.onEvent = function (which, event) {
+            var events = this.schema.pipes[which], i, j;
+            if (!events) {
+                return;
+            }
+            for (i in events) {
+                if (!events.hasOwnProperty(i)) {
+                    continue;
+                }
+                for (j = 0; j < events[i].length; j += 1) {
+                    this.InputWriter.callEvent(i, events[i][j], event);
+                }
+            }
         };
         return ButtonControl;
     })(Control);
@@ -373,6 +373,12 @@ var TouchPassr;
             this.elementDragShadow.style.right = "14%";
             this.elementDragShadow.style.bottom = "14%";
             this.elementDragShadow.style.left = "14%";
+            if (this.currentDirection) {
+                if (this.currentDirection.pipes && this.currentDirection.pipes.deactivated) {
+                    this.onEvent(this.currentDirection.pipes.deactivated, event);
+                }
+                this.currentDirection = undefined;
+            }
         };
         /**
          *
@@ -399,6 +405,7 @@ var TouchPassr;
             });
             this.setRotation(this.elementDragLine, (theta + 450) % 360);
             this.positionDraggerEnable();
+            this.setCurrentDirection(direction, event);
         };
         /**
          *
@@ -468,6 +475,34 @@ var TouchPassr;
             }
             return record;
         };
+        /**
+         *
+         */
+        JoystickControl.prototype.setCurrentDirection = function (direction, event) {
+            if (this.currentDirection === direction) {
+                return;
+            }
+            if (this.currentDirection && this.currentDirection.pipes) {
+                if (this.currentDirection.pipes.deactivated) {
+                    this.onEvent(this.currentDirection.pipes.deactivated, event);
+                }
+            }
+            if (direction.pipes && direction.pipes.activated) {
+                this.onEvent(direction.pipes.activated, event);
+            }
+            this.currentDirection = direction;
+        };
+        /**
+         *
+         */
+        JoystickControl.prototype.onEvent = function (pipes, event) {
+            var i, j;
+            for (i in pipes) {
+                for (j = 0; j < pipes[i].length; j += 1) {
+                    this.InputWriter.callEvent(i, pipes[i][j], event);
+                }
+            }
+        };
         return JoystickControl;
     })(Control);
     TouchPassr_1.JoystickControl = JoystickControl;
@@ -487,6 +522,13 @@ var TouchPassr;
             if (settings.controls) {
                 this.addControls(settings.controls);
             }
+            if (typeof settings.enabled === "undefined") {
+                this.enabled = true;
+            }
+            else {
+                this.enabled = settings.enabled;
+            }
+            this.enabled ? this.enable() : this.disable();
         }
         /* Simple gets
         */
@@ -502,8 +544,22 @@ var TouchPassr;
         TouchPassr.prototype.getPrefix = function () {
             return this.prefix;
         };
-        /* Controls shenanigans
+        /* Core functionality
         */
+        /**
+         *
+         */
+        TouchPassr.prototype.enable = function () {
+            this.enabled = true;
+            this.container.style.display = "block";
+        };
+        /**
+         *
+         */
+        TouchPassr.prototype.disable = function () {
+            this.enabled = false;
+            this.container.style.display = "none";
+        };
         /**
          *
          */
