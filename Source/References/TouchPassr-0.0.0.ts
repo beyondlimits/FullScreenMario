@@ -1,7 +1,7 @@
 /// <reference path="InputWritr-0.2.0.ts" />
 
 /**
- * TouchPass is an in-progress module.
+ * TouchPassr is an in-progress module.
  * This means it doesn't yet exist as its own repository.
  * When it is ready, it will be spun off into its own repository on GitHub.
  */
@@ -510,12 +510,15 @@ module TouchPassr {
          * 
          */
         protected triggerDragger(event: DragEvent | MouseEvent): void {
+            event.preventDefault();
+
             if (!this.dragEnabled) {
                 return;
             }
 
-            var x = event.x,
-                y = event.y,
+            var coordinates = this.getEventCoordinates(event),
+                x = coordinates[0],
+                y = coordinates[1],
                 offsets = this.getOffsets(this.elementInner),
                 midX = offsets[0] + this.elementInner.offsetWidth / 2,
                 midY = offsets[1] + this.elementInner.offsetHeight / 2,
@@ -523,8 +526,9 @@ module TouchPassr {
                 dyRaw = (midY - y) | 0,
                 dTotal = Math.sqrt(dxRaw * dxRaw + dyRaw * dyRaw),
                 thetaRaw = this.getThetaRaw(dxRaw, dyRaw),
-                direction = this.findClosestDirection(thetaRaw),
-                theta = (<IJoystickSchema>this.schema).directions[direction].degrees,
+                directionNumber = this.findClosestDirection(thetaRaw),
+                direction = (<IJoystickSchema>this.schema).directions[directionNumber],
+                theta = direction.degrees,
                 components = this.getThetaComponents(theta),
                 dx = components[0],
                 dy = -components[1];
@@ -544,9 +548,23 @@ module TouchPassr {
                     "left": ((14 + dx * 10) | 0) + "%",
                 }
             });
-            
-            this.setRotation(this.elementDragLine,(theta + 450) % 360);
+
+            this.setRotation(this.elementDragLine, (theta + 450) % 360);
             this.positionDraggerEnable();
+
+
+        }
+
+        /**
+         * 
+         */
+        protected getEventCoordinates(event: Event): number[] {
+            if (event.type === "touchmove") {
+                var touch = (<TouchEvent>event).touches[0];
+                return [touch.pageX, touch.pageY];
+            }
+
+            return [(<MouseEvent>event).x, (<MouseEvent>event).y];
         }
 
         /**

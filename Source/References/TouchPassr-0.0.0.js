@@ -6,12 +6,12 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 /**
- * TouchPass is an in-progress module.
+ * TouchPassr is an in-progress module.
  * This means it doesn't yet exist as its own repository.
  * When it is ready, it will be spun off into its own repository on GitHub.
  */
 var TouchPassr;
-(function (_TouchPassr) {
+(function (TouchPassr_1) {
     "use strict";
     /**
      *
@@ -53,6 +53,7 @@ var TouchPassr;
                 args[_i - 1] = arguments[_i];
             }
             var element = document.createElement(tag || "div"), i;
+            // For each provided object, add those settings to the element
             for (i = 1; i < arguments.length; i += 1) {
                 this.proliferateElement(element, arguments[i]);
             }
@@ -71,6 +72,7 @@ var TouchPassr;
         Control.prototype.proliferateElement = function (recipient, donor, noOverride) {
             if (noOverride === void 0) { noOverride = false; }
             var setting, i, j;
+            // For each attribute of the donor:
             for (i in donor) {
                 if (donor.hasOwnProperty(i)) {
                     // If noOverride, don't override already existing properties
@@ -78,7 +80,9 @@ var TouchPassr;
                         continue;
                     }
                     setting = donor[i];
+                    // Special cases for HTML elements
                     switch (i) {
+                        // Children: just append all of them directly
                         case "children":
                             if (typeof (setting) !== "undefined") {
                                 for (j = 0; j < setting.length; j += 1) {
@@ -86,9 +90,11 @@ var TouchPassr;
                                 }
                             }
                             break;
+                        // Style: proliferate (instead of making a new Object)
                         case "style":
                             this.proliferateElement(recipient[i], setting);
                             break;
+                        // By default, use the normal proliferate logic
                         default:
                             // If it's null, don't do anything (like .textContent)
                             if (setting === null) {
@@ -237,7 +243,7 @@ var TouchPassr;
         };
         return Control;
     })();
-    _TouchPassr.Control = Control;
+    TouchPassr_1.Control = Control;
     /**
      *
      */
@@ -259,7 +265,7 @@ var TouchPassr;
         };
         return ButtonControl;
     })(Control);
-    _TouchPassr.ButtonControl = ButtonControl;
+    TouchPassr_1.ButtonControl = ButtonControl;
     /**
      *
      */
@@ -289,6 +295,7 @@ var TouchPassr;
                 }
             });
             this.proliferateElement(this.elementCircle, styles.Joystick.circle);
+            // Each direction creates a "tick" element, like on a clock
             for (i = 0; i < directions.length; i += 1) {
                 degrees = directions[i].degrees;
                 // sin and cos are an amount / 1 the tick is offset from the center
@@ -371,10 +378,11 @@ var TouchPassr;
          *
          */
         JoystickControl.prototype.triggerDragger = function (event) {
+            event.preventDefault();
             if (!this.dragEnabled) {
                 return;
             }
-            var x = event.x, y = event.y, offsets = this.getOffsets(this.elementInner), midX = offsets[0] + this.elementInner.offsetWidth / 2, midY = offsets[1] + this.elementInner.offsetHeight / 2, dxRaw = (x - midX) | 0, dyRaw = (midY - y) | 0, dTotal = Math.sqrt(dxRaw * dxRaw + dyRaw * dyRaw), thetaRaw = this.getThetaRaw(dxRaw, dyRaw), direction = this.findClosestDirection(thetaRaw), theta = this.schema.directions[direction].degrees, components = this.getThetaComponents(theta), dx = components[0], dy = -components[1];
+            var coordinates = this.getEventCoordinates(event), x = coordinates[0], y = coordinates[1], offsets = this.getOffsets(this.elementInner), midX = offsets[0] + this.elementInner.offsetWidth / 2, midY = offsets[1] + this.elementInner.offsetHeight / 2, dxRaw = (x - midX) | 0, dyRaw = (midY - y) | 0, dTotal = Math.sqrt(dxRaw * dxRaw + dyRaw * dyRaw), thetaRaw = this.getThetaRaw(dxRaw, dyRaw), directionNumber = this.findClosestDirection(thetaRaw), direction = this.schema.directions[directionNumber], theta = direction.degrees, components = this.getThetaComponents(theta), dx = components[0], dy = -components[1];
             this.proliferateElement(this.elementDragLine, {
                 "style": {
                     "marginLeft": ((dx * 77) | 0) + "%",
@@ -391,6 +399,16 @@ var TouchPassr;
             });
             this.setRotation(this.elementDragLine, (theta + 450) % 360);
             this.positionDraggerEnable();
+        };
+        /**
+         *
+         */
+        JoystickControl.prototype.getEventCoordinates = function (event) {
+            if (event.type === "touchmove") {
+                var touch = event.touches[0];
+                return [touch.pageX, touch.pageY];
+            }
+            return [event.x, event.y];
         };
         /**
          *
@@ -430,6 +448,7 @@ var TouchPassr;
          */
         JoystickControl.prototype.findClosestDirection = function (degrees) {
             var directions = this.schema.directions, difference = Math.abs(directions[0].degrees - degrees), smallestDegrees = directions[0].degrees, smallestDegreesRecord = 0, record = 0, differenceTest, i;
+            // Find the direction with the smallest difference in degrees
             for (i = 1; i < directions.length; i += 1) {
                 differenceTest = Math.abs(directions[i].degrees - degrees);
                 if (differenceTest < difference) {
@@ -451,7 +470,7 @@ var TouchPassr;
         };
         return JoystickControl;
     })(Control);
-    _TouchPassr.JoystickControl = JoystickControl;
+    TouchPassr_1.JoystickControl = JoystickControl;
     /**
      *
      */
@@ -501,6 +520,7 @@ var TouchPassr;
          */
         TouchPassr.prototype.addControl = function (schema) {
             var control;
+            // @todo keep a mapping of control classes, not this switch statement
             switch (schema.control) {
                 case "Button":
                     control = new ButtonControl(this.InputWriter, schema, this.styles);
@@ -534,5 +554,5 @@ var TouchPassr;
         };
         return TouchPassr;
     })();
-    _TouchPassr.TouchPassr = TouchPassr;
+    TouchPassr_1.TouchPassr = TouchPassr;
 })(TouchPassr || (TouchPassr = {}));
