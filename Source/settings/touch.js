@@ -1,18 +1,6 @@
 FullScreenMario.FullScreenMario.settings.touch = {
     "enabled": false,
     "styles": {
-        "default": {
-            "element": {
-                "style": {
-                    "opacity": ".84"
-                }
-            },
-            "elementInner": {
-                "style": {
-                    "textAlign": "center"
-                }
-            }
-        },
         "Button": {
             "elementInner": {
                 "style": {

@@ -11,14 +11,18 @@ var __extends = this.__extends || function (d, b) {
  * When it is ready, it will be spun off into its own repository on GitHub.
  */
 var TouchPassr;
-(function (TouchPassr_1) {
+(function (_TouchPassr) {
     "use strict";
     /**
-     *
+     * Abstract class for on-screen controls. Element creation for .element
+     * and .elementInner within the constrained position is provided.
      */
     var Control = (function () {
         /**
+         * Resets the control by setting member variables and calling resetElement.
          *
+         * @param {InputWritr} InputWriter
+         * @param {Object} schema
          */
         function Control(InputWriter, schema, styles) {
             this.InputWriter = InputWriter;
@@ -26,13 +30,13 @@ var TouchPassr;
             this.resetElement(styles);
         }
         /**
-         *
+         * @return {HTMLElement} The outer container element.
          */
         Control.prototype.getElement = function () {
             return this.element;
         };
         /**
-         *
+         * @return {HTMLElement} The inner container element.
          */
         Control.prototype.getElementInner = function () {
             return this.elementInner;
@@ -53,7 +57,6 @@ var TouchPassr;
                 args[_i - 1] = arguments[_i];
             }
             var element = document.createElement(tag || "div"), i;
-            // For each provided object, add those settings to the element
             for (i = 1; i < arguments.length; i += 1) {
                 this.proliferateElement(element, arguments[i]);
             }
@@ -72,7 +75,6 @@ var TouchPassr;
         Control.prototype.proliferateElement = function (recipient, donor, noOverride) {
             if (noOverride === void 0) { noOverride = false; }
             var setting, i, j;
-            // For each attribute of the donor:
             for (i in donor) {
                 if (donor.hasOwnProperty(i)) {
                     // If noOverride, don't override already existing properties
@@ -80,9 +82,7 @@ var TouchPassr;
                         continue;
                     }
                     setting = donor[i];
-                    // Special cases for HTML elements
                     switch (i) {
-                        // Children: just append all of them directly
                         case "children":
                             if (typeof (setting) !== "undefined") {
                                 for (j = 0; j < setting.length; j += 1) {
@@ -90,11 +90,9 @@ var TouchPassr;
                                 }
                             }
                             break;
-                        // Style: proliferate (instead of making a new Object)
                         case "style":
                             this.proliferateElement(recipient[i], setting);
                             break;
-                        // By default, use the normal proliferate logic
                         default:
                             // If it's null, don't do anything (like .textContent)
                             if (setting === null) {
@@ -118,7 +116,10 @@ var TouchPassr;
             return recipient;
         };
         /**
+         * Resets the container elements. In any inherited resetElement, this should
+         * still be called, as it implements the schema's position.
          *
+         * @param {Object} styles   Container styles for the contained elements.
          */
         Control.prototype.resetElement = function (styles, customType) {
             var position = this.schema.position, offset = position.offset, customStyles;
@@ -128,7 +129,8 @@ var TouchPassr;
                     "position": "absolute",
                     "width": 0,
                     "height": 0,
-                    "boxSizing": "border-box"
+                    "boxSizing": "border-box",
+                    "opacity": ".84"
                 }
             });
             this.elementInner = this.createElement("div", {
@@ -136,7 +138,8 @@ var TouchPassr;
                 "textContent": this.schema.label,
                 "style": {
                     "position": "absolute",
-                    "boxSizing": "border-box"
+                    "boxSizing": "border-box",
+                    "textAlign": "center"
                 }
             });
             this.element.appendChild(this.elementInner);
@@ -158,7 +161,7 @@ var TouchPassr;
             else if (position.vertical === "center") {
                 this.element.style.top = "50%";
             }
-            this.passElementStyles(styles.default);
+            this.passElementStyles(styles.global);
             this.passElementStyles(styles[customType]);
             this.passElementStyles(this.schema.styles);
             if (offset.left) {
@@ -167,7 +170,7 @@ var TouchPassr;
             if (offset.top) {
                 this.elementInner.style.marginTop = this.createPixelMeasurement(offset.top);
             }
-            // this glitch doe
+            // elementInner's center-based positioning must wait until its total width is done setting
             setTimeout(function () {
                 if (position.horizontal === "center") {
                     this.elementInner.style.left = Math.round(this.elementInner.offsetWidth / -2) + "px";
@@ -178,7 +181,10 @@ var TouchPassr;
             }.bind(this));
         };
         /**
+         * Converts a String or Number into a CSS-ready String measurement.
          *
+         * @param {Mixed} raw   A raw measurement, such as "7" or "7px" or "7em".
+         * @return {String} The raw measurement as a CSS measurement.
          */
         Control.prototype.createPixelMeasurement = function (raw) {
             if (!raw) {
@@ -190,7 +196,9 @@ var TouchPassr;
             return raw;
         };
         /**
+         * Passes a style schema to .element and .elementInner.
          *
+         * @param {Object} styles   A container for styles to apply.
          */
         Control.prototype.passElementStyles = function (styles) {
             if (!styles) {
@@ -204,13 +212,20 @@ var TouchPassr;
             }
         };
         /**
+         * Sets the rotation of an HTML element via CSS.
          *
+         * @param {HTMLElement} element
+         * @param {Number} rotation
          */
         Control.prototype.setRotation = function (element, rotation) {
             element.style.transform = "rotate(" + rotation + "deg)";
         };
         /**
+         * Finds the position offset of an element relative to the page, factoring in
+         * its parent elements' offsets recursively.
          *
+         * @param {HTMLElement} element
+         * @return {Number[]} The left and top offset of the element, in px.
          */
         Control.prototype.getOffsets = function (element) {
             var output;
@@ -226,9 +241,10 @@ var TouchPassr;
         };
         return Control;
     })();
-    TouchPassr_1.Control = Control;
+    _TouchPassr.Control = Control;
     /**
-     *
+     * Simple button control. It activates its triggers when the users presses
+     * it or releases it, and contains a simple label.
      */
     var ButtonControl = (function (_super) {
         __extends(ButtonControl, _super);
@@ -236,7 +252,10 @@ var TouchPassr;
             _super.apply(this, arguments);
         }
         /**
+         * Resets the elements by adding listeners for mouse and touch
+         * activation and deactivation events.
          *
+         * @param {Object} styles   Container styles for the contained elements.
          */
         ButtonControl.prototype.resetElement = function (styles) {
             var onActivated = this.onEvent.bind(this, "activated"), onDeactivated = this.onEvent.bind(this, "deactivated");
@@ -247,7 +266,11 @@ var TouchPassr;
             this.element.addEventListener("touchend", onDeactivated);
         };
         /**
+         * Reation callback for a triggered event.
          *
+         * @param {String} which   The pipe being activated, such as
+         *                         "activated" or "deactivated".
+         * @param {Event} event
          */
         ButtonControl.prototype.onEvent = function (which, event) {
             var events = this.schema.pipes[which], i, j;
@@ -265,9 +288,10 @@ var TouchPassr;
         };
         return ButtonControl;
     })(Control);
-    TouchPassr_1.ButtonControl = ButtonControl;
+    _TouchPassr.ButtonControl = ButtonControl;
     /**
-     *
+     * Joystick control. An inner circle can be dragged to one of a number
+     * of directions to trigger pipes on and off.
      */
     var JoystickControl = (function (_super) {
         __extends(JoystickControl, _super);
@@ -295,7 +319,6 @@ var TouchPassr;
                 }
             });
             this.proliferateElement(this.elementCircle, styles.Joystick.circle);
-            // Each direction creates a "tick" element, like on a clock
             for (i = 0; i < directions.length; i += 1) {
                 degrees = directions[i].degrees;
                 // sin and cos are an amount / 1 the tick is offset from the center
@@ -412,6 +435,7 @@ var TouchPassr;
          */
         JoystickControl.prototype.getEventCoordinates = function (event) {
             if (event.type === "touchmove") {
+                // TypeScript 1.5 doesn't seem to have TouchEvent yet.
                 var touch = event.touches[0];
                 return [touch.pageX, touch.pageY];
             }
@@ -455,7 +479,6 @@ var TouchPassr;
          */
         JoystickControl.prototype.findClosestDirection = function (degrees) {
             var directions = this.schema.directions, difference = Math.abs(directions[0].degrees - degrees), smallestDegrees = directions[0].degrees, smallestDegreesRecord = 0, record = 0, differenceTest, i;
-            // Find the direction with the smallest difference in degrees
             for (i = 1; i < directions.length; i += 1) {
                 differenceTest = Math.abs(directions[i].degrees - degrees);
                 if (differenceTest < difference) {
@@ -505,7 +528,7 @@ var TouchPassr;
         };
         return JoystickControl;
     })(Control);
-    TouchPassr_1.JoystickControl = JoystickControl;
+    _TouchPassr.JoystickControl = JoystickControl;
     /**
      *
      */
@@ -576,7 +599,6 @@ var TouchPassr;
          */
         TouchPassr.prototype.addControl = function (schema) {
             var control;
-            // @todo keep a mapping of control classes, not this switch statement
             switch (schema.control) {
                 case "Button":
                     control = new ButtonControl(this.InputWriter, schema, this.styles);
@@ -610,5 +632,5 @@ var TouchPassr;
         };
         return TouchPassr;
     })();
-    TouchPassr_1.TouchPassr = TouchPassr;
+    _TouchPassr.TouchPassr = TouchPassr;
 })(TouchPassr || (TouchPassr = {}));
