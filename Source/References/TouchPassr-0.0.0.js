@@ -1,4 +1,4 @@
-/// <reference path="InputWritr-0.2.0.ts" />
+/// <reference path="TouchPassr-0.0.0.d.ts" />
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -299,7 +299,10 @@ var TouchPassr;
             _super.apply(this, arguments);
         }
         /**
+         * Resets the element by creating a tick for each direction, along with
+         * the multiple circular elements with their triggers.
          *
+         * @param {Object} styles   Container styles for the contained elements.
          */
         JoystickControl.prototype.resetElement = function (styles) {
             _super.prototype.resetElement.call(this, styles, "Joystick");
@@ -380,14 +383,15 @@ var TouchPassr;
             this.elementInner.addEventListener("touchend", this.positionDraggerDisable.bind(this));
         };
         /**
-         *
+         * Enables dragging, showing the elementDragLine.
          */
         JoystickControl.prototype.positionDraggerEnable = function () {
             this.dragEnabled = true;
             this.elementDragLine.style.opacity = "1";
         };
         /**
-         *
+         * Disables dragging, hiding the drag line and re-centering the
+         * inner circle shadow.
          */
         JoystickControl.prototype.positionDraggerDisable = function () {
             this.dragEnabled = false;
@@ -404,7 +408,10 @@ var TouchPassr;
             }
         };
         /**
+         * Triggers a movement point for the joystick, and snaps the stick to
+         * the nearest direction (based on the angle from the center to the point).
          *
+         * @param {Event} event
          */
         JoystickControl.prototype.triggerDragger = function (event) {
             event.preventDefault();
@@ -431,7 +438,10 @@ var TouchPassr;
             this.setCurrentDirection(direction, event);
         };
         /**
+         * Finds the raw coordinates of an event, whether it's a drag (touch)
+         * or mouse event.
          *
+         * @return {Number[]} The x- and y- coordinates of the event.
          */
         JoystickControl.prototype.getEventCoordinates = function (event) {
             if (event.type === "touchmove") {
@@ -442,7 +452,10 @@ var TouchPassr;
             return [event.x, event.y];
         };
         /**
+         * Finds the angle from a joystick center to an x and y. This assumes
+         * straight up is 0, to the right is 90, down is 180, and left is 270.
          *
+         * @return {Number} The degrees to the given point.
          */
         JoystickControl.prototype.getThetaRaw = function (dxRaw, dyRaw) {
             // Based on the quadrant, theta changes...
@@ -468,14 +481,20 @@ var TouchPassr;
             }
         };
         /**
+         * Converts an angle to its relative dx and dy coordinates.
          *
+         * @param {Number} thetaRaw
+         * @return {Number[]} The x- and y- parts of an angle.
          */
         JoystickControl.prototype.getThetaComponents = function (thetaRaw) {
             var theta = thetaRaw * Math.PI / 180;
             return [Math.sin(theta), Math.cos(theta)];
         };
         /**
+         * Finds the index of the closest direction to an angle.
          *
+         * @param {Number} degrees
+         * @return {Number}
          */
         JoystickControl.prototype.findClosestDirection = function (degrees) {
             var directions = this.schema.directions, difference = Math.abs(directions[0].degrees - degrees), smallestDegrees = directions[0].degrees, smallestDegreesRecord = 0, record = 0, differenceTest, i;
@@ -499,7 +518,11 @@ var TouchPassr;
             return record;
         };
         /**
+         * Sets the current direction of the joystick, calling the relevant
+         * InputWriter pipes if necessary.
          *
+         * @param {Object} direction
+         * @param {Event} [event]
          */
         JoystickControl.prototype.setCurrentDirection = function (direction, event) {
             if (this.currentDirection === direction) {
@@ -516,7 +539,11 @@ var TouchPassr;
             this.currentDirection = direction;
         };
         /**
+         * Trigger for calling pipes when a new direction is set. All children
+         * of the pipe has each of its keys triggered.
          *
+         * @param {Object} pipes
+         * @param {Event} [event]
          */
         JoystickControl.prototype.onEvent = function (pipes, event) {
             var i, j;
@@ -539,7 +566,6 @@ var TouchPassr;
         function TouchPassr(settings) {
             this.InputWriter = settings.InputWriter;
             this.styles = settings.styles || {};
-            this.prefix = settings.prefix || "TouchPasser";
             this.resetContainer(settings.container);
             this.controls = {};
             if (settings.controls) {
@@ -556,35 +582,56 @@ var TouchPassr;
         /* Simple gets
         */
         /**
-         *
+         * @return {InputWritr} The InputWritr for controls to pipe event triggers to.
          */
         TouchPassr.prototype.getInputWriter = function () {
             return this.InputWriter;
         };
         /**
-         *
+         * @return {Boolean} Whether this is currently enabled and visually on the screen.
          */
-        TouchPassr.prototype.getPrefix = function () {
-            return this.prefix;
+        TouchPassr.prototype.getEnabled = function () {
+            return this.enabled;
+        };
+        /**
+         * @return {Object} The root container for styles to be added to control elements.
+         */
+        TouchPassr.prototype.getStyles = function () {
+            return this.styles;
+        };
+        /**
+         * @return {Object} The container for generated controls, keyed by their name.
+         */
+        TouchPassr.prototype.getControls = function () {
+            return this.controls;
+        };
+        /**
+         * @return {HTMLElement} The HTMLElement all controls are placed within.
+         */
+        TouchPassr.prototype.getContainer = function () {
+            return this.container;
         };
         /* Core functionality
         */
         /**
-         *
+         * Enables the TouchPassr by showing the container.
          */
         TouchPassr.prototype.enable = function () {
             this.enabled = true;
             this.container.style.display = "block";
         };
         /**
-         *
+         * Disables the TouchPassr by hiding the container.
          */
         TouchPassr.prototype.disable = function () {
             this.enabled = false;
             this.container.style.display = "none";
         };
         /**
+         * Adds any number of controls to the internal listing and HTML container.
          *
+         * @param {Object} schemas   Schemas for new controls to be made, keyed
+         *                           by name.
          */
         TouchPassr.prototype.addControls = function (schemas) {
             var i;
@@ -595,7 +642,9 @@ var TouchPassr;
             }
         };
         /**
+         * Adds a control to the internal listing and HTML container.
          *
+         * @param {Object} schema   The schema for the new control to be made.
          */
         TouchPassr.prototype.addControl = function (schema) {
             var control;
@@ -613,7 +662,11 @@ var TouchPassr;
         /* HTML manipulations
         */
         /**
+         * Resets the base controls container. If a parent element is provided,
+         * the container is added to it.
          *
+         * @param {HTMLElement} [parentContainer]   A container element, such as
+         *                                          from GameStartr.
          */
         TouchPassr.prototype.resetContainer = function (parentContainer) {
             this.container = Control.prototype.createElement("div", {
