@@ -17,7 +17,7 @@ declare module TouchPassr {
         left?: number | string;
         top?: number | string;
     }
-    
+
     /**
      * Global declaration of styles for all controls, typically passed from a
      * TouchPassr to its generated controls.
@@ -26,6 +26,13 @@ declare module TouchPassr {
         global: IControlStyles;
         Button: IButtonStyles;
         Joystick: IJoystickStyles;
+    }
+
+    /**
+     * Container for controls, keyed by name.
+     */
+    export interface IControlsContainer {
+        [i: string]: Control;
     }
     
     /**
@@ -110,6 +117,14 @@ declare module TouchPassr {
     }
 
     export interface ITouchPassr {
-
+        getInputWriter(): InputWritr.IInputWritr;
+        getEnabled(): boolean;
+        getStyles(): IRootControlStyles;
+        getControls(): IControlsContainer;
+        getContainer(): HTMLElement;
+        enable(): void;
+        disable(): void;
+        addControls(schemas: IControlsContainer): void;
+        addControl(schema: IControlSchema): void;
     }
 }

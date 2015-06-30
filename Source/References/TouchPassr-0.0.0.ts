@@ -734,7 +734,7 @@ module TouchPassr {
         /**
          * Container for generated controls, keyed by their name.
          */
-        private controls: { [i: string]: Control; };
+        private controls: IControlsContainer;
 
         /**
          * HTMLElement all controls are placed within.
@@ -792,7 +792,7 @@ module TouchPassr {
         /**
          * @return {Object} The container for generated controls, keyed by their name.
          */
-        getControls(): { [i: string]: Control; } {
+        getControls(): IControlsContainer {
             return this.controls;
         }
 
@@ -829,7 +829,7 @@ module TouchPassr {
          * @param {Object} schemas   Schemas for new controls to be made, keyed
          *                           by name.
          */
-        addControls(schemas: { [i: string]: IControlSchema }): void {
+        addControls(schemas: IControlsContainer): void {
             var i: string;
 
             for (i in schemas) {
