@@ -122,7 +122,7 @@ var TouchPassr;
          * @param {Object} styles   Container styles for the contained elements.
          */
         Control.prototype.resetElement = function (styles, customType) {
-            var position = this.schema.position, offset = position.offset, customStyles;
+            var position = this.schema.position, offset = position.offset;
             this.element = this.createElement("div", {
                 "className": "control",
                 "style": {
@@ -418,7 +418,7 @@ var TouchPassr;
             if (!this.dragEnabled) {
                 return;
             }
-            var coordinates = this.getEventCoordinates(event), x = coordinates[0], y = coordinates[1], offsets = this.getOffsets(this.elementInner), midX = offsets[0] + this.elementInner.offsetWidth / 2, midY = offsets[1] + this.elementInner.offsetHeight / 2, dxRaw = (x - midX) | 0, dyRaw = (midY - y) | 0, dTotal = Math.sqrt(dxRaw * dxRaw + dyRaw * dyRaw), thetaRaw = this.getThetaRaw(dxRaw, dyRaw), directionNumber = this.findClosestDirection(thetaRaw), direction = this.schema.directions[directionNumber], theta = direction.degrees, components = this.getThetaComponents(theta), dx = components[0], dy = -components[1];
+            var coordinates = this.getEventCoordinates(event), x = coordinates[0], y = coordinates[1], offsets = this.getOffsets(this.elementInner), midX = offsets[0] + this.elementInner.offsetWidth / 2, midY = offsets[1] + this.elementInner.offsetHeight / 2, dxRaw = (x - midX) | 0, dyRaw = (midY - y) | 0, thetaRaw = this.getThetaRaw(dxRaw, dyRaw), directionNumber = this.findClosestDirection(thetaRaw), direction = this.schema.directions[directionNumber], theta = direction.degrees, components = this.getThetaComponents(theta), dx = components[0], dy = -components[1];
             this.proliferateElement(this.elementDragLine, {
                 "style": {
                     "marginLeft": ((dx * 77) | 0) + "%",
@@ -430,10 +430,12 @@ var TouchPassr;
                     "top": ((14 + dy * 10) | 0) + "%",
                     "right": ((14 - dx * 10) | 0) + "%",
                     "bottom": ((14 - dy * 10) | 0) + "%",
-                    "left": ((14 + dx * 10) | 0) + "%",
+                    "left": ((14 + dx * 10) | 0) + "%"
                 }
             });
-            this.setRotation(this.elementDragLine, (theta + 450) % 360);
+            // Ensure theta is above 0, and offset it by 90 for visual rotation
+            theta = (theta + 450) % 360;
+            this.setRotation(this.elementDragLine, theta);
             this.positionDraggerEnable();
             this.setCurrentDirection(direction, event);
         };
@@ -548,6 +550,9 @@ var TouchPassr;
         JoystickControl.prototype.onEvent = function (pipes, event) {
             var i, j;
             for (i in pipes) {
+                if (!pipes.hasOwnProperty(i)) {
+                    continue;
+                }
                 for (j = 0; j < pipes[i].length; j += 1) {
                     this.InputWriter.callEvent(i, pipes[i][j], event);
                 }
@@ -654,6 +659,8 @@ var TouchPassr;
                     break;
                 case "Joystick":
                     control = new JoystickControl(this.InputWriter, schema, this.styles);
+                    break;
+                default:
                     break;
             }
             this.controls[schema.name] = control;

@@ -7,10 +7,15 @@ declare module TouchPassr {
     export interface IPosition {
         vertical: string;
         horizontal: string;
-        offset?: {
-            left?: number | string;
-            top?: number | string;
-        }
+        offset?: IPositionOffset
+    }
+
+    /**
+     * Offset measurements for a schema's position.
+     */
+    export interface IPositionOffset {
+        left?: number | string;
+        top?: number | string;
     }
     
     /**

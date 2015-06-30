@@ -42,7 +42,7 @@ module TouchPassr {
          * @param {InputWritr} InputWriter
          * @param {Object} schema
          */
-        constructor(InputWriter: InputWritr.IInputWritr, schema: IControlSchema, styles) {
+        constructor(InputWriter: InputWritr.IInputWritr, schema: IControlSchema, styles: IRootControlStyles) {
             this.InputWriter = InputWriter;
             this.schema = schema;
             this.resetElement(styles);
@@ -154,9 +154,8 @@ module TouchPassr {
          * @param {Object} styles   Container styles for the contained elements.
          */
         protected resetElement(styles: IRootControlStyles, customType?: string): void {
-            var position = this.schema.position,
-                offset = position.offset,
-                customStyles;
+            var position: IPosition = this.schema.position,
+                offset: any = position.offset;
 
             this.element = this.createElement("div", {
                 "className": "control",
@@ -208,7 +207,7 @@ module TouchPassr {
             }
 
             // elementInner's center-based positioning must wait until its total width is done setting
-            setTimeout(function () {
+            setTimeout(function (): void {
                 if (position.horizontal === "center") {
                     this.elementInner.style.left = Math.round(this.elementInner.offsetWidth / -2) + "px";
                 }
@@ -296,7 +295,7 @@ module TouchPassr {
          * The governing schema for this button.
          */
         protected schema: IButtonSchema;
-         
+
         /**
          * Resets the elements by adding listeners for mouse and touch 
          * activation and deactivation events.
@@ -304,8 +303,8 @@ module TouchPassr {
          * @param {Object} styles   Container styles for the contained elements.
          */
         protected resetElement(styles: IRootControlStyles): void {
-            var onActivated = this.onEvent.bind(this, "activated"),
-                onDeactivated = this.onEvent.bind(this, "deactivated");
+            var onActivated: any = this.onEvent.bind(this, "activated"),
+                onDeactivated: any = this.onEvent.bind(this, "deactivated");
 
             super.resetElement(styles, "Button");
 
@@ -324,7 +323,7 @@ module TouchPassr {
          * @param {Event} event
          */
         protected onEvent(which: string, event: Event): void {
-            var events = (<IButtonSchema>this.schema).pipes[which],
+            var events: any = (<IButtonSchema>this.schema).pipes[which],
                 i: string,
                 j: number;
 
@@ -353,7 +352,7 @@ module TouchPassr {
          * The governing schema for this joystick
          */
         protected schema: IJoystickSchema;
-        
+
         /**
          * The large inner circle that visually surrounds the ticks and other
          * inner elements.
@@ -532,22 +531,21 @@ module TouchPassr {
                 return;
             }
 
-            var coordinates = this.getEventCoordinates(event),
-                x = coordinates[0],
-                y = coordinates[1],
-                offsets = this.getOffsets(this.elementInner),
-                midX = offsets[0] + this.elementInner.offsetWidth / 2,
-                midY = offsets[1] + this.elementInner.offsetHeight / 2,
-                dxRaw = (x - midX) | 0,
-                dyRaw = (midY - y) | 0,
-                dTotal = Math.sqrt(dxRaw * dxRaw + dyRaw * dyRaw),
-                thetaRaw = this.getThetaRaw(dxRaw, dyRaw),
-                directionNumber = this.findClosestDirection(thetaRaw),
-                direction = (<IJoystickSchema>this.schema).directions[directionNumber],
-                theta = direction.degrees,
-                components = this.getThetaComponents(theta),
-                dx = components[0],
-                dy = -components[1];
+            var coordinates: number[] = this.getEventCoordinates(event),
+                x: number = coordinates[0],
+                y: number = coordinates[1],
+                offsets: number[] = this.getOffsets(this.elementInner),
+                midX: number = offsets[0] + this.elementInner.offsetWidth / 2,
+                midY: number = offsets[1] + this.elementInner.offsetHeight / 2,
+                dxRaw: number = (x - midX) | 0,
+                dyRaw: number = (midY - y) | 0,
+                thetaRaw: number = this.getThetaRaw(dxRaw, dyRaw),
+                directionNumber: number = this.findClosestDirection(thetaRaw),
+                direction: IJoystickDirection = (<IJoystickSchema>this.schema).directions[directionNumber],
+                theta: number = direction.degrees,
+                components: number[] = this.getThetaComponents(theta),
+                dx: number = components[0],
+                dy: number = -components[1];
 
             this.proliferateElement(this.elementDragLine, {
                 "style": {
@@ -561,11 +559,14 @@ module TouchPassr {
                     "top": ((14 + dy * 10) | 0) + "%",
                     "right": ((14 - dx * 10) | 0) + "%",
                     "bottom": ((14 - dy * 10) | 0) + "%",
-                    "left": ((14 + dx * 10) | 0) + "%",
+                    "left": ((14 + dx * 10) | 0) + "%"
                 }
             });
 
-            this.setRotation(this.elementDragLine,(theta + 450) % 360);
+            // Ensure theta is above 0, and offset it by 90 for visual rotation
+            theta = (theta + 450) % 360;
+
+            this.setRotation(this.elementDragLine, theta);
             this.positionDraggerEnable();
 
             this.setCurrentDirection(direction, event);
@@ -580,7 +581,7 @@ module TouchPassr {
         protected getEventCoordinates(event: DragEvent | MouseEvent): number[] {
             if (event.type === "touchmove") {
                 // TypeScript 1.5 doesn't seem to have TouchEvent yet.
-                var touch = (<any>event).touches[0];
+                var touch: any = (<any>event).touches[0];
                 return [touch.pageX, touch.pageY];
             }
 
@@ -621,7 +622,7 @@ module TouchPassr {
          * @return {Number[]} The x- and y- parts of an angle.
          */
         protected getThetaComponents(thetaRaw: number): number[] {
-            var theta = thetaRaw * Math.PI / 180;
+            var theta: number = thetaRaw * Math.PI / 180;
             return [Math.sin(theta), Math.cos(theta)];
         }
 
@@ -634,8 +635,8 @@ module TouchPassr {
         protected findClosestDirection(degrees: number): number {
             var directions: IJoystickDirection[] = (<IJoystickSchema>this.schema).directions,
                 difference: number = Math.abs(directions[0].degrees - degrees),
-                smallestDegrees = directions[0].degrees,
-                smallestDegreesRecord = 0,
+                smallestDegrees: number = directions[0].degrees,
+                smallestDegreesRecord: number = 0,
                 record: number = 0,
                 differenceTest: number,
                 i: number;
@@ -700,13 +701,17 @@ module TouchPassr {
                 j: number;
 
             for (i in pipes) {
+                if (!pipes.hasOwnProperty(i)) {
+                    continue;
+                }
+
                 for (j = 0; j < pipes[i].length; j += 1) {
                     this.InputWriter.callEvent(i, pipes[i][j], event);
                 }
             }
         }
     }
-    
+
     /**
      * 
      */
@@ -720,7 +725,7 @@ module TouchPassr {
          * Whether this is currently enabled and visually on the screen.
          */
         private enabled: boolean;
-        
+
         /**
          * Root container for styles to be added to control elements.
          */
@@ -735,7 +740,7 @@ module TouchPassr {
          * HTMLElement all controls are placed within.
          */
         private container: HTMLElement;
-        
+
         /**
          * @param {ITouchPassrSettings} settings
          */
@@ -842,7 +847,6 @@ module TouchPassr {
         addControl(schema: IControlSchema): void {
             var control: Control;
 
-            // @todo keep a mapping of control classes, not this switch statement
             switch (schema.control) {
                 case "Button":
                     control = new ButtonControl(this.InputWriter, schema, this.styles);
@@ -850,6 +854,9 @@ module TouchPassr {
 
                 case "Joystick":
                     control = new JoystickControl(this.InputWriter, schema, this.styles);
+                    break;
+
+                default:
                     break;
             }
 
