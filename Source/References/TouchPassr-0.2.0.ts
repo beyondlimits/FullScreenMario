@@ -1,88 +1,249 @@
-/// <reference path="TouchPassr-0.0.0.d.ts" />
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-/**
- * TouchPassr is an in-progress module.
- * This means it doesn't yet exist as its own repository.
- * When it is ready, it will be spun off into its own repository on GitHub.
- */
-var TouchPassr;
-(function (_TouchPassr) {
+/// <reference path="InputWritr-0.2.0.ts" />
+
+declare module TouchPassr {
+    /**
+     * Schema for where a control should lay on the screen. 
+     */
+    export interface IPosition {
+        vertical: string;
+        horizontal: string;
+        offset?: IPositionOffset
+    }
+
+    /**
+     * Offset measurements for a schema's position.
+     */
+    export interface IPositionOffset {
+        left?: number | string;
+        top?: number | string;
+    }
+
+    /**
+     * Global declaration of styles for all controls, typically passed from a
+     * TouchPassr to its generated controls.
+     */
+    export interface IRootControlStyles {
+        global: IControlStyles;
+        Button: IButtonStyles;
+        Joystick: IJoystickStyles;
+    }
+
+    /**
+     * Container for controls, keyed by name.
+     */
+    export interface IControlsContainer {
+        [i: string]: Control;
+    }
+
+    /**
+     * Container for control schemas, keyed by name.
+     */
+    export interface IControlSchemasContainer {
+        [i: string]: IControlSchema;
+    }
+    
+    /**
+     * General container for element styles of a control. It should be extended
+     * for more specific controls.
+     */
+    export interface IControlStyles {
+        element?: CSSRuleList;
+        elementInner?: CSSRuleList;
+    }
+
+    /**
+     * Root schema to be followed for all controls. More specific schema versions
+     * will extend this.
+     */
+    export interface IControlSchema {
+        name: string;
+        control: string;
+        position: IPosition;
+        label?: string;
+        styles?: IControlStyles;
+    }
+
+    /**
+     * Schema for how a control should interact with its InputWriter. Each member key
+     * is the control action, which is linked to any number of InputWriter events, each
+     * of which contains any number of key codes to send. 
+     */
+    export interface IPipes {
+        activated?: { [i: string]: (string | number)[] };
+        deactivated?: { [i: string]: (string | number)[] };
+    }
+
+    /**
+     * Control schema for a simple button. Pipes are activated on press and on release.
+     */
+    export interface IButtonSchema extends IControlSchema {
+        pipes?: IPipes;
+    }
+    
+    /**
+     * Styles schema for a button control, which doesn't change anything.
+     */
+    export interface IButtonStyles extends IControlStyles { }
+
+    /**
+     * Control schema for a joystick. It may have any number of directions that it
+     * will snap to, each of which will have its own pipes.
+     */
+    export interface IJoystickSchema extends IControlSchema {
+        directions: IJoystickDirection[];
+    }
+
+    /**
+     * Schema for a single direction for a joystick. It will be represented as a tick
+     * on the joystick that the control will snap its direction to.
+     */
+    export interface IJoystickDirection {
+        name: string;
+        degrees: number;
+        neighbors?: string[];
+        pipes?: IPipes;
+    }
+    
+    /**
+     * Styles schema for a joystick control, adding its ticks and indicator elements.
+     */
+    export interface IJoystickStyles extends IControlStyles {
+        circle?: IControlStyles;
+        tick?: IControlStyles;
+        dragLine?: IControlStyles;
+        dragShadow?: IControlStyles;
+    }
+
+    export interface ITouchPassrSettings {
+        InputWriter: InputWritr.IInputWritr;
+        prefix?: string;
+        container?: HTMLElement;
+        styles?: any;
+        controls?: { [i: string]: IControlSchema };
+        enabled?: boolean;
+    }
+
+    export interface ITouchPassr {
+        getInputWriter(): InputWritr.IInputWritr;
+        getEnabled(): boolean;
+        getStyles(): IRootControlStyles;
+        getControls(): IControlsContainer;
+        getContainer(): HTMLElement;
+        enable(): void;
+        disable(): void;
+        addControls(schemas: IControlSchemasContainer): void;
+        addControl(schema: IControlSchema): void;
+    }
+}
+
+
+module TouchPassr {
     "use strict";
+
     /**
      * Abstract class for on-screen controls. Element creation for .element
      * and .elementInner within the constrained position is provided.
      */
-    var Control = (function () {
+    export class Control {
+        /**
+         * The parent TouchPassr's InputWritr. Pipe events are sent through here.
+         */
+        protected InputWriter: InputWritr.IInputWritr;
+
+        /**
+         * The governing schema for this control. It should be overriden as a more
+         * specific shema in child classes.
+         */
+        protected schema: IControlSchema;
+
+        /**
+         * The outer container element. It should have width and height of 0, so
+         * it can be positioned using the schema's .position.
+         */
+        protected element: HTMLElement;
+
+        /**
+         * The inner container element, directly inside the outer container. It 
+         * should be positioned absolutely so its center is the outer container.
+         */
+        protected elementInner: HTMLElement;
+
         /**
          * Resets the control by setting member variables and calling resetElement.
-         *
+         * 
          * @param {InputWritr} InputWriter
          * @param {Object} schema
          */
-        function Control(InputWriter, schema, styles) {
+        constructor(InputWriter: InputWritr.IInputWritr, schema: IControlSchema, styles: IRootControlStyles) {
             this.InputWriter = InputWriter;
             this.schema = schema;
             this.resetElement(styles);
         }
+
         /**
          * @return {HTMLElement} The outer container element.
          */
-        Control.prototype.getElement = function () {
+        public getElement(): HTMLElement {
             return this.element;
-        };
+        }
+
         /**
          * @return {HTMLElement} The inner container element.
          */
-        Control.prototype.getElementInner = function () {
+        public getElementInner(): HTMLElement {
             return this.elementInner;
-        };
+        }
+
         /**
          * Creates and returns an HTMLElement of the specified type. Any additional
          * settings Objects may be given to be proliferated onto the Element via
          * proliferateElement.
-         *
+         * 
          * @param {String} type   The tag of the Element to be created.
          * @param {Object} [settings]   Additional settings for the Element, such as
          *                              className or style.
          * @return {HTMLElement}
          */
-        Control.prototype.createElement = function (tag) {
-            var args = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                args[_i - 1] = arguments[_i];
-            }
-            var element = document.createElement(tag || "div"), i;
+        public createElement(tag: string, ...args: any[]): HTMLElement {
+            var element: any = document.createElement(tag || "div"),
+                i: number;
+
+            // For each provided object, add those settings to the element
             for (i = 1; i < arguments.length; i += 1) {
                 this.proliferateElement(element, arguments[i]);
             }
+
             return element;
-        };
+        }
+
         /**
          * Identical to proliferate, but tailored for HTML elements because many
-         * element attributes don't play nicely with JavaScript Array standards.
+         * element attributes don't play nicely with JavaScript Array standards. 
          * Looking at you, HTMLCollection!
-         *
+         * 
          * @param {HTMLElement} recipient
          * @param {Any} donor
          * @param {Boolean} [noOverride]
          * @return {HTMLElement}
          */
-        Control.prototype.proliferateElement = function (recipient, donor, noOverride) {
-            if (noOverride === void 0) { noOverride = false; }
-            var setting, i, j;
+        public proliferateElement(recipient: HTMLElement, donor: any, noOverride: boolean = false): HTMLElement {
+            var setting: any,
+                i: string,
+                j: number;
+
+            // For each attribute of the donor:
             for (i in donor) {
                 if (donor.hasOwnProperty(i)) {
                     // If noOverride, don't override already existing properties
                     if (noOverride && recipient.hasOwnProperty(i)) {
                         continue;
                     }
+
                     setting = donor[i];
+
+                    // Special cases for HTML elements
                     switch (i) {
+                        // Children: just append all of them directly
                         case "children":
                             if (typeof (setting) !== "undefined") {
                                 for (j = 0; j < setting.length; j += 1) {
@@ -90,22 +251,24 @@ var TouchPassr;
                                 }
                             }
                             break;
+
+                        // Style: proliferate (instead of making a new Object)
                         case "style":
                             this.proliferateElement(recipient[i], setting);
                             break;
+
+                        // By default, use the normal proliferate logic
                         default:
                             // If it's null, don't do anything (like .textContent)
                             if (setting === null) {
                                 recipient[i] = null;
-                            }
-                            else if (typeof setting === "object") {
+                            } else if (typeof setting === "object") {
                                 // If it's an object, recurse on a new version of it
                                 if (!recipient.hasOwnProperty(i)) {
                                     recipient[i] = new setting.constructor();
                                 }
                                 this.proliferateElement(recipient[i], setting, noOverride);
-                            }
-                            else {
+                            } else {
                                 // Regular primitives are easy to copy otherwise
                                 recipient[i] = setting;
                             }
@@ -114,15 +277,18 @@ var TouchPassr;
                 }
             }
             return recipient;
-        };
+        }
+
         /**
          * Resets the container elements. In any inherited resetElement, this should
          * still be called, as it implements the schema's position.
-         *
+         * 
          * @param {Object} styles   Container styles for the contained elements.
          */
-        Control.prototype.resetElement = function (styles, customType) {
-            var position = this.schema.position, offset = position.offset;
+        protected resetElement(styles: IRootControlStyles, customType?: string): void {
+            var position: IPosition = this.schema.position,
+                offset: any = position.offset;
+
             this.element = this.createElement("div", {
                 "className": "control",
                 "style": {
@@ -143,35 +309,37 @@ var TouchPassr;
                 }
             });
             this.element.appendChild(this.elementInner);
+
             if (position.horizontal === "left") {
                 this.element.style.left = "0";
-            }
-            else if (position.horizontal === "right") {
+            } else if (position.horizontal === "right") {
                 this.element.style.right = "0";
-            }
-            else if (position.horizontal === "center") {
+            } else if (position.horizontal === "center") {
                 this.element.style.left = "50%";
             }
+
             if (position.vertical === "top") {
                 this.element.style.top = "0";
-            }
-            else if (position.vertical === "bottom") {
+            } else if (position.vertical === "bottom") {
                 this.element.style.bottom = "0";
-            }
-            else if (position.vertical === "center") {
+            } else if (position.vertical === "center") {
                 this.element.style.top = "50%";
             }
+
             this.passElementStyles(styles.global);
             this.passElementStyles(styles[customType]);
             this.passElementStyles(this.schema.styles);
+
             if (offset.left) {
                 this.elementInner.style.marginLeft = this.createPixelMeasurement(offset.left);
             }
+
             if (offset.top) {
                 this.elementInner.style.marginTop = this.createPixelMeasurement(offset.top);
             }
+
             // elementInner's center-based positioning must wait until its total width is done setting
-            setTimeout(function () {
+            setTimeout(function (): void {
                 if (position.horizontal === "center") {
                     this.elementInner.style.left = Math.round(this.elementInner.offsetWidth / -2) + "px";
                 }
@@ -179,141 +347,197 @@ var TouchPassr;
                     this.elementInner.style.top = Math.round(this.elementInner.offsetHeight / -2) + "px";
                 }
             }.bind(this));
-        };
+        }
+
         /**
          * Converts a String or Number into a CSS-ready String measurement.
-         *
+         * 
          * @param {Mixed} raw   A raw measurement, such as "7" or "7px" or "7em".
          * @return {String} The raw measurement as a CSS measurement.
          */
-        Control.prototype.createPixelMeasurement = function (raw) {
+        protected createPixelMeasurement(raw: string | number): string {
             if (!raw) {
                 return "0";
             }
+
             if (typeof raw === "number" || raw.constructor === Number) {
                 return raw + "px";
             }
-            return raw;
-        };
+
+            return <string>raw;
+        }
+
         /**
          * Passes a style schema to .element and .elementInner.
-         *
-         * @param {Object} styles   A container for styles to apply.
+         * 
+         * @param {Object} styles   A container for styles to apply.  
          */
-        Control.prototype.passElementStyles = function (styles) {
+        protected passElementStyles(styles: IControlStyles): void {
             if (!styles) {
                 return;
             }
+
             if (styles.element) {
                 this.proliferateElement(this.element, styles.element);
             }
+
             if (styles.elementInner) {
                 this.proliferateElement(this.elementInner, styles.elementInner);
             }
-        };
+        }
+
         /**
          * Sets the rotation of an HTML element via CSS.
-         *
+         * 
          * @param {HTMLElement} element
          * @param {Number} rotation
          */
-        Control.prototype.setRotation = function (element, rotation) {
+        protected setRotation(element: HTMLElement, rotation: number): void {
             element.style.transform = "rotate(" + rotation + "deg)";
-        };
+        }
+
         /**
-         * Finds the position offset of an element relative to the page, factoring in
+         * Finds the position offset of an element relative to the page, factoring in 
          * its parent elements' offsets recursively.
-         *
+         * 
          * @param {HTMLElement} element
-         * @return {Number[]} The left and top offset of the element, in px.
+         * @return {Number[]} The left and top offset of the element, in px. 
          */
-        Control.prototype.getOffsets = function (element) {
-            var output;
+        protected getOffsets(element: HTMLElement): number[] {
+            var output: number[];
+
             if (element.offsetParent && element !== element.offsetParent) {
-                output = this.getOffsets(element.offsetParent);
+                output = this.getOffsets(<HTMLElement>element.offsetParent);
                 output[0] += element.offsetLeft;
                 output[1] += element.offsetTop;
-            }
-            else {
+            } else {
                 output = [element.offsetLeft, element.offsetTop];
             }
+
             return output;
-        };
-        return Control;
-    })();
-    _TouchPassr.Control = Control;
+        }
+    }
+
     /**
      * Simple button control. It activates its triggers when the users presses
      * it or releases it, and contains a simple label.
      */
-    var ButtonControl = (function (_super) {
-        __extends(ButtonControl, _super);
-        function ButtonControl() {
-            _super.apply(this, arguments);
-        }
+    export class ButtonControl extends Control {
         /**
-         * Resets the elements by adding listeners for mouse and touch
+         * The governing schema for this button.
+         */
+        protected schema: IButtonSchema;
+
+        /**
+         * Resets the elements by adding listeners for mouse and touch 
          * activation and deactivation events.
-         *
+         * 
          * @param {Object} styles   Container styles for the contained elements.
          */
-        ButtonControl.prototype.resetElement = function (styles) {
-            var onActivated = this.onEvent.bind(this, "activated"), onDeactivated = this.onEvent.bind(this, "deactivated");
-            _super.prototype.resetElement.call(this, styles, "Button");
+        protected resetElement(styles: IRootControlStyles): void {
+            var onActivated: any = this.onEvent.bind(this, "activated"),
+                onDeactivated: any = this.onEvent.bind(this, "deactivated");
+
+            super.resetElement(styles, "Button");
+
             this.element.addEventListener("mousedown", onActivated);
             this.element.addEventListener("touchstart", onActivated);
+
             this.element.addEventListener("mouseup", onDeactivated);
             this.element.addEventListener("touchend", onDeactivated);
-        };
+        }
+
         /**
          * Reation callback for a triggered event.
-         *
+         * 
          * @param {String} which   The pipe being activated, such as
          *                         "activated" or "deactivated".
          * @param {Event} event
          */
-        ButtonControl.prototype.onEvent = function (which, event) {
-            var events = this.schema.pipes[which], i, j;
+        protected onEvent(which: string, event: Event): void {
+            var events: any = (<IButtonSchema>this.schema).pipes[which],
+                i: string,
+                j: number;
+
             if (!events) {
                 return;
             }
+
             for (i in events) {
                 if (!events.hasOwnProperty(i)) {
                     continue;
                 }
+
                 for (j = 0; j < events[i].length; j += 1) {
                     this.InputWriter.callEvent(i, events[i][j], event);
                 }
             }
-        };
-        return ButtonControl;
-    })(Control);
-    _TouchPassr.ButtonControl = ButtonControl;
+        }
+    }
+
     /**
      * Joystick control. An inner circle can be dragged to one of a number
      * of directions to trigger pipes on and off.
      */
-    var JoystickControl = (function (_super) {
-        __extends(JoystickControl, _super);
-        function JoystickControl() {
-            _super.apply(this, arguments);
-        }
+    export class JoystickControl extends Control {
+        /**
+         * The governing schema for this joystick
+         */
+        protected schema: IJoystickSchema;
+
+        /**
+         * The large inner circle that visually surrounds the ticks and other
+         * inner elements.
+         */
+        protected elementCircle: HTMLDivElement;
+
+        /**
+         * The normally hidden tick to display a snapped direction.
+         */
+        protected elementDragLine: HTMLDivElement;
+
+        /**
+         * The normally hidden circle that emulates the outer part of a joystick.
+         */
+        protected elementDragShadow: HTMLDivElement;
+
+        /**
+         * Whether dragging is currently enabled, generally by the user starting
+         * an interation event with touch or a mouse.
+         */
+        protected dragEnabled: boolean;
+
+        /**
+         * The currently snaped direction, if dragEnabled is true.
+         */
+        protected currentDirection: IJoystickDirection;
+
         /**
          * Resets the element by creating a tick for each direction, along with
          * the multiple circular elements with their triggers.
-         *
+         * 
          * @param {Object} styles   Container styles for the contained elements.
          */
-        JoystickControl.prototype.resetElement = function (styles) {
-            _super.prototype.resetElement.call(this, styles, "Joystick");
-            var directions = this.schema.directions, element, degrees, sin, cos, dx, dy, i;
+        protected resetElement(styles: IRootControlStyles): void {
+            super.resetElement(styles, "Joystick");
+
+            var directions: IJoystickDirection[] = (<IJoystickSchema>this.schema).directions,
+                element: HTMLDivElement,
+                degrees: number,
+                sin: number,
+                cos: number,
+                dx: number,
+                dy: number,
+                i: number;
+
             this.proliferateElement(this.elementInner, {
                 "style": {
                     "border-radius": "100%"
                 }
             });
+
             // The visible circle is what is actually visible to the user
-            this.elementCircle = this.createElement("div", {
+            this.elementCircle = <HTMLDivElement>this.createElement("div", {
                 "className": "control-inner control-joystick-circle",
                 "style": {
                     "position": "absolute",
@@ -322,15 +546,20 @@ var TouchPassr;
                 }
             });
             this.proliferateElement(this.elementCircle, styles.Joystick.circle);
+
+            // Each direction creates a "tick" element, like on a clock
             for (i = 0; i < directions.length; i += 1) {
                 degrees = directions[i].degrees;
+
                 // sin and cos are an amount / 1 the tick is offset from the center
                 sin = Math.sin(degrees * Math.PI / 180);
                 cos = Math.cos(degrees * Math.PI / 180);
+
                 // dx and dy are measured as percent from the center, based on sin & cos
                 dx = cos * 50 + 50;
                 dy = sin * 50 + 50;
-                element = this.createElement("div", {
+
+                element = <HTMLDivElement>this.createElement("div", {
                     "className": "control-joystick-tick",
                     "style": {
                         "position": "absolute",
@@ -340,12 +569,15 @@ var TouchPassr;
                         "marginTop": (-sin * 2 - 1) + "px"
                     }
                 });
+
                 this.proliferateElement(element, styles.Joystick.tick);
                 this.setRotation(element, degrees);
+
                 this.elementCircle.appendChild(element);
             }
+
             // In addition to the ticks, a drag element shows current direction
-            this.elementDragLine = this.createElement("div", {
+            this.elementDragLine = <HTMLDivElement>this.createElement("div", {
                 "className": "control-joystick-drag-line",
                 "style": {
                     "position": "absolute",
@@ -356,8 +588,9 @@ var TouchPassr;
             });
             this.proliferateElement(this.elementDragLine, styles.Joystick.dragLine);
             this.elementCircle.appendChild(this.elementDragLine);
+
             // A shadow-like circle supports the drag effect
-            this.elementDragShadow = this.createElement("div", {
+            this.elementDragShadow = <HTMLDivElement>this.createElement("div", {
                 "className": "control-joystick-drag-shadow",
                 "style": {
                     "position": "absolute",
@@ -373,58 +606,86 @@ var TouchPassr;
             });
             this.proliferateElement(this.elementDragShadow, styles.Joystick.dragShadow);
             this.elementCircle.appendChild(this.elementDragShadow);
+
             this.elementInner.appendChild(this.elementCircle);
+
             this.elementInner.addEventListener("click", this.triggerDragger.bind(this));
             this.elementInner.addEventListener("touchmove", this.triggerDragger.bind(this));
             this.elementInner.addEventListener("mousemove", this.triggerDragger.bind(this));
+
             this.elementInner.addEventListener("mouseover", this.positionDraggerEnable.bind(this));
             this.elementInner.addEventListener("touchstart", this.positionDraggerEnable.bind(this));
+
             this.elementInner.addEventListener("mouseout", this.positionDraggerDisable.bind(this));
             this.elementInner.addEventListener("touchend", this.positionDraggerDisable.bind(this));
-        };
+        }
+
         /**
          * Enables dragging, showing the elementDragLine.
          */
-        JoystickControl.prototype.positionDraggerEnable = function () {
+        protected positionDraggerEnable(): void {
             this.dragEnabled = true;
             this.elementDragLine.style.opacity = "1";
-        };
+        }
+
         /**
-         * Disables dragging, hiding the drag line and re-centering the
+         * Disables dragging, hiding the drag line and re-centering the 
          * inner circle shadow.
          */
-        JoystickControl.prototype.positionDraggerDisable = function () {
+        protected positionDraggerDisable(): void {
             this.dragEnabled = false;
             this.elementDragLine.style.opacity = "0";
+
             this.elementDragShadow.style.top = "14%";
             this.elementDragShadow.style.right = "14%";
             this.elementDragShadow.style.bottom = "14%";
             this.elementDragShadow.style.left = "14%";
+
             if (this.currentDirection) {
                 if (this.currentDirection.pipes && this.currentDirection.pipes.deactivated) {
                     this.onEvent(this.currentDirection.pipes.deactivated, event);
                 }
+
                 this.currentDirection = undefined;
             }
-        };
+        }
+
         /**
          * Triggers a movement point for the joystick, and snaps the stick to
          * the nearest direction (based on the angle from the center to the point).
-         *
+         * 
          * @param {Event} event
          */
-        JoystickControl.prototype.triggerDragger = function (event) {
+        protected triggerDragger(event: DragEvent | MouseEvent): void {
             event.preventDefault();
+
             if (!this.dragEnabled) {
                 return;
             }
-            var coordinates = this.getEventCoordinates(event), x = coordinates[0], y = coordinates[1], offsets = this.getOffsets(this.elementInner), midX = offsets[0] + this.elementInner.offsetWidth / 2, midY = offsets[1] + this.elementInner.offsetHeight / 2, dxRaw = (x - midX) | 0, dyRaw = (midY - y) | 0, thetaRaw = this.getThetaRaw(dxRaw, dyRaw), directionNumber = this.findClosestDirection(thetaRaw), direction = this.schema.directions[directionNumber], theta = direction.degrees, components = this.getThetaComponents(theta), dx = components[0], dy = -components[1];
+
+            var coordinates: number[] = this.getEventCoordinates(event),
+                x: number = coordinates[0],
+                y: number = coordinates[1],
+                offsets: number[] = this.getOffsets(this.elementInner),
+                midX: number = offsets[0] + this.elementInner.offsetWidth / 2,
+                midY: number = offsets[1] + this.elementInner.offsetHeight / 2,
+                dxRaw: number = (x - midX) | 0,
+                dyRaw: number = (midY - y) | 0,
+                thetaRaw: number = this.getThetaRaw(dxRaw, dyRaw),
+                directionNumber: number = this.findClosestDirection(thetaRaw),
+                direction: IJoystickDirection = (<IJoystickSchema>this.schema).directions[directionNumber],
+                theta: number = direction.degrees,
+                components: number[] = this.getThetaComponents(theta),
+                dx: number = components[0],
+                dy: number = -components[1];
+
             this.proliferateElement(this.elementDragLine, {
                 "style": {
                     "marginLeft": ((dx * 77) | 0) + "%",
                     "marginTop": ((dy * 77) | 0) + "%"
                 }
             });
+
             this.proliferateElement(this.elementDragShadow, {
                 "style": {
                     "top": ((14 + dy * 10) | 0) + "%",
@@ -433,73 +694,86 @@ var TouchPassr;
                     "left": ((14 + dx * 10) | 0) + "%"
                 }
             });
+
             // Ensure theta is above 0, and offset it by 90 for visual rotation
             theta = (theta + 450) % 360;
+
             this.setRotation(this.elementDragLine, theta);
             this.positionDraggerEnable();
+
             this.setCurrentDirection(direction, event);
-        };
+        }
+
         /**
          * Finds the raw coordinates of an event, whether it's a drag (touch)
          * or mouse event.
-         *
+         * 
          * @return {Number[]} The x- and y- coordinates of the event.
          */
-        JoystickControl.prototype.getEventCoordinates = function (event) {
+        protected getEventCoordinates(event: DragEvent | MouseEvent): number[] {
             if (event.type === "touchmove") {
                 // TypeScript 1.5 doesn't seem to have TouchEvent yet.
-                var touch = event.touches[0];
+                var touch: any = (<any>event).touches[0];
                 return [touch.pageX, touch.pageY];
             }
-            return [event.x, event.y];
-        };
+
+            return [(<MouseEvent>event).x, (<MouseEvent>event).y];
+        }
+
         /**
-         * Finds the angle from a joystick center to an x and y. This assumes
+         * Finds the angle from a joystick center to an x and y. This assumes 
          * straight up is 0, to the right is 90, down is 180, and left is 270.
-         *
+         * 
          * @return {Number} The degrees to the given point.
          */
-        JoystickControl.prototype.getThetaRaw = function (dxRaw, dyRaw) {
+        protected getThetaRaw(dxRaw: number, dyRaw: number): number {
             // Based on the quadrant, theta changes...
             if (dxRaw > 0) {
                 if (dyRaw > 0) {
                     // Quadrant I
                     return Math.atan(dxRaw / dyRaw) * 180 / Math.PI;
-                }
-                else {
+                } else {
                     // Quadrant II
                     return -Math.atan(dyRaw / dxRaw) * 180 / Math.PI + 90;
                 }
-            }
-            else {
+            } else {
                 if (dyRaw < 0) {
                     // Quadrant III
                     return Math.atan(dxRaw / dyRaw) * 180 / Math.PI + 180;
-                }
-                else {
+                } else {
                     // Quadrant IV
                     return -Math.atan(dyRaw / dxRaw) * 180 / Math.PI + 270;
                 }
             }
-        };
+        }
+
         /**
          * Converts an angle to its relative dx and dy coordinates.
-         *
+         * 
          * @param {Number} thetaRaw
          * @return {Number[]} The x- and y- parts of an angle.
          */
-        JoystickControl.prototype.getThetaComponents = function (thetaRaw) {
-            var theta = thetaRaw * Math.PI / 180;
+        protected getThetaComponents(thetaRaw: number): number[] {
+            var theta: number = thetaRaw * Math.PI / 180;
             return [Math.sin(theta), Math.cos(theta)];
-        };
+        }
+
         /**
-         * Finds the index of the closest direction to an angle.
-         *
+         * Finds the index of the closest direction to an angle. 
+         * 
          * @param {Number} degrees
          * @return {Number}
          */
-        JoystickControl.prototype.findClosestDirection = function (degrees) {
-            var directions = this.schema.directions, difference = Math.abs(directions[0].degrees - degrees), smallestDegrees = directions[0].degrees, smallestDegreesRecord = 0, record = 0, differenceTest, i;
+        protected findClosestDirection(degrees: number): number {
+            var directions: IJoystickDirection[] = (<IJoystickSchema>this.schema).directions,
+                difference: number = Math.abs(directions[0].degrees - degrees),
+                smallestDegrees: number = directions[0].degrees,
+                smallestDegreesRecord: number = 0,
+                record: number = 0,
+                differenceTest: number,
+                i: number;
+
+            // Find the direction with the smallest difference in degrees
             for (i = 1; i < directions.length; i += 1) {
                 differenceTest = Math.abs(directions[i].degrees - degrees);
                 if (differenceTest < difference) {
@@ -511,171 +785,228 @@ var TouchPassr;
                     smallestDegreesRecord = i;
                 }
             }
+
             // 359 is closer to 360 than 0, so pretend the smallest is above 360
             differenceTest = Math.abs(smallestDegrees + 360 - degrees);
             if (differenceTest < difference) {
                 difference = differenceTest;
                 record = smallestDegreesRecord;
             }
+
             return record;
-        };
+        }
+
         /**
-         * Sets the current direction of the joystick, calling the relevant
+         * Sets the current direction of the joystick, calling the relevant 
          * InputWriter pipes if necessary.
-         *
+         * 
          * @param {Object} direction
          * @param {Event} [event]
          */
-        JoystickControl.prototype.setCurrentDirection = function (direction, event) {
+        protected setCurrentDirection(direction: IJoystickDirection, event?: Event): void {
             if (this.currentDirection === direction) {
                 return;
             }
+
             if (this.currentDirection && this.currentDirection.pipes) {
                 if (this.currentDirection.pipes.deactivated) {
                     this.onEvent(this.currentDirection.pipes.deactivated, event);
                 }
             }
+
             if (direction.pipes && direction.pipes.activated) {
                 this.onEvent(direction.pipes.activated, event);
             }
+
             this.currentDirection = direction;
-        };
+        }
+
         /**
          * Trigger for calling pipes when a new direction is set. All children
          * of the pipe has each of its keys triggered.
-         *
+         * 
          * @param {Object} pipes
          * @param {Event} [event]
          */
-        JoystickControl.prototype.onEvent = function (pipes, event) {
-            var i, j;
+        protected onEvent(pipes: IPipes, event?: Event): void {
+            var i: string,
+                j: number;
+
             for (i in pipes) {
                 if (!pipes.hasOwnProperty(i)) {
                     continue;
                 }
+
                 for (j = 0; j < pipes[i].length; j += 1) {
                     this.InputWriter.callEvent(i, pipes[i][j], event);
                 }
             }
-        };
-        return JoystickControl;
-    })(Control);
-    _TouchPassr.JoystickControl = JoystickControl;
+        }
+    }
+
     /**
-     *
+     * 
      */
-    var TouchPassr = (function () {
+    export class TouchPassr implements ITouchPassr {
+        /**
+         * An InputWritr for controls to pipe event triggers to.
+         */
+        private InputWriter: InputWritr.IInputWritr;
+
+        /**
+         * Whether this is currently enabled and visually on the screen.
+         */
+        private enabled: boolean;
+
+        /**
+         * Root container for styles to be added to control elements.
+         */
+        private styles: IRootControlStyles;
+
+        /**
+         * Container for generated controls, keyed by their name.
+         */
+        private controls: IControlsContainer;
+
+        /**
+         * HTMLElement all controls are placed within.
+         */
+        private container: HTMLElement;
+
         /**
          * @param {ITouchPassrSettings} settings
          */
-        function TouchPassr(settings) {
+        constructor(settings: ITouchPassrSettings) {
             this.InputWriter = settings.InputWriter;
             this.styles = settings.styles || {};
+
             this.resetContainer(settings.container);
+
             this.controls = {};
             if (settings.controls) {
                 this.addControls(settings.controls);
             }
+
             if (typeof settings.enabled === "undefined") {
                 this.enabled = true;
-            }
-            else {
+            } else {
                 this.enabled = settings.enabled;
             }
+
             this.enabled ? this.enable() : this.disable();
         }
+
+
         /* Simple gets
         */
+
         /**
          * @return {InputWritr} The InputWritr for controls to pipe event triggers to.
          */
-        TouchPassr.prototype.getInputWriter = function () {
+        getInputWriter(): InputWritr.IInputWritr {
             return this.InputWriter;
-        };
+        }
+
         /**
          * @return {Boolean} Whether this is currently enabled and visually on the screen.
          */
-        TouchPassr.prototype.getEnabled = function () {
+        getEnabled(): boolean {
             return this.enabled;
-        };
+        }
+
         /**
          * @return {Object} The root container for styles to be added to control elements.
          */
-        TouchPassr.prototype.getStyles = function () {
+        getStyles(): IRootControlStyles {
             return this.styles;
-        };
+        }
+
         /**
          * @return {Object} The container for generated controls, keyed by their name.
          */
-        TouchPassr.prototype.getControls = function () {
+        getControls(): IControlsContainer {
             return this.controls;
-        };
+        }
+
         /**
          * @return {HTMLElement} The HTMLElement all controls are placed within.
          */
-        TouchPassr.prototype.getContainer = function () {
+        getContainer(): HTMLElement {
             return this.container;
-        };
+        }
+
+
         /* Core functionality
         */
+
         /**
          * Enables the TouchPassr by showing the container.
          */
-        TouchPassr.prototype.enable = function () {
+        enable(): void {
             this.enabled = true;
             this.container.style.display = "block";
-        };
+        }
+
         /**
          * Disables the TouchPassr by hiding the container.
          */
-        TouchPassr.prototype.disable = function () {
+        disable(): void {
             this.enabled = false;
             this.container.style.display = "none";
-        };
+        }
+
         /**
          * Adds any number of controls to the internal listing and HTML container.
-         *
-         * @param {Object} schemas   Schemas for new controls to be made, keyed
-         *                           by name.
+         * 
+         * @param {Object} schemas   Schemas for new controls to be made, keyed by name.
          */
-        TouchPassr.prototype.addControls = function (schemas) {
-            var i;
+        addControls(schemas: IControlSchemasContainer): void {
+            var i: string;
+
             for (i in schemas) {
                 if (schemas.hasOwnProperty(i)) {
                     this.addControl(schemas[i]);
                 }
             }
-        };
+        }
+
         /**
          * Adds a control to the internal listing and HTML container.
-         *
+         * 
          * @param {Object} schema   The schema for the new control to be made.
          */
-        TouchPassr.prototype.addControl = function (schema) {
-            var control;
+        addControl(schema: IControlSchema): void {
+            var control: Control;
+
             switch (schema.control) {
                 case "Button":
                     control = new ButtonControl(this.InputWriter, schema, this.styles);
                     break;
+
                 case "Joystick":
                     control = new JoystickControl(this.InputWriter, schema, this.styles);
                     break;
+
                 default:
                     break;
             }
+
             this.controls[schema.name] = control;
             this.container.appendChild(control.getElement());
-        };
+        }
+
+
         /* HTML manipulations
         */
+
         /**
          * Resets the base controls container. If a parent element is provided,
          * the container is added to it.
-         *
+         * 
          * @param {HTMLElement} [parentContainer]   A container element, such as
          *                                          from GameStartr.
          */
-        TouchPassr.prototype.resetContainer = function (parentContainer) {
+        private resetContainer(parentContainer?: HTMLElement): void {
             this.container = Control.prototype.createElement("div", {
                 "className": "touch-passer-container",
                 "style": {
@@ -686,11 +1017,10 @@ var TouchPassr;
                     "left": 0
                 }
             });
+
             if (parentContainer) {
                 parentContainer.appendChild(this.container);
             }
-        };
-        return TouchPassr;
-    })();
-    _TouchPassr.TouchPassr = TouchPassr;
-})(TouchPassr || (TouchPassr = {}));
+        }
+    }
+}
