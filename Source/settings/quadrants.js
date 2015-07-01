@@ -4,4 +4,4 @@ FullScreenMario.FullScreenMario.settings.quadrants = {
     "tolerance": FullScreenMario.FullScreenMario.unitsize / 2,
     "groupNames": ["Solid", "Character", "Scenery", "Text"],
     "keyGroupName": "groupType"
-}
+};

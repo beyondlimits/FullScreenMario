@@ -20,9 +20,9 @@ FullScreenMario.FullScreenMario.settings.runner = {
         function () {
             this.PixelDrawer.refillGlobalCanvas(this.MapsHandler.getArea().background);
             // this.PixelDrawer.refillQuadrantGroups(
-                // this.QuadsKeeper.getQuadrantRows(),
-                // this.MapsHandler.getArea().background
+            // this.QuadsKeeper.getQuadrantRows(),
+            // this.MapsHandler.getArea().background
             // );
         }
     ]
-}
+};

@@ -612,7 +612,7 @@ module FullScreenMario {
         keyDownPause(player: IPlayer, event?: Event): void {
             if (!player.FSM.GamesRunner.getPaused()) {
                 player.FSM.TimeHandler.addEvent(
-                    player.FSM.GamesRunner.pause, 7, true);
+                    player.FSM.GamesRunner.pause.bind(player.FSM.GamesRunner), 7, true);
             }
             player.FSM.ModAttacher.fireEvent("onKeyDownPause");
 
