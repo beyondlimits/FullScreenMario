@@ -41,6 +41,7 @@ module FullScreenMario {
             "runner": undefined,
             "sprites": undefined,
             "statistics": undefined,
+            "touch": undefined,
             "ui": undefined
         };
 
