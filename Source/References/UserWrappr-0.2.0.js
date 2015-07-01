@@ -10997,6 +10997,12 @@ var TouchPassr;
         TouchPassr.prototype.getContainer = function () {
             return this.container;
         };
+        /**
+         * @return {HTMLElement} The HTMLElement containing the controls container.
+         */
+        TouchPassr.prototype.getParentContainer = function () {
+            return this.parentContainer;
+        };
         /* Core functionality
         */
         /**
@@ -11012,6 +11018,15 @@ var TouchPassr;
         TouchPassr.prototype.disable = function () {
             this.enabled = false;
             this.container.style.display = "none";
+        };
+        /**
+         * Sets the parent container surrounding the controls container.
+         *
+         * @param {HTMLElement} parentElement
+         */
+        TouchPassr.prototype.setParentContainer = function (parentElement) {
+            this.parentContainer = parentElement;
+            this.parentContainer.appendChild(this.container);
         };
         /**
          * Adds any number of controls to the internal listing and HTML container.
@@ -11067,7 +11082,7 @@ var TouchPassr;
                 }
             });
             if (parentContainer) {
-                parentContainer.appendChild(this.container);
+                this.setParentContainer(parentContainer);
             }
         };
         return TouchPassr;
@@ -13730,7 +13745,7 @@ var GameStartr;
         GameStartr.prototype.resetLevelEditor = function (GameStarter, customs) {
             GameStarter.LevelEditor = new LevelEditr.LevelEditr(GameStarter.proliferate({
                 "GameStarter": GameStarter,
-                "beautifier": js_beautify // Eventually there will be a custom beautifier... maybe
+                "beautifier": js_beautify
             }, GameStarter.settings.editor));
         };
         /**
@@ -13779,7 +13794,7 @@ var GameStartr;
         };
         /**
          * Resets the parent HTML container. Width and height are set by customs,
-         * and canvas and ItemsHolder container elements are added.
+         * and canvas, ItemsHolder, and TouchPassr container elements are added.
          *
          * @param {GameStartr} GameStarter
          * @param {Object} [customs]
@@ -13796,6 +13811,7 @@ var GameStartr;
             GameStarter.canvas = GameStarter.createCanvas(customs.width, customs.height);
             GameStarter.PixelDrawer.setCanvas(GameStarter.canvas);
             GameStarter.container.appendChild(GameStarter.canvas);
+            GameStarter.TouchPasser.setParentContainer(GameStarter.container);
         };
         /* Global manipulations
         */
