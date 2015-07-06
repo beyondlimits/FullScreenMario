@@ -1,4 +1,3 @@
-/// <reference path="ItemsHoldr-0.2.1.ts" />
 /// <reference path="GameStartr-0.2.0.ts" />
 
 interface HTMLElement {
