@@ -147,14 +147,17 @@ module FullScreenMario {
                         "generator": "settings/generator.js",
                         "input": "settings/inpug.js",
                         "maps": "settings/maps.js",
+                        "math": "settings/math.js",
                         "mods": "settings/mods.js",
                         "numbers": "settings/number.js",
                         "objects": "settings/objetcs.js",
                         "quadrants": "settings/quadrants.js",
                         "renderer": "settings/renderer.js",
                         "runner": "settings/runner.js",
+                        "scenes": "settings/scenes.js",
                         "sprites": "settings/sprites.js",
                         "statistics": "settings/statistics.js",
+                        "touch": "settings/touch.js",
                         "ui": "settings/ui.js"
                     }
                 },
