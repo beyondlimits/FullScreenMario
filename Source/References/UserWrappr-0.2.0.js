@@ -10209,6 +10209,150 @@ var NumberMakr;
     })();
     _NumberMakr.NumberMakr = NumberMakr;
 })(NumberMakr || (NumberMakr = {}));
+var ScenePlayr;
+(function (_ScenePlayr) {
+    "use strict";
+    var ScenePlayr = (function () {
+        /**
+         * @param {IScenePlayrSettings} [settings]
+         */
+        function ScenePlayr(settings) {
+            if (settings === void 0) { settings = {}; }
+            this.cutscenes = settings.cutscenes || {};
+            this.cutsceneArguments = settings.cutsceneArguments || [];
+        }
+        /* Simple gets
+        */
+        /**
+         * @return {Object} The complete listing of cutscenes that may be played.
+         */
+        ScenePlayr.prototype.getCutscenes = function () {
+            return this.cutscenes;
+        };
+        /**
+         * @return {Object} The currently playing cutscene.
+         */
+        ScenePlayr.prototype.getCutscene = function () {
+            return this.cutscene;
+        };
+        /**
+         * @return {Object} The cutscene referred to by the given name.
+         */
+        ScenePlayr.prototype.getOtherCutscene = function (name) {
+            return this.cutscenes[name];
+        };
+        /**
+         * @return {Function} The currently playing routine.
+         */
+        ScenePlayr.prototype.getRoutine = function () {
+            return this.routine;
+        };
+        /**
+         * @return {Function} The routine within the current cutscene referred to
+         *                    by the given name.
+         */
+        ScenePlayr.prototype.getOtherRoutine = function (name) {
+            return this.cutscene.routines[name];
+        };
+        /**
+         * @return {String} The name of the currently playing cutscene.
+         */
+        ScenePlayr.prototype.getCutsceneName = function () {
+            return this.cutsceneName;
+        };
+        /**
+         * @return {Object} The settings used by the current cutscene.
+         */
+        ScenePlayr.prototype.getCutsceneSettings = function () {
+            return this.cutsceneSettings;
+        };
+        /* Playback
+        */
+        /**
+         * Starts the cutscene of the given name, keeping the settings Object (if
+         * given one). The cutsceneArguments unshift the settings, and if the
+         * cutscene specifies a firstRoutine, it's started.
+         *
+         * @param {String} name   The name of the cutscene to play.
+         * @param {Object} [settings]   Additional settings to be kept as a
+         *                              persistent Object throughout the cutscene.
+         */
+        ScenePlayr.prototype.startCutscene = function (name, settings) {
+            if (settings === void 0) { settings = {}; }
+            if (!name) {
+                throw new Error("No name given to ScenePlayr.playScene.");
+            }
+            if (this.cutsceneName) {
+                this.stopCutscene();
+            }
+            this.cutscene = this.cutscenes[name];
+            this.cutsceneName = name;
+            this.cutsceneSettings = settings || {};
+            this.cutsceneSettings.cutscene = this.cutscene;
+            this.cutsceneSettings.cutsceneName = name;
+            this.cutsceneArguments.unshift(this.cutsceneSettings);
+            if (this.cutscene.firstRoutine) {
+                this.playRoutine(this.cutscene.firstRoutine);
+            }
+        };
+        /**
+         * Returns this.startCutscene bound to the given name and settings.
+         *
+         * @param {String} name   The name of the cutscene to play.
+         * @param {Object} [settings]   Additional settings to be kept as a
+         *                              persistent Object throughout the cutscene.
+         */
+        ScenePlayr.prototype.bindCutscene = function (name, settings) {
+            return this.startCutscene.bind(self, name, settings);
+        };
+        /**
+         * Stops the currently playing cutscene, clearing the internal data.
+         */
+        ScenePlayr.prototype.stopCutscene = function () {
+            this.cutscene = undefined;
+            this.cutsceneName = undefined;
+            this.cutsceneSettings = undefined;
+            this.routine = undefined;
+            this.cutsceneArguments.shift();
+        };
+        /**
+         * Plays a particular routine within the current cutscene, passing
+         * the given args as cutsceneSettings.routineArguments.
+         *
+         * @param {String} name   The name of the routine to play.
+         * @param {Array} ...args   Any additional arguments to pass to the routine.
+         */
+        ScenePlayr.prototype.playRoutine = function (name) {
+            var args = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                args[_i - 1] = arguments[_i];
+            }
+            if (!this.cutscene) {
+                throw new Error("No cutscene is currently playing.");
+            }
+            if (!this.cutscene.routines[name]) {
+                throw new Error("The " + this.cutsceneName + " cutscene does not contain a " + name + " routine.");
+            }
+            this.routine = this.cutscene.routines[name];
+            this.cutsceneSettings.routine = this.routine;
+            this.cutsceneSettings.routineName = name;
+            this.cutsceneSettings.routineArguments = args;
+            this.routine.apply(this, this.cutsceneArguments);
+        };
+        /**
+         *
+         * Returns this.startCutscene bound to the given name and arguments.
+         *
+         * @param {String} name   The name of the cutscene to play.
+         * @param {Object} [settings]   Any additional arguments to pass to the routine.
+         */
+        ScenePlayr.prototype.bindRoutine = function (name, args) {
+            return this.playRoutine.bind(this, name, args);
+        };
+        return ScenePlayr;
+    })();
+    _ScenePlayr.ScenePlayr = ScenePlayr;
+})(ScenePlayr || (ScenePlayr = {}));
 /// <reference path="QuadsKeepr-0.2.1.ts" />
 var ThingHittr;
 (function (_ThingHittr) {
@@ -13398,6 +13542,7 @@ var WorldSeedr;
 /// <reference path="GamesRunnr-0.2.0.ts" />
 /// <reference path="GroupHoldr-0.2.1.ts" />
 /// <reference path="InputWritr-0.2.0.ts" />
+/// <reference path="ItemsHoldr-0.2.1.ts" />
 /// <reference path="LevelEditr-0.2.0.ts" />
 /// <reference path="MapsCreatr-0.2.1.ts" />
 /// <reference path="MapScreenr-0.2.1.ts" />
@@ -13408,7 +13553,7 @@ var WorldSeedr;
 /// <reference path="PixelDrawr-0.2.0.ts" />
 /// <reference path="PixelRendr-0.2.0.ts" />
 /// <reference path="QuadsKeepr-0.2.1.ts" />
-/// <reference path="ItemsHoldr-0.2.1.ts" />
+/// <reference path="ScenePlayr-0.2.0.ts" />
 /// <reference path="StringFilr-0.2.1.ts" />
 /// <reference path="ThingHittr-0.2.0.ts" />
 /// <reference path="TimeHandlr-0.2.0.ts" />
@@ -13475,6 +13620,7 @@ var GameStartr;
                 "resetTouchPasser",
                 "resetLevelEditor",
                 "resetWorldSeeder",
+                "resetScenePlayer",
                 "resetModAttacher",
                 "startModAttacher",
                 "resetContainer"
@@ -13486,7 +13632,7 @@ var GameStartr;
          * Resets the GameStartr by calling the parent EightBittr.EightBittr.prototype.reset.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          */
         GameStartr.prototype.reset = function (GameStarter, customs) {
             EightBittr.EightBittr.prototype.reset(GameStarter, GameStarter.resets, customs);
@@ -13496,7 +13642,7 @@ var GameStartr;
          * EightBittr.EightBittr.prototype.resetTimed.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          * @return {Array} How long each reset Function took followed by the entire
          *                 operation, in milliseconds.
          */
@@ -13510,7 +13656,7 @@ var GameStartr;
          * given a reference to this container FSM via properties.thing.GameStarter.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          * @remarks Requirement(s): objects.js (settings/objects.js)
          */
         GameStartr.prototype.resetObjectMaker = function (GameStarter, customs) {
@@ -13531,7 +13677,7 @@ var GameStartr;
          * Sets this.QuadsKeeper.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          * @remarks Requirement(s): quadrants.js (settings/quadrants.js)
          */
         GameStartr.prototype.resetQuadsKeeper = function (GameStarter, customs) {
@@ -13551,7 +13697,7 @@ var GameStartr;
          * Sets this.PixelRender.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          * @remarks Requirement(s): sprites.js (settings/sprites.js)
          */
         GameStartr.prototype.resetPixelRender = function (GameStarter, customs) {
@@ -13565,7 +13711,7 @@ var GameStartr;
          * Sets this.PixelDrawer.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          * @remarks Requirement(s): renderer.js (settings/renderer.js)
          */
         GameStartr.prototype.resetPixelDrawer = function (GameStarter, customs) {
@@ -13581,7 +13727,7 @@ var GameStartr;
          * Sets EightBitter.TimeHandler.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          * @remarks Requirement(s): events.js (settings/events.js)
          */
         GameStartr.prototype.resetTimeHandler = function (GameStarter, customs) {
@@ -13594,7 +13740,7 @@ var GameStartr;
          * Sets this.AudioPlayer.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          * @remarks Requirement(s): audio.js (settings/audio.js)
          */
         GameStartr.prototype.resetAudioPlayer = function (GameStarter, customs) {
@@ -13606,7 +13752,7 @@ var GameStartr;
          * Sets this.GamesRunner.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          * @remarks Requirement(s): runner.js (settings/runner.js)
          */
         GameStartr.prototype.resetGamesRunner = function (GameStarter, customs) {
@@ -13623,7 +13769,7 @@ var GameStartr;
          * Sets this.ItemsHolder.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          * @remarks Requirement(s): statistics.js (settings/statistics.js)
          */
         GameStartr.prototype.resetItemsHolder = function (GameStarter, customs) {
@@ -13635,7 +13781,7 @@ var GameStartr;
          * Sets this.GroupHolder.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          * @remarks Requirement(s): groups.js (settings/groups.js)
          */
         GameStartr.prototype.resetGroupHolder = function (GameStarter, customs) {
@@ -13645,7 +13791,7 @@ var GameStartr;
          * Sets this.ThingHitter.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          * @remarks Requirement(s): collisions.js (settings/collisions.js)
          */
         GameStartr.prototype.resetThingHitter = function (GameStarter, customs) {
@@ -13657,7 +13803,7 @@ var GameStartr;
          * Sets this.MapScreener.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          * @remarks Requirement(s): maps.js (settings/maps.js)
          */
         GameStartr.prototype.resetMapScreener = function (GameStarter, customs) {
@@ -13674,7 +13820,7 @@ var GameStartr;
          * Sets this.NumberMaker.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          */
         GameStartr.prototype.resetNumberMaker = function (GameStarter, customs) {
             GameStarter.NumberMaker = new NumberMakr.NumberMakr();
@@ -13699,7 +13845,7 @@ var GameStartr;
          * Sets this.MapsHandler.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          * @remarks Requirement(s): maps.js (settings/maps.js)
          */
         GameStartr.prototype.resetMapsHandler = function (GameStarter, customs) {
@@ -13715,7 +13861,7 @@ var GameStartr;
          * Sets this.InputWriter.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          * @remarks Requirement(s): input.js (settings/input.js)
          */
         GameStartr.prototype.resetInputWriter = function (GameStarter, customs) {
@@ -13727,7 +13873,7 @@ var GameStartr;
          * Sets this.InputWriter.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          * @remarks Requirement(s): touch.js (settings/touch.js)
          */
         GameStartr.prototype.resetTouchPasser = function (GameStarter, customs) {
@@ -13739,7 +13885,7 @@ var GameStartr;
          * Sets this.LevelEditor.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          * @remarks Requirement(s): editor.js (settings/editor.js)
          */
         GameStartr.prototype.resetLevelEditor = function (GameStarter, customs) {
@@ -13752,7 +13898,7 @@ var GameStartr;
          * Sets this.WorldSeeder.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          * @remarks Requirement(s): generator.js (settings/generator.js)
          */
         GameStartr.prototype.resetWorldSeeder = function (GameStarter, customs) {
@@ -13762,10 +13908,21 @@ var GameStartr;
             }, GameStarter.settings.generator));
         };
         /**
+         * Sets this.ScenePlayer.
+         *
+         *
+         * @param {GameStartr} GameStarter
+         * @param {Object} customs
+         * @remarks Requirement(s): scenes.js (settings/scenes.js)
+         */
+        GameStartr.prototype.resetScenePlayer = function (GameStarter, customs) {
+            GameStarter.ScenePlayer = new ScenePlayr.ScenePlayr(GameStarter.settings.generator);
+        };
+        /**
          * Sets this.ModAttacher.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          * @remarks Requirement(s): mods.js (settings/mods.js)
          */
         GameStartr.prototype.resetModAttacher = function (GameStarter, customs) {
@@ -13779,7 +13936,7 @@ var GameStartr;
          * is fired.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          */
         GameStartr.prototype.startModAttacher = function (GameStarter, customs) {
             var mods = customs.mods, i;
@@ -13797,7 +13954,7 @@ var GameStartr;
          * and canvas, ItemsHolder, and TouchPassr container elements are added.
          *
          * @param {GameStartr} GameStarter
-         * @param {Object} [customs]
+         * @param {Object} customs
          */
         GameStartr.prototype.resetContainer = function (GameStarter, customs) {
             GameStarter.container = GameStarter.createElement("div", {
@@ -14704,10 +14861,8 @@ var GameStartr;
     })(EightBittr.EightBittr);
     _GameStartr.GameStartr = GameStartr;
 })(GameStartr || (GameStartr = {}));
-// @echo '/// <reference path="ItemsHoldr-0.2.1.ts" />'
 // @echo '/// <reference path="GameStartr-0.2.0.ts" />'
 // @ifdef INCLUDE_DEFINITIONS
-/// <reference path="References/ItemsHoldr-0.2.1.ts" />
 /// <reference path="References/GameStartr-0.2.0.ts" />
 /// <reference path="UserWrappr.d.ts" />
 // @endif
