@@ -39,6 +39,7 @@ module FullScreenMario {
             "quadrants": undefined,
             "renderer": undefined,
             "runner": undefined,
+            "scenes": undefined,
             "sprites": undefined,
             "statistics": undefined,
             "touch": undefined,
