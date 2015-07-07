@@ -154,12 +154,12 @@ declare module FullScreenMario {
     }
 
     export interface IRandomSpawner extends IDetector {
-        "randomization": string;
-        "randomTop": number;
-        "randomRight": number;
-        "randomBottom": number;
-        "randomLeft": number;
-        "randomWidth": number;
+        randomization: string;
+        randomTop: number;
+        randomRight: number;
+        randomBottom: number;
+        randomLeft: number;
+        randomWidth: number;
     }
 
     export interface IScrollBlocker extends IDetector {
