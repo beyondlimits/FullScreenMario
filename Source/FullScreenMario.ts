@@ -33,6 +33,7 @@ module FullScreenMario {
             "groups": undefined,
             "events": undefined,
             "input": undefined,
+            "math": undefined,
             "maps": undefined,
             "mods": undefined,
             "objects": undefined,
@@ -2584,9 +2585,9 @@ module FullScreenMario {
          */
         activateSectionBefore(thing: ISectionDetector): void {
             var FSM: FullScreenMario = thing.FSM,
-                MapsCreator: MapsCreatr.MapsCreatr = FSM.MapsCreator,
+                MapsCreator: MapsCreatr.IMapsCreatr = FSM.MapsCreator,
                 MapScreener: MapScreenr.MapScreenr = FSM.MapScreener,
-                MapsHandler: MapsHandlr.MapsHandlr = FSM.MapsHandler,
+                MapsHandler: MapsHandlr.IMapsHandlr = FSM.MapsHandler,
                 area: IArea = <IArea>MapsHandler.getArea(),
                 map: MapsCreatr.IMapsCreatrMap = MapsHandler.getMap(),
                 prethings: { [i: string]: MapsCreatr.IPreThing[] } = MapsHandler.getPreThings(),
@@ -2649,9 +2650,9 @@ module FullScreenMario {
          */
         activateSectionStretch(thing: ISectionDetector): void {
             var FSM: FullScreenMario = thing.FSM,
-                MapsCreator: MapsCreatr.MapsCreatr = FSM.MapsCreator,
+                MapsCreator: MapsCreatr.IMapsCreatr = FSM.MapsCreator,
                 MapScreener: MapScreenr.MapScreenr = FSM.MapScreener,
-                MapsHandler: MapsHandlr.MapsHandlr = FSM.MapsHandler,
+                MapsHandler: MapsHandlr.IMapsHandlr = FSM.MapsHandler,
                 area: IArea = <IArea>MapsHandler.getArea(),
                 map: MapsCreatr.IMapsCreatrMap = MapsHandler.getMap(),
                 prethings: { [i: string]: MapsCreatr.IPreThing[] } = MapsHandler.getPreThings(),
@@ -2703,9 +2704,9 @@ module FullScreenMario {
         activateSectionAfter(thing: ISectionDetector): void {
             // Since the section was passed, do the rest of things normally
             var FSM: FullScreenMario = thing.FSM,
-                MapsCreator: MapsCreatr.MapsCreatr = FSM.MapsCreator,
+                MapsCreator: MapsCreatr.IMapsCreatr = FSM.MapsCreator,
                 MapScreener: MapScreenr.MapScreenr = FSM.MapScreener,
-                MapsHandler: MapsHandlr.MapsHandlr = FSM.MapsHandler,
+                MapsHandler: MapsHandlr.IMapsHandlr = FSM.MapsHandler,
                 area: IArea = <IArea>MapsHandler.getArea(),
                 map: MapsCreatr.IMapsCreatrMap = MapsHandler.getMap(),
                 prethings: { [i: string]: MapsCreatr.IPreThing[] } = MapsHandler.getPreThings(),
@@ -7302,8 +7303,8 @@ module FullScreenMario {
          */
         mapAddAfter(prething: any): void {
             var FSM: FullScreenMario = FullScreenMario.prototype.ensureCorrectCaller(this),
-                MapsCreator: MapsCreatr.MapsCreatr = FSM.MapsCreator,
-                MapsHandler: MapsHandlr.MapsHandlr = FSM.MapsHandler,
+                MapsCreator: MapsCreatr.IMapsCreatr = FSM.MapsCreator,
+                MapsHandler: MapsHandlr.IMapsHandlr = FSM.MapsHandler,
                 prethings: { [i: string]: IPreThing[] } = <{ [i: string]: IPreThing[] }>MapsHandler.getPreThings(),
                 area: IArea = <IArea>MapsHandler.getArea(),
                 map: MapsCreatr.IMapsCreatrMap = MapsHandler.getMap(),
