@@ -9,7 +9,7 @@ Although you may no longer play on [fullscreenmario.com](http://www.fullscreenma
 
 #### Newcomers (non-coders)
 
-[Download the .zip](https://github.com/Diogenesthecynic/FullScreenMario-JSON/archive/master.zip) of this project, extract that onto your computer, and open **index.html** in a browser (preferably Google Chrome). That's it!
+[Download the latest release](https://github.com/FullScreenShenanigans/FullScreenMario/releases) of this project, extract that onto your computer, and open **index.html** in a browser (preferably Google Chrome). That's it!
 
 #### In your own site
 
@@ -24,7 +24,7 @@ FullScreenMario uses [Grunt](http://gruntjs.com/) to automate building, which re
 
 #### Coding
 
-FullScreenMario is built on a modular framework called GameStartr. The [FullScreenShenanigans](https://github.com/FullScreenShenanigans/) organization contains GameStartr, its parent class EightBittr, and the 22 modules used by the GameStartr framework. These all (theoretically) have their own README files, which you should skim before developing for FullScreenMario itself.
+FullScreenMario is built on a modular framework called GameStartr. The [FullScreenShenanigans](https://github.com/FullScreenShenanigans/) organization contains GameStartr, its parent class EightBittr, and the modules used by the GameStartr framework. These all (theoretically) have their own README files, which you should skim before developing for FullScreenMario itself.
 
 All source code is in the [Source](Source/) directory. See [Getting Started.md](Getting Started.md) for an in-depth guide on getting started programming with FullScreenMario.
 
