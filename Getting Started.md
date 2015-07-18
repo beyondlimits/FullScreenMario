@@ -20,7 +20,7 @@ FullScreenMario uses [Grunt](http://gruntjs.com/) to automate building, which re
 
 Go to the root repository folder (containing this Getting Started guide) and run the following commands:
 
-    npm install -g
+    npm install
     grunt
 
 Source/FullScreenMario.ts, along all the other files in Source, will be compiled into a new Distribution folder in the root.
