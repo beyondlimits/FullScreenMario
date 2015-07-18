@@ -25,8 +25,7 @@ Go to the root repository folder (containing this Getting Started guide) and run
     
 You may also have to manually install grunt first:
 
-    npm install -g grunt
-    npm install -g grunt-cli
+    npm install -g grunt grunt-cli
 
 Source/FullScreenMario.ts, along all the other files in Source, will be compiled into a new Distribution folder in the root.
 
@@ -45,7 +44,7 @@ Each module contains a class by the same name. The global `ObjectMakr` module co
 
 Everything you see in the game (trees, blocks, the player, etc.) is a Thing. The Thing class is subclassed by a new class for everything (Tree class, Block class, Player class, etc.). When added to the game, a Thing has a number of properties filled out. These include velocities (xvel and yvel), positioning (top, right, bottom, left), and so on.
 
-Coordinates are relative to the top-right part of the screen. If you have experience with CSS, this is the same as positioning HTML elements absolutely. To add a new Thing to the game, use `FSM.addThing("type", #left, #top)`:
+Coordinates are relative to the top-left part of the screen. If you have experience with CSS, this is the same as positioning HTML elements absolutely. To add a new Thing to the game, use `FSM.addThing("type", #left, #top)`:
 
 ```javascript
 FSM.addThing("Block") // Creates a new Cloud and adds it at x=0, y=0
