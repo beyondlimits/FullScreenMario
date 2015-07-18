@@ -14,11 +14,11 @@
         "url": "https://github.com/FullScreenShenanigans/FullScreenMario/issues"
     },
     "license": "MIT",
-    "dependencies": {
+    "devDependencies": {
         "chai": "~2.2.X",
         "grunt": "~0.4.X",
         "grunt-cli": "~0.1.X",
-        "grunt-contrib-clean": "~0.6.0",
+        "grunt-contrib-clean": "~0.6.X",
         "grunt-contrib-copy": "~0.8.X",
         "grunt-contrib-cssmin": "~0.12.X",
         "grunt-contrib-htmlmin": "~0.4.X",
