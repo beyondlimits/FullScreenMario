@@ -22,15 +22,20 @@ Go to the root repository folder (containing this Getting Started guide) and run
 
     npm install
     grunt
+    
+You may also have to manually install grunt first:
+
+    npm install -g grunt
+    npm install -g grunt-cli
 
 Source/FullScreenMario.ts, along all the other files in Source, will be compiled into a new Distribution folder in the root.
 
 * FullScreenMario.d.ts and FullScreenMario.ts are merged into a FullScreenMario.ts, and all .ts files under References are copied as well. A .js file with a .min.js and .min.js.map will be generated as well.
-* Distribution/FullScreenMario-0.10.0 is a minified version for use in static websites. It's also zipped for your convenience.
+* Distribution/FullScreenMario-0.10.X is a minified version for use in static websites. It's also zipped for your convenience.
 
 ## General Usage
 
-FullScreenMario (FullScreenMario.js) is the governing class. The global `window.FSM` is an instance of FullScreenMario, and everything in the game is a member of FSM. The FullScreenMario class itself inherits from GameStartr (Source/References/GameStartr-0.2.0.ts), which inherits from EightBittr (Source/References/EightBittr-0.2.0.ts).
+FullScreenMario (FullScreenMario.js) is the governing class. The global `window.FSM` is an instance of FullScreenMario, and everything in the game is a member of FSM. The FullScreenMario class itself inherits from GameStartr (Source/References/GameStartr-0.2.X.ts), which inherits from EightBittr (Source/References/EightBittr-0.2.X.ts).
 
 The base GameStartr engine includes a large number of modules, all of which are stored in Source/References (AudioPlayr, ChangeLinr, etc.). The naming schema is to have two words, the second of which is a verb ending with 'r'. The class will have the ending two characters abbreviated to 'r', and the instances aren't abbreviated. FSM.ObjectMaker, for example, is an ObjectMakr instance.
 
