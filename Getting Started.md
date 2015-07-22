@@ -9,6 +9,7 @@ This is the general getting started guide for FullScreenMario. You'll want to re
     2. [GroupHoldr](#GroupHoldr)
     3. [Triggers](#triggers)
     4. [Movements](#movements)
+    5. [Sprites](#sprites)
 4. [Maps](#maps)
     1. [MapsCreatr](#mapscreatr)
     3. [MapScreenr](#mapscreenr)
@@ -98,6 +99,16 @@ The objects and map systems provide hooks for Things to have certain member func
 In order to progress game state and repaint the screen, the game calls `FullScreenMario.FullScreenMario.prototype.upkeep()` every 16 milliseconds (while running at 60fps). This is governed by FSM.GamesRunnr.
 
 Inside upkeep, a maintenance function is called for characters and solids. These are `FullScreenMario.FullScreenMario.prototype.maintainCharacters`, and `FullScreenMario.FullScreenMario.prototype.maintainSolids`. During these maintenance calls, for each character and solid, if they have a .movement property, it's called as a Function on the Thing. These will typically be `FullScreenMario.FullScreenMario.prototype.moveSimple` (such as Goombas) or `FullScreenMario.FullScreenMario.prototype.moveSmart` (such as smart Koopas).
+
+### Sprites
+
+Thing sprites are stored in Source/settings/sprites.js using a custom image format. The image format is discussed in more detail in [PixelRendr's readme](http://github.com/FullScreenShenanigans/PixelRendr).
+
+The key used to look up a Thing's sprite is computed using the current area name and the Thing's .title, .groupType, and .className (GameStartr.generateObjectKey). Whenever a Thing is added or has its class changed, its sprite is recomputed using its new key.
+
+Sprites may be single Uint8ClampedArray of pixels (a typical image) or a SpriteMultiple containing multiple Uint8ClampedArray images, keyed by their section. A bush, for example, will have a single sprite; a pipe will have a top sprite and a middle sprite.
+
+To generate your own sprites, you may use [ImageReadr](http://github.com/FullScreenShenanigans/ImageReadr).
 
 ## Maps
 
