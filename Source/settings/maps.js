@@ -3513,7 +3513,7 @@ FullScreenMario.FullScreenMario.settings.maps = {
                         { "thing": "CastleBlock", "x": 512, "y": 44, "fireballs": 6, "hidden": true },
                         { "thing": "Stone", "x": 536, "y": 32, "width": 40, "height": 32 },
                         { "thing": "Stone", "x": 536, "y": 80, "width": 40, "height": 24 },
-                        { "thing": "PipeHorizontal", "x": 544, "y": 48, },
+                        { "thing": "PipeHorizontal", "x": 544, "y": 48, "transport": 5 },
                         { "thing": "Stone", "x": 552, "y": 56, "width": 24, "height": 24 }
                     ]
                 }, {
@@ -3530,7 +3530,7 @@ FullScreenMario.FullScreenMario.settings.maps = {
                         { "thing": "Podoboo", "x": 160, "y": -32 },
                         { "macro": "Floor", "x": 184, "y": 24, "width": 48 },
                         { "thing": "Stone", "x": 184, "y": 80, "width": 48, "height": 16 },
-                        { "macro": "EndInsideCastle", "x": 232, "spawnType": "Bowser", "throwing": true, "transport": { "map": "1-1" } }
+                        { "macro": "EndInsideCastle", "x": 232, "spawnType": "Bowser", "throwing": true, "npc" : "Peach", "transport": { "map": "1-1" } }
                     ]
                 }
             ]
