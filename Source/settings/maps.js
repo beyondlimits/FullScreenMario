@@ -3513,7 +3513,7 @@ FullScreenMario.FullScreenMario.settings.maps = {
                         { "thing": "CastleBlock", "x": 512, "y": 44, "fireballs": 6, "hidden": true },
                         { "thing": "Stone", "x": 536, "y": 32, "width": 40, "height": 32 },
                         { "thing": "Stone", "x": 536, "y": 80, "width": 40, "height": 24 },
-                        { "thing": "PipeHorizontal", "x": 544, "y": 48, },
+                        { "thing": "PipeHorizontal", "x": 544, "y": 48, "transport": 5 },
                         { "thing": "Stone", "x": 552, "y": 56, "width": 24, "height": 24 }
                     ]
                 }, {
