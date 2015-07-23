@@ -32,6 +32,9 @@ Names are sorted within groups by last name. Groups are in order of commit magni
 
 ### Bug Fixers
 
+* [Geoffrey A](https://github.com/Geoffrey-A)
+    * July 2015: [Small fixes for map 8-4](https://github.com/FullScreenShenanigans/FullScreenMario/pull/283)
+
 * [Christopher Best](https://github.com/sirctseb)
     * October 2013: [Bug fix for 8-1 pipe exit point](https://github.com/JoshuaKGoldberg/FullScreenMario/commit/85693eec817e47169e774011129d7fd195200e14)
 
