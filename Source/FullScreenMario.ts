@@ -8586,25 +8586,27 @@ module FullScreenMario {
 
             if (npc === "Toad") {
                 keys = ["1", "2"];
-                texts = [{
-                    "thing": "CustomText",
-                    "x": x + 164,
-                    "y": y + 64,
-                    "texts": [{
-                        "text": "THANK YOU MARIO!"
-                    }],
-                    "textAttributes": {
-                        "hidden": true
-                    },
-                    "collectionName": "endInsideCastleText",
-                    "collectionKey": "1"
-                }, {
+                texts = [
+                    {
+                        "thing": "CustomText",
+                        "x": x + 164,
+                        "y": y + 64,
+                        "texts": [{
+                            "text": "THANK YOU MARIO!"
+                        }],
+                        "textAttributes": {
+                            "hidden": true
+                        },
+                        "collectionName": "endInsideCastleText",
+                        "collectionKey": "1"
+                    }, {
                         "thing": "CustomText",
                         "x": x + 152,
                         "y": y + 48,
-                        "texts": [{
-                            "text": "BUT OUR PRINCESS IS IN"
-                        }, {
+                        "texts": [
+                            {
+                                "text": "BUT OUR PRINCESS IS IN"
+                            }, {
                                 "text": "ANOTHER CASTLE!"
                             }],
                         "textAttributes": {
@@ -8615,26 +8617,28 @@ module FullScreenMario {
                     }];
             } else if (npc === "Peach") {
                 keys = ["1", "2", "3"];
-                texts = [{
-                    "thing": "CustomText",
-                    "x": x + 164,
-                    "y": y + 64,
-                    "texts": [{
-                        "text": "THANK YOU MARIO!"
-                    }],
-                    "textAttributes": {
-                        "hidden": true
-                    },
-                    "collectionName": "endInsideCastleText",
-                    "collectionKey": "1"
-                }, {
+                texts = [
+                    {
+                        "thing": "CustomText",
+                        "x": x + 164,
+                        "y": y + 64,
+                        "texts": [{
+                            "text": "THANK YOU MARIO!"
+                        }],
+                        "textAttributes": {
+                            "hidden": true
+                        },
+                        "collectionName": "endInsideCastleText",
+                        "collectionKey": "1"
+                    }, {
                         "thing": "CustomText",
                         "x": x + 152,
                         "y": y + 48,
-                        "texts": [{
-                            "text": "YOUR QUEST IS OVER.",
-                            "offset": 12
-                        }, {
+                        "texts": [
+                            {
+                                "text": "YOUR QUEST IS OVER.",
+                                "offset": 12
+                            }, {
                                 "text": "WE PRESENT YOU A NEW QUEST."
                             }],
                         "textAttributes": {
@@ -8646,10 +8650,11 @@ module FullScreenMario {
                         "thing": "CustomText",
                         "x": x + 152,
                         "y": 32,
-                        "texts": [{
-                            "text": "PRESS BUTTON B",
-                            "offset": 8
-                        }, {
+                        "texts": [
+                            {
+                                "text": "PRESS BUTTON B",
+                                "offset": 8
+                            }, {
                                 "text": "TO SELECT A WORLD"
                             }],
                         "textAttributes": {
