@@ -3530,7 +3530,7 @@ FullScreenMario.FullScreenMario.settings.maps = {
                         { "thing": "Podoboo", "x": 160, "y": -32 },
                         { "macro": "Floor", "x": 184, "y": 24, "width": 48 },
                         { "thing": "Stone", "x": 184, "y": 80, "width": 48, "height": 16 },
-                        { "macro": "EndInsideCastle", "x": 232, "spawnType": "Bowser", "throwing": true, "transport": { "map": "1-1" } }
+                        { "macro": "EndInsideCastle", "x": 232, "spawnType": "Bowser", "throwing": true, "npc" : "Peach", "transport": { "map": "1-1" } }
                     ]
                 }
             ]
