@@ -12282,14 +12282,19 @@ var UserWrappr;
                 return input;
             };
             OptionsTableGenerator.prototype.setKeyInput = function (input, details, schema) {
-                var values = details.source.call(this, this.GameStarter), children = [], child, scope = this, i, j;
+                var values = details.source.call(this, this.GameStarter), possibleKeys = this.UserWrapper.getAllPossibleKeys(), children = [], child, scope = this, valueLower, i, j;
                 for (i = 0; i < values.length; i += 1) {
+                    valueLower = values[i].toLowerCase();
                     child = document.createElement("select");
                     child.className = "options-key-option";
-                    for (j = 0; j < this.UserWrapper.getAllPossibleKeys().length; j += 1) {
-                        child.appendChild(new Option(this.UserWrapper.getAllPossibleKeys()[j]));
+                    child.value = child.valueOld = valueLower;
+                    for (j = 0; j < possibleKeys.length; j += 1) {
+                        child.appendChild(new Option(possibleKeys[j]));
+                        // Setting child.value won't work in IE or Edge...
+                        if (possibleKeys[j] === valueLower) {
+                            child.selectedIndex = j;
+                        }
                     }
-                    child.value = child.valueOld = values[i].toLowerCase();
                     child.onchange = (function (child) {
                         details.callback.call(scope, scope.GameStarter, child.valueOld, child.value);
                         if (details.storeLocally) {
