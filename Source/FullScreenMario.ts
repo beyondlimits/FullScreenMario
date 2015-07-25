@@ -2030,7 +2030,7 @@ module FullScreenMario {
 
             if (thing.onPipe) {
                 bottom = thing.bottom;
-                thing.FSM.setHeight(thing, 6, true, true);
+                thing.FSM.setHeight(thing, 6);
                 thing.FSM.setBottom(thing, bottom);
             }
         }
@@ -4388,9 +4388,7 @@ module FullScreenMario {
                 atEnd: boolean = false;
 
             if (thing.resting && !thing.FSM.isThingAlive(thing.resting)) {
-                bottom = thing.top + (
-                    thing.constructor.prototype.height * thing.FSM.unitsize
-                    );
+                bottom = thing.constructor.prototype.height * thing.FSM.unitsize + thing.top;
                 height = Infinity;
                 thing.resting = undefined;
             }
@@ -4403,8 +4401,13 @@ module FullScreenMario {
                 atEnd = true;
             }
 
-            thing.FSM.setHeight(thing, height, true, true);
+            thing.FSM.setHeight(thing, height);
             thing.FSM.setBottom(thing, bottom);
+
+            // Canvas height should be manually reset, as PixelRendr will otherwise
+            // store the height as the initial small height from spawnPiranha...
+            thing.canvas.height = height * thing.FSM.unitsize;
+            thing.FSM.PixelDrawer.setThingSprite(thing);
 
             if (atEnd) {
                 thing.counter = 0;
