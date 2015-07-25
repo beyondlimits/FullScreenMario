@@ -242,7 +242,7 @@ section#game {
     }
 
     #controls .options-key-option {
-        display: inline;
+        display: block;
     }
 
         #controls .options-key-option:not(:last-of-type):after {
@@ -256,6 +256,10 @@ section#game {
         width: 100%;
         border-spacing: 1px;
     }
+
+        #controls table input {
+            max-width: 70px;
+        }
 
     #controls .maps-grid-option {
         display: table-cell;
