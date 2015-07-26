@@ -36,7 +36,7 @@ declare module PixelDrawr {
         /**
          * The sprite for this Thing to have drawn.
          */
-        sprite: Uint8ClampedArray | PixelRendr.SpriteMultiple;
+        sprite: Uint8ClampedArray | PixelRendr.ISpriteMultiple;
 
         /**
          * The canvas upon which the Thing's sprite is to be drawn.

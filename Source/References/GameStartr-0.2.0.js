@@ -4982,11 +4982,11 @@ var PixelRendr;
          * Resets the Render. No sprite computation is done here, so sprites is
          * initialized to an empty container.
          */
-        function Render(source, reference, filter) {
+        function Render(source, filter) {
             this.source = source;
-            this.reference = reference;
             this.filter = filter;
             this.sprites = {};
+            this.containers = [];
         }
         return Render;
     })();
@@ -5348,10 +5348,12 @@ var PixelRendr;
                         setNew[i] = this.libraryParse(source);
                         break;
                 }
-                // If a Render was created, its container should be setNew
+                // If a Render was created, mark setNew as a container
                 if (setNew[i].constructor === Render) {
-                    setNew[i].container = setNew;
-                    setNew[i].key = i;
+                    setNew[i].containers.push({
+                        "container": setNew,
+                        "key": i
+                    });
                 }
             }
             return setNew;
@@ -5365,7 +5367,6 @@ var PixelRendr;
          * @param {String} key   The key under which the sprite is stored.
          * @param {Object} attributes   Any additional information to pass to the
          *                              sprite generation process.
-         * @return {Mixed} The output sprite; either a Uint8ClampedArray or SpriteMultiple.
          */
         PixelRendr.prototype.generateRenderSprite = function (render, key, attributes) {
             var sprite;
@@ -5424,9 +5425,10 @@ var PixelRendr;
          * @return {Mixed} The output sprite; either a Uint8ClampedArray or SpriteMultiple.
          */
         PixelRendr.prototype.generateSpriteCommandSameFromRender = function (render, key, attributes) {
-            // The (now temporary) Render's container is given the Render or directory
+            var replacement = this.followPath(this.library.sprites, render.source[1], 0);
+            // The (now temporary) Render's containers are given the Render or directory
             // referenced by the source path
-            render.container[render.key] = this.followPath(this.library.sprites, render.source[1], 0);
+            this.replaceRenderInContainers(render, replacement);
             // BaseFiler will need to remember the new entry for the key,
             // so the cache is cleared and decode restarted
             this.BaseFiler.clearCached(key);
@@ -5448,9 +5450,9 @@ var PixelRendr;
             if (!filter) {
                 console.warn("Invalid filter provided: " + render.source[2]);
             }
-            // If a Render was found, create a new one as a filtered copy
+            // If found is a Render, create a new one as a filtered copy
             if (found.constructor === Render) {
-                filtered = new Render(found.source, found.reference, {
+                filtered = new Render(found.source, {
                     "filter": filter
                 });
                 this.generateRenderSprite(filtered, key, attributes);
@@ -5459,8 +5461,8 @@ var PixelRendr;
                 // Otherwise it's an IRenderLibrary; go through that recursively
                 filtered = this.generateRendersFromFilter(found, filter);
             }
-            // The (now temporary) container is given the filtered Render or directory
-            render.container[render.key] = filtered;
+            // The (now unused) render gives the filtered Render or directory to its containers
+            this.replaceRenderInContainers(render, filtered);
             if (filtered.constructor === Render) {
                 return filtered.sprites[key];
             }
@@ -5487,7 +5489,7 @@ var PixelRendr;
                 }
                 child = directory[i];
                 if (child.constructor === Render) {
-                    output[i] = new Render(child.source, undefined, {
+                    output[i] = new Render(child.source, {
                         "filter": filter
                     });
                 }
@@ -5496,6 +5498,22 @@ var PixelRendr;
                 }
             }
             return output;
+        };
+        /**
+         * Switches all of a given Render's containers to point to a replacement instead.
+         *
+         * @param {Render} render
+         * @param {Mixed} replacement
+         */
+        PixelRendr.prototype.replaceRenderInContainers = function (render, replacement) {
+            var listing, i;
+            for (i = 0; i < render.containers.length; i += 1) {
+                listing = render.containers[i];
+                listing.container[listing.key] = replacement;
+                if (replacement.constructor === Render) {
+                    replacement.containers.push(listing);
+                }
+            }
         };
         /* Core pipeline functions
         */
