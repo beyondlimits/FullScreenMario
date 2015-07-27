@@ -28,6 +28,7 @@ module FullScreenMario {
         public static settings: GameStartr.IGameStartrStoredSettings = {
             "audio": undefined,
             "collisions": undefined,
+            "devices": undefined,
             "editor": undefined,
             "generator": undefined,
             "groups": undefined,
@@ -529,7 +530,9 @@ module FullScreenMario {
             player.keys.rightDown = true; // independent of changes to keys.run
             player.FSM.ModAttacher.fireEvent("onKeyDownRight");
 
-            event.preventDefault();
+            if (event && event.preventDefault !== undefined) {
+                event.preventDefault();
+            }
         }
 
         /**
@@ -569,7 +572,9 @@ module FullScreenMario {
 
             player.FSM.ModAttacher.fireEvent("onKeyDownUp");
 
-            event.preventDefault();
+            if (event && event.preventDefault !== undefined) {
+                event.preventDefault();
+            }
         }
 
         /**
@@ -586,7 +591,9 @@ module FullScreenMario {
             player.keys.crouch = true;
             player.FSM.ModAttacher.fireEvent("onKeyDownDown");
 
-            event.preventDefault();
+            if (event && event.preventDefault !== undefined) {
+                event.preventDefault();
+            }
         }
 
         /**
@@ -606,7 +613,9 @@ module FullScreenMario {
             player.keys.sprint = true;
             player.FSM.ModAttacher.fireEvent("onKeyDownSprint");
 
-            event.preventDefault();
+            if (event && event.preventDefault !== undefined) {
+                event.preventDefault();
+            }
         }
 
         /**
@@ -622,7 +631,9 @@ module FullScreenMario {
             }
             player.FSM.ModAttacher.fireEvent("onKeyDownPause");
 
-            event.preventDefault();
+            if (event && event.preventDefault !== undefined) {
+                event.preventDefault();
+            }
         }
 
         /**
@@ -639,7 +650,9 @@ module FullScreenMario {
             player.FSM.AudioPlayer.toggleMuted();
             player.FSM.ModAttacher.fireEvent("onKeyDownMute");
 
-            event.preventDefault();
+            if (event && event.preventDefault !== undefined) {
+                event.preventDefault();
+            }
         }
 
         /**
@@ -654,7 +667,9 @@ module FullScreenMario {
 
             player.FSM.ModAttacher.fireEvent("onKeyUpLeft");
 
-            event.preventDefault();
+            if (event && event.preventDefault !== undefined) {
+                event.preventDefault();
+            }
         }
 
         /**
@@ -669,7 +684,9 @@ module FullScreenMario {
 
             player.FSM.ModAttacher.fireEvent("onKeyUpRight");
 
-            event.preventDefault();
+            if (event && event.preventDefault !== undefined) {
+                event.preventDefault();
+            }
         }
 
         /**
@@ -685,7 +702,9 @@ module FullScreenMario {
             player.canjump = true;
             player.FSM.ModAttacher.fireEvent("onKeyUpUp");
 
-            event.preventDefault();
+            if (event && event.preventDefault !== undefined) {
+                event.preventDefault();
+            }
         }
 
         /**
@@ -701,7 +720,9 @@ module FullScreenMario {
             }
             player.FSM.ModAttacher.fireEvent("onKeyUpDown");
 
-            event.preventDefault();
+            if (event && event.preventDefault !== undefined) {
+                event.preventDefault();
+            }
         }
 
         /**
@@ -714,7 +735,9 @@ module FullScreenMario {
             player.keys.sprint = false;
             player.FSM.ModAttacher.fireEvent("onKeyUpSprint");
 
-            event.preventDefault();
+            if (event && event.preventDefault !== undefined) {
+                event.preventDefault();
+            }
         }
 
         /**
@@ -729,7 +752,9 @@ module FullScreenMario {
             }
             player.FSM.ModAttacher.fireEvent("onKeyUpPause");
 
-            event.preventDefault();
+            if (event && event.preventDefault !== undefined) {
+                event.preventDefault();
+            }
         }
 
         /**
@@ -742,7 +767,9 @@ module FullScreenMario {
             player.FSM.GamesRunner.togglePause();
             player.FSM.ModAttacher.fireEvent("onMouseDownRight");
 
-            event.preventDefault();
+            if (event && event.preventDefault !== undefined) {
+                event.preventDefault();
+            }
         }
 
         /**
