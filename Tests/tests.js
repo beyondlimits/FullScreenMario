@@ -1,5 +1,22 @@
 var FSM, Uint8ClampedArray;
 
+/**
+ * A shim for non ES5 supporting browsers, like PhantomJS. Lovingly inspired by:
+ * http://www.angrycoding.com/2011/09/to-bind-or-not-to-bind-that-is-in.html
+ * (copied from grunt-mocha-phantomjs)
+ */
+if (!("bind" in Function.prototype)) {
+    Function.prototype.bind = function () {
+        var funcObj = this,
+            extraArgs = Array.prototype.slice.call(arguments),
+            thisObj = extraArgs.shift();
+
+        return function () {
+            return funcObj.apply(thisObj, extraArgs.concat(Array.prototype.slice.call(arguments)));
+        };
+    };
+}
+
 describe("constructor", function () {
     it("runs with a small screen size", function () {
         FSM = new FullScreenMario.FullScreenMario({
