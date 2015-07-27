@@ -22,22 +22,21 @@ describe("constructor", function () {
     });
 });
 
-describe("setMap", function () {
-    it("loads Overworld (1-1)", function () {
-        FSM.setMap("1-1");
-    });
+describe("maps", function () {
+    var maps = FullScreenMario.FullScreenMario.settings.maps.library,
+        map, i, j;
 
-    it("loads Underworld (1-2)", function () {
-        FSM.setMap("1-1", 1);
-    });
+    for (i in maps) {
+        map = maps[i];
 
-    it("loads Castle (1-4)", function () {
-        FSM.setMap("1-4");
-    });
-    
-    it("loads Underwater (2-2)", function () {
-        FSM.setMap("2-2", 1);
-    });
+        describe(map.name, function (map) {
+            for (j in map.locations) {
+                it("location " + j, function (j) {
+                    FSM.setMap(map.name, j);
+                }.bind(this, j));
+            }
+        }.bind(this, map));
+    }
 });
 
 describe("mods", function () {
@@ -49,10 +48,6 @@ describe("mods", function () {
             mod = mods[i];
 
             it(mod.name, function (name) {
-                console.log("With name", name);
-                console.log("got", FSM);
-                console.log("got 2", FSM.ModAttacher);
-                console.log("got 3", FSM.ModAttacher.enableMod);
                 FSM.ModAttacher.enableMod(name);
             }.bind(this, mod.name));
         }
