@@ -39,3 +39,32 @@ describe("setMap", function () {
         FSM.setMap("2-2", 1);
     });
 });
+
+describe("mods", function () {
+    var mods = FullScreenMario.FullScreenMario.settings.mods.mods,
+        mod, i;
+
+    describe("enable", function () {
+        for (i = 0; i < mods.length; i += 1) {
+            mod = mods[i];
+
+            it(mod.name, function (name) {
+                console.log("With name", name);
+                console.log("got", FSM);
+                console.log("got 2", FSM.ModAttacher);
+                console.log("got 3", FSM.ModAttacher.enableMod);
+                FSM.ModAttacher.enableMod(name);
+            }.bind(this, mod.name));
+        }
+    });
+
+    describe("disable", function () {
+        for (i = 0; i < mods.length; i += 1) {
+            mod = mods[i];
+
+            it(mod.name, function (name) {
+                FSM.ModAttacher.disableMod(name);
+            }.bind(this, mod.name));
+        }
+    });
+});
