@@ -1,4 +1,4 @@
-FullScreenMario.prototype.gamepad = {
+FullScreenMario.FullScreenMario.settings.devices = {
     "triggers": {
         "a": {
             "trigger": "up"
