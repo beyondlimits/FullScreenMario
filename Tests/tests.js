@@ -1,5 +1,22 @@
 var FSM, Uint8ClampedArray;
 
+/**
+ * A shim for non ES5 supporting browsers, like PhantomJS. Lovingly inspired by:
+ * http://www.angrycoding.com/2011/09/to-bind-or-not-to-bind-that-is-in.html
+ * (copied from grunt-mocha-phantomjs)
+ */
+if (!("bind" in Function.prototype)) {
+    Function.prototype.bind = function () {
+        var funcObj = this,
+            extraArgs = Array.prototype.slice.call(arguments),
+            thisObj = extraArgs.shift();
+
+        return function () {
+            return funcObj.apply(thisObj, extraArgs.concat(Array.prototype.slice.call(arguments)));
+        };
+    };
+}
+
 describe("constructor", function () {
     it("runs with a small screen size", function () {
         FSM = new FullScreenMario.FullScreenMario({
@@ -22,20 +39,44 @@ describe("constructor", function () {
     });
 });
 
-describe("setMap", function () {
-    it("loads Overworld (1-1)", function () {
-        FSM.setMap("1-1");
+describe("maps", function () {
+    var maps = FullScreenMario.FullScreenMario.settings.maps.library,
+        map, i, j;
+
+    for (i in maps) {
+        map = maps[i];
+
+        describe(map.name, function (map) {
+            for (j in map.locations) {
+                it("location " + j, function (j) {
+                    FSM.setMap(map.name, j);
+                }.bind(this, j));
+            }
+        }.bind(this, map));
+    }
+});
+
+describe("mods", function () {
+    var mods = FullScreenMario.FullScreenMario.settings.mods.mods,
+        mod, i;
+
+    describe("enable", function () {
+        for (i = 0; i < mods.length; i += 1) {
+            mod = mods[i];
+
+            it(mod.name, function (name) {
+                FSM.ModAttacher.enableMod(name);
+            }.bind(this, mod.name));
+        }
     });
 
-    it("loads Underworld (1-2)", function () {
-        FSM.setMap("1-1", 1);
-    });
+    describe("disable", function () {
+        for (i = 0; i < mods.length; i += 1) {
+            mod = mods[i];
 
-    it("loads Castle (1-4)", function () {
-        FSM.setMap("1-4");
-    });
-    
-    it("loads Underwater (2-2)", function () {
-        FSM.setMap("2-2", 1);
+            it(mod.name, function (name) {
+                FSM.ModAttacher.disableMod(name);
+            }.bind(this, mod.name));
+        }
     });
 });

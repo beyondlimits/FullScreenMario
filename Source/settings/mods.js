@@ -387,10 +387,10 @@ FullScreenMario.FullScreenMario.settings.mods = {
                     mod.settings.onPlayerDeathOld = proto.onPlayerDeath;
                     proto.onPlayerDeath = FSM.mapEntranceRespawn;
                     
-                    mod.settings.livesOld = FSM.StatsHolder.getItem("lives");
+                    mod.settings.livesOld = FSM.ItemsHolder.getItem("lives");
                     mod.settings.statsOld = stats;
                     stats.valueDefault = Infinity;
-                    FSM.StatsHolder.setItem("lives", Infinity);
+                    FSM.ItemsHolder.setItem("lives", Infinity);
                 },
                 "onModDisable": function (mod) {
                     var FSM = FullScreenMario.FullScreenMario.prototype.ensureCorrectCaller(this),
@@ -400,7 +400,7 @@ FullScreenMario.FullScreenMario.settings.mods = {
                     proto.onPlayerDeath = mod.settings.onPlayerDeathOld;
                     
                     stats.valueDefault = mod.settings.statsOld.valueDefault;
-                    FSM.StatsHolder.setItem("lives", mod.settings.livesOld);
+                    FSM.ItemsHolder.setItem("lives", mod.settings.livesOld);
                 }
             },
             "settings": {
@@ -482,7 +482,7 @@ FullScreenMario.FullScreenMario.settings.mods = {
             "enabled": false,
             "events": {
                 "onModEnable": function () {
-                    this.StatsHolder.setItem("luigi", true);
+                    this.ItemsHolder.setItem("luigi", true);
                     this.ObjectMaker.getFunction("Player").prototype.title = "Luigi";
                     
                     if (this.player) {
@@ -496,7 +496,7 @@ FullScreenMario.FullScreenMario.settings.mods = {
                     }
                 },
                 "onModDisable": function () {
-                    this.StatsHolder.setItem("luigi", false);
+                    this.ItemsHolder.setItem("luigi", false);
                     this.ObjectMaker.getFunction("Player").prototype.title = "Player";
                     
                     if (this.player) {
