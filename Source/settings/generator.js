@@ -4823,8 +4823,11 @@ FullScreenMario.FullScreenMario.settings.generator = {
                     "title": "EndOutsideCastle",
                     "arguments": {
                         "macro": "EndOutsideCastle",
-                        "transport": "Castle",
-                        "large": true
+                        "large": true,
+                        "transport": {
+                            "map": "Random",
+                            "location": "Castle"
+                        }
                     },
                     "sizing": {
                         "height": 0

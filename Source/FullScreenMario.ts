@@ -3886,7 +3886,11 @@ module FullScreenMario {
             if (transport.constructor === String) {
                 thing.FSM.setLocation(transport);
             } else if (typeof transport.map !== "undefined") {
-                thing.FSM.setMap(transport.map);
+                if (typeof transport.location !== "undefined") {
+                    thing.FSM.setMap(transport.map, transport.location);
+                } else {
+                    thing.FSM.setMap(transport.map);
+                }
             } else if (typeof transport.location !== "undefined") {
                 thing.FSM.setLocation(transport.location);
             } else {
