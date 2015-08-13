@@ -2411,8 +2411,7 @@ var EightBittr;
          * @param {Thing} other   The Thing whose midpoint is referenced.
          */
         EightBittr.prototype.setMidXObj = function (thing, other) {
-            thing.EightBitter.setLeft(thing, thing.EightBitter.getMidX(other)
-                - (thing.width * thing.EightBitter.unitsize / 2));
+            thing.EightBitter.setMidX(thing, thing.EightBitter.getMidX(other));
         };
         /**
          * Shifts a Thing so that its vertical midpoint is centered on the
@@ -2422,8 +2421,7 @@ var EightBittr;
          * @param {Thing} other   The Thing whose midpoint is referenced.
          */
         EightBittr.prototype.setMidYObj = function (thing, other) {
-            thing.EightBitter.setTop(thing, thing.EightBitter.getMidY(other)
-                - (thing.height * thing.EightBitter.unitsize / 2));
+            thing.EightBitter.setMidY(thing, thing.EightBitter.getMidY(other));
         };
         /**
          * @param {Thing} thing

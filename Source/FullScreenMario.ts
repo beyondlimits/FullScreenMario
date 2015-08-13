@@ -5879,13 +5879,15 @@ module FullScreenMario {
          * @param {CastleFireball[]} balls
          */
         animateCastleBlock(thing: ICastleBlock, balls: ICastleFireball[]): void {
-            var ax: number = Math.cos(thing.angle * Math.PI) * thing.FSM.unitsize * 4,
+            var midx: number = thing.EightBitter.getMidX(thing),
+                midy: number = thing.EightBitter.getMidY(thing),
+                ax: number = Math.cos(thing.angle * Math.PI) * thing.FSM.unitsize * 4,
                 ay: number = Math.sin(thing.angle * Math.PI) * thing.FSM.unitsize * 4,
                 i: number;
 
             for (i = 0; i < balls.length; i += 1) {
-                thing.FSM.setMidX(balls[i], thing.left + ax * i);
-                thing.FSM.setMidY(balls[i], thing.top + ay * i);
+                thing.FSM.setMidX(balls[i], midx + ax * i);
+                thing.FSM.setMidY(balls[i], midy + ay * i);
             }
 
             thing.angle += thing.dt * thing.direction;
