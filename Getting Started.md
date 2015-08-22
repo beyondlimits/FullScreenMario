@@ -133,7 +133,7 @@ Each Area's creation instructions are stored as an Array of Objects. You can see
 }
 ``` 
 
-The coordinate system for creation instructions is not the same as the one used by Things during gameplay. X-distance is still measured from the left, but y-distance is how elevated the Thing is from the floor. This system was ipmlemented to make it more logical to write maps. Coordinates are converted from map to gameplay in `FullScreenMario.FullScreenMario.prototype.addPreThing`. 
+The coordinate system for creation instructions is not the same as the one used by Things during gameplay. X-distance is still measured from the left, but y-distance is how elevated the Thing is from the floor. This system was implemented to make it more logical to write maps. Coordinates are converted from map to gameplay in `FullScreenMario.FullScreenMario.prototype.addPreThing`. 
 
 ### MapScreenr
 
