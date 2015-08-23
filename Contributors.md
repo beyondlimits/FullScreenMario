@@ -32,7 +32,7 @@ Names are sorted within groups by last name. Groups are in order of commit magni
 
 ### Bug Fixers
 
-* [Geoffrey A](https://github.com/Geoffrey-A)
+* [Geoffrey Alary](https://github.com/Geoffrey-A)
     * July 2015: [Small fixes for map 8-4](https://github.com/FullScreenShenanigans/FullScreenMario/pull/283)
     * August 2015: [PixelRendr bug with large palette sizes](https://github.com/FullScreenShenanigans/FullScreenMario/pull/297)
 
