@@ -7076,18 +7076,17 @@ module FullScreenMario {
             }
 
             FSM.addPlayer(
-                (
-                    location.entrance.left
-                    + FSM.player.width * FSM.unitsize / 2
-                    ),
-                (
-                    location.entrance.top
-                    + FSM.player.height * FSM.unitsize
-                    )
-                );
+                location.entrance.left + FSM.player.width * FSM.unitsize / 2,
+                location.entrance.top + FSM.player.height * FSM.unitsize);
 
             FSM.animatePlayerPipingStart(FSM.player);
             FSM.AudioPlayer.play("Pipe");
+            FSM.AudioPlayer.addEventListener(
+                "Pipe",
+                "ended",
+                function (): void {
+                    FSM.AudioPlayer.playTheme();
+                });
 
             FSM.TimeHandler.addEventInterval(
                 function (): boolean {
