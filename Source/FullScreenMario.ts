@@ -7084,7 +7084,7 @@ module FullScreenMario {
             FSM.AudioPlayer.addEventListener(
                 "Pipe",
                 "ended",
-                function () {
+                function (): void {
                     FSM.AudioPlayer.playTheme();
                 });
 
