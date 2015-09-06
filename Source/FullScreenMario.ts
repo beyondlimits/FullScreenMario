@@ -4771,8 +4771,6 @@ module FullScreenMario {
          * @param {Player} thing
          */
         movePlayer(thing: IPlayer): void {
-            var decel: number = 0; // (how much extra to decrease running)
-
             // Not jumping
             if (!thing.keys.up) {
                 thing.keys.jump = false;
@@ -4804,7 +4802,7 @@ module FullScreenMario {
                 }
                 if (!thing.FSM.MapScreener.underwater) {
                     thing.keys.jumplev += 1;
-                    thing.FSM.MathDecider.compute("decreasePlayerFallingYvel", thing);
+                    thing.FSM.MathDecider.compute("decreasePlayerJumpingYvel", thing);
                 }
             }
 
@@ -4829,47 +4827,11 @@ module FullScreenMario {
             }
 
             // Running
-            // If a button is pressed, hold/increase speed
-            if (thing.keys.run !== 0 && !thing.crouching) {
-                var dir: number = thing.keys.run,
-                    // No sprinting underwater
-                    sprinting: number = Number(thing.keys.sprint && !thing.FSM.MapScreener.underwater) || 0,
-                    adder: number = dir * (.098 * (Number(sprinting) + 1));
-
-                // Reduce the speed, both by subtracting and dividing a little
-                thing.xvel += adder || 0;
-                thing.xvel *= .98;
-                decel = .0007;
-
-                // If you're accelerating in the opposite direction from your current velocity, that's a skid
-                if ((thing.keys.run > 0) === thing.moveleft) {
-                    if (!thing.skidding) {
-                        thing.FSM.addClass(thing, "skidding");
-                        thing.skidding = true;
-                    }
-                } else if (thing.skidding) {
-                    // Not accelerating: make sure you're not skidding
+            if (thing.FSM.MathDecider.compute("decreasePlayerRunningXvel", thing)) {
+                if (thing.skidding) {
+                    thing.FSM.addClass(thing, "skidding");
+                } else {
                     thing.FSM.removeClass(thing, "skidding");
-                    thing.skidding = false;
-                }
-            } else {
-                // Otherwise slow down a bit
-                thing.xvel *= .98;
-                decel = .035;
-            }
-
-            if (thing.xvel > decel) {
-                thing.xvel -= decel;
-            } else if (thing.xvel < -decel) {
-                thing.xvel += decel;
-            } else if (thing.xvel !== 0) {
-                thing.xvel = 0;
-                if (!thing.FSM.MapScreener.nokeys && thing.keys.run === 0) {
-                    if (thing.keys.leftDown) {
-                        thing.keys.run = -1;
-                    } else if (thing.keys.rightDown) {
-                        thing.keys.run = 1;
-                    }
                 }
             }
 
