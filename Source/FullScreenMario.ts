@@ -4388,15 +4388,11 @@ module FullScreenMario {
             if (thing.height > thing.heightNormal) {
                 thing.FSM.reduceHeight(
                     thing,
-                    (thing.height - thing.heightNormal) * thing.FSM.unitsize
-                    );
+                    (thing.height - thing.heightNormal) * thing.FSM.unitsize);
                 if (thing === player.spring) {
-                    player.yvel = Math.max(
-                        thing.FSM.unitsize * -2,
-                        thing.tensionSave * -.98
-                        );
+                    player.yvel = thing.FSM.MathDecider.compute("springboardYvelUp", thing);
                     player.resting = player.spring = undefined;
-                    player.movement = FullScreenMario.prototype.movePlayer;
+                    player.movement = thing.FSM.movePlayer;
                 }
                 thing.tension = 0;
                 thing.movement = undefined;

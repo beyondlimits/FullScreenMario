@@ -13,52 +13,58 @@ FullScreenMario.FullScreenMario.settings.math = {
          * @returns {Boolean} True if the player started or stopped skidding,
          *                    or false if the skidding status was unchanged.
          */
-        "decreasePlayerRunningXvel": function (constants, equations, thing) {
+        "decreasePlayerRunningXvel": function (constants, equations, player) {
             // If a button is pressed, hold/increase speed
-            if (thing.keys.run !== 0 && !thing.crouching) {
-                var dir = thing.keys.run, 
+            if (player.keys.run !== 0 && !player.crouching) {
+                var dir = player.keys.run, 
                 // No sprinting underwater
-                sprinting = Number(thing.keys.sprint && !thing.FSM.MapScreener.underwater) || 0, adder = dir * (.098 * (Number(sprinting) + 1)), decel = 0, skiddingChanged = false;
+                sprinting = Number(player.keys.sprint && !player.FSM.MapScreener.underwater) || 0, adder = dir * (.098 * (Number(sprinting) + 1)), decel = 0, skiddingChanged = false;
                 // Reduce the speed, both by subtracting and dividing a little
-                thing.xvel += adder || 0;
-                thing.xvel *= .98;
+                player.xvel += adder || 0;
+                player.xvel *= .98;
                 decel = .0007;
                 // If you're accelerating in the opposite direction from your current velocity, that's a skid
-                if ((thing.keys.run > 0) === thing.moveleft) {
-                    if (!thing.skidding) {
-                        thing.skidding = true;
+                if ((player.keys.run > 0) === player.moveleft) {
+                    if (!player.skidding) {
+                        player.skidding = true;
                         skiddingChanged = true;
                     }
                 }
-                else if (thing.skidding) {
+                else if (player.skidding) {
                     // Not accelerating: make sure you're not skidding
-                    thing.skidding = false;
+                    player.skidding = false;
                     skiddingChanged = true;
                 }
             }
             else {
                 // Otherwise slow down a bit
-                thing.xvel *= .98;
+                player.xvel *= .98;
                 decel = .035;
             }
-            if (thing.xvel > decel) {
-                thing.xvel -= decel;
+            if (player.xvel > decel) {
+                player.xvel -= decel;
             }
-            else if (thing.xvel < -decel) {
-                thing.xvel += decel;
+            else if (player.xvel < -decel) {
+                player.xvel += decel;
             }
-            else if (thing.xvel !== 0) {
-                thing.xvel = 0;
-                if (!thing.FSM.MapScreener.nokeys && thing.keys.run === 0) {
-                    if (thing.keys.leftDown) {
-                        thing.keys.run = -1;
+            else if (player.xvel !== 0) {
+                player.xvel = 0;
+                if (!player.FSM.MapScreener.nokeys && player.keys.run === 0) {
+                    if (player.keys.leftDown) {
+                        player.keys.run = -1;
                     }
-                    else if (thing.keys.rightDown) {
-                        thing.keys.run = 1;
+                    else if (player.keys.rightDown) {
+                        player.keys.run = 1;
                     }
                 }
             }
             return skiddingChanged;
+        },
+        /**
+         * @return A player's yvel for when it's riding up a springboard.
+         */
+        "springboardYvelUp": function (constants, equations, thing) {
+            return Math.max(thing.FSM.unitsize * -2, thing.tensionSave * -.98);
         }
     }
 };
