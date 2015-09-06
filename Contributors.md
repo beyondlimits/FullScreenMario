@@ -13,6 +13,11 @@ Names are sorted within groups by last name. Groups are in order of commit magni
 * [Kentucky JavaScript Users Group](http://kyjsug.org/)
     * November 2013: [Added gamepad support](https://github.com/JoshuaKGoldberg/FullScreenMario/pull/91)
 
+* [Geoffrey Alary](https://github.com/Geoffrey-A)
+    * September 2015: [Fix for theme after piping](https://github.com/FullScreenShenanigans/FullScreenMario/pull/300), [Fix for fiery paddling sprites](https://github.com/FullScreenShenanigans/FullScreenMario/pull/301)
+    * July 2015: [Small fixes for map 8-4](https://github.com/FullScreenShenanigans/FullScreenMario/pull/283)
+    * August 2015: [PixelRendr bug with large palette sizes](https://github.com/FullScreenShenanigans/FullScreenMario/pull/297)
+
 * [Aaron Grant](https://github.com/blamonet)
     * November 2013: [Added loop option to playTheme](https://github.com/JoshuaKGoldberg/FullScreenMario/commit/6f370aa9852a75b45bd80b996b913a31ae0cf3db)
     * November 2013: [Added logic to unset sound.used if resume is false](https://github.com/JoshuaKGoldberg/FullScreenMario/commit/abdf9893414cefb43a8377dd1d671a7a8031d2f4)
@@ -31,10 +36,6 @@ Names are sorted within groups by last name. Groups are in order of commit magni
 
 
 ### Bug Fixers
-
-* [Geoffrey Alary](https://github.com/Geoffrey-A)
-    * July 2015: [Small fixes for map 8-4](https://github.com/FullScreenShenanigans/FullScreenMario/pull/283)
-    * August 2015: [PixelRendr bug with large palette sizes](https://github.com/FullScreenShenanigans/FullScreenMario/pull/297)
 
 * [Christopher Best](https://github.com/sirctseb)
     * October 2013: [Bug fix for 8-1 pipe exit point](https://github.com/JoshuaKGoldberg/FullScreenMario/commit/85693eec817e47169e774011129d7fd195200e14)
