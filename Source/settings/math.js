@@ -1,8 +1,12 @@
+/// <reference path="../FullScreenMario.ts" />
 FullScreenMario.FullScreenMario.settings.math = {
     "equations": {
-
-    },
-    "constants": {
-
+        /**
+         * Decreases a player's jumping yvel based on whether it's running.
+         */
+        "decreasePlayerJumpingYvel": function (constants, equations, player) {
+            var jumpmod = player.FSM.MapScreener.jumpmod - player.xvel * .0014, power = Math.pow(player.keys.jumplev, jumpmod), dy = player.FSM.unitsize / power;
+            player.yvel = Math.max(player.yvel - dy, constants.maxyvelinv);
+        }
     }
 };

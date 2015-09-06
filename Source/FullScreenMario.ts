@@ -4804,10 +4804,7 @@ module FullScreenMario {
                 }
                 if (!thing.FSM.MapScreener.underwater) {
                     thing.keys.jumplev += 1;
-                    var dy: number = FullScreenMario.unitsize / (Math.pow(
-                        thing.keys.jumplev,
-                        thing.FSM.MapScreener.jumpmod - .0014 * thing.xvel));
-                    thing.yvel = Math.max(thing.yvel - dy, thing.FSM.MapScreener.maxyvelinv);
+                    thing.FSM.MathDecider.compute("decreasePlayerFallingYvel", thing);
                 }
             }
 
