@@ -426,8 +426,6 @@ module FullScreenMario {
             });
             player.keys = player.getKeys();
 
-            FSM.InputWriter.setEventInformation(player);
-
             if ((<IMapScreenr>FSM.MapScreener).underwater) {
                 player.swimming = true;
 
@@ -505,10 +503,12 @@ module FullScreenMario {
          * 
          * @param {Player} player
          */
-        keyDownLeft(player: IPlayer, event?: Event): void {
-            if (player.FSM.GamesRunner.getPaused()) {
+        keyDownLeft(FSM: FullScreenMario, event?: Event): void {
+            if (FSM.GamesRunner.getPaused()) {
                 return;
             }
+
+            var player: IPlayer = FSM.player;
 
             player.keys.run = -1;
             player.keys.leftDown = true; // independent of changes to keys.run
@@ -521,10 +521,12 @@ module FullScreenMario {
          * 
          * @param {Player} player
          */
-        keyDownRight(player: IPlayer, event?: Event): void {
-            if (player.FSM.GamesRunner.getPaused()) {
+        keyDownRight(FSM: FullScreenMario, event?: Event): void {
+            if (FSM.GamesRunner.getPaused()) {
                 return;
             }
+
+            var player: IPlayer = FSM.player;
 
             player.keys.run = 1;
             player.keys.rightDown = true; // independent of changes to keys.run
@@ -541,28 +543,28 @@ module FullScreenMario {
          * 
          * @param {Player} player
          */
-        keyDownUp(player: IPlayer, event?: Event): void {
-            if (player.FSM.GamesRunner.getPaused()) {
+        keyDownUp(FSM: FullScreenMario, event?: Event): void {
+            if (FSM.GamesRunner.getPaused()) {
                 return;
             }
 
+            var player: IPlayer = FSM.player;
+
             player.keys.up = true;
 
-            if (player.canjump && (
-                player.resting || player.FSM.MapScreener.underwater)
-                ) {
+            if (player.canjump && (player.resting || FSM.MapScreener.underwater)) {
                 player.keys.jump = true;
                 player.canjump = false;
                 player.keys.jumplev = 0;
 
                 if (player.power > 1) {
-                    player.FSM.AudioPlayer.play("Jump Super");
+                    FSM.AudioPlayer.play("Jump Super");
                 } else {
-                    player.FSM.AudioPlayer.play("Jump Small");
+                    FSM.AudioPlayer.play("Jump Small");
                 }
 
-                if (player.FSM.MapScreener.underwater) {
-                    player.FSM.TimeHandler.addEvent(
+                if (FSM.MapScreener.underwater) {
+                    FSM.TimeHandler.addEvent(
                         function (): void {
                             player.jumping = player.keys.jump = false;
                         },
@@ -570,7 +572,7 @@ module FullScreenMario {
                 }
             }
 
-            player.FSM.ModAttacher.fireEvent("onKeyDownUp");
+            FSM.ModAttacher.fireEvent("onKeyDownUp");
 
             if (event && event.preventDefault !== undefined) {
                 event.preventDefault();
@@ -583,13 +585,15 @@ module FullScreenMario {
          * 
          * @param {Player} player
          */
-        keyDownDown(player: IPlayer, event?: Event): void {
-            if (player.FSM.GamesRunner.getPaused()) {
+        keyDownDown(FSM: FullScreenMario, event?: Event): void {
+            if (FSM.GamesRunner.getPaused()) {
                 return;
             }
 
+            var player: IPlayer = FSM.player;
+
             player.keys.crouch = true;
-            player.FSM.ModAttacher.fireEvent("onKeyDownDown");
+            FSM.ModAttacher.fireEvent("onKeyDownDown");
 
             if (event && event.preventDefault !== undefined) {
                 event.preventDefault();
@@ -602,14 +606,17 @@ module FullScreenMario {
          * 
          * @param {Player} player
          */
-        keyDownSprint(player: IPlayer, event?: Event): void {
-            if (player.FSM.GamesRunner.getPaused()) {
+        keyDownSprint(FSM: FullScreenMario, event?: Event): void {
+            if (FSM.GamesRunner.getPaused()) {
                 return;
             }
+
+            var player: IPlayer = FSM.player;
 
             if (player.power === 3 && player.keys.sprint === false && !player.crouching) {
                 player.fire(player);
             }
+
             player.keys.sprint = true;
             player.FSM.ModAttacher.fireEvent("onKeyDownSprint");
 
@@ -624,12 +631,15 @@ module FullScreenMario {
          * 
          * @param {Player} player
          */
-        keyDownPause(player: IPlayer, event?: Event): void {
-            if (!player.FSM.GamesRunner.getPaused()) {
-                player.FSM.TimeHandler.addEvent(
-                    player.FSM.GamesRunner.pause.bind(player.FSM.GamesRunner), 7, true);
+        keyDownPause(FSM: FullScreenMario, event?: Event): void {
+            var player: IPlayer = FSM.player;
+
+            if (!FSM.GamesRunner.getPaused()) {
+                FSM.TimeHandler.addEvent(
+                    FSM.GamesRunner.pause.bind(player.FSM.GamesRunner), 7, true);
             }
-            player.FSM.ModAttacher.fireEvent("onKeyDownPause");
+
+            FSM.ModAttacher.fireEvent("onKeyDownPause");
 
             if (event && event.preventDefault !== undefined) {
                 event.preventDefault();
@@ -642,13 +652,13 @@ module FullScreenMario {
          * 
          * @param {Player} player
          */
-        keyDownMute(player: IPlayer, event?: Event): void {
-            if (player.FSM.GamesRunner.getPaused()) {
+        keyDownMute(FSM: FullScreenMario, event?: Event): void {
+            if (FSM.GamesRunner.getPaused()) {
                 return;
             }
 
-            player.FSM.AudioPlayer.toggleMuted();
-            player.FSM.ModAttacher.fireEvent("onKeyDownMute");
+            FSM.AudioPlayer.toggleMuted();
+            FSM.ModAttacher.fireEvent("onKeyDownMute");
 
             if (event && event.preventDefault !== undefined) {
                 event.preventDefault();
@@ -661,11 +671,13 @@ module FullScreenMario {
          * 
          * @param {Player} player
          */
-        keyUpLeft(player: IPlayer, event?: Event): void {
+        keyUpLeft(FSM: FullScreenMario, event?: Event): void {
+            var player: IPlayer = FSM.player;
+
             player.keys.run = 0;
             player.keys.leftDown = false;
 
-            player.FSM.ModAttacher.fireEvent("onKeyUpLeft");
+            FSM.ModAttacher.fireEvent("onKeyUpLeft");
 
             if (event && event.preventDefault !== undefined) {
                 event.preventDefault();
@@ -678,11 +690,13 @@ module FullScreenMario {
          * 
          * @param {Player} player
          */
-        keyUpRight(player: IPlayer, event?: Event): void {
+        keyUpRight(FSM: FullScreenMario, event?: Event): void {
+            var player: IPlayer = FSM.player;
+
             player.keys.run = 0;
             player.keys.rightDown = false;
 
-            player.FSM.ModAttacher.fireEvent("onKeyUpRight");
+            FSM.ModAttacher.fireEvent("onKeyUpRight");
 
             if (event && event.preventDefault !== undefined) {
                 event.preventDefault();
@@ -695,12 +709,15 @@ module FullScreenMario {
          * 
          * @param {Player} player
          */
-        keyUpUp(player: IPlayer, event?: Event): void {
-            if (!player.FSM.MapScreener.underwater) {
+        keyUpUp(FSM: FullScreenMario, event?: Event): void {
+            var player: IPlayer = FSM.player;
+
+            if (!FSM.MapScreener.underwater) {
                 player.keys.jump = player.keys.up = false;
             }
+
             player.canjump = true;
-            player.FSM.ModAttacher.fireEvent("onKeyUpUp");
+            FSM.ModAttacher.fireEvent("onKeyUpUp");
 
             if (event && event.preventDefault !== undefined) {
                 event.preventDefault();
@@ -713,12 +730,16 @@ module FullScreenMario {
          * 
          * @param {Player} player
          */
-        keyUpDown(player: IPlayer, event?: Event): void {
+        keyUpDown(FSM: FullScreenMario, event?: Event): void {
+            var player: IPlayer = FSM.player;
+
             player.keys.crouch = false;
+
             if (!player.piping) {
-                player.FSM.animatePlayerRemoveCrouch(player);
+                FSM.animatePlayerRemoveCrouch(player);
             }
-            player.FSM.ModAttacher.fireEvent("onKeyUpDown");
+
+            FSM.ModAttacher.fireEvent("onKeyUpDown");
 
             if (event && event.preventDefault !== undefined) {
                 event.preventDefault();
@@ -731,9 +752,11 @@ module FullScreenMario {
          * 
          * @param {Player} player
          */
-        keyUpSprint(player: IPlayer, event?: Event): void {
+        keyUpSprint(FSM: FullScreenMario, event?: Event): void {
+            var player: IPlayer = FSM.player;
+
             player.keys.sprint = false;
-            player.FSM.ModAttacher.fireEvent("onKeyUpSprint");
+            FSM.ModAttacher.fireEvent("onKeyUpSprint");
 
             if (event && event.preventDefault !== undefined) {
                 event.preventDefault();
@@ -746,11 +769,11 @@ module FullScreenMario {
          * 
          * @param {Player} player
          */
-        keyUpPause(player: IPlayer, event?: Event): void {
-            if (player.FSM.GamesRunner.getPaused()) {
-                player.FSM.GamesRunner.play();
+        keyUpPause(FSM: FullScreenMario, event?: Event): void {
+            if (FSM.GamesRunner.getPaused()) {
+                FSM.GamesRunner.play();
             }
-            player.FSM.ModAttacher.fireEvent("onKeyUpPause");
+            FSM.ModAttacher.fireEvent("onKeyUpPause");
 
             if (event && event.preventDefault !== undefined) {
                 event.preventDefault();
@@ -763,9 +786,9 @@ module FullScreenMario {
          * 
          * @param {Player} player
          */
-        mouseDownRight(player: IPlayer, event?: Event): void {
-            player.FSM.GamesRunner.togglePause();
-            player.FSM.ModAttacher.fireEvent("onMouseDownRight");
+        mouseDownRight(FSM: FullScreenMario, event?: Event): void {
+            FSM.GamesRunner.togglePause();
+            FSM.ModAttacher.fireEvent("onMouseDownRight");
 
             if (event && event.preventDefault !== undefined) {
                 event.preventDefault();
@@ -780,8 +803,8 @@ module FullScreenMario {
          * @param {Player} player
          * @param {DeviceMotionEvent} event
          */
-        deviceMotion(player: IPlayer, event: DeviceMotionEvent): void {
-            var FSM: FullScreenMario = player.FSM,
+        deviceMotion(FSM: FullScreenMario, event: DeviceMotionEvent): void {
+            var player: IPlayer = FSM.player,
                 deviceMotionStatus: IDeviceMotionStatus = FSM.deviceMotionStatus,
                 acceleration: DeviceAcceleration = event.accelerationIncludingGravity;
 
@@ -790,9 +813,9 @@ module FullScreenMario {
             if (deviceMotionStatus.y !== undefined) {
                 deviceMotionStatus.dy = acceleration.y - deviceMotionStatus.y;
                 if (deviceMotionStatus.dy > 0.21) {
-                    player.FSM.keyDownUp(player);
+                    FSM.keyDownUp(FSM);
                 } else if (deviceMotionStatus.dy < -0.14) {
-                    player.FSM.keyUpUp(player);
+                    FSM.keyUpUp(FSM);
                 }
             }
 
@@ -801,21 +824,21 @@ module FullScreenMario {
 
             if (deviceMotionStatus.x > 2.1) {
                 if (!deviceMotionStatus.motionLeft) {
-                    player.FSM.keyDownLeft(player);
+                    player.FSM.keyDownLeft(FSM);
                     deviceMotionStatus.motionLeft = true;
                 }
             } else if (deviceMotionStatus.x < -2.1) {
                 if (!deviceMotionStatus.motionRight) {
-                    player.FSM.keyDownRight(player);
+                    player.FSM.keyDownRight(FSM);
                     deviceMotionStatus.motionRight = true;
                 }
             } else {
                 if (deviceMotionStatus.motionLeft) {
-                    player.FSM.keyUpLeft(player);
+                    player.FSM.keyUpLeft(FSM);
                     deviceMotionStatus.motionLeft = false;
                 }
                 if (deviceMotionStatus.motionRight) {
-                    player.FSM.keyUpRight(player);
+                    player.FSM.keyUpRight(FSM);
                     deviceMotionStatus.motionRight = false;
                 }
             }
