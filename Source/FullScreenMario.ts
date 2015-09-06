@@ -3607,11 +3607,7 @@ module FullScreenMario {
 
         /**
          * Collision callback for the DetectCollision on a flagpole at the end of an
-         * EndOutsideCastle. The player becomes invincible and starts sliding down
-         * the flagpole, while all other Things are killed. A score calculated by
-         * scorePlayerFlag is shown at the base of the pole and works its way up. 
-         * The collideFlagBottom callback will be fired when the player reaches the 
-         * bottom. 
+         * EndOutsideCastle. The Flagpole cutscene is started.
          * 
          * @param {Player} thing
          * @param {DetectCollision} other
@@ -3620,114 +3616,11 @@ module FullScreenMario {
             if (thing.bottom > other.bottom) {
                 return;
             }
-
-            var height: number = (other.bottom - thing.bottom) | 0,
-                scoreAmount: number = thing.FSM.scorePlayerFlag(
-                    thing, height / thing.FSM.unitsize),
-                scoreThing: IText = thing.FSM.ObjectMaker.make("Text" + scoreAmount);
-
-            // This is a cutscene. No movement, no deaths, no scrolling.
-            thing.star = 1;
-            thing.nocollidechar = true;
-            thing.FSM.MapScreener.nokeys = true;
-            thing.FSM.MapScreener.notime = true;
-            thing.FSM.MapScreener.canscroll = false;
-
-            // Kill all other characters and pause the player next to the pole
-            thing.FSM.killNPCs();
-            thing.FSM.thingPauseVelocity(thing);
-            thing.FSM.setRight(
-                thing, other.left + thing.FSM.unitsize * 3
-                );
-            thing.FSM.killNormal(other);
-
-            // The player is now climbing down the pole
-            thing.FSM.removeClasses(thing, "running jumping skidding");
-            thing.FSM.addClass(thing, "climbing animated");
-            thing.FSM.TimeHandler.addClassCycle(
-                thing, ["one", "two"], "climbing", 0);
-
-            // Animate the Flag to the base of the pole
-            thing.FSM.TimeHandler.addEventInterval(
-                thing.FSM.shiftVert,
-                1,
-                64,
-                other.collection.Flag,
-                thing.FSM.unitsize);
-
-            // Add a ScoreText element at the bottom of the flag and animate it up
-            thing.FSM.addThing(scoreThing, other.right, other.bottom);
-            thing.FSM.TimeHandler.addEventInterval(
-                thing.FSM.shiftVert,
-                1,
-                72,
-                scoreThing,
-                -thing.FSM.unitsize);
-            thing.FSM.TimeHandler.addEvent(
-                thing.FSM.ItemsHolder.increase.bind(thing.FSM.ItemsHolder),
-                72,
-                "score",
-                scoreAmount);
-
-            // All audio stops, and the flagpole clip is played
-            thing.FSM.AudioPlayer.clearAll();
-            thing.FSM.AudioPlayer.clearTheme();
-            thing.FSM.AudioPlayer.play("Flagpole");
-
-            thing.FSM.TimeHandler.addEventInterval(
-                function (): boolean {
-                    // While the player hasn't reached the bottom yet, slide down
-                    if (thing.bottom < other.bottom) {
-                        thing.FSM.shiftVert(thing, thing.FSM.unitsize);
-                        return false;
-                    }
-
-                    // If the flag hasn't reached it but the player has, don't move yet
-                    if ((other.collection.Flag.bottom | 0) < (other.bottom | 0)) {
-                        return false;
-                    }
-
-                    // The player is done climbing: trigger the flag bottom collision
-                    thing.movement = undefined;
-                    thing.FSM.setBottom(thing, other.bottom);
-                    thing.FSM.TimeHandler.cancelClassCycle(
-                        thing, "climbing"
-                        );
-                    thing.FSM.TimeHandler.addEvent(
-                        function (): void {
-                            thing.FSM.collideFlagBottom(thing, other);
-                        },
-                        21);
-
-                    return true;
-                },
-                1,
-                Infinity);
-        }
-
-        /**
-         * Collision callback for when a player hits the bottom of a flagpole. It is
-         * flipped horizontally, shifted to the other side of the pole, and the
-         * animatePlayerOffPole callback is quickly timed.
-         * 
-         * @param {Player} thing
-         * @param {Solid} other
-         */
-        collideFlagBottom(thing: IPlayer, other: ISolid): void {
-            thing.keys.run = 1;
-            thing.maxspeed = thing.walkspeed;
-
-            thing.FSM.flipHoriz(thing);
-            thing.FSM.shiftHoriz(
-                thing,
-                (thing.width + 1) * thing.FSM.unitsize);
-
-            thing.FSM.TimeHandler.addEvent(
-                function (): void {
-                    thing.FSM.AudioPlayer.play("Stage Clear");
-                    thing.FSM.animatePlayerOffPole(thing, true);
-                },
-                14);
+            
+            thing.FSM.ScenePlayer.startCutscene("Flagpole", {
+                "player": thing,
+                "collider": other
+            });
         }
 
         /**
@@ -7340,6 +7233,126 @@ module FullScreenMario {
 
             prething.x = boundaries.right;
             MapsCreator.analyzePreSwitch(prething, prethings, area, map);
+        }
+        
+        
+        /* Cutscenes
+        */
+        
+        /**
+         * First cutscene for the Flagpole routine. The player becomes invincible and 
+         * starts sliding down the flagpole, while all other Things are killed. 
+         * A score calculated by scorePlayerFlag is shown at the base of the pole and 
+         * works its way up. The collideFlagBottom callback will be fired when the player 
+         * reaches the bottom.
+         * 
+         * @param {Object} settings   Storage for the cutscene's used Things.
+         * @param {FullScreenMario} FSM
+         */
+         cutsceneFlagpoleStartSlidingDown(settings: any, FSM: FullScreenMario): void {
+            var thing: IPlayer = settings.player,
+                other: IDetectCollision = settings.collider,
+                height: number = (other.bottom - thing.bottom) | 0,
+                scoreAmount: number = FSM.scorePlayerFlag(
+                    thing, height / FSM.unitsize),
+                scoreThing: IText = FSM.ObjectMaker.make("Text" + scoreAmount);
+
+            // This is a cutscene. No movement, no deaths, no scrolling.
+            thing.star = 1;
+            thing.nocollidechar = true;
+            FSM.MapScreener.nokeys = true;
+            FSM.MapScreener.notime = true;
+            FSM.MapScreener.canscroll = false;
+
+            // Kill all other characters and pause the player next to the pole
+            FSM.killNPCs();
+            FSM.thingPauseVelocity(thing);
+            FSM.setRight(thing, other.left + FSM.unitsize * 3);
+            FSM.killNormal(other);
+
+            // The player is now climbing down the pole
+            FSM.removeClasses(thing, "running jumping skidding");
+            FSM.addClass(thing, "climbing animated");
+            FSM.TimeHandler.addClassCycle(
+                thing, ["one", "two"], "climbing", 0);
+
+            // Animate the Flag to the base of the pole
+            FSM.TimeHandler.addEventInterval(
+                FSM.shiftVert,
+                1,
+                64,
+                other.collection.Flag,
+                FSM.unitsize);
+
+            // Add a ScoreText element at the bottom of the flag and animate it up
+            FSM.addThing(scoreThing, other.right, other.bottom);
+            FSM.TimeHandler.addEventInterval(
+                FSM.shiftVert,
+                1,
+                72,
+                scoreThing,
+                -FSM.unitsize);
+            FSM.TimeHandler.addEvent(
+                FSM.ItemsHolder.increase.bind(FSM.ItemsHolder),
+                72,
+                "score",
+                scoreAmount);
+
+            // All audio stops, and the flagpole clip is played
+            FSM.AudioPlayer.clearAll();
+            FSM.AudioPlayer.clearTheme();
+            FSM.AudioPlayer.play("Flagpole");
+
+            FSM.TimeHandler.addEventInterval(
+                function (): boolean {
+                    // While the player hasn't reached the bottom yet, slide down
+                    if (thing.bottom < other.bottom) {
+                        FSM.shiftVert(thing, FSM.unitsize);
+                        return false;
+                    }
+
+                    // If the flag hasn't reached it but the player has, don't move yet
+                    if ((other.collection.Flag.bottom | 0) < (other.bottom | 0)) {
+                        return false;
+                    }
+
+                    // The player is done climbing: trigger the flag bottom collision
+                    thing.movement = undefined;
+                    FSM.setBottom(thing, other.bottom);
+                    FSM.TimeHandler.cancelClassCycle(thing, "climbing");
+                    FSM.TimeHandler.addEvent(
+                        FSM.ScenePlayer.bindRoutine("hitBottom"),
+                        21);
+
+                    return true;
+                },
+                1,
+                Infinity);
+        }
+        
+        /**
+         * Routine for when a player hits the bottom of a flagpole. It is
+         * flipped horizontally, shifted to the other side of the pole, and the
+         * animatePlayerOffPole callback is quickly timed.
+         */
+        cutsceneFlagpoleHitBottom(settings: any, FSM: FullScreenMario): void {
+            var thing: IPlayer = settings.player,
+                other: IDetectCollision = settings.collider;
+            
+            thing.keys.run = 1;
+            thing.maxspeed = thing.walkspeed;
+
+            thing.FSM.flipHoriz(thing);
+            thing.FSM.shiftHoriz(
+                thing,
+                (thing.width + 1) * thing.FSM.unitsize);
+
+            thing.FSM.TimeHandler.addEvent(
+                function (): void {
+                    thing.FSM.AudioPlayer.play("Stage Clear");
+                    thing.FSM.animatePlayerOffPole(thing, true);
+                },
+                14);
         }
 
 
