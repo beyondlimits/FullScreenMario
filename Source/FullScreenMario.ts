@@ -248,7 +248,7 @@ module FullScreenMario {
         }
 
         /**
-         * ReSets this.ItemsHolder via the parent GameStartr resetItemsHolder.
+         * Resets this.ItemsHolder via the parent GameStartr resetItemsHolder.
          * 
          * If the screen isn't wide enough to fit the 'lives' display, it's hidden.
          * 
@@ -261,6 +261,21 @@ module FullScreenMario {
             if (customs.width < 560) {
                 (<HTMLElement>(<HTMLTableRowElement>FSM.ItemsHolder.getContainer().children[0]).cells[4]).style.display = "none";
             }
+        }
+
+        /**
+         * Sets this.MathDecider, using its existing MapScreenr as its constants.
+         * 
+         * @param {FullScreenMario} FSM
+         * @param {Object} customs
+         */
+        resetMathDecider(FSM: FullScreenMario, customs: GameStartr.IMathDecidrCustoms): void {
+            FSM.MathDecider = new MathDecidr.MathDecidr(
+                FSM.proliferate(
+                    {
+                        "constants": FSM.MapScreener
+                    },
+                    FSM.settings.math));
         }
 
         /**
@@ -4373,15 +4388,11 @@ module FullScreenMario {
             if (thing.height > thing.heightNormal) {
                 thing.FSM.reduceHeight(
                     thing,
-                    (thing.height - thing.heightNormal) * thing.FSM.unitsize
-                    );
+                    (thing.height - thing.heightNormal) * thing.FSM.unitsize);
                 if (thing === player.spring) {
-                    player.yvel = Math.max(
-                        thing.FSM.unitsize * -2,
-                        thing.tensionSave * -.98
-                        );
+                    player.yvel = thing.FSM.MathDecider.compute("springboardYvelUp", thing);
                     player.resting = player.spring = undefined;
-                    player.movement = FullScreenMario.prototype.movePlayer;
+                    player.movement = thing.FSM.movePlayer;
                 }
                 thing.tension = 0;
                 thing.movement = undefined;
@@ -4756,8 +4767,6 @@ module FullScreenMario {
          * @param {Player} thing
          */
         movePlayer(thing: IPlayer): void {
-            var decel: number = 0; // (how much extra to decrease running)
-
             // Not jumping
             if (!thing.keys.up) {
                 thing.keys.jump = false;
@@ -4789,10 +4798,7 @@ module FullScreenMario {
                 }
                 if (!thing.FSM.MapScreener.underwater) {
                     thing.keys.jumplev += 1;
-                    var dy: number = FullScreenMario.unitsize / (Math.pow(
-                        thing.keys.jumplev,
-                        thing.FSM.MapScreener.jumpmod - .0014 * thing.xvel));
-                    thing.yvel = Math.max(thing.yvel - dy, thing.FSM.MapScreener.maxyvelinv);
+                    thing.FSM.MathDecider.compute("decreasePlayerJumpingYvel", thing);
                 }
             }
 
@@ -4817,47 +4823,11 @@ module FullScreenMario {
             }
 
             // Running
-            // If a button is pressed, hold/increase speed
-            if (thing.keys.run !== 0 && !thing.crouching) {
-                var dir: number = thing.keys.run,
-                    // No sprinting underwater
-                    sprinting: number = Number(thing.keys.sprint && !thing.FSM.MapScreener.underwater) || 0,
-                    adder: number = dir * (.098 * (Number(sprinting) + 1));
-
-                // Reduce the speed, both by subtracting and dividing a little
-                thing.xvel += adder || 0;
-                thing.xvel *= .98;
-                decel = .0007;
-
-                // If you're accelerating in the opposite direction from your current velocity, that's a skid
-                if ((thing.keys.run > 0) === thing.moveleft) {
-                    if (!thing.skidding) {
-                        thing.FSM.addClass(thing, "skidding");
-                        thing.skidding = true;
-                    }
-                } else if (thing.skidding) {
-                    // Not accelerating: make sure you're not skidding
+            if (thing.FSM.MathDecider.compute("decreasePlayerRunningXvel", thing)) {
+                if (thing.skidding) {
+                    thing.FSM.addClass(thing, "skidding");
+                } else {
                     thing.FSM.removeClass(thing, "skidding");
-                    thing.skidding = false;
-                }
-            } else {
-                // Otherwise slow down a bit
-                thing.xvel *= .98;
-                decel = .035;
-            }
-
-            if (thing.xvel > decel) {
-                thing.xvel -= decel;
-            } else if (thing.xvel < -decel) {
-                thing.xvel += decel;
-            } else if (thing.xvel !== 0) {
-                thing.xvel = 0;
-                if (!thing.FSM.MapScreener.nokeys && thing.keys.run === 0) {
-                    if (thing.keys.leftDown) {
-                        thing.keys.run = -1;
-                    } else if (thing.keys.rightDown) {
-                        thing.keys.run = 1;
-                    }
                 }
             }
 

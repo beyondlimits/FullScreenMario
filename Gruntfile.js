@@ -12,7 +12,10 @@ module.exports = function (grunt) {
                 "configuration": grunt.file.readJSON("tslint.json")
             },
             "files": {
-                "src": ["<%= meta.paths.source %>/<%= pkg.name %>.ts"]
+                "src": [
+                    "<%= meta.paths.source %>/<%= pkg.name %>.ts",
+                    "<%= meta.paths.source %>/settings/*.ts",
+                ]
             }
         },
         "typescript": {
