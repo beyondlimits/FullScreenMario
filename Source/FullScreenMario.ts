@@ -248,7 +248,7 @@ module FullScreenMario {
         }
 
         /**
-         * ReSets this.ItemsHolder via the parent GameStartr resetItemsHolder.
+         * Resets this.ItemsHolder via the parent GameStartr resetItemsHolder.
          * 
          * If the screen isn't wide enough to fit the 'lives' display, it's hidden.
          * 
@@ -261,6 +261,21 @@ module FullScreenMario {
             if (customs.width < 560) {
                 (<HTMLElement>(<HTMLTableRowElement>FSM.ItemsHolder.getContainer().children[0]).cells[4]).style.display = "none";
             }
+        }
+
+        /**
+         * Sets this.MathDecider, using its existing MapScreenr as its constants.
+         * 
+         * @param {FullScreenMario} FSM
+         * @param {Object} customs
+         */
+        resetMathDecider(FSM: FullScreenMario, customs: GameStartr.IMathDecidrCustoms): void {
+            FSM.MathDecider = new MathDecidr.MathDecidr(
+                FSM.proliferate(
+                    {
+                        "constants": FSM.MapScreener
+                    },
+                    FSM.settings.math));
         }
 
         /**
