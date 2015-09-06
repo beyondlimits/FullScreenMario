@@ -15522,7 +15522,8 @@ var GameStartr;
          */
         GameStartr.prototype.resetInputWriter = function (GameStarter, customs) {
             GameStarter.InputWriter = new InputWritr.InputWritr(GameStarter.proliferate({
-                "canTrigger": GameStarter.canInputsTrigger.bind(GameStarter, GameStarter)
+                "canTrigger": GameStarter.canInputsTrigger.bind(GameStarter, GameStarter),
+                "eventInformation": GameStarter
             }, GameStarter.settings.input.InputWritrArgs));
         };
         /**
