@@ -657,8 +657,6 @@ module FullScreenMario {
                 return;
             }
 
-            var player: IPlayer = FSM.player;
-
             FSM.AudioPlayer.toggleMuted();
             FSM.ModAttacher.fireEvent("onKeyDownMute");
 
@@ -772,8 +770,6 @@ module FullScreenMario {
          * @param {Player} player
          */
         keyUpPause(FSM: FullScreenMario, event?: Event): void {
-            var player: IPlayer = FSM.player;
-
             if (FSM.GamesRunner.getPaused()) {
                 FSM.GamesRunner.play();
             }

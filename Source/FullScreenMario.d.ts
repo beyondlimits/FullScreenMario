@@ -445,7 +445,7 @@ declare module FullScreenMario {
         keyUpSprint(FSM: FullScreenMario, event?: Event): void;
         keyUpPause(FSM: FullScreenMario, event?: Event): void;
         mouseDownRight(FSM: FullScreenMario, event?: Event): void;
-        deviceMotion(player: IPlayer, event: DeviceMotionEvent): void;
+        deviceMotion(FSM: FullScreenMario, event: DeviceMotionEvent): void;
         canInputsTrigger(FSM: FullScreenMario): boolean;
         maintainTime(FSM: FullScreenMario): void;
         maintainScenery(FSM: FullScreenMario, scenery: IScenery[]): void;
