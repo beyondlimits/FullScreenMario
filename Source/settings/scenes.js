@@ -1,11 +1,17 @@
 FullScreenMario.FullScreenMario.settings.scenes = {
     "cutscenes": {
 		"Flagpole": {
-			"firstRoutine": "startSlidingDown",
+			"firstRoutine": "StartSlidingDown",
 			"routines": {
-				"startSlidingDown": FullScreenMario.FullScreenMario.prototype.cutsceneFlagpoleStartSlidingDown,
-				"hitBottom": FullScreenMario.FullScreenMario.prototype.cutsceneFlagpoleHitBottom 
+				"StartSlidingDown": FullScreenMario.FullScreenMario.prototype.cutsceneFlagpoleStartSlidingDown,
+				"HitBottom": FullScreenMario.FullScreenMario.prototype.cutsceneFlagpoleHitBottom 
 			}
+		},
+		"BowserVictory": {
+		    "firstRoutine": "CollideCastleAxe",
+		    "routines": {
+                "CollideCastleAxe": FullScreenMario.FullScreenMario.prototype.cutsceneBowserVictoryCollideCastleAxe
+		    }
 		}
 	}
 };

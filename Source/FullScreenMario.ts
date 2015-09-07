@@ -3616,7 +3616,7 @@ module FullScreenMario {
             if (thing.bottom > other.bottom) {
                 return;
             }
-            
+
             thing.FSM.ScenePlayer.startCutscene("Flagpole", {
                 "player": thing,
                 "collider": other
@@ -3632,35 +3632,11 @@ module FullScreenMario {
          * @param {CastleAxe} other
          */
         collideCastleAxe(thing: IPlayer, other: ICastleAxe): void {
-            if (!thing.FSM.isThingAlive(thing)) {
+            if (!thing.FSM.MathDecider.compute("canPlayerTouchCastleAxe", thing, other)) {
                 return;
             }
 
-            if (
-                thing.right < other.left + other.EightBitter.unitsize
-                || thing.bottom > other.bottom - other.EightBitter.unitsize
-                ) {
-                return;
-            }
-
-            thing.FSM.thingPauseVelocity(thing);
-            thing.FSM.killNormal(other);
-            thing.FSM.killNPCs();
-
-            thing.FSM.AudioPlayer.clearTheme();
-            thing.FSM.MapScreener.nokeys = true;
-            thing.FSM.MapScreener.notime = true;
-
-            thing.FSM.TimeHandler.addEvent(
-                function (): void {
-                    thing.keys.run = 1;
-                    thing.maxspeed = thing.walkspeed;
-                    thing.FSM.thingResumeVelocity(thing);
-                    thing.yvel = 0;
-                    thing.FSM.MapScreener.canscroll = true;
-                    thing.FSM.AudioPlayer.play("World Clear");
-                },
-                140);
+            thing.FSM.ScenePlayer.startCutscene("BowserVictory");
         }
 
         /**
@@ -7249,7 +7225,7 @@ module FullScreenMario {
          * @param {Object} settings   Storage for the cutscene's used Things.
          * @param {FullScreenMario} FSM
          */
-         cutsceneFlagpoleStartSlidingDown(settings: any, FSM: FullScreenMario): void {
+        cutsceneFlagpoleStartSlidingDown(settings: any, FSM: FullScreenMario): void {
             var thing: IPlayer = settings.player,
                 other: IDetectCollision = settings.collider,
                 height: number = (other.bottom - thing.bottom) | 0,
@@ -7338,7 +7314,7 @@ module FullScreenMario {
         cutsceneFlagpoleHitBottom(settings: any, FSM: FullScreenMario): void {
             var thing: IPlayer = settings.player,
                 other: IDetectCollision = settings.collider;
-            
+
             thing.keys.run = 1;
             thing.maxspeed = thing.walkspeed;
 
@@ -7353,6 +7329,37 @@ module FullScreenMario {
                     thing.FSM.animatePlayerOffPole(thing, true);
                 },
                 14);
+        }
+
+        /**
+         * Routine for when a player collides with a castle axe. All unimportant NPCs
+         * are killed and the player running again is scheduled.
+         * 
+         * @todo The castle bridge animation should use the ScenePlayr hooks to signal
+         *       that it's done, instead of a 140 tick delay hardcoded here...
+         */
+        cutsceneBowserVictoryCollideCastleAxe(settings: any, FSM: FullScreenMario): void {
+            var thing: IPlayer = settings.player,
+                other: ICastleAxe = settings.other;
+
+            thing.FSM.thingPauseVelocity(thing);
+            thing.FSM.killNormal(other);
+            thing.FSM.killNPCs();
+
+            thing.FSM.AudioPlayer.clearTheme();
+            thing.FSM.MapScreener.nokeys = true;
+            thing.FSM.MapScreener.notime = true;
+
+            thing.FSM.TimeHandler.addEvent(
+                function (): void {
+                    thing.keys.run = 1;
+                    thing.maxspeed = thing.walkspeed;
+                    thing.FSM.thingResumeVelocity(thing);
+                    thing.yvel = 0;
+                    thing.FSM.MapScreener.canscroll = true;
+                    thing.FSM.AudioPlayer.play("World Clear");
+                },
+                140);
         }
 
 
