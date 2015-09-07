@@ -10834,8 +10834,14 @@ var ScenePlayr;
         ScenePlayr.prototype.getCutsceneSettings = function () {
             return this.cutsceneSettings;
         };
-        ScenePlayr.prototype.addCutsceneSetting = function (name, setting) {
-            this.cutsceneSettings[name] = setting;
+        /**
+         * Adds a setting to the internal cutscene settings.
+         *
+         * @param {String} key   The key for the new setting.
+         * @param {Mixed} value   The value for the new setting.
+         */
+        ScenePlayr.prototype.addCutsceneSetting = function (key, value) {
+            this.cutsceneSettings[key] = value;
         };
         /* Playback
         */
@@ -10861,7 +10867,7 @@ var ScenePlayr;
             this.cutsceneSettings = settings || {};
             this.cutsceneSettings.cutscene = this.cutscene;
             this.cutsceneSettings.cutsceneName = name;
-            this.cutsceneArguments.unshift(this.cutsceneSettings);
+            this.cutsceneArguments.push(this.cutsceneSettings);
             if (this.cutscene.firstRoutine) {
                 this.playRoutine(this.cutscene.firstRoutine);
             }
@@ -10888,7 +10894,7 @@ var ScenePlayr;
             this.cutsceneName = undefined;
             this.cutsceneSettings = undefined;
             this.routine = undefined;
-            this.cutsceneArguments.shift();
+            this.cutsceneArguments.pop();
         };
         /**
          * Plays a particular routine within the current cutscene, passing
@@ -10915,7 +10921,6 @@ var ScenePlayr;
             this.routine.apply(this, this.cutsceneArguments);
         };
         /**
-         *
          * Returns this.startCutscene bound to the given name and arguments.
          *
          * @param {String} name   The name of the cutscene to play.
