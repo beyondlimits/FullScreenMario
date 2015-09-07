@@ -902,15 +902,16 @@ module FullScreenMario {
          */
         maintainScenery(FSM: FullScreenMario): void {
             var things: IScenery[] = <IScenery[]>FSM.GroupHolder.getGroup("Scenery"),
-                thing: IThing,
                 delx: number = FSM.QuadsKeeper.left,
+                thing: IThing,
                 i: number;
 
-            for (i = things.length - 1; i >= 0; i -= 1) {
+            for (i = 0; i < things.length; i += 1) {
                 thing = things[i];
 
                 if (thing.right < delx) {
                     FSM.arrayDeleteThing(thing, things, i);
+                    i -= 1;
                 }
             }
         }
@@ -931,7 +932,7 @@ module FullScreenMario {
 
             FSM.QuadsKeeper.determineAllQuadrants("Solid", solids);
 
-            for (i = solids.length - 1; i >= 0; i -= 1) {
+            for (i = 0; i < solids.length; i += 1) {
                 solid = solids[i];
 
                 if (solid.alive && solid.right > delx) {
@@ -940,6 +941,7 @@ module FullScreenMario {
                     }
                 } else {
                     FSM.arrayDeleteThing(solid, solids, i);
+                    i -= 1;
                 }
             }
         }
@@ -959,7 +961,7 @@ module FullScreenMario {
                 character: ICharacter,
                 i: number;
 
-            for (i = characters.length - 1; i >= 0; i -= 1) {
+            for (i = 0; i < characters.length; i += 1) {
                 character = characters[i];
 
                 // Gravity
@@ -1007,6 +1009,7 @@ module FullScreenMario {
                             character.right < FSM.MapScreener.width - delx
                             ))) {
                         FSM.arrayDeleteThing(character, characters, i);
+                        i -= 1;
                     } else {
                         if (!character.nomove && character.movement) {
                             character.movement(character);
@@ -1014,6 +1017,7 @@ module FullScreenMario {
                     }
                 } else {
                     FSM.arrayDeleteThing(character, characters, i);
+                    i -= 1;
                 }
             }
         }
