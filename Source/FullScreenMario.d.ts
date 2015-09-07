@@ -541,7 +541,6 @@ declare module FullScreenMario {
         collideSpringboard(thing: ICharacter, other: ISpringboard): void;
         collideWaterBlocker(thing: ICharacter, other: ISolid): void;
         collideFlagpole(thing: IPlayer, other: IDetectCollision): void;
-        collideFlagBottom(thing: IPlayer, other: ISolid): void;
         collideCastleAxe(thing: IPlayer, other: ICastleAxe): void;
         collideCastleDoor(thing: IPlayer, other: IDetectCollision): void;
         collideCastleNPC(thing: IPlayer, other: IDetectCollision): void;
@@ -604,7 +603,6 @@ declare module FullScreenMario {
         animateFireballEmerge(thing): void;
         animateFireballExplode(thing: IFireball, big?: number): void;
         animateFirework(thing: IFirework): void;
-        animateEndLevelFireworks(thing: IPlayer, other: IDetectCollision, numFireworks: number): void;
         animateCannonFiring(thing: ICannon): void;
         animatePlayerFire(thing: IPlayer): void;
         animateCastleBlock(thing: ICastleBlock, balls: ICastleFireball[]): void;
@@ -661,6 +659,13 @@ declare module FullScreenMario {
         getAbsoluteHeight(yloc: number, correctUnitsize?: boolean): number;
         mapAddStretched(prething: any): IThing;
         mapAddAfter(prething: any): void;
+        cutsceneFlagpoleStartSlidingDown(settings: any, FSM: IFullScreenMario): void;
+        cutsceneFlagpoleHitBottom(settings: any, FSM: IFullScreenMario): void;
+        cutsceneFlagpoleCountdown(settings: any, FSM: IFullScreenMario): void;
+        cutsceneFlagpoleFireworks(settings: any, FSM: IFullScreenMario): void;
+        cutsceneBowserVictoryCollideCastleAxe(settings: any, FSM: IFullScreenMario): void;
+        cutsceneBowserVictoryCastleBridgeOpen(settings: any, FSM: IFullScreenMario): void;
+        cutsceneBowserVictoryBowserFalls(settings: any, FSM: IFullScreenMario): void;
         macroExample(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any;
         macroFillPreThings(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any;
         macroFillPrePattern(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any;

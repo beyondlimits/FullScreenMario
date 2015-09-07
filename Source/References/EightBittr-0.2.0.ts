@@ -63,7 +63,8 @@ declare module EightBittr {
         followPathHard(object: any, path: string[], num?: number): any;
         arraySwitch(thing: IThing, arrayOld: any[], arrayNew: any[]): void;
         arrayToBeginning(thing: IThing, array: any[]): void;
-        arrayToEnd(thing: IThing, array: any[]): any;
+        arrayToEnd(thing: IThing, array: any[]): void;
+        arrayToIndex(thing: IThing, array: any[], index: number): void;
     }
 }
 
@@ -419,8 +420,7 @@ module EightBittr {
         setMidX(thing: IThing, x: number): void {
             thing.EightBitter.setLeft(
                 thing,
-                x + thing.width * thing.EightBitter.unitsize / 2
-                );
+                x - thing.width * thing.EightBitter.unitsize / 2);
         }
 
         /**
@@ -432,8 +432,7 @@ module EightBittr {
         setMidY(thing: IThing, y: number): void {
             thing.EightBitter.setTop(
                 thing,
-                y + thing.height * thing.EightBitter.unitsize / 2
-                );
+                y - thing.height * thing.EightBitter.unitsize / 2);
         }
 
         /**
@@ -472,11 +471,7 @@ module EightBittr {
          * @param {Thing} other   The Thing whose midpoint is referenced.
          */
         setMidXObj(thing: IThing, other: IThing): void {
-            thing.EightBitter.setLeft(
-                thing,
-                thing.EightBitter.getMidX(other)
-                - (thing.width * thing.EightBitter.unitsize / 2)
-                );
+            thing.EightBitter.setMidX(thing, thing.EightBitter.getMidX(other));
         }
 
         /**
@@ -487,11 +482,7 @@ module EightBittr {
          * @param {Thing} other   The Thing whose midpoint is referenced.
          */
         setMidYObj(thing: IThing, other: IThing): void {
-            thing.EightBitter.setTop(
-                thing,
-                thing.EightBitter.getMidY(other)
-                - (thing.height * thing.EightBitter.unitsize / 2)
-                );
+            thing.EightBitter.setMidY(thing, thing.EightBitter.getMidY(other));
         }
 
         /**
@@ -582,10 +573,10 @@ module EightBittr {
 
             // Thing to the left? Slide to the right.
             if (midx < x) {
-                thing.EightBitter.shiftHoriz(thing, Math.min(maxSpeed,(x - midx)));
+                thing.EightBitter.shiftHoriz(thing, Math.min(maxSpeed, x - midx));
             } else {
                 // Thing to the right? Slide to the left.
-                thing.EightBitter.shiftHoriz(thing, Math.max(-maxSpeed,(x - midx)));
+                thing.EightBitter.shiftHoriz(thing, Math.max(-maxSpeed, x - midx));
             }
         }
 
@@ -605,10 +596,10 @@ module EightBittr {
 
             // Thing above? slide down.
             if (midy < y) {
-                thing.EightBitter.shiftVert(thing, Math.min(maxSpeed,(y - midy)));
+                thing.EightBitter.shiftVert(thing, Math.min(maxSpeed, y - midy));
             } else {
                 // Thing below? Slide up.
-                thing.EightBitter.shiftVert(thing, Math.max(-maxSpeed,(y - midy)));
+                thing.EightBitter.shiftVert(thing, Math.max(-maxSpeed, y - midy));
             }
         }
 
@@ -858,6 +849,19 @@ module EightBittr {
         arrayToEnd(thing: IThing, array: any[]): void {
             array.splice(array.indexOf(thing), 1);
             array.push(thing);
+        }
+
+        /**
+         * Sets a Thing's position within an Array to a specific index by splicing 
+         * it out, then back in.
+         * 
+         * @param {Thing} thing
+         * @param {Array} array
+         * @param {Number} index
+         */
+        arrayToIndex(thing: IThing, array: any[], index: number): void {
+            array.splice(array.indexOf(thing), 1);
+            array.splice(index, 0, thing);
         }
     };
 }
