@@ -10834,6 +10834,9 @@ var ScenePlayr;
         ScenePlayr.prototype.getCutsceneSettings = function () {
             return this.cutsceneSettings;
         };
+        ScenePlayr.prototype.addCutsceneSetting = function (name, setting) {
+            this.cutsceneSettings[name] = setting;
+        };
         /* Playback
         */
         /**

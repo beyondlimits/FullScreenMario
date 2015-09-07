@@ -3636,91 +3636,56 @@ module FullScreenMario {
                 return;
             }
 
-            thing.FSM.ScenePlayer.startCutscene("BowserVictory");
+            thing.FSM.ScenePlayer.startCutscene("BowserVictory", {
+                "player": thing,
+                "axe": other
+            });
         }
 
         /**
          * Collision callback for a player hitting the DetectCollision placed next 
-         * a CastleDoor in EndOutsideCastle. Time is converted one step at a time to
-         * score, after which animateEndLevelFireworks is called.
+         * a CastleDoor in EndOutsideCastle. Things and the current time are added
+         * to cutscene settings. Infinite time goes directly to the Fireworks
+         * routine, while having non-infinite time goes to the Countdown routine.
          * 
          * @param {Player} thing
          * @param {DetectCollision} other
          */
         collideCastleDoor(thing: IPlayer, other: IDetectCollision): void {
-            var time: string = String(thing.FSM.ItemsHolder.getItem("time")),
-                numFireworks: number = Number(time[time.length - 1]);
-
             thing.FSM.killNormal(thing);
             if (!thing.player) {
                 return;
             }
 
-            if (!(numFireworks === 1 || numFireworks === 3 || numFireworks === 6)) {
-                numFireworks = 0;
+            var time: number = thing.FSM.ItemsHolder.getItem("time");
+
+            thing.FSM.ScenePlayer.addCutsceneSetting("player", thing);
+            thing.FSM.ScenePlayer.addCutsceneSetting("detector", other);
+            thing.FSM.ScenePlayer.addCutsceneSetting("time", time);
+
+            if (time === Infinity) {
+                thing.FSM.ScenePlayer.playRoutine("Fireworks");
+            } else {
+                thing.FSM.ScenePlayer.playRoutine("Countdown");
             }
-
-            if (thing.FSM.ItemsHolder.getItem("time") === Infinity) {
-                thing.FSM.animateEndLevelFireworks(thing, other, numFireworks);
-                return;
-            }
-
-            thing.FSM.TimeHandler.addEventInterval(
-                function (): boolean {
-                    thing.FSM.ItemsHolder.decrease("time");
-                    thing.FSM.ItemsHolder.increase("score", 50);
-                    thing.FSM.AudioPlayer.play("Coin");
-
-                    if (thing.FSM.ItemsHolder.getItem("time") <= 0) {
-                        thing.FSM.TimeHandler.addEvent(
-                            function (): void {
-                                thing.FSM.animateEndLevelFireworks(thing, other, numFireworks);
-                            },
-                            35);
-                        return true;
-                    }
-                },
-                1,
-                Infinity);
         }
 
         /** 
-         * Collision callback for a player reaching a castle's NPC. The ending text
-         * chunks are revealed in turn, after which collideLevelTransport is called.
+         * Collision callback for a player reaching a castle NPC. Things and
+         * the NPC's keys are added to cutscene settings, and the Dialog routine
+         * is played.
          * 
          * @param {Player} thing
          * @param {DetectCollision} other
          */
         collideCastleNPC(thing: IPlayer, other: IDetectCollision): void {
-            var keys: any[] = other.collection.npc.collectionKeys,
-                interval: number = 140,
-                i: number = 0,
-                j: number,
-                letters: IThing[];
+            var keys: any[] = other.collection.npc.collectionKeys;
 
-            thing.keys.run = 0;
-            thing.FSM.killNormal(other);
+            thing.FSM.ScenePlayer.addCutsceneSetting("keys", keys);
+            thing.FSM.ScenePlayer.addCutsceneSetting("player", thing);
+            thing.FSM.ScenePlayer.addCutsceneSetting("detector", other);
 
-            thing.FSM.TimeHandler.addEventInterval(
-                function (): void {
-                    letters = other.collection[keys[i]].children;
-
-                    for (j = 0; j < letters.length; j += 1) {
-                        if (letters[j].title !== "TextSpace") {
-                            letters[j].hidden = false;
-                        }
-                    }
-
-                    i += 1;
-                },
-                interval,
-                keys.length);
-
-            thing.FSM.TimeHandler.addEvent(
-                function (): void {
-                    thing.FSM.collideLevelTransport(thing, other);
-                },
-                280 + interval * keys.length);
+            thing.FSM.ScenePlayer.playRoutine("Dialog");
         }
 
         /**
@@ -5368,10 +5333,11 @@ module FullScreenMario {
 
         /**
          * Animation Function for when Bowser freezes upon the player hitting a 
-         * CastleAxe. Velocity and movement are paused, then nofall is disabled 
-         * after 70 steps.
+         * CastleAxe. Velocity and movement are paused, and the Bowser is added to
+         * the current cutscene's settings.
          * 
          * @param {Bowser} thing
+         * @remarks This is triggered as Bowser's killonend property.
          */
         animateBowserFreeze(thing: IBowser): void {
             thing.nofall = true;
@@ -5380,6 +5346,7 @@ module FullScreenMario {
             thing.dead = true;
             thing.FSM.thingPauseVelocity(thing);
 
+            thing.FSM.ScenePlayer.addCutsceneSetting("bowser", thing);
             thing.FSM.TimeHandler.addEvent(
                 function (): void {
                     thing.nofall = false;
@@ -5581,77 +5548,6 @@ module FullScreenMario {
         }
 
         /**
-         * Animation Function for the Fireworks found at the end of 
-         * EndOutsideCastle. numFireworks dicatates how many to place, and positions
-         * are declared within.
-         * 
-         * @param {Player} thing
-         * @param {Collider} other 
-         * @remarks The left of other is the right of player, and is 4 units away 
-         *          from the center of the door.
-         */
-        animateEndLevelFireworks(thing: IPlayer, other: IDetectCollision, numFireworks: number): void {
-            var doorRight: number = other.left,
-                doorLeft: number = doorRight - thing.FSM.unitsize * 8,
-                doorBottom: number = other.bottom,
-                doorTop: number = doorBottom - thing.FSM.unitsize * 16,
-                flag: IThing = thing.FSM.ObjectMaker.make("CastleFlag", {
-                    "position": "beginning"
-                }),
-                flagMovements: number = 28,
-                fireInterval: number = 28,
-                fireworkPositions: number[][] = [
-                    [0, -48],
-                    [-8, -40],
-                    [8, -40],
-                    [-8, -32],
-                    [0, -48],
-                    [-8, -40]
-                ],
-                i: number = 0,
-                firework: IFirework,
-                position: number[];
-
-            thing.FSM.addThing(
-                flag,
-                doorLeft + thing.FSM.unitsize,
-                doorTop - thing.FSM.unitsize * 24);
-            thing.FSM.arrayToBeginning(flag, <any[]>thing.FSM.GroupHolder.getGroup(flag.groupType));
-
-            thing.FSM.TimeHandler.addEventInterval(
-                function (): void {
-                    thing.FSM.shiftVert(flag, thing.FSM.unitsize * -.25);
-                },
-                1,
-                flagMovements);
-
-            if (numFireworks > 0) {
-                thing.FSM.TimeHandler.addEventInterval(
-                    function (): void {
-                        position = fireworkPositions[i];
-                        firework = <IFirework>thing.FSM.addThing(
-                            "Firework",
-                            thing.left + position[0] * thing.FSM.unitsize,
-                            thing.top + position[1] * thing.FSM.unitsize
-                            );
-                        firework.animate(firework);
-                        i += 1;
-                    },
-                    fireInterval,
-                    numFireworks);
-            }
-
-            thing.FSM.TimeHandler.addEvent(
-                function (): void {
-                    thing.FSM.AudioPlayer.addEventImmediate(
-                        "Stage Clear", "ended", function (): void {
-                            thing.FSM.collideLevelTransport(thing, other);
-                        });
-                },
-                i * fireInterval + 420);
-        }
-
-        /**
          * Animation Function for a Cannon outputting a BulletBill. This will only
          * happen if the Cannon isn't within 8 units of the player. The spawn flies
          * at a constant rate towards the player.
@@ -5761,27 +5657,10 @@ module FullScreenMario {
          * reduced repeatedly on an interval until it's 0.
          * 
          * @param {CastleBridge} thing
+         * @remarks This is triggered as the killonend property of the bridge.
          */
         animateCastleBridgeOpen(thing: ISolid): void {
-            thing.FSM.TimeHandler.addEvent(
-                function (): void {
-                    thing.FSM.TimeHandler.addEventInterval(
-                        function (): boolean {
-                            thing.right -= thing.FSM.unitsize * 2;
-                            thing.FSM.setWidth(thing, thing.width - 2);
-                            thing.FSM.AudioPlayer.play("Break Block");
-
-                            if (thing.width <= 0) {
-                                thing.FSM.AudioPlayer.play("Bowser Falls");
-                                return true;
-                            }
-
-                            return false;
-                        },
-                        1,
-                        Infinity);
-                },
-                7);
+            thing.FSM.ScenePlayer.playRoutine("CastleBridgeOpen", thing);
         }
 
         /**
@@ -5789,9 +5668,10 @@ module FullScreenMario {
          * killNormal call for 7 steps.
          * 
          * @param {CastleChain} thing
+         * @remarks This is triggered as the killonend property of the chain.
          */
         animateCastleChainOpen(thing: ISolid): void {
-            thing.FSM.TimeHandler.addEvent(thing.FSM.killNormal, 7, thing);
+            thing.FSM.TimeHandler.addEvent(thing.FSM.killNormal, 3, thing);
         }
 
         /**
@@ -7222,7 +7102,7 @@ module FullScreenMario {
          * works its way up. The collideFlagBottom callback will be fired when the player 
          * reaches the bottom.
          * 
-         * @param {Object} settings   Storage for the cutscene's used Things.
+         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
          * @param {FullScreenMario} FSM
          */
         cutsceneFlagpoleStartSlidingDown(settings: any, FSM: FullScreenMario): void {
@@ -7297,7 +7177,7 @@ module FullScreenMario {
                     FSM.setBottom(thing, other.bottom);
                     FSM.TimeHandler.cancelClassCycle(thing, "climbing");
                     FSM.TimeHandler.addEvent(
-                        FSM.ScenePlayer.bindRoutine("hitBottom"),
+                        FSM.ScenePlayer.bindRoutine("HitBottom"),
                         21);
 
                     return true;
@@ -7310,6 +7190,9 @@ module FullScreenMario {
          * Routine for when a player hits the bottom of a flagpole. It is
          * flipped horizontally, shifted to the other side of the pole, and the
          * animatePlayerOffPole callback is quickly timed.
+         * 
+         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
+         * @param {FullScreenMario} FSM
          */
         cutsceneFlagpoleHitBottom(settings: any, FSM: FullScreenMario): void {
             var thing: IPlayer = settings.player,
@@ -7332,34 +7215,216 @@ module FullScreenMario {
         }
 
         /**
+         * Routine for counting down time and increasing score at the end of
+         * a level. When it's done, it calls the Fireworks routine.
+         * 
+         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
+         * @param {FullScreenMario} FSM
+         */
+        cutsceneFlagpoleCountdown(settings: any, FSM: FullScreenMario): void {
+            FSM.TimeHandler.addEventInterval(
+                function (): boolean {
+                    FSM.ItemsHolder.decrease("time");
+                    FSM.ItemsHolder.increase("score", 50);
+                    FSM.AudioPlayer.play("Coin");
+
+                    if (FSM.ItemsHolder.getItem("time") > 0) {
+                        return false;
+                    }
+
+                    FSM.TimeHandler.addEvent(FSM.ScenePlayer.bindRoutine("Fireworks"), 35);
+                    return true;
+                },
+                1,
+                Infinity);
+        }
+
+        /**
+         * Animation routine for the fireworks found at the end of EndOutsideCastle.
+         * Fireworks are added on a timer (if there should be any), and the level
+         * transport is called when any fireworks are done.
+         * 
+         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
+         * @param {FullScreenMario} FSM
+         */
+        cutsceneFlagpoleFireworks(settings: any, FSM: FullScreenMario): void {
+            var numFireworks: number = FSM.MathDecider.compute("numberOfFireworks", settings.time),
+                player: IPlayer = settings.player,
+                detector: IDetectCollision = settings.detector,
+                doorRight: number = detector.left,
+                doorLeft: number = doorRight - FSM.unitsize * 8,
+                doorBottom: number = detector.bottom,
+                doorTop: number = doorBottom - FSM.unitsize * 16,
+                flag: IThing = FSM.ObjectMaker.make("CastleFlag", {
+                    "position": "beginning"
+                }),
+                flagMovements: number = 28,
+                fireInterval: number = 28,
+                fireworkPositions: number[][] = [
+                    [0, -48],
+                    [-8, -40],
+                    [8, -40],
+                    [-8, -32],
+                    [0, -48],
+                    [-8, -40]
+                ],
+                i: number = 0,
+                firework: IFirework,
+                position: number[];
+
+            // Add a flag to the center of the castle, behind everything else
+            FSM.addThing(
+                flag,
+                doorLeft + FSM.unitsize,
+                doorTop - FSM.unitsize * 24);
+            FSM.arrayToBeginning(flag, <any[]>FSM.GroupHolder.getGroup(flag.groupType));
+
+            // Animate the flag raising
+            FSM.TimeHandler.addEventInterval(
+                function (): void {
+                    FSM.shiftVert(flag, FSM.unitsize * -.25);
+                },
+                1,
+                flagMovements);
+            
+            // If there should be fireworks, add each of them on an interval
+            if (numFireworks > 0) {
+                FSM.TimeHandler.addEventInterval(
+                    function (): void {
+                        position = fireworkPositions[i];
+                        firework = <IFirework>FSM.addThing(
+                            "Firework",
+                            player.left + position[0] * FSM.unitsize,
+                            player.top + position[1] * FSM.unitsize);
+                        firework.animate(firework);
+                        i += 1;
+                    },
+                    fireInterval,
+                    numFireworks);
+            }
+
+            // After everything, activate the detector's transport to leave
+            FSM.TimeHandler.addEvent(
+                function (): void {
+                    FSM.AudioPlayer.addEventImmediate(
+                        "Stage Clear", "ended", function (): void {
+                            FSM.collideLevelTransport(player, detector);
+                            FSM.ScenePlayer.stopCutscene();
+                        });
+                },
+                i * fireInterval + 420);
+        }
+
+        /**
          * Routine for when a player collides with a castle axe. All unimportant NPCs
          * are killed and the player running again is scheduled.
          * 
-         * @todo The castle bridge animation should use the ScenePlayr hooks to signal
-         *       that it's done, instead of a 140 tick delay hardcoded here...
+         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
+         * @param {FullScreenMario} FSM
          */
         cutsceneBowserVictoryCollideCastleAxe(settings: any, FSM: FullScreenMario): void {
-            var thing: IPlayer = settings.player,
-                other: ICastleAxe = settings.other;
+            var player: IPlayer = settings.player,
+                axe: ICastleAxe = settings.axe;
 
-            thing.FSM.thingPauseVelocity(thing);
-            thing.FSM.killNormal(other);
-            thing.FSM.killNPCs();
+            FSM.thingPauseVelocity(player);
+            FSM.killNormal(axe);
+            FSM.killNPCs();
 
-            thing.FSM.AudioPlayer.clearTheme();
-            thing.FSM.MapScreener.nokeys = true;
-            thing.FSM.MapScreener.notime = true;
+            FSM.AudioPlayer.clearTheme();
+            FSM.MapScreener.nokeys = true;
+            FSM.MapScreener.notime = true;
 
-            thing.FSM.TimeHandler.addEvent(
+            player.FSM.TimeHandler.addEvent(
                 function (): void {
-                    thing.keys.run = 1;
-                    thing.maxspeed = thing.walkspeed;
-                    thing.FSM.thingResumeVelocity(thing);
-                    thing.yvel = 0;
-                    thing.FSM.MapScreener.canscroll = true;
-                    thing.FSM.AudioPlayer.play("World Clear");
+                    player.keys.run = 1;
+                    player.maxspeed = player.walkspeed;
+                    FSM.thingResumeVelocity(player);
+
+                    player.yvel = 0;
+                    FSM.MapScreener.canscroll = true;
+                    FSM.AudioPlayer.play("World Clear");
                 },
                 140);
+        }
+
+        /**
+         * Routine for a castle bridge opening. Its width is reduced repeatedly on an 
+         * interval until it's 0, at which point the BowserFalls routine plays.
+         * 
+         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
+         * @param {FullScreenMario} FSM
+         * @remarks The castle bridge's animateCastleBridgeOpen (called via killNPCs
+         *          as the bridge's .killonend attribute) is what triggers this.
+         */
+        cutsceneBowserVictoryCastleBridgeOpen(settings: ScenePlayr.ICutsceneSettings, FSM: FullScreenMario): void {
+            var bridge: ISolid = settings.routineArguments[0];
+
+            FSM.TimeHandler.addEventInterval(
+                function (): boolean {
+                    bridge.right -= FSM.unitsize * 2;
+                    FSM.setWidth(bridge, bridge.width - 2);
+                    FSM.AudioPlayer.play("Break Block");
+
+                    if (bridge.width <= 0) {
+                        FSM.ScenePlayer.playRoutine("BowserFalls");
+                        return true;
+                    }
+
+                    return false;
+                },
+                1,
+                Infinity);
+        }
+
+        /**
+         * Routine for Bowser falling after his bridge opens.
+         * 
+         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
+         * @param {FullScreenMario} FSM
+         * @remarks This is called by the CastleBridgeOpen routine, once the bridge
+         *          has been reduced to no width.
+         */
+        cutsceneBowserVictoryBowserFalls(settings: any, FSM: FullScreenMario) {
+            FSM.AudioPlayer.play("Bowser Falls");
+            settings.bowser.nofall = true;
+        }
+
+        /**
+         * Routine for displaying text above a castle NPC. Each "layer" of text
+         * is added in order, after which collideLevelTransport is called.
+         */
+        cutsceneBowserVictoryDialog(settings: any, FSM: FullScreenMario) {
+            var player: IPlayer = settings.player,
+                detector: IDetectCollision = settings.detector,
+                keys: any[] = settings.keys,
+                interval: number = 140,
+                i: number = 0,
+                j: number,
+                letters: IThing[];
+
+            player.keys.run = 0;
+            player.FSM.killNormal(detector);
+
+            player.FSM.TimeHandler.addEventInterval(
+                function (): void {
+                    letters = detector.collection[keys[i]].children;
+
+                    for (j = 0; j < letters.length; j += 1) {
+                        if (letters[j].title !== "TextSpace") {
+                            letters[j].hidden = false;
+                        }
+                    }
+
+                    i += 1;
+                },
+                interval,
+                keys.length);
+
+            player.FSM.TimeHandler.addEvent(
+                function (): void {
+                    player.FSM.collideLevelTransport(player, detector);
+                },
+                280 + interval * keys.length);
         }
 
 

@@ -603,7 +603,6 @@ declare module FullScreenMario {
         animateFireballEmerge(thing): void;
         animateFireballExplode(thing: IFireball, big?: number): void;
         animateFirework(thing: IFirework): void;
-        animateEndLevelFireworks(thing: IPlayer, other: IDetectCollision, numFireworks: number): void;
         animateCannonFiring(thing: ICannon): void;
         animatePlayerFire(thing: IPlayer): void;
         animateCastleBlock(thing: ICastleBlock, balls: ICastleFireball[]): void;
@@ -662,6 +661,11 @@ declare module FullScreenMario {
         mapAddAfter(prething: any): void;
         cutsceneFlagpoleStartSlidingDown(settings: any, FSM: IFullScreenMario): void;
         cutsceneFlagpoleHitBottom(settings: any, FSM: IFullScreenMario): void;
+        cutsceneFlagpoleCountdown(settings: any, FSM: IFullScreenMario): void;
+        cutsceneFlagpoleFireworks(settings: any, FSM: IFullScreenMario): void;
+        cutsceneBowserVictoryCollideCastleAxe(settings: any, FSM: IFullScreenMario): void;
+        cutsceneBowserVictoryCastleBridgeOpen(settings: any, FSM: IFullScreenMario): void;
+        cutsceneBowserVictoryBowserFalls(settings: any, FSM: IFullScreenMario): void;
         macroExample(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any;
         macroFillPreThings(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any;
         macroFillPrePattern(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any;

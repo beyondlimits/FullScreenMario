@@ -21,6 +21,8 @@ FullScreenMario.FullScreenMario.settings.math = {
             if (thing.bottom > other.bottom - other.EightBitter.unitsize) {
                 return false;
             }
+
+            return true;
         },
         /**
          * Decreases a player's jumping yvel based on whether it's running.
@@ -79,7 +81,20 @@ FullScreenMario.FullScreenMario.settings.math = {
             return skiddingChanged;
         },
         /**
-         * @return A player's yvel for when it's riding up a springboard.
+         * @return {Number} How many fireworks to show at the end of a level,
+         *                  based on the given time's rightmost digit.
+         */
+        "numberOfFireworks": function (constants, equations, time) {
+            var numFireworks = time % 10;
+
+            if (!(numFireworks === 1 || numFireworks === 3 || numFireworks === 6)) {
+                return 0;
+            }
+
+            return numFireworks;
+        },
+        /**
+         * @return {Number} A player's yvel for when it's riding up a springboard.
          */
         "springboardYvelUp": function (constants, equations, thing) {
             return Math.max(thing.FSM.unitsize * -2, thing.tensionSave * -.98);
