@@ -7090,11 +7090,11 @@ module FullScreenMario {
             prething.x = boundaries.right;
             MapsCreator.analyzePreSwitch(prething, prethings, area, map);
         }
-        
-        
+
+
         /* Cutscenes
         */
-        
+
         /**
          * First cutscene for the Flagpole routine. The player becomes invincible and 
          * starts sliding down the flagpole, while all other Things are killed. 
@@ -7185,7 +7185,7 @@ module FullScreenMario {
                 1,
                 Infinity);
         }
-        
+
         /**
          * Routine for when a player hits the bottom of a flagpole. It is
          * flipped horizontally, shifted to the other side of the pole, and the
@@ -7195,8 +7195,7 @@ module FullScreenMario {
          * @param {FullScreenMario} FSM
          */
         cutsceneFlagpoleHitBottom(settings: any, FSM: FullScreenMario): void {
-            var thing: IPlayer = settings.player,
-                other: IDetectCollision = settings.collider;
+            var thing: IPlayer = settings.player;
 
             thing.keys.run = 1;
             thing.maxspeed = thing.walkspeed;
@@ -7286,7 +7285,7 @@ module FullScreenMario {
                 },
                 1,
                 flagMovements);
-            
+
             // If there should be fireworks, add each of them on an interval
             if (numFireworks > 0) {
                 FSM.TimeHandler.addEventInterval(
@@ -7384,7 +7383,7 @@ module FullScreenMario {
          * @remarks This is called by the CastleBridgeOpen routine, once the bridge
          *          has been reduced to no width.
          */
-        cutsceneBowserVictoryBowserFalls(settings: any, FSM: FullScreenMario) {
+        cutsceneBowserVictoryBowserFalls(settings: any, FSM: FullScreenMario): void {
             FSM.AudioPlayer.play("Bowser Falls");
             settings.bowser.nofall = true;
         }
@@ -7392,8 +7391,12 @@ module FullScreenMario {
         /**
          * Routine for displaying text above a castle NPC. Each "layer" of text
          * is added in order, after which collideLevelTransport is called.
+         * 
+         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
+         * @param {FullScreenMario} FSM
+         * @remarks This is called by collideCastleNPC.
          */
-        cutsceneBowserVictoryDialog(settings: any, FSM: FullScreenMario) {
+        cutsceneBowserVictoryDialog(settings: any, FSM: FullScreenMario): void {
             var player: IPlayer = settings.player,
                 detector: IDetectCollision = settings.detector,
                 keys: any[] = settings.keys,
