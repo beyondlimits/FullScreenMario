@@ -931,7 +931,7 @@ module FullScreenMario {
 
             FSM.QuadsKeeper.determineAllQuadrants("Solid", solids);
 
-            for (i = solids.length - 1; i >= 0; i -= 1) {
+            for (i = 0; i < solids.length; i += 1) {
                 solid = solids[i];
 
                 if (solid.alive && solid.right > delx) {
@@ -959,7 +959,7 @@ module FullScreenMario {
                 character: ICharacter,
                 i: number;
 
-            for (i = characters.length - 1; i >= 0; i -= 1) {
+            for (i = 0; i < characters.length; i += 1) {
                 character = characters[i];
 
                 // Gravity
