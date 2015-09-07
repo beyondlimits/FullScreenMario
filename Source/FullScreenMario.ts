@@ -902,15 +902,16 @@ module FullScreenMario {
          */
         maintainScenery(FSM: FullScreenMario): void {
             var things: IScenery[] = <IScenery[]>FSM.GroupHolder.getGroup("Scenery"),
-                thing: IThing,
                 delx: number = FSM.QuadsKeeper.left,
+                thing: IThing,
                 i: number;
 
-            for (i = things.length - 1; i >= 0; i -= 1) {
+            for (i = 0; i < things.length; i += 1) {
                 thing = things[i];
 
                 if (thing.right < delx) {
                     FSM.arrayDeleteThing(thing, things, i);
+                    i -= 1;
                 }
             }
         }
@@ -940,6 +941,7 @@ module FullScreenMario {
                     }
                 } else {
                     FSM.arrayDeleteThing(solid, solids, i);
+                    i -= 1;
                 }
             }
         }
@@ -1007,6 +1009,7 @@ module FullScreenMario {
                             character.right < FSM.MapScreener.width - delx
                             ))) {
                         FSM.arrayDeleteThing(character, characters, i);
+                        i -= 1;
                     } else {
                         if (!character.nomove && character.movement) {
                             character.movement(character);
@@ -1014,6 +1017,7 @@ module FullScreenMario {
                     }
                 } else {
                     FSM.arrayDeleteThing(character, characters, i);
+                    i -= 1;
                 }
             }
         }
