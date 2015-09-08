@@ -7106,10 +7106,10 @@ module FullScreenMario {
          * works its way up. The collideFlagBottom callback will be fired when the player 
          * reaches the bottom.
          * 
-         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
          * @param {FullScreenMario} FSM
+         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
          */
-        cutsceneFlagpoleStartSlidingDown(settings: any, FSM: FullScreenMario): void {
+        cutsceneFlagpoleStartSlidingDown(FSM: FullScreenMario, settings: any): void {
             var thing: IPlayer = settings.player,
                 other: IDetectCollision = settings.collider,
                 height: number = (other.bottom - thing.bottom) | 0,
@@ -7195,10 +7195,10 @@ module FullScreenMario {
          * flipped horizontally, shifted to the other side of the pole, and the
          * animatePlayerOffPole callback is quickly timed.
          * 
-         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
          * @param {FullScreenMario} FSM
+         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
          */
-        cutsceneFlagpoleHitBottom(settings: any, FSM: FullScreenMario): void {
+        cutsceneFlagpoleHitBottom(FSM: FullScreenMario, settings: any): void {
             var thing: IPlayer = settings.player;
 
             thing.keys.run = 1;
@@ -7221,10 +7221,10 @@ module FullScreenMario {
          * Routine for counting down time and increasing score at the end of
          * a level. When it's done, it calls the Fireworks routine.
          * 
-         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
          * @param {FullScreenMario} FSM
+         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
          */
-        cutsceneFlagpoleCountdown(settings: any, FSM: FullScreenMario): void {
+        cutsceneFlagpoleCountdown(FSM: FullScreenMario, settings: any): void {
             FSM.TimeHandler.addEventInterval(
                 function (): boolean {
                     FSM.ItemsHolder.decrease("time");
@@ -7247,10 +7247,10 @@ module FullScreenMario {
          * Fireworks are added on a timer (if there should be any), and the level
          * transport is called when any fireworks are done.
          * 
-         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
          * @param {FullScreenMario} FSM
+         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
          */
-        cutsceneFlagpoleFireworks(settings: any, FSM: FullScreenMario): void {
+        cutsceneFlagpoleFireworks(FSM: FullScreenMario, settings: any): void {
             var numFireworks: number = FSM.MathDecider.compute("numberOfFireworks", settings.time),
                 player: IPlayer = settings.player,
                 detector: IDetectCollision = settings.detector,
@@ -7322,10 +7322,10 @@ module FullScreenMario {
          * Routine for when a player collides with a castle axe. All unimportant NPCs
          * are killed and the player running again is scheduled.
          * 
-         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
          * @param {FullScreenMario} FSM
+         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
          */
-        cutsceneBowserVictoryCollideCastleAxe(settings: any, FSM: FullScreenMario): void {
+        cutsceneBowserVictoryCollideCastleAxe(FSM: FullScreenMario, settings: any): void {
             var player: IPlayer = settings.player,
                 axe: ICastleAxe = settings.axe;
 
@@ -7354,12 +7354,12 @@ module FullScreenMario {
          * Routine for a castle bridge opening. Its width is reduced repeatedly on an 
          * interval until it's 0, at which point the BowserFalls routine plays.
          * 
-         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
          * @param {FullScreenMario} FSM
+         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
          * @remarks The castle bridge's animateCastleBridgeOpen (called via killNPCs
          *          as the bridge's .killonend attribute) is what triggers this.
          */
-        cutsceneBowserVictoryCastleBridgeOpen(settings: ScenePlayr.ICutsceneSettings, FSM: FullScreenMario): void {
+        cutsceneBowserVictoryCastleBridgeOpen(FSM: FullScreenMario, settings: any): void {
             var bridge: ISolid = settings.routineArguments[0];
 
             FSM.TimeHandler.addEventInterval(
@@ -7387,7 +7387,7 @@ module FullScreenMario {
          * @remarks This is called by the CastleBridgeOpen routine, once the bridge
          *          has been reduced to no width.
          */
-        cutsceneBowserVictoryBowserFalls(settings: any, FSM: FullScreenMario): void {
+        cutsceneBowserVictoryBowserFalls(FSM: FullScreenMario, settings: any): void {
             FSM.AudioPlayer.play("Bowser Falls");
             settings.bowser.nofall = true;
         }
@@ -7400,7 +7400,7 @@ module FullScreenMario {
          * @param {FullScreenMario} FSM
          * @remarks This is called by collideCastleNPC.
          */
-        cutsceneBowserVictoryDialog(settings: any, FSM: FullScreenMario): void {
+        cutsceneBowserVictoryDialog(FSM: FullScreenMario, settings: any): void {
             var player: IPlayer = settings.player,
                 detector: IDetectCollision = settings.detector,
                 keys: any[] = settings.keys,
