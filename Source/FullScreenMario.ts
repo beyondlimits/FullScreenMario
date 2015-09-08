@@ -649,6 +649,8 @@ module FullScreenMario {
         keyDownPause(FSM: FullScreenMario, event?: Event): void {
             var player: IPlayer = FSM.player;
 
+            console.log("Key down pause", event);
+
             if (!FSM.GamesRunner.getPaused()) {
                 FSM.TimeHandler.addEvent(
                     FSM.GamesRunner.pause.bind(player.FSM.GamesRunner), 7, true);
@@ -789,6 +791,8 @@ module FullScreenMario {
                 FSM.GamesRunner.play();
             }
             FSM.ModAttacher.fireEvent("onKeyUpPause");
+
+            console.log("Key up pause", event);
 
             if (event && event.preventDefault !== undefined) {
                 event.preventDefault();

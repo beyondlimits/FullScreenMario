@@ -1,10 +1,6 @@
 FullScreenMario.FullScreenMario.settings.runner = {
     "games": [
         function () {
-            this.DeviceLayer.checkNavigatorGamepads();
-            this.DeviceLayer.activateAllGamepadTriggers();
-        },
-        function () {
             this.QuadsKeeper.determineAllQuadrants("Scenery", this.GroupHolder.getSceneryGroup());
             this.QuadsKeeper.determineAllQuadrants("Text", this.GroupHolder.getTextGroup());
             // Should delete out-of-bounds stuff here

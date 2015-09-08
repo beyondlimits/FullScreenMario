@@ -11828,6 +11828,7 @@ var TouchPassr;
     })();
     TouchPassr_1.TouchPassr = TouchPassr;
 })(TouchPassr || (TouchPassr = {}));
+/// <reference path="DeviceLayr-0.2.0.ts" />
 /// <reference path="GamesRunnr-0.2.0.ts" />
 /// <reference path="ItemsHoldr-0.2.1.ts" />
 /// <reference path="InputWritr-0.2.0.ts" />
@@ -11909,6 +11910,7 @@ var UserWrappr;
             }
             this.resetPageVisibilityHandlers();
             this.GameStarter.gameStart();
+            this.startCheckingDevices();
         };
         /* Simple gets
         */
@@ -12022,6 +12024,12 @@ var UserWrappr;
          */
         UserWrappr.prototype.getCancelFullScreen = function () {
             return this.cancelFullScreen;
+        };
+        /**
+         * @return {Number} The identifier for the device input checking interval.
+         */
+        UserWrappr.prototype.getDeviceChecker = function () {
+            return this.deviceChecker;
         };
         /* Externally allowed sets
         */
@@ -12149,6 +12157,23 @@ var UserWrappr;
                 return text;
             }
             return text + Array.call(Array, diff).join(" ");
+        };
+        /* Devices
+        */
+        /**
+         *
+         */
+        UserWrappr.prototype.startCheckingDevices = function () {
+            this.checkDevices(this.checkDevices.bind(this));
+        };
+        /**
+         *
+         */
+        UserWrappr.prototype.checkDevices = function (callback) {
+            console.log("Ah");
+            this.deviceChecker = setTimeout(callback, this.GameStarter.GamesRunner.getInterval() / this.GameStarter.GamesRunner.getSpeed());
+            this.GameStarter.DeviceLayer.checkNavigatorGamepads();
+            this.GameStarter.DeviceLayer.activateAllGamepadTriggers();
         };
         /* Settings parsing
         */
