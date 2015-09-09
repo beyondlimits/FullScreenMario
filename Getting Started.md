@@ -39,7 +39,9 @@ FullScreenMario (FullScreenMario.js) is the governing class. The global `window.
 
 The base GameStartr engine includes a large number of modules, all of which are stored in Source/References (AudioPlayr, ChangeLinr, etc.). The naming schema is to have two words, the second of which is a verb ending with 'r'. The class will have the ending two characters abbreviated to 'r', and the instances aren't abbreviated. FSM.ObjectMaker, for example, is an ObjectMakr instance.
 
-Each module contains a class by the same name. The global `ObjectMakr` module contains the `ObjectMakr` class. To use it, you would call `var ObjectMaker = new ObjectMakr.ObjectMakr(...);`.
+Each module contains a class by the same name. The global `ObjectMakr` module, for example, contains the `ObjectMakr` class. To use it, you would call `var ObjectMaker = new ObjectMakr.ObjectMakr(...);`.
+
+FullScreenMario is the same - `var FSM = new FullScreenMario.FullScreenMario(...);`. See [Source/index.js](https://github.com/FullScreenShenanigans/FullScreenMario/blob/master/Source/index.js) for sample usage. It looks a little silly from the JavaScript side, but makes organizing the TypeScript interfaces and classes much easier.
 
 ## Things
 
@@ -59,7 +61,7 @@ All of FullScreenMario's non-GameStartr classes, including Thing and its subclas
 `FSM.ObjectMakr.make("type")` is how you make a new Thing in the game. It takes in a string for the class name, and optionally an object containing additional properties for it. For example:
 
 ```javascript
-FSM.ObjectMakr.make("Block") // Creates a new Block
+FSM.ObjectMakr.make("Block"); // Creates a new Block
 
 // Creates a new Brick with a Mushroom inside
 FSM.ObjectMakr.make("Brick", {
@@ -125,7 +127,7 @@ FullScreenMario uses the GameStartr way of storing maps, areas, and locations:
 Each Area's creation instructions are stored as an Array of Objects. You can see examples of maps in Source/settings/maps.js, and read MapScreenr's readme for a full explanation.
 
 ```javascript
-// Creates a Goomba at x=32, y=7
+// Command for a Goomba at x=32, y=7
 {
     "thing": "Goomba",
     "x": 32,
