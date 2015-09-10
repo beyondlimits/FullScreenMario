@@ -647,8 +647,6 @@ module FullScreenMario {
          * @param {Player} player
          */
         keyDownPause(FSM: FullScreenMario, event?: Event): void {
-            var player: IPlayer = FSM.player;
-
             if (FSM.GamesRunner.getPaused()) {
                 FSM.GamesRunner.play();
             } else {
