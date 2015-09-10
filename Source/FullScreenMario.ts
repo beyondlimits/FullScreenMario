@@ -641,17 +641,18 @@ module FullScreenMario {
         }
 
         /**
-         * Reacts to the pause key being pressed. Pausing happens almost immediately
-         * (the delay helps prevent accidental pauses) and the mod event fires.
+         * Reacts to the pause key being pressed. The game is either paused or unpaused,
+         * and the mod event is fired.
          * 
          * @param {Player} player
          */
         keyDownPause(FSM: FullScreenMario, event?: Event): void {
             var player: IPlayer = FSM.player;
 
-            if (!FSM.GamesRunner.getPaused()) {
-                FSM.TimeHandler.addEvent(
-                    FSM.GamesRunner.pause.bind(player.FSM.GamesRunner), 7, true);
+            if (FSM.GamesRunner.getPaused()) {
+                FSM.GamesRunner.play();
+            } else {
+                FSM.GamesRunner.pause();
             }
 
             FSM.ModAttacher.fireEvent("onKeyDownPause");
@@ -779,15 +780,11 @@ module FullScreenMario {
         }
 
         /**
-         * Reacts to the pause key being lifted. The game is unpaused if necessary
-         * and the mod event is fired.
+         * Reacts to the pause key being lifted. The mod event is fired.
          * 
          * @param {Player} player
          */
         keyUpPause(FSM: FullScreenMario, event?: Event): void {
-            if (FSM.GamesRunner.getPaused()) {
-                FSM.GamesRunner.play();
-            }
             FSM.ModAttacher.fireEvent("onKeyUpPause");
 
             if (event && event.preventDefault !== undefined) {
