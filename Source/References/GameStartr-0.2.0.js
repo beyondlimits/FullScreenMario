@@ -720,6 +720,12 @@ var AudioPlayr;
             return this.theme;
         };
         /**
+         * @return {String} The name of the currently playing theme.
+         */
+        AudioPlayr.prototype.getThemeName = function () {
+            return this.themeName;
+        };
+        /**
          * @return {String} The directory under which all filetype directories are
          *                  to be located.
          */
@@ -929,6 +935,7 @@ var AudioPlayr;
             this.pauseTheme();
             delete this.sounds[this.theme.getAttribute("name")];
             this.theme = undefined;
+            this.themeName = undefined;
         };
         /**
          * "Local" version of play that changes the output sound's volume depending
@@ -998,6 +1005,7 @@ var AudioPlayr;
             if (typeof this.theme !== "undefined" && this.theme.hasAttribute("name")) {
                 delete this.sounds[this.theme.getAttribute("name")];
             }
+            this.themeName = name;
             this.theme = this.sounds[name] = this.play(name);
             this.theme.loop = loop;
             // If it's used (no repeat), add the event listener to resume theme
@@ -1922,7 +1930,7 @@ var DeviceLayr;
          * @param {Gamepad} gamepad
          */
         DeviceLayr.prototype.activateGamepadTriggers = function (gamepad) {
-            var mapping = DeviceLayr.controllerMappings[gamepad.mapping], i;
+            var mapping = DeviceLayr.controllerMappings[gamepad.mapping || "standard"], i;
             for (i = 0; i < mapping.axes.length; i += 1) {
                 this.activateAxisTrigger(gamepad, mapping.axes[i].name, mapping.axes[i].axis, gamepad.axes[i]);
             }
@@ -1992,7 +2000,7 @@ var DeviceLayr;
          */
         DeviceLayr.prototype.setDefaultTriggerStatuses = function (gamepad, triggers) {
             if (triggers === void 0) { triggers = this.triggers; }
-            var mapping = DeviceLayr.controllerMappings[gamepad.mapping], button, joystick, i, j;
+            var mapping = DeviceLayr.controllerMappings[gamepad.mapping || "standard"], button, joystick, i, j;
             for (i = 0; i < mapping.buttons.length; i += 1) {
                 button = triggers[mapping.buttons[i]];
                 if (button && button.status === undefined) {
@@ -2018,10 +2026,11 @@ var DeviceLayr;
          *                      positive, negative, or neutral).
          */
         DeviceLayr.prototype.getAxisStatus = function (gamepad, magnitude) {
-            if (magnitude > DeviceLayr.controllerMappings[gamepad.mapping].joystickThreshold) {
+            var joystickThreshold = DeviceLayr.controllerMappings[gamepad.mapping || "standard"].joystickThreshold;
+            if (magnitude > joystickThreshold) {
                 return AxisStatus.positive;
             }
-            if (magnitude < -DeviceLayr.controllerMappings[gamepad.mapping].joystickThreshold) {
+            if (magnitude < -joystickThreshold) {
                 return AxisStatus.negative;
             }
             return AxisStatus.neutral;
@@ -11828,6 +11837,7 @@ var TouchPassr;
     })();
     TouchPassr_1.TouchPassr = TouchPassr;
 })(TouchPassr || (TouchPassr = {}));
+/// <reference path="DeviceLayr-0.2.0.ts" />
 /// <reference path="GamesRunnr-0.2.0.ts" />
 /// <reference path="ItemsHoldr-0.2.1.ts" />
 /// <reference path="InputWritr-0.2.0.ts" />
@@ -11909,6 +11919,7 @@ var UserWrappr;
             }
             this.resetPageVisibilityHandlers();
             this.GameStarter.gameStart();
+            this.startCheckingDevices();
         };
         /* Simple gets
         */
@@ -12022,6 +12033,12 @@ var UserWrappr;
          */
         UserWrappr.prototype.getCancelFullScreen = function () {
             return this.cancelFullScreen;
+        };
+        /**
+         * @return {Number} The identifier for the device input checking interval.
+         */
+        UserWrappr.prototype.getDeviceChecker = function () {
+            return this.deviceChecker;
         };
         /* Externally allowed sets
         */
@@ -12149,6 +12166,25 @@ var UserWrappr;
                 return text;
             }
             return text + Array.call(Array, diff).join(" ");
+        };
+        /* Devices
+        */
+        /**
+         * Starts the checkDevices loop to scan for gamepad status changes.
+         */
+        UserWrappr.prototype.startCheckingDevices = function () {
+            this.checkDevices();
+        };
+        /**
+         * Calls the DeviceLayer to check for gamepad triggers, after scheduling
+         * another checkDevices call via setTimeout.
+         */
+        UserWrappr.prototype.checkDevices = function () {
+            this.deviceChecker = setTimeout(this.checkDevices.bind(this), this.GameStarter.GamesRunner.getPaused()
+                ? 117
+                : this.GameStarter.GamesRunner.getInterval() / this.GameStarter.GamesRunner.getSpeed());
+            this.GameStarter.DeviceLayer.checkNavigatorGamepads();
+            this.GameStarter.DeviceLayer.activateAllGamepadTriggers();
         };
         /* Settings parsing
         */
