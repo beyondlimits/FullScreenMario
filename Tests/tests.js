@@ -23,14 +23,19 @@ describe("constructor", function () {
             "width": 512,
             "height": 464
         });
-
-        Uint8ClampedArray = FSM.PixelRender.Uint8ClampedArray;
     });
 
     it("runs with a large screen size", function () {
         FSM = new FullScreenMario.FullScreenMario({
             "width": 2048,
             "height": 1152
+        });
+    });
+
+    it("runs with a tiny screen size", function () {
+        FSM = new FullScreenMario.FullScreenMario({
+            "width": 320,
+            "height": 288
         });
 
         if (typeof Uint8ClampedArray === "undefined") {
