@@ -14,9 +14,10 @@ Names are sorted within groups by last name. Groups are in order of commit magni
     * November 2013: [Added gamepad support](https://github.com/JoshuaKGoldberg/FullScreenMario/pull/91)
 
 * [Geoffrey Alary](https://github.com/Geoffrey-A)
+    * Fall 2015: [Upgraded ImageReadr to SpriteMakr](https://github.com/FullScreenShenanigans/SpriteMakr)
     * September 2015: [Fix for theme after piping](https://github.com/FullScreenShenanigans/FullScreenMario/pull/300), [Fix for fiery paddling sprites](https://github.com/FullScreenShenanigans/FullScreenMario/pull/301)
-    * July 2015: [Small fixes for map 8-4](https://github.com/FullScreenShenanigans/FullScreenMario/pull/283)
     * August 2015: [PixelRendr bug with large palette sizes](https://github.com/FullScreenShenanigans/FullScreenMario/pull/297)
+    * July 2015: [Small fixes for map 8-4](https://github.com/FullScreenShenanigans/FullScreenMario/pull/283)
 
 * [Aaron Grant](https://github.com/blamonet)
     * November 2013: [Added loop option to playTheme](https://github.com/JoshuaKGoldberg/FullScreenMario/commit/6f370aa9852a75b45bd80b996b913a31ae0cf3db)
