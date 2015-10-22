@@ -83,6 +83,12 @@ var GameStartr;
             if (settings.extraResets) {
                 this.resets.push.apply(this.resets, settings.extraResets);
             }
+            if (settings.resetTimed) {
+                this.resetTimed(this, settings);
+            }
+            else {
+                this.reset(this, settings);
+            }
         }
         /* Resets
         */

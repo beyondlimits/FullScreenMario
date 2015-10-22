@@ -90,7 +90,7 @@ module FullScreenMario {
         /**
          * Internal reference to the static settings.
          */
-        public settings: GameStartr.IGameStartrStoredSettings = FullScreenMario.settings;
+        public settings: GameStartr.IGameStartrStoredSettings;
 
         /**
          * Internal reference to the static unitsize.
@@ -115,14 +115,7 @@ module FullScreenMario {
         /**
          * Container for device motion information, used by this.deviceMotion.
          */
-        public deviceMotionStatus: IDeviceMotionStatus = {
-            "motionDown": false,
-            "motionLeft": false,
-            "motionRight": false,
-            "x": undefined,
-            "y": undefined,
-            "dy": undefined
-        };
+        public deviceMotionStatus: IDeviceMotionStatus;
 
         /**
          * Constructor for a new FullScreenMario game object.
@@ -132,22 +125,30 @@ module FullScreenMario {
          * On typical machines, game startup time is approximately 500-700ms.
          */
         constructor(settings: GameStartr.IGameStartrSettings) {
-            super({
-                "constantsSource": FullScreenMario,
-                "constants": [
-                    "unitsize",
-                    "scale",
-                    "gravity",
-                    "pointLevels",
-                    "customTextMappings"
-                ]
-            });
+            this.settings = FullScreenMario.settings;
 
-            if (settings.resetTimed) {
-                this.resetTimed(this, settings);
-            } else {
-                this.reset(this, settings);
-            }
+            this.deviceMotionStatus = {
+                "motionDown": false,
+                "motionLeft": false,
+                "motionRight": false,
+                "x": undefined,
+                "y": undefined,
+                "dy": undefined
+            };
+
+            super(
+                this.proliferate(
+                    {
+                        "constantsSource": FullScreenMario,
+                        "constants": [
+                            "unitsize",
+                            "scale",
+                            "gravity",
+                            "pointLevels",
+                            "customTextMappings"
+                        ]
+                    },
+                    settings));
         }
 
 
