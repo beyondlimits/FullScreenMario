@@ -420,7 +420,6 @@ declare module FullScreenMario {
         unitsize: number;
         pointLevels: number[];
         customTextMappings: { [i: string]: string };
-        resetTimes: any[];
         player: IPlayer;
         deviceMotionStatus: IDeviceMotionStatus;
         gameStart(): void;
@@ -657,8 +656,8 @@ declare module FullScreenMario {
         initializeArea(): void;
         setAreaBackground(area: IArea): void;
         getAbsoluteHeight(yloc: number, correctUnitsize?: boolean): number;
-        mapAddStretched(prething: any): IThing;
-        mapAddAfter(prething: any): void;
+        mapAddStretched(prething: string | IPreThingSettings): IThing;
+        mapAddAfter(prething: string | IPreThingSettings): void;
         cutsceneFlagpoleStartSlidingDown(settings: any, FSM: IFullScreenMario): void;
         cutsceneFlagpoleHitBottom(settings: any, FSM: IFullScreenMario): void;
         cutsceneFlagpoleCountdown(settings: any, FSM: IFullScreenMario): void;

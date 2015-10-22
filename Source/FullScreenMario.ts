@@ -108,12 +108,6 @@ module FullScreenMario {
         public customTextMappings: { [i: string]: string };
 
         /**
-         * Timed result summaries of the constructor, if resetTimed was passed
-         * as true. Otherwise, this is undefined.
-         */
-        public resetTimes: any[];
-
-        /**
          * The game's player, which (when defined) will always be a Player Thing.
          */
         public player: IPlayer;
@@ -137,32 +131,8 @@ module FullScreenMario {
          * Dynamic game settings may be given as members of the "customs" argument.
          * On typical machines, game startup time is approximately 500-700ms.
          */
-        constructor(customs: GameStartr.IGameStartrCustoms) {
+        constructor(settings: GameStartr.IGameStartrSettings) {
             super({
-                "customs": customs,
-                "requirements": {
-                    "settings": {
-                        "audio": "settings/audio.js",
-                        "collisions": "settings/collisions.js",
-                        "editor": "settings/editor.js",
-                        "events": "settings/events.js",
-                        "generator": "settings/generator.js",
-                        "input": "settings/inpug.js",
-                        "maps": "settings/maps.js",
-                        "math": "settings/math.js",
-                        "mods": "settings/mods.js",
-                        "numbers": "settings/number.js",
-                        "objects": "settings/objetcs.js",
-                        "quadrants": "settings/quadrants.js",
-                        "renderer": "settings/renderer.js",
-                        "runner": "settings/runner.js",
-                        "scenes": "settings/scenes.js",
-                        "sprites": "settings/sprites.js",
-                        "statistics": "settings/statistics.js",
-                        "touch": "settings/touch.js",
-                        "ui": "settings/ui.js"
-                    }
-                },
                 "constantsSource": FullScreenMario,
                 "constants": [
                     "unitsize",
@@ -173,17 +143,17 @@ module FullScreenMario {
                 ]
             });
 
-            if (customs.resetTimed) {
-                this.resetTimes = this.resetTimed(this, customs);
+            if (settings.resetTimed) {
+                this.resetTimed(this, settings);
             } else {
-                this.reset(this, customs);
+                this.reset(this, settings);
             }
         }
 
 
         /* Resets
         */
-        resetObjectMaker(FSM: FullScreenMario, customs: GameStartr.IGameStartrCustoms): void {
+        resetObjectMaker(FSM: FullScreenMario, settings: GameStartr.IGameStartrSettings): void {
             FSM.ObjectMaker = new ObjectMakr.ObjectMakr(
                 FSM.proliferate(
                     {
@@ -209,8 +179,8 @@ module FullScreenMario {
          * @param {FullScreenMario} FSM
          * @param {Object} customs
          */
-        resetAudioPlayer(FSM: FullScreenMario, customs: GameStartr.IGameStartrCustoms): void {
-            super.resetAudioPlayer(FSM, customs);
+        resetAudioPlayer(FSM: FullScreenMario, settings: GameStartr.IGameStartrSettings): void {
+            super.resetAudioPlayer(FSM, settings);
 
             FSM.AudioPlayer.setGetVolumeLocal(FSM.getVolumeLocal.bind(FSM, FSM));
 
@@ -223,8 +193,8 @@ module FullScreenMario {
          * @param {FullScreenMario} FSM
          * @param {Object} customs
          */
-        resetThingHitter(FSM: FullScreenMario, customs: GameStartr.IGameStartrCustoms): void {
-            super.resetThingHitter(<GameStartr.GameStartr>FSM, customs);
+        resetThingHitter(FSM: FullScreenMario, settings: GameStartr.IGameStartrSettings): void {
+            super.resetThingHitter(FSM, settings);
 
             FSM.ThingHitter.cacheHitCheckGroup("Solid");
             FSM.ThingHitter.cacheHitCheckGroup("Character");
@@ -236,7 +206,7 @@ module FullScreenMario {
          * @param {FullScreenMario} FSM
          * @param {Object} customs
          */
-        resetMapsHandler(FSM: FullScreenMario, customs: GameStartr.IGameStartrCustoms): void {
+        resetMapsHandler(FSM: FullScreenMario, settings: GameStartr.IGameStartrSettings): void {
             FSM.MapsHandler = new MapsHandlr.MapsHandlr({
                 "MapsCreator": FSM.MapsCreator,
                 "MapScreener": FSM.MapScreener,
@@ -255,10 +225,10 @@ module FullScreenMario {
          * @param {FullScreenMario} FSM
          * @param {Object} customs
          */
-        resetItemsHolder(FSM: FullScreenMario, customs: GameStartr.IGameStartrCustoms): void {
-            super.resetItemsHolder(FSM, customs);
+        resetItemsHolder(FSM: FullScreenMario, settings: GameStartr.IGameStartrSettings): void {
+            super.resetItemsHolder(FSM, settings);
 
-            if (customs.width < 560) {
+            if (settings.width < 560) {
                 (<HTMLElement>(<HTMLTableRowElement>FSM.ItemsHolder.getContainer().children[0]).cells[4]).style.display = "none";
             }
         }
@@ -288,8 +258,8 @@ module FullScreenMario {
          * @param {FullScreenMario} FSM
          * @param {Object} customs
          */
-        resetContainer(FSM: FullScreenMario, customs: GameStartr.IGameStartrCustoms): void {
-            super.resetContainer(FSM, customs);
+        resetContainer(FSM: FullScreenMario, settings: GameStartr.IGameStartrSettings): void {
+            super.resetContainer(FSM, settings);
 
             FSM.container.style.fontFamily = "Press Start";
             FSM.container.className += " FullScreenMario";
@@ -301,7 +271,7 @@ module FullScreenMario {
                 <GameStartr.IThing[]>FSM.GroupHolder.getGroup("Text")
             ]);
 
-            FSM.ItemsHolder.getContainer().style.width = customs.width + "px";
+            FSM.ItemsHolder.getContainer().style.width = settings.width + "px";
             FSM.container.appendChild(FSM.ItemsHolder.getContainer());
         }
 
@@ -1002,7 +972,7 @@ module FullScreenMario {
                         (character.numquads === 0 || character.left > delx) &&
                         (!character.outerok || (
                             character.right < FSM.MapScreener.width - delx
-                            ))) {
+                        ))) {
                         FSM.arrayDeleteThing(character, characters, i);
                         i -= 1;
                     } else {
@@ -1038,7 +1008,7 @@ module FullScreenMario {
                 character,
                 character.overlapGoal,
                 character.FSM.unitsize
-                );
+            );
 
             // Goal to the right: has the thing gone far enough to the right?
             if (character.overlapGoRight) {
@@ -1268,7 +1238,7 @@ module FullScreenMario {
             if (
                 (<ICharacter>thing).player && thing.bottom < other.bottom
                 && (<ICharacter>other).type === "enemy"
-                ) {
+            ) {
                 return true;
             }
 
@@ -1671,7 +1641,7 @@ module FullScreenMario {
                 "ended",
                 thing.FSM.AudioPlayer.playTheme.bind(
                     thing.FSM.AudioPlayer, "Star", true
-                    ));
+                ));
 
             thing.FSM.TimeHandler.addClassCycle(
                 thing,
@@ -1713,7 +1683,7 @@ module FullScreenMario {
                 thing.FSM.playerStarOffCycle,
                 140,
                 thing
-                );
+            );
 
             thing.FSM.AudioPlayer.removeEventListeners("Powerup", "ended");
 
@@ -1843,7 +1813,7 @@ module FullScreenMario {
             thing.FSM.animateFlicker(thing);
             thing.FSM.removeClasses(
                 thing, "running skidding jumping fiery"
-                );
+            );
             thing.FSM.addClasses(thing, "paddling small");
 
             // Step two (t+21)
@@ -1853,7 +1823,7 @@ module FullScreenMario {
                     thing.FSM.setPlayerSizeSmall(thing);
                     thing.FSM.setBottom(
                         thing, bottom - FullScreenMario.unitsize
-                        );
+                    );
                 },
                 21,
                 thing);
@@ -2301,7 +2271,7 @@ module FullScreenMario {
                 FSM.MapScreener.width,
                 Math.floor(
                     FSM.NumberMaker.randomIntWithin(0, FSM.MapScreener.floor) / 8
-                    ) * 8 * FSM.unitsize);
+                ) * 8 * FSM.unitsize);
 
             return false;
         }
@@ -2354,7 +2324,7 @@ module FullScreenMario {
 
                     textThing = thing.FSM.ObjectMaker.make(
                         letter, attributes
-                        );
+                    );
                     textThing.FSM.addThing(textThing, left, top);
                     children.push(textThing);
 
@@ -2971,7 +2941,7 @@ module FullScreenMario {
                 && !thing.FSM.isThingOnThing(thing, other)
                 && !thing.FSM.isThingOnThing(other, thing)
                 && !thing.under
-                ) {
+            ) {
                 // Character to the left of the solid
                 if (thing.right <= other.right) {
                     thing.xvel = Math.min(thing.xvel, 0);
@@ -2980,8 +2950,8 @@ module FullScreenMario {
                         Math.max(
                             other.left + thing.FSM.unitsize - thing.right,
                             thing.FSM.unitsize / -2
-                            )
-                        );
+                        )
+                    );
                 } else {
                     // Character to the right of the solid
                     thing.xvel = Math.max(thing.xvel, 0);
@@ -2990,8 +2960,8 @@ module FullScreenMario {
                         Math.min(
                             other.right - thing.FSM.unitsize - thing.left,
                             thing.FSM.unitsize / 2
-                            )
-                        );
+                        )
+                    );
                 }
 
                 // Non-players flip horizontally
@@ -3098,7 +3068,7 @@ module FullScreenMario {
             if (
                 !thing.FSM.isThingAlive(thing)
                 || thing.height < thing.FSM.unitsize
-                ) {
+            ) {
                 return;
             }
 
@@ -3309,7 +3279,7 @@ module FullScreenMario {
                 if (!other.hitcount && (
                     (shelltoleft && other.xvel > 0)
                     || (!shelltoleft && other.xvel < 0)
-                    )) {
+                )) {
                     thing.death(thing);
                 }
             }
@@ -3358,7 +3328,7 @@ module FullScreenMario {
             if (
                 !thing.FSM.isThingAlive(thing)
                 || !thing.FSM.isThingAlive(other)
-                ) {
+            ) {
                 return;
             }
 
@@ -3383,8 +3353,8 @@ module FullScreenMario {
                 || (
                     !thing.FSM.MapScreener.underwater
                     && (!other.deadly && thing.FSM.isThingOnThing(thing, other))
-                    )
-                ) {
+                )
+            ) {
                 // For the sake of typing. Should be optimized during runtime.
                 var player: IPlayer = <IPlayer>thing;
 
@@ -3404,7 +3374,7 @@ module FullScreenMario {
                     player.FSM.setBottom(
                         player,
                         Math.min(player.bottom, other.top + player.FSM.unitsize)
-                        );
+                    );
                     player.FSM.TimeHandler.addEvent(player.FSM.jumpEnemy, 0, player, other);
 
                     other.death(other, player.star ? 2 : 0);
@@ -3412,7 +3382,7 @@ module FullScreenMario {
                     player.FSM.addClass(player, "hopping");
                     player.FSM.removeClasses(
                         player, "running skidding jumping one two three"
-                        );
+                    );
                     player.hopping = true;
 
                     if (player.power === 1) {
@@ -3560,7 +3530,7 @@ module FullScreenMario {
             thing.FSM.TimeHandler.cancelClassCycle(thing, "running");
             thing.FSM.TimeHandler.addClassCycle(
                 thing, ["one", "two"], "climbing", 0
-                );
+            );
 
             thing.attachedLeft = !thing.FSM.objectToLeft(thing, other);
             thing.attachedOff = thing.attachedLeft ? 1 : -1;
@@ -3580,11 +3550,11 @@ module FullScreenMario {
             if (
                 thing.player && thing.yvel >= 0 && !other.tension
                 && thing.FSM.isCharacterOnSolid(thing, other)
-                ) {
+            ) {
                 other.tension = other.tensionSave = Math.max(
                     thing.yvel * 0.77,
                     thing.FSM.unitsize
-                    );
+                );
                 thing.movement = thing.FSM.movePlayerSpringboardDown;
                 (<IPlayer>thing).spring = other;
                 thing.xvel /= 2.8;
@@ -3897,7 +3867,7 @@ module FullScreenMario {
                 // To the left of player: walk to the right
                 if (
                     thing.FSM.objectToLeft(thing, thing.FSM.player)
-                    ) {
+                ) {
                     thing.FSM.moveSimple(thing);
                 } else {
                     // To the right of player: look to the left and movePacing as normal
@@ -3910,7 +3880,7 @@ module FullScreenMario {
                 // To the left of player: look and walk to the right
                 if (
                     thing.FSM.objectToLeft(thing, thing.FSM.player)
-                    ) {
+                ) {
                     thing.lookleft = thing.moveleft = false;
                     thing.FSM.flipHoriz(thing);
                     thing.FSM.moveSimple(thing);
@@ -4044,7 +4014,7 @@ module FullScreenMario {
                 thing.FSM.setTop(thing, thing.FSM.MapScreener.bottomPlatformMax);
             } else if (
                 thing.top > thing.FSM.MapScreener.bottomPlatformMax
-                ) {
+            ) {
                 thing.FSM.setBottom(thing, 0);
             } else {
                 thing.FSM.movePlatform(thing);
@@ -4054,7 +4024,7 @@ module FullScreenMario {
             if (
                 thing.FSM.player
                 && thing.FSM.player.resting === thing
-                ) {
+            ) {
                 thing.FSM.player.resting = undefined;
             }
         }
@@ -4078,15 +4048,15 @@ module FullScreenMario {
             // Since the player is on this thing, start falling more
             thing.FSM.shiftVert(
                 thing, thing.yvel += thing.FSM.unitsize / 8
-                );
+            );
             thing.FSM.setBottom(thing.FSM.player, thing.top);
 
             // After a velocity threshold, start always falling
             if (
                 thing.yvel >= (
                     thing.fallThresholdStart || thing.FSM.unitsize * 2.8
-                    )
-                ) {
+                )
+            ) {
                 thing.freefall = true;
                 thing.movement = thing.FSM.moveFreeFalling;
             }
@@ -4133,7 +4103,7 @@ module FullScreenMario {
                 } else {
                     thing.yvel = Math.max(
                         thing.yvel - thing.FSM.unitsize / 16, 0
-                        );
+                    );
                 }
             } else {
                 // Not being rested upon or having a yvel means nothing happens
@@ -4176,10 +4146,10 @@ module FullScreenMario {
                 Math.max(
                     thing.partners.partnerString.height - (
                         thing.yvel / thing.FSM.unitsize
-                        ),
+                    ),
                     0
-                    )
-                );
+                )
+            );
         }
 
         /**
@@ -4329,8 +4299,8 @@ module FullScreenMario {
                     thing.height > 0
                     || playerX < thing.left - thing.FSM.unitsize * 8
                     || playerX > thing.right + thing.FSM.unitsize * 8
-                    )
-                ) {
+                )
+            ) {
                 thing.movement = undefined;
                 thing.direction *= -1;
 
@@ -4355,8 +4325,8 @@ module FullScreenMario {
                 thing.top < (
                     thing.FSM.MapScreener.top
                     + thing.FSM.unitsize * 16
-                    )
-                ) {
+                )
+            ) {
                 thing.FSM.killNormal(thing);
             }
         }
@@ -4436,20 +4406,20 @@ module FullScreenMario {
                 if (
                     thing.FSM.player.left
                     > thing.right + thing.FSM.unitsize * 8
-                    ) {
+                ) {
                     // Go to the right
                     thing.xvel = Math.min(
                         thing.speed, thing.xvel + thing.FSM.unitsize / 32
-                        );
+                    );
                 } else if (
                     thing.FSM.player.right
                     < thing.left - thing.FSM.unitsize * 8
-                    ) {
+                ) {
                     // Go to the left
                     thing.xvel = Math.max(
                         -thing.speed,
                         thing.xvel - thing.FSM.unitsize / 32
-                        );
+                    );
                 }
             }
         }
@@ -4479,7 +4449,7 @@ module FullScreenMario {
             if (
                 thing.top > thing.FSM.player.bottom
                 || thing.bottom > thing.FSM.unitsize * 91
-                ) {
+            ) {
                 thing.FSM.animateBlooperUnsqueezing(thing);
             }
         }
@@ -4528,14 +4498,14 @@ module FullScreenMario {
             if (
                 player.xvel > thing.FSM.unitsize / 8
                 && player.left > thing.FSM.MapScreener.width / 2
-                ) {
+            ) {
                 if (thing.left < player.right + thing.FSM.unitsize * 16) {
                     // slide to xloc
                     thing.FSM.slideToX(
                         thing,
                         player.right + player.xvel + thing.FSM.unitsize * 32,
                         player.maxspeed * 1.4
-                        );
+                    );
                     thing.counter = 0;
                 }
             } else {
@@ -4544,7 +4514,7 @@ module FullScreenMario {
                     thing,
                     player.left + player.xvel + Math.sin(Math.PI * thing.counter) * 117,
                     player.maxspeed * .7
-                    );
+                );
             }
         }
 
@@ -4607,7 +4577,7 @@ module FullScreenMario {
                 // Jumping
                 thing.keys.jump
                 && (thing.yvel <= 0 || thing.FSM.MapScreener.underwater)
-                ) {
+            ) {
                 if (thing.FSM.MapScreener.underwater) {
                     thing.FSM.animatePlayerPaddling(thing);
                     thing.FSM.removeClass(thing, "running");
@@ -4814,7 +4784,7 @@ module FullScreenMario {
             if (
                 other.height < thing.FSM.unitsize * 2.5
                 || other.tension < thing.FSM.unitsize / 32
-                ) {
+            ) {
                 thing.movement = undefined;
                 other.movement = thing.FSM.moveSpringboardUp;
                 return;
@@ -4824,7 +4794,7 @@ module FullScreenMario {
             if (
                 thing.left < other.left + thing.FSM.unitsize * 2
                 || thing.right > other.right - thing.FSM.unitsize * 2
-                ) {
+            ) {
                 thing.xvel /= 1.4;
             }
 
@@ -4892,7 +4862,7 @@ module FullScreenMario {
                 && other.player
                 && other.power > 1
                 && thing.contents === "Mushroom"
-                ) {
+            ) {
                 thing.contents = "FireFlower";
             }
 
@@ -5123,7 +5093,7 @@ module FullScreenMario {
                 !thing.FSM.isThingAlive(thing)
                 || !thing.FSM.isThingAlive(thing.FSM.player)
                 || thing.right < thing.FSM.unitsize * -32
-                ) {
+            ) {
                 return true;
             }
 
@@ -5150,7 +5120,7 @@ module FullScreenMario {
                             }],
                             thing.left - thing.FSM.unitsize * 2,
                             thing.top - thing.FSM.unitsize * 2
-                            );
+                        );
                     }
 
                     // ...and go again
@@ -5158,12 +5128,12 @@ module FullScreenMario {
                         thing.FSM.TimeHandler.addEvent(
                             thing.FSM.animateThrowingHammer,
                             7, thing, count - 1
-                            );
+                        );
                     } else {
                         thing.FSM.TimeHandler.addEvent(
                             thing.FSM.animateThrowingHammer,
                             70, thing, 7
-                            );
+                        );
                         thing.FSM.removeClass(thing, "thrown");
                     }
                 },
@@ -5188,7 +5158,7 @@ module FullScreenMario {
             if (
                 !thing.FSM.isThingAlive(thing)
                 || !thing.FSM.isThingAlive(thing.FSM.player)
-                ) {
+            ) {
                 return true;
             }
 
@@ -5227,7 +5197,7 @@ module FullScreenMario {
             if (
                 !thing.FSM.isThingAlive(thing)
                 || !thing.FSM.isThingAlive(thing.FSM.player)
-                ) {
+            ) {
                 return true;
             }
 
@@ -5266,7 +5236,7 @@ module FullScreenMario {
                 }],
                 thing.left - thing.FSM.unitsize * 8,
                 thing.top + thing.FSM.unitsize * 4
-                );
+            );
 
             return false;
         }
@@ -5298,17 +5268,17 @@ module FullScreenMario {
 
                     thing.FSM.setTop(
                         hammer, thing.top - thing.FSM.unitsize * 2
-                        );
+                    );
                     if (thing.lookleft) {
                         thing.FSM.setLeft(
                             hammer,
                             thing.left + thing.FSM.unitsize * 2
-                            );
+                        );
                     } else {
                         thing.FSM.setLeft(
                             hammer,
                             thing.right - thing.FSM.unitsize * 2
-                            );
+                        );
                     }
 
                     return true;
@@ -5376,10 +5346,10 @@ module FullScreenMario {
             if (
                 thing.FSM.MapScreener.floor - (
                     thing.bottom / thing.FSM.unitsize
-                    ) >= 30
+                ) >= 30
                 && thing.resting.title !== "Floor"
                 && thing.FSM.NumberMaker.randomBoolean()
-                ) {
+            ) {
                 thing.falling = true;
                 thing.yvel = thing.FSM.unitsize * -.7;
                 thing.FSM.TimeHandler.addEvent(
@@ -5562,11 +5532,11 @@ module FullScreenMario {
             if (
                 thing.FSM.player.right > (
                     thing.left - thing.FSM.unitsize * 8
-                    )
+                )
                 && thing.FSM.player.left < (
                     thing.right + thing.FSM.unitsize * 8
-                    )
-                ) {
+                )
+            ) {
                 return;
             }
 
@@ -5685,11 +5655,11 @@ module FullScreenMario {
             if (!thing.paddlingCycle) {
                 thing.FSM.removeClasses(
                     thing, "skidding paddle1 paddle2 paddle3 paddle4 paddle5"
-                    );
+                );
                 thing.FSM.addClass(thing, "paddling");
                 thing.FSM.TimeHandler.cancelClassCycle(
                     thing, "paddlingCycle"
-                    );
+                );
                 thing.FSM.TimeHandler.addClassCycle(
                     thing,
                     [
@@ -5700,7 +5670,7 @@ module FullScreenMario {
                     ],
                     "paddlingCycle",
                     7
-                    );
+                );
             }
             thing.paddling = thing.paddlingCycle = thing.swimming = true;
             thing.yvel = thing.FSM.unitsize * -.84;
@@ -5870,7 +5840,7 @@ module FullScreenMario {
             thing.FSM.shiftHoriz(
                 thing,
                 (thing.width - 1) * thing.FSM.unitsize
-                );
+            );
 
             thing.FSM.TimeHandler.addEvent(thing.FSM.animatePlayerOffPole, 14, thing);
         }
@@ -6089,7 +6059,7 @@ module FullScreenMario {
             if (thing.jumping || thing.floating) {
                 spawn = <ICharacter>thing.FSM.killReplace(
                     thing, "Koopa", undefined, ["smart", "direction", "moveleft"]
-                    );
+                );
                 spawn.xvel = spawn.moveleft ? -spawn.speed : spawn.speed;
             } else {
                 spawn = thing.FSM.killToShell(thing, Number(big));
@@ -6266,12 +6236,12 @@ module FullScreenMario {
             thing.FSM.AudioPlayer.play("Break Block");
             thing.FSM.TimeHandler.addEvent(
                 thing.FSM.animateBrickShards, 1, thing
-                );
+            );
             thing.FSM.killNormal(thing);
 
             if (
                 other instanceof thing.FSM.ObjectMaker.getFunction("Thing")
-                ) {
+            ) {
                 thing.up = other;
             } else {
                 thing.up = undefined;
@@ -6353,7 +6323,7 @@ module FullScreenMario {
                     area.onPlayerDeath.bind(FSM),
                     area.onPlayerDeathTimeout,
                     FSM
-                    );
+                );
             } else {
                 FSM.TimeHandler.addEvent(
                     area.onGameOver.bind(FSM),
@@ -6471,10 +6441,10 @@ module FullScreenMario {
                 timeout,
                 thing,
                 -thing.FSM.unitsize / 6
-                );
+            );
             thing.FSM.TimeHandler.addEvent(
                 thing.FSM.killNormal, timeout, thing
-                );
+            );
         }
 
         /**
@@ -6564,10 +6534,10 @@ module FullScreenMario {
                     (
                         FSM.MapScreener.width - Math.abs(
                             xloc - FSM.player.left
-                            )
-                        ) / FSM.MapScreener.width
-                    )
-                );
+                        )
+                    ) / FSM.MapScreener.width
+                )
+            );
         }
 
         /**
@@ -6744,12 +6714,12 @@ module FullScreenMario {
         mapEntranceVine(FSM: FullScreenMario): void {
             var threshold: number = (
                 FSM.MapScreener.bottom - FSM.unitsize * 40
-                ),
+            ),
                 vine: IVine = <IVine>FSM.addThing(
                     "Vine",
                     FSM.unitsize * 32,
                     FSM.MapScreener.bottom + FSM.unitsize * 8
-                    );
+                );
 
             FSM.TimeHandler.addEventInterval(
                 function (): boolean {
@@ -6776,12 +6746,12 @@ module FullScreenMario {
         mapEntranceVinePlayer(FSM: FullScreenMario, vine: IVine): void {
             var threshold: number = (
                 FSM.MapScreener.bottom - FSM.unitsize * 24
-                ),
+            ),
                 speed: number = FSM.unitsize / -4,
                 player: IPlayer = FSM.addPlayer(
                     FSM.unitsize * 29,
                     FSM.MapScreener.bottom - FSM.unitsize * 4
-                    );
+                );
 
             FSM.shiftVert(player, player.height * FSM.unitsize);
 
@@ -6793,7 +6763,7 @@ module FullScreenMario {
                     if (player.top < threshold) {
                         FSM.TimeHandler.addEvent(
                             FSM.animatePlayerOffVine, 49, player
-                            );
+                        );
                         return true;
                     }
                     return false;
@@ -7015,8 +6985,8 @@ module FullScreenMario {
                     area.setting.indexOf("Underworld") !== -1
                     || area.setting.indexOf("Castle") !== -1
                     || area.setting.indexOf("Night") !== -1
-                    )
-                ) {
+                )
+            ) {
                 area.background = "#000000";
             } else {
                 // Default (typically Overworld): sky blue background
@@ -7050,21 +7020,25 @@ module FullScreenMario {
          * current map's outermost boundaries.
          * 
          * @this {EightBittr}
-         * @param {PreThing} prething
+         * @param {PreThing} prethingRaw
          * @return {Thing} A strethed Thing, newly added via addThing.
          */
-        mapAddStretched(prething: any): IThing {
+        mapAddStretched(prethingRaw: string | IPreThingSettings): IThing {
             var FSM: FullScreenMario = FullScreenMario.prototype.ensureCorrectCaller(this),
                 boundaries: any = FSM.MapsHandler.getArea().boundaries,
+                prething: IPreThingSettings = prethingRaw instanceof String
+                    ? {
+                        "thing": prething
+                    }
+                    : <IPreThingSettings>prethingRaw,
                 y: number = (
                     ((<IMapScreenr>FSM.MapScreener).floor - prething.y)
                     * FSM.unitsize
-                    ),
-                thing: IThing = FSM.ObjectMaker.make(prething.thing, {
+                ),
+                // It is assumed the PreThing does have a .thing if it's a stretch
+                thing: IThing = FSM.ObjectMaker.make((<any>prething).thing, {
                     "width": boundaries.right - boundaries.left,
-                    "height": (
-                        prething.height || FSM.getAbsoluteHeight(prething.y)
-                        )
+                    "height": prething.height || FSM.getAbsoluteHeight(prething.y)
                 });
 
             return <IThing>FSM.addThing(thing, boundaries.left, y);
@@ -7075,13 +7049,18 @@ module FullScreenMario {
          * boundaries (after everything else).
          * 
          * @this {EightBittr}
-         * @param {PreThing} prething
+         * @param {PreThing} prethingRaw
          */
-        mapAddAfter(prething: any): void {
+        mapAddAfter(prethingRaw: string | IPreThingSettings): void {
             var FSM: FullScreenMario = FullScreenMario.prototype.ensureCorrectCaller(this),
                 MapsCreator: MapsCreatr.IMapsCreatr = FSM.MapsCreator,
                 MapsHandler: MapsHandlr.IMapsHandlr = FSM.MapsHandler,
                 prethings: { [i: string]: IPreThing[] } = <{ [i: string]: IPreThing[] }>MapsHandler.getPreThings(),
+                prething: IPreThingSettings = prethingRaw instanceof String
+                    ? {
+                        "thing": prething
+                    }
+                    : <IPreThingSettings>prethingRaw,
                 area: IArea = <IArea>MapsHandler.getArea(),
                 map: MapsCreatr.IMapsCreatrMap = MapsHandler.getMap(),
                 boundaries: any = FSM.MapsHandler.getArea().boundaries;
