@@ -389,7 +389,7 @@ declare module GameStartr {
         UserWrapper: UserWrappr.IUserWrappr;
         WorldSeeder: WorldSeedr.IWorldSeedr;
         reset(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
-        resetTimed(GameStarter: IGameStartr, settings: IGameStartrSettings): EightBittr.IResetTimes;
+        resetTimed(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
         resetAudioPlayer(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
         resetGamesRunner(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
         resetGroupHolder(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
@@ -633,8 +633,8 @@ module GameStartr {
          * @returns {Array} How long each reset Function took followed by the entire
          *                 operation, in milliseconds.
          */
-        resetTimed(GameStarter: GameStartr, settings: IGameStartrSettings): EightBittr.IResetTimes {
-            return super.resetTimed(GameStarter, GameStarter.resets, settings);
+        resetTimed(GameStarter: GameStartr, settings: IGameStartrSettings): void {
+            super.resetTimed(GameStarter, GameStarter.resets, settings);
         }
 
         /**

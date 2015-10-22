@@ -420,7 +420,6 @@ declare module FullScreenMario {
         unitsize: number;
         pointLevels: number[];
         customTextMappings: { [i: string]: string };
-        resetTimes: any[];
         player: IPlayer;
         deviceMotionStatus: IDeviceMotionStatus;
         gameStart(): void;

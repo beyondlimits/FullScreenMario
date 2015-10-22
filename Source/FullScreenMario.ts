@@ -108,12 +108,6 @@ module FullScreenMario {
         public customTextMappings: { [i: string]: string };
 
         /**
-         * Timed result summaries of the constructor, if resetTimed was passed
-         * as true. Otherwise, this is undefined.
-         */
-        public resetTimes: any[];
-
-        /**
          * The game's player, which (when defined) will always be a Player Thing.
          */
         public player: IPlayer;
@@ -137,7 +131,7 @@ module FullScreenMario {
          * Dynamic game settings may be given as members of the "customs" argument.
          * On typical machines, game startup time is approximately 500-700ms.
          */
-        constructor(customs: GameStartr.IGameStartrCustoms) {
+        constructor(settings: GameStartr.IGameStartrSettings) {
             super({
                 "constantsSource": FullScreenMario,
                 "constants": [
@@ -149,17 +143,17 @@ module FullScreenMario {
                 ]
             });
 
-            if (customs.resetTimed) {
-                this.resetTimes = this.resetTimed(this, customs);
+            if (settings.resetTimed) {
+                this.resetTimed(this, settings);
             } else {
-                this.reset(this, customs);
+                this.reset(this, settings);
             }
         }
 
 
         /* Resets
         */
-        resetObjectMaker(FSM: FullScreenMario, customs: GameStartr.IGameStartrCustoms): void {
+        resetObjectMaker(FSM: FullScreenMario, settings: GameStartr.IGameStartrSettings): void {
             FSM.ObjectMaker = new ObjectMakr.ObjectMakr(
                 FSM.proliferate(
                     {
@@ -185,8 +179,8 @@ module FullScreenMario {
          * @param {FullScreenMario} FSM
          * @param {Object} customs
          */
-        resetAudioPlayer(FSM: FullScreenMario, customs: GameStartr.IGameStartrCustoms): void {
-            super.resetAudioPlayer(FSM, customs);
+        resetAudioPlayer(FSM: FullScreenMario, settings: GameStartr.IGameStartrSettings): void {
+            super.resetAudioPlayer(FSM, settings);
 
             FSM.AudioPlayer.setGetVolumeLocal(FSM.getVolumeLocal.bind(FSM, FSM));
 
@@ -199,8 +193,8 @@ module FullScreenMario {
          * @param {FullScreenMario} FSM
          * @param {Object} customs
          */
-        resetThingHitter(FSM: FullScreenMario, customs: GameStartr.IGameStartrCustoms): void {
-            super.resetThingHitter(<GameStartr.GameStartr>FSM, customs);
+        resetThingHitter(FSM: FullScreenMario, settings: GameStartr.IGameStartrSettings): void {
+            super.resetThingHitter(FSM, settings);
 
             FSM.ThingHitter.cacheHitCheckGroup("Solid");
             FSM.ThingHitter.cacheHitCheckGroup("Character");
@@ -212,7 +206,7 @@ module FullScreenMario {
          * @param {FullScreenMario} FSM
          * @param {Object} customs
          */
-        resetMapsHandler(FSM: FullScreenMario, customs: GameStartr.IGameStartrCustoms): void {
+        resetMapsHandler(FSM: FullScreenMario, settings: GameStartr.IGameStartrSettings): void {
             FSM.MapsHandler = new MapsHandlr.MapsHandlr({
                 "MapsCreator": FSM.MapsCreator,
                 "MapScreener": FSM.MapScreener,
@@ -231,10 +225,10 @@ module FullScreenMario {
          * @param {FullScreenMario} FSM
          * @param {Object} customs
          */
-        resetItemsHolder(FSM: FullScreenMario, customs: GameStartr.IGameStartrCustoms): void {
-            super.resetItemsHolder(FSM, customs);
+        resetItemsHolder(FSM: FullScreenMario, settings: GameStartr.IGameStartrSettings): void {
+            super.resetItemsHolder(FSM, settings);
 
-            if (customs.width < 560) {
+            if (settings.width < 560) {
                 (<HTMLElement>(<HTMLTableRowElement>FSM.ItemsHolder.getContainer().children[0]).cells[4]).style.display = "none";
             }
         }
@@ -264,8 +258,8 @@ module FullScreenMario {
          * @param {FullScreenMario} FSM
          * @param {Object} customs
          */
-        resetContainer(FSM: FullScreenMario, customs: GameStartr.IGameStartrCustoms): void {
-            super.resetContainer(FSM, customs);
+        resetContainer(FSM: FullScreenMario, settings: GameStartr.IGameStartrSettings): void {
+            super.resetContainer(FSM, settings);
 
             FSM.container.style.fontFamily = "Press Start";
             FSM.container.className += " FullScreenMario";
@@ -277,7 +271,7 @@ module FullScreenMario {
                 <GameStartr.IThing[]>FSM.GroupHolder.getGroup("Text")
             ]);
 
-            FSM.ItemsHolder.getContainer().style.width = customs.width + "px";
+            FSM.ItemsHolder.getContainer().style.width = settings.width + "px";
             FSM.container.appendChild(FSM.ItemsHolder.getContainer());
         }
 
