@@ -207,7 +207,7 @@ FullScreenMario.FullScreenMario.settings.touch = {
                     "onkeydown": ["sprint"]
                 },
                 "deactivated": {
-                    "onkeydown": ["sprint"]
+                    "onkeyup": ["sprint"]
                 }
             }
         },
