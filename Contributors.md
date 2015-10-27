@@ -47,6 +47,9 @@ Names are sorted within groups by last name. Groups are in order of commit magni
 * [Gus Knight](https://github.com/waddlesplash)
     * October 2013: [Bug fix for Firefox JIT](https://github.com/JoshuaKGoldberg/FullScreenMario/commit/f91ec89f05ae4cbd86dc19c4228b5b603394f3c9)
 
+* [Erkan Özkök](https://github.com/nozkok)
+    * October 2015: [Bug fix for touch input pipes for B](https://github.com/FullScreenShenanigans/FullScreenMario/pull/318)
+
 * [Bryce Pauken](https://github.com/brycepauken)
     * October 2013: [Bug fix for Mario skid reversal direction](https://github.com/JoshuaKGoldberg/FullScreenMario/commit/e9889a5814d9773d5642b3c89a8550028f99779f)
 
