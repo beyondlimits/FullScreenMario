@@ -173,10 +173,10 @@ var TouchPassr;
             // elementInner's center-based positioning must wait until its total width is done setting
             setTimeout(function () {
                 if (position.horizontal === "center") {
-                    this.elementInner.style.left = Math.round(this.elementInner.offsetWidth / -2) + "px";
+                    this.elementInner.style.left = this.createHalfSizeMeasurement(this.elementInner, "width", "offsetWidth");
                 }
                 if (position.vertical === "center") {
-                    this.elementInner.style.top = Math.round(this.elementInner.offsetHeight / -2) + "px";
+                    this.elementInner.style.top = this.createHalfSizeMeasurement(this.elementInner, "height", "offsetHeight");
                 }
             }.bind(this));
         };
@@ -194,6 +194,28 @@ var TouchPassr;
                 return raw + "px";
             }
             return raw;
+        };
+        /**
+         * Determines a "half"-measurement that would center an element based on the
+         * specified units.
+         *
+         * @param {HTMLElement} element   The element whose half-size should be computed.
+         * @param {String} styleTag   The initial CSS measurement to check for, as "width"
+         *                            or "height".
+         * @param {String} attributeBackup   A measurement to check for if the CSS size
+         *                                   is falsy, as "offsetWidth" or "offsetHeight".
+         * @returns {String}   A measurement equal to half the sytleTag/attributeBackup,
+         *                     such as "3.5em" or "10px".
+         */
+        Control.prototype.createHalfSizeMeasurement = function (element, styleTag, attributeBackup) {
+            var amountRaw, amount, units;
+            amountRaw = element.style[styleTag] || (attributeBackup && element[attributeBackup]);
+            if (!amountRaw) {
+                return "0px";
+            }
+            amount = Number(amountRaw.replace(/[^\d]/g, '')) || 0;
+            units = amountRaw.replace(/[\d]/g, '') || "px";
+            return Math.round(amount / -2) + units;
         };
         /**
          * Passes a style schema to .element and .elementInner.
