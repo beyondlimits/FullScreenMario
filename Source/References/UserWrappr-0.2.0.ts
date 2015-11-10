@@ -1115,6 +1115,7 @@ module UserWrappr {
 
                 if (key) {
                     this.GameStarter.ItemsHolder.setItem(key, value);
+                    this.GameStarter.ItemsHolder.saveItem(key);
                 }
             }
         }
