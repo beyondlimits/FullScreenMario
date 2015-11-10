@@ -145,6 +145,10 @@ declare module UserWrappr {
             update: (GameStarter: IGameStartr, value: IUserWrapprSizeSummary) => ISelectElement;
         }
 
+        export interface IOptionsEditorSchema extends ISchema {
+            maps: IOptionsMapGridSchema;
+        }
+
         export interface IOptionsMapGridSchema extends ISchema {
             rangeX: number[];
             rangeY: number[];
@@ -1405,32 +1409,31 @@ module UserWrappr {
          * Options generator for a LevelEditr dialog.
          */
         export class LevelEditorGenerator extends AbstractOptionsGenerator implements IOptionsGenerator {
-            generate(schema: ISchema): HTMLDivElement {
+            generate(schema: IOptionsEditorSchema): HTMLDivElement {
                 var output: HTMLDivElement = document.createElement("div"),
-                    title: HTMLDivElement = document.createElement("div"),
-                    button: HTMLDivElement = document.createElement("div"),
-                    between: HTMLDivElement = document.createElement("div"),
+                    starter: HTMLDivElement = document.createElement("div"),
+                    betweenOne: HTMLDivElement = document.createElement("div"),
+                    betweenTwo: HTMLDivElement = document.createElement("div"),
                     uploader: HTMLDivElement = this.createUploaderDiv(),
+                    mapper: HTMLDivElement = this.createMapSelectorDiv(schema.maps),
                     scope: LevelEditorGenerator = this;
 
                 output.className = "select-options select-options-level-editor";
 
-                title.className = "select-option-title";
-                title.textContent = "Create your own custom levels:";
-
-                button.className = "select-option select-option-large options-button-option";
-                button.innerHTML = "Start the <br /> Level Editor!";
-                button.onclick = function (): void {
+                starter.className = "select-option select-option-large options-button-option";
+                starter.innerHTML = "Start the <br /> Level Editor!";
+                starter.onclick = function (): void {
                     scope.GameStarter.LevelEditor.enable();
                 };
 
-                between.className = "select-option-title";
-                between.innerHTML = "<em>- or -</em><br />";
+                betweenOne.className = betweenTwo.className = "select-option-title";
+                betweenOne.innerHTML = betweenTwo.innerHTML = "<em>- or -</em><br />";
 
-                output.appendChild(title);
-                output.appendChild(button);
-                output.appendChild(between);
+                output.appendChild(starter);
+                output.appendChild(betweenOne);
                 output.appendChild(uploader);
+                output.appendChild(betweenTwo);
+                output.appendChild(mapper);
 
                 return output;
             }
@@ -1440,7 +1443,7 @@ module UserWrappr {
                     input: HTMLInputElement = document.createElement("input");
 
                 uploader.className = "select-option select-option-large options-button-option";
-                uploader.textContent = "Click to upload and continue your editor files!";
+                uploader.textContent = "Continue an editor file!";
                 uploader.setAttribute("textOld", uploader.textContent);
 
                 input.type = "file";
@@ -1456,6 +1459,18 @@ module UserWrappr {
                 uploader.appendChild(input);
 
                 return uploader;
+            }
+
+            protected createMapSelectorDiv(mapSchema: IOptionsMapGridSchema): HTMLDivElement {
+                var container: HTMLDivElement = document.createElement("div"),
+                    maps: HTMLDivElement = this.UserWrapper.getGenerators()["MapsGrid"].generate(mapSchema);
+
+                container.className = "select-option select-option-large options-button-option";
+                container.innerHTML = "Edit a<br />built-in map";
+
+                container.appendChild(maps);
+
+                return container;
             }
 
             protected handleFileDragEnter(uploader: HTMLDivElement, event: LevelEditr.IDataMouseEvent): void {

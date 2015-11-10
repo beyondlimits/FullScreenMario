@@ -326,7 +326,14 @@ FullScreenMario.FullScreenMario.settings.ui = {
             }
         }, {
             "title": "Editor",
-            "generator": "LevelEditor"
+            "generator": "LevelEditor",
+            "maps": {
+                "rangeX": [1, 4],
+                "rangeY": [1, 8],
+                "callback": function (GameStarter, schema, button, event) {
+                    console.log("Got em", arguments);
+                }
+            }
         }, {
             "title": "Maps",
             "generator": "MapsGrid",

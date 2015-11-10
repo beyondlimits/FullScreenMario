@@ -860,27 +860,26 @@ var UserWrappr;
                 _super.apply(this, arguments);
             }
             LevelEditorGenerator.prototype.generate = function (schema) {
-                var output = document.createElement("div"), title = document.createElement("div"), button = document.createElement("div"), between = document.createElement("div"), uploader = this.createUploaderDiv(), scope = this;
+                var output = document.createElement("div"), starter = document.createElement("div"), betweenOne = document.createElement("div"), betweenTwo = document.createElement("div"), uploader = this.createUploaderDiv(), mapper = this.createMapSelectorDiv(schema.maps), scope = this;
                 output.className = "select-options select-options-level-editor";
-                title.className = "select-option-title";
-                title.textContent = "Create your own custom levels:";
-                button.className = "select-option select-option-large options-button-option";
-                button.innerHTML = "Start the <br /> Level Editor!";
-                button.onclick = function () {
+                starter.className = "select-option select-option-large options-button-option";
+                starter.innerHTML = "Start the <br /> Level Editor!";
+                starter.onclick = function () {
                     scope.GameStarter.LevelEditor.enable();
                 };
-                between.className = "select-option-title";
-                between.innerHTML = "<em>- or -</em><br />";
-                output.appendChild(title);
-                output.appendChild(button);
-                output.appendChild(between);
+                betweenOne.className = betweenTwo.className = "select-option-title";
+                betweenOne.innerHTML = betweenTwo.innerHTML = "<em>- or -</em><br />";
+                output.appendChild(starter);
+                output.appendChild(betweenOne);
                 output.appendChild(uploader);
+                output.appendChild(betweenTwo);
+                output.appendChild(mapper);
                 return output;
             };
             LevelEditorGenerator.prototype.createUploaderDiv = function () {
                 var uploader = document.createElement("div"), input = document.createElement("input");
                 uploader.className = "select-option select-option-large options-button-option";
-                uploader.textContent = "Click to upload and continue your editor files!";
+                uploader.textContent = "Continue an editor file!";
                 uploader.setAttribute("textOld", uploader.textContent);
                 input.type = "file";
                 input.className = "select-upload-input";
@@ -892,6 +891,13 @@ var UserWrappr;
                 uploader.onclick = input.click.bind(input);
                 uploader.appendChild(input);
                 return uploader;
+            };
+            LevelEditorGenerator.prototype.createMapSelectorDiv = function (mapSchema) {
+                var container = document.createElement("div"), maps = this.UserWrapper.getGenerators()["MapsGrid"].generate(mapSchema);
+                container.className = "select-option select-option-large options-button-option";
+                container.innerHTML = "Edit a<br />built-in map";
+                container.appendChild(maps);
+                return container;
             };
             LevelEditorGenerator.prototype.handleFileDragEnter = function (uploader, event) {
                 if (event.dataTransfer) {
