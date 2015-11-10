@@ -635,6 +635,7 @@ var UserWrappr;
                 var key = child.getAttribute("localStorageKey");
                 if (key) {
                     this.GameStarter.ItemsHolder.setItem(key, value);
+                    this.GameStarter.ItemsHolder.saveItem(key);
                 }
             };
             return AbstractOptionsGenerator;
