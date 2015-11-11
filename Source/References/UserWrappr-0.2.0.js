@@ -893,10 +893,36 @@ var UserWrappr;
                 return uploader;
             };
             LevelEditorGenerator.prototype.createMapSelectorDiv = function (mapSchema) {
-                var container = document.createElement("div"), maps = this.UserWrapper.getGenerators()["MapsGrid"].generate(mapSchema);
-                container.className = "select-option select-option-large options-button-option";
-                container.innerHTML = "Edit a<br />built-in map";
-                container.appendChild(maps);
+                var container = document.createElement("div"), toggler = document.createElement("div"), mapsOut = document.createElement("div"), mapsIn = this.UserWrapper.getGenerators()["MapsGrid"].generate(mapSchema), expanded = true;
+                container.className = "select-options-group select-options-maps-selector";
+                toggler.className = "select-option select-option-large options-button-option";
+                toggler.onclick = function (event) {
+                    expanded = !expanded;
+                    if (expanded) {
+                        toggler.textContent = "(cancel)";
+                        mapsOut.style.position = "";
+                        mapsIn.style.height = "";
+                    }
+                    else {
+                        toggler.innerHTML = "Edit a <br />built-in map!";
+                        mapsOut.style.position = "absolute";
+                        mapsIn.style.height = "0";
+                    }
+                    if (!container.parentElement) {
+                        return;
+                    }
+                    [].slice.call(container.parentElement.children).forEach(function (element) {
+                        if (element !== container) {
+                            element.style.display = (expanded ? "none" : "block");
+                            console.log(element.style.display, element);
+                        }
+                    });
+                };
+                toggler.onclick(null);
+                mapsOut.style.width = "100%";
+                mapsOut.appendChild(mapsIn);
+                container.appendChild(toggler);
+                container.appendChild(mapsOut);
                 return container;
             };
             LevelEditorGenerator.prototype.handleFileDragEnter = function (uploader, event) {

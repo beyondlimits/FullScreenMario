@@ -353,7 +353,7 @@ module UserWrappr {
             || function (): void {
                 console.warn("Not able to request full screen...");
             }
-            ).bind(this.documentElement);
+        ).bind(this.documentElement);
 
         /**
          * A browser-dependent method for request to exit full screen mode.
@@ -366,7 +366,7 @@ module UserWrappr {
             || function (): void {
                 console.warn("Not able to cancel full screen...");
             }
-            ).bind(document);
+        ).bind(document);
 
         /**
          * @param {IUserWrapprSettings} settings
@@ -628,7 +628,7 @@ module UserWrappr {
                 "To focus on a group, enter `"
                 + this.globalName
                 + ".UserWrapper.displayHelpOption(\"<group-name>\");`"
-                );
+            );
 
             Object.keys(this.helpSettings.options).forEach(this.displayHelpGroupSummary.bind(this));
 
@@ -636,7 +636,7 @@ module UserWrappr {
                 "\nTo focus on a group, enter `"
                 + this.globalName
                 + ".UserWrapper.displayHelpOption(\"<group-name>\");`"
-                );
+            );
         }
 
         /**
@@ -690,7 +690,7 @@ module UserWrappr {
                         maxExampleLength = Math.max(
                             maxExampleLength,
                             this.filterHelpText("    " + example.code).length
-                            );
+                        );
                     }
 
                     for (j = 0; j < action.examples.length; j += 1) {
@@ -699,9 +699,9 @@ module UserWrappr {
                             this.padTextRight(
                                 this.filterHelpText("    " + example.code),
                                 maxExampleLength
-                                )
+                            )
                             + "  // " + example.comment
-                            );
+                        );
                     }
                 }
 
@@ -1463,12 +1463,47 @@ module UserWrappr {
 
             protected createMapSelectorDiv(mapSchema: IOptionsMapGridSchema): HTMLDivElement {
                 var container: HTMLDivElement = document.createElement("div"),
-                    maps: HTMLDivElement = this.UserWrapper.getGenerators()["MapsGrid"].generate(mapSchema);
+                    toggler: HTMLDivElement = document.createElement("div"),
+                    mapsOut: HTMLDivElement = document.createElement("div"),
+                    mapsIn: HTMLDivElement = this.UserWrapper.getGenerators()["MapsGrid"].generate(mapSchema),
+                    expanded: boolean = true;
 
-                container.className = "select-option select-option-large options-button-option";
-                container.innerHTML = "Edit a<br />built-in map";
+                container.className = "select-options-group select-options-maps-selector";
 
-                container.appendChild(maps);
+                toggler.className = "select-option select-option-large options-button-option";
+
+                toggler.onclick = function (event?: Event): void {
+                    expanded = !expanded;
+
+                    if (expanded) {
+                        toggler.textContent = "(cancel)";
+                        mapsOut.style.position = "";
+                        mapsIn.style.height = "";
+                    } else {
+                        toggler.innerHTML = "Edit a <br />built-in map!";
+                        mapsOut.style.position = "absolute";
+                        mapsIn.style.height = "0";
+                    }
+
+                    if (!container.parentElement) {
+                        return;
+                    }
+
+                    [].slice.call(container.parentElement.children).forEach(function (element: HTMLElement): void {
+                        if (element !== container) {
+                            element.style.display = (expanded ? "none" : "block");
+                            console.log(element.style.display, element);
+                        }
+                    });
+                };
+
+                toggler.onclick(null);
+
+                mapsOut.style.width = "100%";
+                mapsOut.appendChild(mapsIn);
+
+                container.appendChild(toggler);
+                container.appendChild(mapsOut);
 
                 return container;
             }
