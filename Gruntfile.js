@@ -20,8 +20,7 @@ module.exports = function (grunt) {
         },
         "typescript": {
             "base": {
-                "src": "<%= meta.paths.source %>/<%= pkg.name %>.ts",
-                "dest": "<%= meta.paths.source %>/<%= pkg.name %>.js"
+                "src": "<%= meta.paths.source %>/<%= pkg.name %>.ts"
             }
         },
         "clean": ["<%= meta.paths.dist %>"],
@@ -33,6 +32,9 @@ module.exports = function (grunt) {
                 }, {
                     "src": "<%= meta.paths.source %>/<%= pkg.name %>.ts",
                     "dest": "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>.ts"
+                }, {
+                    "src": "<%= meta.paths.source %>/<%= pkg.name %>.d.ts",
+                    "dest": "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>.d.ts"
                 }, {
                     "src": "<%= meta.paths.source %>/References/*.ts",
                     "dest": "<%= meta.paths.dist %>/",
