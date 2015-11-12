@@ -147,6 +147,7 @@ declare module UserWrappr {
 
         export interface IOptionsEditorSchema extends ISchema {
             maps: IOptionsMapGridSchema;
+            callback: (GameStarter: IGameStartr, ...args: any[]) => void;
         }
 
         export interface IOptionsMapGridSchema extends ISchema {
@@ -1415,7 +1416,7 @@ module UserWrappr {
                     betweenOne: HTMLDivElement = document.createElement("div"),
                     betweenTwo: HTMLDivElement = document.createElement("div"),
                     uploader: HTMLDivElement = this.createUploaderDiv(),
-                    mapper: HTMLDivElement = this.createMapSelectorDiv(schema.maps),
+                    mapper: HTMLDivElement = this.createMapSelectorDiv(schema),
                     scope: LevelEditorGenerator = this;
 
                 output.className = "select-options select-options-level-editor";
@@ -1461,11 +1462,16 @@ module UserWrappr {
                 return uploader;
             }
 
-            protected createMapSelectorDiv(mapSchema: IOptionsMapGridSchema): HTMLDivElement {
+            protected createMapSelectorDiv(schema: IOptionsEditorSchema): HTMLDivElement {
                 var container: HTMLDivElement = document.createElement("div"),
                     toggler: HTMLDivElement = document.createElement("div"),
                     mapsOut: HTMLDivElement = document.createElement("div"),
-                    mapsIn: HTMLDivElement = this.UserWrapper.getGenerators()["MapsGrid"].generate(mapSchema),
+                    mapsIn: HTMLDivElement = this.UserWrapper.getGenerators()["MapsGrid"].generate(
+                        this.GameStarter.proliferate(
+                            {
+                                "callback": schema.callback
+                            },
+                            schema.maps)),
                     expanded: boolean = true;
 
                 container.className = "select-options-group select-options-maps-selector";
@@ -1492,7 +1498,6 @@ module UserWrappr {
                     [].slice.call(container.parentElement.children).forEach(function (element: HTMLElement): void {
                         if (element !== container) {
                             element.style.display = (expanded ? "none" : "block");
-                            console.log(element.style.display, element);
                         }
                     });
                 };

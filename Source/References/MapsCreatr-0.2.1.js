@@ -76,6 +76,7 @@ var MapsCreatr;
             this.scope = settings.scope || this;
             this.entrances = settings.entrances;
             this.requireEntrance = settings.requireEntrance;
+            this.mapsRaw = {};
             this.maps = {};
             if (settings.maps) {
                 this.storeMaps(settings.maps);
@@ -126,13 +127,31 @@ var MapsCreatr;
             return this.requireEntrance;
         };
         /**
+         * @return {Object}   The Object storing raw maps, keyed by name.
+         */
+        MapsCreatr.prototype.getMapsRaw = function () {
+            return this.mapsRaw;
+        };
+        /**
          * @return {Object}   The Object storing maps, keyed by name.
          */
         MapsCreatr.prototype.getMaps = function () {
             return this.maps;
         };
         /**
-         * Simple getter for a map under the maps container. If the map has not been
+         * @param {Mixed} name   A key to find the map under. This will typically be
+         *                       a String.
+         * @return {Map}   The raw map keyed by the given name.
+         */
+        MapsCreatr.prototype.getMapRaw = function (name) {
+            var mapRaw = this.mapsRaw[name];
+            if (!mapRaw) {
+                throw new Error("No map found under: " + name);
+            }
+            return mapRaw;
+        };
+        /**
+         * Getter for a map under the maps container. If the map has not yet been
          * initialized (had its areas and locations set), that is done here as lazy
          * loading.
          *
@@ -187,6 +206,7 @@ var MapsCreatr;
                 throw new Error("Maps cannot be created with no name.");
             }
             var map = this.ObjectMaker.make("Map", mapRaw);
+            this.mapsRaw[name] = mapRaw;
             if (!map.areas) {
                 throw new Error("Maps cannot be used with no areas: " + name);
             }

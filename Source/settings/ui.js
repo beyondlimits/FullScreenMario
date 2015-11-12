@@ -331,7 +331,9 @@ FullScreenMario.FullScreenMario.settings.ui = {
                 "rangeX": [1, 4],
                 "rangeY": [1, 8],
                 "callback": function (GameStarter, schema, button, event) {
-                    console.log("Got em", arguments);
+                    GameStarter.LevelEditor.enable();
+                    GameStarter.LevelEditor.setCurrentJSON(
+                        JSON.stringify(GameStarter.MapsCreator.getMapRaw(button.textContent)));
                 }
             }
         }, {

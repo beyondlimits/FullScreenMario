@@ -293,7 +293,9 @@ declare module MapsCreatr {
         getMacros(): { [i: string]: IMapsCreatrMacro; };
         getScope(): any;
         getRequireEntrance(): boolean;
+        getMapsRaw(): any;
         getMaps(): any;
+        getMapRaw(name: string): IMapsCreatrMapRaw;
         getMap(name: string): IMapsCreatrMap;
         storeMaps(maps: { [i: string]: IMapsCreatrMapRaw }): void;
         storeMap(name: string, mapRaw: IMapsCreatrMapRaw): IMapsCreatrMap;
@@ -425,6 +427,13 @@ module MapsCreatr {
         private ObjectMaker: ObjectMakr.IObjectMakr;
 
         /**
+         * Raw map objects passed to this.createMap, keyed by name.
+         */
+        private mapsRaw: {
+            [i: string]: IMapsCreatrMapRaw;
+        };
+
+        /**
          * Map objects created by this.createMap, keyed by name.
          */
         private maps: {
@@ -504,6 +513,7 @@ module MapsCreatr {
             this.entrances = settings.entrances;
             this.requireEntrance = settings.requireEntrance;
 
+            this.mapsRaw = {};
             this.maps = {};
             if (settings.maps) {
                 this.storeMaps(settings.maps);
@@ -564,6 +574,13 @@ module MapsCreatr {
         }
 
         /**
+         * @return {Object}   The Object storing raw maps, keyed by name.
+         */
+        getMapsRaw(): any {
+            return this.mapsRaw;
+        }
+
+        /**
          * @return {Object}   The Object storing maps, keyed by name.
          */
         getMaps(): any {
@@ -571,7 +588,21 @@ module MapsCreatr {
         }
 
         /**
-         * Simple getter for a map under the maps container. If the map has not been
+         * @param {Mixed} name   A key to find the map under. This will typically be
+         *                       a String.
+         * @return {Map}   The raw map keyed by the given name.
+         */
+        getMapRaw(name?: string): IMapsCreatrMapRaw {
+            var mapRaw: IMapsCreatrMapRaw = this.mapsRaw[name];
+            if (!mapRaw) {
+                throw new Error("No map found under: " + name);
+            }
+
+            return mapRaw;
+        }
+
+        /**
+         * Getter for a map under the maps container. If the map has not yet been
          * initialized (had its areas and locations set), that is done here as lazy
          * loading.
          * 
@@ -634,6 +665,8 @@ module MapsCreatr {
             }
 
             var map: IMapsCreatrMap = this.ObjectMaker.make("Map", mapRaw);
+
+            this.mapsRaw[name] = mapRaw;
 
             if (!map.areas) {
                 throw new Error("Maps cannot be used with no areas: " + name);

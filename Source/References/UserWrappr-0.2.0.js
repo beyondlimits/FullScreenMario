@@ -860,7 +860,7 @@ var UserWrappr;
                 _super.apply(this, arguments);
             }
             LevelEditorGenerator.prototype.generate = function (schema) {
-                var output = document.createElement("div"), starter = document.createElement("div"), betweenOne = document.createElement("div"), betweenTwo = document.createElement("div"), uploader = this.createUploaderDiv(), mapper = this.createMapSelectorDiv(schema.maps), scope = this;
+                var output = document.createElement("div"), starter = document.createElement("div"), betweenOne = document.createElement("div"), betweenTwo = document.createElement("div"), uploader = this.createUploaderDiv(), mapper = this.createMapSelectorDiv(schema), scope = this;
                 output.className = "select-options select-options-level-editor";
                 starter.className = "select-option select-option-large options-button-option";
                 starter.innerHTML = "Start the <br /> Level Editor!";
@@ -892,8 +892,10 @@ var UserWrappr;
                 uploader.appendChild(input);
                 return uploader;
             };
-            LevelEditorGenerator.prototype.createMapSelectorDiv = function (mapSchema) {
-                var container = document.createElement("div"), toggler = document.createElement("div"), mapsOut = document.createElement("div"), mapsIn = this.UserWrapper.getGenerators()["MapsGrid"].generate(mapSchema), expanded = true;
+            LevelEditorGenerator.prototype.createMapSelectorDiv = function (schema) {
+                var container = document.createElement("div"), toggler = document.createElement("div"), mapsOut = document.createElement("div"), mapsIn = this.UserWrapper.getGenerators()["MapsGrid"].generate(this.GameStarter.proliferate({
+                    "callback": schema.callback
+                }, schema.maps)), expanded = true;
                 container.className = "select-options-group select-options-maps-selector";
                 toggler.className = "select-option select-option-large options-button-option";
                 toggler.onclick = function (event) {
@@ -914,7 +916,6 @@ var UserWrappr;
                     [].slice.call(container.parentElement.children).forEach(function (element) {
                         if (element !== container) {
                             element.style.display = (expanded ? "none" : "block");
-                            console.log(element.style.display, element);
                         }
                     });
                 };
