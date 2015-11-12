@@ -326,7 +326,16 @@ FullScreenMario.FullScreenMario.settings.ui = {
             }
         }, {
             "title": "Editor",
-            "generator": "LevelEditor"
+            "generator": "LevelEditor",
+            "maps": {
+                "rangeX": [1, 4],
+                "rangeY": [1, 8],
+                "callback": function (GameStarter, schema, button, event) {
+                    GameStarter.LevelEditor.enable();
+                    GameStarter.LevelEditor.setCurrentJSON(
+                        JSON.stringify(GameStarter.MapsCreator.getMapRaw(button.textContent)));
+                }
+            }
         }, {
             "title": "Maps",
             "generator": "MapsGrid",

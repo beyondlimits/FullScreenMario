@@ -154,7 +154,7 @@ section#game {
     }
 
     #controls .select-option-title {
-        padding: 11px;
+        padding: 7px;
     }
 
     #controls .select-option {
@@ -255,6 +255,7 @@ section#game {
     #controls table {
         width: 100%;
         border-spacing: 1px;
+        padding: 0 2px;
     }
 
         #controls table input {
@@ -292,6 +293,13 @@ section#game {
 
     #controls .select-upload-input {
         display: none;
+    }
+
+
+    /* Controls - built-in maps */
+
+    #controls .select-options-editor-maps-holder {
+        width: 100%;
     }
 
 
