@@ -1444,7 +1444,7 @@ module UserWrappr {
                     input: HTMLInputElement = document.createElement("input");
 
                 uploader.className = "select-option select-option-large options-button-option";
-                uploader.textContent = "Continue an editor file!";
+                uploader.innerHTML = "Continue an<br />editor file!";
                 uploader.setAttribute("textOld", uploader.textContent);
 
                 input.type = "file";
@@ -1463,20 +1463,28 @@ module UserWrappr {
             }
 
             protected createMapSelectorDiv(schema: IOptionsEditorSchema): HTMLDivElement {
-                var container: HTMLDivElement = document.createElement("div"),
-                    toggler: HTMLDivElement = document.createElement("div"),
-                    mapsOut: HTMLDivElement = document.createElement("div"),
+                var expanded: boolean = true,
+                    container: HTMLDivElement = <HTMLDivElement>this.GameStarter.createElement(
+                        "div",
+                        {
+                            "className": "select-options-group select-options-editor-maps-selector"
+                        }),
+                    toggler: HTMLDivElement = <HTMLDivElement>this.GameStarter.createElement(
+                        "div",
+                        {
+                            "className": "select-option select-option-large options-button-option"
+                        }),
+                    mapsOut: HTMLDivElement = <HTMLDivElement>this.GameStarter.createElement(
+                        "div",
+                        {
+                            "className": "select-options-holder select-options-editor-maps-holder"
+                        }),
                     mapsIn: HTMLDivElement = this.UserWrapper.getGenerators()["MapsGrid"].generate(
                         this.GameStarter.proliferate(
                             {
                                 "callback": schema.callback
                             },
-                            schema.maps)),
-                    expanded: boolean = true;
-
-                container.className = "select-options-group select-options-maps-selector";
-
-                toggler.className = "select-option select-option-large options-button-option";
+                            schema.maps));
 
                 toggler.onclick = function (event?: Event): void {
                     expanded = !expanded;
@@ -1495,18 +1503,17 @@ module UserWrappr {
                         return;
                     }
 
-                    [].slice.call(container.parentElement.children).forEach(function (element: HTMLElement): void {
-                        if (element !== container) {
-                            element.style.display = (expanded ? "none" : "block");
-                        }
-                    });
+                    [].slice.call(container.parentElement.children)
+                        .forEach(function (element: HTMLElement): void {
+                            if (element !== container) {
+                                element.style.display = (expanded ? "none" : "block");
+                            }
+                        });
                 };
 
                 toggler.onclick(null);
 
-                mapsOut.style.width = "100%";
                 mapsOut.appendChild(mapsIn);
-
                 container.appendChild(toggler);
                 container.appendChild(mapsOut);
 

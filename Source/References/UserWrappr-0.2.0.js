@@ -879,7 +879,7 @@ var UserWrappr;
             LevelEditorGenerator.prototype.createUploaderDiv = function () {
                 var uploader = document.createElement("div"), input = document.createElement("input");
                 uploader.className = "select-option select-option-large options-button-option";
-                uploader.textContent = "Continue an editor file!";
+                uploader.innerHTML = "Continue an<br />editor file!";
                 uploader.setAttribute("textOld", uploader.textContent);
                 input.type = "file";
                 input.className = "select-upload-input";
@@ -893,11 +893,15 @@ var UserWrappr;
                 return uploader;
             };
             LevelEditorGenerator.prototype.createMapSelectorDiv = function (schema) {
-                var container = document.createElement("div"), toggler = document.createElement("div"), mapsOut = document.createElement("div"), mapsIn = this.UserWrapper.getGenerators()["MapsGrid"].generate(this.GameStarter.proliferate({
+                var expanded = true, container = this.GameStarter.createElement("div", {
+                    "className": "select-options-group select-options-editor-maps-selector"
+                }), toggler = this.GameStarter.createElement("div", {
+                    "className": "select-option select-option-large options-button-option"
+                }), mapsOut = this.GameStarter.createElement("div", {
+                    "className": "select-options-holder select-options-editor-maps-holder"
+                }), mapsIn = this.UserWrapper.getGenerators()["MapsGrid"].generate(this.GameStarter.proliferate({
                     "callback": schema.callback
-                }, schema.maps)), expanded = true;
-                container.className = "select-options-group select-options-maps-selector";
-                toggler.className = "select-option select-option-large options-button-option";
+                }, schema.maps));
                 toggler.onclick = function (event) {
                     expanded = !expanded;
                     if (expanded) {
@@ -913,14 +917,14 @@ var UserWrappr;
                     if (!container.parentElement) {
                         return;
                     }
-                    [].slice.call(container.parentElement.children).forEach(function (element) {
+                    [].slice.call(container.parentElement.children)
+                        .forEach(function (element) {
                         if (element !== container) {
                             element.style.display = (expanded ? "none" : "block");
                         }
                     });
                 };
                 toggler.onclick(null);
-                mapsOut.style.width = "100%";
                 mapsOut.appendChild(mapsIn);
                 container.appendChild(toggler);
                 container.appendChild(mapsOut);
