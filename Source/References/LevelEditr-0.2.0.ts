@@ -502,14 +502,13 @@ module LevelEditr {
 
             this.clearAllThings();
             this.resetDisplay();
-
             this.GameStarter.InputWriter.setCanTrigger(false);
 
             this.setCurrentMode("Build");
 
             this.setTextareaValue(this.stringifySmart(this.mapDefault), true);
             this.resetDisplayMap();
-            this.disableThing(this.GameStarter.player);
+            this.disableAllThings();
 
             this.GameStarter.ItemsHolder.setItem("lives", Infinity);
 
@@ -531,6 +530,7 @@ module LevelEditr {
 
             this.GameStarter.container.removeChild(this.display.container);
             this.display = undefined;
+
             this.GameStarter.InputWriter.setCanTrigger(true);
             this.GameStarter.setMap(this.oldInformation.map);
             this.GameStarter.ItemsHolder.setItem(
@@ -669,7 +669,8 @@ module LevelEditr {
             ];
 
             this.disableThing(this.currentPreThings[0].thing);
-            this.GameStarter.addThing(this.currentPreThings[0].thing, x, y);
+
+            this.addThingAndDisableEvents(this.currentPreThings[0].thing, x, y);
         }
 
         /**
@@ -686,7 +687,7 @@ module LevelEditr {
                 currentThing.thing.outerok = true;
 
                 this.disableThing(currentThing.thing);
-                this.GameStarter.addThing(currentThing.thing, currentThing.xloc || 0, currentThing.yloc || 0);
+                this.addThingAndDisableEvents(currentThing.thing, currentThing.xloc || 0, currentThing.yloc || 0);
             }
         }
 
@@ -859,10 +860,10 @@ module LevelEditr {
                     this.getNormalizedThingArguments(args)));
 
             if (this.currentMode === "Build") {
-                this.disableThing(thing, .7);
+                this.disableThing(thing);
             }
 
-            this.GameStarter.addThing(
+            this.addThingAndDisableEvents(
                 thing,
                 this.roundTo(x - this.GameStarter.container.offsetLeft, this.blocksize),
                 this.roundTo(y - this.GameStarter.container.offsetTop, this.blocksize));
@@ -2248,6 +2249,7 @@ module LevelEditr {
 
             this.display.stringer.messenger.textContent = "";
             this.setTextareaValue(this.display.stringer.textarea.value);
+
             this.GameStarter.setMap(mapName, this.getCurrentLocation());
 
             if (doDisableThings) {
@@ -2323,9 +2325,6 @@ module LevelEditr {
          */
         private disableThing(thing: any, opacity: number = 1): void {
             thing.movement = undefined;
-            thing.onThingMake = undefined;
-            thing.onThingAdd = undefined;
-            thing.onThingAdded = undefined;
             thing.nofall = true;
             thing.nocollide = true;
             thing.xvel = 0;
@@ -2349,8 +2348,15 @@ module LevelEditr {
                 }
             }
 
-            // Helps prevent triggers such as Bowser jumping
-            this.GameStarter.player.dead = true;
+            this.GameStarter.TimeHandler.cancelAllEvents();
+        }
+        
+        /**
+         *
+         */
+        private addThingAndDisableEvents(thing: IThing, x?: number, y?: number): void {
+            this.GameStarter.addThing(thing, x, y);
+            this.GameStarter.TimeHandler.cancelAllEvents();
         }
 
         /**

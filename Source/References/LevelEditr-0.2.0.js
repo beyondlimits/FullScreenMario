@@ -186,7 +186,7 @@ var LevelEditr;
             this.setCurrentMode("Build");
             this.setTextareaValue(this.stringifySmart(this.mapDefault), true);
             this.resetDisplayMap();
-            this.disableThing(this.GameStarter.player);
+            this.disableAllThings();
             this.GameStarter.ItemsHolder.setItem("lives", Infinity);
             if (!this.pageStylesAdded) {
                 this.GameStarter.addPageStyles(this.createPageStyles());
@@ -318,7 +318,7 @@ var LevelEditr;
                 }
             ];
             this.disableThing(this.currentPreThings[0].thing);
-            this.GameStarter.addThing(this.currentPreThings[0].thing, x, y);
+            this.addThingAndDisableEvents(this.currentPreThings[0].thing, x, y);
         };
         /**
          *
@@ -330,7 +330,7 @@ var LevelEditr;
                 currentThing = this.currentPreThings[i];
                 currentThing.thing.outerok = true;
                 this.disableThing(currentThing.thing);
-                this.GameStarter.addThing(currentThing.thing, currentThing.xloc || 0, currentThing.yloc || 0);
+                this.addThingAndDisableEvents(currentThing.thing, currentThing.xloc || 0, currentThing.yloc || 0);
             }
         };
         /**
@@ -446,9 +446,9 @@ var LevelEditr;
                 "movement": undefined
             }, this.getNormalizedThingArguments(args)));
             if (this.currentMode === "Build") {
-                this.disableThing(thing, .7);
+                this.disableThing(thing);
             }
-            this.GameStarter.addThing(thing, this.roundTo(x - this.GameStarter.container.offsetLeft, this.blocksize), this.roundTo(y - this.GameStarter.container.offsetTop, this.blocksize));
+            this.addThingAndDisableEvents(thing, this.roundTo(x - this.GameStarter.container.offsetLeft, this.blocksize), this.roundTo(y - this.GameStarter.container.offsetTop, this.blocksize));
         };
         /**
          *
@@ -1655,9 +1655,6 @@ var LevelEditr;
         LevelEditr.prototype.disableThing = function (thing, opacity) {
             if (opacity === void 0) { opacity = 1; }
             thing.movement = undefined;
-            thing.onThingMake = undefined;
-            thing.onThingAdd = undefined;
-            thing.onThingAdded = undefined;
             thing.nofall = true;
             thing.nocollide = true;
             thing.xvel = 0;
@@ -1676,8 +1673,14 @@ var LevelEditr;
                     });
                 }
             }
-            // Helps prevent triggers such as Bowser jumping
-            this.GameStarter.player.dead = true;
+            this.GameStarter.TimeHandler.cancelAllEvents();
+        };
+        /**
+         *
+         */
+        LevelEditr.prototype.addThingAndDisableEvents = function (thing, x, y) {
+            this.GameStarter.addThing(thing, x, y);
+            this.GameStarter.TimeHandler.cancelAllEvents();
         };
         /**
          *
