@@ -14,6 +14,7 @@
 
 declare module LevelEditr {
     export interface IGameStartr {
+        settings: GameStartr.IGameStartrStoredSettings
         GroupHolder: GroupHoldr.IGroupHoldr;
         InputWriter: InputWritr.IInputWritr;
         MapsCreator: MapsCreatr.IMapsCreatr;
@@ -510,6 +511,8 @@ module LevelEditr {
             this.resetDisplayMap();
             this.disableThing(this.GameStarter.player);
 
+            this.GameStarter.ItemsHolder.setItem("lives", Infinity);
+
             if (!this.pageStylesAdded) {
                 this.GameStarter.addPageStyles(this.createPageStyles());
                 this.pageStylesAdded = true;
@@ -530,6 +533,9 @@ module LevelEditr {
             this.display = undefined;
             this.GameStarter.InputWriter.setCanTrigger(true);
             this.GameStarter.setMap(this.oldInformation.map);
+            this.GameStarter.ItemsHolder.setItem(
+                "lives",
+                (<any>this.GameStarter.settings.statistics.values).lives.valueDefault);
 
             this.enabled = false;
         }
@@ -640,6 +646,8 @@ module LevelEditr {
          * 
          */
         private setCurrentThing(title: string, args: any, x: number = 0, y: number = 0): void {
+            this.clearCurrentThings();
+
             this.currentTitle = title;
             this.currentArgs = args;
             this.currentPreThings = [
@@ -664,9 +672,14 @@ module LevelEditr {
             this.GameStarter.addThing(this.currentPreThings[0].thing, x, y);
         }
 
+        /**
+         *
+         */
         private setCurrentMacroThings(): void {
             var currentThing: IPreThing,
                 i: number;
+
+            this.clearCurrentThings();
 
             for (i = 0; i < this.currentPreThings.length; i += 1) {
                 currentThing = this.currentPreThings[i];
@@ -674,6 +687,19 @@ module LevelEditr {
 
                 this.disableThing(currentThing.thing);
                 this.GameStarter.addThing(currentThing.thing, currentThing.xloc || 0, currentThing.yloc || 0);
+            }
+        }
+
+        /**
+         *
+         */
+        private clearCurrentThings(): void {
+            if (!this.currentPreThings) {
+                return;
+            }
+
+            for (var i = 0; i < this.currentPreThings.length; i += 1) {
+                this.GameStarter.killNormal(this.currentPreThings[i].thing);
             }
         }
 
@@ -2223,6 +2249,10 @@ module LevelEditr {
             this.display.stringer.messenger.textContent = "";
             this.setTextareaValue(this.display.stringer.textarea.value);
             this.GameStarter.setMap(mapName, this.getCurrentLocation());
+
+            if (doDisableThings) {
+                this.disableAllThings();
+            }
         }
 
         /**
@@ -2253,9 +2283,8 @@ module LevelEditr {
         /**
          * 
          * 
-         * @remarks Settings .random = true informs the area that the player
+         * @remarks Settings .editor=true informs the area that the player
          *          should respawn upon death without resetting gameplay.
-         * @remarks Eventually, .random should probably be renamed.
          */
         private parseSmart(text: string): any {
             var map: any = JSON.parse(text, this.jsonReplacerSmart),
@@ -2267,7 +2296,7 @@ module LevelEditr {
                     return;
                 }
 
-                areas[i].random = true;
+                areas[i].editor = true;
             }
 
             return map;
@@ -2322,8 +2351,6 @@ module LevelEditr {
 
             // Helps prevent triggers such as Bowser jumping
             this.GameStarter.player.dead = true;
-
-            this.GameStarter.ItemsHolder.setItem("time", Infinity);
         }
 
         /**

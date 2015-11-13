@@ -259,6 +259,10 @@ FullScreenMario.FullScreenMario.settings.objects = {
                 "random": {
                     "onPlayerDeath": FullScreenMario.FullScreenMario.prototype.mapEntranceRespawn,
                     "onPlayerDeathTimeout": 140
+                },
+                "editor": {
+                    "onPlayerDeath": FullScreenMario.FullScreenMario.prototype.mapEntranceRespawn,
+                    "onPlayerDeathTimeout": 140
                 }
             }
         },

@@ -187,6 +187,7 @@ var LevelEditr;
             this.setTextareaValue(this.stringifySmart(this.mapDefault), true);
             this.resetDisplayMap();
             this.disableThing(this.GameStarter.player);
+            this.GameStarter.ItemsHolder.setItem("lives", Infinity);
             if (!this.pageStylesAdded) {
                 this.GameStarter.addPageStyles(this.createPageStyles());
                 this.pageStylesAdded = true;
@@ -204,6 +205,7 @@ var LevelEditr;
             this.display = undefined;
             this.GameStarter.InputWriter.setCanTrigger(true);
             this.GameStarter.setMap(this.oldInformation.map);
+            this.GameStarter.ItemsHolder.setItem("lives", this.GameStarter.settings.statistics.values.lives.valueDefault);
             this.enabled = false;
         };
         /**
@@ -300,6 +302,7 @@ var LevelEditr;
         LevelEditr.prototype.setCurrentThing = function (title, args, x, y) {
             if (x === void 0) { x = 0; }
             if (y === void 0) { y = 0; }
+            this.clearCurrentThings();
             this.currentTitle = title;
             this.currentArgs = args;
             this.currentPreThings = [
@@ -317,13 +320,28 @@ var LevelEditr;
             this.disableThing(this.currentPreThings[0].thing);
             this.GameStarter.addThing(this.currentPreThings[0].thing, x, y);
         };
+        /**
+         *
+         */
         LevelEditr.prototype.setCurrentMacroThings = function () {
             var currentThing, i;
+            this.clearCurrentThings();
             for (i = 0; i < this.currentPreThings.length; i += 1) {
                 currentThing = this.currentPreThings[i];
                 currentThing.thing.outerok = true;
                 this.disableThing(currentThing.thing);
                 this.GameStarter.addThing(currentThing.thing, currentThing.xloc || 0, currentThing.yloc || 0);
+            }
+        };
+        /**
+         *
+         */
+        LevelEditr.prototype.clearCurrentThings = function () {
+            if (!this.currentPreThings) {
+                return;
+            }
+            for (var i = 0; i < this.currentPreThings.length; i += 1) {
+                this.GameStarter.killNormal(this.currentPreThings[i].thing);
             }
         };
         /**
@@ -1573,6 +1591,9 @@ var LevelEditr;
             this.display.stringer.messenger.textContent = "";
             this.setTextareaValue(this.display.stringer.textarea.value);
             this.GameStarter.setMap(mapName, this.getCurrentLocation());
+            if (doDisableThings) {
+                this.disableAllThings();
+            }
         };
         /**
          *
@@ -1598,9 +1619,8 @@ var LevelEditr;
         /**
          *
          *
-         * @remarks Settings .random = true informs the area that the player
+         * @remarks Settings .editor=true informs the area that the player
          *          should respawn upon death without resetting gameplay.
-         * @remarks Eventually, .random should probably be renamed.
          */
         LevelEditr.prototype.parseSmart = function (text) {
             var map = JSON.parse(text, this.jsonReplacerSmart), areas = map.areas, i;
@@ -1608,7 +1628,7 @@ var LevelEditr;
                 if (!areas.hasOwnProperty(i)) {
                     return;
                 }
-                areas[i].random = true;
+                areas[i].editor = true;
             }
             return map;
         };
@@ -1658,7 +1678,6 @@ var LevelEditr;
             }
             // Helps prevent triggers such as Bowser jumping
             this.GameStarter.player.dead = true;
-            this.GameStarter.ItemsHolder.setItem("time", Infinity);
         };
         /**
          *
