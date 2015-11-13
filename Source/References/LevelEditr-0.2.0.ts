@@ -166,6 +166,7 @@ declare module LevelEditr {
     }
 
     export interface ILevelEditr {
+        getEnabled(): boolean;
         enable(): void;
         disable(): void;
         minimize(): void;
@@ -189,6 +190,11 @@ module LevelEditr {
      * sub-class.
      */
     export class LevelEditr implements ILevelEditr {
+        /**
+         * Whether the editor is currently visible and active.
+         */
+        private enabled: boolean;
+
         /**
          * The container game object to store Thing and map information
          */
@@ -307,6 +313,8 @@ module LevelEditr {
          * @param {ILevelEditrSettings} settings
          */
         constructor(settings: ILevelEditrSettings) {
+            this.enabled = false;
+
             this.GameStarter = settings.GameStarter;
             this.prethings = settings.prethings;
             this.thingGroups = settings.thingGroups;
@@ -330,6 +338,10 @@ module LevelEditr {
 
         /* Simple gets
         */
+
+        getEnabled(): boolean {
+            return this.enabled;
+        }
 
         /**
          * 
@@ -478,6 +490,11 @@ module LevelEditr {
          * 
          */
         enable(): void {
+            if (this.enabled) {
+                return;
+            }
+            this.enabled = true;
+
             this.oldInformation = {
                 "map": this.GameStarter.MapsHandler.getMapName()
             };
@@ -505,7 +522,7 @@ module LevelEditr {
          * 
          */
         disable(): void {
-            if (!this.display) {
+            if (!this.display || !this.enabled) {
                 return;
             }
 
@@ -513,6 +530,8 @@ module LevelEditr {
             this.display = undefined;
             this.GameStarter.InputWriter.setCanTrigger(true);
             this.GameStarter.setMap(this.oldInformation.map);
+
+            this.enabled = false;
         }
 
         /**
@@ -637,7 +656,7 @@ module LevelEditr {
                                 "outerok": true
                             },
                             this.getNormalizedThingArguments(args))
-                        )
+                    )
                 }
             ];
 
@@ -728,13 +747,13 @@ module LevelEditr {
                     prething.thing,
                     this.roundTo(x - this.GameStarter.container.offsetLeft, this.blocksize)
                     + (prething.left || 0) * this.GameStarter.unitsize
-                    );
+                );
 
                 this.GameStarter.setTop(
                     prething.thing,
                     this.roundTo(y - this.GameStarter.container.offsetTop, this.blocksize)
                     - (prething.top || 0) * this.GameStarter.unitsize
-                    );
+                );
             }
         }
 
@@ -793,7 +812,7 @@ module LevelEditr {
                     y - (prething.top || 0) * this.GameStarter.unitsize,
                     prething.thing.title || prething.title,
                     prething.reference
-                    );
+                );
 
             }
         }
@@ -867,7 +886,7 @@ module LevelEditr {
                 this.createPrethingsHolder(this.currentPreThings),
                 this.getCurrentAreaObject(map),
                 map
-                );
+            );
 
             this.currentTitle = title;
             this.setCurrentMacroThings();
@@ -2204,10 +2223,6 @@ module LevelEditr {
             this.display.stringer.messenger.textContent = "";
             this.setTextareaValue(this.display.stringer.textarea.value);
             this.GameStarter.setMap(mapName, this.getCurrentLocation());
-
-            if (doDisableThings) {
-                this.disableAllThings();
-            }
         }
 
         /**
@@ -2237,9 +2252,25 @@ module LevelEditr {
 
         /**
          * 
+         * 
+         * @remarks Settings .random = true informs the area that the player
+         *          should respawn upon death without resetting gameplay.
+         * @remarks Eventually, .random should probably be renamed.
          */
         private parseSmart(text: string): any {
-            return JSON.parse(text, this.jsonReplacerSmart);
+            var map: any = JSON.parse(text, this.jsonReplacerSmart),
+                areas: any = map.areas,
+                i: any;
+
+            for (i in areas) {
+                if (!areas.hasOwnProperty(i)) {
+                    return;
+                }
+
+                areas[i].random = true;
+            }
+
+            return map;
         }
 
         /**
@@ -2261,7 +2292,7 @@ module LevelEditr {
         /**
          * 
          */
-        private disableThing(thing: any, opacity: number = .49): void {
+        private disableThing(thing: any, opacity: number = 1): void {
             thing.movement = undefined;
             thing.onThingMake = undefined;
             thing.onThingAdd = undefined;
@@ -2270,7 +2301,7 @@ module LevelEditr {
             thing.nocollide = true;
             thing.xvel = 0;
             thing.yvel = 0;
-            thing.opacity = typeof opacity;
+            thing.opacity = opacity;
         }
 
         /**

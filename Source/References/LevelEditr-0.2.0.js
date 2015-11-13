@@ -23,6 +23,7 @@ var LevelEditr;
          * @param {ILevelEditrSettings} settings
          */
         function LevelEditr(settings) {
+            this.enabled = false;
             this.GameStarter = settings.GameStarter;
             this.prethings = settings.prethings;
             this.thingGroups = settings.thingGroups;
@@ -43,6 +44,9 @@ var LevelEditr;
         }
         /* Simple gets
         */
+        LevelEditr.prototype.getEnabled = function () {
+            return this.enabled;
+        };
         /**
          *
          */
@@ -169,6 +173,10 @@ var LevelEditr;
          *
          */
         LevelEditr.prototype.enable = function () {
+            if (this.enabled) {
+                return;
+            }
+            this.enabled = true;
             this.oldInformation = {
                 "map": this.GameStarter.MapsHandler.getMapName()
             };
@@ -189,13 +197,14 @@ var LevelEditr;
          *
          */
         LevelEditr.prototype.disable = function () {
-            if (!this.display) {
+            if (!this.display || !this.enabled) {
                 return;
             }
             this.GameStarter.container.removeChild(this.display.container);
             this.display = undefined;
             this.GameStarter.InputWriter.setCanTrigger(true);
             this.GameStarter.setMap(this.oldInformation.map);
+            this.enabled = false;
         };
         /**
          *
@@ -1564,9 +1573,6 @@ var LevelEditr;
             this.display.stringer.messenger.textContent = "";
             this.setTextareaValue(this.display.stringer.textarea.value);
             this.GameStarter.setMap(mapName, this.getCurrentLocation());
-            if (doDisableThings) {
-                this.disableAllThings();
-            }
         };
         /**
          *
@@ -1591,9 +1597,20 @@ var LevelEditr;
         };
         /**
          *
+         *
+         * @remarks Settings .random = true informs the area that the player
+         *          should respawn upon death without resetting gameplay.
+         * @remarks Eventually, .random should probably be renamed.
          */
         LevelEditr.prototype.parseSmart = function (text) {
-            return JSON.parse(text, this.jsonReplacerSmart);
+            var map = JSON.parse(text, this.jsonReplacerSmart), areas = map.areas, i;
+            for (i in areas) {
+                if (!areas.hasOwnProperty(i)) {
+                    return;
+                }
+                areas[i].random = true;
+            }
+            return map;
         };
         /**
          *
@@ -1616,7 +1633,7 @@ var LevelEditr;
          *
          */
         LevelEditr.prototype.disableThing = function (thing, opacity) {
-            if (opacity === void 0) { opacity = .49; }
+            if (opacity === void 0) { opacity = 1; }
             thing.movement = undefined;
             thing.onThingMake = undefined;
             thing.onThingAdd = undefined;
@@ -1625,7 +1642,7 @@ var LevelEditr;
             thing.nocollide = true;
             thing.xvel = 0;
             thing.yvel = 0;
-            thing.opacity = typeof opacity;
+            thing.opacity = opacity;
         };
         /**
          *
