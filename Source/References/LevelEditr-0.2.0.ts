@@ -14,7 +14,7 @@
 
 declare module LevelEditr {
     export interface IGameStartr {
-        settings: GameStartr.IGameStartrStoredSettings
+        settings: any;
         GroupHolder: GroupHoldr.IGroupHoldr;
         InputWriter: InputWritr.IInputWritr;
         MapsCreator: MapsCreatr.IMapsCreatr;
@@ -658,17 +658,12 @@ module LevelEditr {
                         this.currentTitle,
                         this.GameStarter.proliferate(
                             {
-                                "onThingMake": undefined,
-                                "onThingAdd": undefined,
-                                "onThingAdded": undefined,
                                 "outerok": true
                             },
                             this.getNormalizedThingArguments(args))
                     )
                 }
             ];
-
-            this.disableThing(this.currentPreThings[0].thing);
 
             this.addThingAndDisableEvents(this.currentPreThings[0].thing, x, y);
         }
@@ -680,15 +675,16 @@ module LevelEditr {
             var currentThing: IPreThing,
                 i: number;
 
-            this.clearCurrentThings();
-
             for (i = 0; i < this.currentPreThings.length; i += 1) {
                 currentThing = this.currentPreThings[i];
                 currentThing.thing.outerok = true;
 
+                this.GameStarter.addThing(currentThing.thing, currentThing.xloc || 0, currentThing.yloc || 0);
                 this.disableThing(currentThing.thing);
-                this.addThingAndDisableEvents(currentThing.thing, currentThing.xloc || 0, currentThing.yloc || 0);
+
             }
+
+            this.GameStarter.TimeHandler.cancelAllEvents();
         }
 
         /**
@@ -702,6 +698,8 @@ module LevelEditr {
             for (var i = 0; i < this.currentPreThings.length; i += 1) {
                 this.GameStarter.killNormal(this.currentPreThings[i].thing);
             }
+
+            this.currentPreThings = [];
         }
 
         /**
@@ -903,7 +901,8 @@ module LevelEditr {
                 return;
             }
 
-            this.currentPreThings = [];
+            this.clearCurrentThings();
+
             this.GameStarter.MapsCreator.analyzePreMacro(
                 this.GameStarter.proliferate(
                     {
@@ -958,7 +957,7 @@ module LevelEditr {
 
                 switch ((valuer.getAttribute("data:type") || valuer.type).toLowerCase()) {
                     case "boolean":
-                        value = valuer.value === "true" ? true : false;
+                        value = valuer.value === "true";
                         break;
                     case "number":
                         value = (Number(valuer.value) || 0) * (Number(valuer.getAttribute("data:mod")) || 1);
@@ -2356,7 +2355,13 @@ module LevelEditr {
          */
         private addThingAndDisableEvents(thing: IThing, x?: number, y?: number): void {
             this.GameStarter.addThing(thing, x, y);
+            this.disableThing(thing);
             this.GameStarter.TimeHandler.cancelAllEvents();
+
+            if (thing.hidden || thing.opacity === 0) {
+                thing.hidden = false;
+                thing.opacity = .35;
+            }
         }
 
         /**
@@ -2427,7 +2432,22 @@ module LevelEditr {
                 select.value = attributes.value;
             }
 
+            this.applyElementAttributes(select, attributes);
+
             return select;
+        }
+
+        /**
+         *
+         */
+        private applyElementAttributes(element: HTMLElement, attributes: any): void {
+            var i: string;
+
+            for (i in attributes) {
+                if (attributes.hasOwnProperty(i) && i.indexOf("data:") === 0) {
+                    element.setAttribute(i, attributes[i]);
+                }
+            }
         }
 
         /**

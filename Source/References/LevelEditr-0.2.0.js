@@ -310,14 +310,10 @@ var LevelEditr;
                     "xloc": 0,
                     "yloc": 0,
                     "thing": this.GameStarter.ObjectMaker.make(this.currentTitle, this.GameStarter.proliferate({
-                        "onThingMake": undefined,
-                        "onThingAdd": undefined,
-                        "onThingAdded": undefined,
                         "outerok": true
                     }, this.getNormalizedThingArguments(args)))
                 }
             ];
-            this.disableThing(this.currentPreThings[0].thing);
             this.addThingAndDisableEvents(this.currentPreThings[0].thing, x, y);
         };
         /**
@@ -325,13 +321,13 @@ var LevelEditr;
          */
         LevelEditr.prototype.setCurrentMacroThings = function () {
             var currentThing, i;
-            this.clearCurrentThings();
             for (i = 0; i < this.currentPreThings.length; i += 1) {
                 currentThing = this.currentPreThings[i];
                 currentThing.thing.outerok = true;
+                this.GameStarter.addThing(currentThing.thing, currentThing.xloc || 0, currentThing.yloc || 0);
                 this.disableThing(currentThing.thing);
-                this.addThingAndDisableEvents(currentThing.thing, currentThing.xloc || 0, currentThing.yloc || 0);
             }
+            this.GameStarter.TimeHandler.cancelAllEvents();
         };
         /**
          *
@@ -343,6 +339,7 @@ var LevelEditr;
             for (var i = 0; i < this.currentPreThings.length; i += 1) {
                 this.GameStarter.killNormal(this.currentPreThings[i].thing);
             }
+            this.currentPreThings = [];
         };
         /**
          *
@@ -474,7 +471,7 @@ var LevelEditr;
             if (!map) {
                 return;
             }
-            this.currentPreThings = [];
+            this.clearCurrentThings();
             this.GameStarter.MapsCreator.analyzePreMacro(this.GameStarter.proliferate({
                 "macro": title
             }, this.generateCurrentArgs()), this.createPrethingsHolder(this.currentPreThings), this.getCurrentAreaObject(map), map);
@@ -506,7 +503,7 @@ var LevelEditr;
                 valuer = child.querySelector(".VisualOptionValue");
                 switch ((valuer.getAttribute("data:type") || valuer.type).toLowerCase()) {
                     case "boolean":
-                        value = valuer.value === "true" ? true : false;
+                        value = valuer.value === "true";
                         break;
                     case "number":
                         value = (Number(valuer.value) || 0) * (Number(valuer.getAttribute("data:mod")) || 1);
@@ -1680,7 +1677,12 @@ var LevelEditr;
          */
         LevelEditr.prototype.addThingAndDisableEvents = function (thing, x, y) {
             this.GameStarter.addThing(thing, x, y);
+            this.disableThing(thing);
             this.GameStarter.TimeHandler.cancelAllEvents();
+            if (thing.hidden || thing.opacity === 0) {
+                thing.hidden = false;
+                thing.opacity = .35;
+            }
         };
         /**
          *
@@ -1736,7 +1738,19 @@ var LevelEditr;
             if (typeof attributes.value !== "undefined") {
                 select.value = attributes.value;
             }
+            this.applyElementAttributes(select, attributes);
             return select;
+        };
+        /**
+         *
+         */
+        LevelEditr.prototype.applyElementAttributes = function (element, attributes) {
+            var i;
+            for (i in attributes) {
+                if (attributes.hasOwnProperty(i) && i.indexOf("data:") === 0) {
+                    element.setAttribute(i, attributes[i]);
+                }
+            }
         };
         /**
          *
