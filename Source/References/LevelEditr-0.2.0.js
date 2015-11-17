@@ -365,7 +365,7 @@ var LevelEditr;
                     return true;
                 }
                 if (direction < 0 && scope.GameStarter.MapScreener.left <= 0) {
-                    (scope.display.scrollers.left).style.opacity = "0";
+                    (scope.display.scrollers.left).style.opacity = ".14";
                     return;
                 }
                 scope.GameStarter.scrollWindow(direction);
@@ -452,12 +452,14 @@ var LevelEditr;
          */
         LevelEditr.prototype.onThingIconClick = function (title, event) {
             var x = event.x || event.clientX || 0, y = event.y || event.clientY || 0, target = event.target.nodeName === "DIV"
-                ? event.target : event.target.parentNode, scope = this;
+                ? event.target
+                : event.target.parentNode;
             this.cancelEvent(event);
             this.killCurrentPreThings();
-            setTimeout(function () {
-                scope.setCurrentThing(title, scope.getCurrentArgs(), x, y);
-            });
+            setTimeout((function () {
+                this.generateCurrentArgs();
+                this.setCurrentThing(title, this.getCurrentArgs(), x, y);
+            }).bind(this));
             this.setVisualOptions(target.getAttribute("name"), undefined, target.options);
         };
         /**
@@ -830,9 +832,7 @@ var LevelEditr;
                     "onclick": this.cancelEvent.bind(this),
                     "innerText": "<",
                     "style": {
-                        "paddingTop": this.GameStarter.MapScreener.height / 2 - 35 + "px",
-                        "fontSize": "70px",
-                        "opacity": 0
+                        "opacity": .14
                     }
                 }),
                 "right": this.GameStarter.createElement("div", {
@@ -841,11 +841,7 @@ var LevelEditr;
                     "onmouseup": this.onMouseUpScrolling.bind(this),
                     "onmouseout": this.onMouseUpScrolling.bind(this),
                     "onclick": this.cancelEvent.bind(this),
-                    "innerText": ">",
-                    "style": {
-                        "paddingTop": this.GameStarter.MapScreener.height / 2 - 35 + "px",
-                        "fontSize": "70px"
-                    }
+                    "innerText": ">"
                 }),
                 "container": this.GameStarter.createElement("div", {
                     "className": "EditorScrollers",
@@ -1179,11 +1175,11 @@ var LevelEditr;
                         var children = Object.keys(scope.prethings[key]).map(function (title) {
                             var thing = scope.GameStarter.ObjectMaker.make(title), container = scope.GameStarter.createElement("div", {
                                 "className": "EditorListOption",
-                                "name": title,
                                 "options": scope.prethings[key][title],
                                 "children": [thing.canvas],
                                 "onclick": clicker.bind(scope, title)
                             }), sizeMax = 70, widthThing = thing.width * scope.GameStarter.unitsize, heightThing = thing.height * scope.GameStarter.unitsize, widthDiff = (sizeMax - widthThing) / 2, heightDiff = (sizeMax - heightThing) / 2;
+                            container.setAttribute("name", title);
                             thing.canvas.style.top = heightDiff + "px";
                             thing.canvas.style.right = widthDiff + "px";
                             thing.canvas.style.bottom = heightDiff + "px";
@@ -1880,23 +1876,27 @@ var LevelEditr;
                 },
                 ".LevelEditor .EditorScrollers": {
                     "position": "absolute",
-                    "top": "0",
+                    "top": "50%",
                     "right": "50%",
-                    "bottom": "0",
+                    "bottom": "50%",
                     "left": "0",
                     "transition": "117ms all"
                 },
                 ".EditorScroller": {
                     "position": "absolute",
+                    "margin-top": "-35px",
                     "width": "70px",
                     "height": "101%",
                     "cursor": "pointer",
                     "box-sizing": "border-box",
+                    "background": "rgba(0, 0, 0, .21)",
+                    "font-size": "70px",
                     "text-align": "center",
-                    "transition": "280ms opacity"
+                    "transition": "280ms all"
                 },
                 ".EditorScrollerRight": {
-                    "right": "0"
+                    "right": "0",
+                    "padding-left": ".084em"
                 },
                 ".EditorScrollerLeft": {
                     "left": "0"

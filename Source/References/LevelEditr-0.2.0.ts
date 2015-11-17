@@ -733,7 +733,7 @@ module LevelEditr {
                     }
 
                     if (direction < 0 && scope.GameStarter.MapScreener.left <= 0) {
-                        (scope.display.scrollers.left).style.opacity = "0";
+                        (scope.display.scrollers.left).style.opacity = ".14";
                         return;
                     }
 
@@ -874,15 +874,17 @@ module LevelEditr {
             var x: number = event.x || event.clientX || 0,
                 y: number = event.y || event.clientY || 0,
                 target: IThingIcon = (<HTMLDivElement>event.target).nodeName === "DIV"
-                    ? <IThingIcon>event.target : <IThingIcon>(<HTMLElement>event.target).parentNode,
-                scope: LevelEditr = this;
+                    ? <IThingIcon>event.target
+                    : <IThingIcon>(<HTMLElement>event.target).parentNode;
 
             this.cancelEvent(event);
             this.killCurrentPreThings();
 
-            setTimeout(function (): void {
-                scope.setCurrentThing(title, scope.getCurrentArgs(), x, y);
-            });
+            setTimeout(
+                (function (): void {
+                    this.generateCurrentArgs();
+                    this.setCurrentThing(title, this.getCurrentArgs(), x, y);
+                }).bind(this));
 
             this.setVisualOptions(target.getAttribute("name"), undefined, target.options);
         }
@@ -1370,9 +1372,7 @@ module LevelEditr {
                     "onclick": this.cancelEvent.bind(this),
                     "innerText": "<",
                     "style": {
-                        "paddingTop": this.GameStarter.MapScreener.height / 2 - 35 + "px",
-                        "fontSize": "70px",
-                        "opacity": 0
+                        "opacity": .14
                     }
                 }),
                 "right": this.GameStarter.createElement("div", {
@@ -1381,11 +1381,7 @@ module LevelEditr {
                     "onmouseup": this.onMouseUpScrolling.bind(this),
                     "onmouseout": this.onMouseUpScrolling.bind(this),
                     "onclick": this.cancelEvent.bind(this),
-                    "innerText": ">",
-                    "style": {
-                        "paddingTop": this.GameStarter.MapScreener.height / 2 - 35 + "px",
-                        "fontSize": "70px"
-                    }
+                    "innerText": ">"
                 }),
                 "container": this.GameStarter.createElement("div", {
                     "className": "EditorScrollers",
@@ -1762,7 +1758,6 @@ module LevelEditr {
                                     var thing: IThing = scope.GameStarter.ObjectMaker.make(title),
                                         container: HTMLDivElement = <HTMLDivElement>scope.GameStarter.createElement("div", {
                                             "className": "EditorListOption",
-                                            "name": title,
                                             "options": scope.prethings[key][title],
                                             "children": [thing.canvas],
                                             "onclick": clicker.bind(scope, title)
@@ -1772,6 +1767,8 @@ module LevelEditr {
                                         heightThing: number = thing.height * scope.GameStarter.unitsize,
                                         widthDiff: number = (sizeMax - widthThing) / 2,
                                         heightDiff: number = (sizeMax - heightThing) / 2;
+
+                                    container.setAttribute("name", title);
 
                                     thing.canvas.style.top = heightDiff + "px";
                                     thing.canvas.style.right = widthDiff + "px";
@@ -2598,23 +2595,27 @@ module LevelEditr {
                 },
                 ".LevelEditor .EditorScrollers": {
                     "position": "absolute",
-                    "top": "0",
+                    "top": "50%",
                     "right": "50%",
-                    "bottom": "0",
+                    "bottom": "50%",
                     "left": "0",
                     "transition": "117ms all"
                 },
                 ".EditorScroller": {
                     "position": "absolute",
+                    "margin-top": "-35px",
                     "width": "70px",
                     "height": "101%",
                     "cursor": "pointer",
                     "box-sizing": "border-box",
+                    "background": "rgba(0, 0, 0, .21)",
+                    "font-size": "70px",
                     "text-align": "center",
-                    "transition": "280ms opacity"
+                    "transition": "280ms all"
                 },
                 ".EditorScrollerRight": {
-                    "right": "0"
+                    "right": "0",
+                    "padding-left": ".084em"
                 },
                 ".EditorScrollerLeft": {
                     "left": "0"

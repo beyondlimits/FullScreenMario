@@ -115,26 +115,40 @@ FullScreenMario.FullScreenMario.settings.editor = (function (things, macros) {
             "transport": "Location"
         },
         "Platform": {
-            "width": 2
+            "width": {
+                "type": "Number",
+                "mod": 2
+            }
         },
         "Stone": {
-            "width": 1,
+            "width": {
+                "type": "Number",
+                "mod": 8
+            },
             "height": {
                 "type": "Number",
-                "value": 1,
-                "Infinite": true
+                "Infinite": true,
+                "mod": 8
             }
         },
         "Cannon": {
-            "height": 1
+            "height": {
+                "type": "Number",
+                "mod": 8
+            }
         },
         "Springboard": undefined,
         "Floor": {
-            "width": 8,
+            "width": {
+                "type": "Number",
+                "value": 8,
+                "mod": 8
+            },
             "height": {
                 "type": "Number",
                 "value": Infinity,
-                "Infinite": true
+                "Infinite": true,
+                "mod": 8
             }
         },
         "CastleBlock": {
@@ -144,11 +158,20 @@ FullScreenMario.FullScreenMario.settings.editor = (function (things, macros) {
             }
         },
         "CastleBridge": {
-            "width": 8
+            "width": {
+                "type": "Number",
+                "mod": 8
+            }
         },
         "Coral": {
-            "width": 8,
-            "height": 8
+            "width": {
+                "type": "Number",
+                "mod": 8
+            },
+            "height": {
+                "type": "Number",
+                "mod": 8
+            }
         }
     },
     "Scenery": {
@@ -160,7 +183,10 @@ FullScreenMario.FullScreenMario.settings.editor = (function (things, macros) {
         "Cloud2": undefined,
         "Cloud3": undefined,
         "Fence": {
-            "width": 8
+            "width": {
+                "type": "Number",
+                "mod": 8
+            }
         },
         "HillSmall": undefined,
         "HillLarge": undefined,
