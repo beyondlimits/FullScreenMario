@@ -33,7 +33,7 @@ var LevelEditr;
             this.mapNameDefault = settings.mapNameDefault || "New Map";
             this.mapTimeDefault = settings.mapTimeDefault || Infinity;
             this.mapSettingDefault = settings.mapSettingDefault || "";
-            this.mapEntryDefault = settings.mapEntryDefault || "";
+            this.mapEntrances = settings.mapEntrances || [];
             this.mapDefault = settings.mapDefault;
             this.blocksize = settings.blocksize || 1;
             this.keyUndefined = settings.keyUndefined || "-none-";
@@ -94,12 +94,6 @@ var LevelEditr;
          */
         LevelEditr.prototype.getMapTimeDefault = function () {
             return this.mapTimeDefault;
-        };
-        /**
-         *
-         */
-        LevelEditr.prototype.getMapEntryDefault = function () {
-            return this.mapEntryDefault;
         };
         /**
          *
@@ -182,7 +176,7 @@ var LevelEditr;
             };
             this.clearAllThings();
             this.resetDisplay();
-            this.GameStarter.InputWriter.setCanTrigger(false);
+            this.GameStarter.MapScreener.nokeys = true;
             this.setCurrentMode("Build");
             this.setTextareaValue(this.stringifySmart(this.mapDefault), true);
             this.resetDisplayMap();
@@ -203,7 +197,6 @@ var LevelEditr;
             }
             this.GameStarter.container.removeChild(this.display.container);
             this.display = undefined;
-            this.GameStarter.InputWriter.setCanTrigger(true);
             this.GameStarter.setMap(this.oldInformation.map);
             this.GameStarter.ItemsHolder.setItem("lives", this.GameStarter.settings.statistics.values.lives.valueDefault);
             this.enabled = false;
@@ -232,7 +225,6 @@ var LevelEditr;
         LevelEditr.prototype.startBuilding = function () {
             this.beautifyTextareaValue();
             this.setDisplayMap(true);
-            this.GameStarter.InputWriter.setCanTrigger(false);
             this.setCurrentMode("Build");
             this.maximize();
         };
@@ -241,8 +233,7 @@ var LevelEditr;
          */
         LevelEditr.prototype.startPlaying = function () {
             this.beautifyTextareaValue();
-            this.setDisplayMap(false);
-            this.GameStarter.InputWriter.setCanTrigger(true);
+            this.setDisplayMap();
             this.setCurrentMode("Play");
             this.minimize();
         };
@@ -319,7 +310,7 @@ var LevelEditr;
         /**
          *
          */
-        LevelEditr.prototype.setCurrentMacroThings = function () {
+        LevelEditr.prototype.setCurrentMacroThings = function (event) {
             var currentThing, i;
             for (i = 0; i < this.currentPreThings.length; i += 1) {
                 currentThing = this.currentPreThings[i];
@@ -327,6 +318,7 @@ var LevelEditr;
                 this.GameStarter.addThing(currentThing.thing, currentThing.xloc || 0, currentThing.yloc || 0);
                 this.disableThing(currentThing.thing);
             }
+            this.onMouseMoveEditing(event); // add event?
             this.GameStarter.TimeHandler.cancelAllEvents();
         };
         /**
@@ -465,7 +457,7 @@ var LevelEditr;
         /**
          *
          */
-        LevelEditr.prototype.onMacroIconClick = function (title, description, options) {
+        LevelEditr.prototype.onMacroIconClick = function (title, description, options, event) {
             if (description) {
                 this.setVisualOptions(title, description, options);
             }
@@ -475,10 +467,12 @@ var LevelEditr;
             }
             this.clearCurrentThings();
             this.GameStarter.MapsCreator.analyzePreMacro(this.GameStarter.proliferate({
-                "macro": title
+                "macro": title,
+                "x": 0,
+                "y": 0
             }, this.generateCurrentArgs()), this.createPrethingsHolder(this.currentPreThings), this.getCurrentAreaObject(map), map);
             this.currentTitle = title;
-            this.setCurrentMacroThings();
+            this.setCurrentMacroThings(event);
         };
         /**
          *
@@ -607,8 +601,8 @@ var LevelEditr;
          *
          *
          * @param {Boolean} fromGui   Whether this is from the MapSettings section
-         *                             of the GUI (true), or from the Raw JSON
-         *                             section (false).
+         *                            of the GUI (true), or from the Raw JSON
+         *                            section (false).
          */
         LevelEditr.prototype.setMapEntry = function (fromGui) {
             var map = this.getMapObject(), location, entry;
@@ -660,7 +654,7 @@ var LevelEditr;
                 return;
             }
             map.locations[name] = {
-                "entry": this.mapEntryDefault
+                "entry": this.mapEntrances[0]
             };
             this.resetAllVisualOptionSelects("VisualOptionLocation", Object.keys(map.locations));
             this.setTextareaValue(this.stringifySmart(map), true);
@@ -1069,9 +1063,7 @@ var LevelEditr;
                             this.GameStarter.createElement("label", {
                                 "textContent": "Entrance"
                             }),
-                            this.display.sections.MapSettings.Entry = this.createSelect([
-                                "Plain", "Normal", "Castle", "PipeVertical", "PipeHorizontal"
-                            ], {
+                            this.display.sections.MapSettings.Entry = this.createSelect(this.mapEntrances, {
                                 "onchange": this.setMapEntry.bind(this, true)
                             })
                         ]
@@ -1555,13 +1547,11 @@ var LevelEditr;
         LevelEditr.prototype.resetDisplayMap = function () {
             this.setTextareaValue(this.stringifySmart(this.mapDefault), true);
             this.setDisplayMap(true);
-            this.GameStarter.InputWriter.setCanTrigger(false);
         };
         /**
          *
          */
         LevelEditr.prototype.setDisplayMap = function (doDisableThings) {
-            if (doDisableThings === void 0) { doDisableThings = false; }
             var value = this.display.stringer.textarea.value, mapName = this.getMapName(), testObject, map;
             try {
                 testObject = this.parseSmart(value);
@@ -1876,20 +1866,19 @@ var LevelEditr;
                 },
                 ".LevelEditor .EditorScrollers": {
                     "position": "absolute",
-                    "top": "50%",
+                    "top": "0",
                     "right": "50%",
-                    "bottom": "50%",
+                    "bottom": "0",
                     "left": "0",
                     "transition": "117ms all"
                 },
                 ".EditorScroller": {
                     "position": "absolute",
+                    "top": "50%",
                     "margin-top": "-35px",
                     "width": "70px",
-                    "height": "101%",
                     "cursor": "pointer",
                     "box-sizing": "border-box",
-                    "background": "rgba(0, 0, 0, .21)",
                     "font-size": "70px",
                     "text-align": "center",
                     "transition": "280ms all"

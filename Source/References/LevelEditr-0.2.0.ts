@@ -160,7 +160,7 @@ declare module LevelEditr {
         mapNameDefault?: string;
         mapTimeDefault?: number;
         mapSettingDefault?: string;
-        mapEntryDefault?: string;
+        mapEntrances?: string[];
         mapDefault?: IMapsCreatrMapRaw;
         blocksize?: number;
         keyUndefined?: string;
@@ -246,9 +246,9 @@ module LevelEditr {
         private mapSettingDefault: string;
 
         /**
-         * The default String entry of the map's locations
+         * The allowed String entries of the map's locations
          */
-        private mapEntryDefault: string;
+        private mapEntrances: string[];
 
         /**
          * The starting Object used as a default template for new maps
@@ -325,7 +325,7 @@ module LevelEditr {
             this.mapNameDefault = settings.mapNameDefault || "New Map";
             this.mapTimeDefault = settings.mapTimeDefault || Infinity;
             this.mapSettingDefault = settings.mapSettingDefault || "";
-            this.mapEntryDefault = settings.mapEntryDefault || "";
+            this.mapEntrances = settings.mapEntrances || [];
             this.mapDefault = settings.mapDefault;
             this.blocksize = settings.blocksize || 1;
             this.keyUndefined = settings.keyUndefined || "-none-";
@@ -398,13 +398,6 @@ module LevelEditr {
          */
         getMapTimeDefault(): number {
             return this.mapTimeDefault;
-        }
-
-        /**
-         * 
-         */
-        getMapEntryDefault(): string {
-            return this.mapEntryDefault;
         }
 
         /**
@@ -502,7 +495,7 @@ module LevelEditr {
 
             this.clearAllThings();
             this.resetDisplay();
-            this.GameStarter.InputWriter.setCanTrigger(false);
+            (<any>this.GameStarter.MapScreener).nokeys = true;
 
             this.setCurrentMode("Build");
 
@@ -531,7 +524,6 @@ module LevelEditr {
             this.GameStarter.container.removeChild(this.display.container);
             this.display = undefined;
 
-            this.GameStarter.InputWriter.setCanTrigger(true);
             this.GameStarter.setMap(this.oldInformation.map);
             this.GameStarter.ItemsHolder.setItem(
                 "lives",
@@ -567,7 +559,6 @@ module LevelEditr {
         startBuilding(): void {
             this.beautifyTextareaValue();
             this.setDisplayMap(true);
-            this.GameStarter.InputWriter.setCanTrigger(false);
             this.setCurrentMode("Build");
             this.maximize();
         }
@@ -577,8 +568,7 @@ module LevelEditr {
          */
         startPlaying(): void {
             this.beautifyTextareaValue();
-            this.setDisplayMap(false);
-            this.GameStarter.InputWriter.setCanTrigger(true);
+            this.setDisplayMap();
             this.setCurrentMode("Play");
             this.minimize();
         }
@@ -671,7 +661,7 @@ module LevelEditr {
         /**
          *
          */
-        private setCurrentMacroThings(): void {
+        private setCurrentMacroThings(event?: MouseEvent): void {
             var currentThing: IPreThing,
                 i: number;
 
@@ -681,9 +671,9 @@ module LevelEditr {
 
                 this.GameStarter.addThing(currentThing.thing, currentThing.xloc || 0, currentThing.yloc || 0);
                 this.disableThing(currentThing.thing);
-
             }
 
+            this.onMouseMoveEditing(event); // add event?
             this.GameStarter.TimeHandler.cancelAllEvents();
         }
 
@@ -771,14 +761,12 @@ module LevelEditr {
                 this.GameStarter.setLeft(
                     prething.thing,
                     this.roundTo(x - this.GameStarter.container.offsetLeft, this.blocksize)
-                    + (prething.left || 0) * this.GameStarter.unitsize
-                );
+                    + (prething.left || 0) * this.GameStarter.unitsize);
 
                 this.GameStarter.setTop(
                     prething.thing,
                     this.roundTo(y - this.GameStarter.container.offsetTop, this.blocksize)
-                    - (prething.top || 0) * this.GameStarter.unitsize
-                );
+                    - (prething.top || 0) * this.GameStarter.unitsize);
             }
         }
 
@@ -892,7 +880,7 @@ module LevelEditr {
         /**
          * 
          */
-        private onMacroIconClick(title: string, description: string, options: any): void {
+        private onMacroIconClick(title: string, description: string, options: any, event?: MouseEvent): void {
             if (description) {
                 this.setVisualOptions(title, description, options);
             }
@@ -908,16 +896,17 @@ module LevelEditr {
             this.GameStarter.MapsCreator.analyzePreMacro(
                 this.GameStarter.proliferate(
                     {
-                        "macro": title
+                        "macro": title,
+                        "x": 0,
+                        "y": 0
                     },
                     this.generateCurrentArgs()),
                 this.createPrethingsHolder(this.currentPreThings),
                 this.getCurrentAreaObject(map),
-                map
-            );
+                map);
 
             this.currentTitle = title;
-            this.setCurrentMacroThings();
+            this.setCurrentMacroThings(event);
         }
 
         /**
@@ -1084,8 +1073,8 @@ module LevelEditr {
          * 
          * 
          * @param {Boolean} fromGui   Whether this is from the MapSettings section
-         *                             of the GUI (true), or from the Raw JSON 
-         *                             section (false).
+         *                            of the GUI (true), or from the Raw JSON 
+         *                            section (false).
          */
         private setMapEntry(fromGui: boolean): void {
             var map: IMapsCreatrMapRaw = this.getMapObject(),
@@ -1151,7 +1140,7 @@ module LevelEditr {
             }
 
             map.locations[name] = {
-                "entry": this.mapEntryDefault
+                "entry": this.mapEntrances[0]
             };
 
             this.resetAllVisualOptionSelects("VisualOptionLocation", Object.keys(map.locations));
@@ -1638,9 +1627,7 @@ module LevelEditr {
                                 "textContent": "Entrance"
                             }),
                             this.display.sections.MapSettings.Entry = this.createSelect(
-                                [
-                                    "Plain", "Normal", "Castle", "PipeVertical", "PipeHorizontal"
-                                ],
+                                this.mapEntrances,
                                 {
                                     "onchange": this.setMapEntry.bind(this, true)
                                 })
@@ -2213,13 +2200,12 @@ module LevelEditr {
         private resetDisplayMap(): void {
             this.setTextareaValue(this.stringifySmart(this.mapDefault), true);
             this.setDisplayMap(true);
-            this.GameStarter.InputWriter.setCanTrigger(false);
         }
 
         /**
          * 
          */
-        private setDisplayMap(doDisableThings: boolean = false): void {
+        private setDisplayMap(doDisableThings?: boolean): void {
             var value: string = this.display.stringer.textarea.value,
                 mapName: string = this.getMapName(),
                 testObject: any,
@@ -2595,20 +2581,19 @@ module LevelEditr {
                 },
                 ".LevelEditor .EditorScrollers": {
                     "position": "absolute",
-                    "top": "50%",
+                    "top": "0",
                     "right": "50%",
-                    "bottom": "50%",
+                    "bottom": "0",
                     "left": "0",
                     "transition": "117ms all"
                 },
                 ".EditorScroller": {
                     "position": "absolute",
+                    "top": "50%",
                     "margin-top": "-35px",
                     "width": "70px",
-                    "height": "101%",
                     "cursor": "pointer",
                     "box-sizing": "border-box",
-                    "background": "rgba(0, 0, 0, .21)",
                     "font-size": "70px",
                     "text-align": "center",
                     "transition": "280ms all"
