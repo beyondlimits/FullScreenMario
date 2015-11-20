@@ -5090,41 +5090,25 @@ module FullScreenMario {
          * @remarks This could probably be re-written.
          */
         animateThrowingHammer(thing: IHammerBro, count: number): boolean {
-            if (
-                !thing.FSM.isThingAlive(thing)
-                || !thing.FSM.isThingAlive(thing.FSM.player)
-                || thing.right < thing.FSM.unitsize * -32
-            ) {
+            if (!thing.FSM.isThingAlive(thing)) {
                 return true;
             }
 
-            if (count !== 3) {
+            if (
+                thing.FSM.isThingAlive(thing.FSM.player)
+                && thing.right >= thing.FSM.unitsize * -32
+                && count !== 3
+            ) {
                 thing.FSM.switchClass(thing, "thrown", "throwing");
             }
 
             thing.FSM.TimeHandler.addEvent(
-                function (): boolean {
+                function (): void {
                     if (!thing.FSM.isThingAlive(thing)) {
-                        return false;
+                        return;
                     }
 
-                    // Throw the hammer...
-                    if (count !== 3) {
-                        thing.FSM.switchClass(thing, "throwing", "thrown");
-                        thing.FSM.addThing(
-                            ["Hammer", {
-                                "xvel": thing.lookleft
-                                    ? thing.FSM.unitsize / -1.4
-                                    : thing.FSM.unitsize / 1.4,
-                                "yvel": thing.FSM.unitsize * -1.4,
-                                "gravity": thing.FSM.MapScreener.gravity / 2.1
-                            }],
-                            thing.left - thing.FSM.unitsize * 2,
-                            thing.top - thing.FSM.unitsize * 2
-                        );
-                    }
-
-                    // ...and go again
+                    // Schedule the next animateThrowingHammer call
                     if (count > 0) {
                         thing.FSM.TimeHandler.addEvent(
                             thing.FSM.animateThrowingHammer,
@@ -5137,6 +5121,31 @@ module FullScreenMario {
                         );
                         thing.FSM.removeClass(thing, "thrown");
                     }
+
+                    // Don't throw if the player is dead, or this is too far to the left
+                    if (!thing.FSM.isThingAlive(thing.FSM.player) || thing.right < thing.FSM.unitsize * -32) {
+                        thing.FSM.switchClass(thing, "throwing", "thrown");
+                        return;
+                    }
+
+                    // Don't throw in the third iteration (makes a gap in the hammers)
+                    if (count === 3) {
+                        return;
+                    }
+
+                    // Throw by creating a hammer and visually updating
+                    thing.FSM.switchClass(thing, "throwing", "thrown");
+                    thing.FSM.addThing(
+                        ["Hammer", {
+                            "xvel": thing.lookleft
+                                ? thing.FSM.unitsize / -1.4
+                                : thing.FSM.unitsize / 1.4,
+                            "yvel": thing.FSM.unitsize * -1.4,
+                            "gravity": thing.FSM.MapScreener.gravity / 2.1
+                        }],
+                        thing.left - thing.FSM.unitsize * 2,
+                        thing.top - thing.FSM.unitsize * 2
+                    );
                 },
                 14);
 
@@ -5152,14 +5161,11 @@ module FullScreenMario {
          * @param {Bowser} thing
          */
         animateBowserJump(thing: IBowser): boolean {
-            if (!thing.lookleft || !thing.FSM.player) {
+            if (!thing.lookleft || !thing.FSM.player || !thing.FSM.isThingAlive(thing.FSM.player)) {
                 return false;
             }
 
-            if (
-                !thing.FSM.isThingAlive(thing)
-                || !thing.FSM.isThingAlive(thing.FSM.player)
-            ) {
+            if (!thing.FSM.isThingAlive(thing)) {
                 return true;
             }
 
@@ -5191,14 +5197,11 @@ module FullScreenMario {
          * @param {Bowser} thing
          */
         animateBowserFire(thing: IBowser): boolean {
-            if (!thing.lookleft || !thing.lookleft || !thing.FSM.player) {
+            if (!thing.lookleft || !thing.FSM.player || !thing.FSM.isThingAlive(thing.FSM.player)) {
                 return false;
             }
 
-            if (
-                !thing.FSM.isThingAlive(thing)
-                || !thing.FSM.isThingAlive(thing.FSM.player)
-            ) {
+            if (!thing.FSM.isThingAlive(thing)) {
                 return true;
             }
 
@@ -5251,8 +5254,12 @@ module FullScreenMario {
          * @param {Bowser} thing
          */
         animateBowserThrow(thing: IBowser): boolean {
-            if (!thing.lookleft || !thing.FSM.isThingAlive(thing)) {
-                return;
+            if (!thing.lookleft || !thing.FSM.player || !thing.FSM.isThingAlive(thing.FSM.player)) {
+                return false;
+            }
+
+            if (!thing.FSM.isThingAlive(thing)) {
+                return true;
             }
 
             var hammer: IThing = <IThing>thing.FSM.addThing(
