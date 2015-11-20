@@ -791,9 +791,9 @@ module LevelEditr {
             this.canClick = false;
 
             setTimeout(
-                function (): void {
+                (function (): void {
                     this.canClick = true;
-                },
+                }).bind(this),
                 70);
         }
 
@@ -801,25 +801,27 @@ module LevelEditr {
          * 
          */
         private onClickEditingThing(event: MouseEvent): void {
-            if (!this.canClick || this.currentMode !== "Build") {
+            if (!this.canClick || this.currentMode !== "Build" || !this.currentPreThings.length) {
                 return;
             }
 
             var x: number = this.roundTo(event.x || event.clientX || 0, this.blocksize),
                 y: number = this.roundTo(event.y || event.clientY || 0, this.blocksize);
 
-            if (!this.currentPreThings.length || !this.addMapCreationThing(x, y)) {
+            if (!this.addMapCreationThing(x, y)) {
                 return;
             }
 
             this.onClickEditingGenericAdd(x, y, this.currentTitle, this.currentArgs);
+
+            this.afterClick();
         }
 
         /**
          * 
          */
         private onClickEditingMacro(event: MouseEvent): void {
-            if (!this.canClick || this.currentMode !== "Build") {
+            if (!this.canClick || this.currentMode !== "Build" || !this.currentPreThings.length) {
                 return;
             }
 
@@ -828,7 +830,7 @@ module LevelEditr {
                 prething: IPreThing,
                 i: number;
 
-            if (!this.currentPreThings.length || !this.addMapCreationMacro(x, y)) {
+            if (!this.addMapCreationMacro(x, y)) {
                 return;
             }
 
@@ -840,8 +842,9 @@ module LevelEditr {
                     prething.thing.title || prething.title,
                     prething.reference
                 );
-
             }
+
+            this.afterClick();
         }
 
         /**
@@ -1111,8 +1114,6 @@ module LevelEditr {
                 entry = this.display.sections.MapSettings.Entry.value;
                 (<any>location).entry = entry;
             } else {
-                console.warn("Was this code ever reached? area.location?");
-                // entry = area.location;
                 this.display.sections.MapSettings.Entry.value = entry;
             }
 
@@ -1122,12 +1123,8 @@ module LevelEditr {
 
         /**
          * 
-         * 
-         * @param {Boolean} fromGui   Whether this is from the MapSettings section
-         *                            of the GUI (true), or from the Raw JSON 
-         *                            section (false).
          */
-        private setCurrentLocation(fromGui: boolean): void {
+        private setCurrentLocation(): void {
             var map: IMapsCreatrMapRaw = this.getMapObject(),
                 location: MapsCreatr.IMapsCreatrLocationRaw;
 
@@ -1137,12 +1134,8 @@ module LevelEditr {
 
             location = this.getCurrentLocationObject(map);
 
-            if (fromGui) {
-                this.display.sections.MapSettings.Area.value = location.area
-                    ? location.area.toString() : "0";
-            } else {
-                console.warn("This code is never reached, right?");
-            }
+            this.display.sections.MapSettings.Area.value = location.area
+                ? location.area.toString() : "0";
 
             this.setTextareaValue(this.stringifySmart(map), true);
             this.setDisplayMap(true);
@@ -1364,7 +1357,6 @@ module LevelEditr {
         private resetDisplayGui(): void {
             this.display.gui = this.GameStarter.createElement("div", {
                 "className": "EditorGui",
-                "onclick": this.afterClick.bind(this)
             });
 
             this.display.container.appendChild(this.display.gui);
@@ -1557,7 +1549,7 @@ module LevelEditr {
                     }),
                     this.display.sections.MapSettings.Location = this.createSelect(["0"], {
                         "className": "VisualOptionLocation",
-                        "onchange": this.setCurrentLocation.bind(this, true)
+                        "onchange": this.setCurrentLocation.bind(this)
                     })
                 ]
             }));
@@ -2144,7 +2136,7 @@ module LevelEditr {
         private createVisualOptionSelect(option: any): HTMLSelectElement {
             return this.createSelect(option.options, {
                 "className": "VisualOptionValue",
-                "data:type": "Boolean",
+                "data:type": "Select",
                 "onchange": this.setCurrentArgs.bind(this)
             });
         }

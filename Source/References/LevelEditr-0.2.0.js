@@ -391,38 +391,40 @@ var LevelEditr;
          */
         LevelEditr.prototype.afterClick = function () {
             this.canClick = false;
-            setTimeout(function () {
+            setTimeout((function () {
                 this.canClick = true;
-            }, 70);
+            }).bind(this), 70);
         };
         /**
          *
          */
         LevelEditr.prototype.onClickEditingThing = function (event) {
-            if (!this.canClick || this.currentMode !== "Build") {
+            if (!this.canClick || this.currentMode !== "Build" || !this.currentPreThings.length) {
                 return;
             }
             var x = this.roundTo(event.x || event.clientX || 0, this.blocksize), y = this.roundTo(event.y || event.clientY || 0, this.blocksize);
-            if (!this.currentPreThings.length || !this.addMapCreationThing(x, y)) {
+            if (!this.addMapCreationThing(x, y)) {
                 return;
             }
             this.onClickEditingGenericAdd(x, y, this.currentTitle, this.currentArgs);
+            this.afterClick();
         };
         /**
          *
          */
         LevelEditr.prototype.onClickEditingMacro = function (event) {
-            if (!this.canClick || this.currentMode !== "Build") {
+            if (!this.canClick || this.currentMode !== "Build" || !this.currentPreThings.length) {
                 return;
             }
             var x = this.roundTo(event.x || event.clientX || 0, this.blocksize), y = this.roundTo(event.y || event.clientY || 0, this.blocksize), prething, i;
-            if (!this.currentPreThings.length || !this.addMapCreationMacro(x, y)) {
+            if (!this.addMapCreationMacro(x, y)) {
                 return;
             }
             for (i = 0; i < this.currentPreThings.length; i += 1) {
                 prething = this.currentPreThings[i];
                 this.onClickEditingGenericAdd(x + (prething.left || 0) * this.GameStarter.unitsize, y - (prething.top || 0) * this.GameStarter.unitsize, prething.thing.title || prething.title, prething.reference);
             }
+            this.afterClick();
         };
         /**
          *
@@ -621,8 +623,6 @@ var LevelEditr;
                 location.entry = entry;
             }
             else {
-                console.warn("Was this code ever reached? area.location?");
-                // entry = area.location;
                 this.display.sections.MapSettings.Entry.value = entry;
             }
             this.setTextareaValue(this.stringifySmart(map), true);
@@ -630,24 +630,15 @@ var LevelEditr;
         };
         /**
          *
-         *
-         * @param {Boolean} fromGui   Whether this is from the MapSettings section
-         *                            of the GUI (true), or from the Raw JSON
-         *                            section (false).
          */
-        LevelEditr.prototype.setCurrentLocation = function (fromGui) {
+        LevelEditr.prototype.setCurrentLocation = function () {
             var map = this.getMapObject(), location;
             if (!map) {
                 return;
             }
             location = this.getCurrentLocationObject(map);
-            if (fromGui) {
-                this.display.sections.MapSettings.Area.value = location.area
-                    ? location.area.toString() : "0";
-            }
-            else {
-                console.warn("This code is never reached, right?");
-            }
+            this.display.sections.MapSettings.Area.value = location.area
+                ? location.area.toString() : "0";
             this.setTextareaValue(this.stringifySmart(map), true);
             this.setDisplayMap(true);
         };
@@ -817,7 +808,6 @@ var LevelEditr;
         LevelEditr.prototype.resetDisplayGui = function () {
             this.display.gui = this.GameStarter.createElement("div", {
                 "className": "EditorGui",
-                "onclick": this.afterClick.bind(this)
             });
             this.display.container.appendChild(this.display.gui);
         };
@@ -990,7 +980,7 @@ var LevelEditr;
                     }),
                     this.display.sections.MapSettings.Location = this.createSelect(["0"], {
                         "className": "VisualOptionLocation",
-                        "onchange": this.setCurrentLocation.bind(this, true)
+                        "onchange": this.setCurrentLocation.bind(this)
                     })
                 ]
             }));
@@ -1486,7 +1476,7 @@ var LevelEditr;
         LevelEditr.prototype.createVisualOptionSelect = function (option) {
             return this.createSelect(option.options, {
                 "className": "VisualOptionValue",
-                "data:type": "Boolean",
+                "data:type": "Select",
                 "onchange": this.setCurrentArgs.bind(this)
             });
         };
