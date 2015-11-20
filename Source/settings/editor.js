@@ -244,7 +244,12 @@ FullScreenMario.FullScreenMario.settings.editor = (function (things, macros) {
     "Pipe": {
         "description": "Add a pipe with the option for piranhas and moving to locations.",
         "options": {
-            "height": 8,
+            "height": {
+                "type": "Number",
+                "value": 2,
+                "mod": 8,
+                "Infinite": true
+            },
             "piranha": "Boolean",
             "transport": "Location",
             "entrance": "Location"

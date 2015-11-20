@@ -7634,11 +7634,7 @@ module FullScreenMario {
          *                             entrance to (by default, none).
          * @return {Object[]}
          */
-        macroPipe(reference: any,
-            prethings: any[],
-            area: IArea,
-            map: IMap,
-            scope: any): any {
+        macroPipe(reference: any, prethings: any[], area: IArea, map: IMap, scope: any): any {
             var x: number = reference.x || 0,
                 y: number = reference.y || 0,
                 height: number | string = reference.height || 16,
@@ -7648,7 +7644,9 @@ module FullScreenMario {
                         "x": x,
                         "y": y,
                         "width": 16,
-                        "height": reference.height || 8
+                        "height": reference.height === Infinity
+                            ? "Infinity"
+                            : reference.height || 8
                     },
                     reference,
                     true),
@@ -7656,7 +7654,7 @@ module FullScreenMario {
 
             pipe.macro = undefined;
 
-            if (height === "Infinity") {
+            if (height === "Infinity" || height === Infinity) {
                 pipe.height = scope.MapScreener.height;
             } else {
                 pipe.y += height;

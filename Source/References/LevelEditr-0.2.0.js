@@ -489,6 +489,7 @@ var LevelEditr;
          */
         LevelEditr.prototype.generateCurrentArgs = function () {
             var args = {}, container = this.display.sections.ClickToPlace.VisualOptions, children = container.getElementsByClassName("VisualOptionsList"), child, labeler, valuer, value, i;
+            this.currentArgs = args;
             if (children.length === 0) {
                 return args;
             }
@@ -505,7 +506,12 @@ var LevelEditr;
                         value = (Number(valuer.value) || 0) * (Number(valuer.getAttribute("data:mod")) || 1);
                         break;
                     default:
-                        value = valuer.value;
+                        if (valuer.getAttribute("typeReal") === "Number") {
+                            value = Number(valuer.value);
+                        }
+                        else {
+                            value = valuer.value;
+                        }
                         break;
                 }
                 if (value !== this.keyUndefined) {
@@ -1425,26 +1431,39 @@ var LevelEditr;
                     }, {
                         "className": "VisualOptionValue modReal" + modReal,
                         "onchange": scope.setCurrentArgs.bind(scope)
-                    }), children = [input];
+                    }), recommendation = modReal > 1
+                        && scope.GameStarter.createElement("div", {
+                            "className": "VisualOptionRecommendation",
+                            "textContent": "x" + option.mod
+                        }), children = [input];
                     input.setAttribute("data:mod", modReal.toString());
+                    input.setAttribute("typeReal", "Number");
                     if (option.Infinite) {
                         var valueOld = undefined, infinite = scope.createSelect([
                             "Number", "Infinite"
                         ], {
                             "className": "VisualOptionInfiniter",
-                            "onchange": function () {
+                            "onchange": function (event) {
                                 if (infinite.value === "Number") {
                                     input.type = "Number";
                                     input.disabled = false;
+                                    input.style.display = "";
+                                    if (recommendation) {
+                                        recommendation.style.display = "";
+                                    }
                                     input.value = valueOld;
-                                    input.onchange(undefined);
+                                    input.onchange(event);
                                 }
                                 else {
                                     input.type = "Text";
                                     input.disabled = true;
+                                    input.style.display = "none";
+                                    if (recommendation) {
+                                        recommendation.style.display = "none";
+                                    }
                                     valueOld = input.value;
                                     input.value = "Infinity";
-                                    input.onchange(undefined);
+                                    input.onchange(event);
                                 }
                             }
                         });
@@ -1454,11 +1473,8 @@ var LevelEditr;
                         }
                         children.push(infinite);
                     }
-                    if (modReal > 1) {
-                        children.push(scope.GameStarter.createElement("div", {
-                            "className": "VisualOptionRecommendation",
-                            "textContent": "x" + option.mod
-                        }));
+                    if (recommendation) {
+                        children.push(recommendation);
                     }
                     return children;
                 })()

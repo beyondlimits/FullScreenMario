@@ -949,6 +949,8 @@ module LevelEditr {
                 value: boolean | number | string,
                 i: number;
 
+            this.currentArgs = args;
+
             if (children.length === 0) {
                 return args;
             }
@@ -968,7 +970,11 @@ module LevelEditr {
                         value = (Number(valuer.value) || 0) * (Number(valuer.getAttribute("data:mod")) || 1);
                         break;
                     default:
-                        value = valuer.value;
+                        if (valuer.getAttribute("typeReal") === "Number") {
+                            value = Number(valuer.value);
+                        } else {
+                            value = valuer.value;
+                        }
                         break;
                 }
 
@@ -1758,7 +1764,7 @@ module LevelEditr {
                                     function (title: string): HTMLDivElement {
                                         var prething: IPreThing = prethings[title],
                                             thing: IThing = scope.GameStarter.ObjectMaker.make(
-                                                title, 
+                                                title,
                                                 scope.getPrethingSizeArguments(prething)),
                                             container: HTMLDivElement = <HTMLDivElement>scope.GameStarter.createElement("div", {
                                                 "className": "EditorListOption",
@@ -2071,9 +2077,15 @@ module LevelEditr {
                                 "className": "VisualOptionValue modReal" + modReal,
                                 "onchange": scope.setCurrentArgs.bind(scope)
                             }),
+                        recommendation: HTMLElement = modReal > 1
+                            && scope.GameStarter.createElement("div", {
+                                "className": "VisualOptionRecommendation",
+                                "textContent": "x" + option.mod
+                            }),
                         children: HTMLElement[] = [input];
 
                     input.setAttribute("data:mod", modReal.toString());
+                    input.setAttribute("typeReal", "Number");
 
                     if (option.Infinite) {
                         var valueOld: string = undefined,
@@ -2083,20 +2095,28 @@ module LevelEditr {
                                 ],
                                 {
                                     "className": "VisualOptionInfiniter",
-                                    "onchange": function (): void {
+                                    "onchange": function (event: Event): void {
                                         if (infinite.value === "Number") {
                                             input.type = "Number";
                                             input.disabled = false;
+                                            input.style.display = "";
+                                            if (recommendation) {
+                                                recommendation.style.display = "";
+                                            }
 
                                             input.value = valueOld;
-                                            input.onchange(undefined);
+                                            input.onchange(event);
                                         } else {
                                             input.type = "Text";
                                             input.disabled = true;
+                                            input.style.display = "none";
+                                            if (recommendation) {
+                                                recommendation.style.display = "none";
+                                            }
 
                                             valueOld = input.value;
                                             input.value = "Infinity";
-                                            input.onchange(undefined);
+                                            input.onchange(event);
                                         }
                                     }
                                 });
@@ -2109,11 +2129,8 @@ module LevelEditr {
                         children.push(infinite);
                     }
 
-                    if (modReal > 1) {
-                        children.push(scope.GameStarter.createElement("div", {
-                            "className": "VisualOptionRecommendation",
-                            "textContent": "x" + option.mod
-                        }));
+                    if (recommendation) {
+                        children.push(recommendation);
                     }
 
                     return children;
