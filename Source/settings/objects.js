@@ -800,7 +800,7 @@ FullScreenMario.FullScreenMario.settings.objects = {
         },
         "Cannon": {
             "frequency": 280,
-            "spriteheight": 16,
+            "spriteheight": 8,
             "onThingAdded": FullScreenMario.FullScreenMario.prototype.spawnCannon
         },
         "Springboard": {
@@ -821,8 +821,8 @@ FullScreenMario.FullScreenMario.settings.objects = {
             }
         },
         "CastleBridge": {
-            "height": 16,
-            "spriteheight": 16,
+            "height": 8,
+            "spriteheight": 8,
             "spritewidth": 4,
             "killonend": FullScreenMario.FullScreenMario.prototype.animateCastleBridgeOpen
         },

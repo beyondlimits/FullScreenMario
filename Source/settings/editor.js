@@ -33,23 +33,23 @@ FullScreenMario.FullScreenMario.settings.editor = (function (things, macros) {
     };
 })({
     "Characters": {
-        "Goomba": undefined,
+        "Goomba": {},
         "Koopa": {
             "smart": "Boolean",
             "jumping": "Boolean",
             "flying": "Boolean"
         },
-        "Beetle": undefined,
+        "Beetle": {},
         "Piranha": {
             "evil": "Boolean"
         },
-        "Blooper": undefined,
+        "Blooper": {},
         "CheepCheep": {
             "smart": "Boolean"
         },
-        "Podoboo": undefined,
-        "Lakitu": undefined,
-        "HammerBro": undefined,
+        "Podoboo": {},
+        "Lakitu": {},
+        "HammerBro": {},
         "Bowser": {
             "contents": {
                 "type": "String",
@@ -60,16 +60,16 @@ FullScreenMario.FullScreenMario.settings.editor = (function (things, macros) {
         }
     },
     "Items": {
-        "Mushroom": undefined,
-        "Mushroom1Up": undefined,
-        "MushroomDeathly": undefined,
-        "FireFlower": undefined,
-        "Star": undefined,
+        "Mushroom": {},
+        "Mushroom1Up": {},
+        "MushroomDeathly": {},
+        "FireFlower": {},
+        "Star": {},
         "Shell": {
             "smart": "Boolean"
         },
-        "BeetleShell": undefined,
-        "Coin": undefined
+        "BeetleShell": {},
+        "Coin": {}
     },
     "Solids": {
         "Block": {
@@ -92,7 +92,7 @@ FullScreenMario.FullScreenMario.settings.editor = (function (things, macros) {
         "Pipe": {
             "height": {
                 "type": "Number",
-                "value": 8,
+                "value": 2,
                 "mod": 8,
                 "Infinite": true
             }
@@ -110,14 +110,17 @@ FullScreenMario.FullScreenMario.settings.editor = (function (things, macros) {
                 "type": "Number",
                 "value": 2,
                 "mod": 8,
-                "Infinite": true
+                "Infinite": true,
+                "real": 8
             },
             "transport": "Location"
         },
         "Platform": {
             "width": {
                 "type": "Number",
-                "mod": 2
+                "value": 4,
+                "mod": 2,
+                "real": 2
             }
         },
         "Stone": {
@@ -137,11 +140,11 @@ FullScreenMario.FullScreenMario.settings.editor = (function (things, macros) {
                 "mod": 8
             }
         },
-        "Springboard": undefined,
+        "Springboard": {},
         "Floor": {
             "width": {
                 "type": "Number",
-                "value": 8,
+                "value": 1,
                 "mod": 8
             },
             "height": {
@@ -160,7 +163,8 @@ FullScreenMario.FullScreenMario.settings.editor = (function (things, macros) {
         "CastleBridge": {
             "width": {
                 "type": "Number",
-                "mod": 8
+                "mod": 8,
+                "real": 4
             }
         },
         "Coral": {
@@ -175,25 +179,37 @@ FullScreenMario.FullScreenMario.settings.editor = (function (things, macros) {
         }
     },
     "Scenery": {
-        "BrickPlain": undefined,
-        "Bush1": undefined,
-        "Bush2": undefined,
-        "Bush3": undefined,
-        "Cloud1": undefined,
-        "Cloud2": undefined,
-        "Cloud3": undefined,
+        "BrickPlain": {},
+        "Bush1": {},
+        "Bush2": {},
+        "Bush3": {},
+        "Cloud1": {},
+        "Cloud2": {},
+        "Cloud3": {},
         "Fence": {
             "width": {
                 "type": "Number",
                 "mod": 8
             }
         },
-        "HillSmall": undefined,
-        "HillLarge": undefined,
-        "PlantSmall": undefined,
-        "PlantLarge": undefined,
-        "Railing": undefined,
-        "Water": undefined
+        "HillSmall": {},
+        "HillLarge": {},
+        "PlantSmall": {},
+        "PlantLarge": {},
+        "Railing": {
+            "width": {
+                "type": "Number",
+                "mod": 4,
+                "value": 1
+            }
+        },
+        "Water": {
+            "width": {
+                "type": "Number",
+                "mod": 4,
+                "value": 1
+            }
+        }
     }
 }, {
     "Fill": {

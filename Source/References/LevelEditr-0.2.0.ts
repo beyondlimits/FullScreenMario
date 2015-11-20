@@ -70,6 +70,20 @@ declare module LevelEditr {
         reference?: any;
     }
 
+    export interface IPreThingDescriptor {
+        width?: IPreThingDimensionDescriptor;
+        height?: IPreThingDimensionDescriptor;
+        [i: string]: any;
+    }
+
+    export interface IPreThingDimensionDescriptor {
+        type?: string;
+        value?: any;
+        Infinite?: any;
+        mod?: number;
+        real?: number;
+    }
+
     export interface IPreThingHolder {
         [i: string]: IPreThing[];
     }
@@ -210,7 +224,7 @@ module LevelEditr {
          * The listings of PreThings that the GUI displays
          */
         private prethings: {
-            [i: string]: IPreThing[]
+            [i: string]: IPreThingDescriptor[]
         };
 
         /**
@@ -361,7 +375,7 @@ module LevelEditr {
         /**
          * 
          */
-        getPreThings(): { [i: string]: IPreThing[] } {
+        getPreThings(): { [i: string]: IPreThingDimensionDescriptor[] } {
             return this.prethings;
         }
 
@@ -695,11 +709,11 @@ module LevelEditr {
         /**
          * 
          */
-        private setCurrentArgs(): void {
+        private setCurrentArgs(event?: MouseEvent): void {
             if (this.currentClickMode === "Thing") {
                 this.setCurrentThing(this.currentTitle, this.generateCurrentArgs());
             } else {
-                this.onMacroIconClick(this.currentTitle, undefined, this.generateCurrentArgs());
+                this.onMacroIconClick(this.currentTitle, undefined, this.generateCurrentArgs(), event);
             }
         }
 
@@ -1216,12 +1230,12 @@ module LevelEditr {
             return map;
         }
 
-        private getMapObjectAndTry(): boolean {
+        private getMapObjectAndTry(): void {
             var mapName: string = this.getMapName() + "::Temporary",
                 mapRaw: IMapsCreatrMapRaw = this.getMapObject();
 
             if (!mapRaw) {
-                return false;
+                return;
             }
 
             try {
@@ -1230,7 +1244,6 @@ module LevelEditr {
                 this.setDisplayMap(true);
             } catch (error) {
                 this.display.stringer.messenger.textContent = error.message;
-                return false;
             }
         }
 
@@ -1740,32 +1753,36 @@ module LevelEditr {
                 "children": (function (): HTMLElement[] {
                     var selectedIndex: number = 0,
                         containers: HTMLElement[] = Object.keys(scope.prethings).map(function (key: string): HTMLDivElement {
-                            var children: HTMLDivElement[] = Object.keys(scope.prethings[key]).map(
-                                function (title: string): HTMLDivElement {
-                                    var thing: IThing = scope.GameStarter.ObjectMaker.make(title),
-                                        container: HTMLDivElement = <HTMLDivElement>scope.GameStarter.createElement("div", {
-                                            "className": "EditorListOption",
-                                            "options": scope.prethings[key][title],
-                                            "children": [thing.canvas],
-                                            "onclick": clicker.bind(scope, title)
-                                        }),
-                                        sizeMax: number = 70,
-                                        widthThing: number = thing.width * scope.GameStarter.unitsize,
-                                        heightThing: number = thing.height * scope.GameStarter.unitsize,
-                                        widthDiff: number = (sizeMax - widthThing) / 2,
-                                        heightDiff: number = (sizeMax - heightThing) / 2;
+                            var prethings: IPreThingDimensionDescriptor[] = scope.prethings[key],
+                                children: HTMLDivElement[] = Object.keys(prethings).map(
+                                    function (title: string): HTMLDivElement {
+                                        var prething: IPreThing = prethings[title],
+                                            thing: IThing = scope.GameStarter.ObjectMaker.make(
+                                                title, 
+                                                scope.getPrethingSizeArguments(prething)),
+                                            container: HTMLDivElement = <HTMLDivElement>scope.GameStarter.createElement("div", {
+                                                "className": "EditorListOption",
+                                                "options": scope.prethings[key][title],
+                                                "children": [thing.canvas],
+                                                "onclick": clicker.bind(scope, title)
+                                            }),
+                                            sizeMax: number = 70,
+                                            widthThing: number = thing.width * scope.GameStarter.unitsize,
+                                            heightThing: number = thing.height * scope.GameStarter.unitsize,
+                                            widthDiff: number = (sizeMax - widthThing) / 2,
+                                            heightDiff: number = (sizeMax - heightThing) / 2;
 
-                                    container.setAttribute("name", title);
+                                        container.setAttribute("name", title);
 
-                                    thing.canvas.style.top = heightDiff + "px";
-                                    thing.canvas.style.right = widthDiff + "px";
-                                    thing.canvas.style.bottom = heightDiff + "px";
-                                    thing.canvas.style.left = widthDiff + "px";
+                                        thing.canvas.style.top = heightDiff + "px";
+                                        thing.canvas.style.right = widthDiff + "px";
+                                        thing.canvas.style.bottom = heightDiff + "px";
+                                        thing.canvas.style.left = widthDiff + "px";
 
-                                    scope.GameStarter.PixelDrawer.setThingSprite(thing);
+                                        scope.GameStarter.PixelDrawer.setThingSprite(thing);
 
-                                    return container;
-                                });
+                                        return container;
+                                    });
 
                             return <HTMLDivElement>scope.GameStarter.createElement("div", {
                                 "className": "EditorOptionContainer",
@@ -2398,6 +2415,47 @@ module LevelEditr {
         }
 
         /**
+         *
+         */
+        private getPrethingSizeArguments(descriptor: IPreThingDescriptor): any {
+            var output: any = {},
+                width: number = this.getPrethingSizeArgument(descriptor.width),
+                height: number = this.getPrethingSizeArgument(descriptor.height);
+
+            if (width) {
+                output.width = width;
+            }
+
+            if (height) {
+                output.height = height;
+            }
+
+            return output;
+        }
+
+        /**
+         *
+         */
+        private getPrethingSizeArgument(descriptor: IPreThingDimensionDescriptor): number {
+            if (!descriptor) {
+                return undefined;
+            }
+
+            if (descriptor.real) {
+                return descriptor.real;
+            }
+
+            var value: number = descriptor.value || 1,
+                mod: number = descriptor.mod || 1;
+
+            if (!isFinite(value)) {
+                return mod || 8;
+            }
+
+            return value * mod;
+        }
+
+        /**
          * 
          */
         private createSelect(options: string[], attributes: any): HTMLSelectElement {
@@ -2724,8 +2782,8 @@ module LevelEditr {
                     "margin": "0 7px 7px 0",
                     "width": "70px",
                     "height": "70px",
-                    "background": "black",
-                    "border": "white",
+                    "background": "rgba(77, 77, 77, .7)",
+                    "border": "2px solid black",
                     "overflow": "hidden",
                     "cursor": "pointer"
                 },

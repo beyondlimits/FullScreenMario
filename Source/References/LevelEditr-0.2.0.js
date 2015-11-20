@@ -336,12 +336,12 @@ var LevelEditr;
         /**
          *
          */
-        LevelEditr.prototype.setCurrentArgs = function () {
+        LevelEditr.prototype.setCurrentArgs = function (event) {
             if (this.currentClickMode === "Thing") {
                 this.setCurrentThing(this.currentTitle, this.generateCurrentArgs());
             }
             else {
-                this.onMacroIconClick(this.currentTitle, undefined, this.generateCurrentArgs());
+                this.onMacroIconClick(this.currentTitle, undefined, this.generateCurrentArgs(), event);
             }
         };
         /* Mouse events
@@ -712,7 +712,7 @@ var LevelEditr;
         LevelEditr.prototype.getMapObjectAndTry = function () {
             var mapName = this.getMapName() + "::Temporary", mapRaw = this.getMapObject();
             if (!mapRaw) {
-                return false;
+                return;
             }
             try {
                 this.GameStarter.MapsCreator.storeMap(mapName, mapRaw);
@@ -721,7 +721,6 @@ var LevelEditr;
             }
             catch (error) {
                 this.display.stringer.messenger.textContent = error.message;
-                return false;
             }
         };
         /**
@@ -1164,8 +1163,8 @@ var LevelEditr;
                 },
                 "children": (function () {
                     var selectedIndex = 0, containers = Object.keys(scope.prethings).map(function (key) {
-                        var children = Object.keys(scope.prethings[key]).map(function (title) {
-                            var thing = scope.GameStarter.ObjectMaker.make(title), container = scope.GameStarter.createElement("div", {
+                        var prethings = scope.prethings[key], children = Object.keys(prethings).map(function (title) {
+                            var prething = prethings[title], thing = scope.GameStarter.ObjectMaker.make(title, scope.getPrethingSizeArguments(prething)), container = scope.GameStarter.createElement("div", {
                                 "className": "EditorListOption",
                                 "options": scope.prethings[key][title],
                                 "children": [thing.canvas],
@@ -1713,6 +1712,35 @@ var LevelEditr;
         /**
          *
          */
+        LevelEditr.prototype.getPrethingSizeArguments = function (descriptor) {
+            var output = {}, width = this.getPrethingSizeArgument(descriptor.width), height = this.getPrethingSizeArgument(descriptor.height);
+            if (width) {
+                output.width = width;
+            }
+            if (height) {
+                output.height = height;
+            }
+            return output;
+        };
+        /**
+         *
+         */
+        LevelEditr.prototype.getPrethingSizeArgument = function (descriptor) {
+            if (!descriptor) {
+                return undefined;
+            }
+            if (descriptor.real) {
+                return descriptor.real;
+            }
+            var value = descriptor.value || 1, mod = descriptor.mod || 1;
+            if (!isFinite(value)) {
+                return mod || 8;
+            }
+            return value * mod;
+        };
+        /**
+         *
+         */
         LevelEditr.prototype.createSelect = function (options, attributes) {
             var select = this.GameStarter.createElement("select", attributes), i;
             for (i = 0; i < options.length; i += 1) {
@@ -2009,8 +2037,8 @@ var LevelEditr;
                     "margin": "0 7px 7px 0",
                     "width": "70px",
                     "height": "70px",
-                    "background": "black",
-                    "border": "white",
+                    "background": "rgba(77, 77, 77, .7)",
+                    "border": "2px solid black",
                     "overflow": "hidden",
                     "cursor": "pointer"
                 },
