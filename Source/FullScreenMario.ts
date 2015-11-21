@@ -875,7 +875,7 @@ module FullScreenMario {
             for (i = 0; i < things.length; i += 1) {
                 thing = things[i];
 
-                if (thing.right < delx) {
+                if (thing.right < delx && thing.outerok !== 2) {
                     FSM.arrayDeleteThing(thing, things, i);
                     i -= 1;
                 }
@@ -905,7 +905,7 @@ module FullScreenMario {
                     if (solid.movement) {
                         solid.movement(solid);
                     }
-                } else {
+                } else if (!solid.alive || solid.outerok !== 2) {
                     FSM.arrayDeleteThing(solid, solids, i);
                     i -= 1;
                 }
@@ -972,7 +972,8 @@ module FullScreenMario {
                     if (!character.player &&
                         (character.numquads === 0 || character.left > delx) &&
                         (!character.outerok || (
-                            character.right < FSM.MapScreener.width - delx
+                            character.outerok !== 2
+                            && character.right < FSM.MapScreener.width - delx
                         ))) {
                         FSM.arrayDeleteThing(character, characters, i);
                         i -= 1;

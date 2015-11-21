@@ -301,10 +301,11 @@ var LevelEditr;
                     "xloc": 0,
                     "yloc": 0,
                     "thing": this.GameStarter.ObjectMaker.make(this.currentTitle, this.GameStarter.proliferate({
-                        "outerok": true
+                        "outerok": 2
                     }, this.getNormalizedThingArguments(args)))
                 }
             ];
+            var thing = this.currentPreThings[0].thing;
             this.addThingAndDisableEvents(this.currentPreThings[0].thing, x, y);
         };
         /**
@@ -314,7 +315,7 @@ var LevelEditr;
             var currentThing, i;
             for (i = 0; i < this.currentPreThings.length; i += 1) {
                 currentThing = this.currentPreThings[i];
-                currentThing.thing.outerok = true;
+                currentThing.thing.outerok = 2;
                 this.GameStarter.addThing(currentThing.thing, currentThing.xloc || 0, currentThing.yloc || 0);
                 this.disableThing(currentThing.thing);
             }
@@ -1645,6 +1646,7 @@ var LevelEditr;
             thing.movement = undefined;
             thing.nofall = true;
             thing.nocollide = true;
+            thing.outerok = 2;
             thing.xvel = 0;
             thing.yvel = 0;
             thing.opacity = opacity;
