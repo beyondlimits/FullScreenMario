@@ -350,7 +350,7 @@ var LevelEditr;
         /**
          *
          */
-        LevelEditr.prototype.onMouseDownScroller = function (direction, event) {
+        LevelEditr.prototype.onMouseDownScrolling = function (direction, event) {
             var target = event.target, scope = this;
             target.setAttribute("scrolling", "1");
             this.GameStarter.TimeHandler.addEventInterval(function () {
@@ -360,6 +360,9 @@ var LevelEditr;
                 if (direction < 0 && scope.GameStarter.MapScreener.left <= 0) {
                     (scope.display.scrollers.left).style.opacity = ".14";
                     return;
+                }
+                for (var i = 0; i < scope.currentPreThings.length; i += 1) {
+                    scope.GameStarter.shiftHoriz(scope.currentPreThings[i].thing, direction);
                 }
                 scope.GameStarter.scrollWindow(direction);
                 scope.display.scrollers.left.style.opacity = "1";
@@ -440,7 +443,7 @@ var LevelEditr;
             if (this.currentMode === "Build") {
                 this.disableThing(thing);
             }
-            this.addThingAndDisableEvents(thing, this.roundTo(x - this.GameStarter.container.offsetLeft, this.blocksize), this.roundTo(y - this.GameStarter.container.offsetTop, this.blocksize));
+            this.addThingAndDisableEvents(thing, x - this.GameStarter.container.offsetLeft, y - this.GameStarter.container.offsetTop);
         };
         /**
          *
@@ -816,7 +819,7 @@ var LevelEditr;
             this.display.scrollers = {
                 "left": this.GameStarter.createElement("div", {
                     "className": "EditorScroller EditorScrollerLeft",
-                    "onmousedown": this.onMouseDownScroller.bind(this, -this.GameStarter.unitsize * 2),
+                    "onmousedown": this.onMouseDownScrolling.bind(this, -this.GameStarter.unitsize * 2),
                     "onmouseup": this.onMouseUpScrolling.bind(this),
                     "onmouseout": this.onMouseUpScrolling.bind(this),
                     "onclick": this.cancelEvent.bind(this),
@@ -827,7 +830,7 @@ var LevelEditr;
                 }),
                 "right": this.GameStarter.createElement("div", {
                     "className": "EditorScroller EditorScrollerRight",
-                    "onmousedown": this.onMouseDownScroller.bind(this, this.GameStarter.unitsize * 2),
+                    "onmousedown": this.onMouseDownScrolling.bind(this, this.GameStarter.unitsize * 2),
                     "onmouseup": this.onMouseUpScrolling.bind(this),
                     "onmouseout": this.onMouseUpScrolling.bind(this),
                     "onclick": this.cancelEvent.bind(this),
@@ -2091,6 +2094,9 @@ var LevelEditr;
                 },
                 ".LevelEditor .EditorVisualOptions .VisualOptionValue": {
                     "max-width": "117px"
+                },
+                ".LevelEditor .EditorVisualOptions select.VisualOptionValue": {
+                    "max-width": "156px"
                 },
                 ".LevelEditor .EditorVisualOptions .VisualOptionInfiniter, .LevelEditor .EditorVisualOptions .VisualOptionRecommendation": {
                     "display": "inline"

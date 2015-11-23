@@ -44,6 +44,7 @@ declare module LevelEditr {
         setMap(name: string, location?: string): void;
         setRight(thing: IThing, right: number): void;
         setTop(thing: IThing, top: number): void;
+        shiftHoriz(thing: IThing, dx: number, notChanged?: boolean): void;
         proliferate(recipient: any, donor: any, noOverride?: boolean): any;
         scrollWindow(x: number): void;
     }
@@ -51,6 +52,7 @@ declare module LevelEditr {
     export interface IThing extends PixelDrawr.IThing, MapsCreatr.IThing {
         width: number;
         height: number;
+        left: number;
         outerok: boolean | number;
     }
 
@@ -726,7 +728,7 @@ module LevelEditr {
         /**
          * 
          */
-        private onMouseDownScroller(direction: number, event: MouseEvent): void {
+        private onMouseDownScrolling(direction: number, event: MouseEvent): void {
             var target: HTMLDivElement = <HTMLDivElement>event.target,
                 scope: LevelEditr = this;
 
@@ -741,6 +743,10 @@ module LevelEditr {
                     if (direction < 0 && scope.GameStarter.MapScreener.left <= 0) {
                         (scope.display.scrollers.left).style.opacity = ".14";
                         return;
+                    }
+
+                    for (var i: number = 0; i < scope.currentPreThings.length; i += 1) {
+                        scope.GameStarter.shiftHoriz(scope.currentPreThings[i].thing, direction);
                     }
 
                     scope.GameStarter.scrollWindow(direction);
@@ -870,8 +876,8 @@ module LevelEditr {
 
             this.addThingAndDisableEvents(
                 thing,
-                this.roundTo(x - this.GameStarter.container.offsetLeft, this.blocksize),
-                this.roundTo(y - this.GameStarter.container.offsetTop, this.blocksize));
+                x - this.GameStarter.container.offsetLeft,
+                y - this.GameStarter.container.offsetTop);
         }
 
         /**
@@ -1368,7 +1374,7 @@ module LevelEditr {
             this.display.scrollers = {
                 "left": this.GameStarter.createElement("div", {
                     "className": "EditorScroller EditorScrollerLeft",
-                    "onmousedown": this.onMouseDownScroller.bind(this, -this.GameStarter.unitsize * 2),
+                    "onmousedown": this.onMouseDownScrolling.bind(this, -this.GameStarter.unitsize * 2),
                     "onmouseup": this.onMouseUpScrolling.bind(this),
                     "onmouseout": this.onMouseUpScrolling.bind(this),
                     "onclick": this.cancelEvent.bind(this),
@@ -1379,7 +1385,7 @@ module LevelEditr {
                 }),
                 "right": this.GameStarter.createElement("div", {
                     "className": "EditorScroller EditorScrollerRight",
-                    "onmousedown": this.onMouseDownScroller.bind(this, this.GameStarter.unitsize * 2),
+                    "onmousedown": this.onMouseDownScrolling.bind(this, this.GameStarter.unitsize * 2),
                     "onmouseup": this.onMouseUpScrolling.bind(this),
                     "onmouseout": this.onMouseUpScrolling.bind(this),
                     "onclick": this.cancelEvent.bind(this),
@@ -2840,6 +2846,9 @@ module LevelEditr {
                 },
                 ".LevelEditor .EditorVisualOptions .VisualOptionValue": {
                     "max-width": "117px"
+                },
+                ".LevelEditor .EditorVisualOptions select.VisualOptionValue": {
+                    "max-width": "156px"
                 },
                 ".LevelEditor .EditorVisualOptions .VisualOptionInfiniter, .LevelEditor .EditorVisualOptions .VisualOptionRecommendation": {
                     "display": "inline"
