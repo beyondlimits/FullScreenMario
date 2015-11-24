@@ -719,7 +719,7 @@ var LevelEditr;
             }
             return map;
         };
-        LevelEditr.prototype.getMapObjectAndTry = function () {
+        LevelEditr.prototype.getMapObjectAndTry = function (event) {
             var mapName = this.getMapName() + "::Temporary", mapRaw = this.getMapObject();
             if (!mapRaw) {
                 return;
@@ -731,6 +731,9 @@ var LevelEditr;
             }
             catch (error) {
                 this.display.stringer.messenger.textContent = error.message;
+            }
+            if (event) {
+                event.stopPropagation();
             }
         };
         /**
@@ -1112,7 +1115,10 @@ var LevelEditr;
                         "className": "EditorJSONInput",
                         "spellcheck": false,
                         "onkeyup": this.getMapObjectAndTry.bind(this),
-                        "onchange": this.getMapObjectAndTry.bind(this)
+                        "onchange": this.getMapObjectAndTry.bind(this),
+                        "onkeydown": function (event) {
+                            event.stopPropagation();
+                        }
                     }),
                     this.display.stringer.messenger = this.GameStarter.createElement("div", {
                         "className": "EditorJSONInfo"

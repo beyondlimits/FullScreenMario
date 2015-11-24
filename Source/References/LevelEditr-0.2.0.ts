@@ -1249,7 +1249,7 @@ module LevelEditr {
             return map;
         }
 
-        private getMapObjectAndTry(): void {
+        private getMapObjectAndTry(event: Event): void {
             var mapName: string = this.getMapName() + "::Temporary",
                 mapRaw: IMapsCreatrMapRaw = this.getMapObject();
 
@@ -1264,6 +1264,10 @@ module LevelEditr {
             } catch (error) {
                 this.display.stringer.messenger.textContent = error.message;
             }
+
+			if (event) {
+				event.stopPropagation();
+			}
         }
 
         /**
@@ -1704,7 +1708,10 @@ module LevelEditr {
                         "className": "EditorJSONInput",
                         "spellcheck": false,
                         "onkeyup": this.getMapObjectAndTry.bind(this),
-                        "onchange": this.getMapObjectAndTry.bind(this)
+                        "onchange": this.getMapObjectAndTry.bind(this),
+						"onkeydown": function (event: Event): void {
+							event.stopPropagation();
+						}
                     }),
                     this.display.stringer.messenger = this.GameStarter.createElement("div", {
                         "className": "EditorJSONInfo"
