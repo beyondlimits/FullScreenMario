@@ -1351,7 +1351,7 @@ var LevelEditr;
             visual.textContent = "";
             visual.appendChild(this.GameStarter.createElement("h3", {
                 "className": "VisualOptionName",
-                "textContent": name
+                "textContent": name.replace(/([A-Z][a-z])/g, " $1")
             }));
             if (description) {
                 visual.appendChild(this.GameStarter.createElement("div", {

@@ -1991,7 +1991,7 @@ module LevelEditr {
 
             visual.appendChild(this.GameStarter.createElement("h3", {
                 "className": "VisualOptionName",
-                "textContent": name
+                "textContent": name.replace(/([A-Z][a-z])/g, " $1")
             }));
 
             if (description) {
