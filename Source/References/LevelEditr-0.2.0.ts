@@ -73,9 +73,13 @@ declare module LevelEditr {
     }
 
     export interface IPreThingDescriptor {
-        width?: IPreThingDimensionDescriptor;
-        height?: IPreThingDimensionDescriptor;
-        [i: string]: any;
+		offsetTop?: number;
+		offsetLeft?: number;
+		width?: IPreThingDimensionDescriptor;
+		height?: IPreThingDimensionDescriptor;
+		options?: {
+			[i: string]: IPreThingDimensionDescriptor;
+		};
     }
 
     export interface IPreThingDimensionDescriptor {
@@ -170,7 +174,7 @@ declare module LevelEditr {
         GameStarter: IGameStartr;
         prethings: { [i: string]: IPreThing[] };
         thingGroups: string[];
-        thingKeys: string[];
+        things: { [i: string]: IThing };
         macros: { [i: string]: MapsCreatr.IMapsCreatrMacro };
         beautifier: (text: string) => string;
         mapNameDefault?: string;
@@ -226,7 +230,7 @@ module LevelEditr {
          * The listings of PreThings that the GUI displays
          */
         private prethings: {
-            [i: string]: IPreThingDescriptor[]
+            [i: string]: IPreThingDescriptor[];
         };
 
         /**
@@ -237,7 +241,9 @@ module LevelEditr {
         /**
          * The complete list of Things that may be placed
          */
-        private thingKeys: string[];
+        private things: {
+			[i: string]: IPreThingDescriptor;
+		};
 
         /**
          * The listings of macros that the GUI display
@@ -335,7 +341,7 @@ module LevelEditr {
             this.GameStarter = settings.GameStarter;
             this.prethings = settings.prethings;
             this.thingGroups = settings.thingGroups;
-            this.thingKeys = settings.thingKeys;
+            this.things = settings.things;
             this.macros = settings.macros;
             this.beautifier = settings.beautifier;
             this.mapNameDefault = settings.mapNameDefault || "New Map";
@@ -391,8 +397,8 @@ module LevelEditr {
         /**
          * 
          */
-        getThingKeys(): string[] {
-            return this.thingKeys;
+        getThings(): { [i: string]: IPreThingDescriptor } {
+            return this.things;
         }
 
         /**
@@ -567,6 +573,12 @@ module LevelEditr {
             if (this.display.container.className.indexOf("minimized") !== -1) {
                 this.display.container.className = this.display.container.className.replace(/ minimized/g, "");
             }
+
+			if (this.currentClickMode === "Thing") {
+				this.setSectionClickToPlaceThings();
+			} else if (this.currentClickMode === "Macro") {
+				this.setSectionClickToPlaceMacros();
+			}
         }
 
         /**
@@ -651,27 +663,29 @@ module LevelEditr {
         /**
          * 
          */
-        private setCurrentThing(title: string, args: any, x: number = 0, y: number = 0): void {
-            this.clearCurrentThings();
+        private setCurrentThing(title: string, x: number = 0, y: number = 0): void {
+			var args: any = this.generateCurrentArgs(),
+				description: IPreThingDescriptor = this.things[title];
+
+			this.clearCurrentThings();
 
             this.currentTitle = title;
             this.currentArgs = args;
             this.currentPreThings = [
                 {
-                    "xloc": 0,
-                    "yloc": 0,
+					"xloc": 0,
+					"yloc": 0,
+                    "left": description.offsetLeft || 0,
+                    "top": -description.offsetTop || 0,
                     "thing": this.GameStarter.ObjectMaker.make(
                         this.currentTitle,
                         this.GameStarter.proliferate(
                             {
                                 "outerok": 2
                             },
-                            this.getNormalizedThingArguments(args))
-                    )
+                            this.getNormalizedThingArguments(args)))
                 }
             ];
-
-            var thing = this.currentPreThings[0].thing;
 
             this.addThingAndDisableEvents(this.currentPreThings[0].thing, x, y);
         }
@@ -691,7 +705,7 @@ module LevelEditr {
                 this.disableThing(currentThing.thing);
             }
 
-            this.onMouseMoveEditing(event); // add event?
+            this.onMouseMoveEditing(event);
             this.GameStarter.TimeHandler.cancelAllEvents();
         }
 
@@ -715,7 +729,7 @@ module LevelEditr {
          */
         private setCurrentArgs(event?: MouseEvent): void {
             if (this.currentClickMode === "Thing") {
-                this.setCurrentThing(this.currentTitle, this.generateCurrentArgs());
+                this.setCurrentThing(this.currentTitle);
             } else {
                 this.onMacroIconClick(this.currentTitle, undefined, this.generateCurrentArgs(), event);
             }
@@ -771,24 +785,25 @@ module LevelEditr {
             var x: number = event.x || event.clientX || 0,
                 y: number = event.y || event.clientY || 0,
                 prething: IPreThing,
+				left: number,
+				top: number,
                 i: number;
 
             for (i = 0; i < this.currentPreThings.length; i += 1) {
                 prething = this.currentPreThings[i];
+				left = this.roundTo(x - this.GameStarter.container.offsetLeft, this.blocksize)
+				top = this.roundTo(y - this.GameStarter.container.offsetTop, this.blocksize);
 
-                if (!prething.thing) {
-                    continue;
-                }
+				if (prething.left) {
+					left += prething.left * this.GameStarter.unitsize;
+				}
 
-                this.GameStarter.setLeft(
-                    prething.thing,
-                    this.roundTo(x - this.GameStarter.container.offsetLeft, this.blocksize)
-                    + (prething.left || 0) * this.GameStarter.unitsize);
+				if (prething.top) {
+					top -= prething.top * this.GameStarter.unitsize;
+				}
 
-                this.GameStarter.setTop(
-                    prething.thing,
-                    this.roundTo(y - this.GameStarter.container.offsetTop, this.blocksize)
-                    - (prething.top || 0) * this.GameStarter.unitsize);
+                this.GameStarter.setLeft(prething.thing, left);
+                this.GameStarter.setTop(prething.thing, top);
             }
         }
 
@@ -813,8 +828,9 @@ module LevelEditr {
                 return;
             }
 
-            var x: number = this.roundTo(event.x || event.clientX || 0, this.blocksize),
-                y: number = this.roundTo(event.y || event.clientY || 0, this.blocksize);
+            var coordinates = this.getNormalizedThingMouseEventCoordinates(event),
+				x = coordinates[0],
+				y = coordinates[1];
 
             if (!this.addMapCreationThing(x, y)) {
                 return;
@@ -859,25 +875,25 @@ module LevelEditr {
          * 
          */
         private onClickEditingGenericAdd(x: number, y: number, title: string, args: any): void {
-            var thing: IThing = this.GameStarter.ObjectMaker.make(
-                title,
-                this.GameStarter.proliferate(
-                    {
-                        "onThingMake": undefined,
-                        "onThingAdd": undefined,
-                        "onThingAdded": undefined,
-                        "movement": undefined
-                    },
-                    this.getNormalizedThingArguments(args)));
+            var description: IPreThingDescriptor = this.things[title],
+				thing: IThing = this.GameStarter.ObjectMaker.make(
+					title,
+					this.GameStarter.proliferate(
+						{
+							"onThingMake": undefined,
+							"onThingAdd": undefined,
+							"onThingAdded": undefined,
+							"movement": undefined
+						},
+						this.getNormalizedThingArguments(args))),
+				left: number = x - this.GameStarter.container.offsetLeft,
+				top: number = y - this.GameStarter.container.offsetTop;
 
             if (this.currentMode === "Build") {
                 this.disableThing(thing);
             }
 
-            this.addThingAndDisableEvents(
-                thing,
-                x - this.GameStarter.container.offsetLeft,
-                y - this.GameStarter.container.offsetTop);
+            this.addThingAndDisableEvents(thing, left, top);
         }
 
         /**
@@ -893,13 +909,9 @@ module LevelEditr {
             this.cancelEvent(event);
             this.killCurrentPreThings();
 
-            setTimeout(
-                (function (): void {
-                    this.generateCurrentArgs();
-                    this.setCurrentThing(title, this.getCurrentArgs(), x, y);
-                }).bind(this));
-
             this.setVisualOptions(target.getAttribute("name"), undefined, target.options);
+			this.generateCurrentArgs();
+			this.setCurrentThing(title, x, y);
         }
 
         /**
@@ -1540,6 +1552,7 @@ module LevelEditr {
 
             this.resetDisplayMapSettingsCurrent();
             this.resetDisplayMapSettingsMap();
+            this.resetDisplayMapSettingsArea();
             this.resetDisplayMapSettingsLocation();
             this.resetDisplayJSON();
             this.resetDisplayVisualContainers();
@@ -1591,24 +1604,12 @@ module LevelEditr {
             }));
         }
 
-        private resetDisplayMapSettingsLocation(): void {
+        private resetDisplayMapSettingsArea(): void {
             this.display.sections.MapSettings.container.appendChild(this.GameStarter.createElement("div", {
                 "className": "EditorMapSettingsGroup",
                 "children": [
                     this.GameStarter.createElement("h4", {
-                        "textContent": "Location"
-                    }),
-                    this.GameStarter.createElement("div", {
-                        "className": "EditorMapSettingsSubGroup",
-                        "children": [
-                            this.GameStarter.createElement("label", {
-                                "textContent": "Area"
-                            }),
-                            this.display.sections.MapSettings.Area = this.createSelect(["0"], {
-                                "className": "VisualOptionArea",
-                                "onchange": this.setLocationArea.bind(this, true)
-                            })
-                        ]
+                        "textContent": "Area"
                     }),
                     this.GameStarter.createElement("div", {
                         "className": "EditorMapSettingsSubGroup",
@@ -1637,6 +1638,29 @@ module LevelEditr {
                                 {
                                     "onchange": this.setMapSetting.bind(this, true)
                                 })
+                        ]
+                    })
+                ]
+            }));
+        }
+
+        private resetDisplayMapSettingsLocation(): void {
+            this.display.sections.MapSettings.container.appendChild(this.GameStarter.createElement("div", {
+                "className": "EditorMapSettingsGroup",
+                "children": [
+                    this.GameStarter.createElement("h4", {
+                        "textContent": "Location"
+                    }),
+                    this.GameStarter.createElement("div", {
+                        "className": "EditorMapSettingsSubGroup",
+                        "children": [
+                            this.GameStarter.createElement("label", {
+                                "textContent": "Area"
+                            }),
+                            this.display.sections.MapSettings.Area = this.createSelect(["0"], {
+                                "className": "VisualOptionArea",
+                                "onchange": this.setLocationArea.bind(this, true)
+                            })
                         ]
                     }),
                     this.GameStarter.createElement("div", {
@@ -1751,6 +1775,10 @@ module LevelEditr {
                 // Without clicker, tslint complaints onThingIconClick isn't used...
                 clicker: any = this.onThingIconClick;
 
+            if (this.display.sections.ClickToPlace.Things) {
+                this.display.sections.ClickToPlace.container.removeChild(this.display.sections.ClickToPlace.Things);
+            }
+
             this.display.sections.ClickToPlace.Things = this.GameStarter.createElement("div", {
                 "className": "EditorSectionSecondary EditorOptions EditorOptions-Things",
                 "style": {
@@ -1768,7 +1796,7 @@ module LevelEditr {
                                                 scope.getPrethingSizeArguments(prething)),
                                             container: HTMLDivElement = <HTMLDivElement>scope.GameStarter.createElement("div", {
                                                 "className": "EditorListOption",
-                                                "options": scope.prethings[key][title],
+                                                "options": scope.prethings[key][title].options,
                                                 "children": [thing.canvas],
                                                 "onclick": clicker.bind(scope, title)
                                             }),
@@ -1823,6 +1851,10 @@ module LevelEditr {
          */
         private resetDisplayOptionsListSubOptionsMacros(): void {
             var scope: LevelEditr = this;
+
+            if (this.display.sections.ClickToPlace.Macros) {
+                this.display.sections.ClickToPlace.container.removeChild(this.display.sections.ClickToPlace.Macros);
+            }
 
             scope.display.sections.ClickToPlace.Macros = scope.GameStarter.createElement("div", {
                 "className": "EditorSectionSecondary EditorOptions EditorOptions-Macros",
@@ -1890,7 +1922,7 @@ module LevelEditr {
         /**
          * 
          */
-        private setSectionClickToPlaceThings(event: MouseEvent): void {
+        private setSectionClickToPlaceThings(event?: MouseEvent): void {
             this.setCurrentClickMode("Thing", event);
 
             this.display.container.onclick = this.onClickEditingThing.bind(this);
@@ -1905,7 +1937,7 @@ module LevelEditr {
         /**
          * 
          */
-        private setSectionClickToPlaceMacros(event: MouseEvent): void {
+        private setSectionClickToPlaceMacros(event?: MouseEvent): void {
             this.setCurrentClickMode("Macro", event);
 
             this.display.container.onclick = this.onClickEditingMacro.bind(this);
@@ -2211,7 +2243,7 @@ module LevelEditr {
          * 
          */
         private createVisualOptionEverything(option: any): HTMLSelectElement {
-            return this.createSelect(this.thingKeys, {
+            return this.createSelect(Object.keys(this.things), {
                 "className": "VisualOptionValue VisualOptionEverything",
                 "data-type": "String",
                 "onchange": this.setCurrentArgs.bind(this)
@@ -2267,6 +2299,7 @@ module LevelEditr {
             this.setTextareaValue(this.display.stringer.textarea.value);
 
             this.GameStarter.setMap(mapName, this.getCurrentLocation());
+            this.resetDisplayOptionsListSubOptionsThings();
 
             if (doDisableThings) {
                 this.disableAllThings();
@@ -2372,6 +2405,7 @@ module LevelEditr {
          *
          */
         private addThingAndDisableEvents(thing: IThing, x?: number, y?: number): void {
+			console.log("Adding", thing.title, "at", x, y);
             this.GameStarter.addThing(thing, x, y);
             this.disableThing(thing);
             this.GameStarter.TimeHandler.cancelAllEvents();
@@ -2431,6 +2465,25 @@ module LevelEditr {
 
             return argsNormal;
         }
+
+		/**
+		 *
+		 */
+		private getNormalizedThingMouseEventCoordinates(event: MouseEvent): number[] {
+			var x: number = this.roundTo(event.x || event.clientX || 0, this.blocksize),
+                y: number = this.roundTo(event.y || event.clientY || 0, this.blocksize),
+				thing: IPreThingDescriptor = this.things[this.currentTitle];
+
+			if (thing.offsetLeft) {
+				x += thing.offsetLeft * this.GameStarter.unitsize;
+			}
+
+			if (thing.offsetTop) {
+				y += thing.offsetTop * this.GameStarter.unitsize;
+			}
+
+			return [x, y];
+		}
 
         /**
          *

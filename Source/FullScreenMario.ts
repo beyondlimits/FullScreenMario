@@ -2204,7 +2204,7 @@ module FullScreenMario {
          * @param {Platform} thing
          */
         spawnScalePlatform(thing: IPlatform): void {
-            var collection: any = thing.collection,
+            var collection: any = thing.collection || {},
                 ownKey: string = thing.collectionKey === "platformLeft" ? "Left" : "Right",
                 partnerKey: string = ownKey === "Left" ? "Right" : "Left";
 

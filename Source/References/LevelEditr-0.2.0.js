@@ -27,7 +27,7 @@ var LevelEditr;
             this.GameStarter = settings.GameStarter;
             this.prethings = settings.prethings;
             this.thingGroups = settings.thingGroups;
-            this.thingKeys = settings.thingKeys;
+            this.things = settings.things;
             this.macros = settings.macros;
             this.beautifier = settings.beautifier;
             this.mapNameDefault = settings.mapNameDefault || "New Map";
@@ -74,8 +74,8 @@ var LevelEditr;
         /**
          *
          */
-        LevelEditr.prototype.getThingKeys = function () {
-            return this.thingKeys;
+        LevelEditr.prototype.getThings = function () {
+            return this.things;
         };
         /**
          *
@@ -218,6 +218,12 @@ var LevelEditr;
             if (this.display.container.className.indexOf("minimized") !== -1) {
                 this.display.container.className = this.display.container.className.replace(/ minimized/g, "");
             }
+            if (this.currentClickMode === "Thing") {
+                this.setSectionClickToPlaceThings();
+            }
+            else if (this.currentClickMode === "Macro") {
+                this.setSectionClickToPlaceMacros();
+            }
         };
         /**
          *
@@ -290,9 +296,10 @@ var LevelEditr;
         /**
          *
          */
-        LevelEditr.prototype.setCurrentThing = function (title, args, x, y) {
+        LevelEditr.prototype.setCurrentThing = function (title, x, y) {
             if (x === void 0) { x = 0; }
             if (y === void 0) { y = 0; }
+            var args = this.generateCurrentArgs(), description = this.things[title];
             this.clearCurrentThings();
             this.currentTitle = title;
             this.currentArgs = args;
@@ -300,12 +307,13 @@ var LevelEditr;
                 {
                     "xloc": 0,
                     "yloc": 0,
+                    "left": description.offsetLeft || 0,
+                    "top": -description.offsetTop || 0,
                     "thing": this.GameStarter.ObjectMaker.make(this.currentTitle, this.GameStarter.proliferate({
                         "outerok": 2
                     }, this.getNormalizedThingArguments(args)))
                 }
             ];
-            var thing = this.currentPreThings[0].thing;
             this.addThingAndDisableEvents(this.currentPreThings[0].thing, x, y);
         };
         /**
@@ -319,7 +327,7 @@ var LevelEditr;
                 this.GameStarter.addThing(currentThing.thing, currentThing.xloc || 0, currentThing.yloc || 0);
                 this.disableThing(currentThing.thing);
             }
-            this.onMouseMoveEditing(event); // add event?
+            this.onMouseMoveEditing(event);
             this.GameStarter.TimeHandler.cancelAllEvents();
         };
         /**
@@ -339,7 +347,7 @@ var LevelEditr;
          */
         LevelEditr.prototype.setCurrentArgs = function (event) {
             if (this.currentClickMode === "Thing") {
-                this.setCurrentThing(this.currentTitle, this.generateCurrentArgs());
+                this.setCurrentThing(this.currentTitle);
             }
             else {
                 this.onMacroIconClick(this.currentTitle, undefined, this.generateCurrentArgs(), event);
@@ -378,16 +386,19 @@ var LevelEditr;
          *
          */
         LevelEditr.prototype.onMouseMoveEditing = function (event) {
-            var x = event.x || event.clientX || 0, y = event.y || event.clientY || 0, prething, i;
+            var x = event.x || event.clientX || 0, y = event.y || event.clientY || 0, prething, left, top, i;
             for (i = 0; i < this.currentPreThings.length; i += 1) {
                 prething = this.currentPreThings[i];
-                if (!prething.thing) {
-                    continue;
+                left = this.roundTo(x - this.GameStarter.container.offsetLeft, this.blocksize);
+                top = this.roundTo(y - this.GameStarter.container.offsetTop, this.blocksize);
+                if (prething.left) {
+                    left += prething.left * this.GameStarter.unitsize;
                 }
-                this.GameStarter.setLeft(prething.thing, this.roundTo(x - this.GameStarter.container.offsetLeft, this.blocksize)
-                    + (prething.left || 0) * this.GameStarter.unitsize);
-                this.GameStarter.setTop(prething.thing, this.roundTo(y - this.GameStarter.container.offsetTop, this.blocksize)
-                    - (prething.top || 0) * this.GameStarter.unitsize);
+                if (prething.top) {
+                    top -= prething.top * this.GameStarter.unitsize;
+                }
+                this.GameStarter.setLeft(prething.thing, left);
+                this.GameStarter.setTop(prething.thing, top);
             }
         };
         /**
@@ -406,7 +417,7 @@ var LevelEditr;
             if (!this.canClick || this.currentMode !== "Build" || !this.currentPreThings.length) {
                 return;
             }
-            var x = this.roundTo(event.x || event.clientX || 0, this.blocksize), y = this.roundTo(event.y || event.clientY || 0, this.blocksize);
+            var coordinates = this.getNormalizedThingMouseEventCoordinates(event), x = coordinates[0], y = coordinates[1];
             if (!this.addMapCreationThing(x, y)) {
                 return;
             }
@@ -434,16 +445,16 @@ var LevelEditr;
          *
          */
         LevelEditr.prototype.onClickEditingGenericAdd = function (x, y, title, args) {
-            var thing = this.GameStarter.ObjectMaker.make(title, this.GameStarter.proliferate({
+            var description = this.things[title], thing = this.GameStarter.ObjectMaker.make(title, this.GameStarter.proliferate({
                 "onThingMake": undefined,
                 "onThingAdd": undefined,
                 "onThingAdded": undefined,
                 "movement": undefined
-            }, this.getNormalizedThingArguments(args)));
+            }, this.getNormalizedThingArguments(args))), left = x - this.GameStarter.container.offsetLeft, top = y - this.GameStarter.container.offsetTop;
             if (this.currentMode === "Build") {
                 this.disableThing(thing);
             }
-            this.addThingAndDisableEvents(thing, x - this.GameStarter.container.offsetLeft, y - this.GameStarter.container.offsetTop);
+            this.addThingAndDisableEvents(thing, left, top);
         };
         /**
          *
@@ -454,11 +465,9 @@ var LevelEditr;
                 : event.target.parentNode;
             this.cancelEvent(event);
             this.killCurrentPreThings();
-            setTimeout((function () {
-                this.generateCurrentArgs();
-                this.setCurrentThing(title, this.getCurrentArgs(), x, y);
-            }).bind(this));
             this.setVisualOptions(target.getAttribute("name"), undefined, target.options);
+            this.generateCurrentArgs();
+            this.setCurrentThing(title, x, y);
         };
         /**
          *
@@ -969,6 +978,7 @@ var LevelEditr;
             });
             this.resetDisplayMapSettingsCurrent();
             this.resetDisplayMapSettingsMap();
+            this.resetDisplayMapSettingsArea();
             this.resetDisplayMapSettingsLocation();
             this.resetDisplayJSON();
             this.resetDisplayVisualContainers();
@@ -1014,24 +1024,12 @@ var LevelEditr;
                 ]
             }));
         };
-        LevelEditr.prototype.resetDisplayMapSettingsLocation = function () {
+        LevelEditr.prototype.resetDisplayMapSettingsArea = function () {
             this.display.sections.MapSettings.container.appendChild(this.GameStarter.createElement("div", {
                 "className": "EditorMapSettingsGroup",
                 "children": [
                     this.GameStarter.createElement("h4", {
-                        "textContent": "Location"
-                    }),
-                    this.GameStarter.createElement("div", {
-                        "className": "EditorMapSettingsSubGroup",
-                        "children": [
-                            this.GameStarter.createElement("label", {
-                                "textContent": "Area"
-                            }),
-                            this.display.sections.MapSettings.Area = this.createSelect(["0"], {
-                                "className": "VisualOptionArea",
-                                "onchange": this.setLocationArea.bind(this, true)
-                            })
-                        ]
+                        "textContent": "Area"
                     }),
                     this.GameStarter.createElement("div", {
                         "className": "EditorMapSettingsSubGroup",
@@ -1053,6 +1051,28 @@ var LevelEditr;
                                 "", "Night", "Underwater", "Alt"
                             ], {
                                 "onchange": this.setMapSetting.bind(this, true)
+                            })
+                        ]
+                    })
+                ]
+            }));
+        };
+        LevelEditr.prototype.resetDisplayMapSettingsLocation = function () {
+            this.display.sections.MapSettings.container.appendChild(this.GameStarter.createElement("div", {
+                "className": "EditorMapSettingsGroup",
+                "children": [
+                    this.GameStarter.createElement("h4", {
+                        "textContent": "Location"
+                    }),
+                    this.GameStarter.createElement("div", {
+                        "className": "EditorMapSettingsSubGroup",
+                        "children": [
+                            this.GameStarter.createElement("label", {
+                                "textContent": "Area"
+                            }),
+                            this.display.sections.MapSettings.Area = this.createSelect(["0"], {
+                                "className": "VisualOptionArea",
+                                "onchange": this.setLocationArea.bind(this, true)
                             })
                         ]
                     }),
@@ -1156,6 +1176,9 @@ var LevelEditr;
             var scope = this, 
             // Without clicker, tslint complaints onThingIconClick isn't used...
             clicker = this.onThingIconClick;
+            if (this.display.sections.ClickToPlace.Things) {
+                this.display.sections.ClickToPlace.container.removeChild(this.display.sections.ClickToPlace.Things);
+            }
             this.display.sections.ClickToPlace.Things = this.GameStarter.createElement("div", {
                 "className": "EditorSectionSecondary EditorOptions EditorOptions-Things",
                 "style": {
@@ -1166,7 +1189,7 @@ var LevelEditr;
                         var prethings = scope.prethings[key], children = Object.keys(prethings).map(function (title) {
                             var prething = prethings[title], thing = scope.GameStarter.ObjectMaker.make(title, scope.getPrethingSizeArguments(prething)), container = scope.GameStarter.createElement("div", {
                                 "className": "EditorListOption",
-                                "options": scope.prethings[key][title],
+                                "options": scope.prethings[key][title].options,
                                 "children": [thing.canvas],
                                 "onclick": clicker.bind(scope, title)
                             }), sizeMax = 70, widthThing = thing.width * scope.GameStarter.unitsize, heightThing = thing.height * scope.GameStarter.unitsize, widthDiff = (sizeMax - widthThing) / 2, heightDiff = (sizeMax - heightThing) / 2;
@@ -1206,6 +1229,9 @@ var LevelEditr;
          */
         LevelEditr.prototype.resetDisplayOptionsListSubOptionsMacros = function () {
             var scope = this;
+            if (this.display.sections.ClickToPlace.Macros) {
+                this.display.sections.ClickToPlace.container.removeChild(this.display.sections.ClickToPlace.Macros);
+            }
             scope.display.sections.ClickToPlace.Macros = scope.GameStarter.createElement("div", {
                 "className": "EditorSectionSecondary EditorOptions EditorOptions-Macros",
                 "style": {
@@ -1535,7 +1561,7 @@ var LevelEditr;
          *
          */
         LevelEditr.prototype.createVisualOptionEverything = function (option) {
-            return this.createSelect(this.thingKeys, {
+            return this.createSelect(Object.keys(this.things), {
                 "className": "VisualOptionValue VisualOptionEverything",
                 "data-type": "String",
                 "onchange": this.setCurrentArgs.bind(this)
@@ -1583,6 +1609,7 @@ var LevelEditr;
             this.display.stringer.messenger.textContent = "";
             this.setTextareaValue(this.display.stringer.textarea.value);
             this.GameStarter.setMap(mapName, this.getCurrentLocation());
+            this.resetDisplayOptionsListSubOptionsThings();
             if (doDisableThings) {
                 this.disableAllThings();
             }
@@ -1672,6 +1699,7 @@ var LevelEditr;
          *
          */
         LevelEditr.prototype.addThingAndDisableEvents = function (thing, x, y) {
+            console.log("Adding", thing.title, "at", x, y);
             this.GameStarter.addThing(thing, x, y);
             this.disableThing(thing);
             this.GameStarter.TimeHandler.cancelAllEvents();
@@ -1719,6 +1747,19 @@ var LevelEditr;
                 argsNormal.width = this.GameStarter.MapScreener.width;
             }
             return argsNormal;
+        };
+        /**
+         *
+         */
+        LevelEditr.prototype.getNormalizedThingMouseEventCoordinates = function (event) {
+            var x = this.roundTo(event.x || event.clientX || 0, this.blocksize), y = this.roundTo(event.y || event.clientY || 0, this.blocksize), thing = this.things[this.currentTitle];
+            if (thing.offsetLeft) {
+                x += thing.offsetLeft * this.GameStarter.unitsize;
+            }
+            if (thing.offsetTop) {
+                y += thing.offsetTop * this.GameStarter.unitsize;
+            }
+            return [x, y];
         };
         /**
          *
