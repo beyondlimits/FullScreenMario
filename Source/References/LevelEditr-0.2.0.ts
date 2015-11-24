@@ -73,13 +73,13 @@ declare module LevelEditr {
     }
 
     export interface IPreThingDescriptor {
-		offsetTop?: number;
-		offsetLeft?: number;
-		width?: IPreThingDimensionDescriptor;
-		height?: IPreThingDimensionDescriptor;
-		options?: {
-			[i: string]: IPreThingDimensionDescriptor;
-		};
+        offsetTop?: number;
+        offsetLeft?: number;
+        width?: IPreThingDimensionDescriptor;
+        height?: IPreThingDimensionDescriptor;
+        options?: {
+            [i: string]: IPreThingDimensionDescriptor;
+        };
     }
 
     export interface IPreThingDimensionDescriptor {
@@ -242,8 +242,8 @@ module LevelEditr {
          * The complete list of Things that may be placed
          */
         private things: {
-			[i: string]: IPreThingDescriptor;
-		};
+            [i: string]: IPreThingDescriptor;
+        };
 
         /**
          * The listings of macros that the GUI display
@@ -517,9 +517,8 @@ module LevelEditr {
 
             this.clearAllThings();
             this.resetDisplay();
-            (<any>this.GameStarter.MapScreener).nokeys = true;
-
             this.setCurrentMode("Build");
+            (<any>this.GameStarter.MapScreener).nokeys = true;
 
             this.setTextareaValue(this.stringifySmart(this.mapDefault), true);
             this.resetDisplayMap();
@@ -574,11 +573,11 @@ module LevelEditr {
                 this.display.container.className = this.display.container.className.replace(/ minimized/g, "");
             }
 
-			if (this.currentClickMode === "Thing") {
-				this.setSectionClickToPlaceThings();
-			} else if (this.currentClickMode === "Macro") {
-				this.setSectionClickToPlaceMacros();
-			}
+            if (this.currentClickMode === "Thing") {
+                this.setSectionClickToPlaceThings();
+            } else if (this.currentClickMode === "Macro") {
+                this.setSectionClickToPlaceMacros();
+            }
         }
 
         /**
@@ -664,17 +663,17 @@ module LevelEditr {
          * 
          */
         private setCurrentThing(title: string, x: number = 0, y: number = 0): void {
-			var args: any = this.generateCurrentArgs(),
-				description: IPreThingDescriptor = this.things[title];
+            var args: any = this.generateCurrentArgs(),
+                description: IPreThingDescriptor = this.things[title];
 
-			this.clearCurrentThings();
+            this.clearCurrentThings();
 
             this.currentTitle = title;
             this.currentArgs = args;
             this.currentPreThings = [
                 {
-					"xloc": 0,
-					"yloc": 0,
+                    "xloc": 0,
+                    "yloc": 0,
                     "left": description.offsetLeft || 0,
                     "top": -description.offsetTop || 0,
                     "thing": this.GameStarter.ObjectMaker.make(
@@ -785,22 +784,22 @@ module LevelEditr {
             var x: number = event.x || event.clientX || 0,
                 y: number = event.y || event.clientY || 0,
                 prething: IPreThing,
-				left: number,
-				top: number,
+                left: number,
+                top: number,
                 i: number;
 
             for (i = 0; i < this.currentPreThings.length; i += 1) {
                 prething = this.currentPreThings[i];
-				left = this.roundTo(x - this.GameStarter.container.offsetLeft, this.blocksize)
-				top = this.roundTo(y - this.GameStarter.container.offsetTop, this.blocksize);
+                left = this.roundTo(x - this.GameStarter.container.offsetLeft, this.blocksize)
+                top = this.roundTo(y - this.GameStarter.container.offsetTop, this.blocksize);
 
-				if (prething.left) {
-					left += prething.left * this.GameStarter.unitsize;
-				}
+                if (prething.left) {
+                    left += prething.left * this.GameStarter.unitsize;
+                }
 
-				if (prething.top) {
-					top -= prething.top * this.GameStarter.unitsize;
-				}
+                if (prething.top) {
+                    top -= prething.top * this.GameStarter.unitsize;
+                }
 
                 this.GameStarter.setLeft(prething.thing, left);
                 this.GameStarter.setTop(prething.thing, top);
@@ -828,9 +827,9 @@ module LevelEditr {
                 return;
             }
 
-            var coordinates = this.getNormalizedThingMouseEventCoordinates(event),
-				x = coordinates[0],
-				y = coordinates[1];
+            var coordinates: number[] = this.getNormalizedMouseEventCoordinates(event, true),
+                x: number = coordinates[0],
+                y: number = coordinates[1];
 
             if (!this.addMapCreationThing(x, y)) {
                 return;
@@ -849,8 +848,9 @@ module LevelEditr {
                 return;
             }
 
-            var x: number = this.roundTo(event.x || event.clientX || 0, this.blocksize),
-                y: number = this.roundTo(event.y || event.clientY || 0, this.blocksize),
+            var coordinates: number[] = this.getNormalizedMouseEventCoordinates(event),
+                x: number = coordinates[0],
+                y: number = coordinates[1],
                 prething: IPreThing,
                 i: number;
 
@@ -876,18 +876,18 @@ module LevelEditr {
          */
         private onClickEditingGenericAdd(x: number, y: number, title: string, args: any): void {
             var description: IPreThingDescriptor = this.things[title],
-				thing: IThing = this.GameStarter.ObjectMaker.make(
-					title,
-					this.GameStarter.proliferate(
-						{
-							"onThingMake": undefined,
-							"onThingAdd": undefined,
-							"onThingAdded": undefined,
-							"movement": undefined
-						},
-						this.getNormalizedThingArguments(args))),
-				left: number = x - this.GameStarter.container.offsetLeft,
-				top: number = y - this.GameStarter.container.offsetTop;
+                thing: IThing = this.GameStarter.ObjectMaker.make(
+                    title,
+                    this.GameStarter.proliferate(
+                        {
+                            "onThingMake": undefined,
+                            "onThingAdd": undefined,
+                            "onThingAdded": undefined,
+                            "movement": undefined
+                        },
+                        this.getNormalizedThingArguments(args))),
+                left: number = x - this.GameStarter.container.offsetLeft,
+                top: number = y - this.GameStarter.container.offsetTop;
 
             if (this.currentMode === "Build") {
                 this.disableThing(thing);
@@ -910,8 +910,8 @@ module LevelEditr {
             this.killCurrentPreThings();
 
             this.setVisualOptions(target.getAttribute("name"), undefined, target.options);
-			this.generateCurrentArgs();
-			this.setCurrentThing(title, x, y);
+            this.generateCurrentArgs();
+            this.setCurrentThing(title, x, y);
         }
 
         /**
@@ -1372,6 +1372,18 @@ module LevelEditr {
             this.resetDisplaySectionChoosers();
             this.resetDisplayOptionsList();
             this.resetDisplayMapSettings();
+
+            setTimeout(this.resetDisplayThinCheck.bind(this));
+        }
+
+        private resetDisplayThinCheck(): void {
+            var width: number = this.display.gui.clientWidth;
+
+            if (width <= 385) {
+                this.display.container.className += " thin";
+            } else if (width >= 560) {
+                this.display.container.className += " thick";
+            }
         }
 
         private resetDisplayGui(): void {
@@ -1704,18 +1716,17 @@ module LevelEditr {
         }
 
         private resetDisplayVisualContainers(): void {
+            var scope: LevelEditr = this;
+
             this.display.sections.ClickToPlace.VisualSummary = this.GameStarter.createElement("div", {
                 "className": "EditorVisualSummary",
                 "onclick": this.cancelEvent.bind(this)
             });
 
             this.display.sections.ClickToPlace.VisualOptions = this.GameStarter.createElement("div", {
-                "className": "EditorVisualOptions",
-                "onclick": this.cancelEvent.bind(this),
                 "textContent": "Click an icon to view options.",
-                "style": {
-                    "display": "block"
-                }
+                "className": "EditorVisualOptions",
+                "onclick": this.cancelEvent.bind(this)
             });
 
             this.display.gui.appendChild(this.display.sections.ClickToPlace.VisualSummary);
@@ -2405,7 +2416,6 @@ module LevelEditr {
          *
          */
         private addThingAndDisableEvents(thing: IThing, x?: number, y?: number): void {
-			console.log("Adding", thing.title, "at", x, y);
             this.GameStarter.addThing(thing, x, y);
             this.disableThing(thing);
             this.GameStarter.TimeHandler.cancelAllEvents();
@@ -2466,24 +2476,28 @@ module LevelEditr {
             return argsNormal;
         }
 
-		/**
-		 *
-		 */
-		private getNormalizedThingMouseEventCoordinates(event: MouseEvent): number[] {
-			var x: number = this.roundTo(event.x || event.clientX || 0, this.blocksize),
+        /**
+         *
+         */
+        private getNormalizedMouseEventCoordinates(event: MouseEvent, referenceThing?: boolean): number[] {
+            var x: number = this.roundTo(event.x || event.clientX || 0, this.blocksize),
                 y: number = this.roundTo(event.y || event.clientY || 0, this.blocksize),
-				thing: IPreThingDescriptor = this.things[this.currentTitle];
+                prething: IPreThingDescriptor;
 
-			if (thing.offsetLeft) {
-				x += thing.offsetLeft * this.GameStarter.unitsize;
-			}
+            if (referenceThing) {
+                prething = this.things[this.currentTitle];
 
-			if (thing.offsetTop) {
-				y += thing.offsetTop * this.GameStarter.unitsize;
-			}
+                if (prething.offsetLeft) {
+                    x += prething.offsetLeft * this.GameStarter.unitsize;
+                }
 
-			return [x, y];
-		}
+                if (prething.offsetTop) {
+                    y += prething.offsetTop * this.GameStarter.unitsize;
+                }
+            }
+
+            return [x, y];
+        }
 
         /**
          *
@@ -2805,17 +2819,19 @@ module LevelEditr {
                     "position": "absolute",
                     "top": "70px",
                     "right": "0",
-                    "bottom": "49px",
+                    "bottom": "35px",
                     "left": "0",
                     "overflow-y": "auto"
                 },
                 ".LevelEditor .EditorSectionSecondary": {
                     "position": "absolute",
                     "top": "35px",
-                    "right": "248px",
+                    "right": "203px",
                     "bottom": "0px",
                     "left": "0",
-                    "overflow-y": "auto"
+                    "min-width": "182px",
+                    "overflow-y": "auto",
+                    "overflow-x": "hidden"
                 },
                 // EditorJSON
                 ".LevelEditor .EditorJSON": {
@@ -2842,7 +2858,6 @@ module LevelEditr {
                 ".LevelEditor .EditorOptions, .LevelEditor .EditorOptionContainer": {
                     "padding-left": "3px",
                     "clear": "both",
-                    "min-width": "98px"
                 },
                 ".LevelEditor.minimized .EditorOptionsList": {
                     "opacity": "0"
@@ -2872,18 +2887,32 @@ module LevelEditr {
                 },
                 ".LevelEditor .EditorVisualOptions": {
                     "position": "absolute",
-                    "right": "21px",
-                    "top": "119px",
-                    "bottom": "42px",
+                    "top": "105px",
+                    "right": "0",
+                    "bottom": "35px",
                     "padding": "7px 11px",
-                    "width": "210px",
-                    "border": "1px solid silver",
-                    "border-width": "1px 0 0 1px",
+                    "width": "203px",
+                    "border-left": "1px solid silver",
+                    "background": "rgba(0, 7, 14, .84)",
                     "overflow-x": "visible",
                     "overflow-y": "auto",
+                    "line-height": "140%",
                     "opacity": "1",
                     "box-sizing": "border-box",
-                    "transition": "117ms opacity"
+                    "transition": "117ms opacity, 70ms left"
+                },
+                ".LevelEditor.thin .EditorVisualOptions": {
+                    "left": "185px",
+                },
+                ".LevelEditor.thin .EditorVisualOptions:hover": {
+                    "left": "70px",
+                    "width": "245px"
+                },
+                ".LevelEditor.thick .EditorVisualOptions": {
+                    "width": "350px"
+                },
+                ".LevelEditor.thick .EditorSectionSecondary": {
+                    "right": "350px"
                 },
                 ".LevelEditor.minimized .EditorVisualOptions": {
                     "left": "100%"

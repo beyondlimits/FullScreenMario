@@ -176,8 +176,8 @@ var LevelEditr;
             };
             this.clearAllThings();
             this.resetDisplay();
-            this.GameStarter.MapScreener.nokeys = true;
             this.setCurrentMode("Build");
+            this.GameStarter.MapScreener.nokeys = true;
             this.setTextareaValue(this.stringifySmart(this.mapDefault), true);
             this.resetDisplayMap();
             this.disableAllThings();
@@ -417,7 +417,7 @@ var LevelEditr;
             if (!this.canClick || this.currentMode !== "Build" || !this.currentPreThings.length) {
                 return;
             }
-            var coordinates = this.getNormalizedThingMouseEventCoordinates(event), x = coordinates[0], y = coordinates[1];
+            var coordinates = this.getNormalizedMouseEventCoordinates(event, true), x = coordinates[0], y = coordinates[1];
             if (!this.addMapCreationThing(x, y)) {
                 return;
             }
@@ -431,7 +431,7 @@ var LevelEditr;
             if (!this.canClick || this.currentMode !== "Build" || !this.currentPreThings.length) {
                 return;
             }
-            var x = this.roundTo(event.x || event.clientX || 0, this.blocksize), y = this.roundTo(event.y || event.clientY || 0, this.blocksize), prething, i;
+            var coordinates = this.getNormalizedMouseEventCoordinates(event), x = coordinates[0], y = coordinates[1], prething, i;
             if (!this.addMapCreationMacro(x, y)) {
                 return;
             }
@@ -817,6 +817,16 @@ var LevelEditr;
             this.resetDisplaySectionChoosers();
             this.resetDisplayOptionsList();
             this.resetDisplayMapSettings();
+            setTimeout(this.resetDisplayThinCheck.bind(this));
+        };
+        LevelEditr.prototype.resetDisplayThinCheck = function () {
+            var width = this.display.gui.clientWidth;
+            if (width <= 385) {
+                this.display.container.className += " thin";
+            }
+            else if (width >= 560) {
+                this.display.container.className += " thick";
+            }
         };
         LevelEditr.prototype.resetDisplayGui = function () {
             this.display.gui = this.GameStarter.createElement("div", {
@@ -1112,17 +1122,15 @@ var LevelEditr;
             this.display.gui.appendChild(this.display.sections.JSON);
         };
         LevelEditr.prototype.resetDisplayVisualContainers = function () {
+            var scope = this;
             this.display.sections.ClickToPlace.VisualSummary = this.GameStarter.createElement("div", {
                 "className": "EditorVisualSummary",
                 "onclick": this.cancelEvent.bind(this)
             });
             this.display.sections.ClickToPlace.VisualOptions = this.GameStarter.createElement("div", {
-                "className": "EditorVisualOptions",
-                "onclick": this.cancelEvent.bind(this),
                 "textContent": "Click an icon to view options.",
-                "style": {
-                    "display": "block"
-                }
+                "className": "EditorVisualOptions",
+                "onclick": this.cancelEvent.bind(this)
             });
             this.display.gui.appendChild(this.display.sections.ClickToPlace.VisualSummary);
             this.display.gui.appendChild(this.display.sections.ClickToPlace.VisualOptions);
@@ -1699,7 +1707,6 @@ var LevelEditr;
          *
          */
         LevelEditr.prototype.addThingAndDisableEvents = function (thing, x, y) {
-            console.log("Adding", thing.title, "at", x, y);
             this.GameStarter.addThing(thing, x, y);
             this.disableThing(thing);
             this.GameStarter.TimeHandler.cancelAllEvents();
@@ -1751,13 +1758,16 @@ var LevelEditr;
         /**
          *
          */
-        LevelEditr.prototype.getNormalizedThingMouseEventCoordinates = function (event) {
-            var x = this.roundTo(event.x || event.clientX || 0, this.blocksize), y = this.roundTo(event.y || event.clientY || 0, this.blocksize), thing = this.things[this.currentTitle];
-            if (thing.offsetLeft) {
-                x += thing.offsetLeft * this.GameStarter.unitsize;
-            }
-            if (thing.offsetTop) {
-                y += thing.offsetTop * this.GameStarter.unitsize;
+        LevelEditr.prototype.getNormalizedMouseEventCoordinates = function (event, referenceThing) {
+            var x = this.roundTo(event.x || event.clientX || 0, this.blocksize), y = this.roundTo(event.y || event.clientY || 0, this.blocksize), prething;
+            if (referenceThing) {
+                prething = this.things[this.currentTitle];
+                if (prething.offsetLeft) {
+                    x += prething.offsetLeft * this.GameStarter.unitsize;
+                }
+                if (prething.offsetTop) {
+                    y += prething.offsetTop * this.GameStarter.unitsize;
+                }
             }
             return [x, y];
         };
@@ -2041,17 +2051,19 @@ var LevelEditr;
                     "position": "absolute",
                     "top": "70px",
                     "right": "0",
-                    "bottom": "49px",
+                    "bottom": "35px",
                     "left": "0",
                     "overflow-y": "auto"
                 },
                 ".LevelEditor .EditorSectionSecondary": {
                     "position": "absolute",
                     "top": "35px",
-                    "right": "248px",
+                    "right": "203px",
                     "bottom": "0px",
                     "left": "0",
-                    "overflow-y": "auto"
+                    "min-width": "182px",
+                    "overflow-y": "auto",
+                    "overflow-x": "hidden"
                 },
                 // EditorJSON
                 ".LevelEditor .EditorJSON": {
@@ -2078,7 +2090,6 @@ var LevelEditr;
                 ".LevelEditor .EditorOptions, .LevelEditor .EditorOptionContainer": {
                     "padding-left": "3px",
                     "clear": "both",
-                    "min-width": "98px"
                 },
                 ".LevelEditor.minimized .EditorOptionsList": {
                     "opacity": "0"
@@ -2108,18 +2119,32 @@ var LevelEditr;
                 },
                 ".LevelEditor .EditorVisualOptions": {
                     "position": "absolute",
-                    "right": "21px",
-                    "top": "119px",
-                    "bottom": "42px",
+                    "top": "105px",
+                    "right": "0",
+                    "bottom": "35px",
                     "padding": "7px 11px",
-                    "width": "210px",
-                    "border": "1px solid silver",
-                    "border-width": "1px 0 0 1px",
+                    "width": "203px",
+                    "border-left": "1px solid silver",
+                    "background": "rgba(0, 7, 14, .84)",
                     "overflow-x": "visible",
                     "overflow-y": "auto",
+                    "line-height": "140%",
                     "opacity": "1",
                     "box-sizing": "border-box",
-                    "transition": "117ms opacity"
+                    "transition": "117ms opacity, 70ms left"
+                },
+                ".LevelEditor.thin .EditorVisualOptions": {
+                    "left": "185px",
+                },
+                ".LevelEditor.thin .EditorVisualOptions:hover": {
+                    "left": "70px",
+                    "width": "245px"
+                },
+                ".LevelEditor.thick .EditorVisualOptions": {
+                    "width": "350px"
+                },
+                ".LevelEditor.thick .EditorSectionSecondary": {
+                    "right": "350px"
                 },
                 ".LevelEditor.minimized .EditorVisualOptions": {
                     "left": "100%"
