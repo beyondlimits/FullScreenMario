@@ -732,6 +732,10 @@ module LevelEditr {
             } else {
                 this.onMacroIconClick(this.currentTitle, undefined, this.generateCurrentArgs(), event);
             }
+
+			if (event) {
+				event.stopPropagation();
+			}
         }
 
 
@@ -1249,7 +1253,7 @@ module LevelEditr {
             return map;
         }
 
-        private getMapObjectAndTry(event: Event): void {
+        private getMapObjectAndTry(event?: Event): void {
             var mapName: string = this.getMapName() + "::Temporary",
                 mapRaw: IMapsCreatrMapRaw = this.getMapObject();
 
@@ -2058,7 +2062,6 @@ module LevelEditr {
         /**
          * 
          */
-        // mergin this into createVisualOption
         private createVisualOptionObject(optionRaw: number | string | any | any[]): HTMLElement {
             var option: any;
 
@@ -2095,15 +2098,19 @@ module LevelEditr {
          * 
          */
         private createVisualOptionBoolean(): HTMLSelectElement {
-            return <HTMLSelectElement>this.createSelect(
+            var select: HTMLSelectElement = <HTMLSelectElement>this.createSelect(
                 [
                     "false", "true"
                 ],
                 {
                     "className": "VisualOptionValue",
-                    "data:type": "Boolean",
+                    "onkeyup": this.setCurrentArgs.bind(this),
                     "onchange": this.setCurrentArgs.bind(this)
                 });
+
+			select.setAttribute("data:type", "Boolean");
+
+			return select;
         }
 
         /**
@@ -2121,10 +2128,9 @@ module LevelEditr {
                             {
                                 "type": "Number",
                                 "data:type": "Number",
-                                "value": (option.value === undefined) ? 1 : option.value
-                            },
-                            {
+                                "value": (option.value === undefined) ? 1 : option.value,
                                 "className": "VisualOptionValue modReal" + modReal,
+                                "onkeyup": scope.setCurrentArgs.bind(scope),
                                 "onchange": scope.setCurrentArgs.bind(scope)
                             }),
                         recommendation: HTMLElement = modReal > 1
@@ -2135,6 +2141,7 @@ module LevelEditr {
                         children: HTMLElement[] = [input];
 
                     input.setAttribute("data:mod", modReal.toString());
+                    input.setAttribute("data:type", "Number");
                     input.setAttribute("typeReal", "Number");
 
                     if (option.Infinite) {
@@ -2192,22 +2199,32 @@ module LevelEditr {
          * 
          */
         private createVisualOptionSelect(option: any): HTMLSelectElement {
-            return this.createSelect(option.options, {
+            var select: HTMLSelectElement = this.createSelect(option.options, {
                 "className": "VisualOptionValue",
                 "data:type": "Select",
+                "onkeyup": this.setCurrentArgs.bind(this),
                 "onchange": this.setCurrentArgs.bind(this)
             });
+
+			select.setAttribute("data:type", "Select");
+
+			return select;
         }
 
         /**
          * 
          */
         private createVisualOptionString(option: any): HTMLSelectElement {
-            return this.createSelect(option.options, {
+            var select: HTMLSelectElement = this.createSelect(option.options, {
                 "className": "VisualOptionValue",
                 "data:type": "String",
+                "onkeyup": this.setCurrentArgs.bind(this),
                 "onchange": this.setCurrentArgs.bind(this)
             });
+
+			select.setAttribute("data:type", "String");
+
+			return select;
         }
 
         /**
@@ -2215,7 +2232,8 @@ module LevelEditr {
          */
         private createVisualOptionLocation(option: any): HTMLDivElement | HTMLSelectElement {
             var map: IMapsCreatrMapRaw = this.getMapObject(),
-                locations: string[];
+                locations: string[],
+				select: HTMLSelectElement;
 
             if (!map) {
                 return this.GameStarter.createElement("div", {
@@ -2227,10 +2245,15 @@ module LevelEditr {
             locations = Object.keys(map.locations);
             locations.unshift(this.keyUndefined);
 
-            return this.createSelect(locations, {
+            select = this.createSelect(locations, {
                 "className": "VisualOptionValue VisualOptionLocation",
-                "data-type": "Number"
+                "data-type": "String",
+                "onkeyup": this.setCurrentArgs.bind(this),
+                "onchange": this.setCurrentArgs.bind(this)
             });
+			select.setAttribute("data-type", "String");
+
+			return select;
         }
 
         /**
@@ -2238,7 +2261,8 @@ module LevelEditr {
          */
         private createVisualOptionArea(option: any): HTMLDivElement | HTMLSelectElement {
             var map: IMapsCreatrMapRaw = this.getMapObject(),
-                areas: string[];
+                areas: string[],
+				select: HTMLSelectElement;
 
             if (!map) {
                 return this.GameStarter.createElement("div", {
@@ -2250,22 +2274,31 @@ module LevelEditr {
             areas = Object.keys(map.areas);
             areas.unshift(this.keyUndefined);
 
-            return this.createSelect(areas, {
+            select = this.createSelect(areas, {
                 "className": "VisualOptionValue VisualOptionArea",
-                "data-type": "Number",
+                "data-type": "String",
+                "onkeyup": this.setCurrentArgs.bind(this),
                 "onchange": this.setCurrentArgs.bind(this)
             });
+			select.setAttribute("data-type", "String");
+
+			return select;
         }
 
         /**
          * 
          */
         private createVisualOptionEverything(option: any): HTMLSelectElement {
-            return this.createSelect(Object.keys(this.things), {
+            var select: HTMLSelectElement = this.createSelect(Object.keys(this.things), {
                 "className": "VisualOptionValue VisualOptionEverything",
                 "data-type": "String",
+                "onkeyup": this.setCurrentArgs.bind(this),
                 "onchange": this.setCurrentArgs.bind(this)
             });
+
+			select.setAttribute("data-type", "String");
+
+			return select;
         }
 
         /**

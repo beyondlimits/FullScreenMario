@@ -352,6 +352,9 @@ var LevelEditr;
             else {
                 this.onMacroIconClick(this.currentTitle, undefined, this.generateCurrentArgs(), event);
             }
+            if (event) {
+                event.stopPropagation();
+            }
         };
         /* Mouse events
         */
@@ -1411,7 +1414,6 @@ var LevelEditr;
         /**
          *
          */
-        // mergin this into createVisualOption
         LevelEditr.prototype.createVisualOptionObject = function (optionRaw) {
             var option;
             // If the option isn't already an Object, make it one
@@ -1442,13 +1444,15 @@ var LevelEditr;
          *
          */
         LevelEditr.prototype.createVisualOptionBoolean = function () {
-            return this.createSelect([
+            var select = this.createSelect([
                 "false", "true"
             ], {
                 "className": "VisualOptionValue",
-                "data:type": "Boolean",
+                "onkeyup": this.setCurrentArgs.bind(this),
                 "onchange": this.setCurrentArgs.bind(this)
             });
+            select.setAttribute("data:type", "Boolean");
+            return select;
         };
         /**
          *
@@ -1461,9 +1465,9 @@ var LevelEditr;
                     var modReal = option.mod || 1, input = scope.GameStarter.createElement("input", {
                         "type": "Number",
                         "data:type": "Number",
-                        "value": (option.value === undefined) ? 1 : option.value
-                    }, {
+                        "value": (option.value === undefined) ? 1 : option.value,
                         "className": "VisualOptionValue modReal" + modReal,
+                        "onkeyup": scope.setCurrentArgs.bind(scope),
                         "onchange": scope.setCurrentArgs.bind(scope)
                     }), recommendation = modReal > 1
                         && scope.GameStarter.createElement("div", {
@@ -1471,6 +1475,7 @@ var LevelEditr;
                             "textContent": "x" + option.mod
                         }), children = [input];
                     input.setAttribute("data:mod", modReal.toString());
+                    input.setAttribute("data:type", "Number");
                     input.setAttribute("typeReal", "Number");
                     if (option.Infinite) {
                         var valueOld = undefined, infinite = scope.createSelect([
@@ -1518,27 +1523,33 @@ var LevelEditr;
          *
          */
         LevelEditr.prototype.createVisualOptionSelect = function (option) {
-            return this.createSelect(option.options, {
+            var select = this.createSelect(option.options, {
                 "className": "VisualOptionValue",
                 "data:type": "Select",
+                "onkeyup": this.setCurrentArgs.bind(this),
                 "onchange": this.setCurrentArgs.bind(this)
             });
+            select.setAttribute("data:type", "Select");
+            return select;
         };
         /**
          *
          */
         LevelEditr.prototype.createVisualOptionString = function (option) {
-            return this.createSelect(option.options, {
+            var select = this.createSelect(option.options, {
                 "className": "VisualOptionValue",
                 "data:type": "String",
+                "onkeyup": this.setCurrentArgs.bind(this),
                 "onchange": this.setCurrentArgs.bind(this)
             });
+            select.setAttribute("data:type", "String");
+            return select;
         };
         /**
          *
          */
         LevelEditr.prototype.createVisualOptionLocation = function (option) {
-            var map = this.getMapObject(), locations;
+            var map = this.getMapObject(), locations, select;
             if (!map) {
                 return this.GameStarter.createElement("div", {
                     "className": "VisualOptionValue VisualOptionLocation EditorComplaint",
@@ -1547,16 +1558,20 @@ var LevelEditr;
             }
             locations = Object.keys(map.locations);
             locations.unshift(this.keyUndefined);
-            return this.createSelect(locations, {
+            select = this.createSelect(locations, {
                 "className": "VisualOptionValue VisualOptionLocation",
-                "data-type": "Number"
+                "data-type": "String",
+                "onkeyup": this.setCurrentArgs.bind(this),
+                "onchange": this.setCurrentArgs.bind(this)
             });
+            select.setAttribute("data-type", "String");
+            return select;
         };
         /**
          *
          */
         LevelEditr.prototype.createVisualOptionArea = function (option) {
-            var map = this.getMapObject(), areas;
+            var map = this.getMapObject(), areas, select;
             if (!map) {
                 return this.GameStarter.createElement("div", {
                     "className": "VisualOptionValue VisualOptionArea EditorComplaint",
@@ -1565,21 +1580,27 @@ var LevelEditr;
             }
             areas = Object.keys(map.areas);
             areas.unshift(this.keyUndefined);
-            return this.createSelect(areas, {
+            select = this.createSelect(areas, {
                 "className": "VisualOptionValue VisualOptionArea",
-                "data-type": "Number",
+                "data-type": "String",
+                "onkeyup": this.setCurrentArgs.bind(this),
                 "onchange": this.setCurrentArgs.bind(this)
             });
+            select.setAttribute("data-type", "String");
+            return select;
         };
         /**
          *
          */
         LevelEditr.prototype.createVisualOptionEverything = function (option) {
-            return this.createSelect(Object.keys(this.things), {
+            var select = this.createSelect(Object.keys(this.things), {
                 "className": "VisualOptionValue VisualOptionEverything",
                 "data-type": "String",
+                "onkeyup": this.setCurrentArgs.bind(this),
                 "onchange": this.setCurrentArgs.bind(this)
             });
+            select.setAttribute("data-type", "String");
+            return select;
         };
         /**
          *
