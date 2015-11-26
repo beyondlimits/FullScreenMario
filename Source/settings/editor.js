@@ -18,7 +18,7 @@ FullScreenMario.FullScreenMario.settings.editor = (function (prethings, macros) 
         },
         "prethings": prethings,
         "mapSettingDefault": "Overworld",
-        "mapEntrances": ["Plain", "Normal", "Castle", "PipeVertical", "PipeHorizontal", "Walking"],
+        "mapEntrances": ["Plain", "Normal", "Castle", "PipeVertical", "Walking"],
         "thingGroups": ["Text", "Character", "Solid", "Scenery"],
         "things": (function () {
             var things = {},
