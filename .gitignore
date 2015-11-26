@@ -1,7 +1,7 @@
 Distribution
 Distribution/**
 Source/**/*.js
-!Source/index.js
+!Source/*.js
 !Source/References/*.js
 Source/**/*.md
 Source/**/*.txt
