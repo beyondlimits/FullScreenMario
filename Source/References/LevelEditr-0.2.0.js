@@ -208,6 +208,7 @@ var LevelEditr;
             this.display.minimizer.innerText = "+";
             this.display.minimizer.onclick = this.maximize.bind(this);
             this.display.container.className += " minimized";
+            this.display.scrollers.container.style.opacity = "0";
         };
         /**
          *
@@ -224,23 +225,24 @@ var LevelEditr;
             else if (this.currentClickMode === "Macro") {
                 this.setSectionClickToPlaceMacros();
             }
+            this.display.scrollers.container.style.opacity = "1";
         };
         /**
          *
          */
         LevelEditr.prototype.startBuilding = function () {
+            this.setCurrentMode("Build");
             this.beautifyTextareaValue();
             this.setDisplayMap(true);
-            this.setCurrentMode("Build");
             this.maximize();
         };
         /**
          *
          */
         LevelEditr.prototype.startPlaying = function () {
+            this.setCurrentMode("Play");
             this.beautifyTextareaValue();
             this.setDisplayMap();
-            this.setCurrentMode("Play");
             this.minimize();
         };
         /**
@@ -349,7 +351,7 @@ var LevelEditr;
             if (this.currentClickMode === "Thing") {
                 this.setCurrentThing(this.currentTitle);
             }
-            else {
+            else if (this.currentClickMode === "Macro") {
                 this.onMacroIconClick(this.currentTitle, undefined, this.generateCurrentArgs(), event);
             }
             if (event) {
@@ -1285,7 +1287,8 @@ var LevelEditr;
         /**
          *
          */
-        LevelEditr.prototype.setSectionMapSettings = function () {
+        LevelEditr.prototype.setSectionMapSettings = function (event) {
+            this.setCurrentClickMode("Map", event);
             this.display.sections.ClickToPlace.VisualOptions.style.display = "none";
             this.display.sections.ClickToPlace.container.style.display = "none";
             this.display.sections.MapSettings.container.style.display = "block";
@@ -1297,7 +1300,8 @@ var LevelEditr;
         /**
          *
          */
-        LevelEditr.prototype.setSectionJSON = function () {
+        LevelEditr.prototype.setSectionJSON = function (event) {
+            this.setCurrentClickMode("JSON", event);
             this.display.sections.ClickToPlace.VisualOptions.style.display = "none";
             this.display.sections.ClickToPlace.container.style.display = "none";
             this.display.sections.MapSettings.container.style.display = "none";

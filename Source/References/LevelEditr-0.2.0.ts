@@ -560,6 +560,8 @@ module LevelEditr {
             this.display.minimizer.innerText = "+";
             this.display.minimizer.onclick = this.maximize.bind(this);
             this.display.container.className += " minimized";
+
+            this.display.scrollers.container.style.opacity = "0";
         }
 
         /**
@@ -578,15 +580,18 @@ module LevelEditr {
             } else if (this.currentClickMode === "Macro") {
                 this.setSectionClickToPlaceMacros();
             }
+
+            this.display.scrollers.container.style.opacity = "1";
         }
 
         /**
          * 
          */
         startBuilding(): void {
+            this.setCurrentMode("Build");
+
             this.beautifyTextareaValue();
             this.setDisplayMap(true);
-            this.setCurrentMode("Build");
             this.maximize();
         }
 
@@ -594,9 +599,10 @@ module LevelEditr {
          * 
          */
         startPlaying(): void {
+            this.setCurrentMode("Play");
+
             this.beautifyTextareaValue();
             this.setDisplayMap();
-            this.setCurrentMode("Play");
             this.minimize();
         }
 
@@ -654,7 +660,7 @@ module LevelEditr {
         /**
          * 
          */
-        private setCurrentClickMode(mode: string, event: Event): void {
+        private setCurrentClickMode(mode: string, event?: Event): void {
             this.currentClickMode = mode;
             this.cancelEvent(event);
         }
@@ -729,13 +735,13 @@ module LevelEditr {
         private setCurrentArgs(event?: MouseEvent): void {
             if (this.currentClickMode === "Thing") {
                 this.setCurrentThing(this.currentTitle);
-            } else {
+            } else if (this.currentClickMode === "Macro") {
                 this.onMacroIconClick(this.currentTitle, undefined, this.generateCurrentArgs(), event);
             }
 
-			if (event) {
-				event.stopPropagation();
-			}
+            if (event) {
+                event.stopPropagation();
+            }
         }
 
 
@@ -1269,9 +1275,9 @@ module LevelEditr {
                 this.display.stringer.messenger.textContent = error.message;
             }
 
-			if (event) {
-				event.stopPropagation();
-			}
+            if (event) {
+                event.stopPropagation();
+            }
         }
 
         /**
@@ -1713,9 +1719,9 @@ module LevelEditr {
                         "spellcheck": false,
                         "onkeyup": this.getMapObjectAndTry.bind(this),
                         "onchange": this.getMapObjectAndTry.bind(this),
-						"onkeydown": function (event: Event): void {
-							event.stopPropagation();
-						}
+                        "onkeydown": function (event: Event): void {
+                            event.stopPropagation();
+                        }
                     }),
                     this.display.stringer.messenger = this.GameStarter.createElement("div", {
                         "className": "EditorJSONInfo"
@@ -1918,7 +1924,9 @@ module LevelEditr {
         /**
          * 
          */
-        private setSectionMapSettings(): void {
+        private setSectionMapSettings(event?: Event): void {
+            this.setCurrentClickMode("Map", event);
+
             this.display.sections.ClickToPlace.VisualOptions.style.display = "none";
             this.display.sections.ClickToPlace.container.style.display = "none";
             this.display.sections.MapSettings.container.style.display = "block";
@@ -1931,7 +1939,9 @@ module LevelEditr {
         /**
          * 
          */
-        private setSectionJSON(): void {
+        private setSectionJSON(event?: Event): void {
+            this.setCurrentClickMode("JSON", event);
+
             this.display.sections.ClickToPlace.VisualOptions.style.display = "none";
             this.display.sections.ClickToPlace.container.style.display = "none";
             this.display.sections.MapSettings.container.style.display = "none";
@@ -2108,9 +2118,9 @@ module LevelEditr {
                     "onchange": this.setCurrentArgs.bind(this)
                 });
 
-			select.setAttribute("data:type", "Boolean");
+            select.setAttribute("data:type", "Boolean");
 
-			return select;
+            return select;
         }
 
         /**
@@ -2206,9 +2216,9 @@ module LevelEditr {
                 "onchange": this.setCurrentArgs.bind(this)
             });
 
-			select.setAttribute("data:type", "Select");
+            select.setAttribute("data:type", "Select");
 
-			return select;
+            return select;
         }
 
         /**
@@ -2222,9 +2232,9 @@ module LevelEditr {
                 "onchange": this.setCurrentArgs.bind(this)
             });
 
-			select.setAttribute("data:type", "String");
+            select.setAttribute("data:type", "String");
 
-			return select;
+            return select;
         }
 
         /**
@@ -2233,7 +2243,7 @@ module LevelEditr {
         private createVisualOptionLocation(option: any): HTMLDivElement | HTMLSelectElement {
             var map: IMapsCreatrMapRaw = this.getMapObject(),
                 locations: string[],
-				select: HTMLSelectElement;
+                select: HTMLSelectElement;
 
             if (!map) {
                 return this.GameStarter.createElement("div", {
@@ -2251,9 +2261,9 @@ module LevelEditr {
                 "onkeyup": this.setCurrentArgs.bind(this),
                 "onchange": this.setCurrentArgs.bind(this)
             });
-			select.setAttribute("data-type", "String");
+            select.setAttribute("data-type", "String");
 
-			return select;
+            return select;
         }
 
         /**
@@ -2262,7 +2272,7 @@ module LevelEditr {
         private createVisualOptionArea(option: any): HTMLDivElement | HTMLSelectElement {
             var map: IMapsCreatrMapRaw = this.getMapObject(),
                 areas: string[],
-				select: HTMLSelectElement;
+                select: HTMLSelectElement;
 
             if (!map) {
                 return this.GameStarter.createElement("div", {
@@ -2280,9 +2290,9 @@ module LevelEditr {
                 "onkeyup": this.setCurrentArgs.bind(this),
                 "onchange": this.setCurrentArgs.bind(this)
             });
-			select.setAttribute("data-type", "String");
+            select.setAttribute("data-type", "String");
 
-			return select;
+            return select;
         }
 
         /**
@@ -2296,9 +2306,9 @@ module LevelEditr {
                 "onchange": this.setCurrentArgs.bind(this)
             });
 
-			select.setAttribute("data-type", "String");
+            select.setAttribute("data-type", "String");
 
-			return select;
+            return select;
         }
 
         /**
@@ -2694,7 +2704,7 @@ module LevelEditr {
         /**
          * 
          */
-        private cancelEvent(event: Event): void {
+        private cancelEvent(event?: Event): void {
             if (!event) {
                 return;
             }
