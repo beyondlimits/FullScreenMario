@@ -1,4 +1,4 @@
-FullScreenMario.FullScreenMario.settings.editor = (function (things, macros) {
+FullScreenMario.FullScreenMario.settings.editor = (function (prethings, macros) {
     return {
         "blocksize": FullScreenMario.FullScreenMario.unitsize * 4,
         "mapDefault": {
@@ -16,158 +16,259 @@ FullScreenMario.FullScreenMario.settings.editor = (function (things, macros) {
                 }
             ]
         },
+        "prethings": prethings,
         "mapSettingDefault": "Overworld",
-        "mapEntryDefault": "Plain",
-        "prethings": things,
+        "mapEntrances": ["Plain", "Normal", "Castle", "PipeVertical", "PipeHorizontal", "Walking"],
         "thingGroups": ["Text", "Character", "Solid", "Scenery"],
-        "thingKeys": (function () {
-            var keys = [];
+        "things": (function () {
+            var things = {},
+                i, j;
 
-            Object.keys(things).forEach(function (group) {
-                keys.push.apply(keys, Object.keys(things[group]));
-            });
+            for (i in prethings) {
+                if (prethings.hasOwnProperty(i)) {
+                    for (j in prethings[i]) {
+                        if (prethings[i].hasOwnProperty(j)) {
+                            things[j] = prethings[i][j];
+                        }
+                    }
+                }
+            }
 
-            return keys;
+            return things;
         })(),
         "macros": macros
     };
 })({
     "Characters": {
-        "Goomba": undefined,
+        "Goomba": {},
         "Koopa": {
-            "smart": "Boolean",
-            "jumping": "Boolean",
-            "flying": "Boolean"
+            "options": {
+                "smart": "Boolean",
+                "jumping": "Boolean",
+                "flying": "Boolean"
+            }
         },
-        "Beetle": undefined,
+        "Beetle": {},
         "Piranha": {
-            "evil": "Boolean"
+            "options": {
+                "evil": "Boolean"
+            }
         },
-        "Blooper": undefined,
+        "Blooper": {},
         "CheepCheep": {
-            "smart": "Boolean"
+            "options": {
+                "smart": "Boolean"
+            }
         },
-        "Podoboo": undefined,
-        "Lakitu": undefined,
-        "HammerBro": undefined,
+        "Podoboo": {},
+        "Lakitu": {},
+        "HammerBro": {},
         "Bowser": {
-            "contents": {
-                "type": "String",
-                "options": [
-                    "Gooma", "Koopa", "HammerBro", "Bowser"
-                ]
+            "options": {
+                "contents": {
+                    "type": "String",
+                    "options": [
+                        "Gooma", "Koopa", "HammerBro", "Bowser"
+                    ]
+                }
             }
         }
     },
     "Items": {
-        "Mushroom": undefined,
-        "Mushroom1Up": undefined,
-        "MushroomDeathly": undefined,
-        "FireFlower": undefined,
-        "Star": undefined,
+        "Mushroom": {},
+        "Mushroom1Up": {},
+        "MushroomDeathly": {},
+        "FireFlower": {},
+        "Star": {},
         "Shell": {
-            "smart": "Boolean"
+            "offsetTop": 1,
+            "options": {
+                "smart": "Boolean"
+            },
         },
-        "BeetleShell": undefined,
-        "Coin": undefined
+        "BeetleShell": {},
+        "Coin": {}
     },
     "Solids": {
         "Block": {
-            "contents": {
-                "type": "String",
-                "options": [
-                    "Coin", "Mushroom", "Star", "Mushroom1Up", "MushroomDeathly"
-                ]
-            },
-            "hidden": "Boolean"
+            "options": {
+                "contents": {
+                    "type": "String",
+                    "options": [
+                        "Coin", "Mushroom", "Star", "Mushroom1Up", "MushroomDeathly"
+                    ]
+                },
+                "hidden": "Boolean"
+            }
         },
         "Brick": {
-            "contents": {
-                "type": "String",
-                "options": [
-                    "", "Coin", "Mushroom", "Star", "Mushroom1Up", "MushroomDeathly"
-                ]
+            "options": {
+                "contents": {
+                    "type": "String",
+                    "options": [
+                        "", "Coin", "Mushroom", "Star", "Mushroom1Up", "MushroomDeathly"
+                    ]
+                }
             }
         },
         "Pipe": {
-            "height": {
-                "type": "Number",
-                "value": 8,
-                "mod": 8,
-                "Infinite": true
+            "options": {
+                "height": {
+                    "type": "Number",
+                    "value": 2,
+                    "mod": 8,
+                    "Infinite": true
+                }
             }
         },
         "PipeHorizontal": {
-            "width": {
-                "type": "Number",
-                "value": 2,
-                "mod": 8
-            },
-            "transport": "Location"
+            "options": {
+                "width": {
+                    "type": "Number",
+                    "value": 2,
+                    "mod": 8
+                },
+                "transport": "Location"
+            }
         },
         "PipeVertical": {
-            "height": {
-                "type": "Number",
-                "value": 2,
-                "mod": 8,
-                "Infinite": true
-            },
-            "transport": "Location"
+            "options": {
+                "height": {
+                    "type": "Number",
+                    "value": 2,
+                    "mod": 8,
+                    "Infinite": true,
+                    "real": 8
+                },
+                "transport": "Location"
+            }
         },
         "Platform": {
-            "width": 2
+            "options": {
+                "width": {
+                    "type": "Number",
+                    "value": 4,
+                    "mod": 2,
+                    "real": 2
+                }
+            }
         },
         "Stone": {
-            "width": 1,
-            "height": {
-                "type": "Number",
-                "value": 1,
-                "Infinite": true
+            "options": {
+                "width": {
+                    "type": "Number",
+                    "mod": 8
+                },
+                "height": {
+                    "type": "Number",
+                    "Infinite": true,
+                    "mod": 8
+                }
             }
         },
         "Cannon": {
-            "height": 1
+            "options": {
+                "height": {
+                    "type": "Number",
+                    "mod": 8
+                }
+            }
         },
-        "Springboard": undefined,
+        "Springboard": {
+            "offsetTop": 1.5
+        },
         "Floor": {
-            "width": 8,
-            "height": {
-                "type": "Number",
-                "value": Infinity,
-                "Infinite": true
+            "options": {
+                "width": {
+                    "type": "Number",
+                    "value": 1,
+                    "mod": 8
+                },
+                "height": {
+                    "type": "Number",
+                    "value": Infinity,
+                    "Infinite": true,
+                    "mod": 8
+                }
             }
         },
         "CastleBlock": {
-            "fireballs": {
-                "value": 0,
-                "mod": 4
+            "options": {
+                "fireballs": {
+                    "type": "Number",
+                    "value": 0,
+                    "mod": 4
+                }
             }
         },
         "CastleBridge": {
-            "width": 8
+            "options": {
+                "width": {
+                    "type": "Number",
+                    "mod": 8,
+                    "real": 4
+                }
+            }
         },
         "Coral": {
-            "width": 8,
-            "height": 8
+            "options": {
+                "width": {
+                    "type": "Number",
+                    "mod": 8
+                },
+                "height": {
+                    "type": "Number",
+                    "mod": 8
+                }
+            }
         }
     },
     "Scenery": {
-        "BrickPlain": undefined,
-        "Bush1": undefined,
-        "Bush2": undefined,
-        "Bush3": undefined,
-        "Cloud1": undefined,
-        "Cloud2": undefined,
-        "Cloud3": undefined,
+        "BrickPlain": {},
+        "Bush1": {},
+        "Bush2": {},
+        "Bush3": {},
+        "Cloud1": {},
+        "Cloud2": {},
+        "Cloud3": {},
         "Fence": {
-            "width": 8
+            "options": {
+                "width": {
+                    "type": "Number",
+                    "mod": 8
+                }
+            }
         },
-        "HillSmall": undefined,
-        "HillLarge": undefined,
-        "PlantSmall": undefined,
-        "PlantLarge": undefined,
-        "Railing": undefined,
-        "Water": undefined
+        "HillSmall": {
+            "offsetTop": -1.5
+        },
+        "HillLarge": {
+            "offsetTop": 2.5
+        },
+        "PlantSmall": {
+            "offsetTop": 1
+        },
+        "PlantLarge": {
+            "offsetTop": 1
+        },
+        "Railing": {
+            "options": {
+                "width": {
+                    "type": "Number",
+                    "mod": 4,
+                    "value": 1
+                }
+            }
+        },
+        "Water": {
+            "options": {
+                "width": {
+                    "type": "Number",
+                    "mod": 4,
+                    "value": 1
+                }
+            }
+        }
     }
 }, {
     "Fill": {
@@ -202,7 +303,12 @@ FullScreenMario.FullScreenMario.settings.editor = (function (things, macros) {
     "Pipe": {
         "description": "Add a pipe with the option for piranhas and moving to locations.",
         "options": {
-            "height": 8,
+            "height": {
+                "type": "Number",
+                "value": 2,
+                "mod": 8,
+                "Infinite": true
+            },
             "piranha": "Boolean",
             "transport": "Location",
             "entrance": "Location"

@@ -64,6 +64,7 @@ declare module FullScreenMario {
         dead?: boolean;
         flickering?: boolean;
         numquads: number;
+        outerok: boolean | number;
         partners?: { [i: string]: IThing };
         position?: string;
         tolx: number;

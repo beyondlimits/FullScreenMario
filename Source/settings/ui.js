@@ -334,6 +334,7 @@ FullScreenMario.FullScreenMario.settings.ui = {
                     GameStarter.LevelEditor.enable();
                     GameStarter.LevelEditor.setCurrentJSON(
                         JSON.stringify(GameStarter.MapsCreator.getMapRaw(button.textContent)));
+                    GameStarter.LevelEditor.startBuilding();
                 }
             }
         }, {
