@@ -574,12 +574,28 @@ var UserWrappr;
                     return element;
                 }
                 else if (!element.parentNode) {
-                    return undefined;
+                    return element;
                 }
                 return this.getParentControlDiv(element.parentElement);
             };
             /**
-             * Ensures a child's required local storage value is being stored,
+             *
+             */
+            AbstractOptionsGenerator.prototype.ensureLocalStorageButtonValue = function (child, details, schema) {
+                var key = schema.title + "::" + details.title, valueDefault = details.source.call(this, this.GameStarter).toString(), value;
+                child.setAttribute("localStorageKey", key);
+                this.GameStarter.ItemsHolder.addItem(key, {
+                    "storeLocally": true,
+                    "valueDefault": valueDefault
+                });
+                value = this.GameStarter.ItemsHolder.getItem(key);
+                if (value.toString().toLowerCase() === "true") {
+                    details[schema.keyActive || "active"] = true;
+                    schema.callback.call(this, this.GameStarter, schema, child);
+                }
+            };
+            /**
+             * Ensures an input's required local storage value is being stored,
              * and adds it to the internal GameStarter.ItemsHolder if not. If it
              * is, and the child's value isn't equal to it, the value is set.
              *
@@ -589,7 +605,7 @@ var UserWrappr;
              *                           and the source Function to get its value.
              * @param {Object} schema   The container schema this child is within.
              */
-            AbstractOptionsGenerator.prototype.ensureLocalStorageValue = function (childRaw, details, schema) {
+            AbstractOptionsGenerator.prototype.ensureLocalStorageInputValue = function (childRaw, details, schema) {
                 if (childRaw.constructor === Array) {
                     this.ensureLocalStorageValues(childRaw, details, schema);
                     return;
@@ -694,7 +710,8 @@ var UserWrappr;
                             element.setAttribute("option-enabled", "true");
                             element.className = classNameStart + " option-enabled";
                         }
-                    }.bind(undefined, schema, element);
+                    }.bind(this, schema, element);
+                    this.ensureLocalStorageButtonValue(element, option, schema);
                     if (option[keyActive]) {
                         element.className += " option-enabled";
                         element.setAttribute("option-enabled", "true");
@@ -744,7 +761,7 @@ var UserWrappr;
                         row.appendChild(input);
                         child = this.optionTypes[schema.options[i].type].call(this, input, option, schema);
                         if (option.storeLocally) {
-                            this.ensureLocalStorageValue(child, option, schema);
+                            this.ensureLocalStorageInputValue(child, option, schema);
                         }
                         table.appendChild(row);
                     }

@@ -319,10 +319,36 @@ FullScreenMario.FullScreenMario.settings.ui = {
             "keyActive": "enabled",
             "assumeInactive": true,
             "options": function (GameStarter) {
-                return GameStarter.ModAttacher.getMods();
+                var mods = GameStarter.ModAttacher.getMods(),
+                    output = {},
+                    mod, i;
+
+                for (i in mods) {
+                    if (mods.hasOwnProperty(i)) {
+                        mod = mods[i];
+
+                        output[i] = {
+                            "title": mod.name,
+                            "source": function () {
+                                return mod.enabled;
+                            },
+                            "keyActive": "enabled",
+                            "storeLocally": true,
+                            "type": "text"
+                        };
+                    }
+                }
+
+                return output;
             },
             "callback": function (GameStarter, schema, button) {
-                GameStarter.ModAttacher.toggleMod(button.getAttribute("value") || button.textContent);
+                var name = button.textContent,
+                    key = button.getAttribute("localStorageKey"),
+                    mod = GameStarter.ModAttacher.getMod(name);
+
+                GameStarter.ModAttacher.toggleMod(name);
+                GameStarter.ItemsHolder.setItem(key, mod.enabled);
+                GameStarter.ItemsHolder.saveItem(key);
             }
         }, {
             "title": "Editor",
