@@ -8867,6 +8867,7 @@ module FullScreenMario {
                 "width": reference.width || 8,
                 "height": reference.height || 8,
                 "activate": function (thing: IThing): void {
+                    thing.FSM.AudioPlayer.play("Coin");
                     thing.FSM.MapScreener.sectionPassed = true;
                 }
             };
@@ -8896,6 +8897,7 @@ module FullScreenMario {
                     "width": reference.width || 8,
                     "height": reference.height || 8,
                     "activate": function (thing: IThing): void {
+                        thing.FSM.AudioPlayer.play("Fail");
                         thing.FSM.MapScreener.sectionPassed = false;
                     }
                 }

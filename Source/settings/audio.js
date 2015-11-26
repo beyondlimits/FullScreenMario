@@ -9,6 +9,7 @@ FullScreenMario.FullScreenMario.settings.audio = {
             "Bump",
             "Coin",
             "Ending",
+            "Fail",
             "Fireball",
             "Firework",
             "Flagpole",
