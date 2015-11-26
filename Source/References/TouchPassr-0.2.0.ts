@@ -303,7 +303,7 @@ module TouchPassr {
             });
             this.elementInner = this.createElement("div", {
                 "className": "control-inner",
-                "textContent": this.schema.label,
+                "textContent": this.schema.label || "",
                 "style": {
                     "position": "absolute",
                     "boxSizing": "border-box",
