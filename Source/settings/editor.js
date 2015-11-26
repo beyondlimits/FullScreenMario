@@ -195,6 +195,7 @@ FullScreenMario.FullScreenMario.settings.editor = (function (prethings, macros) 
         "CastleBlock": {
             "options": {
                 "fireballs": {
+                    "type": "Number",
                     "value": 0,
                     "mod": 4
                 }

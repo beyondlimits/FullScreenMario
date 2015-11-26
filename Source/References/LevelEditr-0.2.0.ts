@@ -698,7 +698,7 @@ module LevelEditr {
         /**
          *
          */
-        private setCurrentMacroThings(event?: MouseEvent): void {
+        private resetCurrentThings(event?: MouseEvent): void {
             var currentThing: IPreThing,
                 i: number;
 
@@ -953,7 +953,7 @@ module LevelEditr {
                 map);
 
             this.currentTitle = title;
-            this.setCurrentMacroThings(event);
+            this.resetCurrentThings(event);
         }
 
         /**
@@ -1073,7 +1073,7 @@ module LevelEditr {
          *                            of the GUI (true), or from the Raw JSON 
          *                            section (false).
          */
-        private setMapSetting(fromGui: boolean): void {
+        private setMapSetting(fromGui: boolean, event?: MouseEvent): void {
             var map: IMapsCreatrMapRaw = this.getMapObject(),
                 area: IMapsCreatrAreaRaw,
                 setting: string | string[];
@@ -1102,6 +1102,7 @@ module LevelEditr {
 
             this.setTextareaValue(this.stringifySmart(map), true);
             this.setDisplayMap(true);
+            this.resetCurrentThings(event);
         }
 
         /**
@@ -1515,10 +1516,7 @@ module LevelEditr {
         private resetDisplayOptionsList(): void {
             this.display.sections.ClickToPlace.container = this.GameStarter.createElement("div", {
                 "className": "EditorOptionsList EditorSectionMain",
-                "onclick": this.cancelEvent.bind(this),
-                "style": {
-                    "display": "block"
-                }
+                "onclick": this.cancelEvent.bind(this)
             });
 
             this.resetDisplayOptionsListSubOptionsMenu();
@@ -1913,6 +1911,10 @@ module LevelEditr {
             this.display.sections.buttons.ClickToPlace.container.style.backgroundColor = "white";
             this.display.sections.buttons.MapSettings.style.background = "gray";
             this.display.sections.buttons.JSON.style.background = "gray";
+
+            if (this.currentClickMode !== "Thing" && this.currentClickMode !== "Macro") {
+                this.display.sections.buttons.ClickToPlace.Things.click();
+            }
         }
 
         /**
@@ -2057,7 +2059,7 @@ module LevelEditr {
                 case "Everything":
                     return this.createVisualOptionEverything(option);
                 default:
-                    return this.createVisualOptionDefault(option);
+                    throw new Error("Unknown type requested: '" + option.type + "'.");
             }
         }
 
@@ -2306,16 +2308,6 @@ module LevelEditr {
         /**
          * 
          */
-        private createVisualOptionDefault(option: any): HTMLDivElement {
-            return this.GameStarter.createElement("div", {
-                "className": "EditorComplaint",
-                "textContent": "Unknown type requested: " + option.type
-            });
-        }
-
-        /**
-         * 
-         */
         private resetDisplayMap(): void {
             this.setTextareaValue(this.stringifySmart(this.mapDefault), true);
             this.setDisplayMap(true);
@@ -2465,7 +2457,7 @@ module LevelEditr {
             this.disableThing(thing);
             this.GameStarter.TimeHandler.cancelAllEvents();
 
-            if (thing.hidden || thing.opacity === 0) {
+            if ((thing.hasOwnProperty("hidden") && thing.hidden) || thing.opacity === 0) {
                 thing.hidden = false;
                 thing.opacity = .35;
             }
@@ -2867,6 +2859,9 @@ module LevelEditr {
                     "bottom": "35px",
                     "left": "0",
                     "overflow-y": "auto"
+                },
+                ".LevelEditor.minimized .EditorSectionMain": {
+                    "display": "none"
                 },
                 ".LevelEditor .EditorSectionSecondary": {
                     "position": "absolute",

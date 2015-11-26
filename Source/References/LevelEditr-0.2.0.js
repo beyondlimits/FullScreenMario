@@ -321,7 +321,7 @@ var LevelEditr;
         /**
          *
          */
-        LevelEditr.prototype.setCurrentMacroThings = function (event) {
+        LevelEditr.prototype.resetCurrentThings = function (event) {
             var currentThing, i;
             for (i = 0; i < this.currentPreThings.length; i += 1) {
                 currentThing = this.currentPreThings[i];
@@ -492,7 +492,7 @@ var LevelEditr;
                 "y": 0
             }, this.generateCurrentArgs()), this.createPrethingsHolder(this.currentPreThings), this.getCurrentAreaObject(map), map);
             this.currentTitle = title;
-            this.setCurrentMacroThings(event);
+            this.resetCurrentThings(event);
         };
         /**
          *
@@ -585,7 +585,7 @@ var LevelEditr;
          *                            of the GUI (true), or from the Raw JSON
          *                            section (false).
          */
-        LevelEditr.prototype.setMapSetting = function (fromGui) {
+        LevelEditr.prototype.setMapSetting = function (fromGui, event) {
             var map = this.getMapObject(), area, setting;
             if (!map) {
                 return;
@@ -609,6 +609,7 @@ var LevelEditr;
             }
             this.setTextareaValue(this.stringifySmart(map), true);
             this.setDisplayMap(true);
+            this.resetCurrentThings(event);
         };
         /**
          *
@@ -941,10 +942,7 @@ var LevelEditr;
         LevelEditr.prototype.resetDisplayOptionsList = function () {
             this.display.sections.ClickToPlace.container = this.GameStarter.createElement("div", {
                 "className": "EditorOptionsList EditorSectionMain",
-                "onclick": this.cancelEvent.bind(this),
-                "style": {
-                    "display": "block"
-                }
+                "onclick": this.cancelEvent.bind(this)
             });
             this.resetDisplayOptionsListSubOptionsMenu();
             this.resetDisplayOptionsListSubOptions();
@@ -1278,6 +1276,9 @@ var LevelEditr;
             this.display.sections.buttons.ClickToPlace.container.style.backgroundColor = "white";
             this.display.sections.buttons.MapSettings.style.background = "gray";
             this.display.sections.buttons.JSON.style.background = "gray";
+            if (this.currentClickMode !== "Thing" && this.currentClickMode !== "Macro") {
+                this.display.sections.buttons.ClickToPlace.Things.click();
+            }
         };
         /**
          *
@@ -1406,7 +1407,7 @@ var LevelEditr;
                 case "Everything":
                     return this.createVisualOptionEverything(option);
                 default:
-                    return this.createVisualOptionDefault(option);
+                    throw new Error("Unknown type requested: '" + option.type + "'.");
             }
         };
         /**
@@ -1603,15 +1604,6 @@ var LevelEditr;
         /**
          *
          */
-        LevelEditr.prototype.createVisualOptionDefault = function (option) {
-            return this.GameStarter.createElement("div", {
-                "className": "EditorComplaint",
-                "textContent": "Unknown type requested: " + option.type
-            });
-        };
-        /**
-         *
-         */
         LevelEditr.prototype.resetDisplayMap = function () {
             this.setTextareaValue(this.stringifySmart(this.mapDefault), true);
             this.setDisplayMap(true);
@@ -1736,7 +1728,7 @@ var LevelEditr;
             this.GameStarter.addThing(thing, left, top);
             this.disableThing(thing);
             this.GameStarter.TimeHandler.cancelAllEvents();
-            if (thing.hidden || thing.opacity === 0) {
+            if ((thing.hasOwnProperty("hidden") && thing.hidden) || thing.opacity === 0) {
                 thing.hidden = false;
                 thing.opacity = .35;
             }
@@ -2080,6 +2072,9 @@ var LevelEditr;
                     "bottom": "35px",
                     "left": "0",
                     "overflow-y": "auto"
+                },
+                ".LevelEditor.minimized .EditorSectionMain": {
+                    "display": "none"
                 },
                 ".LevelEditor .EditorSectionSecondary": {
                     "position": "absolute",
