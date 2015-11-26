@@ -84,8 +84,8 @@ declare module DeviceLayr {
 
     export interface IDeviceLayerSettings {
         InputWriter: InputWritr.IInputWritr;
-        triggers: ITriggers;
-        aliases: IAliases;
+        triggers?: ITriggers;
+        aliases?: IAliases;
     }
 
     export interface IDeviceLayr {
@@ -220,16 +220,13 @@ module DeviceLayr {
             if (typeof settings.InputWriter === "undefined") {
                 throw new Error("No InputWriter given to DeviceLayr.");
             }
-            if (typeof settings.triggers === "undefined") {
-                throw new Error("No triggers given to DeviceLayr.");
-            }
-            if (typeof settings.aliases === "undefined") {
-                throw new Error("No aliases given to DeviceLayr.");
-            }
 
             this.InputWritr = settings.InputWriter;
-            this.triggers = settings.triggers;
-            this.aliases = settings.aliases;
+            this.triggers = settings.triggers || {};
+            this.aliases = settings.aliases || {
+                "on": "on",
+                "off": "off"
+            };
 
             this.gamepads = [];
         }
