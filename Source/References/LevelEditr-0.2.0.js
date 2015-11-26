@@ -1134,16 +1134,11 @@ var LevelEditr;
         };
         LevelEditr.prototype.resetDisplayVisualContainers = function () {
             var scope = this;
-            this.display.sections.ClickToPlace.VisualSummary = this.GameStarter.createElement("div", {
-                "className": "EditorVisualSummary",
-                "onclick": this.cancelEvent.bind(this)
-            });
             this.display.sections.ClickToPlace.VisualOptions = this.GameStarter.createElement("div", {
                 "textContent": "Click an icon to view options.",
                 "className": "EditorVisualOptions",
                 "onclick": this.cancelEvent.bind(this)
             });
-            this.display.gui.appendChild(this.display.sections.ClickToPlace.VisualSummary);
             this.display.gui.appendChild(this.display.sections.ClickToPlace.VisualOptions);
         };
         LevelEditr.prototype.resetDisplayButtons = function () {
@@ -1389,7 +1384,6 @@ var LevelEditr;
                     })
                 }));
             }
-            this.display.sections.ClickToPlace.VisualSummary.textContent = name;
         };
         /**
          *
@@ -1738,7 +1732,8 @@ var LevelEditr;
          *
          */
         LevelEditr.prototype.addThingAndDisableEvents = function (thing, x, y) {
-            this.GameStarter.addThing(thing, x, y);
+            var left = this.roundTo(x, this.GameStarter.scale), top = this.roundTo(y, this.GameStarter.scale);
+            this.GameStarter.addThing(thing, left, top);
             this.disableThing(thing);
             this.GameStarter.TimeHandler.cancelAllEvents();
             if (thing.hidden || thing.opacity === 0) {
@@ -2140,14 +2135,6 @@ var LevelEditr;
                     "position": "absolute"
                 },
                 // EditorVisualOptions
-                ".LevelEditor .EditorVisualSummary": {
-                    "margin": "42px 7px",
-                    "opacity": "0",
-                    "transition": "117ms opacity"
-                },
-                ".LevelEditor.minimized .EditorVisualSummary": {
-                    "opacity": "0"
-                },
                 ".LevelEditor .EditorVisualOptions": {
                     "position": "absolute",
                     "top": "105px",
@@ -2169,7 +2156,9 @@ var LevelEditr;
                 },
                 ".LevelEditor.thin .EditorVisualOptions:hover": {
                     "left": "70px",
-                    "width": "245px"
+                    "right": "0",
+                    "width": "auto",
+                    "overflow-x": "hidden"
                 },
                 ".LevelEditor.thick .EditorVisualOptions": {
                     "width": "350px"

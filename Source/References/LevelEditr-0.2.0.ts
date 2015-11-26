@@ -26,6 +26,7 @@ declare module LevelEditr {
         TimeHandler: TimeHandlr.ITimeHandlr;
         player: IPlayer;
         container: HTMLDivElement;
+        scale: number;
         unitsize: number;
         addPageStyles(styles: any): void;
         addThing(thing: IThing, x?: number, y?: number): IThing;
@@ -142,7 +143,6 @@ declare module LevelEditr {
                 "container": HTMLDivElement;
                 "Things": HTMLDivElement;
                 "Macros": HTMLDivElement;
-                "VisualSummary": HTMLDivElement;
                 "VisualOptions": HTMLDivElement;
             };
             "MapSettings": {
@@ -1735,18 +1735,12 @@ module LevelEditr {
         private resetDisplayVisualContainers(): void {
             var scope: LevelEditr = this;
 
-            this.display.sections.ClickToPlace.VisualSummary = this.GameStarter.createElement("div", {
-                "className": "EditorVisualSummary",
-                "onclick": this.cancelEvent.bind(this)
-            });
-
             this.display.sections.ClickToPlace.VisualOptions = this.GameStarter.createElement("div", {
                 "textContent": "Click an icon to view options.",
                 "className": "EditorVisualOptions",
                 "onclick": this.cancelEvent.bind(this)
             });
 
-            this.display.gui.appendChild(this.display.sections.ClickToPlace.VisualSummary);
             this.display.gui.appendChild(this.display.sections.ClickToPlace.VisualOptions);
         }
 
@@ -2039,8 +2033,6 @@ module LevelEditr {
                     })
                 }));
             }
-
-            this.display.sections.ClickToPlace.VisualSummary.textContent = name;
         }
 
         /**
@@ -2466,7 +2458,10 @@ module LevelEditr {
          *
          */
         private addThingAndDisableEvents(thing: IThing, x?: number, y?: number): void {
-            this.GameStarter.addThing(thing, x, y);
+            var left: number = this.roundTo(x, this.GameStarter.scale),
+                top: number = this.roundTo(y, this.GameStarter.scale);
+
+            this.GameStarter.addThing(thing, left, top);
             this.disableThing(thing);
             this.GameStarter.TimeHandler.cancelAllEvents();
 
@@ -2927,14 +2922,6 @@ module LevelEditr {
                     "position": "absolute"
                 },
                 // EditorVisualOptions
-                ".LevelEditor .EditorVisualSummary": {
-                    "margin": "42px 7px",
-                    "opacity": "0",
-                    "transition": "117ms opacity"
-                },
-                ".LevelEditor.minimized .EditorVisualSummary": {
-                    "opacity": "0"
-                },
                 ".LevelEditor .EditorVisualOptions": {
                     "position": "absolute",
                     "top": "105px",
@@ -2956,7 +2943,9 @@ module LevelEditr {
                 },
                 ".LevelEditor.thin .EditorVisualOptions:hover": {
                     "left": "70px",
-                    "width": "245px"
+                    "right": "0",
+                    "width": "auto",
+                    "overflow-x": "hidden"
                 },
                 ".LevelEditor.thick .EditorVisualOptions": {
                     "width": "350px"
