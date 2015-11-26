@@ -490,7 +490,7 @@ module MapsCreatr {
             if (!settings.ObjectMaker) {
                 throw new Error("No ObjectMakr given to MapsCreatr.");
             }
-            if (typeof this.ObjectMaker.getFullProperties() === "undefined") {
+            if (typeof settings.ObjectMaker.getFullProperties() === "undefined") {
                 throw new Error("MapsCreatr's ObjectMaker must store full properties.");
             }
             if (!settings.groupTypes) {
