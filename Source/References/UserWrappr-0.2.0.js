@@ -390,8 +390,8 @@ var UserWrappr;
                 else {
                     customs.height = window.innerHeight;
                 }
-                // 49px from header, 35px from menus
-                customs.height -= 84;
+                // 49px from header, 77px from menus
+                customs.height -= 126;
             }
             return customs;
         };
