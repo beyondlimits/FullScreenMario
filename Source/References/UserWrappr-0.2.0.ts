@@ -373,12 +373,34 @@ module UserWrappr {
          * @param {IUserWrapprSettings} settings
          */
         constructor(settings: IUserWrapprSettings) {
-            this.customs = settings.customs || {};
+            if (typeof settings === "undefined") {
+                throw new Error("No settings object given to UserWrappr.");
+            }
+            if (typeof settings.GameStartrConstructor === "undefined") {
+                throw new Error("No GameStartrConstructor given to UserWrappr.");
+            }
+            if (typeof settings.helpSettings === "undefined") {
+                throw new Error("No helpSettings given to UserWrappr.");
+            }
+            if (typeof settings.globalName === "undefined") {
+                throw new Error("No globalName given to UserWrappr.");
+            }
+            if (typeof settings.sizes === "undefined") {
+                throw new Error("No sizes given to UserWrappr.");
+            }
+            if (typeof settings.sizeDefault === "undefined") {
+                throw new Error("No sizeDefault given to UserWrappr.");
+            }
+            if (typeof settings.schemas === "undefined") {
+                throw new Error("No schemas given to UserWrappr.");
+            }
 
-            this.GameStartrConstructor = settings.GameStartrConstructor;
             this.settings = settings;
-            this.helpSettings = this.settings.helpSettings;
+            this.GameStartrConstructor = settings.GameStartrConstructor;
             this.globalName = settings.globalName;
+            this.helpSettings = this.settings.helpSettings;
+
+            this.customs = settings.customs || {};
 
             this.importSizes(settings.sizes);
 

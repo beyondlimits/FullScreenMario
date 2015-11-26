@@ -593,6 +593,12 @@ var TouchPassr;
          * @param {ITouchPassrSettings} settings
          */
         function TouchPassr(settings) {
+            if (typeof settings === "undefined") {
+                throw new Error("No settings object given to TouchPassr.");
+            }
+            if (typeof settings.InputWriter === "undefined") {
+                throw new Error("No InputWriter given to TouchPassr.");
+            }
             this.InputWriter = settings.InputWriter;
             this.styles = settings.styles || {};
             this.resetContainer(settings.container);

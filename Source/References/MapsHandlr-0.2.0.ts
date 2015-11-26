@@ -169,19 +169,17 @@ module MapsHandlr {
          */
         constructor(settings: IMapsHandlrSettings) {
             if (!settings) {
-                throw new Error("No settings given to MapsHandlr.");
+                throw new Error("No settings object given to MapsHandlr.");
             }
-
-            // Maps themselves should have been created in the MapsCreator object
             if (!settings.MapsCreator) {
                 throw new Error("No MapsCreator provided to MapsHandlr.");
             }
-            this.MapsCreator = settings.MapsCreator;
-
-            // Map/Area attributes will need to be stored in a MapScreenr object
             if (!settings.MapScreener) {
                 throw new Error("No MapScreener provided to MapsHandlr.");
             }
+
+            this.MapsCreator = settings.MapsCreator;
+
             this.MapScreener = settings.MapScreener;
 
             this.onSpawn = settings.onSpawn;

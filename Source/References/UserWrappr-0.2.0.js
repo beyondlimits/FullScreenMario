@@ -44,11 +44,32 @@ var UserWrappr;
                 || function () {
                     console.warn("Not able to cancel full screen...");
                 }).bind(document);
-            this.customs = settings.customs || {};
-            this.GameStartrConstructor = settings.GameStartrConstructor;
+            if (typeof settings === "undefined") {
+                throw new Error("No settings object given to UserWrappr.");
+            }
+            if (typeof settings.GameStartrConstructor === "undefined") {
+                throw new Error("No GameStartrConstructor given to UserWrappr.");
+            }
+            if (typeof settings.helpSettings === "undefined") {
+                throw new Error("No helpSettings given to UserWrappr.");
+            }
+            if (typeof settings.globalName === "undefined") {
+                throw new Error("No globalName given to UserWrappr.");
+            }
+            if (typeof settings.sizes === "undefined") {
+                throw new Error("No sizes given to UserWrappr.");
+            }
+            if (typeof settings.sizeDefault === "undefined") {
+                throw new Error("No sizeDefault given to UserWrappr.");
+            }
+            if (typeof settings.schemas === "undefined") {
+                throw new Error("No schemas given to UserWrappr.");
+            }
             this.settings = settings;
-            this.helpSettings = this.settings.helpSettings;
+            this.GameStartrConstructor = settings.GameStartrConstructor;
             this.globalName = settings.globalName;
+            this.helpSettings = this.settings.helpSettings;
+            this.customs = settings.customs || {};
             this.importSizes(settings.sizes);
             this.gameNameAlias = this.helpSettings.globalNameAlias || "{%%%%GAME%%%%}";
             this.gameElementSelector = settings.gameElementSelector || "#game";

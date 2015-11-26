@@ -12,7 +12,9 @@ var AudioPlayr;
          * @param {IAudioPlayrSettings} settings
          */
         function AudioPlayr(settings) {
-            var volumeInitial;
+            if (typeof settings === "undefined") {
+                throw new Error("No settings object given to AudioPlayr.");
+            }
             if (typeof settings.library === "undefined") {
                 throw new Error("No library given to AudioPlayr.");
             }
@@ -25,6 +27,7 @@ var AudioPlayr;
             if (!settings.ItemsHolder) {
                 throw new Error("No ItemsHoldr given to AudioPlayr.");
             }
+            var volumeInitial;
             this.ItemsHolder = settings.ItemsHolder;
             this.library = settings.library;
             this.directory = settings.directory;

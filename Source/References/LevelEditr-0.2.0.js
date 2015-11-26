@@ -23,6 +23,24 @@ var LevelEditr;
          * @param {ILevelEditrSettings} settings
          */
         function LevelEditr(settings) {
+            if (typeof settings === "undefined") {
+                throw new Error("No settings object given to LevelEditr.");
+            }
+            if (typeof settings.prethings === "undefined") {
+                throw new Error("No prethings given to LevelEditr.");
+            }
+            if (typeof settings.thingGroups === "undefined") {
+                throw new Error("No thingGroups given to LevelEditr.");
+            }
+            if (typeof settings.things === "undefined") {
+                throw new Error("No things given to LevelEditr.");
+            }
+            if (typeof settings.macros === "undefined") {
+                throw new Error("No macros given to LevelEditr.");
+            }
+            if (typeof settings.beautifier === "undefined") {
+                throw new Error("No beautifier given to LevelEditr.");
+            }
             this.enabled = false;
             this.GameStarter = settings.GameStarter;
             this.prethings = settings.prethings;

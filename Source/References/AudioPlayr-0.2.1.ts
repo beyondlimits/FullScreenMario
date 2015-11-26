@@ -141,23 +141,23 @@ module AudioPlayr {
          * @param {IAudioPlayrSettings} settings
          */
         constructor(settings: IAudioPlayrSettings) {
-            var volumeInitial: number;
-
+            if (typeof settings === "undefined") {
+                throw new Error("No settings object given to AudioPlayr.");
+            }
             if (typeof settings.library === "undefined") {
                 throw new Error("No library given to AudioPlayr.");
             }
-
             if (typeof settings.directory === "undefined") {
                 throw new Error("No directory given to AudioPlayr.");
             }
-
             if (typeof settings.fileTypes === "undefined") {
                 throw new Error("No fileTypes given to AudioPlayr.");
             }
-
             if (!settings.ItemsHolder) {
                 throw new Error("No ItemsHoldr given to AudioPlayr.");
             }
+
+            var volumeInitial: number;
 
             this.ItemsHolder = settings.ItemsHolder;
 

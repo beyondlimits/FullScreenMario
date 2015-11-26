@@ -29,6 +29,18 @@ var DeviceLayr;
          * @param {IDeviceLayerSettings} settings
          */
         function DeviceLayr(settings) {
+            if (typeof settings === "undefined") {
+                throw new Error("No settings object given to DeviceLayr.");
+            }
+            if (typeof settings.InputWriter === "undefined") {
+                throw new Error("No InputWriter given to DeviceLayr.");
+            }
+            if (typeof settings.triggers === "undefined") {
+                throw new Error("No triggers given to DeviceLayr.");
+            }
+            if (typeof settings.aliases === "undefined") {
+                throw new Error("No aliases given to DeviceLayr.");
+            }
             this.InputWritr = settings.InputWriter;
             this.triggers = settings.triggers;
             this.aliases = settings.aliases;
