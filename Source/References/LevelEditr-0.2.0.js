@@ -857,7 +857,7 @@ var LevelEditr;
         };
         LevelEditr.prototype.resetDisplayGui = function () {
             this.display.gui = this.GameStarter.createElement("div", {
-                "className": "EditorGui",
+                "className": "EditorGui"
             });
             this.display.container.appendChild(this.display.gui);
         };
@@ -2128,7 +2128,7 @@ var LevelEditr;
                 // EditorOptions
                 ".LevelEditor .EditorOptions, .LevelEditor .EditorOptionContainer": {
                     "padding-left": "3px",
-                    "clear": "both",
+                    "clear": "both"
                 },
                 ".LevelEditor.minimized .EditorOptionsList": {
                     "opacity": "0"
@@ -2165,7 +2165,7 @@ var LevelEditr;
                     "transition": "117ms opacity, 70ms left"
                 },
                 ".LevelEditor.thin .EditorVisualOptions": {
-                    "left": "185px",
+                    "left": "185px"
                 },
                 ".LevelEditor.thin .EditorVisualOptions:hover": {
                     "left": "70px",

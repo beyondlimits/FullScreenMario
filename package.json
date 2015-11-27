@@ -1,7 +1,7 @@
 {
     "name": "FullScreenMario",
     "description": "An HTML5 remake of the original Super Mario Brothers - expanded for modern browsing.",
-    "version": "0.10.2",
+    "version": "0.10.3",
     "author": {
         "name": "Josh Goldberg",
         "email": "josh@fullscreenmario.com"
