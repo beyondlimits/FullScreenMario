@@ -3970,7 +3970,7 @@ var FullScreenMario;
                     return false;
                 }
                 thing.FSM.setBottom(thing, other.top);
-                thing.FSM.GroupHolder.switchObjectGroup(thing, "Scenery", "Character");
+                thing.FSM.GroupHolder.switchMemberGroup(thing, "Scenery", "Character");
                 thing.nomove = thing.nocollide = thing.nofall = thing.moveleft = false;
                 if (thing.emergeOut) {
                     thing.emergeOut(thing, other);
@@ -4005,7 +4005,7 @@ var FullScreenMario;
             thing.nocollide = thing.alive = thing.nofall = true;
             thing.yvel -= thing.FSM.unitsize;
             thing.FSM.switchClass(thing, "still", "anim");
-            thing.FSM.GroupHolder.switchObjectGroup(thing, "Character", "Scenery");
+            thing.FSM.GroupHolder.switchMemberGroup(thing, "Character", "Scenery");
             thing.FSM.AudioPlayer.play("Coin");
             thing.FSM.ItemsHolder.increase("coins", 1);
             thing.FSM.ItemsHolder.increase("score", 200);
@@ -4612,7 +4612,7 @@ var FullScreenMario;
             thing.FSM.removeClasses(thing, "jumping running crouching");
             thing.FSM.AudioPlayer.clearTheme();
             thing.FSM.TimeHandler.cancelAllCycles(thing);
-            thing.FSM.GroupHolder.switchObjectGroup(thing, "Character", "Scenery");
+            thing.FSM.GroupHolder.switchMemberGroup(thing, "Character", "Scenery");
         };
         /**
          * Animation Function for when a player is done passing through a Pipe. This
@@ -4625,7 +4625,7 @@ var FullScreenMario;
             thing.movement = thing.movementOld;
             thing.nocollide = thing.nofall = thing.piping = false;
             thing.FSM.AudioPlayer.resumeTheme();
-            thing.FSM.GroupHolder.switchObjectGroup(thing, "Scenery", "Character");
+            thing.FSM.GroupHolder.switchMemberGroup(thing, "Scenery", "Character");
         };
         /**
          * Animation Function for when a player is hopping off a pole. It hops off

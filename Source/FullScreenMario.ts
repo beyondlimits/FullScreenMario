@@ -4933,8 +4933,7 @@ module FullScreenMario {
                     }
 
                     thing.FSM.setBottom(thing, other.top);
-                    thing.FSM.GroupHolder.switchObjectGroup(
-                        thing, "Scenery", "Character");
+                    thing.FSM.GroupHolder.switchMemberGroup(thing, "Scenery", "Character");
                     thing.nomove = thing.nocollide = thing.nofall = thing.moveleft = false;
 
                     if (thing.emergeOut) {
@@ -4984,7 +4983,7 @@ module FullScreenMario {
             thing.yvel -= thing.FSM.unitsize;
 
             thing.FSM.switchClass(thing, "still", "anim");
-            thing.FSM.GroupHolder.switchObjectGroup(thing, "Character", "Scenery");
+            thing.FSM.GroupHolder.switchMemberGroup(thing, "Character", "Scenery");
 
             thing.FSM.AudioPlayer.play("Coin");
             thing.FSM.ItemsHolder.increase("coins", 1);
@@ -5787,7 +5786,7 @@ module FullScreenMario {
 
             thing.FSM.AudioPlayer.clearTheme();
             thing.FSM.TimeHandler.cancelAllCycles(thing);
-            thing.FSM.GroupHolder.switchObjectGroup(thing, "Character", "Scenery");
+            thing.FSM.GroupHolder.switchMemberGroup(thing, "Character", "Scenery");
         }
 
         /**
@@ -5802,7 +5801,7 @@ module FullScreenMario {
             thing.nocollide = thing.nofall = thing.piping = false;
 
             thing.FSM.AudioPlayer.resumeTheme();
-            thing.FSM.GroupHolder.switchObjectGroup(thing, "Scenery", "Character");
+            thing.FSM.GroupHolder.switchMemberGroup(thing, "Scenery", "Character");
         }
 
         /**

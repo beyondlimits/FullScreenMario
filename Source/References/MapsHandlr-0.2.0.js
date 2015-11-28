@@ -16,21 +16,24 @@ var MapsHandlr;
          */
         function MapsHandlr(settings) {
             if (!settings) {
-                throw new Error("No settings object given to MapsHandlr.");
+                throw new Error("No settings given to MapsHandlr.");
             }
+            // Maps themselves should have been created in the MapsCreator object
             if (!settings.MapsCreator) {
                 throw new Error("No MapsCreator provided to MapsHandlr.");
             }
+            this.MapsCreator = settings.MapsCreator;
+            // Map/Area attributes will need to be stored in a MapScreenr object
             if (!settings.MapScreener) {
                 throw new Error("No MapScreener provided to MapsHandlr.");
             }
-            this.MapsCreator = settings.MapsCreator;
             this.MapScreener = settings.MapScreener;
             this.onSpawn = settings.onSpawn;
             this.onUnspawn = settings.onUnspawn;
             this.screenAttributes = settings.screenAttributes || [];
             this.stretchAdd = settings.stretchAdd;
             this.afterAdd = settings.afterAdd;
+            this.commandScope = settings.commandScope;
         }
         /* Simple gets
         */
@@ -196,7 +199,7 @@ var MapsHandlr;
          */
         MapsHandlr.prototype.setStretches = function (stretchesRaw) {
             this.stretches = stretchesRaw;
-            this.stretches.forEach(this.stretchAdd);
+            this.stretches.forEach(this.stretchAdd.bind(this.commandScope || this));
         };
         /**
          * Applies the afterAdd Function to each given "after" command and stores
@@ -206,7 +209,7 @@ var MapsHandlr;
          */
         MapsHandlr.prototype.setAfters = function (aftersRaw) {
             this.afters = aftersRaw;
-            this.afters.forEach(this.afterAdd);
+            this.afters.forEach(this.afterAdd.bind(this.commandScope || this));
         };
         /**
          * Calls onSpawn on every PreThing touched by the given bounding box,
