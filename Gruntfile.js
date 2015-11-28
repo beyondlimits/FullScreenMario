@@ -83,7 +83,8 @@ module.exports = function (grunt) {
                 "files": {
                     "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/<%= pkg.name %>-<%= pkg.version %>.min.js": [
                         "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/<%= pkg.name %>-<%= pkg.version %>.js",
-                        "<%= meta.paths.source %>/settings/*.js"
+                        "<%= meta.paths.source %>/settings/*.js",
+                        "<%= meta.paths.source %>/settings/maps/*.js"
                     ],
                     "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/index.min.js": [
                         "<%= meta.paths.source %>/index.js"
