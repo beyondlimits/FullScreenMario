@@ -8,7 +8,10 @@ module FullScreenMario {
             /**
              * Decreases a player's jumping yvel based on whether it's running.
              */
-            "decreasePlayerJumpingYvel": function (constants: IMapScreenr, equations: MathDecidr.IEquationContainer, player: IPlayer): void {
+            "decreasePlayerJumpingYvel": function (
+                constants: IMapScreenr,
+                equations: MathDecidr.IEquationContainer,
+                player: IPlayer): void {
                 var jumpmod: number = player.FSM.MapScreener.jumpmod - player.xvel * .0014,
                     power: number = Math.pow(player.keys.jumplev, jumpmod),
                     dy: number = player.FSM.unitsize / power;
@@ -20,7 +23,10 @@ module FullScreenMario {
              * @returns {Boolean} True if the player started or stopped skidding,
              *                    or false if the skidding status was unchanged.
              */
-            "decreasePlayerRunningXvel": function (constants: IMapScreenr, equations: MathDecidr.IEquationContainer, player: IPlayer): boolean {
+            "decreasePlayerRunningXvel": function (
+                constants: IMapScreenr,
+                equations: MathDecidr.IEquationContainer,
+                player: IPlayer): boolean {
                 // If a button is pressed, hold/increase speed
                 if (player.keys.run !== 0 && !player.crouching) {
                     var dir: number = player.keys.run,
@@ -72,7 +78,10 @@ module FullScreenMario {
             /**
              * @return A player's yvel for when it's riding up a springboard.
              */
-            "springboardYvelUp": function (constants: IMapScreenr, equations: MathDecidr.IEquationContainer, thing: ISpringboard): number {
+            "springboardYvelUp": function (
+                constants: IMapScreenr,
+                equations: MathDecidr.IEquationContainer,
+                thing: ISpringboard): number {
                 return Math.max(thing.FSM.unitsize * -2, thing.tensionSave * -.98);
             }
         }
