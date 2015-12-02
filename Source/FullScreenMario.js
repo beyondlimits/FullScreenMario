@@ -2,8 +2,7 @@
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 // @ifdef INCLUDE_DEFINITIONS
 /// <reference path="References/GameStartr-0.2.0.ts" />
@@ -6163,7 +6162,8 @@ var FullScreenMario;
          * @return {Object}
          */
         FullScreenMario.prototype.macroWater = function (reference, prethings, area, map, scope) {
-            var x = reference.x || 0, y = (reference.y || 0) + 2, output = FullScreenMario.prototype.proliferate({
+            var x = reference.x || 0, y = (reference.y || 0) + 2, // water is 3.5 x 5.5
+            output = FullScreenMario.prototype.proliferate({
                 "thing": "Water",
                 "x": x,
                 "y": y,
