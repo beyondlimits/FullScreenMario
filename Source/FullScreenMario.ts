@@ -7371,7 +7371,11 @@ module FullScreenMario {
          */
         cutsceneBowserVictoryBowserFalls(FSM: FullScreenMario, settings: any): void {
             FSM.AudioPlayer.play("Bowser Falls");
-            settings.bowser.nofall = true;
+
+            // Bowser won't exist if the player already killed him with a star or fireballs
+            if (settings.bowser) {
+                settings.bowser.nofall = true;
+            }
         }
 
         /**

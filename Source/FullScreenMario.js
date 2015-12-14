@@ -5816,7 +5816,10 @@ var FullScreenMario;
          */
         FullScreenMario.prototype.cutsceneBowserVictoryBowserFalls = function (FSM, settings) {
             FSM.AudioPlayer.play("Bowser Falls");
-            settings.bowser.nofall = true;
+            // Bowser won't exist if the player already killed him with a star or fireballs
+            if (settings.bowser) {
+                settings.bowser.nofall = true;
+            }
         };
         /**
          * Routine for displaying text above a castle NPC. Each "layer" of text
