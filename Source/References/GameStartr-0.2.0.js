@@ -223,12 +223,12 @@ var GameStartr;
         GameStartr.prototype.resetGamesRunner = function (GameStarter, settings) {
             GameStarter.GamesRunner = new GamesRunnr.GamesRunnr(GameStarter.proliferate({
                 "adjustFramerate": true,
-                "interval": 1000 / 60,
                 "scope": GameStarter,
                 "onPlay": GameStarter.onGamePlay.bind(GameStarter, GameStarter),
                 "onPause": GameStarter.onGamePause.bind(GameStarter, GameStarter),
                 "FPSAnalyzer": new FPSAnalyzr.FPSAnalyzr()
             }, GameStarter.settings.runner));
+            GameStarter.FPSAnalyzer = GameStarter.GamesRunner.getFPSAnalyzer();
         };
         /**
          * Sets this.ItemsHolder.

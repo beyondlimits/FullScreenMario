@@ -180,7 +180,7 @@ module InputWritr {
                         || (<any>performance).mozNow
                         || (<any>performance).msNow
                         || (<any>performance).oNow
-                        ).bind(performance);
+                    ).bind(performance);
                 }
             } else {
                 this.getTimestamp = settings.getTimestamp;
@@ -615,7 +615,7 @@ module InputWritr {
          * @return {Mixed}
          */
         callEvent(event: Function | string, keyCode?: number | string, sourceEvent?: Event): any {
-            if (!this.canTrigger(event, keyCode)) {
+            if (!this.canTrigger(event, keyCode, sourceEvent)) {
                 return;
             }
 

@@ -236,52 +236,93 @@ declare module GameStartr {
     export interface IDeviceLayrCustoms extends IGameStartrSettingsObject { }
 
     /**
-     * Settings regarded preset in-game scenes, particularly for an IScenePlayr.
+     * Settings regarding upkeep Functions, particularly for an IGroupHoldr.
      */
     export interface IGamesRunnrCustoms extends IGameStartrSettingsObject {
+        /**
+         * How often updates should be called.
+         */
         interval?: number;
+
+        /**
+         * Functions to be run on every upkeep.
+         */
         games: Function[]
     }
 
+    /**
+     * Settings regarding groups holding in-game Things, particularly for an IGroupHoldr.
+     */
     export interface IGroupHoldrCustoms extends IGameStartrSettingsObject, GroupHoldr.IGroupHoldrSettings { }
 
+    /**
+     * Settings regarding keyboard and mouse inputs, particularly for an IInputWritr.
+     */
     export interface IInputWritrCustoms extends IGameStartrSettingsObject {
-        "InputWritrArgs": {
-            triggers: InputWritr.IInputWritrTriggerContainer;
-            eventInformation?: any;
-            getTimestamp?: () => number;
-            aliases?: { [i: string]: any[] };
-            keyAliasesToCodes?: { [i: string]: number };
-            keyCodesToAliases?: { [i: number]: string };
-            isRecording?: boolean | InputWritr.IInputWriterBooleanGetter;
-        }
+        /**
+         * Arguments to be directly passed to the InputWritr.
+         */
+        InputWritrArgs: InputWritr.IInputWritrSettings;
     }
 
+    /**
+     * Settings regarding persistent and temporary statistics, particularly for an IItemsHoldr.
+     */
     export interface IItemsHoldrCustoms extends IGameStartrSettingsObject {
-        "prefix": string;
-        "doMakeContainer"?: boolean;
-        "displayChanges"?: { [i: string]: string };
-        "containersArguments": any[][];
-        "defaults": { [i: string]: string };
-        "values": { [i: string]: ItemsHoldr.IItemValueSettings };
+        /**
+         * A prefix to add before IItemsValue keys.
+         */
+        prefix: string;
+        
+        /**
+         * Whether an HTML container should be created to house the IItemValue elements.
+         */
+        doMakeContainer?: boolean;
+        
+        /**
+         * Any hardcoded changes to element content, such as "INF" for Infinity.
+         */
+        displayChanges?: {
+            [i: string]: string;
+        };
+
+        /**
+         * An Array of elements as createElement arguments, outside-to-inside.
+         */
+        containersArguments: any[][];
+
+        /**
+         * Default attributes for all ItemValues.
+         */
+        defaults: {
+            [i: string]: string;
+        };
+        
+        /**
+         * Initial item values (defaults) to store.
+         */
+        values: ItemsHoldr.IItemValueDefaults;
     }
 
+    /**
+     * Settings regarding the level editor, particularly for an ILevelEditr.
+     */
     export interface ILevelEditrCustoms extends IGameStartrSettingsObject {
-        "blocksize": number;
-        "mapDefault": MapsCreatr.IMapsCreatrMapRaw;
-        "mapSettingDefault": string;
-        "mapEntryDefault": string;
-        "prethings": {
+        blocksize?: number;
+        mapDefault: MapsCreatr.IMapsCreatrMapRaw;
+        mapSettingDefault: string;
+        mapEntryDefault: string;
+        prethings: {
             [i: string]: {
                 [i: string]: any;
             }
         };
-        "thingGroups": string[];
-        "thingKeys": string[];
-        "macros": {
+        thingGroups: string[];
+        thingKeys: string[];
+        macros: {
             [i: string]: {
-                "description": string;
-                "options": any;
+                description: string;
+                options: any;
             }
         }
     }
@@ -294,16 +335,27 @@ declare module GameStartr {
         "screenAttributes"?: string[];
         "screenVariables": { [i: string]: Function };
         "onSpawn": (prething: MapsCreatr.IPreThing) => void;
-        "onUnspawn": (prething: MapsCreatr.IPreThing) => void;
+        "onUnspawn"?: (prething: MapsCreatr.IPreThing) => void;
         "stretchAdd"?: (thing: string | MapsCreatr.IPreThingSettings, index: number) => void;
         "afterAdd"?: (thing: string | MapsCreatr.IPreThingSettings, index: number) => void;
         "macros": { [i: string]: MapsCreatr.IMapsCreatrMacro };
         "entrances": { [i: string]: MapsCreatr.IMapsCreatrEntrance };
         "patterns"?: any;
-        "library": { [i: string]: MapsCreatr.IMapsCreatrMapRaw };
+        "library": { [i: string]: IMapsCreatrMapRaw };
     }
 
-    export interface IMathDecidrCustoms extends IGameStartrSettingsObject { }
+    export interface IMapsCreatrMapRaw extends MapsCreatr.IMapsCreatrMapRaw {
+        locationDefault: string;
+        areas: {
+            [i: string]: IMapsCreatrAreaRaw;
+        };
+    }
+
+    export interface IMapsCreatrAreaRaw extends MapsCreatr.IMapsCreatrAreaRaw {
+        background?: string;
+    }
+
+    export interface IMathDecidrCustoms extends IGameStartrSettingsObject, MathDecidr.IMathDecidrSettings { }
 
     export interface IModAttachrCustoms extends IGameStartrSettingsObject {
         "storeLocally"?: boolean;
@@ -782,13 +834,13 @@ module GameStartr {
                 GameStarter.proliferate(
                     {
                         "adjustFramerate": true,
-                        "interval": 1000 / 60,
                         "scope": GameStarter,
                         "onPlay": GameStarter.onGamePlay.bind(GameStarter, GameStarter),
                         "onPause": GameStarter.onGamePause.bind(GameStarter, GameStarter),
                         "FPSAnalyzer": new FPSAnalyzr.FPSAnalyzr()
                     },
                     GameStarter.settings.runner));
+            GameStarter.FPSAnalyzer = GameStarter.GamesRunner.getFPSAnalyzer();
         }
 
         /**
