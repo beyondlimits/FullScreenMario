@@ -119,7 +119,7 @@ module FullScreenMario {
                 constants: IMapScreenr,
                 equations: MathDecidr.IEquationContainer,
                 time: number): number {
-                var numFireworks = time % 10;
+                var numFireworks: number = time % 10;
 
                 if (!(numFireworks === 1 || numFireworks === 3 || numFireworks === 6)) {
                     return 0;
