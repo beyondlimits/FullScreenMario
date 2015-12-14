@@ -5,6 +5,26 @@ var FullScreenMario;
     FullScreenMario.FullScreenMario.settings.math = {
         "equations": {
             /**
+             * Determines whether a player is within touching distance of a castle axe
+             * (assuming it is alive), so that it can start the BowserVictory cutscene.
+             *
+             * @param thing   A player close to a castle axe.
+             * @param other   A castle axe that can defeat Bowser.
+             * @returns Whether the player is both alive and close enough to the axe.
+             */
+            "canPlayerTouchCastleAxe": function (constants, equations, thing, other) {
+                if (!thing.FSM.isThingAlive(thing)) {
+                    return false;
+                }
+                if (thing.right < other.left + other.EightBitter.unitsize) {
+                    return false;
+                }
+                if (thing.bottom > other.bottom - other.EightBitter.unitsize) {
+                    return false;
+                }
+                return true;
+            },
+            /**
              * Decreases a player's jumping yvel based on whether it's running.
              */
             "decreasePlayerJumpingYvel": function (constants, equations, player) {
@@ -64,10 +84,21 @@ var FullScreenMario;
                 return skiddingChanged;
             },
             /**
-             * @return A player's yvel for when it's riding up a springboard.
+             * @returns A player's yvel for when riding up a springboard.
              */
             "springboardYvelUp": function (constants, equations, thing) {
                 return Math.max(thing.FSM.unitsize * -2, thing.tensionSave * -.98);
+            },
+            /**
+             * @returns How many fireworks to show at the end of a level,
+             *          based on the given time's rightmost digit.
+             */
+            "numberOfFireworks": function (constants, equations, time) {
+                var numFireworks = time % 10;
+                if (!(numFireworks === 1 || numFireworks === 3 || numFireworks === 6)) {
+                    return 0;
+                }
+                return numFireworks;
             }
         }
     };

@@ -2,8 +2,8 @@
 
 declare module ThingHittr {
     // Determines whether a group of Things may all have hits checked.
-    export interface IThingMayCheck {
-        (thing: QuadsKeepr.IThing): boolean;
+    export interface IThingGroupCheck {
+        (): boolean;
     }
 
     /**
@@ -29,10 +29,10 @@ declare module ThingHittr {
     }
 
     /**
-     * Generator Function to create IThingMayCheckCheck Functions.
+     * Generator Function to create IThingGroupCheck Functions.
      */
-    export interface IThingMayCheckCheckGenerator {
-        (): IThingMayCheck;
+    export interface IThingGroupCheckGenerator {
+        (): IThingGroupCheck;
     }
 
     /**
@@ -57,10 +57,10 @@ declare module ThingHittr {
     }
 
     /**
-     * Container to hold IThingMayCheckCheck Functions, keyed by their respective group.
+     * Container to hold IThingGroupCheck Functions, keyed by their respective group.
      */
-    export interface IThingMayCheckCheckContainer {
-        [i: string]: IThingMayCheck;
+    export interface IThingGroupCheckContainer {
+        [i: string]: IThingGroupCheck;
     }
 
     /**
@@ -103,11 +103,11 @@ declare module ThingHittr {
     }
 
     /**
-     * Container to hold IThingMayCheckCheckGenerator Functions, keyed by their
+     * Container to hold IThingGroupCheckGenerator Functions, keyed by their
      * respective groups.
      */
-    export interface IThingMayCheckCheckGeneratorContainer {
-        [i: string]: IThingMayCheckCheckGenerator;
+    export interface IThingGroupCheckGeneratorContainer {
+        [i: string]: IThingGroupCheckGenerator;
     }
 
     /**
@@ -154,7 +154,7 @@ declare module ThingHittr {
          * The Function generators used for each group to test if a contained
          * Thing may collide, keyed by group name.
          */
-        globalCheckGenerators: IThingMayCheckCheckGeneratorContainer;
+        globalCheckGenerators: IThingGroupCheckGeneratorContainer;
 
         /**
          * The Function generators used for hitChecks, as an Object with sub-Objects
@@ -225,7 +225,7 @@ module ThingHittr {
          * Check Functions for Things within groups to see if they're able to
          * collide in the first place.
          */
-        private globalChecks: IThingMayCheckCheckContainer;
+        private globalChecks: IThingGroupCheckContainer;
 
         /**
          * Collision detection Functions to check two Things for collision.
@@ -240,7 +240,7 @@ module ThingHittr {
         /**
          * Function generators for globalChecks.
          */
-        private globalCheckGenerators: IThingMayCheckCheckGeneratorContainer;
+        private globalCheckGenerators: IThingGroupCheckGeneratorContainer;
 
         /**
          * Function generators for hitChecks.
@@ -422,7 +422,7 @@ module ThingHittr {
                             if (
                                 typeof this.globalChecks[other[this.keyGroupName]] !== "undefined"
                                 && !this.globalChecks[other[this.keyGroupName]](other)
-                                ) {
+                            ) {
                                 continue;
                             }
 
@@ -472,7 +472,7 @@ module ThingHittr {
          * @param {String} groupName
          * @return {Function}
          */
-        private cacheGlobalCheck(groupName: string): IThingMayCheck {
+        private cacheGlobalCheck(groupName: string): IThingGroupCheck {
             return this.globalCheckGenerators[groupName]();
         }
 
@@ -485,7 +485,7 @@ module ThingHittr {
          * @return {Object<Function>}
          */
         private cacheFunctionGroup(
-            functions: IThingHitCheckGeneratorContainer | IThingHitFunctionGeneratorContainer): IThingHitContainer  {
+            functions: IThingHitCheckGeneratorContainer | IThingHitFunctionGeneratorContainer): IThingHitContainer {
             var output: IThingHitCheckContainer | IThingHitFunctionContainer = {},
                 i: string;
 
