@@ -77,17 +77,6 @@ var FullScreenMario;
             FSM.AudioPlayer.setGetThemeDefault(FSM.getAudioThemeDefault.bind(FSM, FSM));
         };
         /**
-         * Sets this.ThingHitter.
-         *
-         * @param {FullScreenMario} FSM
-         * @param {Object} customs
-         */
-        FullScreenMario.prototype.resetThingHitter = function (FSM, settings) {
-            _super.prototype.resetThingHitter.call(this, FSM, settings);
-            FSM.ThingHitter.cacheHitCheckGroup("Solid");
-            FSM.ThingHitter.cacheHitCheckGroup("Character");
-        };
-        /**
          * Sets this.MapsHandler.
          *
          * @param {FullScreenMario} FSM
@@ -203,10 +192,7 @@ var FullScreenMario;
                 thing.height = thing.FSM.getAbsoluteHeight(thing.y) / thing.FSM.unitsize;
             }
             _super.prototype.thingProcess.call(this, thing, title, settings, defaults);
-            // ThingHittr becomes very non-performant if functions aren't generated
-            // for each Thing constructor (optimization does not respect prototypal 
-            // inheritance, sadly).
-            thing.FSM.ThingHitter.cacheHitCheckType(thing.title, thing.groupType);
+            thing.FSM.ThingHitter.cacheChecksForType(thing.title, thing.groupType);
         };
         /**
          * Adds a Thing via addPreThing based on the specifications in a PreThing.
@@ -685,7 +671,7 @@ var FullScreenMario;
                 character.under = character.undermid = undefined;
                 FSM.updatePosition(character);
                 FSM.QuadsKeeper.determineThingQuadrants(character);
-                FSM.ThingHitter.checkHitsOf[character.title](character);
+                FSM.ThingHitter.checkHitsForThing(character);
                 // Overlaps
                 if (character.overlaps && character.overlaps.length) {
                     FSM.maintainOverlaps(character);

@@ -4,8 +4,8 @@ module FullScreenMario {
     "use strict";
 
     FullScreenMario.settings.collisions = {
-        "groupNames": ["Solid", "Character"],
         "keyGroupName": "groupType",
+        "keyTypeName": "title",
         "globalCheckGenerators": {
             "Character": FullScreenMario.prototype.generateCanThingCollide,
             "Solid": FullScreenMario.prototype.generateCanThingCollide
@@ -16,7 +16,7 @@ module FullScreenMario {
                 "Solid": FullScreenMario.prototype.generateIsCharacterTouchingSolid
             }
         },
-        "hitFunctionGenerators": {
+        "hitCallbackGenerators": {
             "Character": {
                 "Solid": FullScreenMario.prototype.generateHitCharacterSolid,
                 "Character": FullScreenMario.prototype.generateHitCharacterCharacter

@@ -3,8 +3,8 @@ var FullScreenMario;
 (function (FullScreenMario) {
     "use strict";
     FullScreenMario.FullScreenMario.settings.collisions = {
-        "groupNames": ["Solid", "Character"],
         "keyGroupName": "groupType",
+        "keyTypeName": "title",
         "globalCheckGenerators": {
             "Character": FullScreenMario.FullScreenMario.prototype.generateCanThingCollide,
             "Solid": FullScreenMario.FullScreenMario.prototype.generateCanThingCollide
@@ -15,7 +15,7 @@ var FullScreenMario;
                 "Solid": FullScreenMario.FullScreenMario.prototype.generateIsCharacterTouchingSolid
             }
         },
-        "hitFunctionGenerators": {
+        "hitCallbackGenerators": {
             "Character": {
                 "Solid": FullScreenMario.FullScreenMario.prototype.generateHitCharacterSolid,
                 "Character": FullScreenMario.FullScreenMario.prototype.generateHitCharacterCharacter
