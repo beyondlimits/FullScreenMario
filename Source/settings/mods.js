@@ -489,10 +489,7 @@ FullScreenMario.FullScreenMario.settings.mods = {
                         this.player.title = "Luigi";
                         this.PixelDrawer.setThingSprite(this.player);
                         
-                        this.ThingHitter.cacheHitCheckType(
-                            this.player.title,
-                            this.player.groupType
-                        );
+                        this.ThingHitter.cacheChecksForType(this.player.title, this.player.groupType);
                     }
                 },
                 "onModDisable": function () {
