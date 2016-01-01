@@ -765,7 +765,7 @@ var UserWrappr;
             this.helpSettings = this.settings.helpSettings;
             this.sizes = this.importSizes(settings.sizes);
             this.customs = settings.customs || {};
-            this.gameNameAlias = settings.helpSettings.globalNameAlias || "{%%%%GAME%%%%}";
+            this.gameNameAlias = settings.helpSettings.globalNameAlias || "{GAME}";
             this.gameElementSelector = settings.gameElementSelector || "#game";
             this.gameControlsSelector = settings.gameControlsSelector || "#controls";
             this.logger = settings.log || console.log.bind(console);
@@ -953,20 +953,24 @@ var UserWrappr;
          * for each help settings opening.
          */
         UserWrappr.prototype.displayHelpMenu = function () {
-            this.helpSettings.openings.forEach(this.logHelpText.bind(this));
+            var _this = this;
+            this.helpSettings.openings.forEach(function (opening) { return _this.logHelpText(opening); });
         };
         /**
          * Displays the texts of each help settings options, all surrounded by
          * instructions on how to focus on a group.
          */
         UserWrappr.prototype.displayHelpOptions = function () {
-            this.logHelpText("To focus on a group, enter `"
-                + this.globalName
-                + ".UserWrapper.displayHelpOption(\"<group-name>\");`");
-            Object.keys(this.helpSettings.options).forEach(this.displayHelpGroupSummary.bind(this));
-            this.logHelpText("\nTo focus on a group, enter `"
-                + this.globalName
-                + ".UserWrapper.displayHelpOption(\"<group-name>\");`");
+            var _this = this;
+            this.logHelpText([
+                ("To focus on a group, enter %c" + this.globalName + ".UserWrapper.displayHelpOption(\"<group-name>\");%c"),
+                "code"
+            ]);
+            Object.keys(this.helpSettings.options).forEach(function (key) { return _this.displayHelpGroupSummary(key); });
+            this.logHelpText([
+                ("\nTo focus on a group, enter %c" + this.globalName + ".UserWrapper.displayHelpOption(\"<group-name>\");%c"),
+                "code"
+            ]);
         };
         /**
          * Displays the summary for a help group of the given optionName.
@@ -975,13 +979,13 @@ var UserWrappr;
          */
         UserWrappr.prototype.displayHelpGroupSummary = function (optionName) {
             var actions = this.helpSettings.options[optionName], action, maxTitleLength = 0, i;
-            this.logger("\n" + optionName);
+            this.logger("\r\n%c" + optionName, UserWrappr.styles.head);
             for (i = 0; i < actions.length; i += 1) {
                 maxTitleLength = Math.max(maxTitleLength, this.filterHelpText(actions[i].title).length);
             }
             for (i = 0; i < actions.length; i += 1) {
                 action = actions[i];
-                this.logger(this.padTextRight(this.filterHelpText(action.title), maxTitleLength) + " ... " + action.description);
+                this.logger("%c" + this.padTextRight(this.filterHelpText(action.title), maxTitleLength) + "%c  // " + action.description, UserWrappr.styles.code, UserWrappr.styles.comment);
             }
         };
         /**
@@ -991,41 +995,66 @@ var UserWrappr;
          */
         UserWrappr.prototype.displayHelpOption = function (optionName) {
             var actions = this.helpSettings.options[optionName], action, example, maxExampleLength, i, j;
+            this.logHelpText([("\r\n\r\n%c" + optionName + "\r\n-------\r\n\r\n"), "head"]);
             for (i = 0; i < actions.length; i += 1) {
                 action = actions[i];
                 maxExampleLength = 0;
-                this.logHelpText(action.title + " -- " + action.description);
+                this.logHelpText([
+                    ("%c" + action.title + "%c  ---  " + action.description),
+                    "head",
+                    "italic"
+                ]);
                 if (action.usage) {
-                    this.logHelpText(action.usage);
+                    this.logHelpText([
+                        ("%cUsage: %c" + action.usage),
+                        "comment",
+                        "code"
+                    ]);
                 }
                 if (action.examples) {
                     for (j = 0; j < action.examples.length; j += 1) {
                         example = action.examples[j];
-                        maxExampleLength = Math.max(maxExampleLength, this.filterHelpText("    " + example.code).length);
-                    }
-                    for (j = 0; j < action.examples.length; j += 1) {
-                        example = action.examples[j];
-                        this.logHelpText(this.padTextRight(this.filterHelpText("    " + example.code), maxExampleLength)
-                            + "  // " + example.comment);
+                        this.logger("\r\n");
+                        this.logHelpText([("%c// " + example.comment), "comment"]);
+                        this.logHelpText([
+                            ("%c" + this.padTextRight(this.filterHelpText(example.code), maxExampleLength)),
+                            "code"
+                        ]);
                     }
                 }
-                this.logger("\n");
+                this.logger("\r\n");
             }
         };
         /**
-         * Logs a bit of help text, filtered by this.filterHelpText.
+         * Logs a bit of help text, filtered by this.filterHelpText, with ordered styles
+         * from `UserWrappr.styles` keyed by name.
          *
          * @param text   The text to be filtered and logged.
+         * @remarks See https://getfirebug.com/wiki/index.php/Console.log for "%c" usage.
          */
-        UserWrappr.prototype.logHelpText = function (text) {
-            this.logger(this.filterHelpText(text));
+        UserWrappr.prototype.logHelpText = function (line) {
+            if (typeof line === "string") {
+                return this.logHelpText([line]);
+            }
+            var message = line[0], styles = line
+                .slice(1)
+                .filter(function (style) { return UserWrappr.styles.hasOwnProperty(style); })
+                .map(function (style) { return UserWrappr.styles[style]; });
+            // A last blank "" style  allows the last "%c" in the message to reset text styles
+            this.logger.apply(this, [this.filterHelpText(message)].concat(styles, [""]));
         };
         /**
+         * Filters a span of help text to replace the game name with its alias. If "%c" isn't
+         * in the text, it's added at the end.
+         *
          * @param text The text to filter.
          * @returns The text, with `this.gameNameAlias` replaced by globalName.
          */
-        UserWrappr.prototype.filterHelpText = function (text) {
-            return text.replace(new RegExp(this.gameNameAlias, "g"), this.globalName);
+        UserWrappr.prototype.filterHelpText = function (textRaw) {
+            if (textRaw.constructor === Array) {
+                return this.filterHelpText(textRaw[0]);
+            }
+            return textRaw.replace(new RegExp(this.gameNameAlias, "g"), this.globalName);
         };
         /**
          * Ensures a bit of text is of least a certain length.
@@ -1237,6 +1266,16 @@ var UserWrappr;
             "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
             "up", "right", "down", "left", "space", "shift", "ctrl"
         ];
+        /**
+         * Styles for fancy text in console help messages.
+         */
+        UserWrappr.styles = {
+            "code": "color: #000077; font-weight: bold; font-family: Consolas, Courier New, monospace;",
+            "comment": "color: #497749; font-style: italic;",
+            "head": "font-weight: bold; font-size: 117%;",
+            "italic": "font-style: italic;",
+            "none": ""
+        };
         return UserWrappr;
     })();
     UserWrappr_1.UserWrappr = UserWrappr;
