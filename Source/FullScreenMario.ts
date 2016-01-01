@@ -1757,7 +1757,7 @@ module FullScreenMario {
          * @param {Player} thing
          */
         playerGetsBigAnimation(thing: IPlayer): void {
-            var stages: (string | { (...args: any[]): boolean })[] = [
+            var stages: (string | TimeHandlr.IClassCalculator)[] = [
                 "shrooming1", "shrooming2",
                 "shrooming1", "shrooming2",
                 "shrooming3", "shrooming2", "shrooming3"
@@ -1767,7 +1767,7 @@ module FullScreenMario {
             thing.FSM.thingPauseVelocity(thing);
 
             // The last stage in the events clears it, resets movement, and stops
-            stages.push(function (thing: IPlayer, stages: string[]): boolean {
+            stages.push(function (thing: IPlayer): boolean {
                 thing.shrooming = false;
                 stages.length = 0;
 

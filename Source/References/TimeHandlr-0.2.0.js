@@ -338,15 +338,23 @@ var TimeHandlr;
             // Start off before the beginning of the cycle
             settings.location = settings.oldclass = -1;
             // Let the object know to start the cycle when needed
-            thing[this.keyOnClassCycleStart] = function () {
-                var calcTime = settings.length * timing, entryTime = Math.ceil(_this.time / calcTime) * calcTime;
-                if (entryTime === _this.time) {
+            if (synched) {
+                thing[this.keyOnClassCycleStart] = function () {
+                    var calcTime = settings.length * timing, entryDelay = Math.ceil(_this.time / calcTime) * calcTime - _this.time, event;
+                    if (entryDelay === 0) {
+                        event = _this.addEventInterval(_this.cycleClass, timing, Infinity, thing, settings);
+                    }
+                    else {
+                        event = _this.addEvent(_this.addEventInterval, entryDelay, _this.cycleClass, timing, Infinity, thing, settings);
+                    }
+                    settings.event = event;
+                };
+            }
+            else {
+                thing[this.keyOnClassCycleStart] = function () {
                     settings.event = _this.addEventInterval(_this.cycleClass, timing, Infinity, thing, settings);
-                }
-                else {
-                    settings.event = _this.addEvent(_this.addEventInterval, entryTime - _this.time, _this.cycleClass, timing, Infinity, thing, settings);
-                }
-            };
+                };
+            }
             // If it should already start, do that
             if (thing[this.keyDoClassCycleStart]) {
                 thing[this.keyOnClassCycleStart]();

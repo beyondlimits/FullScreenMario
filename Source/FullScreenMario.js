@@ -1378,7 +1378,7 @@ var FullScreenMario;
             thing.FSM.addClass(thing, "shrooming");
             thing.FSM.thingPauseVelocity(thing);
             // The last stage in the events clears it, resets movement, and stops
-            stages.push(function (thing, stages) {
+            stages.push(function (thing) {
                 thing.shrooming = false;
                 stages.length = 0;
                 thing.FSM.addClass(thing, "large");
