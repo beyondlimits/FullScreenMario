@@ -21,7 +21,7 @@ FullScreenMario.FullScreenMario.settings.maps = {
             return GameStarter.unitsize * 12;
         },
         "bottomPlatformMax": function (GameStarter) {
-            var area = GameStarter.MapsHandler.getArea(),
+            var area = GameStarter.AreaSpawner.getArea(),
                 diff = GameStarter.MapScreener.bottomDeathDifference;
                 
             if (!area) {
@@ -31,7 +31,7 @@ FullScreenMario.FullScreenMario.settings.maps = {
             return (area.floor + diff) * GameStarter.unitsize;
         },
         "gravity": function (GameStarter) {
-            var area = GameStarter.MapsHandler.getArea();
+            var area = GameStarter.AreaSpawner.getArea();
             
             if (area && area.underwater) {
                 return GameStarter.gravity / 2.8;

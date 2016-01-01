@@ -27,20 +27,20 @@ FullScreenMario.FullScreenMario.settings.ui = {
         ],
         "options": {
             "Map": [{
-                "title": "{%%%%GAME%%%%}.MapsHandler.setMap",
+                "title": "{%%%%GAME%%%%}.AreaSpawner.setMap",
                 "description": "Go to a specified map and location.",
-                "usage": "{%%%%GAME%%%%}.MapsHandler.setMap(<map>[, <location>]);",
+                "usage": "{%%%%GAME%%%%}.AreaSpawner.setMap(<map>[, <location>]);",
                 "examples": [{
-                    "code": "{%%%%GAME%%%%}.MapsHandler.setMap('1-1');",
+                    "code": "{%%%%GAME%%%%}.AreaSpawner.setMap('1-1');",
                     "comment": "Starts map 1-1."
                 }, {
-                    "code": "{%%%%GAME%%%%}.MapsHandler.setMap('1-2', 1);",
+                    "code": "{%%%%GAME%%%%}.AreaSpawner.setMap('1-2', 1);",
                     "comment": "Starts map 1-2, at the second location."
                 }, {
-                    "code": "{%%%%GAME%%%%}.MapsHandler.setMap('Random');",
+                    "code": "{%%%%GAME%%%%}.AreaSpawner.setMap('Random');",
                     "comment": "Starts the random map."
                 }, {
-                    "code": "{%%%%GAME%%%%}.MapsHandler.setMap('Random', 'Underworld');",
+                    "code": "{%%%%GAME%%%%}.AreaSpawner.setMap('Random', 'Underworld');",
                     "comment": "Starts the random map in the Underworld."
                 }]
             }],
@@ -368,17 +368,17 @@ FullScreenMario.FullScreenMario.settings.ui = {
             "generator": "MapsGrid",
             "rangeX": [1, 4],
             "rangeY": [1, 8],
-            "extras": {
-                "Map Generator!": (function () {
+            "extras": [
+                (function () {
                     var shuffle = function (string) {
                         return string
-                            .split('')
+                            .split("")
                             // Same function used in browserchoice.eu :)
                             .sort(function () {
                                 return 0.5 - Math.random()
                             })
                             .reverse()
-                            .join('');
+                            .join("");
                     };
 
                     var getNewSeed = function () {
@@ -391,7 +391,7 @@ FullScreenMario.FullScreenMario.settings.ui = {
                             var parent = event.target.parentNode,
                                 randomizer = parent.querySelector(".randomInput");
 
-                            randomizer.value = randomizer.value.replace(/[^\d]/g, '');
+                            randomizer.value = randomizer.value.replace(/[^\d]/g, "");
                             if (!randomizer.value) {
                                 randomizer.value = getNewSeed();
                             }
@@ -405,20 +405,21 @@ FullScreenMario.FullScreenMario.settings.ui = {
                             }
                         },
                         "extraElements": [
-                            [
-                                "input", {
-                                    "className": "randomInput maps-grid-input",
-                                    "type": "text",
-                                    "value": getNewSeed(),
-                                    "onchange": function (event) {
-                                        event.target.setAttribute("custom", true)
-                                    }
-                                }
-                            ]
+                           {
+                               "tag": "input",
+                               "options": {
+                                   "className": "randomInput maps-grid-input",
+                                   "type": "text",
+                                   "value": getNewSeed(),
+                                   "onchange": function (event) {
+                                       event.target.setAttribute("custom", true)
+                                   }
+                               }
+                           }
                         ]
                     };
                 })()
-            },
+            ],
             "callback": function (GameStarter, schema, button, event) {
                 GameStarter.LevelEditor.disable();
                 GameStarter.setMap(button.getAttribute("value") || button.textContent);
