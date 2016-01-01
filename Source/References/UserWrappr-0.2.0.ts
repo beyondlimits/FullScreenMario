@@ -18,6 +18,10 @@ interface HTMLElement {
 }
 
 declare module UserWrappr {
+    export interface IEvent {
+        target: HTMLElement;
+    }
+
     /**
      * The class of game being controlled by the UserWrappr. This will normally
      * be implemented by the GameStartr project itself.
@@ -568,7 +572,7 @@ module UserWrappr.UISchemas {
         /**
          * A general, default callback for when a button is clicked.
          */
-        callback: (GameStarter: IGameStartr) => void;
+        callback: (GameStarter: IGameStartr, ...args: any[]) => void;
 
         /**
          * A key to add to buttons when they're active.
@@ -588,7 +592,7 @@ module UserWrappr.UISchemas {
         /**
          * A callback for when this specific button is pressed.
          */
-        callback: (GameStarter: IGameStartr) => void;
+        callback?: (GameStarter: IGameStartr, ...args: any[]) => void;
 
         /**
          * A source for the button's initial value.
@@ -622,8 +626,6 @@ module UserWrappr.UISchemas {
                 options: IOptionsButtonSchema[] = schema.options instanceof Function
                     ? (<IOptionSource>schema.options).call(self, this.GameStarter)
                     : schema.options,
-                optionKeys: string[] = Object.keys(options),
-                keyActive: string = schema.keyActive || "active",
                 classNameStart: string = "select-option options-button-option",
                 scope: ButtonsGenerator = this,
                 option: IOptionsButtonSchema,
@@ -632,12 +634,12 @@ module UserWrappr.UISchemas {
 
             output.className = "select-options select-options-buttons";
 
-            for (i = 0; i < optionKeys.length; i += 1) {
-                option = options[optionKeys[i]];
+            for (i = 0; i < options.length; i += 1) {
+                option = options[i];
 
                 element = document.createElement("div");
                 element.className = classNameStart;
-                element.textContent = optionKeys[i];
+                element.textContent = option.title;
 
                 element.onclick = function (schema: IOptionsButtonSchema, element: HTMLDivElement): void {
                     if (scope.getParentControlElement(element).getAttribute("active") !== "on") {
@@ -656,7 +658,7 @@ module UserWrappr.UISchemas {
 
                 this.ensureLocalStorageButtonValue(element, option, schema);
 
-                if (option[keyActive]) {
+                if (option[schema.keyActive || "active"]) {
                     element.className += " option-enabled";
                     element.setAttribute("option-enabled", "true");
                 } else if (schema.assumeInactive) {

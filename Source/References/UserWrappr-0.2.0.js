@@ -69,13 +69,13 @@ var UserWrappr;
             ButtonsGenerator.prototype.generate = function (schema) {
                 var output = document.createElement("div"), options = schema.options instanceof Function
                     ? schema.options.call(self, this.GameStarter)
-                    : schema.options, optionKeys = Object.keys(options), keyActive = schema.keyActive || "active", classNameStart = "select-option options-button-option", scope = this, option, element, i;
+                    : schema.options, classNameStart = "select-option options-button-option", scope = this, option, element, i;
                 output.className = "select-options select-options-buttons";
-                for (i = 0; i < optionKeys.length; i += 1) {
-                    option = options[optionKeys[i]];
+                for (i = 0; i < options.length; i += 1) {
+                    option = options[i];
                     element = document.createElement("div");
                     element.className = classNameStart;
-                    element.textContent = optionKeys[i];
+                    element.textContent = option.title;
                     element.onclick = function (schema, element) {
                         if (scope.getParentControlElement(element).getAttribute("active") !== "on") {
                             return;
@@ -91,7 +91,7 @@ var UserWrappr;
                         }
                     }.bind(this, schema, element);
                     this.ensureLocalStorageButtonValue(element, option, schema);
-                    if (option[keyActive]) {
+                    if (option[schema.keyActive || "active"]) {
                         element.className += " option-enabled";
                         element.setAttribute("option-enabled", "true");
                     }
