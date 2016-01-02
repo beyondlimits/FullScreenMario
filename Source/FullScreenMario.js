@@ -77,13 +77,13 @@ var FullScreenMario;
             FSM.AudioPlayer.setGetThemeDefault(FSM.getAudioThemeDefault.bind(FSM, FSM));
         };
         /**
-         * Sets this.MapsHandler.
+         * Sets this.AreaSpawner.
          *
          * @param {FullScreenMario} FSM
          * @param {Object} customs
          */
-        FullScreenMario.prototype.resetMapsHandler = function (FSM, settings) {
-            FSM.MapsHandler = new MapsHandlr.MapsHandlr({
+        FullScreenMario.prototype.resetAreaSpawner = function (FSM, settings) {
+            FSM.AreaSpawner = new AreaSpawnr.AreaSpawnr({
                 "MapsCreator": FSM.MapsCreator,
                 "MapScreener": FSM.MapScreener,
                 "screenAttributes": FSM.settings.maps.screenAttributes,
@@ -829,8 +829,8 @@ var FullScreenMario;
                 // Player has fallen too far
                 if (!player.dying && player.top > FSM.MapScreener.bottom) {
                     // If the map has an exit (e.g. cloud world), transport there
-                    if (FSM.MapsHandler.getArea().exit) {
-                        FSM.setLocation(FSM.MapsHandler.getArea().exit);
+                    if (FSM.AreaSpawner.getArea().exit) {
+                        FSM.setLocation(FSM.AreaSpawner.getArea().exit);
                     }
                     else {
                         // Otherwise, since Player is below the screen, kill him dead
@@ -1378,7 +1378,7 @@ var FullScreenMario;
             thing.FSM.addClass(thing, "shrooming");
             thing.FSM.thingPauseVelocity(thing);
             // The last stage in the events clears it, resets movement, and stops
-            stages.push(function (thing, stages) {
+            stages.push(function (thing) {
                 thing.shrooming = false;
                 stages.length = 0;
                 thing.FSM.addClass(thing, "large");
@@ -1844,7 +1844,7 @@ var FullScreenMario;
         };
         /**
          * Spawning callback for RandomSpawner Things, which generate a set of
-         * commands using the WorldSeeder to be piped into the MapsHandlr, then
+         * commands using the WorldSeeder to be piped into the AreaSpawnr, then
          * spawn the immediate area.
          *
          * @param {RandomSpawner} thing
@@ -1862,7 +1862,7 @@ var FullScreenMario;
                 "height": thing.randomTop - thing.randomBottom
             });
             FSM.WorldSeeder.runGeneratedCommands();
-            FSM.MapsHandler.spawnMap("xInc", FSM.QuadsKeeper.top / FSM.unitsize, FSM.QuadsKeeper.right / FSM.unitsize, FSM.QuadsKeeper.bottom / FSM.unitsize, FSM.QuadsKeeper.left / FSM.unitsize);
+            FSM.AreaSpawner.spawnArea("xInc", FSM.QuadsKeeper.top / FSM.unitsize, FSM.QuadsKeeper.right / FSM.unitsize, FSM.QuadsKeeper.bottom / FSM.unitsize, FSM.QuadsKeeper.left / FSM.unitsize);
         };
         /**
          * Activation callback for starting spawnRandomCheep on an interval.
@@ -2022,7 +2022,7 @@ var FullScreenMario;
          * @param {DetectWindow} thing
          */
         FullScreenMario.prototype.activateSectionBefore = function (thing) {
-            var FSM = thing.FSM, MapsCreator = FSM.MapsCreator, MapScreener = FSM.MapScreener, MapsHandler = FSM.MapsHandler, area = MapsHandler.getArea(), map = MapsHandler.getMap(), prethings = MapsHandler.getPreThings(), section = area.sections[thing.section || 0], left = (thing.left + MapScreener.left) / FSM.unitsize, before = section.before ? section.before.creation : undefined, command, i;
+            var FSM = thing.FSM, MapsCreator = FSM.MapsCreator, MapScreener = FSM.MapScreener, AreaSpawner = FSM.AreaSpawner, area = AreaSpawner.getArea(), map = AreaSpawner.getMap(), prethings = AreaSpawner.getPreThings(), section = area.sections[thing.section || 0], left = (thing.left + MapScreener.left) / FSM.unitsize, before = section.before ? section.before.creation : undefined, command, i;
             // If there is a before, parse each command into the prethings array
             if (before) {
                 for (i = 0; i < before.length; i += 1) {
@@ -2052,7 +2052,7 @@ var FullScreenMario;
             };
             MapsCreator.analyzePreSwitch(command, prethings, area, map);
             // Spawn new Things that should be placed for being nearby
-            MapsHandler.spawnMap("xInc", MapScreener.top / FSM.unitsize, (MapScreener.left + FSM.QuadsKeeper.right) / FSM.unitsize, MapScreener.bottom / FSM.unitsize, left);
+            AreaSpawner.spawnArea("xInc", MapScreener.top / FSM.unitsize, (MapScreener.left + FSM.QuadsKeeper.right) / FSM.unitsize, MapScreener.bottom / FSM.unitsize, left);
         };
         /**
          * Activates the "stretch" component of a stretchable section. The creation
@@ -2064,7 +2064,7 @@ var FullScreenMario;
          * @param {DetectWindow} thing
          */
         FullScreenMario.prototype.activateSectionStretch = function (thing) {
-            var FSM = thing.FSM, MapsCreator = FSM.MapsCreator, MapScreener = FSM.MapScreener, MapsHandler = FSM.MapsHandler, area = MapsHandler.getArea(), map = MapsHandler.getMap(), prethings = MapsHandler.getPreThings(), section = area.sections[thing.section || 0], stretch = section.stretch ? section.stretch.creation : undefined, left = (thing.left + MapScreener.left) / FSM.unitsize, width = MapScreener.width / FSM.unitsize, command, i;
+            var FSM = thing.FSM, MapsCreator = FSM.MapsCreator, MapScreener = FSM.MapScreener, AreaSpawner = FSM.AreaSpawner, area = AreaSpawner.getArea(), map = AreaSpawner.getMap(), prethings = AreaSpawner.getPreThings(), section = area.sections[thing.section || 0], stretch = section.stretch ? section.stretch.creation : undefined, left = (thing.left + MapScreener.left) / FSM.unitsize, width = MapScreener.width / FSM.unitsize, command, i;
             // If there is a stretch, parse each command into the current prethings array
             if (stretch) {
                 for (i = 0; i < stretch.length; i += 1) {
@@ -2086,7 +2086,7 @@ var FullScreenMario;
                 MapsCreator.analyzePreSwitch(command, prethings, area, map);
             }
             // Spawn the map, so new Things that should be placed will be spawned if nearby
-            MapsHandler.spawnMap("xInc", MapScreener.top / FSM.unitsize, left + (MapScreener.width / FSM.unitsize), MapScreener.bottom / FSM.unitsize, left);
+            AreaSpawner.spawnArea("xInc", MapScreener.top / FSM.unitsize, left + (MapScreener.width / FSM.unitsize), MapScreener.bottom / FSM.unitsize, left);
         };
         /**
          * Activates the "after" component of a stretchable sectin. The creation
@@ -2096,7 +2096,7 @@ var FullScreenMario;
          */
         FullScreenMario.prototype.activateSectionAfter = function (thing) {
             // Since the section was passed, do the rest of things normally
-            var FSM = thing.FSM, MapsCreator = FSM.MapsCreator, MapScreener = FSM.MapScreener, MapsHandler = FSM.MapsHandler, area = MapsHandler.getArea(), map = MapsHandler.getMap(), prethings = MapsHandler.getPreThings(), section = area.sections[thing.section || 0], left = (thing.left + MapScreener.left) / FSM.unitsize, after = section.after ? section.after.creation : undefined, command, i;
+            var FSM = thing.FSM, MapsCreator = FSM.MapsCreator, MapScreener = FSM.MapScreener, AreaSpawner = FSM.AreaSpawner, area = AreaSpawner.getArea(), map = AreaSpawner.getMap(), prethings = AreaSpawner.getPreThings(), section = area.sections[thing.section || 0], left = (thing.left + MapScreener.left) / FSM.unitsize, after = section.after ? section.after.creation : undefined, command, i;
             // If there is an after, parse each command into the current prethings array
             if (after) {
                 for (i = 0; i < after.length; i += 1) {
@@ -2118,7 +2118,7 @@ var FullScreenMario;
                 }
             }
             // Spawn the map, so new Things that should be placed will be spawned if nearby
-            MapsHandler.spawnMap("xInc", MapScreener.top / FSM.unitsize, left + (MapScreener.right / FSM.unitsize), MapScreener.bottom / FSM.unitsize, left);
+            AreaSpawner.spawnArea("xInc", MapScreener.top / FSM.unitsize, left + (MapScreener.right / FSM.unitsize), MapScreener.bottom / FSM.unitsize, left);
         };
         /* Collision functions
         */
@@ -4560,8 +4560,8 @@ var FullScreenMario;
             thing.FSM.switchClass(thing, "still", "running");
             thing.running = thing.FSM.TimeHandler.addClassCycle(thing, [
                 "one", "two", "three", "two"
-            ], "running", function (event) {
-                event.timeout = 5 + Math.ceil(thing.maxspeedsave - Math.abs(thing.xvel));
+            ], "running", function () {
+                return 5 + Math.ceil(thing.maxspeedsave - Math.abs(thing.xvel));
             });
         };
         /**
@@ -5000,7 +5000,7 @@ var FullScreenMario;
             if (!thing.alive || thing.flickering || thing.dying) {
                 return;
             }
-            var FSM = thing.FSM, area = thing.FSM.MapsHandler.getArea();
+            var FSM = thing.FSM, area = thing.FSM.AreaSpawner.getArea();
             // Large big: real, no-animation death
             if (big === 2) {
                 thing.dead = thing.dying = true;
@@ -5224,7 +5224,7 @@ var FullScreenMario;
          *                  spaces).
          */
         FullScreenMario.prototype.getAudioThemeDefault = function (FSM) {
-            return FSM.MapsHandler.getArea().setting.split(" ")[0];
+            return FSM.AreaSpawner.getArea().setting.split(" ")[0];
         };
         /* Map sets
         */
@@ -5241,9 +5241,9 @@ var FullScreenMario;
         FullScreenMario.prototype.setMap = function (name, location) {
             var FSM = FullScreenMario.prototype.ensureCorrectCaller(this), time, map;
             if (typeof name === "undefined" || name.constructor === FullScreenMario) {
-                name = FSM.MapsHandler.getMapName();
+                name = FSM.AreaSpawner.getMapName();
             }
-            map = FSM.MapsHandler.setMap(name);
+            map = FSM.AreaSpawner.setMap(name);
             FSM.ModAttacher.fireEvent("onPreSetMap", map);
             if (map.seed) {
                 FSM.NumberMaker.resetFromSeed(map.seed);
@@ -5252,7 +5252,7 @@ var FullScreenMario;
             FSM.InputWriter.restartHistory();
             FSM.ModAttacher.fireEvent("onSetMap", map);
             FSM.setLocation(location || map.locationDefault || FSM.settings.maps.locationDefault);
-            time = FSM.MapsHandler.getArea().time || FSM.MapsHandler.getMap().time;
+            time = FSM.AreaSpawner.getArea().time || FSM.AreaSpawner.getMap().time;
             FSM.ItemsHolder.setItem("time", Number(time));
         };
         /**
@@ -5273,11 +5273,11 @@ var FullScreenMario;
             FSM.MapScreener.clearScreen();
             FSM.GroupHolder.clearArrays();
             FSM.TimeHandler.cancelAllEvents();
-            FSM.MapsHandler.setLocation((name || 0).toString());
+            FSM.AreaSpawner.setLocation((name || 0).toString());
             FSM.MapScreener.setVariables();
-            location = FSM.MapsHandler.getLocation((name || 0).toString());
+            location = FSM.AreaSpawner.getLocation((name || 0).toString());
             FSM.ModAttacher.fireEvent("onPreSetLocation", location);
-            FSM.PixelDrawer.setBackground(FSM.MapsHandler.getArea().background);
+            FSM.PixelDrawer.setBackground(FSM.AreaSpawner.getArea().background);
             FSM.TimeHandler.addEventInterval(FSM.maintainTime, 25, Infinity, FSM);
             FSM.TimeHandler.addEventInterval(FSM.maintainScenery, 350, Infinity, FSM);
             FSM.AudioPlayer.clearAll();
@@ -5579,7 +5579,7 @@ var FullScreenMario;
          * @return {Thing} A strethed Thing, newly added via addThing.
          */
         FullScreenMario.prototype.mapAddStretched = function (prethingRaw) {
-            var FSM = FullScreenMario.prototype.ensureCorrectCaller(this), boundaries = FSM.MapsHandler.getArea().boundaries, prething = prethingRaw instanceof String
+            var FSM = FullScreenMario.prototype.ensureCorrectCaller(this), boundaries = FSM.AreaSpawner.getArea().boundaries, prething = prethingRaw instanceof String
                 ? {
                     "thing": prething
                 }
@@ -5600,11 +5600,11 @@ var FullScreenMario;
          * @param {PreThing} prethingRaw
          */
         FullScreenMario.prototype.mapAddAfter = function (prethingRaw) {
-            var FSM = FullScreenMario.prototype.ensureCorrectCaller(this), MapsCreator = FSM.MapsCreator, MapsHandler = FSM.MapsHandler, prethings = MapsHandler.getPreThings(), prething = prethingRaw instanceof String
+            var FSM = FullScreenMario.prototype.ensureCorrectCaller(this), MapsCreator = FSM.MapsCreator, AreaSpawner = FSM.AreaSpawner, prethings = AreaSpawner.getPreThings(), prething = prethingRaw instanceof String
                 ? {
                     "thing": prething
                 }
-                : prethingRaw, area = MapsHandler.getArea(), map = MapsHandler.getMap(), boundaries = FSM.MapsHandler.getArea().boundaries;
+                : prethingRaw, area = AreaSpawner.getArea(), map = AreaSpawner.getMap(), boundaries = FSM.AreaSpawner.getArea().boundaries;
             prething.x = boundaries.right;
             MapsCreator.analyzePreSwitch(prething, prethings, area, map);
         };

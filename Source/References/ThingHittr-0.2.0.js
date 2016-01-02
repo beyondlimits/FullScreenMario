@@ -1,9 +1,4 @@
-// @echo '/// <reference path="QuadsKeepr-0.2.1.ts" />'
-// @ifdef INCLUDE_DEFINITIONS
-/// <reference path="References/QuadsKeepr-0.2.1.ts" />
-/// <reference path="ThingHittr.d.ts" />
-// @endif
-// @include ../Source/ThingHittr.d.ts
+/// <reference path="QuadsKeepr-0.2.1.ts" />
 var ThingHittr;
 (function (ThingHittr_1) {
     "use strict";

@@ -1,8 +1,9 @@
 /// <reference path="../FullScreenMario.ts" />
-var FullScreenMario;
-(function (FullScreenMario) {
+
+module FullScreenMario {
     "use strict";
-    FullScreenMario.FullScreenMario.settings.ui = {
+
+    FullScreenMario.settings.ui = {
         "globalName": "FSM",
         "styleSheet": {
             ".FullScreenMario": {
@@ -36,16 +37,16 @@ var FullScreenMario;
                         "usage": "{GAME}.setMap(<map>[, <location>]);",
                         "examples": [
                             {
-                                "code": "{GAME}.setMap(\"1-1\");",
+                                "code": `{GAME}.setMap("1-1");`,
                                 "comment": "Starts map 1-1."
                             }, {
-                                "code": "{GAME}.setMap(\"1-2\", 1);",
+                                "code": `{GAME}.setMap("1-2", 1);`,
                                 "comment": "Starts map 1-2, at the second location."
                             }, {
-                                "code": "{GAME}.setMap(\"Random\");",
+                                "code": `{GAME}.setMap("Random");`,
                                 "comment": "Starts the random map."
                             }, {
-                                "code": "{GAME}.setMap(\"Random\", \"Underworld\");",
+                                "code": `{GAME}.setMap("Random", "Underworld");`,
                                 "comment": "Starts the random map in the Underworld."
                             }]
                     }],
@@ -56,16 +57,16 @@ var FullScreenMario;
                         "usage": "{GAME}.addThing(<thing>, left, top);",
                         "examples": [
                             {
-                                "code": "{GAME}.addThing(\"Goomba\", 256, 384);",
+                                "code": `{GAME}.addThing("Goomba", 256, 384);`,
                                 "comment": "Adds a Goomba to the game."
                             }, {
-                                "code": "{GAME}.addThing(\"Mushroom\", {GAME}.player.right + 80, {GAME}.player.top);",
+                                "code": `{GAME}.addThing("Mushroom", {GAME}.player.right + 80, {GAME}.player.top);`,
                                 "comment": "Adds a Mushroom to the right of the player."
                             }, {
-                                "code": "{GAME}.addThing([\"Koopa\", { \"smart\": true }], 256, 368);",
+                                "code": `{GAME}.addThing(["Koopa", { "smart": true }], 256, 368);`,
                                 "comment": "Adds a smart Koopa to the game."
                             }, {
-                                "code": "{GAME}.addThing({GAME}.ObjectMaker.make(\"Koopa\", { \"smart\": true, \"jumping\": true }), 256, 368);",
+                                "code": `{GAME}.addThing({GAME}.ObjectMaker.make("Koopa", { "smart": true, "jumping": true }), 256, 368);`,
                                 "comment": "Adds a smart jumping Koopa to the game."
                             }]
                     }, {
@@ -138,56 +139,56 @@ var FullScreenMario;
                     }],
                 "Statistics": [
                     {
-                        "title": "{GAME}.ItemsHolder.getKeys",
+                        "title": `{GAME}.ItemsHolder.getKeys`,
                         "description": "Gets the keys you can manipulate.",
-                        "usage": "{GAME}.ItemsHolder.getKeys();"
+                        "usage": `{GAME}.ItemsHolder.getKeys();`
                     }, {
-                        "title": "{GAME}.ItemsHolder.setItem",
+                        "title": `{GAME}.ItemsHolder.setItem`,
                         "description": "Sets a stored statitistic to a value.",
-                        "usage": "{GAME}.ItemsHolder.setItem(\"<key>\", <number>);",
+                        "usage": `{GAME}.ItemsHolder.setItem("<key>", <number>);`,
                         "examples": [
                             {
-                                "code": "{GAME}.ItemsHolder.setItem(\"coins\", 77);",
+                                "code": `{GAME}.ItemsHolder.setItem("coins", 77);`,
                                 "comment": "Sets the number of coins to 77."
                             }, {
-                                "code": "{GAME}.ItemsHolder.setItem(\"lives\", 7);",
+                                "code": `{GAME}.ItemsHolder.setItem("lives", 7);`,
                                 "comment": "Sets the number of lives to seven."
                             }, {
-                                "code": "{GAME}.ItemsHolder.setItem(\"lives\", Infinity);",
+                                "code": `{GAME}.ItemsHolder.setItem("lives", Infinity);`,
                                 "comment": "Sets the number of lives to Infinity and beyond."
                             }]
                     }, {
-                        "title": "{GAME}.ItemsHolder.increase",
+                        "title": `{GAME}.ItemsHolder.increase`,
                         "description": "Increases the number of coins you have.",
-                        "usage": "{GAME}.ItemsHolder.increase(\"coins\", <number>);",
+                        "usage": `{GAME}.ItemsHolder.increase("coins", <number>);`,
                         "examples": [
                             {
-                                "code": "{GAME}.ItemsHolder.increase(\"coins\", 7);",
+                                "code": `{GAME}.ItemsHolder.increase("coins", 7);`,
                                 "comment": "Increases the number of coins by seven."
                             }]
                     }],
                 "Mods": [
                     {
-                        "title": "{GAME}.ModAttacher.getMods",
+                        "title": `{GAME}.ModAttacher.getMods`,
                         "description": "Gets all the available mods.",
-                        "usage": "{GAME}.ItemsHolder.getMods();"
+                        "usage": `{GAME}.ItemsHolder.getMods();`
                     }, {
-                        "title": "{GAME}.ModAttacher.enableMod",
+                        "title": `{GAME}.ModAttacher.enableMod`,
                         "description": "Enables a mod.",
-                        "usage": "{GAME}.enableMod(\"<key>\");",
+                        "usage": `{GAME}.enableMod("<key>");`,
                         "examples": [
                             {
-                                "code": "{GAME}.enableMod(\"Gradient Skies\");",
-                                "comment": "Enables the \"Gradient Skies\" mod."
+                                "code": `{GAME}.enableMod("Gradient Skies");`,
+                                "comment": `Enables the "Gradient Skies" mod.`
                             }]
                     }, {
-                        "title": "{GAME}.ModAttacher.disableMod",
+                        "title": `{GAME}.ModAttacher.disableMod`,
                         "description": "Disables a mod.",
-                        "usage": "{GAME}.disableMod(\"<key>\");",
+                        "usage": `{GAME}.disableMod("<key>");`,
                         "examples": [
                             {
-                                "code": "{GAME}.disableMod(\"Gradient Skies\");",
-                                "comment": "Disables the \"Gradient Skies\" mod."
+                                "code": `{GAME}.disableMod("Gradient Skies");`,
+                                "comment": `Disables the "Gradient Skies" mod.`
                             }]
                     }]
             }
@@ -225,36 +226,36 @@ var FullScreenMario;
                         "type": "Number",
                         "minimum": 0,
                         "maximum": 100,
-                        "source": function (FSM) {
+                        "source": (FSM: FullScreenMario.IFullScreenMario): number => {
                             return Math.round(FSM.AudioPlayer.getVolume() * 100);
                         },
-                        "update": function (FSM, value) {
+                        "update": (FSM: FullScreenMario.IFullScreenMario, value: number): void => {
                             FSM.AudioPlayer.setVolume(value / 100);
                         }
                     },
                     {
                         "title": "Mute",
                         "type": "Boolean",
-                        "source": function (FSM) {
+                        "source": (FSM: FullScreenMario.IFullScreenMario): boolean => {
                             return FSM.AudioPlayer.getMuted();
                         },
-                        "enable": function (FSM) {
+                        "enable": (FSM: FullScreenMario.IFullScreenMario): void => {
                             FSM.AudioPlayer.setMutedOn();
                         },
-                        "disable": function (FSM) {
+                        "disable": (FSM: FullScreenMario.IFullScreenMario): void => {
                             FSM.AudioPlayer.setMutedOff();
                         }
                     },
                     {
                         "title": "Speed",
                         "type": "Select",
-                        "options": function (FSM) {
+                        "options": (FSM: FullScreenMario.IFullScreenMario): string[] => {
                             return [".25x", ".5x", "1x", "2x", "5x"];
                         },
-                        "source": function (FSM) {
+                        "source": (FSM: FullScreenMario.IFullScreenMario): string => {
                             return "1x";
                         },
-                        "update": function (FSM, value) {
+                        "update": (FSM: FullScreenMario.IFullScreenMario, value: string): void => {
                             FSM.GamesRunner.setSpeed(Number(value.replace("x", "")));
                         },
                         "storeLocally": true
@@ -266,13 +267,13 @@ var FullScreenMario;
                     {
                         "title": "Framerate",
                         "type": "Select",
-                        "options": function (FSM) {
+                        "options": (FSM: FullScreenMario.IFullScreenMario): string[] => {
                             return ["60fps", "30fps"];
                         },
-                        "source": function (FSM) {
+                        "source": (FSM: FullScreenMario.IFullScreenMario): string => {
                             return (1 / FSM.PixelDrawer.getFramerateSkip() * 60) + "fps";
                         },
-                        "update": function (FSM, value) {
+                        "update": (FSM: FullScreenMario.IFullScreenMario, value: string): void => {
                             FSM.PixelDrawer.setFramerateSkip(1 / Number(value.replace("fps", "")) * 60);
                         },
                         "storeLocally": true
@@ -281,23 +282,23 @@ var FullScreenMario;
                         "title": "Touch Controls",
                         "type": "Boolean",
                         "storeLocally": true,
-                        "source": function (FSM) { return false; },
-                        "enable": function (FSM) {
-                            setTimeout(function () { return FSM.TouchPasser.enable(); });
+                        "source": (FSM: FullScreenMario.IFullScreenMario): boolean => false,
+                        "enable": (FSM: FullScreenMario.IFullScreenMario): void => {
+                            setTimeout((): void => FSM.TouchPasser.enable());
                         },
-                        "disable": function (FSM) {
-                            setTimeout(function () { return FSM.TouchPasser.disable(); });
+                        "disable": (FSM: FullScreenMario.IFullScreenMario): void => {
+                            setTimeout((): void => FSM.TouchPasser.disable());
                         }
                     },
                     {
                         "title": "Tilt Controls",
                         "type": "Boolean",
                         "storeLocally": true,
-                        "source": function (FSM) { return false; },
-                        "enable": function (FSM) {
-                            window.ondevicemotion = FSM.InputWriter.makePipe("ondevicemotion", "type");
+                        "source": (FSM: FullScreenMario.IFullScreenMario): boolean => false,
+                        "enable": (FSM: FullScreenMario.IFullScreenMario): void => {
+                            window.ondevicemotion = <any>FSM.InputWriter.makePipe("ondevicemotion", "type");
                         },
-                        "disable": function (FSM) {
+                        "disable": (FSM: FullScreenMario.IFullScreenMario): void => {
                             window.ondevicemotion = undefined;
                         }
                     }
@@ -305,7 +306,7 @@ var FullScreenMario;
                 "actions": [
                     {
                         "title": "Screenshot",
-                        "action": function (FSM) {
+                        "action": (FSM: FullScreenMario.IFullScreenMario): void => {
                             FSM.takeScreenshot("FullScreenMario " + new Date().getTime());
                         }
                     }
@@ -313,19 +314,23 @@ var FullScreenMario;
             }, {
                 "title": "Controls",
                 "generator": "OptionsTable",
-                "options": (function (controls) {
-                    return controls.map(function (title) {
+                "options": ((controls: string[]): UserWrappr.UISchemas.IOptionsButtonSchema[] => {
+                    return controls.map((title: string): UserWrappr.UISchemas.IOptionsButtonSchema => {
                         return {
                             "title": title[0].toUpperCase() + title.substr(1),
                             "type": "Keys",
                             "storeLocally": true,
-                            "source": function (FSM) {
+                            "source": (FSM: FullScreenMario.IFullScreenMario): string[] => {
                                 return FSM.InputWriter
                                     .getAliasAsKeyStrings(title)
-                                    .map(function (string) { return string.toLowerCase(); });
+                                    .map((string: string) => string.toLowerCase());
                             },
-                            "callback": function (FSM, valueOld, valueNew) {
-                                FSM.InputWriter.switchAliasValues(title, [FSM.InputWriter.convertKeyStringToAlias(valueOld)], [FSM.InputWriter.convertKeyStringToAlias(valueNew)]);
+                            "callback": (FSM: FullScreenMario.IFullScreenMario, valueOld: any, valueNew: any): void => {
+                                FSM.InputWriter.switchAliasValues(
+                                    title,
+                                    [FSM.InputWriter.convertKeyStringToAlias(valueOld)],
+                                    [FSM.InputWriter.convertKeyStringToAlias(valueNew)]
+                                );
                             }
                         };
                     });
@@ -335,24 +340,34 @@ var FullScreenMario;
                 "generator": "OptionsButtons",
                 "keyActive": "enabled",
                 "assumeInactive": true,
-                "options": function (FSM) {
-                    var mods = FSM.ModAttacher.getMods(), output = [], mod, i;
+                "options": (FSM: FullScreenMario.IFullScreenMario): UserWrappr.UISchemas.IOptionsButtonSchema[] => {
+                    var mods: ModAttachr.IModAttachrMods = FSM.ModAttacher.getMods(),
+                        output: UserWrappr.UISchemas.IOptionsButtonSchema[] = [],
+                        mod: ModAttachr.IModAttachrMod,
+                        i: string;
+
                     for (i in mods) {
                         if (!mods.hasOwnProperty(i)) {
                             continue;
                         }
+
                         mod = mods[i];
+
                         output.push({
                             "title": mod.name,
-                            "source": function () { return mod.enabled; },
+                            "source": (): boolean => mod.enabled,
                             "storeLocally": true,
                             "type": "text"
                         });
                     }
+
                     return output;
                 },
-                "callback": function (FSM, schema, button) {
-                    var name = button.textContent, key = button.getAttribute("localStorageKey"), mod = FSM.ModAttacher.getMod(name);
+                "callback": (FSM: FullScreenMario.IFullScreenMario, schema: UserWrappr.UISchemas.ISchema, button: HTMLElement): void => {
+                    var name: string = button.textContent,
+                        key: string = button.getAttribute("localStorageKey"),
+                        mod: ModAttachr.IModAttachrMod = FSM.ModAttacher.getMod(name);
+
                     FSM.ModAttacher.toggleMod(name);
                     FSM.ItemsHolder.setItem(key, mod.enabled);
                     FSM.ItemsHolder.saveItem(key);
@@ -363,7 +378,10 @@ var FullScreenMario;
                 "maps": {
                     "rangeX": [1, 4],
                     "rangeY": [1, 8],
-                    "callback": function (FSM, schema, button) {
+                    "callback": (
+                        FSM: FullScreenMario.IFullScreenMario,
+                        schema: UserWrappr.UISchemas.ISchema,
+                        button: HTMLElement): void => {
                         FSM.LevelEditor.enable();
                         FSM.LevelEditor.setCurrentJSON(JSON.stringify(FSM.MapsCreator.getMapRaw(button.textContent)));
                         FSM.LevelEditor.startBuilding();
@@ -375,26 +393,36 @@ var FullScreenMario;
                 "rangeX": [1, 4],
                 "rangeY": [1, 8],
                 "extras": [
-                    (function () {
-                        function getNewSeed() {
+                    ((): UserWrappr.UISchemas.IOptionsMapGridExtra => {
+                        function getNewSeed(): string {
                             return new Date().getTime()
                                 .toString()
                                 .split("")
-                                .sort(function () { return 0.5 - Math.random(); })
+                                // Same function used in browserchoice.eu :)
+                                .sort((): number => 0.5 - Math.random())
                                 .reverse()
                                 .join("");
                         }
+
                         return {
                             "title": "Map Generator!",
-                            "callback": function (FSM, schema, button, event) {
-                                var parent = event.target.parentElement, randomizer = parent.querySelector(".randomInput");
+                            "callback": (
+                                FSM: FullScreenMario.IFullScreenMario,
+                                schema: UserWrappr.UISchemas.ISchema,
+                                button: HTMLElement,
+                                event: UserWrappr.IEvent): void => {
+                                var parent: HTMLElement = event.target.parentElement,
+                                    randomizer: HTMLInputElement = <HTMLInputElement>parent.querySelector(".randomInput");
+
                                 randomizer.value = randomizer.value.replace(/[^\d]/g, "");
                                 if (!randomizer.value) {
                                     randomizer.value = getNewSeed();
                                 }
+
                                 FSM.LevelEditor.disable();
                                 FSM.NumberMaker.resetFromSeed(Number(randomizer.value));
                                 FSM.setMap("Random");
+
                                 if (!randomizer.getAttribute("custom")) {
                                     randomizer.value = getNewSeed();
                                 }
@@ -406,7 +434,7 @@ var FullScreenMario;
                                         "className": "randomInput maps-grid-input",
                                         "type": "text",
                                         "value": getNewSeed(),
-                                        "onchange": function (event) {
+                                        "onchange": (event: UserWrappr.IEvent): void => {
                                             event.target.setAttribute("custom", "true");
                                         }
                                     }
@@ -415,11 +443,11 @@ var FullScreenMario;
                         };
                     })()
                 ],
-                "callback": function (FSM, schema, button) {
+                "callback": (FSM: FullScreenMario.IFullScreenMario, schema: UserWrappr.UISchemas.ISchema, button: HTMLElement): void => {
                     FSM.LevelEditor.disable();
                     FSM.setMap(button.getAttribute("value") || button.textContent);
                 }
             }
         ]
     };
-})(FullScreenMario || (FullScreenMario = {}));
+}

@@ -22,10 +22,10 @@ FullScreenMario.FullScreenMario.settings.runner = {
             this.TimeHandler.handleEvents();
         },
         function () {
-            this.PixelDrawer.refillGlobalCanvas(this.MapsHandler.getArea().background);
+            this.PixelDrawer.refillGlobalCanvas(this.AreaSpawner.getArea().background);
             // this.PixelDrawer.refillQuadrantGroups(
             // this.QuadsKeeper.getQuadrantRows(),
-            // this.MapsHandler.getArea().background
+            // this.AreaSpawner.getArea().background
             // );
         }
     ]
