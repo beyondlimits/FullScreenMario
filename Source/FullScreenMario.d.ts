@@ -65,6 +65,27 @@ declare module FullScreenMario {
         flickering?: boolean;
         numquads: number;
         outerok: boolean | number;
+
+        /**
+         * Whether this is allowed to fall due to gravity.
+         */
+        nofall?: boolean;
+
+        /**
+         * Scratch variable for whether this is allowed to fall due to gravity.
+         */
+        nofallOld?: boolean;
+
+        /**
+         * Whether this is barred from colliding with other Things.
+         */
+        nocollide?: boolean;
+
+        /**
+         * Scratch flag for whether this is barred from colliding with other Things.
+         */
+        nocollideOld?: boolean;
+        movementOld?: Function;
         partners?: { [i: string]: IThing };
         position?: string;
         tolx: number;
@@ -613,6 +634,8 @@ declare module FullScreenMario {
         animatePlayerRestingOff(thing: IPlayer): void;
         animatePlayerBubbling(thing: IPlayer): void;
         animatePlayerRunningCycle(thing: IPlayer): void;
+        animateCharacterPauseVelocity(thing: IThing, keepMovement?: boolean): void;
+        animateCharacterResumeVelocity(thing: IThing, noVelocity?: boolean): void;
         animateCharacterHop(thing: IPlayer): void;
         animatePlayerPipingStart(thing: IPlayer): void;
         animatePlayerPipingEnd(thing: IPlayer): void;

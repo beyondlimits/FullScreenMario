@@ -44,7 +44,7 @@ module FullScreenMario {
             "runner": undefined,
             "scenes": undefined,
             "sprites": undefined,
-            "statistics": undefined,
+            "items": undefined,
             "touch": undefined,
             "ui": undefined
         };
@@ -278,7 +278,7 @@ module FullScreenMario {
             FSM.setMap(FSM.settings.maps.mapDefault, FSM.settings.maps.locationDefault);
             FSM.ItemsHolder.setItem(
                 "lives",
-                (<any>FSM.settings.statistics.values).lives.valueDefault);
+                (<any>FSM.settings.items.values).lives.valueDefault);
 
             FSM.ModAttacher.fireEvent("onGameStart");
         }
@@ -1765,7 +1765,7 @@ module FullScreenMario {
             ];
 
             thing.FSM.addClass(thing, "shrooming");
-            thing.FSM.thingPauseVelocity(thing);
+            thing.FSM.animateCharacterPauseVelocity(thing);
 
             // The last stage in the events clears it, resets movement, and stops
             stages.push(function (thing: IPlayer): boolean {
@@ -1774,7 +1774,7 @@ module FullScreenMario {
 
                 thing.FSM.addClass(thing, "large");
                 thing.FSM.removeClasses(thing, "shrooming shrooming3");
-                thing.FSM.thingResumeVelocity(thing);
+                thing.FSM.animateCharacterResumeVelocity(thing);
 
                 return true;
             });
@@ -1793,7 +1793,7 @@ module FullScreenMario {
         playerGetsSmall(thing: IPlayer): void {
             var bottom: number = thing.bottom;
 
-            thing.FSM.thingPauseVelocity(thing);
+            thing.FSM.animateCharacterPauseVelocity(thing);
 
             // Step one
             thing.nocollidechar = true;
@@ -1818,7 +1818,7 @@ module FullScreenMario {
             // Step three (t+42)
             thing.FSM.TimeHandler.addEvent(
                 function (thing: IPlayer): void {
-                    thing.FSM.thingResumeVelocity(thing, false);
+                    thing.FSM.animateCharacterResumeVelocity(thing, false);
                     thing.FSM.removeClass(thing, "paddling");
                     if (thing.running || thing.xvel) {
                         thing.FSM.addClass(thing, "running");
@@ -3509,7 +3509,7 @@ module FullScreenMario {
                 thing.FSM.flipHoriz(thing);
             }
 
-            thing.FSM.thingPauseVelocity(thing);
+            thing.FSM.animateCharacterPauseVelocity(thing);
             thing.FSM.addClass(thing, "climbing");
             thing.FSM.removeClasses(
                 thing, "running", "jumping", "skidding");
@@ -5306,7 +5306,7 @@ module FullScreenMario {
             thing.nothrow = true;
             thing.movement = undefined;
             thing.dead = true;
-            thing.FSM.thingPauseVelocity(thing);
+            thing.FSM.animateCharacterPauseVelocity(thing);
 
             thing.FSM.ScenePlayer.addCutsceneSetting("bowser", thing);
             thing.FSM.TimeHandler.addEvent(
@@ -5734,6 +5734,50 @@ module FullScreenMario {
                 function (): number {
                     return 5 + Math.ceil(thing.maxspeedsave - Math.abs(thing.xvel));
                 });
+        }
+
+        /**
+         * Completely pauses a Thing by setting its velocities to zero and disabling
+         * it from falling, colliding, or moving. Its old attributes for those are
+         * saved so thingResumeVelocity may restore them.
+         * 
+         * @param thing
+         * @param keepMovement   Whether to keep movement instead of wiping it
+         *                       (by default, false).
+         */
+        animateCharacterPauseVelocity(thing: ICharacter, keepMovement?: boolean): void {
+            thing.xvelOld = thing.xvel || 0;
+            thing.yvelOld = thing.yvel || 0;
+
+            thing.nofallOld = thing.nofall || false;
+            thing.nocollideOld = thing.nocollide || false;
+            thing.movementOld = thing.movement || thing.movementOld;
+
+            thing.nofall = thing.nocollide = true;
+            thing.xvel = thing.yvel = 0;
+
+            if (!keepMovement) {
+                thing.movement = undefined;
+            }
+        }
+
+        /**
+         * Resumes a Thing's velocity and movements after they were paused by
+         * thingPauseVelocity.
+         * 
+         * @param thing
+         * @param noVelocity   Whether to skip restoring the Thing's velocity
+         *                     (by default, false).
+         */
+        animateCharacterResumeVelocity(thing: ICharacter, noVelocity?: boolean): void {
+            if (!noVelocity) {
+                thing.xvel = thing.xvelOld || 0;
+                thing.yvel = thing.yvelOld || 0;
+            }
+
+            thing.movement = thing.movementOld || thing.movement;
+            thing.nofall = thing.nofallOld || false;
+            thing.nocollide = thing.nocollideOld || false;
         }
 
         /**
@@ -6284,7 +6328,7 @@ module FullScreenMario {
                     FSM.setSize(thing, 7.5, 7, true);
                     FSM.updateSize(thing);
                     FSM.setClass(thing, "character player dead");
-                    FSM.thingPauseVelocity(thing);
+                    FSM.animateCharacterPauseVelocity(thing);
                     FSM.arrayToEnd(
                         thing, <any[]>FSM.GroupHolder.getGroup(thing.groupType));
 
@@ -6294,7 +6338,7 @@ module FullScreenMario {
                     FSM.TimeHandler.cancelAllCycles(thing);
                     FSM.TimeHandler.addEvent(
                         function (): void {
-                            FSM.thingResumeVelocity(thing, true);
+                            FSM.animateCharacterResumeVelocity(thing, true);
                             thing.nocollide = true;
                             thing.movement = thing.resting = undefined;
                             thing.gravity = FSM.MapScreener.gravity / 2.1;
@@ -7093,7 +7137,7 @@ module FullScreenMario {
 
             // Kill all other characters and pause the player next to the pole
             FSM.killNPCs();
-            FSM.thingPauseVelocity(thing);
+            FSM.animateCharacterPauseVelocity(thing);
             FSM.setRight(thing, other.left + FSM.unitsize * 3);
             FSM.killNormal(other);
 
@@ -7296,7 +7340,7 @@ module FullScreenMario {
             var player: IPlayer = settings.player,
                 axe: ICastleAxe = settings.axe;
 
-            FSM.thingPauseVelocity(player);
+            FSM.animateCharacterPauseVelocity(player);
             FSM.killNormal(axe);
             FSM.killNPCs();
 
@@ -7308,7 +7352,7 @@ module FullScreenMario {
                 function (): void {
                     player.keys.run = 1;
                     player.maxspeed = player.walkspeed;
-                    FSM.thingResumeVelocity(player);
+                    FSM.animateCharacterResumeVelocity(player);
 
                     player.yvel = 0;
                     FSM.MapScreener.canscroll = true;
