@@ -33,6 +33,7 @@ module FullScreenMario {
             "generator": undefined,
             "groups": undefined,
             "events": undefined,
+            "help": undefined,
             "input": undefined,
             "math": undefined,
             "maps": undefined,
