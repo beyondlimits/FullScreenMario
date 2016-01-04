@@ -129,25 +129,18 @@ module FullScreenMario {
             this.settings = FullScreenMario.settings;
 
             this.deviceMotionStatus = {
-                "motionDown": false,
-                "motionLeft": false,
-                "motionRight": false,
-                "x": undefined,
-                "y": undefined,
-                "dy": undefined
+                motionLeft: false,
+                motionRight: false,
+                x: undefined,
+                y: undefined,
+                dy: undefined
             };
 
             super(
                 this.proliferate(
                     {
-                        "constantsSource": FullScreenMario,
-                        "constants": [
-                            "unitsize",
-                            "scale",
-                            "gravity",
-                            "pointLevels",
-                            "customTextMappings"
-                        ]
+                        constantsSource: FullScreenMario,
+                        constants: ["unitsize", "scale", "gravity", "pointLevels", "customTextMappings"]
                     },
                     settings));
         }
@@ -155,20 +148,22 @@ module FullScreenMario {
 
         /* Resets
         */
+
         resetObjectMaker(FSM: FullScreenMario, settings: GameStartr.IGameStartrSettings): void {
+            FSM.resets
             FSM.ObjectMaker = new ObjectMakr.ObjectMakr(
                 FSM.proliferate(
                     {
-                        "properties": {
-                            "Quadrant": {
-                                "EightBitter": FSM,
-                                "GameStarter": FSM,
-                                "FSM": FSM
+                        properties: {
+                            Quadrant: {
+                                EightBitter: FSM,
+                                GameStarter: FSM,
+                                FSM: FSM
                             },
-                            "Thing": {
-                                "EightBitter": FSM,
-                                "GameStarter": FSM,
-                                "FSM": FSM
+                            Thing: {
+                                EightBitter: FSM,
+                                GameStarter: FSM,
+                                FSM: FSM
                             }
                         }
                     },
@@ -1075,7 +1070,7 @@ module FullScreenMario {
 
         /**
          * Regular maintenance Function called on the player every upkeep. A barrage
-         * of tests are applied, namely falling/jumping, dying, x- and y-velocities,
+         * of tests are applied, namely falling/jumping, dieing, x- and y-velocities,
          * running, and scrolling. This is separate from the movePlayer movement
          * Function that will be called in maintainCharacters.
          * 
@@ -1106,7 +1101,7 @@ module FullScreenMario {
                     }
                 }
                 // Player has fallen too far
-                if (!player.dying && player.top > FSM.MapScreener.bottom) {
+                if (!player.dieing && player.top > FSM.MapScreener.bottom) {
                     // If the map has an exit (e.g. cloud world), transport there
                     if ((<IArea>FSM.AreaSpawner.getArea()).exit) {
                         FSM.setLocation((<IArea>FSM.AreaSpawner.getArea()).exit);
@@ -1222,10 +1217,7 @@ module FullScreenMario {
             }
 
             // If thing is the player, and it's on top of an enemy, that's true
-            if (
-                (<ICharacter>thing).player && thing.bottom < other.bottom
-                && (<ICharacter>other).type === "enemy"
-            ) {
+            if ((<ICharacter>thing).player && thing.bottom < other.bottom && (<IEnemy>other).enemy) {
                 return true;
             }
 
@@ -1544,7 +1536,7 @@ module FullScreenMario {
             thing.xvel *= 0.91;
             thing.FSM.AudioPlayer.play("Kick");
 
-            if (other.group !== "item" || other.shell) {
+            if (!(<IItem>thing).item || other.shell) {
                 thing.jumpcount += 1;
                 thing.FSM.scoreOn(thing.FSM.findScore(thing.jumpcount + thing.jumpers), other);
             }
@@ -2277,11 +2269,11 @@ module FullScreenMario {
                 spacingHorizontal: number = thing.spacingHorizontal * thing.FSM.unitsize,
                 spacingVertical: number = thing.spacingVertical * thing.FSM.unitsize,
                 spacingVerticalBlank: number = thing.spacingVerticalBlank * thing.FSM.unitsize,
-                children: IThing[] = [],
+                children: IText[] = [],
+                textChild: IText,
                 left: number,
                 text: string,
                 letter: string,
-                textThing: IThing,
                 i: number,
                 j: number;
 
@@ -2309,13 +2301,11 @@ module FullScreenMario {
                     }
                     letter = "Text" + thing.size + letter;
 
-                    textThing = thing.FSM.ObjectMaker.make(
-                        letter, attributes
-                    );
-                    textThing.FSM.addThing(textThing, left, top);
-                    children.push(textThing);
+                    textChild = thing.FSM.ObjectMaker.make(letter, attributes);
+                    textChild.FSM.addThing(textChild, left, top);
+                    children.push(textChild);
 
-                    left += textThing.width * thing.FSM.unitsize;
+                    left += textChild.width * thing.FSM.unitsize;
                     left += spacingHorizontal;
                 }
                 top += spacingVertical;
@@ -2336,7 +2326,7 @@ module FullScreenMario {
         }
 
         /**
-         * Spawning callback for ScrollBlockers. If the Thing is too the right of 
+         * Spawning callback for ScrollBlockers. If the Thing is to the right of 
          * the visible viewframe, it should limit scrolling when triggered.
          * 
          * @param {ScrollBlocker} thing
@@ -2362,30 +2352,6 @@ module FullScreenMario {
             collection[thing.collectionName] = thing;
         }
 
-        /** 
-         * Used by Things in a collection to get direct references to other Things
-         * ("partners") in that collection. This is called by onThingAdd, so it's
-         * always after spawnCollectionComponent (which is by onThingMake).     
-         * 
-         * @param {Object} collection   The collection Object shared by all members
-         *                              of it. It should be automatically generated.
-         * @param {Thing} thing   A member of the collection being spawned.
-         * @remarks This should be bound in prethings as ".bind(scope, collection)"
-         */
-        spawnCollectionPartner(collection: any, thing: IThing): void {
-            var partnerNames: any = thing.collectionPartnerNames,
-                partners: any = {},
-                name: string;
-
-            for (name in partnerNames) {
-                if (partnerNames.hasOwnProperty(name)) {
-                    partners[name] = collection[partnerNames[name]];
-                }
-            }
-
-            thing.partners = {};
-        }
-
         /**
          * Spawning callback for RandomSpawner Things, which generate a set of 
          * commands using the WorldSeeder to be piped into the AreaSpawnr, then 
@@ -2394,7 +2360,7 @@ module FullScreenMario {
          * @param {RandomSpawner} thing
          */
         spawnRandomSpawner(thing: IRandomSpawner): void {
-            var FSM: FullScreenMario = thing.FSM,
+            var FSM: IFullScreenMario = thing.FSM,
                 left: number = (thing.left + FSM.MapScreener.left) / FSM.unitsize;
 
             FSM.WorldSeeder.clearGeneratedCommands();
@@ -2605,7 +2571,7 @@ module FullScreenMario {
          * @param {DetectWindow} thing
          */
         activateSectionBefore(thing: ISectionDetector): void {
-            var FSM: FullScreenMario = thing.FSM,
+            var FSM: IFullScreenMario = thing.FSM,
                 MapsCreator: MapsCreatr.IMapsCreatr = FSM.MapsCreator,
                 MapScreener: MapScreenr.MapScreenr = FSM.MapScreener,
                 AreaSpawner: AreaSpawnr.IAreaSpawnr = FSM.AreaSpawner,
@@ -2670,7 +2636,7 @@ module FullScreenMario {
          * @param {DetectWindow} thing
          */
         activateSectionStretch(thing: ISectionDetector): void {
-            var FSM: FullScreenMario = thing.FSM,
+            var FSM: IFullScreenMario = thing.FSM,
                 MapsCreator: MapsCreatr.IMapsCreatr = FSM.MapsCreator,
                 MapScreener: MapScreenr.MapScreenr = FSM.MapScreener,
                 AreaSpawner: AreaSpawnr.IAreaSpawnr = FSM.AreaSpawner,
@@ -2681,7 +2647,7 @@ module FullScreenMario {
                 stretch: any[] = section.stretch ? section.stretch.creation : undefined,
                 left: number = (thing.left + MapScreener.left) / FSM.unitsize,
                 width: number = MapScreener.width / FSM.unitsize,
-                command: IPreThingSettings,
+                command: MapsCreatr.IPreThingSettings,
                 i: number;
 
             // If there is a stretch, parse each command into the current prethings array
@@ -2724,7 +2690,7 @@ module FullScreenMario {
          */
         activateSectionAfter(thing: ISectionDetector): void {
             // Since the section was passed, do the rest of things normally
-            var FSM: FullScreenMario = thing.FSM,
+            var FSM: IFullScreenMario = thing.FSM,
                 MapsCreator: MapsCreatr.IMapsCreatr = FSM.MapsCreator,
                 MapScreener: MapScreenr.MapScreenr = FSM.MapScreener,
                 AreaSpawner: AreaSpawnr.IAreaSpawnr = FSM.AreaSpawner,
@@ -2957,7 +2923,7 @@ module FullScreenMario {
                         thing.moveleft = !thing.moveleft;
                     }
                     // Some items require fancy versions (e.g. Shell)
-                    if (thing.group === "item") {
+                    if ((<IItem>thing).item) {
                         thing.collide(other, thing);
                     }
                 } else if (other.actionLeft) {
@@ -3312,15 +3278,12 @@ module FullScreenMario {
             }
 
             // Death: nothing happens
-            if (
-                !thing.FSM.isThingAlive(thing)
-                || !thing.FSM.isThingAlive(other)
-            ) {
+            if (!thing.FSM.isThingAlive(thing) || !thing.FSM.isThingAlive(other)) {
                 return;
             }
 
             // Items
-            if (thing.group === "item") {
+            if ((<IItem>thing).item) {
                 if (thing.collidePrimary) {
                     return thing.collide(other, thing);
                 }
@@ -3479,7 +3442,7 @@ module FullScreenMario {
          * @param {Player} thing
          * @param {Solid} other
          */
-        collideVine(thing: IPlayer, other: ISolid): void {
+        collideVine(thing: IPlayer, other: IVine): void {
             if (!thing.player || thing.attachedSolid || thing.climbing) {
                 return;
             }
@@ -3741,7 +3704,7 @@ module FullScreenMario {
          */
         moveSimple(thing: ICharacter): void {
             // If the thing is looking away from the intended direction, flip it
-            if (thing.direction !== thing.moveleft) {
+            if (thing.direction !== (thing.moveleft ? 1 : 0)) {
                 // thing.moveleft is truthy: it should now be looking to the right
                 if (thing.moveleft) {
                     thing.xvel = -thing.speed;
@@ -3755,7 +3718,8 @@ module FullScreenMario {
                         thing.FSM.flipHoriz(thing);
                     }
                 }
-                thing.direction = thing.moveleft;
+
+                thing.direction = thing.moveleft ? 1 : 0;
             }
         }
 
@@ -3817,13 +3781,12 @@ module FullScreenMario {
         }
 
         /**
-         * Movement Function for Things that slide back and forth, such as 
+         * Movement Function for Characters that slide back and forth, such as 
          * HammerBros and Lakitus.
          * 
-         * @remarks thing.counter must be a number set elsewhere, such as in a spawn
-         *          Function.    
+         * @remarks thing.counter must be set elsewhere, such as during spawning.    
          */
-        movePacing(thing: ICharacter): void {
+        movePacing(thing: IHammerBro | ILakitu): void {
             thing.counter += .007;
             thing.xvel = Math.sin(Math.PI * thing.counter) / 2.1;
         }
@@ -3858,7 +3821,7 @@ module FullScreenMario {
                     thing.FSM.moveSimple(thing);
                 } else {
                     // To the right of player: look to the left and movePacing as normal
-                    thing.lookleft = thing.moveleft = true;
+                    thing.moveleft = thing.lookleft = true;
                     thing.FSM.unflipHoriz(thing);
                     thing.FSM.movePacing(thing);
                 }
@@ -3868,7 +3831,7 @@ module FullScreenMario {
                 if (
                     thing.FSM.objectToLeft(thing, thing.FSM.player)
                 ) {
-                    thing.lookleft = thing.moveleft = false;
+                    thing.moveleft = thing.lookleft = false;
                     thing.FSM.flipHoriz(thing);
                     thing.FSM.moveSimple(thing);
                 } else {
@@ -4039,11 +4002,7 @@ module FullScreenMario {
             thing.FSM.setBottom(thing.FSM.player, thing.top);
 
             // After a velocity threshold, start always falling
-            if (
-                thing.yvel >= (
-                    thing.fallThresholdStart || thing.FSM.unitsize * 2.8
-                )
-            ) {
+            if (thing.yvel >= (thing.fallThresholdStart || thing.FSM.unitsize * 2.8)) {
                 thing.freefall = true;
                 thing.movement = thing.FSM.moveFreeFalling;
             }
@@ -4063,7 +4022,7 @@ module FullScreenMario {
             thing.FSM.shiftVert(thing, thing.yvel);
 
             // After a velocity threshold, stop accelerating
-            if (thing.yvel >= (thing.fallThresholdEnd || thing.FSM.unitsize * 2)) {
+            if (thing.yvel >= (thing.fallThresholdEnd || thing.FSM.unitsize * 2.1)) {
                 thing.movement = thing.FSM.movePlatform;
             }
         }
@@ -4390,23 +4349,12 @@ module FullScreenMario {
             }
 
             if (!thing.squeeze) {
-                if (
-                    thing.FSM.player.left
-                    > thing.right + thing.FSM.unitsize * 8
-                ) {
+                if (thing.FSM.player.left > thing.right + thing.FSM.unitsize * 8) {
                     // Go to the right
-                    thing.xvel = Math.min(
-                        thing.speed, thing.xvel + thing.FSM.unitsize / 32
-                    );
-                } else if (
-                    thing.FSM.player.right
-                    < thing.left - thing.FSM.unitsize * 8
-                ) {
+                    thing.xvel = Math.min(thing.speed, thing.xvel + thing.FSM.unitsize / 32);
+                } else if (thing.FSM.player.right < thing.left - thing.FSM.unitsize * 8) {
                     // Go to the left
-                    thing.xvel = Math.max(
-                        -thing.speed,
-                        thing.xvel - thing.FSM.unitsize / 32
-                    );
+                    thing.xvel = Math.max(-thing.speed, thing.xvel - thing.FSM.unitsize / 32);
                 }
             }
         }
@@ -4433,10 +4381,7 @@ module FullScreenMario {
 
             thing.squeeze += 1;
 
-            if (
-                thing.top > thing.FSM.player.bottom
-                || thing.bottom > thing.FSM.unitsize * 91
-            ) {
+            if (thing.top > thing.FSM.player.bottom || thing.bottom > thing.FSM.unitsize * 91) {
                 thing.FSM.animateBlooperUnsqueezing(thing);
             }
         }
@@ -4467,7 +4412,7 @@ module FullScreenMario {
                 thing.FSM.flipVert(thing);
             }
 
-            thing.yvel += thing.acceleration;
+            thing.yvel += thing.gravity;
         }
 
         /**
@@ -4844,17 +4789,11 @@ module FullScreenMario {
         animateSolidContents(thing: IBrick | IBlock, other: IPlayer): ICharacter {
             var output: ICharacter;
 
-            if (
-                other
-                && other.player
-                && other.power > 1
-                && thing.contents === "Mushroom"
-            ) {
+            if (other && other.player && other.power > 1 && thing.contents === "Mushroom") {
                 thing.contents = "FireFlower";
             }
 
-            output = <ICharacter>thing.FSM.addThing(
-                thing.contents || thing.constructor.prototype.contents);
+            output = <ICharacter>thing.FSM.addThing(thing.contents || thing.constructor.prototype.contents);
             thing.FSM.setMidXObj(output, thing);
             thing.FSM.setTop(output, thing.top);
             output.blockparent = thing;
@@ -5337,9 +5276,7 @@ module FullScreenMario {
 
             // Jump up?
             if (
-                thing.FSM.MapScreener.floor - (
-                    thing.bottom / thing.FSM.unitsize
-                ) >= 30
+                thing.FSM.MapScreener.floor - (thing.bottom / thing.FSM.unitsize) >= 30
                 && thing.resting.title !== "Floor"
                 && thing.FSM.NumberMaker.randomBoolean()
             ) {
@@ -5455,7 +5392,7 @@ module FullScreenMario {
          * 
          * @param {Fireball} thing
          */
-        animateFireballEmerge(thing: IThing): void {
+        animateFireballEmerge(thing: IFireball): void {
             thing.FSM.AudioPlayer.play("Fireball");
         }
 
@@ -5536,7 +5473,8 @@ module FullScreenMario {
             var spawn: IBulletBill = thing.FSM.ObjectMaker.make("BulletBill");
 
             if (thing.FSM.objectToLeft(thing.FSM.player, thing)) {
-                spawn.direction = spawn.moveleft = true;
+                spawn.direction = 1;
+                spawn.moveleft = true;
                 spawn.xvel *= -1;
                 thing.FSM.flipHoriz(spawn);
                 thing.FSM.addThing(spawn, thing.left, thing.top);
@@ -5650,20 +5588,15 @@ module FullScreenMario {
                     thing, "skidding paddle1 paddle2 paddle3 paddle4 paddle5"
                 );
                 thing.FSM.addClass(thing, "paddling");
-                thing.FSM.TimeHandler.cancelClassCycle(
-                    thing, "paddlingCycle"
-                );
+                thing.FSM.TimeHandler.cancelClassCycle(thing, "paddlingCycle");
                 thing.FSM.TimeHandler.addClassCycle(
                     thing,
                     [
                         "paddle1", "paddle2", "paddle3", "paddle2", "paddle1",
-                        function (): boolean {
-                            return thing.paddlingCycle = false;
-                        },
+                        (): boolean => thing.paddlingCycle = false
                     ],
                     "paddlingCycle",
-                    7
-                );
+                    7);
             }
             thing.paddling = thing.paddlingCycle = thing.swimming = true;
             thing.yvel = thing.FSM.unitsize * -.84;
@@ -6300,16 +6233,16 @@ module FullScreenMario {
          *                         not survivable, 2 for immediate death.
          */
         killPlayer(thing: IPlayer, big?: number): void {
-            if (!thing.alive || thing.flickering || thing.dying) {
+            if (!thing.alive || thing.flickering || thing.dieing) {
                 return;
             }
 
-            var FSM: FullScreenMario = thing.FSM,
+            var FSM: IFullScreenMario = thing.FSM,
                 area: IArea = <IArea>thing.FSM.AreaSpawner.getArea();
 
             // Large big: real, no-animation death
             if (big === 2) {
-                thing.dead = thing.dying = true;
+                thing.dead = thing.dieing = true;
                 thing.alive = false;
                 FSM.MapScreener.notime = true;
             } else {
@@ -6323,7 +6256,7 @@ module FullScreenMario {
                     return;
                 } else {
                     // The player can't survive this: animate a death
-                    thing.dying = true;
+                    thing.dieing = true;
 
                     FSM.setSize(thing, 7.5, 7, true);
                     FSM.updateSize(thing);
@@ -7060,14 +6993,14 @@ module FullScreenMario {
          * @param {PreThing} prethingRaw
          * @return {Thing} A strethed Thing, newly added via addThing.
          */
-        mapAddStretched(prethingRaw: string | IPreThingSettings): IThing {
+        mapAddStretched(prethingRaw: string | MapsCreatr.IPreThingSettings): IThing {
             var FSM: FullScreenMario = FullScreenMario.prototype.ensureCorrectCaller(this),
                 boundaries: any = FSM.AreaSpawner.getArea().boundaries,
-                prething: IPreThingSettings = prethingRaw instanceof String
+                prething: MapsCreatr.IPreThingSettings = prethingRaw instanceof String
                     ? {
                         "thing": prething
                     }
-                    : <IPreThingSettings>prethingRaw,
+                    : <MapsCreatr.IPreThingSettings>prethingRaw,
                 y: number = (
                     ((<IMapScreenr>FSM.MapScreener).floor - prething.y)
                     * FSM.unitsize
@@ -7088,16 +7021,16 @@ module FullScreenMario {
          * @this {EightBittr}
          * @param {PreThing} prethingRaw
          */
-        mapAddAfter(prethingRaw: string | IPreThingSettings): void {
+        mapAddAfter(prethingRaw: string | MapsCreatr.IPreThingSettings): void {
             var FSM: FullScreenMario = FullScreenMario.prototype.ensureCorrectCaller(this),
                 MapsCreator: MapsCreatr.IMapsCreatr = FSM.MapsCreator,
                 AreaSpawner: AreaSpawnr.IAreaSpawnr = FSM.AreaSpawner,
                 prethings: MapsCreatr.IPreThingsContainers = AreaSpawner.getPreThings(),
-                prething: IPreThingSettings = prethingRaw instanceof String
+                prething: MapsCreatr.IPreThingSettings = prethingRaw instanceof String
                     ? {
                         "thing": prething
                     }
-                    : <IPreThingSettings>prethingRaw,
+                    : <MapsCreatr.IPreThingSettings>prethingRaw,
                 area: IArea = <IArea>AreaSpawner.getArea(),
                 map: MapsCreatr.IMapsCreatrMap = AreaSpawner.getMap(),
                 boundaries: any = FSM.AreaSpawner.getArea().boundaries;

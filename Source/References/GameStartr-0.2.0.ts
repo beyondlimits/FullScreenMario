@@ -802,6 +802,11 @@ declare module GameStartr {
      */
     export interface IGameStartr extends EightBittr.IEightBittr {
         /**
+         * Default list of reset Functions to call, in order.
+         */
+        resets: string[];
+
+        /**
          * Settings for individual modules.
          */
         settings: IGameStartrStoredSettings;

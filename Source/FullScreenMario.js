@@ -29,38 +29,32 @@ var FullScreenMario;
         function FullScreenMario(settings) {
             this.settings = FullScreenMario.settings;
             this.deviceMotionStatus = {
-                "motionDown": false,
-                "motionLeft": false,
-                "motionRight": false,
-                "x": undefined,
-                "y": undefined,
-                "dy": undefined
+                motionLeft: false,
+                motionRight: false,
+                x: undefined,
+                y: undefined,
+                dy: undefined
             };
             _super.call(this, this.proliferate({
-                "constantsSource": FullScreenMario,
-                "constants": [
-                    "unitsize",
-                    "scale",
-                    "gravity",
-                    "pointLevels",
-                    "customTextMappings"
-                ]
+                constantsSource: FullScreenMario,
+                constants: ["unitsize", "scale", "gravity", "pointLevels", "customTextMappings"]
             }, settings));
         }
         /* Resets
         */
         FullScreenMario.prototype.resetObjectMaker = function (FSM, settings) {
+            FSM.resets;
             FSM.ObjectMaker = new ObjectMakr.ObjectMakr(FSM.proliferate({
-                "properties": {
-                    "Quadrant": {
-                        "EightBitter": FSM,
-                        "GameStarter": FSM,
-                        "FSM": FSM
+                properties: {
+                    Quadrant: {
+                        EightBitter: FSM,
+                        GameStarter: FSM,
+                        FSM: FSM
                     },
-                    "Thing": {
-                        "EightBitter": FSM,
-                        "GameStarter": FSM,
-                        "FSM": FSM
+                    Thing: {
+                        EightBitter: FSM,
+                        GameStarter: FSM,
+                        FSM: FSM
                     }
                 }
             }, FSM.settings.objects));
@@ -796,7 +790,7 @@ var FullScreenMario;
         };
         /**
          * Regular maintenance Function called on the player every upkeep. A barrage
-         * of tests are applied, namely falling/jumping, dying, x- and y-velocities,
+         * of tests are applied, namely falling/jumping, dieing, x- and y-velocities,
          * running, and scrolling. This is separate from the movePlayer movement
          * Function that will be called in maintainCharacters.
          *
@@ -827,7 +821,7 @@ var FullScreenMario;
                     }
                 }
                 // Player has fallen too far
-                if (!player.dying && player.top > FSM.MapScreener.bottom) {
+                if (!player.dieing && player.top > FSM.MapScreener.bottom) {
                     // If the map has an exit (e.g. cloud world), transport there
                     if (FSM.AreaSpawner.getArea().exit) {
                         FSM.setLocation(FSM.AreaSpawner.getArea().exit);
@@ -932,8 +926,7 @@ var FullScreenMario;
                 return false;
             }
             // If thing is the player, and it's on top of an enemy, that's true
-            if (thing.player && thing.bottom < other.bottom
-                && other.type === "enemy") {
+            if (thing.player && thing.bottom < other.bottom && other.enemy) {
                 return true;
             }
             // If thing is too far to the right, it can't be touching other
@@ -1209,7 +1202,7 @@ var FullScreenMario;
             }
             thing.xvel *= 0.91;
             thing.FSM.AudioPlayer.play("Kick");
-            if (other.group !== "item" || other.shell) {
+            if (!thing.item || other.shell) {
                 thing.jumpcount += 1;
                 thing.FSM.scoreOn(thing.FSM.findScore(thing.jumpcount + thing.jumpers), other);
             }
@@ -1758,7 +1751,7 @@ var FullScreenMario;
          * @param {CustomText} thing
          */
         FullScreenMario.prototype.spawnCustomText = function (thing) {
-            var top = thing.top, texts = thing.texts, attributes = thing.textAttributes, spacingHorizontal = thing.spacingHorizontal * thing.FSM.unitsize, spacingVertical = thing.spacingVertical * thing.FSM.unitsize, spacingVerticalBlank = thing.spacingVerticalBlank * thing.FSM.unitsize, children = [], left, text, letter, textThing, i, j;
+            var top = thing.top, texts = thing.texts, attributes = thing.textAttributes, spacingHorizontal = thing.spacingHorizontal * thing.FSM.unitsize, spacingVertical = thing.spacingVertical * thing.FSM.unitsize, spacingVerticalBlank = thing.spacingVerticalBlank * thing.FSM.unitsize, children = [], textChild, left, text, letter, i, j;
             thing.children = children;
             for (i = 0; i < texts.length; i += 1) {
                 if (!texts[i]) {
@@ -1778,10 +1771,10 @@ var FullScreenMario;
                         letter = thing.FSM.customTextMappings[letter];
                     }
                     letter = "Text" + thing.size + letter;
-                    textThing = thing.FSM.ObjectMaker.make(letter, attributes);
-                    textThing.FSM.addThing(textThing, left, top);
-                    children.push(textThing);
-                    left += textThing.width * thing.FSM.unitsize;
+                    textChild = thing.FSM.ObjectMaker.make(letter, attributes);
+                    textChild.FSM.addThing(textChild, left, top);
+                    children.push(textChild);
+                    left += textChild.width * thing.FSM.unitsize;
                     left += spacingHorizontal;
                 }
                 top += spacingVertical;
@@ -1799,7 +1792,7 @@ var FullScreenMario;
             thing.FSM.killNormal(thing);
         };
         /**
-         * Spawning callback for ScrollBlockers. If the Thing is too the right of
+         * Spawning callback for ScrollBlockers. If the Thing is to the right of
          * the visible viewframe, it should limit scrolling when triggered.
          *
          * @param {ScrollBlocker} thing
@@ -1822,25 +1815,6 @@ var FullScreenMario;
         FullScreenMario.prototype.spawnCollectionComponent = function (collection, thing) {
             thing.collection = collection;
             collection[thing.collectionName] = thing;
-        };
-        /**
-         * Used by Things in a collection to get direct references to other Things
-         * ("partners") in that collection. This is called by onThingAdd, so it's
-         * always after spawnCollectionComponent (which is by onThingMake).
-         *
-         * @param {Object} collection   The collection Object shared by all members
-         *                              of it. It should be automatically generated.
-         * @param {Thing} thing   A member of the collection being spawned.
-         * @remarks This should be bound in prethings as ".bind(scope, collection)"
-         */
-        FullScreenMario.prototype.spawnCollectionPartner = function (collection, thing) {
-            var partnerNames = thing.collectionPartnerNames, partners = {}, name;
-            for (name in partnerNames) {
-                if (partnerNames.hasOwnProperty(name)) {
-                    partners[name] = collection[partnerNames[name]];
-                }
-            }
-            thing.partners = {};
         };
         /**
          * Spawning callback for RandomSpawner Things, which generate a set of
@@ -2280,7 +2254,7 @@ var FullScreenMario;
                         thing.moveleft = !thing.moveleft;
                     }
                     // Some items require fancy versions (e.g. Shell)
-                    if (thing.group === "item") {
+                    if (thing.item) {
                         thing.collide(other, thing);
                     }
                 }
@@ -2599,12 +2573,11 @@ var FullScreenMario;
                 return thing.FSM.collideEnemy(thing, other);
             }
             // Death: nothing happens
-            if (!thing.FSM.isThingAlive(thing)
-                || !thing.FSM.isThingAlive(other)) {
+            if (!thing.FSM.isThingAlive(thing) || !thing.FSM.isThingAlive(other)) {
                 return;
             }
             // Items
-            if (thing.group === "item") {
+            if (thing.item) {
                 if (thing.collidePrimary) {
                     return thing.collide(other, thing);
                 }
@@ -2957,7 +2930,7 @@ var FullScreenMario;
          */
         FullScreenMario.prototype.moveSimple = function (thing) {
             // If the thing is looking away from the intended direction, flip it
-            if (thing.direction !== thing.moveleft) {
+            if (thing.direction !== (thing.moveleft ? 1 : 0)) {
                 // thing.moveleft is truthy: it should now be looking to the right
                 if (thing.moveleft) {
                     thing.xvel = -thing.speed;
@@ -2972,7 +2945,7 @@ var FullScreenMario;
                         thing.FSM.flipHoriz(thing);
                     }
                 }
-                thing.direction = thing.moveleft;
+                thing.direction = thing.moveleft ? 1 : 0;
             }
         };
         /**
@@ -3027,11 +3000,10 @@ var FullScreenMario;
             }
         };
         /**
-         * Movement Function for Things that slide back and forth, such as
+         * Movement Function for Characters that slide back and forth, such as
          * HammerBros and Lakitus.
          *
-         * @remarks thing.counter must be a number set elsewhere, such as in a spawn
-         *          Function.
+         * @remarks thing.counter must be set elsewhere, such as during spawning.
          */
         FullScreenMario.prototype.movePacing = function (thing) {
             thing.counter += .007;
@@ -3065,7 +3037,7 @@ var FullScreenMario;
                 }
                 else {
                     // To the right of player: look to the left and movePacing as normal
-                    thing.lookleft = thing.moveleft = true;
+                    thing.moveleft = thing.lookleft = true;
                     thing.FSM.unflipHoriz(thing);
                     thing.FSM.movePacing(thing);
                 }
@@ -3074,7 +3046,7 @@ var FullScreenMario;
                 // Facing to the left
                 // To the left of player: look and walk to the right
                 if (thing.FSM.objectToLeft(thing, thing.FSM.player)) {
-                    thing.lookleft = thing.moveleft = false;
+                    thing.moveleft = thing.lookleft = false;
                     thing.FSM.flipHoriz(thing);
                     thing.FSM.moveSimple(thing);
                 }
@@ -3241,7 +3213,7 @@ var FullScreenMario;
             thing.yvel += thing.acceleration || thing.FSM.unitsize / 16;
             thing.FSM.shiftVert(thing, thing.yvel);
             // After a velocity threshold, stop accelerating
-            if (thing.yvel >= (thing.fallThresholdEnd || thing.FSM.unitsize * 2)) {
+            if (thing.yvel >= (thing.fallThresholdEnd || thing.FSM.unitsize * 2.1)) {
                 thing.movement = thing.FSM.movePlatform;
             }
         };
@@ -3512,13 +3484,11 @@ var FullScreenMario;
                 thing.FSM.shiftVert(thing, thing.yvel, true);
             }
             if (!thing.squeeze) {
-                if (thing.FSM.player.left
-                    > thing.right + thing.FSM.unitsize * 8) {
+                if (thing.FSM.player.left > thing.right + thing.FSM.unitsize * 8) {
                     // Go to the right
                     thing.xvel = Math.min(thing.speed, thing.xvel + thing.FSM.unitsize / 32);
                 }
-                else if (thing.FSM.player.right
-                    < thing.left - thing.FSM.unitsize * 8) {
+                else if (thing.FSM.player.right < thing.left - thing.FSM.unitsize * 8) {
                     // Go to the left
                     thing.xvel = Math.max(-thing.speed, thing.xvel - thing.FSM.unitsize / 32);
                 }
@@ -3544,8 +3514,7 @@ var FullScreenMario;
                 thing.xvel = 0;
             }
             thing.squeeze += 1;
-            if (thing.top > thing.FSM.player.bottom
-                || thing.bottom > thing.FSM.unitsize * 91) {
+            if (thing.top > thing.FSM.player.bottom || thing.bottom > thing.FSM.unitsize * 91) {
                 thing.FSM.animateBlooperUnsqueezing(thing);
             }
         };
@@ -3572,7 +3541,7 @@ var FullScreenMario;
             if (!thing.flipVert && thing.yvel > 0) {
                 thing.FSM.flipVert(thing);
             }
-            thing.yvel += thing.acceleration;
+            thing.yvel += thing.gravity;
         };
         /**
          * Movement Function for Lakitus that have finished their moveLakituInitial
@@ -3904,10 +3873,7 @@ var FullScreenMario;
          */
         FullScreenMario.prototype.animateSolidContents = function (thing, other) {
             var output;
-            if (other
-                && other.player
-                && other.power > 1
-                && thing.contents === "Mushroom") {
+            if (other && other.player && other.power > 1 && thing.contents === "Mushroom") {
                 thing.contents = "FireFlower";
             }
             output = thing.FSM.addThing(thing.contents || thing.constructor.prototype.contents);
@@ -4404,7 +4370,8 @@ var FullScreenMario;
             }
             var spawn = thing.FSM.ObjectMaker.make("BulletBill");
             if (thing.FSM.objectToLeft(thing.FSM.player, thing)) {
-                spawn.direction = spawn.moveleft = true;
+                spawn.direction = 1;
+                spawn.moveleft = true;
                 spawn.xvel *= -1;
                 thing.FSM.flipHoriz(spawn);
                 thing.FSM.addThing(spawn, thing.left, thing.top);
@@ -4501,9 +4468,7 @@ var FullScreenMario;
                 thing.FSM.TimeHandler.cancelClassCycle(thing, "paddlingCycle");
                 thing.FSM.TimeHandler.addClassCycle(thing, [
                     "paddle1", "paddle2", "paddle3", "paddle2", "paddle1",
-                    function () {
-                        return thing.paddlingCycle = false;
-                    },
+                    function () { return thing.paddlingCycle = false; }
                 ], "paddlingCycle", 7);
             }
             thing.paddling = thing.paddlingCycle = thing.swimming = true;
@@ -5035,13 +5000,13 @@ var FullScreenMario;
          *                         not survivable, 2 for immediate death.
          */
         FullScreenMario.prototype.killPlayer = function (thing, big) {
-            if (!thing.alive || thing.flickering || thing.dying) {
+            if (!thing.alive || thing.flickering || thing.dieing) {
                 return;
             }
             var FSM = thing.FSM, area = thing.FSM.AreaSpawner.getArea();
             // Large big: real, no-animation death
             if (big === 2) {
-                thing.dead = thing.dying = true;
+                thing.dead = thing.dieing = true;
                 thing.alive = false;
                 FSM.MapScreener.notime = true;
             }
@@ -5057,7 +5022,7 @@ var FullScreenMario;
                 }
                 else {
                     // The player can't survive this: animate a death
-                    thing.dying = true;
+                    thing.dieing = true;
                     FSM.setSize(thing, 7.5, 7, true);
                     FSM.updateSize(thing);
                     FSM.setClass(thing, "character player dead");

@@ -322,7 +322,7 @@ FullScreenMario.FullScreenMario.settings.objects = {
             "moveleft": 0,
             "skidding": 0,
             "star": 0,
-            "dying": 0,
+            "dieing": 0,
             "nofall": 0,
             "maxvel": 0,
             "paddling": 0,
@@ -464,7 +464,7 @@ FullScreenMario.FullScreenMario.settings.objects = {
         "Podoboo": {
             "width": 7,
             "speed": FullScreenMario.FullScreenMario.unitsize * 1.75,
-            "acceleration": FullScreenMario.FullScreenMario.unitsize / 24,
+            "gravity": FullScreenMario.FullScreenMario.unitsize / 24,
             "jumpHeight": 28,
             "frequency": 245,
             "deadly": true,
@@ -575,10 +575,10 @@ FullScreenMario.FullScreenMario.settings.objects = {
             ]
         },
         "item": {
-            "group": "item",
             "collide": FullScreenMario.FullScreenMario.prototype.collideFriendly,
             "onCollideUp": FullScreenMario.FullScreenMario.prototype.collideUpItem,
             "jump": FullScreenMario.FullScreenMario.prototype.itemJump,
+            "item": true,
             "nofire": true
         },
         "Mushroom": {
@@ -902,10 +902,7 @@ FullScreenMario.FullScreenMario.settings.objects = {
         "TreeTrunk": [4, 4],
         "Water": {
             "width": 4,
-            "height": 5,
-            // spriteCycle": [
-            //     ["one", "two", "three", "four"]
-            // ]
+            "height": 5
         },
         "Text": {
             "width": 3.5,

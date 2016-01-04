@@ -1,0 +1,167 @@
+[4mRunning "tslint:files" (tslint) task[24m
+[31m>> [39mSource/FullScreenMario.d.ts[135, 13]: asterisks in jsdoc must be aligned
+[31m>> [39mSource/FullScreenMario.d.ts[1222, 1]: exceeds maximum line length of 140
+[31m>> [39mSource/FullScreenMario.d.ts[1223, 1]: exceeds maximum line length of 140
+[31m>> [39mSource/FullScreenMario.d.ts[1226, 1]: exceeds maximum line length of 140
+[31m>> [39mSource/FullScreenMario.d.ts[1233, 1]: exceeds maximum line length of 140
+[31m>> [39mSource/FullScreenMario.d.ts[1235, 1]: exceeds maximum line length of 140
+[31m>> [39mSource/FullScreenMario.d.ts[1236, 1]: exceeds maximum line length of 140
+[31m>> [39mSource/FullScreenMario.d.ts[1237, 1]: exceeds maximum line length of 140
+[31m>> [39mSource/FullScreenMario.d.ts[1238, 1]: exceeds maximum line length of 140
+[31m>> [39mSource/FullScreenMario.d.ts[1239, 1]: exceeds maximum line length of 140
+[31m>> [39mSource/FullScreenMario.d.ts[1242, 1]: exceeds maximum line length of 140
+[31m>> [39mSource/FullScreenMario.d.ts[1244, 1]: exceeds maximum line length of 140
+[31m>> [39mSource/FullScreenMario.d.ts[1246, 1]: exceeds maximum line length of 140
+[31m>> [39mSource/FullScreenMario.d.ts[1247, 1]: exceeds maximum line length of 140
+[31m>> [39mSource/FullScreenMario.d.ts[1248, 1]: exceeds maximum line length of 140
+[31m>> [39mSource/FullScreenMario.d.ts[133, 9]: Declaration of public instance member variable not allowed to appear after declaration of public instance member function
+[31m>> [39mSource/FullScreenMario.d.ts[143, 9]: Declaration of public instance member variable not allowed to appear after declaration of public instance member function
+[31m>> [39mSource/FullScreenMario.d.ts[426, 9]: Declaration of public instance member variable not allowed to appear after declaration of public instance member function
+[31m>> [39mSource/FullScreenMario.d.ts[441, 9]: Declaration of public instance member variable not allowed to appear after declaration of public instance member function
+[31m>> [39mSource/FullScreenMario.d.ts[457, 9]: Declaration of public instance member variable not allowed to appear after declaration of public instance member function
+[31m>> [39mSource/FullScreenMario.d.ts[577, 9]: Declaration of public instance member variable not allowed to appear after declaration of public instance member function
+[31m>> [39mSource/FullScreenMario.d.ts[755, 9]: Declaration of public instance member variable not allowed to appear after declaration of public instance member function
+[31m>> [39mSource/FullScreenMario.d.ts[757, 9]: Declaration of public instance member variable not allowed to appear after declaration of public instance member function
+[31m>> [39mSource/FullScreenMario.d.ts[760, 9]: Declaration of public instance member variable not allowed to appear after declaration of public instance member function
+[31m>> [39mSource/FullScreenMario.d.ts[762, 9]: Declaration of public instance member variable not allowed to appear after declaration of public instance member function
+[31m>> [39mSource/FullScreenMario.d.ts[768, 9]: Declaration of public instance member variable not allowed to appear after declaration of public instance member function
+[31m>> [39mSource/FullScreenMario.d.ts[780, 9]: Declaration of public instance member variable not allowed to appear after declaration of public instance member function
+[31m>> [39mSource/FullScreenMario.d.ts[795, 9]: Declaration of public instance member variable not allowed to appear after declaration of public instance member function
+[31m>> [39mSource/FullScreenMario.d.ts[894, 9]: Declaration of public instance member variable not allowed to appear after declaration of public instance member function
+[31m>> [39mSource/FullScreenMario.d.ts[926, 9]: Declaration of public instance member variable not allowed to appear after declaration of public instance member function
+[31m>> [39mSource/FullScreenMario.d.ts[155, 1]: trailing whitespace
+[31m>> [39mSource/FullScreenMario.d.ts[200, 1]: trailing whitespace
+[31m>> [39mSource/FullScreenMario.d.ts[432, 1]: trailing whitespace
+[31m>> [39mSource/FullScreenMario.d.ts[108, 10]: missing semicolon
+[31m>> [39mSource/FullScreenMario.d.ts[699, 10]: missing semicolon
+[31m>> [39mSource/FullScreenMario.d.ts[907, 10]: missing semicolon
+[31m>> [39mSource/FullScreenMario.d.ts[1047, 52]: missing semicolon
+[31m>> [39mSource/FullScreenMario.d.ts[1152, 36]: expected parameter: 'thing' to have a typedef
+[31m>> [39mSource/References/AudioPlayr-0.2.1.ts[68, 1]: trailing whitespace
+[31m>> [39mSource/References/AudioPlayr-0.2.1.ts[78, 1]: trailing whitespace
+[31m>> [39mSource/References/AudioPlayr-0.2.1.ts[83, 1]: trailing whitespace
+[31m>> [39mSource/References/AudioPlayr-0.2.1.ts[88, 1]: trailing whitespace
+[31m>> [39mSource/References/ChangeLinr-0.2.0.ts[38, 10]: missing semicolon
+[31m>> [39mSource/References/DeviceLayr-0.2.0.ts[142, 1]: trailing whitespace
+[31m>> [39mSource/References/DeviceLayr-0.2.0.ts[216, 79]: expected call-signature: 'activateButtonTrigger' to have a typedef
+[31m>> [39mSource/References/GroupHoldr-0.2.1.ts[140, 1]: trailing whitespace
+[31m>> [39mSource/References/GroupHoldr-0.2.1.ts[145, 1]: trailing whitespace
+[31m>> [39mSource/References/GroupHoldr-0.2.1.ts[150, 1]: trailing whitespace
+[31m>> [39mSource/References/GroupHoldr-0.2.1.ts[155, 1]: trailing whitespace
+[31m>> [39mSource/References/GroupHoldr-0.2.1.ts[160, 1]: trailing whitespace
+[31m>> [39mSource/References/InputWritr-0.2.0.ts[12, 1]: trailing whitespace
+[31m>> [39mSource/References/InputWritr-0.2.0.ts[22, 1]: trailing whitespace
+[31m>> [39mSource/References/InputWritr-0.2.0.ts[36, 1]: trailing whitespace
+[31m>> [39mSource/References/InputWritr-0.2.0.ts[43, 1]: trailing whitespace
+[31m>> [39mSource/References/InputWritr-0.2.0.ts[50, 1]: trailing whitespace
+[31m>> [39mSource/References/InputWritr-0.2.0.ts[57, 1]: trailing whitespace
+[31m>> [39mSource/References/InputWritr-0.2.0.ts[64, 1]: trailing whitespace
+[31m>> [39mSource/References/InputWritr-0.2.0.ts[97, 1]: trailing whitespace
+[31m>> [39mSource/References/InputWritr-0.2.0.ts[104, 1]: trailing whitespace
+[31m>> [39mSource/References/InputWritr-0.2.0.ts[20, 10]: missing semicolon
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[26, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[31, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[36, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[42, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[47, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[52, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[57, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[62, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[67, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[72, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[77, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[82, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[87, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[93, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[103, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[108, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[113, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[118, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[124, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[129, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[134, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[139, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[144, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[149, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[154, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[159, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[164, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[169, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[174, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[179, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[184, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[192, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[199, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[217, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[222, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[227, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[232, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[237, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[242, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[247, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[252, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[257, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[273, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[278, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[283, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[288, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[293, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[298, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[303, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[308, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[313, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[318, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[324, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[330, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[336, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[341, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[350, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[358, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[364, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[373, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[382, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[391, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[398, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[418, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[423, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[428, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[441, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[446, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[451, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[462, 1]: trailing whitespace
+[31m>> [39mSource/References/ItemsHoldr-0.2.1.ts[474, 1]: trailing whitespace
+[31m>> [39mSource/References/ModAttachr-0.2.2.ts[85, 1]: trailing whitespace
+[31m>> [39mSource/References/NumberMakr-0.2.2.ts[34, 1]: trailing whitespace
+[31m>> [39mSource/References/PixelRendr-0.2.0.ts[61, 1]: trailing whitespace
+[31m>> [39mSource/References/PixelRendr-0.2.0.ts[51, 10]: missing semicolon
+[31m>> [39mSource/References/PixelRendr-0.2.0.ts[150, 33]: expected call-signature: 'memcpyU8' to have a typedef
+[31m>> [39mSource/References/QuadsKeepr-0.2.1.ts[12, 1]: trailing whitespace
+[31m>> [39mSource/References/QuadsKeepr-0.2.1.ts[17, 1]: trailing whitespace
+[31m>> [39mSource/References/QuadsKeepr-0.2.1.ts[22, 1]: trailing whitespace
+[31m>> [39mSource/References/QuadsKeepr-0.2.1.ts[60, 1]: trailing whitespace
+[31m>> [39mSource/References/ScenePlayr-0.2.0.ts[85, 1]: trailing whitespace
+[31m>> [39mSource/References/StringFilr-0.2.1.ts[36, 1]: trailing whitespace
+[31m>> [39mSource/References/ThingHittr-0.2.0.ts[116, 1]: trailing whitespace
+[31m>> [39mSource/References/TouchPassr-0.2.0.ts[32, 1]: trailing whitespace
+[31m>> [39mSource/References/TouchPassr-0.2.0.ts[75, 1]: trailing whitespace
+[31m>> [39mSource/References/TouchPassr-0.2.0.ts[152, 1]: trailing whitespace
+[31m>> [39mSource/References/TouchPassr-0.2.0.ts[157, 1]: trailing whitespace
+[31m>> [39mSource/References/TouchPassr-0.2.0.ts[167, 1]: trailing whitespace
+[31m>> [39mSource/References/TouchPassr-0.2.0.ts[564, 1]: trailing whitespace
+[31m>> [39mSource/References/TouchPassr-0.2.0.ts[660, 1]: trailing whitespace
+[31m>> [39mSource/References/TouchPassr-0.2.0.ts[666, 1]: trailing whitespace
+[31m>> [39mSource/References/TouchPassr-0.2.0.ts[21, 33]: missing semicolon
+[31m>> [39mSource/References/TouchPassr-0.2.0.ts[242, 1]: missing 'use strict'
+[31m>> [39mSource/References/TouchPassr-0.2.0.ts[554, 1]: missing 'use strict'
+[31m>> [39mSource/References/TouchPassr-0.2.0.ts[634, 1]: missing 'use strict'
+[31m>> [39mSource/References/UserWrappr-0.2.0.ts[163, 1]: trailing whitespace
+[31m>> [39mSource/References/UserWrappr-0.2.0.ts[370, 12]: expected an assignment or function call
+[31m>> [39mSource/References/UserWrappr-0.2.0.ts[370, 20]: missing semicolon
+[31m>> [39mSource/References/UserWrappr-0.2.0.ts[397, 43]: missing semicolon
+[31m>> [39mSource/References/UserWrappr-0.2.0.ts[397, 17]: expected member-variable-declaration: 'abstract' to have a typedef
+[31m>> [39mSource/References/UserWrappr-0.2.0.ts[397, 59]: expected member-variable-declaration: 'HTMLDivElement' to have a typedef
+[31m>> [39mSource/References/WorldSeedr-0.2.0.ts[1201, 17]: unused variable: 'movePositionBySpacing'
+[31m>> [39m819 errors in 36 files
+[33mWarning: Task "tslint:files" failed. Use --force to continue.[39m
+
+[31mAborted due to warnings.[39m
