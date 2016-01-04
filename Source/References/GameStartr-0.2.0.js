@@ -126,8 +126,8 @@ var GameStartr;
         /**
          * Sets this.ObjectMaker.
          *
-         * Because many Thing functions require access to other FSM modules, each is
-         * given a reference to this container FSM via properties.thing.GameStarter.
+         * Because many Thing functions require access to other GameStartr modules, each is
+         * given a reference to this container GameStartr via properties.thing.GameStarter.
          *
          * @param GameStarter
          * @param customs   Any optional custom settings.
@@ -566,7 +566,7 @@ var GameStartr;
          * sprite must be set, attributes and onThingMake called upon, and initial
          * class cycles and flipping set.
          *
-         * @param thing
+         * @param thing   The Thing being processed.
          * @param title   What type Thing this is (the name of the class).
          * @param settings   Additional settings to be given to the Thing.
          * @param defaults   The default settings for the Thing's class.

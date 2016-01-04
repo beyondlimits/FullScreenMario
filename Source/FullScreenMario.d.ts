@@ -407,6 +407,13 @@ declare module FullScreenMario {
     }
 
     /**
+     * Text title replacements for Text Things.
+     */
+    export interface ITextMappings {
+        [i: string]: string;
+    }
+
+    /**
      * A solid Thing that may be rested upon or bumped into.
      */
     export interface ISolid extends IThing {
@@ -1574,31 +1581,31 @@ declare module FullScreenMario {
         addPreThing(prething: IPreThing): void;
         addPlayer(left?: number, bottom?: number): IPlayer;
         scrollPlayer(dx: number, dy?: number): void;
-        onGamePause(FSM: FullScreenMario): void;
-        onGamePlay(FSM: FullScreenMario): void;
-        keyDownLeft(FSM: FullScreenMario, event?: Event): void;
-        keyDownRight(FSM: FullScreenMario, event?: Event): void;
-        keyDownUp(FSM: FullScreenMario, event?: Event): void;
-        keyDownDown(FSM: FullScreenMario, event?: Event): void;
-        keyDownSprint(FSM: FullScreenMario, event?: Event): void;
-        keyDownPause(FSM: FullScreenMario, event?: Event): void;
-        keyDownMute(FSM: FullScreenMario, event?: Event): void;
-        keyUpLeft(FSM: FullScreenMario, event?: Event): void;
-        keyUpRight(FSM: FullScreenMario, event?: Event): void;
-        keyUpUp(FSM: FullScreenMario, event?: Event): void;
-        keyUpDown(FSM: FullScreenMario, event?: Event): void;
-        keyUpSprint(FSM: FullScreenMario, event?: Event): void;
-        keyUpPause(FSM: FullScreenMario, event?: Event): void;
-        mouseDownRight(FSM: FullScreenMario, event?: Event): void;
-        deviceMotion(FSM: FullScreenMario, event: DeviceMotionEvent): void;
-        canInputsTrigger(FSM: FullScreenMario): boolean;
-        maintainTime(FSM: FullScreenMario): boolean;
-        maintainScenery(FSM: FullScreenMario): void;
-        maintainSolids(FSM: FullScreenMario, solids: ISolid[]): void;
-        maintainCharacters(FSM: FullScreenMario, characters: ICharacter[]): void;
+        onGamePause(FSM: IFullScreenMario): void;
+        onGamePlay(FSM: IFullScreenMario): void;
+        keyDownLeft(FSM: IFullScreenMario, event?: Event): void;
+        keyDownRight(FSM: IFullScreenMario, event?: Event): void;
+        keyDownUp(FSM: IFullScreenMario, event?: Event): void;
+        keyDownDown(FSM: IFullScreenMario, event?: Event): void;
+        keyDownSprint(FSM: IFullScreenMario, event?: Event): void;
+        keyDownPause(FSM: IFullScreenMario, event?: Event): void;
+        keyDownMute(FSM: IFullScreenMario, event?: Event): void;
+        keyUpLeft(FSM: IFullScreenMario, event?: Event): void;
+        keyUpRight(FSM: IFullScreenMario, event?: Event): void;
+        keyUpUp(FSM: IFullScreenMario, event?: Event): void;
+        keyUpDown(FSM: IFullScreenMario, event?: Event): void;
+        keyUpSprint(FSM: IFullScreenMario, event?: Event): void;
+        keyUpPause(FSM: IFullScreenMario, event?: Event): void;
+        mouseDownRight(FSM: IFullScreenMario, event?: Event): void;
+        deviceMotion(FSM: IFullScreenMario, event: DeviceMotionEvent): void;
+        canInputsTrigger(FSM: IFullScreenMario): boolean;
+        maintainTime(FSM: IFullScreenMario): boolean;
+        maintainScenery(FSM: IFullScreenMario): void;
+        maintainSolids(FSM: IFullScreenMario, solids: ISolid[]): void;
+        maintainCharacters(FSM: IFullScreenMario, characters: ICharacter[]): void;
         maintainOverlaps(character: ICharacterOverlapping): void;
         setOverlapBoundaries(thing: ICharacterOverlapping): boolean;
-        maintainPlayer(FSM: FullScreenMario): void;
+        maintainPlayer(FSM: IFullScreenMario): void;
         generateCanThingCollide(): (thing: IThing) => boolean;
         isThingAlive(thing: IThing): boolean;
         isThingTouchingThing(thing: IThing, other: IThing): boolean;
@@ -1643,8 +1650,8 @@ declare module FullScreenMario {
         spawnMoveFloating(thing: IThingFloating): void;
         spawnMoveSliding(thing: IThingSliding): void;
         spawnScalePlatform(thing: IPlatform): void;
-        spawnRandomCheep(FSM: FullScreenMario): boolean;
-        spawnRandomBulletBill(FSM: FullScreenMario): boolean;
+        spawnRandomCheep(FSM: IFullScreenMario): boolean;
+        spawnRandomBulletBill(FSM: IFullScreenMario): boolean;
         spawnCustomText(thing: ICustomText): void;
         spawnDetector(thing: IDetector): void;
         spawnScrollBlocker(thing: IScrollBlocker): void;
@@ -1785,19 +1792,19 @@ declare module FullScreenMario {
         scoreAnimate(thing: IThing, timeout?: number): void;
         scorePlayerShell(thing: IPlayer, other: IShell): void;
         scorePlayerFlag(thing: IThing, difference: number): number;
-        getVolumeLocal(FSM: FullScreenMario, xloc: number): number;
-        getAudioThemeDefault(FSM: FullScreenMario): string;
+        getVolumeLocal(FSM: IFullScreenMario, xloc: number): number;
+        getAudioThemeDefault(FSM: IFullScreenMario): string;
         setMap(name?: string | IFullScreenMario, location?: string | number): void;
         setLocation(name?: string | number): void;
-        mapEntranceNormal(FSM: FullScreenMario, location?: ILocation): void;
-        mapEntrancePlain(FSM: FullScreenMario, location?: ILocation): void;
-        mapEntranceWalking(FSM: FullScreenMario, location?: ILocation): void;
-        mapEntranceCastle(FSM: FullScreenMario): void;
-        mapEntranceVine(FSM: FullScreenMario): void;
-        mapEntranceVinePlayer(FSM: FullScreenMario, vine: IVine): void;
-        mapEntrancePipeVertical(FSM: FullScreenMario, location?: ILocation): void;
-        mapEntrancePipeHorizontal(FSM: FullScreenMario, location?: ILocation): void;
-        mapEntranceRespawn(FSM: FullScreenMario): void;
+        mapEntranceNormal(FSM: IFullScreenMario, location?: ILocation): void;
+        mapEntrancePlain(FSM: IFullScreenMario, location?: ILocation): void;
+        mapEntranceWalking(FSM: IFullScreenMario, location?: ILocation): void;
+        mapEntranceCastle(FSM: IFullScreenMario): void;
+        mapEntranceVine(FSM: IFullScreenMario): void;
+        mapEntranceVinePlayer(FSM: IFullScreenMario, vine: IVine): void;
+        mapEntrancePipeVertical(FSM: IFullScreenMario, location?: ILocation): void;
+        mapEntrancePipeHorizontal(FSM: IFullScreenMario, location?: ILocation): void;
+        mapEntranceRespawn(FSM: IFullScreenMario): void;
         mapExitPipeVertical(thing: IPlayer, other: IPipe): void;
         mapExitPipeHorizontal(thing: IPlayer, other: IPipe, shouldTransport?: boolean): void;
         initializeArea(): void;

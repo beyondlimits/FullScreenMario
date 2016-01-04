@@ -996,7 +996,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        reset(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        reset(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Resets the EightBittr and records the time by calling the parent
@@ -1005,7 +1005,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetTimed(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetTimed(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.UsageHelper.
@@ -1013,18 +1013,18 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetUsageHelper(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetUsageHelper(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.ObjectMaker.
          *
          * Because many Thing functions require access to other FSM modules, each is
-         * given a reference to this container FSM via properties.thing.GameStarter.
+         * given a reference to this container GameStartr via properties.thing.GameStarter.
          *
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetObjectMaker(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetObjectMaker(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.QuadsKeeper.
@@ -1032,7 +1032,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetQuadsKeeper(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetQuadsKeeper(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.PixelRender.
@@ -1040,7 +1040,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetPixelRender(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetPixelRender(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.PixelDrawer.
@@ -1048,7 +1048,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetPixelDrawer(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetPixelDrawer(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.TimeHandler.
@@ -1056,7 +1056,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetTimeHandler(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetTimeHandler(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.AudioPlayer.
@@ -1064,7 +1064,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetAudioPlayer(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetAudioPlayer(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.GamesRunner.
@@ -1072,7 +1072,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetGamesRunner(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetGamesRunner(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.ItemsHolder.
@@ -1080,7 +1080,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetItemsHolder(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetItemsHolder(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.GroupHolder.
@@ -1088,7 +1088,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetGroupHolder(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetGroupHolder(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.ThingHitter.
@@ -1096,7 +1096,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetThingHitter(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetThingHitter(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.MapScreener.
@@ -1104,7 +1104,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetMapScreener(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetMapScreener(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.NumberMaker.
@@ -1112,7 +1112,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetNumberMaker(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetNumberMaker(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.MapCreator.
@@ -1120,7 +1120,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetMapsCreator(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetMapsCreator(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.AreaSpawner.
@@ -1128,7 +1128,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetAreaSpawner(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetAreaSpawner(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.InputWriter.
@@ -1136,7 +1136,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetInputWriter(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetInputWriter(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.DeviceLayer.
@@ -1144,7 +1144,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetDeviceLayer(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetDeviceLayer(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.InputWriter.
@@ -1152,7 +1152,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetTouchPasser(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetTouchPasser(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.LevelEditor.
@@ -1160,7 +1160,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetLevelEditor(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetLevelEditor(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.WorldSeeder.
@@ -1168,7 +1168,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetWorldSeeder(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetWorldSeeder(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.ScenePlayer.
@@ -1176,7 +1176,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetScenePlayer(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetScenePlayer(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.MathDecider.
@@ -1184,7 +1184,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetMathDecider(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetMathDecider(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Sets this.ModAttacher.
@@ -1192,7 +1192,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetModAttacher(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetModAttacher(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Starts self.ModAttacher. All mods are enabled, and the "onReady" trigger
@@ -1201,7 +1201,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        startModAttacher(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        startModAttacher(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Resets the parent HTML container. Width and height are set by customs,
@@ -1210,7 +1210,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param customs   Any optional custom settings.
          */
-        resetContainer(GameStarter: GameStartr, settings: IGameStartrSettings): void;
+        resetContainer(GameStarter: IGameStartr, settings: IGameStartrSettings): void;
 
         /**
          * Scrolls the game window by shifting all Things and checking for quadrant
@@ -1242,7 +1242,7 @@ declare module GameStartr {
          * @param left   A left boundary to spawn within.
          * @remarks This is generally called by a QuadsKeepr during a screen update.
          */
-        onAreaSpawn(GameStarter: GameStartr, direction: string, top: number, right: number, bottom: number, left: number): void;
+        onAreaSpawn(GameStarter: IGameStartr, direction: string, top: number, right: number, bottom: number, left: number): void;
 
         /**
          * "Unspawns" all Things within a given area that should be gone by marking
@@ -1256,7 +1256,7 @@ declare module GameStartr {
          * @param left   A left boundary to spawn within.
          * @remarks This is generally called by a QuadsKeepr during a screen update.
          */
-        onAreaUnspawn(GameStarter: GameStartr, direction: string, top: number, right: number, bottom: number, left: number): void;
+        onAreaUnspawn(GameStarter: IGameStartr, direction: string, top: number, right: number, bottom: number, left: number): void;
 
         /**
          * Adds a new Thing to the game at a given position, relative to the top
@@ -1302,7 +1302,7 @@ declare module GameStartr {
          * @param GameStarter
          * @param generatedCommands   Commands generated by WorldSeedr.generateFull.
          */
-        mapPlaceRandomCommands(GameStarter: GameStartr, generatedCommands: WorldSeedr.ICommand[]): void;
+        mapPlaceRandomCommands(GameStarter: IGameStartr, generatedCommands: WorldSeedr.ICommand[]): void;
 
         /**
          * Triggered Function for when the game is unpaused. Music resumes, and
@@ -1310,7 +1310,7 @@ declare module GameStartr {
          *
          * @param GameStartr
          */
-        onGamePlay(GameStarter: GameStartr): void;
+        onGamePlay(GameStarter: IGameStartr): void;
 
         /**
          * Triggered Function for when the game is paused. Music stops, and the
@@ -1318,7 +1318,7 @@ declare module GameStartr {
          *
          * @param GameStartr
          */
-        onGamePause(GameStarter: GameStartr): void;
+        onGamePause(GameStarter: IGameStartr): void;
 
         /**
          * Checks whether inputs can be fired, which by default is always true.
@@ -1326,7 +1326,7 @@ declare module GameStartr {
          * @param GameStartr
          * @returns Whether inputs can be fired, which is always true.
          */
-        canInputsTrigger(GameStarter: GameStartr): boolean;
+        canInputsTrigger(GameStarter: IGameStartr): boolean;
 
         /**
          * Generic Function to start the game. Nothing actually happens here.
@@ -2003,8 +2003,8 @@ module GameStartr {
         /**
          * Sets this.ObjectMaker.
          * 
-         * Because many Thing functions require access to other FSM modules, each is
-         * given a reference to this container FSM via properties.thing.GameStarter. 
+         * Because many Thing functions require access to other GameStartr modules, each is
+         * given a reference to this container GameStartr via properties.thing.GameStarter. 
          * 
          * @param GameStarter
          * @param customs   Any optional custom settings.
@@ -2553,7 +2553,7 @@ module GameStartr {
          * sprite must be set, attributes and onThingMake called upon, and initial
          * class cycles and flipping set.
          * 
-         * @param thing
+         * @param thing   The Thing being processed.
          * @param title   What type Thing this is (the name of the class).
          * @param settings   Additional settings to be given to the Thing.
          * @param defaults   The default settings for the Thing's class.
