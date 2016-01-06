@@ -7,7 +7,6 @@ FullScreenMario.FullScreenMario.settings.runner = {
         function () {
             this.QuadsKeeper.determineAllQuadrants("Scenery", this.GroupHolder.getSceneryGroup());
             this.QuadsKeeper.determineAllQuadrants("Text", this.GroupHolder.getTextGroup());
-            // Should delete out-of-bounds stuff here
         },
         function () {
             this.maintainSolids(this, this.GroupHolder.getSolidGroup());
@@ -23,10 +22,6 @@ FullScreenMario.FullScreenMario.settings.runner = {
         },
         function () {
             this.PixelDrawer.refillGlobalCanvas(this.AreaSpawner.getArea().background);
-            // this.PixelDrawer.refillQuadrantGroups(
-            // this.QuadsKeeper.getQuadrantRows(),
-            // this.AreaSpawner.getArea().background
-            // );
         }
     ]
 };

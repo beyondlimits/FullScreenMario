@@ -20,47 +20,48 @@ var FullScreenMario;
     var FullScreenMario = (function (_super) {
         __extends(FullScreenMario, _super);
         /**
-         * Constructor for a new FullScreenMario game object.
-         * Static game settings are stored in the appropriate settings/*.js object
-         * as members of the FullScreenMario.prototype object.
-         * Dynamic game settings may be given as members of the "customs" argument.
-         * On typical machines, game startup time is approximately 500-700ms.
+         * Initializes a new instance of the FullScreenMario class using the static
+         * settings stored in `FullScreenMario.setting`.
+         *
+         * @param settings   Extra settings such as screen size.
          */
         function FullScreenMario(settings) {
             this.settings = FullScreenMario.settings;
             this.deviceMotionStatus = {
-                "motionDown": false,
-                "motionLeft": false,
-                "motionRight": false,
-                "x": undefined,
-                "y": undefined,
-                "dy": undefined
+                motionLeft: false,
+                motionRight: false,
+                x: undefined,
+                y: undefined,
+                dy: undefined
             };
             _super.call(this, this.proliferate({
-                "constantsSource": FullScreenMario,
-                "constants": [
-                    "unitsize",
-                    "scale",
-                    "gravity",
-                    "pointLevels",
-                    "customTextMappings"
-                ]
+                constantsSource: FullScreenMario,
+                constants: ["unitsize", "scale", "gravity", "pointLevels", "customTextMappings"]
             }, settings));
         }
         /* Resets
         */
+        /**
+         * Sets this.ObjectMaker.
+         *
+         * Because many Thing functions require access to other FSM modules, each is
+         * given a reference to this container FSM via properties.thing.GameStarter.
+         *
+         * @param FSM
+         * @param customs   Any optional custom settings.
+         */
         FullScreenMario.prototype.resetObjectMaker = function (FSM, settings) {
             FSM.ObjectMaker = new ObjectMakr.ObjectMakr(FSM.proliferate({
-                "properties": {
-                    "Quadrant": {
-                        "EightBitter": FSM,
-                        "GameStarter": FSM,
-                        "FSM": FSM
+                properties: {
+                    Quadrant: {
+                        EightBitter: FSM,
+                        GameStarter: FSM,
+                        FSM: FSM
                     },
-                    "Thing": {
-                        "EightBitter": FSM,
-                        "GameStarter": FSM,
-                        "FSM": FSM
+                    Thing: {
+                        EightBitter: FSM,
+                        GameStarter: FSM,
+                        FSM: FSM
                     }
                 }
             }, FSM.settings.objects));
@@ -68,8 +69,8 @@ var FullScreenMario;
         /**
          * Sets this.AudioPlayer.
          *
-         * @param {FullScreenMario} FSM
-         * @param {Object} customs
+         * @param FSM
+         * @param customs   Any optional custom settings.
          */
         FullScreenMario.prototype.resetAudioPlayer = function (FSM, settings) {
             _super.prototype.resetAudioPlayer.call(this, FSM, settings);
@@ -79,8 +80,8 @@ var FullScreenMario;
         /**
          * Sets this.AreaSpawner.
          *
-         * @param {FullScreenMario} FSM
-         * @param {Object} customs
+         * @param FSM
+         * @param customs   Any optional custom settings.
          */
         FullScreenMario.prototype.resetAreaSpawner = function (FSM, settings) {
             FSM.AreaSpawner = new AreaSpawnr.AreaSpawnr({
@@ -95,10 +96,10 @@ var FullScreenMario;
         /**
          * Resets this.ItemsHolder via the parent GameStartr resetItemsHolder.
          *
-         * If the screen isn't wide enough to fit the 'lives' display, it's hidden.
+         * If the screen isn't wide enough to fit the "lives" display, it's hidden.
          *
-         * @param {FullScreenMario} FSM
-         * @param {Object} customs
+         * @param FSM
+         * @param customs   Any optional custom settings.
          */
         FullScreenMario.prototype.resetItemsHolder = function (FSM, settings) {
             _super.prototype.resetItemsHolder.call(this, FSM, settings);
@@ -109,8 +110,8 @@ var FullScreenMario;
         /**
          * Sets this.MathDecider, using its existing MapScreenr as its constants.
          *
-         * @param {FullScreenMario} FSM
-         * @param {Object} customs
+         * @param FSM
+         * @param customs   Any optional custom settings.
          */
         FullScreenMario.prototype.resetMathDecider = function (FSM, customs) {
             FSM.MathDecider = new MathDecidr.MathDecidr(FSM.proliferate({
@@ -124,8 +125,8 @@ var FullScreenMario;
          * to draw the scenery, solid, character, and text groups, and the container
          * width is set to the custom's width.
          *
-         * @param {FullScreenMario} FSM
-         * @param {Object} customs
+         * @param FSM
+         * @param customs   Any optional custom settings.
          */
         FullScreenMario.prototype.resetContainer = function (FSM, settings) {
             _super.prototype.resetContainer.call(this, FSM, settings);
@@ -149,7 +150,7 @@ var FullScreenMario;
         FullScreenMario.prototype.gameStart = function () {
             var FSM = FullScreenMario.prototype.ensureCorrectCaller(this);
             FSM.setMap(FSM.settings.maps.mapDefault, FSM.settings.maps.locationDefault);
-            FSM.ItemsHolder.setItem("lives", FSM.settings.statistics.values.lives.valueDefault);
+            FSM.ItemsHolder.setItem("lives", FSM.settings.items.values.lives.valueDefault);
             FSM.ModAttacher.fireEvent("onGameStart");
         };
         /**
@@ -185,6 +186,12 @@ var FullScreenMario;
         /**
          * Slight addition to the GameStartr thingProcess Function. The Thing's hit
          * check type is cached immediately.
+         *
+         * @param thing   The Thing being processed.
+         * @param title   What type Thing this is (the name of the class).
+         * @param settings   Additional settings to be given to the Thing.
+         * @param defaults   The default settings for the Thing's class.
+         * @remarks This is generally called as the onMake call in an ObjectMakr.
          */
         FullScreenMario.prototype.thingProcess = function (thing, title, settings, defaults) {
             // Infinite height refers to objects that reach exactly to the bottom
@@ -198,7 +205,7 @@ var FullScreenMario;
          * Adds a Thing via addPreThing based on the specifications in a PreThing.
          * This is done relative to MapScreener.left and MapScreener.floor.
          *
-         * @param {PreThing} prething
+         * @param prething   A PreThing whose Thing is to be added to the game.
          */
         FullScreenMario.prototype.addPreThing = function (prething) {
             var thing = prething.thing, position = prething.position || thing.position;
@@ -226,11 +233,9 @@ var FullScreenMario;
          * required additional settings (namely keys, power/size, and swimming) are
          * applied here.
          *
-         * @this {EightBittr}
-         * @param {Number} [left]   A left coordinate to place the Thing at (by
-         *                          default, unitsize * 16).
-         * @param {Number} [bottom]   A bottom coordinate to place the Thing upon
-         *                            (by default, unitsize * 16).
+         * @param left   A left edge to place the Thing at (by default, unitsize * 16).
+         * @param bottom   A bottom to place the Thing upon (by default, unitsize * 16).
+         * @returns A newly created Player in the game.
          */
         FullScreenMario.prototype.addPlayer = function (left, bottom) {
             if (left === void 0) { left = this.unitsize * 16; }
@@ -259,11 +264,10 @@ var FullScreenMario;
             return player;
         };
         /**
-         * Shortcut to call scrollThing on the player.
+         * Shortcut to call scrollThing on a Player.
          *
-         * @this {EightBittr}
-         * @param {Number} dx
-         * @param {Number} dy
+         * @param dx   How far to scroll horizontally.
+         * @param dy   How far to scroll vertically.
          */
         FullScreenMario.prototype.scrollPlayer = function (dx, dy) {
             var FSM = FullScreenMario.prototype.ensureCorrectCaller(this);
@@ -273,6 +277,8 @@ var FullScreenMario;
         /**
          * Triggered Function for when the game is paused. Music stops, the pause
          * bleep is played, and the mod event is fired.
+         *
+         * @param FSM
          */
         FullScreenMario.prototype.onGamePause = function (FSM) {
             FSM.AudioPlayer.pauseAll();
@@ -282,6 +288,8 @@ var FullScreenMario;
         /**
          * Triggered Function for when the game is played or unpause. Music resumes
          * and the mod event is fired.
+         *
+         * @param FSM
          */
         FullScreenMario.prototype.onGamePlay = function (FSM) {
             FSM.AudioPlayer.resumeAll();
@@ -293,7 +301,8 @@ var FullScreenMario;
          * Reacts to the left key being pressed. keys.run and leftDown are marked
          * and the mod event is fired.
          *
-         * @param {Player} player
+         * @param FSM
+         * @param event   The original user-caused Event.
          */
         FullScreenMario.prototype.keyDownLeft = function (FSM, event) {
             if (FSM.GamesRunner.getPaused()) {
@@ -308,7 +317,8 @@ var FullScreenMario;
          * Reacts to the right key being pressed. keys.run and keys.rightDown are
          * marked and the mod event is fired.
          *
-         * @param {Player} player
+         * @param FSM
+         * @param event   The original user-caused Event.
          */
         FullScreenMario.prototype.keyDownRight = function (FSM, event) {
             if (FSM.GamesRunner.getPaused()) {
@@ -323,10 +333,11 @@ var FullScreenMario;
             }
         };
         /**
-         * Reacts to the up key being pressed. If the player can jump, it does, and
+         * Reacts to the up key being pressed. If a Player can jump, it does, and
          * underwater paddling is checked. The mod event is fired.
          *
-         * @param {Player} player
+         * @param FSM
+         * @param event   The original user-caused Event.
          */
         FullScreenMario.prototype.keyDownUp = function (FSM, event) {
             if (FSM.GamesRunner.getPaused()) {
@@ -356,10 +367,11 @@ var FullScreenMario;
             }
         };
         /**
-         * Reacts to the down key being pressed. The player's keys.crouch is marked
+         * Reacts to the down key being pressed. A player's keys.crouch is marked
          * and the mod event is fired.
          *
-         * @param {Player} player
+         * @param FSM
+         * @param event   The original user-caused Event.
          */
         FullScreenMario.prototype.keyDownDown = function (FSM, event) {
             if (FSM.GamesRunner.getPaused()) {
@@ -373,10 +385,11 @@ var FullScreenMario;
             }
         };
         /**
-         * Reacts to the sprint key being pressed. Firing happens if the player is
+         * Reacts to the sprint key being pressed. Firing happens if a Player is
          * able, keys.spring is marked, and the mod event is fired.
          *
-         * @param {Player} player
+         * @param FSM
+         * @param event   The original user-caused Event.
          */
         FullScreenMario.prototype.keyDownSprint = function (FSM, event) {
             if (FSM.GamesRunner.getPaused()) {
@@ -396,7 +409,8 @@ var FullScreenMario;
          * Reacts to the pause key being pressed. The game is either paused or unpaused,
          * and the mod event is fired.
          *
-         * @param {Player} player
+         * @param FSM
+         * @param event   The original user-caused Event.
          */
         FullScreenMario.prototype.keyDownPause = function (FSM, event) {
             if (FSM.GamesRunner.getPaused()) {
@@ -414,7 +428,8 @@ var FullScreenMario;
          * Reacts to the mute key being lifted. Muting is toggled and the mod event
          * is fired.
          *
-         * @param {Player} player
+         * @param FSM
+         * @param event   The original user-caused Event.
          */
         FullScreenMario.prototype.keyDownMute = function (FSM, event) {
             if (FSM.GamesRunner.getPaused()) {
@@ -430,7 +445,8 @@ var FullScreenMario;
          * Reacts to the left key being lifted. keys.run and keys.leftDown are
          * marked and the mod event is fired.
          *
-         * @param {Player} player
+         * @param FSM
+         * @param event   The original user-caused Event.
          */
         FullScreenMario.prototype.keyUpLeft = function (FSM, event) {
             var player = FSM.player;
@@ -445,7 +461,8 @@ var FullScreenMario;
          * Reacts to the right key being lifted. keys.run and keys.rightDown are
          * marked and the mod event is fired.
          *
-         * @param {Player} player
+         * @param FSM
+         * @param event   The original user-caused Event.
          */
         FullScreenMario.prototype.keyUpRight = function (FSM, event) {
             var player = FSM.player;
@@ -460,7 +477,8 @@ var FullScreenMario;
          * Reacts to the up key being lifted. Jumping stops and the mod event is
          * fired.
          *
-         * @param {Player} player
+         * @param FSM
+         * @param event   The original user-caused Event.
          */
         FullScreenMario.prototype.keyUpUp = function (FSM, event) {
             var player = FSM.player;
@@ -477,7 +495,8 @@ var FullScreenMario;
          * Reacts to the down key being lifted. keys.crouch is marked, crouch
          * removal happens if necessary, and the mod event is fired.
          *
-         * @param {Player} player
+         * @param FSM
+         * @param event   The original user-caused Event.
          */
         FullScreenMario.prototype.keyUpDown = function (FSM, event) {
             var player = FSM.player;
@@ -494,7 +513,8 @@ var FullScreenMario;
          * Reacts to the spring key being lifted. keys.sprint is marked and the mod
          * event is fired.
          *
-         * @param {Player} player
+         * @param FSM
+         * @param event   The original user-caused Event.
          */
         FullScreenMario.prototype.keyUpSprint = function (FSM, event) {
             var player = FSM.player;
@@ -507,7 +527,8 @@ var FullScreenMario;
         /**
          * Reacts to the pause key being lifted. The mod event is fired.
          *
-         * @param {Player} player
+         * @param FSM
+         * @param event   The original user-caused Event.
          */
         FullScreenMario.prototype.keyUpPause = function (FSM, event) {
             FSM.ModAttacher.fireEvent("onKeyUpPause");
@@ -519,7 +540,8 @@ var FullScreenMario;
          * Reacts to a right click being pressed. Pausing is toggled and the mod
          * event is fired.
          *
-         * @param {Player} player
+         * @param FSM
+         * @param event   The original user-caused Event.
          */
         FullScreenMario.prototype.mouseDownRight = function (FSM, event) {
             FSM.GamesRunner.togglePause();
@@ -533,8 +555,8 @@ var FullScreenMario;
          * for changed tilt horizontally (to trigger left or right key statuses) or
          * changed tilt vertically (jumping). The mod event is also fired.
          *
-         * @param {Player} player
-         * @param {DeviceMotionEvent} event
+         * @param FSM
+         * @param event   The original user-caused Event.
          */
         FullScreenMario.prototype.deviceMotion = function (FSM, event) {
             var player = FSM.player, deviceMotionStatus = FSM.deviceMotionStatus, acceleration = event.accelerationIncludingGravity;
@@ -577,7 +599,8 @@ var FullScreenMario;
          * Checks whether inputs can be fired, which is equivalent to the status of
          * the MapScreener's nokeys variable (an inverse value).
          *
-         * @param {FullScreenMario} FSM
+         * @param FSM
+         * @returns Whether inputs are allowed to trigger.
          */
         FullScreenMario.prototype.canInputsTrigger = function (FSM) {
             return !FSM.MapScreener.nokeys;
@@ -585,11 +608,10 @@ var FullScreenMario;
         /* Upkeep maintenence
         */
         /**
-         * Regular maintenance Function called to decrease time every 25 game
-         * ticks. Returns whether time should stop counting, which is only when
-         * it becomes 0.
+         * Regular maintenance Function called to decrease time every 25 game ticks.
          *
-         * @param {FullScreenMario} FSM
+         * @param FSM
+         * @returns Whether time should stop counting, which is whether it's <= 0.
          */
         FullScreenMario.prototype.maintainTime = function (FSM) {
             if (!FSM.MapScreener.notime) {
@@ -606,7 +628,7 @@ var FullScreenMario;
          * upkeeps (slightly over 5 seconds). Things are checked for being alive
          * and to the left of QuadsKeeper.left; if they aren't, they are removed.
          *
-         * @param {FullScreenMario} FSM
+         * @param FSM
          */
         FullScreenMario.prototype.maintainScenery = function (FSM) {
             var things = FSM.GroupHolder.getGroup("Scenery"), delx = FSM.QuadsKeeper.left, thing, i;
@@ -624,8 +646,8 @@ var FullScreenMario;
          * if they aren't, they are removed. Each Thing is also allowed a movement
          * Function.
          *
-         * @param {FullScreenMario} FSM
-         * @param {Solid[]} solids   FSM's GroupHolder's Solid group.
+         * @param FSM
+         * @param solids   FSM's GroupHolder's Solid group.
          */
         FullScreenMario.prototype.maintainSolids = function (FSM, solids) {
             var delx = FSM.QuadsKeeper.left, solid, i;
@@ -649,9 +671,8 @@ var FullScreenMario;
          * checks applied before they're checked for being alive. If they are, they
          * are allowed a movement Function; if not, they are removed.
          *
-         * @param {FullScreenMario} FSM
-         * @param {Character[]} characters   EightBittr's GroupHolder's Characters
-         *                                   group.
+         * @param FSM
+         * @param characters   FSM's GroupHolder's Characters group.
          */
         FullScreenMario.prototype.maintainCharacters = function (FSM, characters) {
             var delx = FSM.QuadsKeeper.right, character, i;
@@ -721,7 +742,7 @@ var FullScreenMario;
          * until it's past the boundary (and check for those boundaries if not
          * already set).
          *
-         * @param {Thing} thing
+         * @param character   A Character that is known to be overlapping Solid(s).
          */
         FullScreenMario.prototype.maintainOverlaps = function (character) {
             // If checkOverlaps is still true, this is the first maintain call
@@ -755,14 +776,13 @@ var FullScreenMario;
         };
         /**
          * Sets the overlapping properties of a Thing when it is first detected as
-         * overlapping in maintainOverlaps. All solids in its overlaps Array are
+         * overlapping in maintainOverlaps. All Solids in its overlaps Array are
          * checked to find the leftmost and rightmost extremes and midpoint.
          * Then, the Thing is checked for being to the left or right of the
          * midpoint, and the goal set to move it away from the midpoint.
          *
-         * @param {Thing} thing
-         * @return {Boolean}   Whether the Thing's overlaps were successfully
-         *                     recorded (if there was only one, not so).
+         * @param thing
+         * @returns Whether the Thing's overlaps were successfully recorded.
          */
         FullScreenMario.prototype.setOverlapBoundaries = function (thing) {
             // Only having one overlap means nothing should be done
@@ -795,12 +815,12 @@ var FullScreenMario;
             return true;
         };
         /**
-         * Regular maintenance Function called on the player every upkeep. A barrage
-         * of tests are applied, namely falling/jumping, dying, x- and y-velocities,
+         * Regular maintenance Function called on a Player every upkeep. A barrage
+         * of tests are applied, namely falling/jumping, dieing, x- and y-velocities,
          * running, and scrolling. This is separate from the movePlayer movement
          * Function that will be called in maintainCharacters.
          *
-         * @param {FullScreenMario} FSM
+         * @param FSM
          */
         FullScreenMario.prototype.maintainPlayer = function (FSM) {
             var player = FSM.player;
@@ -827,7 +847,7 @@ var FullScreenMario;
                     }
                 }
                 // Player has fallen too far
-                if (!player.dying && player.top > FSM.MapScreener.bottom) {
+                if (!player.dieing && player.top > FSM.MapScreener.bottom) {
                     // If the map has an exit (e.g. cloud world), transport there
                     if (FSM.AreaSpawner.getArea().exit) {
                         FSM.setLocation(FSM.AreaSpawner.getArea().exit);
@@ -872,7 +892,7 @@ var FullScreenMario;
          * repeatedly by ThingHittr to generate separately optimized Functions for
          * different Thing types.
          *
-         * @return {Function}
+         * @returns A Function that generates a canThingCollide checker.
          */
         FullScreenMario.prototype.generateCanThingCollide = function () {
             /**
@@ -880,17 +900,17 @@ var FullScreenMario;
              * This just returns if the Thing is alive and doesn't have the
              * nocollide flag.
              *
-             * @param {Thing} thing
-             * @return {Boolean}
+             * @param thing
+             * @returns Whether the thing can collide.
              */
             return function canThingCollide(thing) {
                 return thing.alive && !thing.nocollide;
             };
         };
         /**
-         * @param {Thing} thing
-         * @return {Boolean} Whether the Thing is alive, meaning it has a true alive
-         *                   flag and a false dead flag.
+         * @param thing
+         * @returns Whether the Thing is alive, meaning it has a true alive flag
+         *          and a false dead flag.
          */
         FullScreenMario.prototype.isThingAlive = function (thing) {
             return thing && thing.alive && !thing.dead;
@@ -899,10 +919,10 @@ var FullScreenMario;
          * Generic base function to check if one Thing is touching another. This
          * will be called by the more specific Thing touching functions.
          *
-         * @param {Thing} thing
-         * @param {Thing} other
-         * @return {Boolean}
-         * @remarks Only the horizontal checks use unitsize
+         * @param thing
+         * @param other
+         * @returns Whether the two Things are touching.
+         * @remarks The horizontal checks use allow a unitsize of flexibility.
          */
         FullScreenMario.prototype.isThingTouchingThing = function (thing, other) {
             return (!thing.nocollide && !other.nocollide
@@ -916,10 +936,10 @@ var FullScreenMario;
          * one Thing is on top of another. This takes into consideration factors
          * such as which are solid or an enemy, and y-velocity.
          *
-         * @param {Thing} thing
-         * @param {Thing} other
-         * @return {Boolean}
-         * @remarks This is a more specific form of isThingTouchingThing
+         * @param thing
+         * @param other
+         * @returns Whether thing is on top of other.
+         * @remarks This is a more specific form of isThingTouchingThing.
          */
         FullScreenMario.prototype.isThingOnThing = function (thing, other) {
             // If thing is a solid and other is falling, thing can't be above other
@@ -931,9 +951,8 @@ var FullScreenMario;
             if (thing.yvel < other.yvel && other.groupType !== "Solid") {
                 return false;
             }
-            // If thing is the player, and it's on top of an enemy, that's true
-            if (thing.player && thing.bottom < other.bottom
-                && other.type === "enemy") {
+            // If thing is a Player, and it's on top of an enemy, that's true
+            if (thing.player && thing.bottom < other.bottom && other.enemy) {
                 return true;
             }
             // If thing is too far to the right, it can't be touching other
@@ -949,20 +968,21 @@ var FullScreenMario;
             if (thing.bottom <= other.top + other.toly + other.yvel) {
                 return true;
             }
-            // Same as before, but with velocity as the absolute difference between
-            // their two velocities
+            // Same as before, but with velocity as the absolute difference
+            // between their two velocities
             if (thing.bottom <= other.top + other.toly + Math.abs(thing.yvel - other.yvel)) {
                 return true;
             }
             // None of the above checks passed for true, so this is false (thing's
-            // bottom is above other's top
+            // bottom is above other's top)
             return false;
         };
         /**
-         * Top collision Function to determine if one Thing is on top of a solid.
+         * Top collision Function to determine if a Thing is on top of a Solid.
          *
-         * @param {Thing} thing
-         * @param {Solid} other
+         * @param thing
+         * @param other
+         * @returns Whether thing is on top of other.
          * @remarks Similar to isThingOnThing, but more specifically used for
          *          isCharacterOnSolid and isCharacterOnResting
          */
@@ -994,9 +1014,9 @@ var FullScreenMario;
          * This is always true for resting (since resting checks happen before when
          * this should be called).
          *
-         * @param {Character} thing
-         * @param {Solid} other
-         * @return {Boolean}
+         * @param thing
+         * @param other
+         * @returns Whether thing is on top of other.
          */
         FullScreenMario.prototype.isCharacterOnSolid = function (thing, other) {
             // If character is resting on solid, this is automatically true
@@ -1030,9 +1050,9 @@ var FullScreenMario;
          * the corner cases of the character being exactly at the edge of the solid
          * (such as when jumping while next to it).
          *
-         * @param {Character} thing
-         * @param {Solid} other
-         * @return {Boolean}
+         * @param thing
+         * @param other
+         * @returns Whether thing is on top of other.
          */
         FullScreenMario.prototype.isCharacterOnResting = function (thing, other) {
             if (!thing.FSM.isThingOnSolid(thing, other)) {
@@ -1054,7 +1074,7 @@ var FullScreenMario;
          * This is used repeatedly by ThingHittr to generate separately optimized
          * Functions for different Thing types.
          *
-         * @return {Function}
+         * @returns A Function that generates isCharacterTouchingCharacter.
          */
         FullScreenMario.prototype.generateIsCharacterTouchingCharacter = function () {
             /**
@@ -1062,9 +1082,9 @@ var FullScreenMario;
              * This mostly checks to see if either has the nocollidechar flag, and
              * if the other is a player. isThingTouchingThing is used after.
              *
-             * @param {Character} thing
-             * @param {Character} other
-             * @return {Boolean}
+             * @param thing
+             * @param other
+             * @returns Whether thing is touching other.
              */
             return function isCharacterTouchingCharacter(thing, other) {
                 if (thing.nocollidechar && (!other.player || thing.nocollideplayer)) {
@@ -1081,18 +1101,19 @@ var FullScreenMario;
          * is used repeatedly by ThingHittr to generate separately optimized
          * Functions for different Thing types.
          *
-         * @return {Function}
+         * @returns A Function that generates isCharacterTouchingSolid.
          */
         FullScreenMario.prototype.generateIsCharacterTouchingSolid = function () {
             /**
              * Generic checker for whether a character is touching a solid. The
              * hidden, collideHidden, and nocollidesolid flags are most relevant.
              *
-             * @param {Character} thing
-             * @param {Solid} other
+             * @param thing
+             * @param other
+             * @returns Whether thing is touching other.
              */
             return function isCharacterTouchingSolid(thing, other) {
-                // Hidden solids can only be touched by the player bottom-bumping
+                // Hidden solids can only be touched by a Player bottom-bumping
                 // them, or by specifying collideHidden
                 if (other.hidden && !other.collideHidden) {
                     if (!thing.player || !thing.FSM.isSolidOnCharacter(other, thing)) {
@@ -1106,39 +1127,37 @@ var FullScreenMario;
             };
         };
         /**
-         * @param {Character} thing
-         * @param {Enemy} other
-         * @return {Boolean} Whether the Thing's bottom is above the other's top,
-         *                   allowing for the other's toly.
+         * @param thing
+         * @param other
+         * @returns Whether thing's bottom is above other's top, allowing for
+         *          other's toly.
          */
         FullScreenMario.prototype.isCharacterAboveEnemy = function (thing, other) {
             return thing.bottom < other.top + other.toly;
         };
         /**
-         * @param {Character} thing
-         * @param {Solid} other
-         * @return {Boolean} Whether the Thing's top is above the other's bottom,
-         *                   allowing for the Thing's toly and yvel.
+         * @param thing
+         * @param other
+         * @returns Whether thing's top is above other's bottom, allowing for
+         *          the Thing's toly and yvel.
          */
         FullScreenMario.prototype.isCharacterBumpingSolid = function (thing, other) {
             return thing.top + thing.toly + Math.abs(thing.yvel) > other.bottom;
         };
         /**
-         * @param {Character} thing
-         * @param {Solid} other
-         * @return {Boolean} Whether the Thing is "overlapping" the solid, which
-         *                   should move the Thing until it isn't.
+         * @param thing
+         * @param other
+         * @returns Whether thing is "overlapping" other.
          */
         FullScreenMario.prototype.isCharacterOverlappingSolid = function (thing, other) {
             return thing.top <= other.top && thing.bottom > other.bottom;
         };
         /**
-         * @param {Solid} thing
-         * @param {Character} other
-         * @return {Boolean} Whether the Thing, typically a solid, is on top of the
-         *                   other.
-         * @remarks Similar to isThingOnThing, but more specifically used for
-         *          characterTouchedSolid
+         * @param thing
+         * @param other
+         * @returns Whether thing, typically a solid, is on top of other.
+         * @remarks This is similar to isThingOnThing, but more specifically
+         *          used for characterTouchedSolid.
          */
         FullScreenMario.prototype.isSolidOnCharacter = function (thing, other) {
             // This can never be true if other is falling
@@ -1167,10 +1186,9 @@ var FullScreenMario;
          * increases the "score" statistic, an audio is played, and the mod event is
          * fired.
          *
-         * @this {EightBittr}
-         * @param {Number} [amount]   How many lives to gain (by default, 1).
-         * @param {Boolean} [nosound]   Whether the sound should be skipped (by
-         *                              default, false).
+         * @param amount   How many lives to gain (by default, 1).
+         * @param nosound   Whether the sound should be skipped (by default,
+         *                  false).
          */
         FullScreenMario.prototype.gainLife = function (amount, nosound) {
             var FSM = FullScreenMario.prototype.ensureCorrectCaller(this);
@@ -1183,9 +1201,9 @@ var FullScreenMario;
         };
         /**
          * Basic Function for an item to jump slightly into the air, such as from
-         * the player hitting a solid below it.
+         * a Player hitting a solid below it.
          *
-         * @param {Item} thing
+         * @param thing   An item.
          * @remarks This simply moves the thing up slightly and decreases its
          *          y-velocity, without considering x-direction.
          */
@@ -1194,11 +1212,11 @@ var FullScreenMario;
             this.shiftVert(thing, -FullScreenMario.unitsize);
         };
         /**
-         * Generic Function for when the player jumps on top of an enemy. The enemy
-         * is killed, the player's velocity points upward, and score is gained.
+         * Generic Function for when a Player jumps on top of an enemy. The enemy
+         * is killed, a Player's velocity points upward, and score is gained.
          *
-         * @param {Player} thing
-         * @param {Enemy} other
+         * @param thing   A Player jumping on other.
+         * @param other   An Enemy being jumped upon.
          */
         FullScreenMario.prototype.jumpEnemy = function (thing, other) {
             if (thing.keys.up) {
@@ -1209,7 +1227,7 @@ var FullScreenMario;
             }
             thing.xvel *= 0.91;
             thing.FSM.AudioPlayer.play("Kick");
-            if (other.group !== "item" || other.shell) {
+            if (!thing.item || other.shell) {
                 thing.jumpcount += 1;
                 thing.FSM.scoreOn(thing.FSM.findScore(thing.jumpcount + thing.jumpers), other);
             }
@@ -1219,12 +1237,12 @@ var FullScreenMario;
             }, 1, thing);
         };
         /**
-         * Callback for the player hitting a Mushroom or FireFlower. The player's
+         * Callback for a Player hitting a Mushroom or FireFlower. A player's
          * power and the ItemsHolder's "power" statistic both go up, and the
          * corresponding animations and mod event are triggered.
          *
-         * @param {Player} thing
-         * @param {Item} [other]
+         * @param thing   A Player powering up.
+         * @param other   A Mushroom powering up hte Player.
          */
         FullScreenMario.prototype.playerShroom = function (thing, other) {
             if (thing.shrooming || !thing.player) {
@@ -1248,11 +1266,11 @@ var FullScreenMario;
             thing.FSM.ModAttacher.fireEvent("onPlayerShroom", thing, other);
         };
         /**
-         * Callback for the player hitting a Mushroom1Up. The game simply calls
+         * Callback for a Player hitting a Mushroom1Up. The game simply calls
          * gainLife and triggers the mod event.
          *
-         * @param {Player} thing
-         * @param {Item} [other]
+         * @param thing   A Player gaining a life.
+         * @param other   The Mushroom1Up giving the life.
          */
         FullScreenMario.prototype.playerShroom1Up = function (thing, other) {
             if (!thing.player) {
@@ -1262,13 +1280,13 @@ var FullScreenMario;
             thing.FSM.ModAttacher.fireEvent("onPlayerShroom1Up", thing, other);
         };
         /**
-         * Callback for the player hitting a Star. A set of animation loops and
+         * Callback for a Player hitting a Star. A set of animation loops and
          * sounds play, and the mod event is triggered. After some long period time,
          * playerStarDown is called to start the process of removing star power.
          *
-         * @param {Player} thing
-         * @param {Number} [timeout]   How long to wait before calling
-         *                             playerStarDown (by default, 560).
+         * @param thing   A Player gaining star powers.
+         * @param timeout   How long to wait before calling playerStarDown
+         *                  (by default, 560).
          */
         FullScreenMario.prototype.playerStarUp = function (thing, timeout) {
             if (timeout === void 0) { timeout = 560; }
@@ -1276,17 +1294,15 @@ var FullScreenMario;
             thing.FSM.switchClass(thing, "normal fiery", "star");
             thing.FSM.AudioPlayer.play("Powerup");
             thing.FSM.AudioPlayer.addEventListener("Powerup", "ended", thing.FSM.AudioPlayer.playTheme.bind(thing.FSM.AudioPlayer, "Star", true));
-            thing.FSM.TimeHandler.addClassCycle(thing, [
-                "star1", "star2", "star3", "star4"
-            ], "star", 2);
+            thing.FSM.TimeHandler.addClassCycle(thing, ["star1", "star2", "star3", "star4"], "star", 2);
             thing.FSM.TimeHandler.addEvent(thing.FSM.playerStarDown, timeout || 560, thing);
             thing.FSM.ModAttacher.fireEvent("onPlayerStarUp", thing);
         };
         /**
-         * Trigger to commence reducing the player's star power. This slows the
+         * Trigger to commence reducing a Player's star power. This slows the
          * class cycle, times a playerStarOffCycle trigger, and fires the mod event.
          *
-         * @param {Player} thing
+         * @param thing   A Player losing star powers.
          */
         FullScreenMario.prototype.playerStarDown = function (thing) {
             if (!thing.player) {
@@ -1301,11 +1317,11 @@ var FullScreenMario;
             thing.FSM.ModAttacher.fireEvent("onPlayerStarDown", thing);
         };
         /**
-         * Trigger to continue reducing the player's star power. This resumes
+         * Trigger to continue reducing a Player's star power. This resumes
          * playing the regular theme, times a playerStarOffFinal trigger, and fires
          * the mod event.
          *
-         * @param {Player} thing
+         * @param thing   A Player losing star powers.
          */
         FullScreenMario.prototype.playerStarOffCycle = function (thing) {
             if (!thing.player) {
@@ -1322,11 +1338,11 @@ var FullScreenMario;
             thing.FSM.ModAttacher.fireEvent("onPlayerStarOffCycle", thing);
         };
         /**
-         * Trigger to finish reducing the player's star power. This actually reduces
-         * the player's star attribute, cancels the sprite cycle, adds the previous
+         * Trigger to finish reducing a Player's star power. This actually reduces
+         * a Player's star attribute, cancels the sprite cycle, adds the previous
          * classes back, and fires the mod event.
          *
-         * @param {Player} thing
+         * @param thing   A Player losing star powers.
          */
         FullScreenMario.prototype.playerStarOffFinal = function (thing) {
             if (!thing.player) {
@@ -1342,13 +1358,13 @@ var FullScreenMario;
             thing.FSM.ModAttacher.fireEvent("onPlayerStarOffFinal", thing);
         };
         /**
-         * Sizing modifier for the player, typically called when entering a location
-         * or colliding with a Mushroom. This sets the player's size to the large
+         * Sizing modifier for a Player, typically called when entering a location
+         * or colliding with a Mushroom. This sets a Player's size to the large
          * mode and optionally plays the animation. The mod event is then fired.
          *
-         * @param {Player} thing
-         * @param {Boolean} [noAnimation]   Whether to skip the animation (by
-         *                                  default, false).
+         * @param thing   A Player increasing in size.
+         * @param noAnimation   Whether to skip the animation (by default,
+         *                      false).
          */
         FullScreenMario.prototype.playerGetsBig = function (thing, noAnimation) {
             thing.FSM.setPlayerSizeLarge(thing);
@@ -1364,10 +1380,10 @@ var FullScreenMario;
             thing.FSM.ModAttacher.fireEvent("onPlayerGetsBig", thing);
         };
         /**
-         * Animation scheduler for the player getting big. The shrooming classes are
-         * cycled through rapidly while the player's velocity is paused.
+         * Animation scheduler for a Player getting big. The shrooming classes are
+         * cycled through rapidly while a Player's velocity is paused.
          *
-         * @param {Player} thing
+         * @param thing   A Player increasing in size.
          */
         FullScreenMario.prototype.playerGetsBigAnimation = function (thing) {
             var stages = [
@@ -1376,29 +1392,29 @@ var FullScreenMario;
                 "shrooming3", "shrooming2", "shrooming3"
             ];
             thing.FSM.addClass(thing, "shrooming");
-            thing.FSM.thingPauseVelocity(thing);
+            thing.FSM.animateCharacterPauseVelocity(thing);
             // The last stage in the events clears it, resets movement, and stops
             stages.push(function (thing) {
                 thing.shrooming = false;
                 stages.length = 0;
                 thing.FSM.addClass(thing, "large");
                 thing.FSM.removeClasses(thing, "shrooming shrooming3");
-                thing.FSM.thingResumeVelocity(thing);
+                thing.FSM.animateCharacterResumeVelocity(thing);
                 return true;
             });
             thing.FSM.TimeHandler.addClassCycle(thing, stages, "shrooming", 6);
         };
         /**
-         * Sizing modifier for the player, typically called when going down to
+         * Sizing modifier for a Player, typically called when going down to
          * normal size after being large. This containst eha nimation scheduling
-         * to cycle through paddling classes, then flickers the player. The mod
+         * to cycle through paddling classes, then flickers a Player. The mod
          * event is fired.
          *
-         * @param {Player} thing
+         * @param thing   A Player decreasing in size.
          */
         FullScreenMario.prototype.playerGetsSmall = function (thing) {
             var bottom = thing.bottom;
-            thing.FSM.thingPauseVelocity(thing);
+            thing.FSM.animateCharacterPauseVelocity(thing);
             // Step one
             thing.nocollidechar = true;
             thing.FSM.animateFlicker(thing);
@@ -1412,7 +1428,7 @@ var FullScreenMario;
             }, 21, thing);
             // Step three (t+42)
             thing.FSM.TimeHandler.addEvent(function (thing) {
-                thing.FSM.thingResumeVelocity(thing, false);
+                thing.FSM.animateCharacterResumeVelocity(thing, false);
                 thing.FSM.removeClass(thing, "paddling");
                 if (thing.running || thing.xvel) {
                     thing.FSM.addClass(thing, "running");
@@ -1426,10 +1442,10 @@ var FullScreenMario;
             thing.FSM.ModAttacher.fireEvent("onPlayerGetsSmall");
         };
         /**
-         * Visual changer for when the player collides with a FireFlower. The
+         * Visual changer for when a Player collides with a FireFlower. The
          * "fiery" class is added, and the mod event is fired.
          *
-         * @param {Player} thing
+         * @param thing   A Player gaining fire powers.
          */
         FullScreenMario.prototype.playerGetsFire = function (thing) {
             thing.shrooming = false;
@@ -1442,7 +1458,7 @@ var FullScreenMario;
          * Actually sets the size for a player to small (8x8) via setSize and
          * updateSize.
          *
-         * @param {Player} thing
+         * @param thing   A Player decreasing in size.
          */
         FullScreenMario.prototype.setPlayerSizeSmall = function (thing) {
             thing.FSM.setSize(thing, 8, 8, true);
@@ -1452,17 +1468,17 @@ var FullScreenMario;
          * Actually sets the size for a player to large (8x16) via setSize and
          * updateSize.
          *
-         * @param {Player} thing
+         * @param thing   A Player increasing in size.
          */
         FullScreenMario.prototype.setPlayerSizeLarge = function (thing) {
             thing.FSM.setSize(thing, 8, 16, true);
             thing.FSM.updateSize(thing);
         };
         /**
-         * Removes the crouching flag from the player and re-adds the running cycle.
-         * If the player is large (has power > 1), size and classes must be set.
+         * Removes the crouching flag from a Player and re-adds the running cycle.
+         * If a Player is large (has power > 1), size and classes must be set.
          *
-         * @param {Player} thing
+         * @param thing   A Player that is no longer crouching.
          */
         FullScreenMario.prototype.animatePlayerRemoveCrouch = function (thing) {
             thing.crouching = false;
@@ -1480,8 +1496,8 @@ var FullScreenMario;
          * are reset to normal, the two have their attachment flags set, and the
          * thing is set to be jumping off.
          *
-         * @param {Player} thing   A character attached to other.
-         * @param {Solid} other   A solid the thing is attached to.
+         * @param thing   A Player attached to other.
+         * @param other   A Solid thing is attached to.
          */
         FullScreenMario.prototype.unattachPlayer = function (thing, other) {
             thing.nofall = false;
@@ -1495,11 +1511,11 @@ var FullScreenMario;
             other.attachedCharacter = undefined;
         };
         /**
-         * Adds an invisible RestingStone underneath the player. It is hidden and
-         * unable to collide until the player falls to its level, at which point the
-         * stone is set underneath the player to be rested upon.
+         * Adds an invisible RestingStone underneath a Player. It is hidden and
+         * unable to collide until a Player falls to its level, at which point the
+         * stone is set underneath a Player to be rested upon.
          *
-         * @param {Player} thing
+         * @param thing   A Player respawning into the game.
          */
         FullScreenMario.prototype.playerAddRestingStone = function (thing) {
             var stone = thing.FSM.addThing("RestingStone", thing.left, thing.top + thing.FSM.unitsize * 48);
@@ -1518,8 +1534,8 @@ var FullScreenMario;
          * Marks a new overlapping Thing in the first Thing's overlaps Array,
          * creating the Array if needed.
          *
-         * @param {Thing} thing   The Thing that is overlapping another Thing.
-         * @param {Thing} other   The Thing being added to the overlaps Array.
+         * @param thing   The Thing that is overlapping another Thing.
+         * @param other   The Thing being added to the overlaps Array.
          */
         FullScreenMario.prototype.markOverlap = function (thing, other) {
             if (!thing.overlaps) {
@@ -1534,7 +1550,7 @@ var FullScreenMario;
         /**
          * Spawn callback for DeadGoombas. They simply disappear after 21 steps.
          *
-         * @param {DeadGoomba} thing
+         * @param thing   A DeadGoomba being spawned.
          */
         FullScreenMario.prototype.spawnDeadGoomba = function (thing) {
             thing.FSM.TimeHandler.addEvent(FullScreenMario.prototype.killNormal, 21, thing);
@@ -1544,7 +1560,7 @@ var FullScreenMario;
          * jump event intervals are started. The cyclical movement counter is set to
          * 0.
          *
-         * @param {HammerBro} thing
+         * @param thing   A HammerBro being spawned.
          */
         FullScreenMario.prototype.spawnHammerBro = function (thing) {
             thing.counter = 0;
@@ -1557,7 +1573,7 @@ var FullScreenMario;
          * the firing and jumping event intervals are started. If it also specifies
          * a throwing interval, that's started too.
          *
-         * @param {Bowser} thing
+         * @param thing   A Bowser being spawned.
          */
         FullScreenMario.prototype.spawnBowser = function (thing) {
             var i;
@@ -1581,7 +1597,7 @@ var FullScreenMario;
          * Spawn callback for Piranhas. The movement counter and direction are
          * reset, and if the Piranha is on a pipe, it has a reduced height (6).
          *
-         * @param {Piranha} thing
+         * @param thing   A Piranha being spawned.
          */
         FullScreenMario.prototype.spawnPiranha = function (thing) {
             var bottom;
@@ -1594,10 +1610,10 @@ var FullScreenMario;
             }
         };
         /**
-         * Spawn callback for Bloopers. Its squeeze and movement counters are set to
-         * 0.
+         * Spawn callback for Bloopers. Its squeeze and movement counters are
+         * set to 0.
          *
-         * @param {Blooper} thing
+         * @param thing   A Blooper being spawned.
          */
         FullScreenMario.prototype.spawnBlooper = function (thing) {
             thing.squeeze = 0;
@@ -1607,16 +1623,16 @@ var FullScreenMario;
          * Spawn callback for Podoboos. The jumping interval is set to the Thing's
          * frequency.
          *
-         * @param {Podoboo} thing
+         * @param thing   A Podoboo being spawned.
          */
         FullScreenMario.prototype.spawnPodoboo = function (thing) {
             thing.FSM.TimeHandler.addEventInterval(thing.FSM.animatePodobooJumpUp, thing.frequency, Infinity, thing);
         };
         /**
          * Spawn callback for Lakitus. MapScreenr registers the most recently
-         * added lakitu, as some areas spawn them every once in a while.
+         * added Lakitu as some areas spawn them every once in a while.
          *
-         * @param {Lakitu} thing
+         * @param thing   A Lakitu being spawned.
          */
         FullScreenMario.prototype.spawnLakitu = function (thing) {
             thing.FSM.MapScreener.lakitu = thing;
@@ -1626,7 +1642,7 @@ var FullScreenMario;
          * Spawning callback for Cannons. Unless specified by the noBullets flag,
          * the firing interval is set to the Thing's frequency.
          *
-         * @param {Cannon} thing
+         * @param thing   A Cannon being spawned.
          */
         FullScreenMario.prototype.spawnCannon = function (thing) {
             if (thing.noBullets) {
@@ -1639,7 +1655,7 @@ var FullScreenMario;
          * of them are made and animated to tick around the block like a clock, set
          * by the thing's speed and direction.
          *
-         * @param {CastleBlock} thing
+         * @param thing   A CastleBlock being spawned.
          */
         FullScreenMario.prototype.spawnCastleBlock = function (thing) {
             if (!thing.fireballs) {
@@ -1668,31 +1684,29 @@ var FullScreenMario;
          * Thing's begin and end attributes are set relative to the MapScreener's
          * floor, so its movement can handle cycling between the two.
          *
-         * @param {Thing} thing
+         * @param thing   A Thing being spawned to float around.
          */
         FullScreenMario.prototype.spawnMoveFloating = function (thing) {
             // Make sure thing.begin <= thing.end
             thing.FSM.setMovementEndpoints(thing);
             // Make thing.begin and thing.end relative to the area's floor
-            thing.begin = (thing.FSM.MapScreener.floor
-                * thing.FSM.unitsize - thing.begin);
-            thing.end = (thing.FSM.MapScreener.floor
-                * thing.FSM.unitsize - thing.end);
+            thing.begin = thing.FSM.MapScreener.floor * thing.FSM.unitsize - thing.begin;
+            thing.end = thing.FSM.MapScreener.floor * thing.FSM.unitsize - thing.end;
         };
         /**
          * Spawning callback for sliding Things, such as Platforms. The Thing's
          * begin and end attributes do not need to be relative to anything.
          *
-         * @param {Thing} thing
+         * @param thing   A Thing being spawned to slide back and forth.
          */
         FullScreenMario.prototype.spawnMoveSliding = function (thing) {
             // Make sure thing.begin <= thing.end
             thing.FSM.setMovementEndpoints(thing);
         };
         /**
-         * Spawning callback for a Platform that's a part of a Scale. ???
+         * Spawning callback for a Platform that's a part of a Scale.
          *
-         * @param {Platform} thing
+         * @param thing   A Platform being spawned within a Scale group.
          */
         FullScreenMario.prototype.spawnScalePlatform = function (thing) {
             var collection = thing.collection || {}, ownKey = thing.collectionKey === "platformLeft" ? "Left" : "Right", partnerKey = ownKey === "Left" ? "Right" : "Left";
@@ -1705,16 +1719,16 @@ var FullScreenMario;
         /**
          * Generator callback to create a random CheepCheep. The spawn is given a
          * random x-velocity, is placed at a random point just below the screen, and
-         * is oriented towards the player.
+         * is oriented towards a Player.
          *
-         * @param {FullScreenMario} FSM
+         * @param FSM
+         * @returns Whether CheepCheep spawning has been cancelled.
          */
         FullScreenMario.prototype.spawnRandomCheep = function (FSM) {
             if (!FSM.MapScreener.spawningCheeps) {
                 return true;
             }
-            var spawn;
-            spawn = FSM.ObjectMaker.make("CheepCheep", {
+            var spawn = FSM.ObjectMaker.make("CheepCheep", {
                 "flying": true,
                 "xvel": FSM.NumberMaker.random() * FSM.unitsize * 1.4,
                 "yvel": FSM.unitsize * -1.4
@@ -1733,16 +1747,14 @@ var FullScreenMario;
          * at a constant rate towards the left side of the bill, and is placed at a
          * random point to the right side of the screen.
          *
-         * @param {FullScreenMario} FSM
-         * @return {Boolean} Whether the spawn cancelled (FSM.MapScreenr's
-         *                   spawningBulletBills is false).
+         * @param FSM
+         * @returns Whether BulletBill spawning has been cancelled.
          */
         FullScreenMario.prototype.spawnRandomBulletBill = function (FSM) {
             if (!FSM.MapScreener.spawningBulletBills) {
                 return true;
             }
-            var spawn;
-            spawn = FSM.ObjectMaker.make("BulletBill");
+            var spawn = FSM.ObjectMaker.make("BulletBill");
             spawn.direction = 1;
             spawn.moveleft = true;
             spawn.xvel *= -1;
@@ -1755,10 +1767,10 @@ var FullScreenMario;
          * member variable. These are written with a determined amount of spacing
          * between them, as if by a typewriter.
          *
-         * @param {CustomText} thing
+         * @param thing   A CustomText being spawned.
          */
         FullScreenMario.prototype.spawnCustomText = function (thing) {
-            var top = thing.top, texts = thing.texts, attributes = thing.textAttributes, spacingHorizontal = thing.spacingHorizontal * thing.FSM.unitsize, spacingVertical = thing.spacingVertical * thing.FSM.unitsize, spacingVerticalBlank = thing.spacingVerticalBlank * thing.FSM.unitsize, children = [], left, text, letter, textThing, i, j;
+            var top = thing.top, texts = thing.texts, attributes = thing.textAttributes, spacingHorizontal = thing.spacingHorizontal * thing.FSM.unitsize, spacingVertical = thing.spacingVertical * thing.FSM.unitsize, spacingVerticalBlank = thing.spacingVerticalBlank * thing.FSM.unitsize, children = [], textChild, left, text, letter, i, j;
             thing.children = children;
             for (i = 0; i < texts.length; i += 1) {
                 if (!texts[i]) {
@@ -1778,10 +1790,10 @@ var FullScreenMario;
                         letter = thing.FSM.customTextMappings[letter];
                     }
                     letter = "Text" + thing.size + letter;
-                    textThing = thing.FSM.ObjectMaker.make(letter, attributes);
-                    textThing.FSM.addThing(textThing, left, top);
-                    children.push(textThing);
-                    left += textThing.width * thing.FSM.unitsize;
+                    textChild = thing.FSM.ObjectMaker.make(letter, attributes);
+                    textChild.FSM.addThing(textChild, left, top);
+                    children.push(textChild);
+                    left += textChild.width * thing.FSM.unitsize;
                     left += spacingHorizontal;
                 }
                 top += spacingVertical;
@@ -1792,17 +1804,17 @@ var FullScreenMario;
          * Spawning callback for generic detectors, activated as soon as they are
          * placed. The Thing's activate trigger is called, then it is killed.
          *
-         * @param {Detector} thing
+         * @param thing   A Detector being spawned.
          */
         FullScreenMario.prototype.spawnDetector = function (thing) {
             thing.activate(thing);
             thing.FSM.killNormal(thing);
         };
         /**
-         * Spawning callback for ScrollBlockers. If the Thing is too the right of
+         * Spawning callback for ScrollBlockers. If the Thing is to the right of
          * the visible viewframe, it should limit scrolling when triggered.
          *
-         * @param {ScrollBlocker} thing
+         * @param thing   A ScrollBlocker being spawned.
          */
         FullScreenMario.prototype.spawnScrollBlocker = function (thing) {
             if (thing.FSM.MapScreener.width < thing.right) {
@@ -1814,40 +1826,19 @@ var FullScreenMario;
          * container collection Object. This is called by onThingMake, so they're
          * immediately put in the collection and have it as a member variable.
          *
-         * @param {Object} collection   The collection Object shared by all members
-         *                              of it. It should be automatically generated.
-         * @param {Thing} thing   A member of the collection being spawned.
-         * @remarks This should be bound in prethings as ".bind(scope, collection)"
+         * @param collection   The collection Object shared by all members.
+         * @param thing   A member of the collection being spawned.
          */
         FullScreenMario.prototype.spawnCollectionComponent = function (collection, thing) {
             thing.collection = collection;
             collection[thing.collectionName] = thing;
         };
         /**
-         * Used by Things in a collection to get direct references to other Things
-         * ("partners") in that collection. This is called by onThingAdd, so it's
-         * always after spawnCollectionComponent (which is by onThingMake).
-         *
-         * @param {Object} collection   The collection Object shared by all members
-         *                              of it. It should be automatically generated.
-         * @param {Thing} thing   A member of the collection being spawned.
-         * @remarks This should be bound in prethings as ".bind(scope, collection)"
-         */
-        FullScreenMario.prototype.spawnCollectionPartner = function (collection, thing) {
-            var partnerNames = thing.collectionPartnerNames, partners = {}, name;
-            for (name in partnerNames) {
-                if (partnerNames.hasOwnProperty(name)) {
-                    partners[name] = collection[partnerNames[name]];
-                }
-            }
-            thing.partners = {};
-        };
-        /**
          * Spawning callback for RandomSpawner Things, which generate a set of
          * commands using the WorldSeeder to be piped into the AreaSpawnr, then
          * spawn the immediate area.
          *
-         * @param {RandomSpawner} thing
+         * @param thing   A RandomSpawner being spawned.
          */
         FullScreenMario.prototype.spawnRandomSpawner = function (thing) {
             var FSM = thing.FSM, left = (thing.left + FSM.MapScreener.left) / FSM.unitsize;
@@ -1868,7 +1859,7 @@ var FullScreenMario;
          * Activation callback for starting spawnRandomCheep on an interval.
          * MapScreener is notified that spawningCheeps is true.
          *
-         * @param {Detector} thing
+         * @param thing   A Detector activated to start spawning CheepCheeps.
          */
         FullScreenMario.prototype.activateCheepsStart = function (thing) {
             thing.FSM.MapScreener.spawningCheeps = true;
@@ -1878,7 +1869,7 @@ var FullScreenMario;
          * Activation callback to stop spawning CheepCheeps. MapScreener is notified
          * that spawningCheeps is false.
          *
-         * @param {Detector} thing
+         * @param thing   A Detector activated to stop spawning CheepCheeps.
          */
         FullScreenMario.prototype.activateCheepsStop = function (thing) {
             thing.FSM.MapScreener.spawningCheeps = false;
@@ -1887,7 +1878,7 @@ var FullScreenMario;
          * Activation callback for starting spawnRandomBulletBill on an interval.
          * MapScreener is notified that spawningBulletBills is true.
          *
-         * @param {Detector} thing
+         * @param thing   A Detector activated to start spawning BulletBills.
          */
         FullScreenMario.prototype.activateBulletBillsStart = function (thing) {
             thing.FSM.MapScreener.spawningBulletBills = true;
@@ -1897,7 +1888,7 @@ var FullScreenMario;
          * Activation callback to stop spawning BulletBills. MapScreener is notified
          * that spawningBulletBills is false.
          *
-         * @param {Detector} thing
+         * @param thing   A Detector activated to stop spawning BulletBills.
          */
         FullScreenMario.prototype.activateBulletBillsStop = function (thing) {
             thing.FSM.MapScreener.spawningBulletBills = false;
@@ -1906,7 +1897,7 @@ var FullScreenMario;
          * Activation callback to tell the area's Lakitu, if it exists, to start
          * fleeing the scene.
          *
-         * @param {Detector} thing
+         * @param thing   A Detector activated to make the Lakitu flee.
          */
         FullScreenMario.prototype.activateLakituStop = function (thing) {
             var lakitu = thing.FSM.MapScreener.lakitu;
@@ -1917,12 +1908,12 @@ var FullScreenMario;
             lakitu.movement = thing.FSM.moveLakituFleeing;
         };
         /**
-         * Activation callback for a warp world area, triggered by the player
+         * Activation callback for a warp world area, triggered by a Player
          * touching a collider on top of it. Piranhas disappear and texts are
          * revealed.
          *
-         * @param {Thing} player
-         * @param {DetectCollision} other
+         * @param thing   A Player activating the warp world.
+         * @param other   A Detector triggered by thing to activate a warp world.
          */
         FullScreenMario.prototype.activateWarpWorld = function (thing, other) {
             var collection = other.collection, key = 0, keyString, texts, j;
@@ -1951,13 +1942,13 @@ var FullScreenMario;
             }
         };
         /**
-         * Activation callback for when the player lands on a RestingStone. The
+         * Activation callback for when a Player lands on a RestingStone. The
          * stone "appears" (via opacity), the regular theme plays if it wasn't
-         * already, and the RestingStone waits to kill itself when the player isn't
+         * already, and the RestingStone waits to kill itself when a Player isn't
          * touching it.
          *
-         * @param {RestingStone} thing
-         * @param {Player} other
+         * @param thing   A RestingStone being landed on.
+         * @param other   A Player landing on thing.
          */
         FullScreenMario.prototype.activateRestingStone = function (thing, other) {
             if (thing.activated) {
@@ -1980,7 +1971,7 @@ var FullScreenMario;
          * within the MapScreener's area to call the activate Function and kill
          * itself.
          *
-         * @param {DetectWindow} thing
+         * @param thing   A DetectWindow that might be activated.
          */
         FullScreenMario.prototype.activateWindowDetector = function (thing) {
             if (thing.FSM.MapScreener.right - thing.FSM.MapScreener.left < thing.left) {
@@ -1995,7 +1986,7 @@ var FullScreenMario;
          * latest scrollWindow call pushed it too far to the left, it scrolls back
          * the other way.
          *
-         * @param {ScrollBlocker} thing
+         * @param thing   A ScrollBlocker that might be activated.
          */
         FullScreenMario.prototype.activateScrollBlocker = function (thing) {
             var dx = thing.FSM.MapScreener.width - thing.left;
@@ -2008,7 +1999,7 @@ var FullScreenMario;
          * Activation callback for ScrollBlocker Things. These are DetectCollision
          * that set MapScreener.canscroll to true when they're triggered.
          *
-         * @param {DetectCollision} thing
+         * @param thing   An activated ScrollEnabler.
          */
         FullScreenMario.prototype.activateScrollEnabler = function (thing) {
             thing.FSM.MapScreener.canscroll = true;
@@ -2019,7 +2010,7 @@ var FullScreenMario;
          * DetectWindow is added to their immediate right that will trigger the
          * equivalent activateSectionStretch.
          *
-         * @param {DetectWindow} thing
+         * @param thing   An activated SectionDecider.
          */
         FullScreenMario.prototype.activateSectionBefore = function (thing) {
             var FSM = thing.FSM, MapsCreator = FSM.MapsCreator, MapScreener = FSM.MapScreener, AreaSpawner = FSM.AreaSpawner, area = AreaSpawner.getArea(), map = AreaSpawner.getMap(), prethings = AreaSpawner.getPreThings(), section = area.sections[thing.section || 0], left = (thing.left + MapScreener.left) / FSM.unitsize, before = section.before ? section.before.creation : undefined, command, i;
@@ -2061,7 +2052,7 @@ var FullScreenMario;
          * to their immediate right that will trigger the equivalent
          * activateSectionAfter.
          *
-         * @param {DetectWindow} thing
+         * @param thing   An activated SectionDetector.
          */
         FullScreenMario.prototype.activateSectionStretch = function (thing) {
             var FSM = thing.FSM, MapsCreator = FSM.MapsCreator, MapScreener = FSM.MapScreener, AreaSpawner = FSM.AreaSpawner, area = AreaSpawner.getArea(), map = AreaSpawner.getMap(), prethings = AreaSpawner.getPreThings(), section = area.sections[thing.section || 0], stretch = section.stretch ? section.stretch.creation : undefined, left = (thing.left + MapScreener.left) / FSM.unitsize, width = MapScreener.width / FSM.unitsize, command, i;
@@ -2092,7 +2083,7 @@ var FullScreenMario;
          * Activates the "after" component of a stretchable sectin. The creation
          * commands of the stretch are loaded onto the screen as is.
          *
-         * @param {DetectWindow} thing
+         * @param thing   An activated SectioNDetector.
          */
         FullScreenMario.prototype.activateSectionAfter = function (thing) {
             // Since the section was passed, do the rest of things normally
@@ -2127,7 +2118,7 @@ var FullScreenMario;
          * used repeatedly by ThingHittr to generate separately optimized Functions
          * for different Thing types.
          *
-         * @return {Function}
+         * @returns A Function that generates hitCharacterSolid.
          */
         FullScreenMario.prototype.generateHitCharacterSolid = function () {
             /**
@@ -2136,8 +2127,9 @@ var FullScreenMario;
              * normally involve the solid's collide callback being called and
              * under/undermid checks activating.
              *
-             * @param {Character} thing
-             * @param {Solid} other
+             * @param thing
+             * @param other
+             * @returns Whether thing is hitting other.
              */
             return function hitCharacterSolid(thing, other) {
                 // "Up" solids are special (they kill things that aren't their .up)
@@ -2166,7 +2158,7 @@ var FullScreenMario;
          * is used repeatedly by ThingHittr to generate separately optimized
          * Functions for different Thing types.
          *
-         * @return {Function}
+         * @returns A Function that generates hitCharacterCharacter.
          */
         FullScreenMario.prototype.generateHitCharacterCharacter = function () {
             /**
@@ -2174,11 +2166,12 @@ var FullScreenMario;
              * first Thing's collide callback is called unless it's a player, in
              * which the other Thing's is.
              *
-             * @param {Character} thing
-             * @param {Character} other
+             * @param thing
+             * @param other
+             * @returns Whether thing is hitting other.
              */
             return function hitCharacterCharacter(thing, other) {
-                // The player calls the other's collide function, such as playerStar
+                // a Player calls the other's collide function, such as playerStar
                 if (thing.player) {
                     if (other.collide) {
                         return other.collide(thing, other);
@@ -2194,8 +2187,8 @@ var FullScreenMario;
          * Collision callback used by most Items. The item's action callback will
          * be called only if the first Thing is a player.
          *
-         * @param {Thing} thing
-         * @param {Item} other
+         * @param thing   A Character touching other.
+         * @param other   An Item being touched by thing.
          */
         FullScreenMario.prototype.collideFriendly = function (thing, other) {
             if (!thing.player || !thing.FSM.isThingAlive(other)) {
@@ -2212,8 +2205,8 @@ var FullScreenMario;
          * the side (it should shouldn't overlap), or undernearth (it also shouldn't
          * overlap).
          *
-         * @param {Character} thing
-         * @param {Solid} other
+         * @param thing   A Character touching other.
+         * @param other   A Solid being touched by thing.
          */
         FullScreenMario.prototype.collideCharacterSolid = function (thing, other) {
             if (other.up === thing) {
@@ -2280,7 +2273,7 @@ var FullScreenMario;
                         thing.moveleft = !thing.moveleft;
                     }
                     // Some items require fancy versions (e.g. Shell)
-                    if (thing.group === "item") {
+                    if (thing.item) {
                         thing.collide(other, thing);
                     }
                 }
@@ -2295,8 +2288,8 @@ var FullScreenMario;
          * Collision callback for a character hitting an "up" solid. If it has an
          * onCollideUp callback, that is called; otherwise, it is killed.
          *
-         * @param {Character} thing
-         * @param {Solid} other
+         * @param thing   A Character touching other.
+         * @param other   A Solid being touched by thing.
          */
         FullScreenMario.prototype.collideCharacterSolidUp = function (thing, other) {
             if (thing.onCollideUp) {
@@ -2311,8 +2304,8 @@ var FullScreenMario;
          * Collision callback for an item hitting an "up" solid. Items just hop
          * and switch direction.
          *
-         * @param {Item} thing
-         * @param {Solid} other
+         * @param thing   An Item touching other.
+         * @param other   A Solid being touched by thing.
          */
         FullScreenMario.prototype.collideUpItem = function (thing, other) {
             thing.FSM.animateCharacterHop(thing);
@@ -2322,8 +2315,8 @@ var FullScreenMario;
          * Collision callback for a floating coin being hit by an "up" solid. It is
          * animated, as if it were hit as the contents of a solid.
          *
-         * @param {Coin} thing
-         * @param {Solid} other
+         * @param thing   A Coin being touched by other.
+         * @param other   A Solid touching thing.
          */
         FullScreenMario.prototype.collideUpCoin = function (thing, other) {
             thing.blockparent = other;
@@ -2334,8 +2327,8 @@ var FullScreenMario;
          * disappears but points and Coin totals are both increased, along with
          * the "Coin" sound being played.
          *
-         * @param {Player} thing
-         * @param {Coin} other
+         * @param thing   A Player touching other.
+         * @param other   A Coin being touched by thing.
          */
         FullScreenMario.prototype.collideCoin = function (thing, other) {
             if (!thing.player) {
@@ -2348,10 +2341,10 @@ var FullScreenMario;
         };
         /**
          * Collision callback for a player hitting a Star. The Star is killed, and
-         * the playerStarUp trigger is called on the Thing.
+         * a PlayerStarUp trigger is called on the Thing.
          *
-         * @param {Player} thing
-         * @param {Star} other
+         * @param thing   A Player touching other.
+         * @param other   A Star being touched by thing.
          */
         FullScreenMario.prototype.collideStar = function (thing, other) {
             if (!thing.player || thing.star) {
@@ -2365,12 +2358,11 @@ var FullScreenMario;
          * most likely be killed with an explosion unless it has the nofiredeath
          * flag, in which case only the fireball dies.
          *
-         * @param {Character} thing
-         * @param {Fireball} other
+         * @param thing   A Character being touched by other.
+         * @param other   A Fireball touching thing.
          */
         FullScreenMario.prototype.collideFireball = function (thing, other) {
-            if (!thing.FSM.isThingAlive(thing)
-                || thing.height < thing.FSM.unitsize) {
+            if (!thing.FSM.isThingAlive(thing) || thing.height < thing.FSM.unitsize) {
                 return;
             }
             if (thing.nofire) {
@@ -2394,8 +2386,8 @@ var FullScreenMario;
          * Collision callback for hitting a CastleFireball. The character is killed
          * unless it has the star flag, in which case the CastleFireball is.
          *
-         * @param {Character} thing
-         * @param {CastleFireball} other
+         * @param thing   A Character being touched by other.
+         * @param other   A CastleFireball touching thing.
          */
         FullScreenMario.prototype.collideCastleFireball = function (thing, other) {
             if (thing.star) {
@@ -2410,8 +2402,8 @@ var FullScreenMario;
          * cases, such as deaths, side-to-side Shell collisions, player stomps, and
          * so on.
          *
-         * @param {Character} thing
-         * @param {Shell} other
+         * @param thing   A Character touching other.
+         * @param other   A Shell being touched by thing.
          */
         FullScreenMario.prototype.collideShell = function (thing, other) {
             // If only one is a shell, it should be other, not thing
@@ -2425,7 +2417,7 @@ var FullScreenMario;
             if (thing.groupType === "Solid") {
                 return thing.FSM.collideShellSolid(thing, other);
             }
-            // Hitting the player
+            // Hitting a Player
             if (thing.player) {
                 return thing.FSM.collideShellPlayer(thing, other);
             }
@@ -2447,8 +2439,8 @@ var FullScreenMario;
          * Collision callback for a solid being hit by a Shell. The Shell will
          * bounce the opposition direction.
          *
-         * @param {Solid} thing
-         * @param {Shell} other
+         * @param thing   A Solid being touched by other.
+         * @param other   A Shell touching thing.
          */
         FullScreenMario.prototype.collideShellSolid = function (thing, other) {
             if (other.right < thing.right) {
@@ -2465,11 +2457,11 @@ var FullScreenMario;
             }
         };
         /**
-         * Collision callback for when the player hits a Shell. This covers all the
+         * Collision callback for when a Player hits a Shell. This covers all the
          * possible scenarios, and is much larger than common sense dictates.
          *
-         * @param {Player} thing
-         * @param {Shell} other
+         * @param thing   A Player touching other.
+         * @param other   A Shell being touched by thing.
          */
         FullScreenMario.prototype.collideShellPlayer = function (thing, other) {
             var shelltoleft = thing.FSM.objectToLeft(other, thing), playerjump = thing.yvel > 0 && (thing.bottom <= other.top + thing.FSM.unitsize * 2);
@@ -2479,7 +2471,7 @@ var FullScreenMario;
                 other.death(other, 2);
                 return;
             }
-            // If the shell is already being landed on by the player, see if it's
+            // If the shell is already being landed on by a Player, see if it's
             // still being pushed to the side, or has reversed direction (is deadly)
             if (other.landing) {
                 // Equal shelltoleft measurements: it's still being pushed
@@ -2500,7 +2492,7 @@ var FullScreenMario;
                 }
                 return;
             }
-            // If the shell is being kicked by the player, either by hitting a still
+            // If the shell is being kicked by a Player, either by hitting a still
             // shell or jumping onto an already moving one
             if (other.xvel === 0 || playerjump) {
                 // Reset any signs of peeking from the shell
@@ -2532,8 +2524,8 @@ var FullScreenMario;
                     other.height -= thing.FSM.unitsize / 8;
                     thing.FSM.updateSize(other);
                 }
-                // If the player is landing on the shell (with movements and xvels
-                // already set), the player should then jump up a bit
+                // If a Player is landing on the shell (with movements and xvels
+                // already set), a Player should then jump up a bit
                 if (playerjump) {
                     thing.FSM.AudioPlayer.play("Kick");
                     if (!other.xvel) {
@@ -2552,7 +2544,7 @@ var FullScreenMario;
                 }
             }
             else {
-                // Since the player is touching the shell normally, that's a death if
+                // Since a Player is touching the shell normally, that's a death if
                 // the shell isn't moving away
                 if (!other.hitcount && ((shelltoleft && other.xvel > 0)
                     || (!shelltoleft && other.xvel < 0))) {
@@ -2564,8 +2556,8 @@ var FullScreenMario;
          * Collision callback for two Shells. If one is moving, it kills the other;
          * otherwise, they bounce off.
          *
-         * @param {Shell} thing
-         * @param {Shell} other
+         * @param thing   A Shell touching other.
+         * @param other   A Shell being touched by thing.
          */
         FullScreenMario.prototype.collideShellShell = function (thing, other) {
             if (thing.xvel !== 0) {
@@ -2590,8 +2582,8 @@ var FullScreenMario;
          * Collision callback for a general character hitting an enemy. This covers
          * many general cases, most of which involve a player and an enemy.
          *
-         * @param {Character} thing
-         * @param {Enemy} other
+         * @param thing   A Character touching other.
+         * @param other   An Enemy being touched by thing.
          */
         FullScreenMario.prototype.collideEnemy = function (thing, other) {
             // If either is a player, make it thing (not other)
@@ -2599,12 +2591,11 @@ var FullScreenMario;
                 return thing.FSM.collideEnemy(thing, other);
             }
             // Death: nothing happens
-            if (!thing.FSM.isThingAlive(thing)
-                || !thing.FSM.isThingAlive(other)) {
+            if (!thing.FSM.isThingAlive(thing) || !thing.FSM.isThingAlive(other)) {
                 return;
             }
             // Items
-            if (thing.group === "item") {
+            if (thing.item) {
                 if (thing.collidePrimary) {
                     return thing.collide(other, thing);
                 }
@@ -2657,8 +2648,8 @@ var FullScreenMario;
          * players will kill solids that have the breakable flag on. If the solid
          * does jump and has contents, they emerge.
          *
-         * @param {Solid} thing
-         * @param {Character} other
+         * @param thing   A Brick being touched by other.
+         * @param other   A Character touching thing.
          */
         FullScreenMario.prototype.collideBottomBrick = function (thing, other) {
             if (other.solid && !thing.solid) {
@@ -2697,12 +2688,12 @@ var FullScreenMario;
             }
         };
         /**
-         * Collision callback for the player hitting the bottom of a Block. Unused
+         * Collision callback for a Player hitting the bottom of a Block. Unused
          * Blocks have their contents emerge (by default a Coin), while used Blocks
          * just have a small bump noise played.
          *
-         * @param {Solid} thing
-         * @param {Player} other
+         * @param thing   A Block being touched by other.
+         * @param other   A Player touching thing.
          */
         FullScreenMario.prototype.collideBottomBlock = function (thing, other) {
             if (other.solid && !thing.solid) {
@@ -2724,11 +2715,11 @@ var FullScreenMario;
             thing.FSM.TimeHandler.addEvent(thing.FSM.animateSolidContents, 7, thing, other);
         };
         /**
-         * Collision callback for Vines. The player becomes "attached" to the Vine
+         * Collision callback for Vines. A player becomes "attached" to the Vine
          * and starts climbing it, with movement set to movePlayerVine.
          *
-         * @param {Player} thing
-         * @param {Solid} other
+         * @param thing   A Player touching other.
+         * @param other   A Solid being touched by thing.
          */
         FullScreenMario.prototype.collideVine = function (thing, other) {
             if (!thing.player || thing.attachedSolid || thing.climbing) {
@@ -2756,7 +2747,7 @@ var FullScreenMario;
                 thing.attachedDirection = 1;
                 thing.FSM.flipHoriz(thing);
             }
-            thing.FSM.thingPauseVelocity(thing);
+            thing.FSM.animateCharacterPauseVelocity(thing);
             thing.FSM.addClass(thing, "climbing");
             thing.FSM.removeClasses(thing, "running", "jumping", "skidding");
             thing.FSM.TimeHandler.cancelClassCycle(thing, "running");
@@ -2767,11 +2758,11 @@ var FullScreenMario;
         };
         /**
          * Collision callback for a character hitting a Springboard. This acts as a
-         * normal solid to non-players, and only acts as a spring if the player is
+         * normal solid to non-players, and only acts as a spring if a Player is
          * above it and moving down.
          *
-         * @param {Character} thing
-         * @param {Springboard} other
+         * @param thing   A Character touching other.
+         * @param other   A Springboard being touched by thing.
          */
         FullScreenMario.prototype.collideSpringboard = function (thing, other) {
             if (thing.player && thing.yvel >= 0 && !other.tension
@@ -2789,8 +2780,8 @@ var FullScreenMario;
          * Collision callback for a character hitting a WaterBlocker on the top of
          * an underwater area. It simply stops them from moving up.
          *
-         * @param {Character} thing
-         * @param {WaterBlocker} other
+         * @param thing   A Character touching other.
+         * @param other   A WaterBlocker being touched by thing.
          */
         FullScreenMario.prototype.collideWaterBlocker = function (thing, other) {
             thing.FSM.collideCharacterSolid(thing, other);
@@ -2799,8 +2790,8 @@ var FullScreenMario;
          * Collision callback for the DetectCollision on a flagpole at the end of an
          * EndOutsideCastle. The Flagpole cutscene is started.
          *
-         * @param {Player} thing
-         * @param {DetectCollision} other
+         * @param thing   A Player touching other.
+         * @param other   A DetectCollision being touched by thing.
          */
         FullScreenMario.prototype.collideFlagpole = function (thing, other) {
             if (thing.bottom > other.bottom) {
@@ -2812,12 +2803,12 @@ var FullScreenMario;
             });
         };
         /**
-         * Collision callback for the player hitting a CastleAxe. The player and
+         * Collision callback for a Player hitting a CastleAxe. A player and
          * screen are paused for 140 steps (other callbacks should be animating
          * the custcene).
          *
-         * @param {Player} thing
-         * @param {CastleAxe} other
+         * @param thing   A Player touching other.
+         * @param other   A CastleAxe being touched by thing.
          */
         FullScreenMario.prototype.collideCastleAxe = function (thing, other) {
             if (!thing.FSM.MathDecider.compute("canPlayerTouchCastleAxe", thing, other)) {
@@ -2834,8 +2825,8 @@ var FullScreenMario;
          * to cutscene settings. Infinite time goes directly to the Fireworks
          * routine, while having non-infinite time goes to the Countdown routine.
          *
-         * @param {Player} thing
-         * @param {DetectCollision} other
+         * @param thing   A Player touching other.
+         * @param other   A DetectCollision being touched by thing.
          */
         FullScreenMario.prototype.collideCastleDoor = function (thing, other) {
             thing.FSM.killNormal(thing);
@@ -2858,8 +2849,8 @@ var FullScreenMario;
          * the NPC's keys are added to cutscene settings, and the Dialog routine
          * is played.
          *
-         * @param {Player} thing
-         * @param {DetectCollision} other
+         * @param thing   A Player touching other.
+         * @param other   A DetectCollision being touched by thing.
          */
         FullScreenMario.prototype.collideCastleNPC = function (thing, other) {
             var keys = other.collection.npc.collectionKeys;
@@ -2870,12 +2861,12 @@ var FullScreenMario;
         };
         /**
          * Collision callback for a player hitting the transportation Platform in
-         * cloud worlds. The player collides with it as normal for solids, but if
-         * the player is then resting on it, it becomes a normal moving platform
+         * cloud worlds. A player collides with it as normal for solids, but if
+         * a Player is then resting on it, it becomes a normal moving platform
          * with only horizontal momentum.
          *
-         * @param {Player} thing
-         * @param {Solid} other
+         * @param thing   A Player touching other.
+         * @param other   A Solid being touched by thing.
          */
         FullScreenMario.prototype.collideTransport = function (thing, other) {
             if (!thing.player) {
@@ -2895,8 +2886,8 @@ var FullScreenMario;
          * activateFail may be activated. The DetectCollision is then killed if it
          * doesn't have the noActivateDeath flag.
          *
-         * @param {Thing} thing
-         * @param {DetectCollision} other
+         * @param thing   A Character touching other.
+         * @param other   A DetectCollision being touched by thing.
          */
         FullScreenMario.prototype.collideDetector = function (thing, other) {
             if (!thing.player) {
@@ -2915,14 +2906,14 @@ var FullScreenMario;
          * attribute). Depending on the transport, either the map or location are
          * shifted to it.
          *
-         * @param {Player} thing
-         * @param {Thing} other
+         * @param thing   A Player touching other.
+         * @param other   A Solid being touched by thing.
          */
         FullScreenMario.prototype.collideLevelTransport = function (thing, other) {
-            var transport = other.transport;
             if (!thing.player) {
                 return;
             }
+            var transport = other.transport;
             if (typeof transport === "undefined") {
                 throw new Error("No transport given to collideLevelTransport");
             }
@@ -2951,13 +2942,13 @@ var FullScreenMario;
          * at a constant rate in either the x or y direction, and switches direction
          * only if directed by the engine (e.g. when it hits a Solid)
          *
-         * @param {Character} thing
+         * @param thing   A Character that should move.
          * @remarks thing.speed is the only required member attribute; .direction
          *          and .moveleft should be set by the game engine.
          */
         FullScreenMario.prototype.moveSimple = function (thing) {
             // If the thing is looking away from the intended direction, flip it
-            if (thing.direction !== thing.moveleft) {
+            if (thing.direction !== (thing.moveleft ? 1 : 0)) {
                 // thing.moveleft is truthy: it should now be looking to the right
                 if (thing.moveleft) {
                     thing.xvel = -thing.speed;
@@ -2972,14 +2963,14 @@ var FullScreenMario;
                         thing.FSM.flipHoriz(thing);
                     }
                 }
-                thing.direction = thing.moveleft;
+                thing.direction = thing.moveleft ? 1 : 0;
             }
         };
         /**
          * Extension of the moveSimple movement Function for Things that shouldn't
          * fall off the edge of their resting blocks
          *
-         * @param {Character} thing
+         * @param thing   A Character that should move.
          */
         FullScreenMario.prototype.moveSmart = function (thing) {
             // Start off by calling moveSimple for normal movement
@@ -2997,25 +2988,13 @@ var FullScreenMario;
                 }
                 thing.moveleft = !thing.moveleft;
             }
-            // // Check for being over the edge in the direction of movement
-            // if (thing.moveleft) {
-            // if (thing.left + thing.FSM.unitsize <= thing.resting.left) {
-            // thing.FSM.shiftHoriz(thing, thing.FSM.unitsize);
-            // thing.moveleft = false;
-            // }
-            // } else {
-            // if (thing.right - thing.FSM.unitsize >= thing.resting.right) {
-            // thing.FSM.shiftHoriz(thing, -thing.FSM.unitsize);
-            // thing.moveleft = true;
-            // }
-            // }
         };
         /**
          * Extension of the moveSimple movement Function for Things that should
          * jump whenever they start resting.
          *
-         * @param {Character} thing
-         * @remarks thing.jumpheight is required to know how high to jump
+         * @param thing   A Character that should move.
+         * @remarks thing.jumpheight is required to know how high to jump.
          */
         FullScreenMario.prototype.moveJumping = function (thing) {
             // Start off by calling moveSimple for normal movement
@@ -3027,11 +3006,11 @@ var FullScreenMario;
             }
         };
         /**
-         * Movement Function for Things that slide back and forth, such as
+         * Movement Function for Characters that slide back and forth, such as
          * HammerBros and Lakitus.
          *
-         * @remarks thing.counter must be a number set elsewhere, such as in a spawn
-         *          Function.
+         * @param thing   A HammerBro or Lakitu that should move.
+         * @remarks thing.counter must be set elsewhere, such as during spawning.
          */
         FullScreenMario.prototype.movePacing = function (thing) {
             thing.counter += .007;
@@ -3042,7 +3021,7 @@ var FullScreenMario;
          * player, and have the nocollidesolid flag if they're jumping up or
          * intentionally falling through a solid.
          *
-         * @param {HammerBro} thing
+         * @param thing   A HammerBro that should move.
          */
         FullScreenMario.prototype.moveHammerBro = function (thing) {
             thing.FSM.movePacing(thing);
@@ -3050,11 +3029,11 @@ var FullScreenMario;
             thing.nocollidesolid = thing.yvel < 0 || thing.falling;
         };
         /**
-         * Movement Function for Bowser. Bowser always faces the player and
-         * movePaces if he's to the right of the player, or moves to the right if
+         * Movement Function for Bowser. Bowser always faces a Player and
+         * movePaces if he's to the right of a Player, or moves to the right if
          * he's to the left.
          *
-         * @param {Bowser} thing
+         * @param thing   A Bowser that should move.
          */
         FullScreenMario.prototype.moveBowser = function (thing) {
             // Facing to the right
@@ -3065,7 +3044,7 @@ var FullScreenMario;
                 }
                 else {
                     // To the right of player: look to the left and movePacing as normal
-                    thing.lookleft = thing.moveleft = true;
+                    thing.moveleft = thing.lookleft = true;
                     thing.FSM.unflipHoriz(thing);
                     thing.FSM.movePacing(thing);
                 }
@@ -3074,12 +3053,12 @@ var FullScreenMario;
                 // Facing to the left
                 // To the left of player: look and walk to the right
                 if (thing.FSM.objectToLeft(thing, thing.FSM.player)) {
-                    thing.lookleft = thing.moveleft = false;
+                    thing.moveleft = thing.lookleft = false;
                     thing.FSM.flipHoriz(thing);
                     thing.FSM.moveSimple(thing);
                 }
                 else {
-                    // To the right of the player: movePacing as normal
+                    // To the right of a Player: movePacing as normal
                     thing.FSM.movePacing(thing);
                 }
             }
@@ -3090,7 +3069,7 @@ var FullScreenMario;
          * velocity from this Function; otherwise, it shifts its vertical
          * position to move to the ylev.
          *
-         * @param {BowserFire} thing
+         * @param thing   A BowserFire that should move.
          */
         FullScreenMario.prototype.moveBowserFire = function (thing) {
             if (Math.round(thing.bottom) === Math.round(thing.ylev)) {
@@ -3104,7 +3083,7 @@ var FullScreenMario;
          * If the Thing has reached thing.begin or thing.end, it gradually switches
          * thing.yvel
          *
-         * @param {Thing} thing
+         * @param thing   A Thing that should move.
          * @remarks thing.maxvel is used as the maximum absolute speed vertically
          * @remarks thing.begin and thing.end are used as the vertical endpoints;
          *          .begin is the bottom and .end is the top (since begin <= end)
@@ -3118,7 +3097,7 @@ var FullScreenMario;
                 // If below the endpoint:
                 thing.yvel = Math.max(thing.yvel - thing.FSM.unitsize / 64, -thing.maxvel);
             }
-            // Deal with velocities and whether the player is resting on this
+            // Deal with velocities and whether a Player is resting on this
             thing.FSM.movePlatform(thing);
         };
         /**
@@ -3126,7 +3105,7 @@ var FullScreenMario;
          * If the Thing has reached thing.begin or thing.end, it gradually switches
          * thing.xvel.
          *
-         * @param {Thing} thing
+         * @param thing   A Thing that should move.
          * @remarks thing.maxvel is used as the maximum absolute speed horizontally
          * @remarks thing.begin and thing.end are used as the horizontal endpoints;
          *          .begin is the left and .end is the right (since begin <= end)
@@ -3140,14 +3119,14 @@ var FullScreenMario;
                 // If to the right of the endpoint:
                 thing.xvel = Math.max(thing.xvel - thing.FSM.unitsize / 64, -thing.maxvel);
             }
-            // Deal with velocities and whether the player is resting on this
+            // Deal with velocities and whether a Player is resting on this
             thing.FSM.movePlatform(thing);
         };
         /**
          * Ensures thing.begin <= thing.end (so there won't be glitches pertaining
          * to them in functions like moveFloating and moveSliding
          *
-         * @param {Thing} thing
+         * @param thing   A spawning Thing that needs its movement endpoings set.
          */
         FullScreenMario.prototype.setMovementEndpoints = function (thing) {
             if (thing.begin > thing.end) {
@@ -3163,16 +3142,16 @@ var FullScreenMario;
          * velocities, and checks for whether a Thing is resting on it (if so,
          * the Thing is accordingly).
          *
-         * @param {Thing} thing
+         * @param thing   A Platform that should move.
          */
         FullScreenMario.prototype.movePlatform = function (thing) {
             thing.FSM.shiftHoriz(thing, thing.xvel);
             thing.FSM.shiftVert(thing, thing.yvel);
-            // If the player is resting on this and this is alive, move the player
+            // If a Player is resting on this and this is alive, move a Player
             if (thing === thing.FSM.player.resting && thing.FSM.player.alive) {
                 thing.FSM.setBottom(thing.FSM.player, thing.top);
                 thing.FSM.shiftHoriz(thing.FSM.player, thing.xvel);
-                // If the player is too far to the right or left, stop that overlap
+                // If a Player is too far to the right or left, stop that overlap
                 if (thing.FSM.player.right > thing.FSM.MapScreener.width) {
                     thing.FSM.setRight(thing.FSM.player, thing.FSM.MapScreener.width);
                 }
@@ -3186,7 +3165,7 @@ var FullScreenMario;
          * have the typical movePlatform applied to them, but if they reach the
          * bottom or top of the screen, they are shifted to the opposite side.
          *
-         * @param {Platform} thing
+         * @param thing   A Platform that should move.
          */
         FullScreenMario.prototype.movePlatformSpawn = function (thing) {
             if (thing.bottom < 0) {
@@ -3209,17 +3188,17 @@ var FullScreenMario;
          * player. Being rested upon means the Platform falls; when it reaches a
          * terminal velocity, it switches to moveFreeFalling forever.
          *
-         * @param {Platform} thing
+         * @param thing   A Platform that should move.
          */
         FullScreenMario.prototype.moveFalling = function (thing) {
-            // If the player isn't resting on this thing (any more?), ignore it
+            // If a Player isn't resting on this thing (any more?), ignore it
             if (thing.FSM.player.resting !== thing) {
-                // Since the player might have been on this thing but isn't anymore, 
+                // Since a Player might have been on this thing but isn't anymore, 
                 // set the yvel to 0 just in case
                 thing.yvel = 0;
                 return;
             }
-            // Since the player is on this thing, start falling more
+            // Since a Player is on this thing, start falling more
             thing.FSM.shiftVert(thing, thing.yvel += thing.FSM.unitsize / 8);
             thing.FSM.setBottom(thing.FSM.player, thing.top);
             // After a velocity threshold, start always falling
@@ -3234,14 +3213,14 @@ var FullScreenMario;
          * accelerate towards certain death until another velocity threshold,
          * and then switches to movePlatform to remain at that rate.
          *
-         * @param {Platform} thing
+         * @param thing   A Platform that should move.
          */
         FullScreenMario.prototype.moveFreeFalling = function (thing) {
             // Accelerate downwards, increasing the thing's y-velocity
             thing.yvel += thing.acceleration || thing.FSM.unitsize / 16;
             thing.FSM.shiftVert(thing, thing.yvel);
             // After a velocity threshold, stop accelerating
-            if (thing.yvel >= (thing.fallThresholdEnd || thing.FSM.unitsize * 2)) {
+            if (thing.yvel >= (thing.fallThresholdEnd || thing.FSM.unitsize * 2.1)) {
                 thing.movement = thing.FSM.movePlatform;
             }
         };
@@ -3253,16 +3232,15 @@ var FullScreenMario;
          * "partner" in the other vertical direction. When the Platform is too far
          * down (visually has no string left), they both fall.
          *
-         * @param {Platform} thing
-         * @todo Implement this! See #146.
+         * @param thing   A Platform that should move.
          */
         FullScreenMario.prototype.movePlatformScale = function (thing) {
-            // If the Player is resting on this, fall hard
+            // If a Player is resting on this, fall hard
             if (thing.FSM.player.resting === thing) {
                 thing.yvel += thing.FSM.unitsize / 16;
             }
             else if (thing.yvel > 0) {
-                // If this still has velocity from a player, stop or fall less
+                // If this still has velocity from a Player, stop or fall less
                 if (!thing.partners) {
                     thing.yvel = 0;
                 }
@@ -3301,7 +3279,7 @@ var FullScreenMario;
          * undefined. If there is an attached Thing, it is moved up at the same rate
          * as the Vine.
          *
-         * @param {Vine} thing
+         * @param thing   A Vine that should move.
          */
         FullScreenMario.prototype.moveVine = function (thing) {
             thing.FSM.increaseHeight(thing, thing.speed);
@@ -3316,10 +3294,10 @@ var FullScreenMario;
         /**
          * Movement Function for Springboards that are "pushing up" during or after
          * being hit by a player. The Springboard changes its height based on its
-         * tension. If the player is still on it, then the player is given extra
+         * tension. If a Player is still on it, then a Player is given extra
          * vertical velocity and taken off.
          *
-         * @param {Springboard} thing
+         * @param thing   A Springboard that should move.
          */
         FullScreenMario.prototype.moveSpringboardUp = function (thing) {
             var player = thing.FSM.player;
@@ -3353,7 +3331,7 @@ var FullScreenMario;
          * shell is "peeking" visually; when it reaches 490, the Shell spawns back
          * into its original spawner (typically Koopa or Beetle).
          *
-         * @param {Shell} thing
+         * @param thing   A Shell that should move.
          */
         FullScreenMario.prototype.moveShell = function (thing) {
             if (thing.xvel !== 0) {
@@ -3382,7 +3360,7 @@ var FullScreenMario;
          * point they switch to movePiranhaLatent to wait to move in the opposite
          * direction.
          *
-         * @param {Piranha} thing
+         * @param thing   A Piranha that should move.
          */
         FullScreenMario.prototype.movePiranha = function (thing) {
             var bottom = thing.bottom, height = thing.height + thing.direction, atEnd = false;
@@ -3415,7 +3393,7 @@ var FullScreenMario;
          * until a counter reaches a point (and then, if their height is 0, for the
          * player to go away) to switch back to movePiranha.
          *
-         * @param {Piranha} thing
+         * @param thing   A Piranha that should move.
          */
         FullScreenMario.prototype.movePiranhaLatent = function (thing) {
             var playerX = thing.FSM.getMidX(thing.FSM.player);
@@ -3437,11 +3415,10 @@ var FullScreenMario;
          * Movement Function for the Bubbles that come out of a player's mouth
          * underwater. They die when they reach a top threshold of unitsize * 16.
          *
-         * @param {Bubble} thing
+         * @param thing   A Thing that should move.
          */
         FullScreenMario.prototype.moveBubble = function (thing) {
-            if (thing.top < (thing.FSM.MapScreener.top
-                + thing.FSM.unitsize * 16)) {
+            if (thing.top < (thing.FSM.MapScreener.top + thing.FSM.unitsize * 16)) {
                 thing.FSM.killNormal(thing);
             }
         };
@@ -3450,13 +3427,12 @@ var FullScreenMario;
          * move according to their native velocities except that they cannot travel
          * above the unitsize * 16 top threshold.
          *
-         * @param {CheepCheep} thing
+         * @param thing   A CheepCheep that should move.
          */
         FullScreenMario.prototype.moveCheepCheep = function (thing) {
             if (thing.top < thing.FSM.unitsize * 16) {
                 thing.FSM.setTop(thing, thing.FSM.unitsize * 16);
                 thing.yvel *= -1;
-                return;
             }
         };
         /**
@@ -3464,7 +3440,7 @@ var FullScreenMario;
          * lose a movement Function (and therefore just fall) at a unitsize * 28 top
          * threshold.
          *
-         * @param {CheepCheep} thing
+         * @param thing   A CheepCheep that should move.
          */
         FullScreenMario.prototype.moveCheepCheepFlying = function (thing) {
             if (thing.top < thing.FSM.unitsize * 28) {
@@ -3477,10 +3453,10 @@ var FullScreenMario;
          * down) and moving up ("unsqueezing"). They always try to unsqueeze if the
          * player is above them.
          *
-         * @param {Blooper} thing
+         * @param thing   A Blooper that should move.
          */
         FullScreenMario.prototype.moveBlooper = function (thing) {
-            // If the player is dead, just drift aimlessly
+            // If a Player is dead, just drift aimlessly
             if (!thing.FSM.isThingAlive(thing.FSM.player)) {
                 thing.xvel = thing.FSM.unitsize / -4;
                 thing.yvel = 0;
@@ -3512,13 +3488,11 @@ var FullScreenMario;
                 thing.FSM.shiftVert(thing, thing.yvel, true);
             }
             if (!thing.squeeze) {
-                if (thing.FSM.player.left
-                    > thing.right + thing.FSM.unitsize * 8) {
+                if (thing.FSM.player.left > thing.right + thing.FSM.unitsize * 8) {
                     // Go to the right
                     thing.xvel = Math.min(thing.speed, thing.xvel + thing.FSM.unitsize / 32);
                 }
-                else if (thing.FSM.player.right
-                    < thing.left - thing.FSM.unitsize * 8) {
+                else if (thing.FSM.player.right < thing.left - thing.FSM.unitsize * 8) {
                     // Go to the left
                     thing.xvel = Math.max(-thing.speed, thing.xvel - thing.FSM.unitsize / 32);
                 }
@@ -3529,7 +3503,7 @@ var FullScreenMario;
          * Bloopers travel downard at a gradual pace until they reach either the
          * player's bottom or a threshold of unitsize * 90.
          *
-         * @param {Blooper} thing
+         * @param thing   A Blooper that should move.
          */
         FullScreenMario.prototype.moveBlooperSqueezing = function (thing) {
             if (thing.squeeze !== 2) {
@@ -3544,8 +3518,7 @@ var FullScreenMario;
                 thing.xvel = 0;
             }
             thing.squeeze += 1;
-            if (thing.top > thing.FSM.player.bottom
-                || thing.bottom > thing.FSM.unitsize * 91) {
+            if (thing.top > thing.FSM.player.bottom || thing.bottom > thing.FSM.unitsize * 91) {
                 thing.FSM.animateBlooperUnsqueezing(thing);
             }
         };
@@ -3555,7 +3528,7 @@ var FullScreenMario;
          * use this to determine when they should stop accelerating downward, which
          * is their starting location.
          *
-         * @param {Podoboo} thing
+         * @param thing   A Podoboo that should move.
          */
         FullScreenMario.prototype.movePodobooFalling = function (thing) {
             if (thing.top >= thing.starty) {
@@ -3572,19 +3545,19 @@ var FullScreenMario;
             if (!thing.flipVert && thing.yvel > 0) {
                 thing.FSM.flipVert(thing);
             }
-            thing.yvel += thing.acceleration;
+            thing.yvel += thing.gravity;
         };
         /**
          * Movement Function for Lakitus that have finished their moveLakituInitial
          * run. This is similar to movePacing in that it makes the Lakitu pace to
-         * left and right of the player, and moves with the player rather than the
+         * left and right of a Player, and moves with a Player rather than the
          * scrolling window.
          *
-         * @param {Lakitu} thing
+         * @param thing   A Lakitu that should move.
          */
         FullScreenMario.prototype.moveLakitu = function (thing) {
             var player = thing.FSM.player;
-            // If the player is moving quickly to the right, move in front and stay there
+            // If a Player is moving quickly to the right, move in front and stay there
             if (player.xvel > thing.FSM.unitsize / 8
                 && player.left > thing.FSM.MapScreener.width / 2) {
                 if (thing.left < player.right + thing.FSM.unitsize * 16) {
@@ -3600,10 +3573,10 @@ var FullScreenMario;
         };
         /**
          * Initial entry movement Function for Lakitus. They enter by sliding across
-         * the top of the screen until they reach the player, and then switch to
+         * the top of the screen until they reach a Player, and then switch to
          * their standard moveLakitu movement.
          *
-         * @param {Lakitu} thing
+         * @param thing   A Lakitu that should move.
          */
         FullScreenMario.prototype.moveLakituInitial = function (thing) {
             if (thing.right < thing.FSM.player.left) {
@@ -3615,11 +3588,11 @@ var FullScreenMario;
             thing.FSM.shiftHoriz(thing, -thing.FSM.unitsize);
         };
         /**
-         * Alternate movement Function for Lakitus. This is used when the player
+         * Alternate movement Function for Lakitus. This is used when a Player
          * reaches the ending flagpole in a level and the Lakitu just flies to the
          * left.
          *
-         * @param {Lakitu} thing
+         * @param thing   A Lakitu that should move.
          */
         FullScreenMario.prototype.moveLakituFleeing = function (thing) {
             thing.FSM.shiftHoriz(thing, -thing.FSM.unitsize);
@@ -3628,8 +3601,8 @@ var FullScreenMario;
          * Movement Function for Coins that have been animated. They move based on
          * their yvel, and if they have a parent, die when they go below the parent.
          *
-         * @param {Coin} thing
-         * @param {Solid} [parent]
+         * @param thing   A Coin that should move up.
+         * @param parent   A parent Solid spawning thing.
          */
         FullScreenMario.prototype.moveCoinEmerge = function (thing, parent) {
             thing.FSM.shiftVert(thing, thing.yvel);
@@ -3638,11 +3611,11 @@ var FullScreenMario;
             }
         };
         /**
-         * Movement Function for the player. It reacts to almost all actions that
+         * Movement Function for a Player. It reacts to almost all actions that
          * to be done, but is horribly written so that is all the documentation you
          * get here. Sorry! Sections are labeled on the inside.
          *
-         * @param {Player} thing
+         * @param thing   A player that should move.
          */
         FullScreenMario.prototype.movePlayer = function (thing) {
             // Not jumping
@@ -3774,7 +3747,7 @@ var FullScreenMario;
          * Alternate movement Function for players attached to a Vine. They may
          * climb up or down the Vine, or jump off.
          *
-         * @param {Player} thing
+         * @param thing   A Player that should move.
          */
         FullScreenMario.prototype.movePlayerVine = function (thing) {
             var attachedSolid = thing.attachedSolid, animatedClimbing;
@@ -3799,7 +3772,7 @@ var FullScreenMario;
                 thing.FSM.unattachPlayer(thing, attachedSolid);
                 return;
             }
-            // If the player is moving up, simply move up
+            // If a Player is moving up, simply move up
             if (thing.keys.up) {
                 animatedClimbing = true;
                 thing.FSM.shiftVert(thing, thing.FSM.unitsize / -4);
@@ -3829,15 +3802,15 @@ var FullScreenMario;
         };
         /**
          * Movement Function for players pressing down onto a Springboard. This does
-         * basically nothing except check for when the player is off the spring or
-         * the spring is fully contracted. The former restores the player's movement
+         * basically nothing except check for when a Player is off the spring or
+         * the spring is fully contracted. The former restores a Player's movement
          * and the latter clears it (to be restored in moveSpringboardUp).
          *
-         * @param {Player} thing
+         * @param thing   A Player that should move.
          */
         FullScreenMario.prototype.movePlayerSpringboardDown = function (thing) {
             var other = thing.spring;
-            // If the player has moved off the spring, get outta here
+            // If a Player has moved off the spring, get outta here
             if (!thing.FSM.isThingTouchingThing(thing, other)) {
                 thing.movement = thing.FSM.movePlayer;
                 other.movement = thing.FSM.moveSpringboardUp;
@@ -3867,7 +3840,7 @@ var FullScreenMario;
          * Animates a solid that has just had its bottom "bumped" by a player. It
          * moves with a dx that is initially negative (up) and increases (to down).
          *
-         * @param {Solid} thing
+         * @param thing   A Solid being bumped.
          */
         FullScreenMario.prototype.animateSolidBump = function (thing) {
             var dx = -3;
@@ -3884,7 +3857,7 @@ var FullScreenMario;
         /**
          * Animates a Block to switch from unused to used.
          *
-         * @param {Block} thing
+         * @param thing   A Block that is now marked as used.
          */
         FullScreenMario.prototype.animateBlockBecomesUsed = function (thing) {
             thing.used = true;
@@ -3895,19 +3868,16 @@ var FullScreenMario;
          * contents is spawned directly on top of (visually behind) the solid, and
          * has its animate callback triggered.
          *
-         * @param {Solid} thing
-         * @param {Player} other
+         * @param thing   A Solid whose contents are coming out.
+         * @param other   A Playe triggering the Solid contents.
          * @remarks If the contents are "Mushroom" and a large player hits the
          *          solid, they turn into "FireFlower".
-         * @remarks For the level editor, if thing.contents is false, the prototype
-         *          is tried (so false becomes Coin in Blocks).
+         * @remarks For level editors, if thing.contents is falsy, the prototype
+         *          is tried (so nothing becomes Coin in Blocks).
          */
         FullScreenMario.prototype.animateSolidContents = function (thing, other) {
             var output;
-            if (other
-                && other.player
-                && other.power > 1
-                && thing.contents === "Mushroom") {
+            if (other && other.player && other.power > 1 && thing.contents === "Mushroom") {
                 thing.contents = "FireFlower";
             }
             output = thing.FSM.addThing(thing.contents || thing.constructor.prototype.contents);
@@ -3921,7 +3891,7 @@ var FullScreenMario;
          * Animates a Brick turning into four rotating shards flying out of it. The
          * shards have an initial x- and y-velocities, and die after 70 steps.
          *
-         * @param {Brick} thing
+         * @param thing   A destroyed Brick to be animated.
          */
         FullScreenMario.prototype.animateBrickShards = function (thing) {
             var unitsize = thing.FSM.unitsize, shard, left, top, i;
@@ -3940,8 +3910,8 @@ var FullScreenMario;
          * they're off the solid, at which point they revert to their normal
          * movement.
          *
-         * @param {Character} thing
-         * @param {Solid} other
+         * @param thing   A Character emerging from other.
+         * @param other   A Solid that thing is emerging from.
          */
         FullScreenMario.prototype.animateEmerge = function (thing, other) {
             thing.nomove = thing.nocollide = thing.nofall = thing.alive = true;
@@ -3983,8 +3953,8 @@ var FullScreenMario;
          * moves up then down then dies, plays the "Coin" sound, and increaes the
          * "coins" and "score" statistics.
          *
-         * @param {Coin} thing
-         * @param {Solid} other
+         * @param thing   A Coin emerging from other.
+         * @param other   A Solid thing is emerging from.
          */
         FullScreenMario.prototype.animateEmergeCoin = function (thing, other) {
             thing.nocollide = thing.alive = thing.nofall = true;
@@ -4014,8 +3984,8 @@ var FullScreenMario;
          * as normal via moveVine for 700 steps, then has its movement erased to
          * stop.
          *
-         * @param {Vine} thing
-         * @param {Solid} solid
+         * @param thing   A Vine emerging from other.
+         * @param other   A Solid thing is emerging from.
          */
         FullScreenMario.prototype.animateEmergeVine = function (thing, solid) {
             // This allows the thing's movement to keep it on the solid
@@ -4033,11 +4003,9 @@ var FullScreenMario;
          * Animates a "flicker" effect on a Thing by repeatedly toggling its hidden
          * flag for a little while.
          *
-         * @param {Thing} thing
-         * @param {Number} [cleartime]   How long to wait to stop the effect (by
-         *                               default, 49).
-         * @param {Number} [interval]   How many steps between hidden toggles (by
-         *                              default, 2).
+         * @param thing   A Thing switching between hidden and visible.
+         * @param cleartime   How long to wait to stop the effect (by default, 49).
+         * @param interval   How many steps between hidden toggles (by default, 2).
          */
         FullScreenMario.prototype.animateFlicker = function (thing, cleartime, interval) {
             cleartime = Math.round(cleartime) || 49;
@@ -4057,11 +4025,10 @@ var FullScreenMario;
          * switches to the "throwing" class, waits and throws a few repeats, then
          * goes back to normal.
          *
-         * @param {HammerBro} thing
-         * @param {Number} count   How many times left there are to throw a hammer.
-         *                         If equal to 3, a hammer will not be thrown (to
-         *                         mimic the pause in the original game).
-         * @remarks This could probably be re-written.
+         * @param thing   A HammerBro throwing hammers.
+         * @param count   How many times left there are to throw a hammer. If equal
+         *                to 3, a hammer will not be thrown (to mimic the pause in
+         *                the original game).
          */
         FullScreenMario.prototype.animateThrowingHammer = function (thing, count) {
             if (!thing.FSM.isThingAlive(thing)) {
@@ -4084,7 +4051,7 @@ var FullScreenMario;
                     thing.FSM.TimeHandler.addEvent(thing.FSM.animateThrowingHammer, 70, thing, 7);
                     thing.FSM.removeClass(thing, "thrown");
                 }
-                // Don't throw if the player is dead, or this is too far to the left
+                // Don't throw if a Player is dead, or this is too far to the left
                 if (!thing.FSM.isThingAlive(thing.FSM.player) || thing.right < thing.FSM.unitsize * -32) {
                     thing.FSM.switchClass(thing, "throwing", "thrown");
                     return;
@@ -4107,14 +4074,15 @@ var FullScreenMario;
         };
         /**
          * Animation Function for when Bowser jumps. This will only trigger if he is
-         * facing left and a player exists. If either Bowser or the player die, it
+         * facing left and a player exists. If either Bowser or a Player die, it
          * is cancelled. He is given a negative yvel to jump, and the nocollidesolid
          * flag is enabled as long as he is rising.
          *
-         * @param {Bowser} thing
+         * @param thing   A Bowser about to jump.
+         * @returns Whether to stop the event interval occasionally triggering this.
          */
         FullScreenMario.prototype.animateBowserJump = function (thing) {
-            if (!thing.lookleft || !thing.FSM.player || !thing.FSM.isThingAlive(thing.FSM.player)) {
+            if (!thing.lookleft || !thing.FSM.isThingAlive(thing.FSM.player)) {
                 return false;
             }
             if (!thing.FSM.isThingAlive(thing)) {
@@ -4135,14 +4103,15 @@ var FullScreenMario;
         };
         /**
          * Animation Function for when Bowser fires. This will only trigger if he is
-         * facing left and a player exists. If either Bowser or the player die, it
+         * facing left and a player exists. If either Bowser or a Player die, it
          * is cancelled. His mouth is closed and an animateBowserFireOpen call is
          * scheduled to complete the animation.
          *
-         * @param {Bowser} thing
+         * @param thing   A Bowser about to fire.
+         * @returns Whether to stop the event interval occasionally triggering this.
          */
         FullScreenMario.prototype.animateBowserFire = function (thing) {
-            if (!thing.lookleft || !thing.FSM.player || !thing.FSM.isThingAlive(thing.FSM.player)) {
+            if (!thing.lookleft || !thing.FSM.isThingAlive(thing.FSM.player)) {
                 return false;
             }
             if (!thing.FSM.isThingAlive(thing)) {
@@ -4158,9 +4127,10 @@ var FullScreenMario;
         /**
          * Animation Function for when Bowser actually fires. A BowserFire Thing is
          * placed at his mouth, given a (rounded to unitsize * 8) destination y, and
-         * sent firing to the player.
+         * sent firing to a Player.
          *
-         * @param {Bowser} thing
+         * @param thing   A Bowser opening its mouth.
+         * @returns Whether to stop the event interval occasionally triggering this.
          */
         FullScreenMario.prototype.animateBowserFireOpen = function (thing) {
             var unitsize = thing.FSM.unitsize, ylev = Math.max(-thing.height * unitsize, Math.round(thing.FSM.player.bottom / (unitsize * 8))
@@ -4180,7 +4150,8 @@ var FullScreenMario;
          * before being thrown in the direction Bowser is facing (though it will
          * only be added if facing left).
          *
-         * @param {Bowser} thing
+         * @param thing   A Bowser about to throw a hammer.
+         * @returns Whether to stop the event interval occasionally triggering this.
          */
         FullScreenMario.prototype.animateBowserThrow = function (thing) {
             if (!thing.lookleft || !thing.FSM.player || !thing.FSM.isThingAlive(thing.FSM.player)) {
@@ -4215,11 +4186,11 @@ var FullScreenMario;
             return false;
         };
         /**
-         * Animation Function for when Bowser freezes upon the player hitting a
+         * Animation Function for when Bowser freezes upon a Player hitting a
          * CastleAxe. Velocity and movement are paused, and the Bowser is added to
          * the current cutscene's settings.
          *
-         * @param {Bowser} thing
+         * @param thing   A Bowser that has just been killed.
          * @remarks This is triggered as Bowser's killonend property.
          */
         FullScreenMario.prototype.animateBowserFreeze = function (thing) {
@@ -4227,7 +4198,7 @@ var FullScreenMario;
             thing.nothrow = true;
             thing.movement = undefined;
             thing.dead = true;
-            thing.FSM.thingPauseVelocity(thing);
+            thing.FSM.animateCharacterPauseVelocity(thing);
             thing.FSM.ScenePlayer.addCutsceneSetting("bowser", thing);
             thing.FSM.TimeHandler.addEvent(function () {
                 thing.nofall = false;
@@ -4239,7 +4210,8 @@ var FullScreenMario;
          * Steps are taken to ensure the Thing does not collide at improper points
          * during the jump.
          *
-         * @param {Thing} thing
+         * @param thing   A HammerBro about to jump.
+         * @returns Whether to stop the event interval occasionally triggering this.
          */
         FullScreenMario.prototype.animateJump = function (thing) {
             // Finish
@@ -4275,7 +4247,7 @@ var FullScreenMario;
          * Animation Function for Bloopers starting to "unsqueeze". The "squeeze"
          * class is removed, their height is reset to 12, and their counter reset.
          *
-         * @param {Blooper} thing
+         * @param thing   An unsqueezing Blooper.
          */
         FullScreenMario.prototype.animateBlooperUnsqueezing = function (thing) {
             thing.counter = 0;
@@ -4288,7 +4260,7 @@ var FullScreenMario;
          * large negative yvel is given; after the jumpheight number of steps, they
          * fall back down.
          *
-         * @param {Podoboo} thing
+         * @param thing   A Podoboo jumping up.
          */
         FullScreenMario.prototype.animatePodobooJumpUp = function (thing) {
             thing.starty = thing.top;
@@ -4299,7 +4271,7 @@ var FullScreenMario;
          * Animation Function for when a Podoboo needs to stop jumping. It obtains
          * the movePodobooFalling movement to track its descent.
          *
-         * @param {Podoboo} thing
+         * @param thing   A Podoboo jumping down.
          */
         FullScreenMario.prototype.animatePodobooJumpDown = function (thing) {
             thing.movement = thing.FSM.movePodobooFalling;
@@ -4309,7 +4281,8 @@ var FullScreenMario;
          * behind its cloud ("hiding" class), waits 21 steps, then throws an egg up
          * and comes out of "hiding".
          *
-         * @param {Lakitu} thing
+         * @param thing   A Lakitu throwing a Spiny.
+         * @returns Whether to stop the event interval occasionally triggering this.
          */
         FullScreenMario.prototype.animateLakituThrowingSpiny = function (thing) {
             if (thing.fleeing || !thing.FSM.isThingAlive(thing)) {
@@ -4327,9 +4300,9 @@ var FullScreenMario;
         };
         /**
          * Animation Function for when a SpinyEgg hits the ground. The SpinyEgg is
-         * killed and a Spiny is put in its place, moving towards the player.
+         * killed and a Spiny is put in its place, moving towards a Player.
          *
-         * @param {SpinyEgg} thing
+         * @param thing   A SpinyEgg hatching into a Spiny.
          */
         FullScreenMario.prototype.animateSpinyEggHatching = function (thing) {
             if (!thing.FSM.isThingAlive(thing)) {
@@ -4340,10 +4313,10 @@ var FullScreenMario;
             thing.FSM.killNormal(thing);
         };
         /**
-         * Animation Function for when a Fireball emerges from a player. All that
+         * Animation Function for when a Fireball emerges from a Player. All that
          * happens is the "Fireball" sound plays.
          *
-         * @param {Fireball} thing
+         * @param thing   A Fireball emerging from a Player.
          */
         FullScreenMario.prototype.animateFireballEmerge = function (thing) {
             thing.FSM.AudioPlayer.play("Fireball");
@@ -4353,9 +4326,9 @@ var FullScreenMario;
          * unless big is === 2 (as this is used as a kill Function), a Firework is
          * put in its place.
          *
-         * @param {Fireball} thing
-         * @param {Number} [big]   The "level" of death this is (a 2 implies this is
-         *                         a sudden death, without animations).
+         * @param thing   An exploding Fireball.
+         * @param big   The "level" of death this is (a 2 implies this is a sudden
+         *              death, without animations).
          */
         FullScreenMario.prototype.animateFireballExplode = function (thing, big) {
             thing.nocollide = true;
@@ -4372,13 +4345,13 @@ var FullScreenMario;
          * Animation Function for a Firework, triggered immediately upon spawning.
          * The Firework cycles between "n1" through "n3", then dies.
          *
-         * @param {Firework} thing
+         * @param thing   An exploding Firework.
          */
         FullScreenMario.prototype.animateFirework = function (thing) {
             var name = thing.className + " n", i;
             for (i = 0; i < 3; i += 1) {
                 thing.FSM.TimeHandler.addEvent(function (i) {
-                    thing.FSM.setClass(thing, name + String(i + 1));
+                    thing.FSM.setClass(thing, name + (i + 1).toString());
                 }, i * 7, i);
             }
             thing.FSM.AudioPlayer.play("Firework");
@@ -4388,10 +4361,10 @@ var FullScreenMario;
         };
         /**
          * Animation Function for a Cannon outputting a BulletBill. This will only
-         * happen if the Cannon isn't within 8 units of the player. The spawn flies
-         * at a constant rate towards the player.
+         * happen if the Cannon isn't within 8 units of a Player. The spawn flies
+         * at a constant rate towards a Player.
          *
-         * @param {Cannon} thing
+         * @param thing   A firing Cannon.
          */
         FullScreenMario.prototype.animateCannonFiring = function (thing) {
             if (!thing.FSM.isThingAlive(thing)) {
@@ -4404,7 +4377,8 @@ var FullScreenMario;
             }
             var spawn = thing.FSM.ObjectMaker.make("BulletBill");
             if (thing.FSM.objectToLeft(thing.FSM.player, thing)) {
-                spawn.direction = spawn.moveleft = true;
+                spawn.direction = 1;
+                spawn.moveleft = true;
                 spawn.xvel *= -1;
                 thing.FSM.flipHoriz(spawn);
                 thing.FSM.addThing(spawn, thing.left, thing.top);
@@ -4415,13 +4389,12 @@ var FullScreenMario;
             thing.FSM.AudioPlayer.playLocal("Bump", thing.right);
         };
         /**
-         * Animation Function for a fiery player throwing a Fireball. The player may
+         * Animation Function for a fiery player throwing a Fireball. A player may
          * only do so if fewer than 2 other thrown Fireballs exist. A new Fireball
-         * is created in front of where the player is facing and are sent bouncing
+         * is created in front of where a Player is facing and are sent bouncing
          * away.
          *
-         * @param {Player} thing
-         * @remarks Yes, it's called numballs.
+         * @param thing   A Player throwing a fireball.
          */
         FullScreenMario.prototype.animatePlayerFire = function (thing) {
             if (thing.numballs >= 2) {
@@ -4454,8 +4427,8 @@ var FullScreenMario;
          * location of each CastleFireball, and its dt and direction determine how
          * the angle is changed for the next call.
          *
-         * @param {CastleBlock} thing
-         * @param {CastleFireball[]} balls
+         * @param thing   A CastleBlock with CastleFireballs around it.
+         * @param balls   CastleFireballs rotating from thing's center.
          */
         FullScreenMario.prototype.animateCastleBlock = function (thing, balls) {
             var midx = thing.EightBitter.getMidX(thing), midy = thing.EightBitter.getMidY(thing), ax = Math.cos(thing.angle * Math.PI) * thing.FSM.unitsize * 4, ay = Math.sin(thing.angle * Math.PI) * thing.FSM.unitsize * 4, i;
@@ -4466,11 +4439,11 @@ var FullScreenMario;
             thing.angle += thing.dt * thing.direction;
         };
         /**
-         * Animation Function to close a CastleBridge when the player triggers its
+         * Animation Function to close a CastleBridge when a Player triggers its
          * killonend after hitting the CastleAxe in EndInsideCastle. Its width is
          * reduced repeatedly on an interval until it's 0.
          *
-         * @param {CastleBridge} thing
+         * @param thing   A CastleBridge opening from a CastleAxe's trigger.
          * @remarks This is triggered as the killonend property of the bridge.
          */
         FullScreenMario.prototype.animateCastleBridgeOpen = function (thing) {
@@ -4480,19 +4453,19 @@ var FullScreenMario;
          * Animation Function for when a CastleChain opens, which just delays a
          * killNormal call for 7 steps.
          *
-         * @param {CastleChain} thing
+         * @param thing   A CastleChain opening from a CastleAxe's trigger.
          * @remarks This is triggered as the killonend property of the chain.
          */
         FullScreenMario.prototype.animateCastleChainOpen = function (thing) {
             thing.FSM.TimeHandler.addEvent(thing.FSM.killNormal, 3, thing);
         };
         /**
-         * Animation Function for when the player paddles underwater. Any previous
+         * Animation Function for when a Player paddles underwater. Any previous
          * Any previous paddling classes and cycle are removed, and a new one is
-         * added that, when it finishes, remnoves the player's paddlingCycle as
+         * added that, when it finishes, remnoves a Player's paddlingCycle as
          * well.
          *
-         * @param {Player} thing
+         * @param thing   A Player paddling in water.
          */
         FullScreenMario.prototype.animatePlayerPaddling = function (thing) {
             if (!thing.paddlingCycle) {
@@ -4501,9 +4474,7 @@ var FullScreenMario;
                 thing.FSM.TimeHandler.cancelClassCycle(thing, "paddlingCycle");
                 thing.FSM.TimeHandler.addClassCycle(thing, [
                     "paddle1", "paddle2", "paddle3", "paddle2", "paddle1",
-                    function () {
-                        return thing.paddlingCycle = false;
-                    },
+                    function () { return thing.paddlingCycle = false; }
                 ], "paddlingCycle", 7);
             }
             thing.paddling = thing.paddlingCycle = thing.swimming = true;
@@ -4513,7 +4484,7 @@ var FullScreenMario;
          * Animation Function for when a player lands to reset size and remove
          * hopping (and if underwater, paddling) classes. The mod event is fired.
          *
-         * @param {Player} thing
+         * @param thing   A Player landing on a Solid.
          */
         FullScreenMario.prototype.animatePlayerLanding = function (thing) {
             if (thing.crouching && thing.power > 1) {
@@ -4528,11 +4499,11 @@ var FullScreenMario;
             thing.FSM.ModAttacher.fireEvent("onPlayerLanding", thing, thing.resting);
         };
         /**
-         * Animation Function for when the player moves off a resting solid. It
+         * Animation Function for when a Player moves off a resting solid. It
          * sets resting to undefined, and if underwater, switches the "running" and
          * "paddling" classes.
          *
-         * @param {Player} thing
+         * @param thing   A Player moving off a resting Solid.
          */
         FullScreenMario.prototype.animatePlayerRestingOff = function (thing) {
             thing.resting = undefined;
@@ -4544,17 +4515,17 @@ var FullScreenMario;
          * Animation Function for when a player breathes a underwater. This creates
          * a Bubble, which slowly rises to the top of the screen.
          *
-         * @param {Player} thing
+         * @param thing   An underwater Player.
          */
         FullScreenMario.prototype.animatePlayerBubbling = function (thing) {
             thing.FSM.addThing("Bubble", thing.right, thing.top);
         };
         /**
-         * Animation Function to give the player a cycle of running classes. The
-         * cycle auto-updates its time as a function of how fast the player is
+         * Animation Function to give a Player a cycle of running classes. The
+         * cycle auto-updates its time as a function of how fast a Player is
          * moving relative to its maximum speed.
          *
-         * @param {Player} thing
+         * @param thing   A running player.
          */
         FullScreenMario.prototype.animatePlayerRunningCycle = function (thing) {
             thing.FSM.switchClass(thing, "still", "running");
@@ -4565,10 +4536,48 @@ var FullScreenMario;
             });
         };
         /**
+         * Completely pauses a Thing by setting its velocities to zero and disabling
+         * it from falling, colliding, or moving. Its old attributes for those are
+         * saved so thingResumeVelocity may restore them.
+         *
+         * @param thing   A Character being forzen in place.
+         * @param keepMovement   Whether to keep movement instead of wiping it
+         *                       (by default, false).
+         */
+        FullScreenMario.prototype.animateCharacterPauseVelocity = function (thing, keepMovement) {
+            thing.xvelOld = thing.xvel || 0;
+            thing.yvelOld = thing.yvel || 0;
+            thing.nofallOld = thing.nofall || false;
+            thing.nocollideOld = thing.nocollide || false;
+            thing.movementOld = thing.movement || thing.movementOld;
+            thing.nofall = thing.nocollide = true;
+            thing.xvel = thing.yvel = 0;
+            if (!keepMovement) {
+                thing.movement = undefined;
+            }
+        };
+        /**
+         * Resumes a Thing's velocity and movements after they were paused by
+         * thingPauseVelocity.
+         *
+         * @param thing   A Character being unfrozen.
+         * @param noVelocity   Whether to skip restoring the Thing's velocity
+         *                     (by default, false).
+         */
+        FullScreenMario.prototype.animateCharacterResumeVelocity = function (thing, noVelocity) {
+            if (!noVelocity) {
+                thing.xvel = thing.xvelOld || 0;
+                thing.yvel = thing.yvelOld || 0;
+            }
+            thing.movement = thing.movementOld || thing.movement;
+            thing.nofall = thing.nofallOld || false;
+            thing.nocollide = thing.nocollideOld || false;
+        };
+        /**
          * Animation Function for when a player hops on an enemy. Resting is set to
          * undefined, and a small vertical yvel is given.
          *
-         * @param {Player} thing
+         * @param thing   A Character hopping up.
          */
         FullScreenMario.prototype.animateCharacterHop = function (thing) {
             thing.resting = undefined;
@@ -4578,9 +4587,9 @@ var FullScreenMario;
          * Animation Function to start a player transferring through a Pipe. This is
          * generic for entrances and exists horizontally and vertically: movement
          * and velocities are frozen, size is reset, and the piping flag enabled.
-         * The player is also moved into the Scenery group to be behind the Pipe.
+         * a Player is also moved into the Scenery group to be behind the Pipe.
          *
-         * @param {Player} thing
+         * @param thing   A Player entering a Pipe.
          */
         FullScreenMario.prototype.animatePlayerPipingStart = function (thing) {
             thing.nocollide = thing.nofall = thing.piping = true;
@@ -4604,7 +4613,7 @@ var FullScreenMario;
          * is abstracted for exits both horizontally and vertically, typically after
          * an area has just been entered.
          *
-         * @param {Player} thing
+         * @param thing   A Player completing a pass through a Pipe.
          */
         FullScreenMario.prototype.animatePlayerPipingEnd = function (thing) {
             thing.movement = thing.movementOld;
@@ -4616,10 +4625,10 @@ var FullScreenMario;
          * Animation Function for when a player is hopping off a pole. It hops off
          * and faces the opposite direction.
          *
-         * @param {Player} thing
-         * @param {Boolean} [doRun]   Whether the player should have a running cycle
-         *                            added immediately, such as during cutscenes
-         *                            (by default, false).
+         * @param thing   A Player moving a way from a pole.
+         * @param doRun   Whether a Player should have a running cycle added
+         *                added immediately, such as during cutscenes (by
+         *                default, false).
          */
         FullScreenMario.prototype.animatePlayerOffPole = function (thing, doRun) {
             thing.FSM.removeClasses(thing, "climbing running");
@@ -4639,10 +4648,10 @@ var FullScreenMario;
         };
         /**
          * Animation Function for when a player must hop off a Vine during an area's
-         * opening cutscene. The player switches sides, waits 14 steps, then calls
+         * opening cutscene. A player switches sides, waits 14 steps, then calls
          * animatePlayerOffPole.
          *
-         * @param {Player} thing
+         * @param thing   A Player moving away from a Vine.
          */
         FullScreenMario.prototype.animatePlayerOffVine = function (thing) {
             thing.FSM.flipHoriz(thing);
@@ -4655,8 +4664,8 @@ var FullScreenMario;
          * Makes one Thing look towards another, chainging lookleft and moveleft in
          * the process.
          *
-         * @param {Thing} thing
-         * @param {Thing} other
+         * @param thing   A Character looking towards other.
+         * @param other   A Thing being looked at by thing.
          */
         FullScreenMario.prototype.lookTowardsThing = function (thing, other) {
             // Case: other is to the left
@@ -4673,13 +4682,13 @@ var FullScreenMario;
             }
         };
         /**
-         * Makes one Thing look towards the player, chainging lookleft and moveleft
+         * Makes one Thing look towards a Player, chainging lookleft and moveleft
          * in the process.
          *
-         * @param {Thing} thing
-         * @param {Boolean} [big]   Whether to always change lookleft and moveleft,
-         *                          even if lookleft is already accurate (by
-         *                          default, false).
+         * @param thing   A Character looking towards the Player.
+         * @param big   Whether to always change lookleft and moveleft,
+         *              even if lookleft is already accurate (by
+         *              default, false).
          */
         FullScreenMario.prototype.lookTowardsPlayer = function (thing, big) {
             // Case: Player is to the left
@@ -4706,7 +4715,7 @@ var FullScreenMario;
          * clearing its numquads, resting, movement, and cycles. It will later be
          * marked as gone by its maintain* Function (Solids or Characters).
          *
-         * @param {Thing} thing
+         * @param thing   A Thing to kill.
          */
         FullScreenMario.prototype.killNormal = function (thing) {
             if (!thing) {
@@ -4728,10 +4737,9 @@ var FullScreenMario;
          * Death Function commonly called on characters to animate a small flip
          * before killNormal is called.
          *
-         * @param {Thing} thing
-         * @param {Number} [extra]   How much time to wait beyond the standard 70
-         *                           steps before calling killNormal (by default,
-         *                           0).
+         * @param thing   A Thing to kill.
+         * @param extra   How much time to wait beyond the standard 70 steps
+         *                before calling killNormal (by default, 0).
          */
         FullScreenMario.prototype.killFlip = function (thing, extra) {
             if (extra === void 0) { extra = 0; }
@@ -4750,9 +4758,9 @@ var FullScreenMario;
          * Kill Function to replace a Thing with a spawned Thing, determined by the
          * thing's spawnType, in the same location.
          *
-         * @param {Thing} thing
-         * @param {Boolean} [big]   Whether this should skip creating the spawn (by
-         *                          default, false).
+         * @param thing    A Thing to kill.
+         * @param big   Whether this should skip creating the spawn (by default,
+         *              false).
          */
         FullScreenMario.prototype.killSpawn = function (thing, big) {
             if (big) {
@@ -4774,19 +4782,16 @@ var FullScreenMario;
          * Thing is created with the given attributes and copies over any specified
          * attributes from the original Thing.
          *
-         * @param {Thing} thing
-         * @param {String} title   The type of new Thing to create, such as "Goomba".
-         * @param {Object} [attributes]   An optional object to pass in to the
-         *                                ObjectMaker.make call (by default, {}).
-         * @param {String[]} [attributesCopied]   An optional listing of attributes
-         *                                        to copy from the original Thing
-         *                                        (by default, none).
+         * @param thing   A Thing to kill.
+         * @param title   The type of new Thing to create, such as "Goomba".
+         * @param attributes   An optional object to pass in to the ObjectMaker.make
+         *                     call (by default, {}).
+         * @param attributesCopied   An optional listing of attributes to copy from
+         *                           the original Thing (by default, none).
          */
         FullScreenMario.prototype.killReplace = function (thing, title, attributes, attributesCopied) {
+            if (attributes === void 0) { attributes = {}; }
             var spawn, i;
-            if (typeof attributes === "undefined") {
-                attributes = {};
-            }
             if (typeof attributesCopied !== "undefined") {
                 for (i = 0; i < attributesCopied.length; i += 1) {
                     attributes[attributesCopied[i]] = thing[attributesCopied[i]];
@@ -4807,9 +4812,9 @@ var FullScreenMario;
          * Kill Function for Goombas. If big isn't specified, it replaces the
          * killed Goomba with a DeadGoomba via killSpawn.
          *
-         * @param {Thing} thing
-         * @param {Boolean} [big]   Whether to call killFlip on the Thing instead of
-         *                          killSpawn, such as when a Shell hits it.
+         * @param thing   A Goomba to kill.
+         * @param big   Whether to call killFlip on the Thing instead of
+         *              killSpawn, such as when a Shell hits it.
          */
         FullScreenMario.prototype.killGoomba = function (thing, big) {
             if (big) {
@@ -4823,8 +4828,8 @@ var FullScreenMario;
          * an equivalent Koopa that's just walking, while walking Koopas become
          * Shells.
          *
-         * @param {Koopa} thing
-         * @param {Boolean} [big]   Whether shells should be immediately killed.
+         * @param thing   A Koopa to kill.
+         * @param big   Whether shells should be immediately killed.
          * @remarks This isn't called when a Shell hits a Koopa.
          */
         FullScreenMario.prototype.killKoopa = function (thing, big) {
@@ -4842,7 +4847,7 @@ var FullScreenMario;
          * Kill Function for Lakitus. If this is the last Lakitu in Characters,
          * a new one is scheduled to be spawned at the same y-position.
          *
-         * @param {Lakitu} thing
+         * @param thing   A Lakitu to kill.
          */
         FullScreenMario.prototype.killLakitu = function (thing) {
             var characters = thing.FSM.GroupHolder.getGroup("Character"), i;
@@ -4859,13 +4864,13 @@ var FullScreenMario;
             thing.FSM.TimeHandler.addEvent(thing.FSM.addThing.bind(thing.FSM), 350, "Lakitu", thing.FSM.MapScreener.right, thing.top);
         };
         /**
-         * Kill Function for Bowsers. In reality this is only called when the player
+         * Kill Function for Bowsers. In reality this is only called when a Player
          * Fireballs him or all NPCs are to be killed. It takes five Fireballs to
          * killFlip a Bowser, which scores 5000 points.
          *
-         * @param {Bowser} thing
-         * @param {Boolean} [big]   Whether this should default to killFlip, as in
-         *                          an EndInsideCastle cutscene.
+         * @param thing   A Bowser to kill.
+         * @param big   Whether this should default to killFlip, as in an
+         *              EndInsideCastle cutscene.
          */
         FullScreenMario.prototype.killBowser = function (thing, big) {
             if (big) {
@@ -4888,9 +4893,9 @@ var FullScreenMario;
          * and location from its parent, and is temporarily given nocollidechar to
          * stop double collision detections.
          *
-         * @param {Thing} thing
-         * @param {Number} [big]   Whether the spawned Shell should be killed
-         *                         immediately (by default, false).
+         * @param thing   A Character to kill.
+         * @param big   Whether the spawned Shell should be killed
+         *              immediately (by default, false).
          */
         FullScreenMario.prototype.killToShell = function (thing, big) {
             var spawn, nocollidecharold, nocollideplayerold;
@@ -4929,7 +4934,6 @@ var FullScreenMario;
          * Solids are only deleted if their .killonend is true.
          *
          * @remarks If thing.killonend is a Function, it is called on the Thing.
-         * @todo   Rename .killonend to be more accurate
          */
         FullScreenMario.prototype.killNPCs = function () {
             var FSM = FullScreenMario.prototype.ensureCorrectCaller(this), group, character, solid, i;
@@ -4967,9 +4971,9 @@ var FullScreenMario;
          * maintainSolids happens before maintainCharacters, so the killNormal won't
          * come into play until after the next maintainCharacters call.
          *
-         * @param {Brick} thing
-         * @param {Thing} [other]   An optional Thing to mark as the cause of the
-         *                          Brick's death (its up attribute).
+         * @param thing   A Brick to kill.
+         * @param other   An optional Character to mark as the cause of the
+         *                Brick's death (its up attribute).
          */
         FullScreenMario.prototype.killBrick = function (thing, other) {
             thing.FSM.AudioPlayer.play("Break Block");
@@ -4983,33 +4987,33 @@ var FullScreenMario;
             }
         };
         /**
-         * Kill Function for the player. It's big and complicated, but in general...
+         * Kill Function for a Player. It's big and complicated, but in general...
          * 1. If big === 2, just kill it altogether
-         * 2. If the player is large and big isn't true, just power down the player.
-         * 3. The player can't survive this, so animate the "shrug" class and an
+         * 2. If a Player is large and big isn't true, just power down a Player.
+         * 3. A player can't survive this, so animate the "shrug" class and an
          *    up-then-down movement.
          * At the end of 1. and 3., decrease the "lives" and "power" statistics and
          * call the equivalent onPlayerDeath or onGameOver callbacks, depending on
          * how many lives are left. The mod event is also fired.
          *
-         * @param {Thing} thing
-         * @param {Number} [big]   The severity of this death: 0 for normal, 1 for
-         *                         not survivable, 2 for immediate death.
+         * @param thing   A Player to kill.
+         * @param big   The severity of this death: 0 for normal, 1 for not
+         *              survivable, or 2 for immediate death.
          */
         FullScreenMario.prototype.killPlayer = function (thing, big) {
-            if (!thing.alive || thing.flickering || thing.dying) {
+            if (!thing.alive || thing.flickering || thing.dieing) {
                 return;
             }
             var FSM = thing.FSM, area = thing.FSM.AreaSpawner.getArea();
             // Large big: real, no-animation death
             if (big === 2) {
-                thing.dead = thing.dying = true;
+                thing.dead = thing.dieing = true;
                 thing.alive = false;
                 FSM.MapScreener.notime = true;
             }
             else {
                 // Regular big: regular (enemy, time, etc.) kill
-                // If the player can survive this, just power down
+                // If a Player can survive this, just power down
                 if (!big && thing.power > 1) {
                     thing.power = 1;
                     FSM.ItemsHolder.setItem("power", 1);
@@ -5018,18 +5022,18 @@ var FullScreenMario;
                     return;
                 }
                 else {
-                    // The player can't survive this: animate a death
-                    thing.dying = true;
+                    // a Player can't survive this: animate a death
+                    thing.dieing = true;
                     FSM.setSize(thing, 7.5, 7, true);
                     FSM.updateSize(thing);
                     FSM.setClass(thing, "character player dead");
-                    FSM.thingPauseVelocity(thing);
+                    FSM.animateCharacterPauseVelocity(thing);
                     FSM.arrayToEnd(thing, FSM.GroupHolder.getGroup(thing.groupType));
                     FSM.MapScreener.notime = true;
                     FSM.MapScreener.nokeys = true;
                     FSM.TimeHandler.cancelAllCycles(thing);
                     FSM.TimeHandler.addEvent(function () {
-                        FSM.thingResumeVelocity(thing, true);
+                        FSM.animateCharacterResumeVelocity(thing, true);
                         thing.nocollide = true;
                         thing.movement = thing.resting = undefined;
                         thing.gravity = FSM.MapScreener.gravity / 2.1;
@@ -5053,11 +5057,11 @@ var FullScreenMario;
         /* Scoring
         */
         /**
-         * @this {EightBittr}
-         * @param {Number} level   What number call this is in a chain of scoring
-         *                         events, such as a Shell or hopping spree.
-         * @return {Number}   How many points should be gained (if 0, that means the
-         *                    maximum points were passed and gainLife was called).
+         * Determines how many points should be gained from a number of consecutive
+         * enemy deaths (such as via hops or shells).
+         *
+         * @param level   How many deaths have happened.
+         * @returns How many points should be gained (or 0, for having gained a life).
          */
         FullScreenMario.prototype.findScore = function (level) {
             var FSM = FullScreenMario.prototype.ensureCorrectCaller(this);
@@ -5068,18 +5072,17 @@ var FullScreenMario;
             return 0;
         };
         /**
-         * Driver function to score some number of points for the player and show
+         * Driver function to score some number of points for a Player and show
          * the gains via an animation.
          *
-         * @this {EightBittr}
-         * @param {Number} value   How many points the player is receiving.
-         * @param {Boolean} [continuation]   Whether the game shouldn't increase the
-         *                                   score amount in the ItemsHoldr (this will
-         *                                   only be false on the first score() call).
-         * @remarks   For point gains that should not have a visual animation,
-         *            directly call ItemsHolder.increase("score", value).
-         * @remarks   The calling chain will be:
-         *                score -> scoreOn -> scoreAnimateOn -> scoreAnimate
+         * @param value   How many points a Player is receiving.
+         * @param continuation   Whether the game shouldn't increase the score
+         *                       amount in the ItemsHoldr (this will only be
+         *                       false on the first score() call).
+         * @remarks For point gains that should not have a visual animation,
+         *          directly call ItemsHolder.increase("score", value).
+         * @remarks The calling chain will be:
+         *              score -> scoreOn -> scoreAnimateOn -> scoreAnimate
          */
         FullScreenMario.prototype.score = function (value, continuation) {
             if (!value) {
@@ -5092,17 +5095,17 @@ var FullScreenMario;
             }
         };
         /**
-         * Scores a given number of points for the player, and shows the gains via
+         * Scores a given number of points for a Player, and shows the gains via
          * an animation centered at the top of a thing.
          *
-         * @param {Number} value   How many points the player is receiving.
-         * @param {Thing} thing   An in-game Thing to place the visual score text
+         * @param value   How many points a Player is receiving.
+         * @param thing   An in-game Thing to place the visual score text
          *                        on top of and centered.
-         * @param {Boolean} [continuation]   Whether the game shouldn't increase the
-         *                                   score amount in the ItemsHoldr (this will
-         *                                   only be false on the first score() call).
-         * @remarks   The calling chain will be:
-         *                scoreOn -> scoreAnimateOn -> scoreAnimate
+         * @param continuation   Whether the game shouldn't increase the score
+         *                       amount in the ItemsHoldr (this will only be
+         *                       false on the first score() call).
+         * @remarks The calling chain will be:
+         *              scoreOn -> scoreAnimateOn -> scoreAnimate
          */
         FullScreenMario.prototype.scoreOn = function (value, thing, continuation) {
             if (!value) {
@@ -5119,11 +5122,11 @@ var FullScreenMario;
          * Centers a text associated with some points gain on the top of a Thing,
          * and animates it updward, setting an event for it to die.
          *
-         * @param {Thing} text   The text whose position is being manipulated.
-         * @param {Thing} thing   An in-game Thing to place the visual score text
-         *                        on top of and centered.
-         * @remarks   The calling chain will be:
-         *                scoreAnimateOn -> scoreAnimate
+         * @param text   The text whose position is being manipulated.
+         * @param thing   An in-game Thing to place the visual score text
+         *                on top of and centered.
+         * @remarks The calling chain will be:
+         *              scoreAnimateOn -> scoreAnimate
          */
         FullScreenMario.prototype.scoreAnimateOn = function (text, thing) {
             thing.FSM.setMidXObj(text, thing);
@@ -5133,11 +5136,12 @@ var FullScreenMario;
         /**
          * Animates a score on top of a Thing.
          *
-         * @param {Thing} thing
-         * @param {Number} [timeout]   How many game ticks to wait before killing
-         *                             the text (defaults to 28).
-         * @remarks   This is the last function in the score() calling chain:
-         *                scoreAnimate <- scoreAnimateOn <- scoreOn <- score
+         * @param thing   An in-game Thing to place the visual score text
+         *                on top of and centered.
+         * @param timeout   How many game ticks to wait before killing
+         *                  the text (by default, 28).
+         * @remarks This is the last function in the score() calling chain:
+         *              scoreAnimate <- scoreAnimateOn <- scoreOn <- score
          */
         FullScreenMario.prototype.scoreAnimate = function (thing, timeout) {
             if (timeout === void 0) { timeout = 28; }
@@ -5145,13 +5149,13 @@ var FullScreenMario;
             thing.FSM.TimeHandler.addEvent(thing.FSM.killNormal, timeout, thing);
         };
         /**
-         * Inelegant catch-all Function for when the player has hit a shell and
+         * Inelegant catch-all Function for when a Player has hit a shell and
          * needs points to be scored. This takes into account player star status and
          * Shell resting and peeking. With none of those modifiers, it defaults to
          * scoreOn with 400.
          *
-         * @param {Player} thing
-         * @param {Shell} other
+         * @param thing   A Player hitting other.
+         * @param other   A Shell being hit by thing.
          * @remarks See http://themushroomkingdom.net/smb_breakdown.shtml
          */
         FullScreenMario.prototype.scorePlayerShell = function (thing, other) {
@@ -5179,14 +5183,14 @@ var FullScreenMario;
             thing.FSM.scoreOn(400, other);
         };
         /**
-         * Determines the amount a player should score upon hitting a flag, based on
-         * the player's y-position.
+         * Determines the amount a Player should score upon hitting a flagpole,
+         * based on the Player's y-position.
          *
-         * @param {Player} thing
-         * @param {Number} difference   How far up the pole the collision happened,
-         *                              by absolute amount (not multiplied by
-         *                              unitsize).
-         * @return {Number}
+         * @param thing   A Player hitting a flagpole
+         * @param difference   How far up the pole the collision happened,
+         *                     by absolute amount (not multiplied by
+         *                     unitsize).
+         * @returns How many points to award.
          * @remarks See http://themushroomkingdom.net/smb_breakdown.shtml
          */
         FullScreenMario.prototype.scorePlayerFlag = function (thing, difference) {
@@ -5205,11 +5209,13 @@ var FullScreenMario;
         /* Audio
         */
         /**
-         * @param {FullScreenMario} FSM
-         * @param {Number} xloc   The x-location of the sound's source.
-         * @return {Number} How loud the sound should be at that position, in [0,1].
-         *                  This is louder closer to the player, and nothing to
-         *                  the right of the visible screen.
+         * Determines how loud a sound should be at an x-location. This
+         * is louder closer to a Player, and nothing to the right of the
+         * visible screen.
+         *
+         * @param FSM
+         * @param xloc   The x-location of the sound's source.
+         * @returns How loud the sound should be, in [0,1].
          */
         FullScreenMario.prototype.getVolumeLocal = function (FSM, xloc) {
             if (xloc > FSM.MapScreener.right) {
@@ -5218,10 +5224,11 @@ var FullScreenMario;
             return Math.max(.14, Math.min(.84, (FSM.MapScreener.width - Math.abs(xloc - FSM.player.left)) / FSM.MapScreener.width));
         };
         /**
-         * @param {FullScreenMario} FSM
-         * @return {String} The name of the default audio for the current area,
-         *                  which is the first word in the area's setting (split on
-         *                  spaces).
+         * Determines the name of the default theme for the current area,
+         * which is the first word in the area's setting (split on spaces).
+         *
+         * @param FSM
+         * @returns The default theme for the current area.
          */
         FullScreenMario.prototype.getAudioThemeDefault = function (FSM) {
             return FSM.AreaSpawner.getArea().setting.split(" ")[0];
@@ -5232,10 +5239,10 @@ var FullScreenMario;
          * Sets the game state to a new map, resetting all Things and inputs in the
          * process. The mod events are fired.
          *
-         * @param {String} [name]   The name of the map (by default, the currently
-         *                          played one).
-         * @param {Mixed} [location]   The name of the location within the map (by
-         *                             default 0 for the first in Array form).
+         * @param name   The name of the map (by default, the currently
+         *               played one).
+         * @param location   The name of the location within the map (by
+         *                   default, 0 for the first in Array form).
          * @remarks Most of the work here is done by setLocation.
          */
         FullScreenMario.prototype.setMap = function (name, location) {
@@ -5261,8 +5268,8 @@ var FullScreenMario;
          * process. The location's entry Function is called to bring a new Player
          * into the game. The mod events are fired.
          *
-         * @param {Mixed} [name]   The name of the location within the map (by
-         *                         default 0 for the first in Array form).
+         * @param name   The name of the location within the map (by
+         *               default, 0 for the first in Array form).
          */
         FullScreenMario.prototype.setLocation = function (name) {
             if (name === void 0) { name = 0; }
@@ -5294,9 +5301,9 @@ var FullScreenMario;
          * player is placed 16x16 units away from the top-left corner, with
          * location.xloc scrolling applied if necessary.
          *
-         * @param {FullScreenMario} FSM
-         * @param {Location} [location]   The calling Location entering into (by
-         *                                default, not used).
+         * @param FSM
+         * @param location   The calling Location entering into (by default,
+         *                   not used).
          */
         FullScreenMario.prototype.mapEntranceNormal = function (FSM, location) {
             if (location && location.xloc) {
@@ -5309,9 +5316,9 @@ var FullScreenMario;
          * is placed 16x16 units away from the top-left corner, with location.xloc
          * scrolling applied if necessary.
          *
-         * @param {FullScreenMario} FSM
-         * @param {Location} [location]   The calling Location entering into (by
-         *                                default, not used).
+         * @param FSM
+         * @param location   The calling Location entering into (by default,
+         *                   not used).
          */
         FullScreenMario.prototype.mapEntrancePlain = function (FSM, location) {
             if (location && location.xloc) {
@@ -5325,9 +5332,9 @@ var FullScreenMario;
          * player has movement forced to be walking, with nokeys and notime set to
          * true.
          *
-         * @param {FullScreenMario} FSM
-         * @param {Location} [location]   The calling Location entering into (by
-         *                                default, not used).
+         * @param FSM
+         * @param location   The calling Location entering into (by default,
+         *                   not used).
          */
         FullScreenMario.prototype.mapEntranceWalking = function (FSM, location) {
             FSM.mapEntrancePlain(FSM, location);
@@ -5337,24 +5344,24 @@ var FullScreenMario;
             FSM.MapScreener.notime = true;
         };
         /**
-         * Map entrance Function for entering a castle area. The player is simply
+         * Map entrance Function for entering a castle area. A player is simply
          * added at 2 x 56.
          *
-         * @param {FullScreenMario} FSM
+         * @param FSM
          */
         FullScreenMario.prototype.mapEntranceCastle = function (FSM) {
             FSM.addPlayer(FSM.unitsize * 2, FSM.unitsize * 56);
         };
         /**
          * Map entrance Function for entering an area climbing a Vine. The Vine
-         * enters first by growing, then the player climbs it and hops off. The
+         * enters first by growing, then a Player climbs it and hops off. The
          * player's actions are done via mapEntranceVinePlayer and are triggered
          * when the Vine's top reaches its threshold.
          *
-         * @param {FullScreenMario} FSM
+         * @param FSM
          */
         FullScreenMario.prototype.mapEntranceVine = function (FSM) {
-            var threshold = (FSM.MapScreener.bottom - FSM.unitsize * 40), vine = FSM.addThing("Vine", FSM.unitsize * 32, FSM.MapScreener.bottom + FSM.unitsize * 8);
+            var threshold = FSM.MapScreener.bottom - FSM.unitsize * 40, vine = FSM.addThing("Vine", FSM.unitsize * 32, FSM.MapScreener.bottom + FSM.unitsize * 8);
             FSM.TimeHandler.addEventInterval(function () {
                 if (vine.top >= threshold) {
                     return false;
@@ -5365,15 +5372,15 @@ var FullScreenMario;
             }, 1, Infinity);
         };
         /**
-         * Continuation of mapEntranceVine for the player's actions. The player
+         * Continuation of mapEntranceVine for a Player's actions. A player
          * climbs up the Vine; once it reaches the threshold, it hops off using
          * animatePlayerOffVine.
          *
-         * @param {FullScreenMario} FSM
-         * @param {Vine} vine
+         * @param FSM
+         * @param vine   A Vine bringing a Player up.
          */
         FullScreenMario.prototype.mapEntranceVinePlayer = function (FSM, vine) {
-            var threshold = (FSM.MapScreener.bottom - FSM.unitsize * 24), speed = FSM.unitsize / -4, player = FSM.addPlayer(FSM.unitsize * 29, FSM.MapScreener.bottom - FSM.unitsize * 4);
+            var threshold = FSM.MapScreener.bottom - FSM.unitsize * 24, speed = FSM.unitsize / -4, player = FSM.addPlayer(FSM.unitsize * 29, FSM.MapScreener.bottom - FSM.unitsize * 4);
             FSM.shiftVert(player, player.height * FSM.unitsize);
             FSM.collideVine(player, vine);
             FSM.TimeHandler.addEventInterval(function () {
@@ -5386,13 +5393,13 @@ var FullScreenMario;
             }, 1, Infinity);
         };
         /**
-         * Map entrance Function for coming in through a vertical Pipe. The player
+         * Map entrance Function for coming in through a vertical Pipe. A player
          * is added just below the top of the Pipe, and is animated to rise up
          * through it like an Italian chestburster.
          *
-         * @param {FullScreenMario} FSM
-         * @param {Location} [location]   The calling Location entering into (by
-         *                                default, not used).
+         * @param FSM
+         * @param location   The calling Location entering into (by default,
+         *                   not used).
          */
         FullScreenMario.prototype.mapEntrancePipeVertical = function (FSM, location) {
             if (location && location.xloc) {
@@ -5414,23 +5421,23 @@ var FullScreenMario;
             }, 1, Infinity);
         };
         /**
-         * Map entrance Function for coming in through a horizontal Pipe. The player
+         * Map entrance Function for coming in through a horizontal Pipe. A player
          * is added just to the left of the entrance, and is animated to pass
          * through it like an Italian chestburster.
          *
-         * @param {FullScreenMario} FSM
-         * @param {Location} [location]   The calling Location entering into (by
-         *                                default, not used).
+         * @param FSM
+         * @param location   The calling Location entering into (by default,
+         *                   not used).
          */
         FullScreenMario.prototype.mapEntrancePipeHorizontal = function (FSM, location) {
             throw new Error("mapEntrancePipeHorizontal is not yet implemented.");
         };
         /**
-         * Map entrance Function for the player reincarnating into a level,
-         * typically from a random map. The player is placed at 16 x 0 and a
+         * Map entrance Function for a Player reincarnating into a level,
+         * typically from a random map. A player is placed at 16 x 0 and a
          * Resting Stone placed some spaces below via playerAddRestingStone.
          *
-         * @param {FullScreenMario} FSM
+         * @param FSM
          */
         FullScreenMario.prototype.mapEntranceRespawn = function (FSM) {
             FSM.MapScreener.nokeys = false;
@@ -5446,11 +5453,11 @@ var FullScreenMario;
         /* Map exits
         */
         /**
-         * Map exit Function for leaving through a vertical Pipe. The player is
+         * Map exit Function for leaving through a vertical Pipe. A player is
          * animated to pass through it and then transfer locations.
          *
-         * @param {Player} thing
-         * @param {Pipe} other
+         * @param thing   A Player exiting through other.
+         * @param other   A Pipe sucking in thing.
          */
         FullScreenMario.prototype.mapExitPipeVertical = function (thing, other) {
             if (!thing.resting || typeof (other.transport) === "undefined"
@@ -5477,15 +5484,14 @@ var FullScreenMario;
             }, 1, Infinity);
         };
         /**
-         * Map exit Function for leaving through a horiontal Pipe. The player is
+         * Map exit Function for leaving through a horiontal Pipe. A player is
          * animated to pass through it and then transfer locations.
          *
-         * @param {Player} thing
-         * @param {Pipe} other
-         * @param {Boolean} [shouldTransport]   Whether not resting and not paddling
-         *                                      does not imply the player cannot
-         *                                      pass through the Pipe (by default,
-         *                                      false, as this is normal).
+         * @param thing   A Player exiting through other.
+         * @param other   A Pipe sucking in thing.
+         * @param shouldTransport   Whether not resting and not paddling does
+         *                          not imply a Player cannot pass through the
+         *                          Pipe (by default, false, as this is normal).
          * @remarks The shouldTransport argument was added because the "Bouncy
          *          Bounce!" mod rendered some areas unenterable without it.
          */
@@ -5518,7 +5524,7 @@ var FullScreenMario;
          * The onMake callback for Areas. Attributes are copied as specified in the
          * prototype, and the background is set based on the setting.
          *
-         * @this {Area}
+         * @remarks The scope for this will be an Area.
          */
         FullScreenMario.prototype.initializeArea = function () {
             var scope = this, i;
@@ -5535,7 +5541,7 @@ var FullScreenMario;
         /**
          * Sets an area's background as a function of its setting.
          *
-         * @param {Area} area
+         * @param area   An Area having its background set.
          * @remarks In the future, it might be more elegant to make Areas inherit
          * from base Area types (Overworld, etc.) so this inelegant switch
          * statement doesn't have to be used.
@@ -5554,14 +5560,15 @@ var FullScreenMario;
             }
         };
         /**
-         * @param {Number} yloc   A height to find the distance to the floor from.
-         * @param {Boolean} [correctUnitsize]   Whether the yloc accounts for
-         *                                      unitsize expansion (e.g. 48 rather
-         *                                      than 12, for unitsize=4).
-         * @return {Number} The distance from the absolute base (bottom of the
-         *                  user's viewport) to a specific height above the floor
-         *                  (in the form given by map functions, distance from the
-         *                  floor).
+         * Determines the absolute height of a y-location, which is the distance
+         * from the absolute base (bottom of the user's viewport) to a specific
+         * height above the floor.
+         *
+         * @param yloc   A height to find the distance to the floor from.
+         * @param correctUnitsize   Whether the yloc accounts for unitsize
+         *                          expansion (e.g. 48 rather than 12, for
+         *                          unitsize=4).
+         * @returns The absolute height of the y-location.
          */
         FullScreenMario.prototype.getAbsoluteHeight = function (yloc, correctUnitsize) {
             var FSM = FullScreenMario.prototype.ensureCorrectCaller(this), height = yloc + FSM.MapScreener.height;
@@ -5574,15 +5581,12 @@ var FullScreenMario;
          * Adds a PreThing to the map and stretches it to fit a width equal to the
          * current map's outermost boundaries.
          *
-         * @this {EightBittr}
-         * @param {PreThing} prethingRaw
-         * @return {Thing} A strethed Thing, newly added via addThing.
+         * @param prethingRaw   A raw PreThing descriptor.
+         * @returns A strethed Thing, newly added via addThing.
          */
         FullScreenMario.prototype.mapAddStretched = function (prethingRaw) {
             var FSM = FullScreenMario.prototype.ensureCorrectCaller(this), boundaries = FSM.AreaSpawner.getArea().boundaries, prething = prethingRaw instanceof String
-                ? {
-                    "thing": prething
-                }
+                ? { "thing": prething }
                 : prethingRaw, y = ((FSM.MapScreener.floor - prething.y)
                 * FSM.unitsize), 
             // It is assumed the PreThing does have a .thing if it's a stretch
@@ -5596,8 +5600,7 @@ var FullScreenMario;
          * Analyzes a PreThing to be placed to the right of the current map's
          * boundaries (after everything else).
          *
-         * @this {EightBittr}
-         * @param {PreThing} prethingRaw
+         * @param prethingRaw   A raw PreThing descriptor.
          */
         FullScreenMario.prototype.mapAddAfter = function (prethingRaw) {
             var FSM = FullScreenMario.prototype.ensureCorrectCaller(this), MapsCreator = FSM.MapsCreator, AreaSpawner = FSM.AreaSpawner, prethings = AreaSpawner.getPreThings(), prething = prethingRaw instanceof String
@@ -5611,14 +5614,14 @@ var FullScreenMario;
         /* Cutscenes
         */
         /**
-         * First cutscene for the Flagpole routine. The player becomes invincible and
+         * First cutscene for the Flagpole routine. A player becomes invincible and
          * starts sliding down the flagpole, while all other Things are killed.
          * A score calculated by scorePlayerFlag is shown at the base of the pole and
-         * works its way up. The collideFlagBottom callback will be fired when the player
+         * works its way up. The collideFlagBottom callback will be fired when a Player
          * reaches the bottom.
          *
-         * @param {FullScreenMario} FSM
-         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
+         * @param FSM
+         * @param settings   Storage for the cutscene from ScenePlayr.
          */
         FullScreenMario.prototype.cutsceneFlagpoleStartSlidingDown = function (FSM, settings) {
             var thing = settings.player, other = settings.collider, height = (other.bottom - thing.bottom) | 0, scoreAmount = FSM.scorePlayerFlag(thing, height / FSM.unitsize), scoreThing = FSM.ObjectMaker.make("Text" + scoreAmount);
@@ -5628,12 +5631,12 @@ var FullScreenMario;
             FSM.MapScreener.nokeys = true;
             FSM.MapScreener.notime = true;
             FSM.MapScreener.canscroll = false;
-            // Kill all other characters and pause the player next to the pole
+            // Kill all other characters and pause a Player next to the pole
             FSM.killNPCs();
-            FSM.thingPauseVelocity(thing);
+            FSM.animateCharacterPauseVelocity(thing);
             FSM.setRight(thing, other.left + FSM.unitsize * 3);
             FSM.killNormal(other);
-            // The player is now climbing down the pole
+            // a Player is now climbing down the pole
             FSM.removeClasses(thing, "running jumping skidding");
             FSM.addClass(thing, "climbing animated");
             FSM.TimeHandler.addClassCycle(thing, ["one", "two"], "climbing", 0);
@@ -5648,16 +5651,16 @@ var FullScreenMario;
             FSM.AudioPlayer.clearTheme();
             FSM.AudioPlayer.play("Flagpole");
             FSM.TimeHandler.addEventInterval(function () {
-                // While the player hasn't reached the bottom yet, slide down
+                // While a Player hasn't reached the bottom yet, slide down
                 if (thing.bottom < other.bottom) {
                     FSM.shiftVert(thing, FSM.unitsize);
                     return false;
                 }
-                // If the flag hasn't reached it but the player has, don't move yet
+                // If the flag hasn't reached it but a Player has, don't move yet
                 if ((other.collection.Flag.bottom | 0) < (other.bottom | 0)) {
                     return false;
                 }
-                // The player is done climbing: trigger the flag bottom collision
+                // a Player is done climbing: trigger the flag bottom collision
                 thing.movement = undefined;
                 FSM.setBottom(thing, other.bottom);
                 FSM.TimeHandler.cancelClassCycle(thing, "climbing");
@@ -5670,8 +5673,8 @@ var FullScreenMario;
          * flipped horizontally, shifted to the other side of the pole, and the
          * animatePlayerOffPole callback is quickly timed.
          *
-         * @param {FullScreenMario} FSM
-         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
+         * @param FSM
+         * @param settings   Storage for the cutscene from ScenePlayr.
          */
         FullScreenMario.prototype.cutsceneFlagpoleHitBottom = function (FSM, settings) {
             var thing = settings.player;
@@ -5688,8 +5691,8 @@ var FullScreenMario;
          * Routine for counting down time and increasing score at the end of
          * a level. When it's done, it calls the Fireworks routine.
          *
-         * @param {FullScreenMario} FSM
-         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
+         * @param FSM
+         * @param settings   Storage for the cutscene from ScenePlayr.
          */
         FullScreenMario.prototype.cutsceneFlagpoleCountdown = function (FSM, settings) {
             FSM.TimeHandler.addEventInterval(function () {
@@ -5708,8 +5711,8 @@ var FullScreenMario;
          * Fireworks are added on a timer (if there should be any), and the level
          * transport is called when any fireworks are done.
          *
-         * @param {FullScreenMario} FSM
-         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
+         * @param FSM
+         * @param settings   Storage for the cutscene from ScenePlayr.
          */
         FullScreenMario.prototype.cutsceneFlagpoleFireworks = function (FSM, settings) {
             var numFireworks = FSM.MathDecider.compute("numberOfFireworks", settings.time), player = settings.player, detector = settings.detector, doorRight = detector.left, doorLeft = doorRight - FSM.unitsize * 8, doorBottom = detector.bottom, doorTop = doorBottom - FSM.unitsize * 16, flag = FSM.ObjectMaker.make("CastleFlag", {
@@ -5748,14 +5751,14 @@ var FullScreenMario;
         };
         /**
          * Routine for when a player collides with a castle axe. All unimportant NPCs
-         * are killed and the player running again is scheduled.
+         * are killed and a Player running again is scheduled.
          *
-         * @param {FullScreenMario} FSM
-         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
+         * @param FSM
+         * @param settings   Storage for the cutscene from ScenePlayr.
          */
         FullScreenMario.prototype.cutsceneBowserVictoryCollideCastleAxe = function (FSM, settings) {
             var player = settings.player, axe = settings.axe;
-            FSM.thingPauseVelocity(player);
+            FSM.animateCharacterPauseVelocity(player);
             FSM.killNormal(axe);
             FSM.killNPCs();
             FSM.AudioPlayer.clearTheme();
@@ -5764,7 +5767,7 @@ var FullScreenMario;
             player.FSM.TimeHandler.addEvent(function () {
                 player.keys.run = 1;
                 player.maxspeed = player.walkspeed;
-                FSM.thingResumeVelocity(player);
+                FSM.animateCharacterResumeVelocity(player);
                 player.yvel = 0;
                 FSM.MapScreener.canscroll = true;
                 FSM.AudioPlayer.play("World Clear");
@@ -5774,8 +5777,8 @@ var FullScreenMario;
          * Routine for a castle bridge opening. Its width is reduced repeatedly on an
          * interval until it's 0, at which point the BowserFalls routine plays.
          *
-         * @param {FullScreenMario} FSM
-         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
+         * @param FSM
+         * @param settings   Storage for the cutscene from ScenePlayr.
          * @remarks The castle bridge's animateCastleBridgeOpen (called via killNPCs
          *          as the bridge's .killonend attribute) is what triggers this.
          */
@@ -5795,14 +5798,14 @@ var FullScreenMario;
         /**
          * Routine for Bowser falling after his bridge opens.
          *
-         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
-         * @param {FullScreenMario} FSM
+         * @param settings   Storage for the cutscene from ScenePlayr.
+         * @param FSM
          * @remarks This is called by the CastleBridgeOpen routine, once the bridge
          *          has been reduced to no width.
          */
         FullScreenMario.prototype.cutsceneBowserVictoryBowserFalls = function (FSM, settings) {
             FSM.AudioPlayer.play("Bowser Falls");
-            // Bowser won't exist if the player already killed him with a star or fireballs
+            // Bowser won't exist if a Player already killed him with a star or fireballs
             if (settings.bowser) {
                 settings.bowser.nofall = true;
             }
@@ -5811,8 +5814,8 @@ var FullScreenMario;
          * Routine for displaying text above a castle NPC. Each "layer" of text
          * is added in order, after which collideLevelTransport is called.
          *
-         * @param {Object} settings   Storage for the cutscene from ScenePlayr.
-         * @param {FullScreenMario} FSM
+         * @param settings   Storage for the cutscene from ScenePlayr.
+         * @param FSM
          * @remarks This is called by collideCastleNPC.
          */
         FullScreenMario.prototype.cutsceneBowserVictoryDialog = function (FSM, settings) {
@@ -5835,54 +5838,19 @@ var FullScreenMario;
         /* Map macros
         */
         /**
-         * Sample macro with no functionality, except to console.log a listing of
-         * the arguments provided to each macro function.
-         * For all real macros, arguments are listed as the keys given as members of
-         * the reference object.
-         * They also ignore the "x" and "y" arguments, which
-         * are the x-location and y-location of the output (and both default to 0),
-         * and the "macro" argument, which is listed as their alias.
-         *
-         * @alias Example
-         * @param {Object} reference   A listing of the settings for this macro,
-         *                             from an Area's .creation Array. This should
-         *                             be treated as const!
-         * @param {Object[]} prethings   The Area's actual .creation Array, which
-         *                               consists of a bunch of reference Objects.
-         * @param {Area} area   The area currently being generated.
-         * @param {Map} map   The map containing the area currently being generated.
-         */
-        FullScreenMario.prototype.macroExample = function (reference, prethings, area, map, scope) {
-            console.log("This is a macro that may be called by a map creation.");
-            console.log("The arguments are:\n");
-            console.log("Reference (the listing from area.creation):  ", reference);
-            console.log("Prethings (the area's listing of prethings): ", prethings);
-            console.log("Area      (the currently generated area):    ", area);
-            console.log("Map       (the map containing the area):     ", map);
-            console.log("Scope     (the custom scope container):      ", scope);
-        };
-        /**
          * Macro to place a single type of Thing multiple times, drawing from a
          * bottom/left corner to a top/right corner.
          *
          * @alias Fill
-         * @param {String} thing   The name of the Thing to fill (e.g. "Brick").
-         * @param {Number} xnum   How many times to repeat the Thing horizontally
-         *                        to the right (defaults to 1)
-         * @param {Number} ynum   How many times to repeat the Thing vertically
-         *                        upwards (defaults to 1)
-         * @param {Number} xwidth   How many units are between the left edges of
-         *                          placed Things horizontally (defaults to 0)
-         * @param {Number} yheight   How many units are between the top edges of
-         *                           placed Things vertically (defaults to 0)
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [y]   The y-location (defaults to 0).
-         * @example   { "macro": "Fill", "thing": "Brick",
-         *              "x": 644, "y": 64, "xnum": 5, "xwidth": 8 }
-         * @return {Object[]}
+         * @param reference   Settings for a FillPreThings macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns A single type of Thing any number of times.
          */
-        FullScreenMario.prototype.macroFillPreThings = function (reference, prethings, area, map, scope) {
-            var defaults = scope.ObjectMaker.getFullPropertiesOf(reference.thing), xnum = reference.xnum || 1, ynum = reference.ynum || 1, xwidth = reference.xwidth || defaults.width, yheight = reference.yheight || defaults.height, x = reference.x || 0, yref = reference.y || 0, outputs = [], output, o = 0, y, i, j;
+        FullScreenMario.prototype.macroFillPreThings = function (reference, prethings, area, map, FSM) {
+            var defaults = FSM.ObjectMaker.getFullPropertiesOf(reference.thing), xnum = reference.xnum || 1, ynum = reference.ynum || 1, xwidth = reference.xwidth || defaults.width, yheight = reference.yheight || defaults.height, x = reference.x || 0, yref = reference.y || 0, outputs = [], output, o = 0, y, i, j;
             for (i = 0; i < xnum; ++i) {
                 y = yref;
                 for (j = 0; j < ynum; ++j) {
@@ -5891,7 +5859,7 @@ var FullScreenMario;
                         "y": y,
                         "macro": undefined
                     };
-                    outputs.push(FullScreenMario.prototype.proliferate(output, reference, true));
+                    outputs.push(FSM.proliferate(output, reference, true));
                     o += 1;
                     y += yheight;
                 }
@@ -5904,22 +5872,18 @@ var FullScreenMario;
          * to right. This is commonly used for repeating background scenery.
          *
          * @alias Pattern
-         * @param {String} pattern   The name of the pattern to print, from the
-         *                           listing in scope.settings.maps.patterns.
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [y]   The y-location (defaults to 0).
-         * @param {Number} [repeat]   How many times to repeat the overall pattern
-         *                            (by default, 1).
-         * @param {Number[]} [skips]   Which numbered items to skip, if any.
-         * @return {Object[]}
+         * @param reference   Settings for a FillPrePattern macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns Preset Things in a pattern.
          */
-        FullScreenMario.prototype.macroFillPrePattern = function (reference, prethings, area, map, scope) {
-            // Make sure the pattern exists before doing anything
-            if (!scope.settings.maps.patterns[reference.pattern]) {
-                console.warn("An unknown pattern is referenced: " + reference);
-                return;
+        FullScreenMario.prototype.macroFillPrePattern = function (reference, prethings, area, map, FSM) {
+            if (!FSM.settings.maps.patterns[reference.pattern]) {
+                throw new Error("An unknown pattern is referenced: " + reference);
             }
-            var pattern = scope.settings.maps.patterns[reference.pattern], length = pattern.length, defaults = scope.ObjectMaker.getFullProperties(), repeats = reference.repeat || 1, xpos = reference.x || 0, ypos = reference.y || 0, outputs = [], o = 0, skips = {}, prething, output, i, j;
+            var pattern = FSM.settings.maps.patterns[reference.pattern], length = pattern.length, defaults = FSM.ObjectMaker.getFullProperties(), repeats = reference.repeat || 1, xpos = reference.x || 0, ypos = reference.y || 0, outputs = [], o = 0, skips = {}, prething, output, i, j;
             // If skips are given, record them in an Object for quick access
             if (typeof reference.skips !== "undefined") {
                 for (i = 0; i < reference.skips.length; i += 1) {
@@ -5955,13 +5919,16 @@ var FullScreenMario;
          * Macro to place a Floor Thing with infinite height. All settings are
          * passed in except "macro", which becomes undefined.
          *
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [y]   The y-location (defaults to 0).
-         * @param {Number} [width]   How wide the Floor should be (by default, 8).
-         * @return {Object}
+         * @alias Floor
+         * @param reference   Settings for a Floor macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns A single Floor.
          */
-        FullScreenMario.prototype.macroFloor = function (reference, prethings, area, map, scope) {
-            var x = reference.x || 0, y = reference.y || 0, floor = FullScreenMario.prototype.proliferate({
+        FullScreenMario.prototype.macroFloor = function (reference, prethings, area, map, FSM) {
+            var x = reference.x || 0, y = reference.y || 0, floor = FSM.proliferate({
                 "thing": "Floor",
                 "x": x,
                 "y": y,
@@ -5976,17 +5943,13 @@ var FullScreenMario;
          * infinite height. All settings are copied to Pipe except for "macro",
          * which becomes undefined.
          *
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [y]   The y-location (defaults to 0).
-         * @param {Mixed} [height]   How high the Pipe should be (by default, 8).
-         *                           May be a Number or "Infinity".
-         * @param {Boolean} [piranha]   Whethere there should be a Piranha spawned
-         *                              with the Pipe (by default, false).
-         * @param {Mixed} [transport]   What location the Pipe should transport to
-         *                              (by default, none).
-         * @param {Mixed} [entrance]   What location the Pipe should act as an
-         *                             entrance to (by default, none).
-         * @return {Object[]}
+         * @alias Pipe
+         * @param reference   Settings for a Pipe macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns A Pipe, and potentially a Piranha.
          */
         FullScreenMario.prototype.macroPipe = function (reference, prethings, area, map, scope) {
             var x = reference.x || 0, y = reference.y || 0, height = reference.height || 16, pipe = FullScreenMario.prototype.proliferate({
@@ -6019,22 +5982,13 @@ var FullScreenMario;
          * Macro to place a horizontal Pipe with a vertical one, likely with
          * location hooks.
          *
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [y]   The y-location (defaults to 0).
-         * @param {Mixed} [height]   How high the Pipe should be (by default, 8).
-         *                           May be a Number or "Infinity".
-         * @param {Mixed} [transport]   What location the Pipe should transport to
-         *                              (by default, none).
-         * @param {Boolean} [scrollEnabler]   Whether there should be a
-         *                                    ScrollEnabler placed on top of the
-         *                                    PipeVertical (by default, false).
-         * @param {Boolean} [scrollBlocker]   Whether there should be a
-         *                                    ScrollBlocker placed to the right of
-         *                                    the PipeVertical (by default, false).
-         * @return {Object[]}
-         * @remarks This could be used in maps like 1-2, but there's no real need to
-         *          take the time (unless you're a volunteer and want something to
-         *          do!). It was introduced for WorldSeedr generation.
+         * @alias PipeCorner
+         * @param reference   Settings for a PipeCorner macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns A horizontal Pipe and a vertical Pipe.
          */
         FullScreenMario.prototype.macroPipeCorner = function (reference, prethings, area, map, scope) {
             var x = reference.x || 0, y = reference.y || 0, height = reference.height || 16, output = [
@@ -6069,20 +6023,15 @@ var FullScreenMario;
             return output;
         };
         /**
-         * Macro to place a large Tree.
+         * Macro to place a Tree.
          *
-         * @param {Number} width   How wide the Tree should be (preferably a
-         *                         multiple of eight
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [y]   The y-location (defaults to 0).
-         * @param {Boolean} [solidTrunk]   Whether the trunk scenery should be
-         *                                 listed in the Solids group instead of
-         *                                 Scenery for the sake of overlaps (by
-         *                                 default, false).
-         * @return {Object[]}
-         * @remarks Although the tree trunks in later trees overlap earlier ones,
-         *          it's ok because the pattern is indistinguishible when placed
-         *          correctly.
+         * @alias Tree
+         * @param reference   Settings for a Tree macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns A Tree and its trunk.
          */
         FullScreenMario.prototype.macroTree = function (reference, prethings, area, map, scope) {
             var x = reference.x || 0, y = reference.y || 0, width = reference.width || 24, output = [
@@ -6108,18 +6057,13 @@ var FullScreenMario;
         /**
          * Macro to place a large Shroom (a Tree that looks like a large Mushroom).
          *
-         * @param {Number} width   How wide the Shroom should be (preferably a
-         *                         multiple of eight).
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [y]   The y-location (defaults to 0).
-         * @param {Boolean} [solidTrunk]   Whether the trunk scenery should be
-         *                                 listed in the Solids group instead of
-         *                                 Scenery for the sake of overlaps (by
-         *                                 default, false).
-         * @return {Object[]}
-         * @remarks Although the shroom trunks in later shrooms overlap earlier
-         *          ones, it's ok because the pattern is indistinguishible when
-         *          placed correctly.
+         * @alias Shroom
+         * @param reference   Settings for a Shroom macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns A Shroom and its trunk.
          */
         FullScreenMario.prototype.macroShroom = function (reference, prethings, area, map, scope) {
             var x = reference.x || 0, y = reference.y || 0, width = reference.width || 24, output = [
@@ -6145,29 +6089,29 @@ var FullScreenMario;
          * Macro to place Water of infinite height. All settings are copied to the
          * Water except for "macro", which becomes undefined.
          *
-         * @param {Number} width   How wide the Water should be.
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [y]   The y-location (defaults to 0).
-         * @return {Object}
+         * @alias Water
+         * @param reference   Settings for a Water macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns A Water scenery.
          */
-        FullScreenMario.prototype.macroWater = function (reference, prethings, area, map, scope) {
-            var x = reference.x || 0, y = (reference.y || 0) + 2, // water is 3.5 x 5.5
-            output = FullScreenMario.prototype.proliferate({
+        FullScreenMario.prototype.macroWater = function (reference, prethings, area, map, FSM) {
+            return FSM.proliferate({
                 "thing": "Water",
-                "x": x,
-                "y": y,
+                "x": reference.x || 0,
+                "y": (reference.y || 0) + 2,
                 "height": "Infinity",
                 "macro": undefined
             }, reference, true);
-            return output;
         };
         /**
          * Macro to place a row of Bricks at y = 88.
          *
-         * @param {Number} width   How wide the ceiling should be (eight times the
-         *                         number of Bricks).
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @return {Object}
+         * @alias Ceiling
+         * @param reference   Settings for a Ceiling macro.
+         * @returns A Brick ceiling.
          */
         FullScreenMario.prototype.macroCeiling = function (reference) {
             return {
@@ -6182,16 +6126,9 @@ var FullScreenMario;
         /**
          * Macro to place a bridge, possibly with columns at the start and/or end.
          *
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [y]   The y-location (defaults to 0).
-         * @param {Number} [width]   How wide the bridge should be (by default, 16).
-         * @param {Boolean} [begin]   Whether the first 8 units should be taken up
-         *                            by an infinitely high Stone column (by
-         *                            default, false).
-         * @param {Boolean} [end]   Whether the last 8 units should be taken up by
-         *                          an infinitely high Stone column (by default,
-         *                          false).
-         * @return {Object[]}
+         * @alias Bridge
+         * @param reference   Settings for a Bridge macro.
+         * @returns A bridge.
          */
         FullScreenMario.prototype.macroBridge = function (reference) {
             var x = reference.x || 0, y = reference.y || 0, width = Math.max(reference.width || 0, 16), output = [];
@@ -6222,99 +6159,87 @@ var FullScreenMario;
             return output;
         };
         /**
-         * Macro to place a scale on the map, which is two Platforms seemingly
-         * suspended by Strings.
+         * Macro to place a scale, which is two Platforms seemingly suspended
+         * by Strings.
          *
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [y]   The y-location (defaults to 0).
-         * @param {Number} [widthLeft]   How wide the left Platform should be (by
-         *                               default, 24).
-         * @param {Number} [widthRight]   How wide the right Platform should be (by
-         *                               default, 24).
-         * @param {Number} [between]   How much space there should be between
-         *                             Platforms (by default, 40).
-         * @param {Number} [dropLeft]   How far down from y the left platform should
-         *                              start (by default, 24).
-         * @param {Number} [dropRight]   How far down from y the right platform
-         *                               should start (by default, 24).
-         * @return {Object[]}
+         * @alias Scale
+         * @param reference   Settings for a Scale macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns A scale group.
          */
-        FullScreenMario.prototype.macroScale = function (reference, prethings, area, map, scope) {
-            var x = reference.x || 0, y = reference.y || 0, unitsize = scope.unitsize, widthLeft = reference.widthLeft || 24, widthRight = reference.widthRight || 24, between = reference.between || 40, dropLeft = reference.dropLeft || 24, dropRight = reference.dropRight || 24, collectionName = "ScaleCollection--" + [
+        FullScreenMario.prototype.macroScale = function (reference, prethings, area, map, FSM) {
+            var x = reference.x || 0, y = reference.y || 0, unitsize = FSM.unitsize, widthLeft = reference.widthLeft || 24, widthRight = reference.widthRight || 24, between = reference.between || 40, dropLeft = reference.dropLeft || 24, dropRight = reference.dropRight || 24, collectionName = "ScaleCollection--" + [
                 x, y, widthLeft, widthRight, dropLeft, dropRight
-            ].join(","), stringLeft = {
-                "thing": "String",
-                "x": x,
-                "y": y - 4,
-                "height": dropLeft - 4,
-                "collectionName": collectionName,
-                "collectionKey": "stringLeft"
-            }, stringRight = {
-                "thing": "String",
-                "x": x + between,
-                "y": y - 4,
-                "height": dropRight - 4,
-                "collectionName": collectionName,
-                "collectionKey": "stringRight"
-            }, stringMiddle = {
-                "thing": "String",
-                "x": x + 4,
-                "y": y,
-                "width": between - 7,
-                "collectionName": collectionName,
-                "collectionKey": "stringMiddle"
-            }, cornerLeft = {
-                "thing": "StringCornerLeft",
-                "x": x,
-                "y": y
-            }, cornerRight = {
-                "thing": "StringCornerRight",
-                "x": x + between - 4,
-                "y": y
-            }, platformLeft = {
-                "thing": "Platform",
-                "x": x - (widthLeft / 2),
-                "y": y - dropLeft,
-                "width": widthLeft,
-                "inScale": true,
-                "tension": (dropLeft - 1.5) * unitsize,
-                "onThingAdd": scope.spawnScalePlatform,
-                "collectionName": collectionName,
-                "collectionKey": "platformLeft"
-            }, platformRight = {
-                "thing": "Platform",
-                "x": x + between - (widthRight / 2),
-                "y": y - dropRight,
-                "width": widthRight,
-                "inScale": true,
-                "tension": (dropRight - 1.5) * unitsize,
-                "onThingAdd": scope.spawnScalePlatform,
-                "collectionName": collectionName,
-                "collectionKey": "platformRight"
-            };
+            ].join(",");
             return [
-                stringLeft,
-                stringRight,
-                stringMiddle,
-                cornerLeft,
-                cornerRight,
-                platformLeft,
-                platformRight
-            ];
+                {
+                    "thing": "String",
+                    "x": x,
+                    "y": y - 4,
+                    "height": dropLeft - 4,
+                    "collectionName": collectionName,
+                    "collectionKey": "stringLeft"
+                },
+                {
+                    "thing": "String",
+                    "x": x + between,
+                    "y": y - 4,
+                    "height": dropRight - 4,
+                    "collectionName": collectionName,
+                    "collectionKey": "stringRight"
+                }, {
+                    "thing": "String",
+                    "x": x + 4,
+                    "y": y,
+                    "width": between - 7,
+                    "collectionName": collectionName,
+                    "collectionKey": "stringMiddle"
+                }, {
+                    "thing": "StringCornerLeft",
+                    "x": x,
+                    "y": y
+                }, {
+                    "thing": "StringCornerRight",
+                    "x": x + between - 4,
+                    "y": y
+                }, {
+                    "thing": "Platform",
+                    "x": x - (widthLeft / 2),
+                    "y": y - dropLeft,
+                    "width": widthLeft,
+                    "inScale": true,
+                    "tension": (dropLeft - 1.5) * unitsize,
+                    "onThingAdd": FSM.spawnScalePlatform,
+                    "collectionName": collectionName,
+                    "collectionKey": "platformLeft"
+                }, {
+                    "thing": "Platform",
+                    "x": x + between - (widthRight / 2),
+                    "y": y - dropRight,
+                    "width": widthRight,
+                    "inScale": true,
+                    "tension": (dropRight - 1.5) * unitsize,
+                    "onThingAdd": FSM.spawnScalePlatform,
+                    "collectionName": collectionName,
+                    "collectionKey": "platformRight"
+                }];
         };
         /**
-         * Macro to place what appears to be a PlatformGenerator on the map (in
-         * actuality, it is multiple Platforms vertically that know how to respawn).
+         * Macro to place Platforms traveling and spawning vertically.
          *
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [direction]   What direction to travel (either -1 or 1;
-         *                               defaults to 1).
-         * @param {Number} [width]   How wide the Platforms should be (by default,
-         *                           16).
-         * @return {Object[]}
+         * @alias PlatformGenerator
+         * @param reference   Settings for a PlatformGenerator macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns Multiple Platforms.
          */
-        FullScreenMario.prototype.macroPlatformGenerator = function (reference, prethings, area, map, scope) {
-            var output = [], direction = reference.direction || 1, levels = direction > 0 ? [0, 48] : [8, 56], width = reference.width || 16, x = reference.x || 0, yvel = direction * scope.unitsize * .42, i;
+        FullScreenMario.prototype.macroPlatformGenerator = function (reference, prethings, area, map, FSM) {
+            var output = [], direction = reference.direction || 1, levels = direction > 0 ? [0, 48] : [8, 56], width = reference.width || 16, x = reference.x || 0, yvel = direction * FSM.unitsize * .42, i;
             for (i = 0; i < levels.length; i += 1) {
                 output.push({
                     "thing": "Platform",
@@ -6322,15 +6247,15 @@ var FullScreenMario;
                     "y": levels[i],
                     "width": width,
                     "yvel": yvel,
-                    "movement": scope.movePlatformSpawn
+                    "movement": FSM.movePlatformSpawn
                 });
             }
             output.push({
                 "thing": "PlatformString",
                 "x": x + (width / 2) - .5,
-                "y": scope.MapScreener.floor,
+                "y": FSM.MapScreener.floor,
                 "width": 1,
-                "height": scope.MapScreener.height / scope.unitsize
+                "height": FSM.MapScreener.height / FSM.unitsize
             });
             return output;
         };
@@ -6338,15 +6263,15 @@ var FullScreenMario;
          * Macro to place a Warp World group of Pipes, Texts, Piranhas, and
          * detectors.
          *
-         * @param {String[]} warps   The map names each Pipe should warp to.
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [y]   The y-location (defaults to 0).
-         * @param {Number} [textHeight]   How far above the Piranhas to place the
-         *                                CustomText labels (by default, 8).
-         *
-         * @return {Object[]}
+         * @alias WarpWorld
+         * @param reference   Settings for a WarpWorld macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns A Warp World group.
          */
-        FullScreenMario.prototype.macroWarpWorld = function (reference, prethings, area, map, scope) {
+        FullScreenMario.prototype.macroWarpWorld = function (reference, prethings, area, map, FSM) {
             var output = [], x = reference.x || 0, y = reference.y || 0, textHeight = reference.hasOwnProperty("textHeight") ? reference.textHeight : 8, warps = reference.warps, collectionName = "WarpWorldCollection-" + warps.join("."), keys = [], i;
             output.push({
                 "thing": "CustomText",
@@ -6367,7 +6292,7 @@ var FullScreenMario;
                 "y": y + 174,
                 "width": 40,
                 "height": 102,
-                "activate": scope.activateWarpWorld,
+                "activate": FSM.activateWarpWorld,
                 "collectionName": collectionName,
                 "collectionKey": "Detector"
             });
@@ -6413,109 +6338,124 @@ var FullScreenMario;
          * Macro to place a DetectCollision that will start the map spawning random
          * CheepCheeps intermittently.
          *
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [width]   How wide the infinitely tall DetectCollision
-         *                           should be (by default, 8).
-         * @return {Object}
+         * @alias CheepsStart
+         * @param reference   Settings for a CheepsStart macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns A detector to start spawning CheepCheeps.
          */
-        FullScreenMario.prototype.macroCheepsStart = function (reference, prethings, area, map, scope) {
+        FullScreenMario.prototype.macroCheepsStart = function (reference, prethings, area, map, FSM) {
             return {
                 "thing": "DetectCollision",
                 "x": reference.x || 0,
-                "y": scope.MapScreener.floor,
+                "y": FSM.MapScreener.floor,
                 "width": reference.width || 8,
-                "height": scope.MapScreener.height / scope.unitsize,
-                "activate": scope.activateCheepsStart
+                "height": FSM.MapScreener.height / FSM.unitsize,
+                "activate": FSM.activateCheepsStart
             };
         };
         /**
          * Macro to place a DetectCollision that will stop the map spawning random
          * CheepCheeps intermittently.
          *
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [width]   How wide the infinitely tall DetectCollision
-         *                           should be (by default, 8).
-         * @return {Object}
+         * @alias CheepsStop
+         * @param reference   Settings for a CheepsStop macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns A detector to stop spawning CheepCheeps.
          */
-        FullScreenMario.prototype.macroCheepsStop = function (reference, prethings, area, map, scope) {
+        FullScreenMario.prototype.macroCheepsStop = function (reference, prethings, area, map, FSM) {
             return {
                 "thing": "DetectCollision",
                 "x": reference.x || 0,
-                "y": scope.MapScreener.floor,
+                "y": FSM.MapScreener.floor,
                 "width": reference.width || 8,
-                "height": scope.MapScreener.height / scope.unitsize,
-                "activate": scope.activateCheepsStop
+                "height": FSM.MapScreener.height / FSM.unitsize,
+                "activate": FSM.activateCheepsStop
             };
         };
         /**
          * Macro to place a DetectCollision that will start the map spawning random
          * BulletBills intermittently.
          *
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [width]   How wide the infinitely tall DetectCollision
-         *                           should be (by default, 8).
-         * @return {Object}
+         * @alias BulletBillsStart
+         * @param reference   Settings for a BulletBillsStart macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns A detector to start spawning BulletBills.
          */
-        FullScreenMario.prototype.macroBulletBillsStart = function (reference, prethings, area, map, scope) {
+        FullScreenMario.prototype.macroBulletBillsStart = function (reference, prethings, area, map, FSM) {
             return {
                 "thing": "DetectCollision",
                 "x": reference.x || 0,
-                "y": scope.MapScreener.floor,
+                "y": FSM.MapScreener.floor,
                 "width": reference.width || 8,
-                "height": scope.MapScreener.height / scope.unitsize,
-                "activate": scope.activateBulletBillsStart
+                "height": FSM.MapScreener.height / FSM.unitsize,
+                "activate": FSM.activateBulletBillsStart
             };
         };
         /**
          * Macro to place a DetectCollision that will stop the map spawning random
          * BulletBills intermittently.
          *
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [width]   How wide the infinitely tall DetectCollision
-         *                           should be (by default, 8).
-         * @return {Object}
+         * @alias BulletBillsStop
+         * @param reference   Settings for a BulletBillsStop macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns A detector to stop spawning BulletBills.
          */
-        FullScreenMario.prototype.macroBulletBillsStop = function (reference, prethings, area, map, scope) {
+        FullScreenMario.prototype.macroBulletBillsStop = function (reference, prethings, area, map, FSM) {
             return {
                 "thing": "DetectCollision",
                 "x": reference.x || 0,
-                "y": scope.MapScreener.floor,
+                "y": FSM.MapScreener.floor,
                 "width": reference.width || 8,
-                "height": scope.MapScreener.height / scope.unitsize,
-                "activate": scope.activateBulletBillsStop
+                "height": FSM.MapScreener.height / FSM.unitsize,
+                "activate": FSM.activateBulletBillsStop
             };
         };
         /**
          * Macro to place a DetectCollision that will tell any current Lakitu to
          * flee the scene.
          *
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [width]   How wide the infinitely tall DetectCollision
-         *                           should be (by default, 8).
-         * @return {Object}
+         * @alias LakituStop
+         * @param reference   Settings for a LakituStop macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns A detector to cause any current Lakitu to flee.
          */
-        FullScreenMario.prototype.macroLakituStop = function (reference, prethings, area, map, scope) {
+        FullScreenMario.prototype.macroLakituStop = function (reference, prethings, area, map, FSM) {
             return {
                 "thing": "DetectCollision",
                 "x": reference.x || 0,
-                "y": scope.MapScreener.floor,
+                "y": FSM.MapScreener.floor,
                 "width": reference.width || 8,
-                "height": scope.MapScreener.height / scope.unitsize,
-                "activate": scope.activateLakituStop
+                "height": FSM.MapScreener.height / FSM.unitsize,
+                "activate": FSM.activateLakituStop
             };
         };
         /**
          * Macro to place a small castle, which is really a collection of sceneries.
          *
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [y]   The y-location (defaults to 0).
-         * @param {Mixed} [transport]   What map or location to shift to after
-         *                              ending theatrics (collidePlayerTransport).
-         * @param {Number} [walls]   How many CastleWall Things should be placed to
-         *                           the right of the castle (by default, 2).
-         * @return {Object[]}
+         * @alias CastleSmall
+         * @param reference   Settings for a CastleSmall macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns A small castle.
          */
-        FullScreenMario.prototype.macroCastleSmall = function (reference) {
+        FullScreenMario.prototype.macroCastleSmall = function (reference, prethings, area, map, FSM) {
             var output = [], x = reference.x || 0, y = reference.y || 0, i, j;
             // Base filling left
             for (i = 0; i < 2; i += 1) {
@@ -6605,7 +6545,7 @@ var FullScreenMario;
                     "x": x + 24,
                     "y": y + 16,
                     "height": 16,
-                    "activate": FullScreenMario.prototype.collideCastleDoor,
+                    "activate": FSM.collideCastleDoor,
                     "transport": reference.transport,
                     "position": "end"
                 });
@@ -6616,13 +6556,15 @@ var FullScreenMario;
          * Macro to place a large castle, which is really a collection of sceneries
          * underneath a small castle.
          *
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [y]   The y-location (defaults to 0).
-         * @param {Mixed} [transport]   What map or location to shift to after
-         *                              ending theatrics (collidePlayerTransport).
-         * @return {Object[]}
+         * @alias CastleLarge
+         * @param reference   Settings for a CastleLarge macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns A large castle.
          */
-        FullScreenMario.prototype.macroCastleLarge = function (reference) {
+        FullScreenMario.prototype.macroCastleLarge = function (reference, prethings, area, map, FSM) {
             var output = [], x = reference.x || 0, y = reference.y || 0, i, j;
             output.push({
                 "macro": "CastleSmall",
@@ -6697,7 +6639,7 @@ var FullScreenMario;
                     "x": x + 24,
                     "y": y + 16,
                     "height": 16,
-                    "activate": FullScreenMario.prototype.collideCastleDoor,
+                    "activate": FSM.collideCastleDoor,
                     "transport": reference.transport,
                     "position": "end"
                 });
@@ -6708,13 +6650,11 @@ var FullScreenMario;
          * Macro to place the typical starting Things for the inside of a castle
          * area.
          *
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [y]   The y-location (defaults to 0).
-         * @param {Number} [width]   How wide the entire shebang should be (by
-         *                           default, 40).
-         * @return {Object[]}
+         * @alias StartInsideCastle
+         * @param reference   Settings for a StartInsideCastle macro.
+         * @returns A starting zone for the inside of a castle.
          */
-        FullScreenMario.prototype.macroStartInsideCastle = function (reference, prethings, area, map, scope) {
+        FullScreenMario.prototype.macroStartInsideCastle = function (reference) {
             var x = reference.x || 0, y = reference.y || 0, width = (reference.width || 0) - 40, output = [
                 {
                     "thing": "Stone",
@@ -6736,8 +6676,7 @@ var FullScreenMario;
                     "y": y + 32,
                     "width": 8,
                     "height": Infinity
-                }
-            ];
+                }];
             if (width > 0) {
                 output.push({
                     "macro": "Floor",
@@ -6752,20 +6691,15 @@ var FullScreenMario;
          * Macro to place the typical ending Things for the inside of an outdoor
          * area.
          *
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [y]   The y-location (defaults to 0).
-         * @param {Mixed} [transport]   What map or location to shift to after
-         *                              ending theatrics (collidePlayerTransport).
-         * @param {Boolean} [large]   Whether this should place a large castle
-         *                            instead of a small (by default, false).
-         * @param {Number} [castleDistance]   How far from the flagpole to the
-         *                                    castle (by default, 24 for large
-         *                                    castles and 32 for small).
-         * @param {Number} [walls]   For large castles, how many CastleWall Things
-         *                           should be placed after (by default, 2).
-         * @return {Object[]}
+         * @alias EndOutsideCastle
+         * @param reference   Settings for an EndOutsideCastle macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns An outdoors castle ending.
          */
-        FullScreenMario.prototype.macroEndOutsideCastle = function (reference) {
+        FullScreenMario.prototype.macroEndOutsideCastle = function (reference, prethings, area, map, FSM) {
             var x = reference.x || 0, y = reference.y || 0, collectionName = "EndOutsideCastle-" + [
                 reference.x, reference.y, reference.large
             ].join(","), output;
@@ -6801,8 +6735,7 @@ var FullScreenMario;
                     "thing": "Stone", "x": x, "y": y + 8,
                     "collectionName": collectionName,
                     "collectionKey": "FlagPole"
-                },
-            ];
+                }];
             if (reference.large) {
                 output.push({
                     "macro": "CastleLarge",
@@ -6825,25 +6758,15 @@ var FullScreenMario;
         /**
          * Macro to place the typical ending Things for the inside of a castle area.
          *
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [y]   The y-location (defaults to 0).
-         * @param {Mixed} [transport]   What map or location to shift to after
-         *                              ending theatrics (collidePlayerTransport).
-         * @param {String} [npc]   Which NPC to use (either "Toad" or "Peach";
-         *                         "Toad" by default).
-         * @param {Boolean} [hard]   Whether Bowser should be "hard" (by default,
-         *                           false).
-         * @param {String} [spawnType]   What the Bowser's spawnType should be for
-         *                               fireball deaths (by default, "Goomba").
-         * @param {Boolean} [throwing]   Whether the Bowser is also throwing hammers
-         *                               (by default, false).
-         * @param {Boolean} [topScrollEnabler]   Whether a ScrollEnabler should be
-         *                                       added like the ones at the end of
-         *                                       large underground PipeCorners (by
-         *                                       default, false).
-         * @return {Object[]}
+         * @alias EndInsideCastle
+         * @param reference   Settings for an EndInsideCastle macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns An ending zone for inside a castle.
          */
-        FullScreenMario.prototype.macroEndInsideCastle = function (reference, prethings, area, map, scope) {
+        FullScreenMario.prototype.macroEndInsideCastle = function (reference, prethings, area, map, FSM) {
             var x = reference.x || 0, y = reference.y || 0, npc = reference.npc || "Toad", output, texts, keys;
             if (npc === "Toad") {
                 keys = ["1", "2"];
@@ -6953,7 +6876,7 @@ var FullScreenMario;
                 // Peach's Magical Happy Chamber of Fantastic Love
                 {
                     "thing": "DetectCollision", "x": x + 180,
-                    "activate": scope.collideCastleNPC,
+                    "activate": FSM.collideCastleNPC,
                     "transport": reference.transport,
                     "collectionName": "endInsideCastleText",
                     "collectionKey": "npc",
@@ -6981,33 +6904,31 @@ var FullScreenMario;
          * Macro to place a DetectSpawn that will call activateSectionBefore to
          * start a stretch section.
          *
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [y]   The y-location (defaults to 0).
-         * @param {Number} [section]   Which of the area's sections to spawn (by
-         *                             default, 0).
-         * @return {Object}
+         * @alias Section
+         * @param reference   Settings for a Section macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns A section.
          */
-        FullScreenMario.prototype.macroSection = function (reference, prethings, area, map, scope) {
+        FullScreenMario.prototype.macroSection = function (reference, prethings, area, map, FSM) {
             return {
                 "thing": "DetectSpawn",
                 "x": reference.x || 0,
                 "y": reference.y || 0,
-                "activate": scope.activateSectionBefore,
+                "activate": FSM.activateSectionBefore,
                 "section": reference.section || 0
             };
         };
         /**
          * Macro to place a DetectCollision to mark the current section as passed.
          *
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [y]   The y-location (defaults to 0).
-         * @param {Number} [width]   How wide the DetectCollision should be (by
-         *                           default, 8).
-         * @param {Number} [height]   How high the DetectCollision should be (by
-         *                            default, 8).
-         * @return {Object}
+         * @alias SectionPass
+         * @param reference   Settings for a SectionPass macro.
+         * @returns A section pass detector.
          */
-        FullScreenMario.prototype.macroSectionPass = function (reference, prethings, area, map, scope) {
+        FullScreenMario.prototype.macroSectionPass = function (reference) {
             return {
                 "thing": "DetectCollision",
                 "x": reference.x || 0,
@@ -7023,15 +6944,11 @@ var FullScreenMario;
         /**
          * Macro to place a DetectCollision to mark the current section as failed.
          *
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [y]   The y-location (defaults to 0).
-         * @param {Number} [width]   How wide the DetectCollision should be (by
-         *                           default, 8).
-         * @param {Number} [height]   How high the DetectCollision should be (by
-         *                            default, 8).
-         * @return {Object}
+         * @alias SectionFail
+         * @param reference   Settings for a SectionFail macro.
+         * @returns A section fail detector.
          */
-        FullScreenMario.prototype.macroSectionFail = function (reference, prethings, area, map, scope) {
+        FullScreenMario.prototype.macroSectionFail = function (reference) {
             return [
                 {
                     "thing": "DetectCollision",
@@ -7050,15 +6967,15 @@ var FullScreenMario;
          * Macro to place a DetectSpawn that will spawn a following section based on
          * whether the current one was marked as passed or failed.
          *
-         * @param {Number} [x]   The x-location (defaults to 0).
-         * @param {Number} [y]   The y-location (defaults to 0).
-         * @param {Number} [pass]   Which section to spawn if passed (by default,
-         *                          0).
-         * @param {Number} [fail]   Which section to spawn if failed (by default,
-         *                          0).
-         * @return {Object}
+         * @alias SectionDecider
+         * @param reference   Settings for a SectionDecider macro.
+         * @param prethings   The container Area's creation commands.
+         * @param area   The container Area.
+         * @param map   The container Map.
+         * @param FSM   The calling FullScreenMario.
+         * @returns A section decider detector.
          */
-        FullScreenMario.prototype.macroSectionDecider = function (reference, prethings, area, map, scope) {
+        FullScreenMario.prototype.macroSectionDecider = function (reference) {
             return {
                 "thing": "DetectSpawn",
                 "x": reference.x || 0,
@@ -7119,28 +7036,26 @@ var FullScreenMario;
             "runner": undefined,
             "scenes": undefined,
             "sprites": undefined,
-            "statistics": undefined,
+            "items": undefined,
             "touch": undefined,
             "ui": undefined
         };
         /**
-         * Static unitsize of 4, as that's how Super Mario Bros. is.
+         * How much to expand each pixel from raw sizing measurements to in-game.
          */
         FullScreenMario.unitsize = 4;
         /**
-         * Static scale of 2, to exand to two pixels per one game pixel.
+         * How much to scale each pixel from PixelDrawr to the real canvas.
          */
         FullScreenMario.scale = 2;
         /**
-         * Gravity is always a function of unitsize (and about .48).
+         * How much falling Characters accelerate downward by default.
          */
         FullScreenMario.gravity = Math.round(12 * FullScreenMario.unitsize) / 100;
         /**
          * Levels of points to award for hopping on / shelling enemies.
          */
-        FullScreenMario.pointLevels = [
-            100, 200, 400, 500, 800, 1000, 2000, 4000, 5000, 8000
-        ];
+        FullScreenMario.pointLevels = [100, 200, 400, 500, 800, 1000, 2000, 4000, 5000, 8000];
         /**
          * Useful for custom text Things, where "text!" cannot be a Function name.
          */

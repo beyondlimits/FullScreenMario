@@ -14,8 +14,7 @@ module.exports = function (grunt) {
             },
             "files": {
                 "src": [
-                    "<%= meta.paths.source %>/<%= pkg.name %>.ts",
-                    "<%= meta.paths.source %>/settings/*.ts",
+                    "<%= meta.paths.source %>/*.ts"
                 ]
             }
         },

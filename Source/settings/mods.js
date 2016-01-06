@@ -382,7 +382,7 @@ FullScreenMario.FullScreenMario.settings.mods = {
                 "onModEnable": function (mod) {
                     var FSM = FullScreenMario.FullScreenMario.prototype.ensureCorrectCaller(this),
                         proto = FSM.ObjectMaker.getFunction("Area").prototype,
-                        stats = FSM.settings.statistics.values.lives;
+                        stats = FSM.settings.items.values.lives;
                     
                     mod.settings.onPlayerDeathOld = proto.onPlayerDeath;
                     proto.onPlayerDeath = FSM.mapEntranceRespawn;
@@ -395,7 +395,7 @@ FullScreenMario.FullScreenMario.settings.mods = {
                 "onModDisable": function (mod) {
                     var FSM = FullScreenMario.FullScreenMario.prototype.ensureCorrectCaller(this),
                         proto = FSM.ObjectMaker.getFunction("Area").prototype,
-                        stats = FSM.settings.statistics.values.lives;
+                        stats = FSM.settings.items.values.lives;
                     
                     proto.onPlayerDeath = mod.settings.onPlayerDeathOld;
                     
