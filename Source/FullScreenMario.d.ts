@@ -119,11 +119,15 @@ declare module FullScreenMario {
 
         /**
          * A callback to initialize the Area background as a function of its setting.
+         * 
+         * @param area   The Area having its background set.
          */
         setBackground: (area: IArea) => void;
 
         /**
          * A callback for when a Player runs out of lives.
+         * 
+         * @param FSM
          */
         onGameOver: (FSM: IFullScreenMario) => void;
 
@@ -134,6 +138,8 @@ declare module FullScreenMario {
 
         /**
          * A callback for when a Player loses a life (dies).
+         * 
+         * @param FSM
          */
         onPlayerDeath: (FSM: IFullScreenMario) => void;
 
@@ -419,11 +425,19 @@ declare module FullScreenMario {
     export interface ISolid extends IThing {
         /**
          * A callback for when a Player actively runs into this from the left.
+         * 
+         * @param thing   The Character running into other from the left.
+         * @param other   The Solid being run into by thing.
+         * @param transport   Other's transport property, if it exists.
          */
         actionLeft?: (thing: ICharacter, other: ISolid, transport?: any) => void;
 
         /**
          * A callback for when a Player actively attemps to crouch on top of this.
+         * 
+         * @param thing   The Character crouching on other.
+         * @param other   The Solid being crouched on by thing.
+         * @param transport   Other's transport property, if it exists.
          */
         actionTop?: (thing: ICharacter, other: ISolid, transport?: any) => void;
 
@@ -434,11 +448,17 @@ declare module FullScreenMario {
 
         /**
          * A callback for when a Player jumps up and hits the bottom of this.
+         * 
+         * @param thing   The Character bumping into other from the bottom.
+         * @param other   The Solid being run into by thing.
          */
         bottomBump?: (thing: ISolid, other: ICharacter) => void;
 
         /**
          * A callback for when a Character collides with this.
+         * 
+         * @param thing   The Character colliding into other.
+         * @param other   The Solid being collided into by thing.
          */
         collide: (thing: ICharacter, other: ISolid) => void;
 
@@ -455,6 +475,9 @@ declare module FullScreenMario {
 
         /**
          * A callback for when a Character starts resting on this.
+         * 
+         * @param thing   The Character now resting on other.
+         * @param other   The Solid being rested on by thing.
          */
         onRestedUpon?: (thing: ISolid, other: ICharacter) => void;
 
@@ -585,11 +608,16 @@ declare module FullScreenMario {
         /**
          * A callback for when a non-Player Character collides with this,
          * called from activate instead of Player functionality.
+         * 
+         * @param thing   The Character activating this detector.
          */
         activateFail?: (thing: ICharacter) => void;
 
         /**
          * A callback for when a Character collides with this.
+         * 
+         * @param thing   The Character activating other.
+         * @param other   The detector being activated by thing.
          */
         activate: (thing: ICharacter, other?: IDetectCollision) => void;
 
@@ -778,6 +806,9 @@ declare module FullScreenMario {
 
         /**
          * A callback to animate this, such as when emerging from a Solid.
+         * 
+         * @param thing   The Charater being animated.
+         * @param other   An optional Solid used as the animation source.
          */
         animate?: (thing: ICharacter, other?: ISolid) => void;
 
@@ -806,6 +837,9 @@ declare module FullScreenMario {
 
         /**
          * A callback for when this dies.
+         * 
+         * @param thing   The dieing Thing.
+         * @param severity   How severe the death is, as 1 for normal or 2 for instant.
          */
         death: (thing: IThing, severity?: number) => void;
 
@@ -838,7 +872,9 @@ declare module FullScreenMario {
         lookleft: boolean;
 
         /**
-         * A callback for kill this Character on end, instead of killNormal.
+         * A callback to kill this Character on end, instead of killNormal.
+         * 
+         * @param thing   The Thing being killed on end.
          */
         killonend?: (thing: IThing) => void;
 
@@ -1268,6 +1304,9 @@ declare module FullScreenMario {
     export interface ICoin extends IItem {
         /**
          * Animation callback for when this is bumped by a Solid.
+         *
+         * @param thing   The Soin being bumped by other.
+         * @param other   The Solid bumping thing.
          */
         animate(thing: ICoin, other: ISolid): void;
     }
@@ -1383,6 +1422,8 @@ declare module FullScreenMario {
 
         /**
          * A callback for when this Player shoots a Fireball.
+         * 
+         * @param player   The Player shooting a Fireball.
          */
         fire: (player: IPlayer) => void;
 
