@@ -1678,7 +1678,7 @@ declare module GameStartr {
          *
          * @param current
          */
-        ensureCorrectCaller(current: any): GameStartr;
+        ensureCorrectCaller(current: any): IGameStartr;
 
         /**
          * Removes a Thing from an Array using Array.splice. If the thing has an

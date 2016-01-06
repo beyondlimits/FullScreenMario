@@ -20,11 +20,10 @@ var FullScreenMario;
     var FullScreenMario = (function (_super) {
         __extends(FullScreenMario, _super);
         /**
-         * Constructor for a new FullScreenMario game object.
-         * Static game settings are stored in the appropriate settings/*.js object
-         * as members of the FullScreenMario.prototype object.
-         * Dynamic game settings may be given as members of the "customs" argument.
-         * On typical machines, game startup time is approximately 500-700ms.
+         * Initializes a new instance of the FullScreenMario class using the static
+         * settings stored in `FullScreenMario.setting`.
+         *
+         * @param settings   Extra settings such as screen size.
          */
         function FullScreenMario(settings) {
             this.settings = FullScreenMario.settings;
