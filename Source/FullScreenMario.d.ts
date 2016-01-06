@@ -1567,9 +1567,513 @@ declare module FullScreenMario {
         animate(thing: IFirework): void;
     }
 
+    /**
+     * General-purpose settings for macros.
+     */
+    export interface IMacroSettings {
+        /**
+         * The x-location (by default, 0).
+         */
+        x?: number;
+
+        /**
+         * The y-location (by default, 0).
+         */
+        y?: number;
+
+        [i: string]: any;
+    }
+
+    /**
+     * Settings for a FillPreThings macro.
+     */
+    export interface IMacroFillPreThingsSettings extends IMacroSettings {
+        /**
+         * The name of the Thing to fill, such as "Brick".
+         */
+        thing: string;
+
+        /**
+         * How many times to repeat the Thing horizontally to the
+         * right (by default, 1).
+         */
+        xnum?: number;
+
+        /**
+         * How many times to repeat the Thing vertically upwards
+         * (by default, 1).
+         */
+        ynum?: number;
+
+        /**
+         * How many units are between the left edges of placed
+         * Things horizontally (by default, 0).
+         */
+        xwidth?: number;
+
+        /**
+         * How many units are between the top edges of placed
+         * Things vertically (by default, 0).
+         */
+        yheight?: number;
+    }
+
+    /**
+     * Settings for a FillPrePattern macro.
+     */
+    export interface IMacroFillPrePatternSettings extends IMacroSettings {
+        /**
+         * The name of the pattern to print, from the listing in
+         * FSM.settings.maps.patterns.
+         */
+        pattern: string;
+
+        /**
+         * How many times to repeat the overall pattern (by 
+         * default, 1).
+         */
+        repeat?: number;
+
+        /**
+         * Numbered items to skip, if any.
+         */
+        skips?: number[];
+    }
+
+    /**
+     * Settings for a Floor macro.
+     */
+    export interface IMacroFloorSettings extends IMacroSettings {
+        /**
+         * How wide the Floor should be (by default, 8).
+         */
+        width?: number;
+    }
+
+    /**
+     * Settings for a Pipe macro.
+     */
+    export interface IMacroPipeSettings extends IMacroSettings {
+        /**
+         * How high the Pipe should be, as a Number or "Infinity"
+         * (by default, 8).
+         */
+        height?: number | string;
+
+        /**
+         * Whether there should be a Piranha spawning with the
+         * Pipe (by default, false).
+         */
+        piranha?: boolean;
+
+        /**
+         * What location the Pipe should transport to (by default,
+         * none).
+         */
+        transport?: any;
+
+        /**
+         * What location the Pipe should act as an entrance to (by
+         * default, none).
+         */
+        entrance?: any;
+    }
+
+    /**
+     * Settings for a PipeCorner macro.
+     */
+    export interface IMacroPipeCornerSettings extends IMacroSettings {
+        /**
+         * How high the Pipe should be (by default, 8).
+         */
+        height: number;
+
+        /**
+         * What location the Pipe should transport to (by default,
+         * none).
+         */
+        transport?: any;
+
+        /**
+         * Whether there should be a ScrollEnabler placed on top of
+         * the PipeVertical (by default, false).
+         */
+        scrollEnabler?: boolean;
+
+        /**
+         * Whether there should be a ScrollBlocker placed on top of
+         * the PipeVertical (by default, false).
+         */
+        scrollBlocker?: boolean;
+    }
+
+    /**
+     * Settings for a Tree macro.
+     */
+    export interface IMacroTreeSettings extends IMacroSettings {
+        /**
+         * How wide the Tree should be (preferably a multiple of 8).
+         */
+        width: number;
+
+        /**
+         * Whether the trunk scenery should be listed in the Solids
+         * group instead of Scenery, to keep it in front of clouds
+         * (by default, false).
+         */
+        solidTrunk?: boolean;
+    }
+
+    /**
+     * Settings for a Shroom macro.
+     */
+    export interface IMacroShroomSettings extends IMacroSettings {
+        /**
+         * How wide the Shroom should be (preferably a multiple of 8).
+         */
+        width: number;
+
+        /**
+         * Whether the trunk scenery should be listed in the Solids
+         * group instead of Scenery, to keep it in front of clouds
+         * (by default, false).
+         */
+        solidTrunk?: boolean;
+    }
+
+    /**
+     * Settings for a Water macro.
+     */
+    export interface IMacroWaterSettings extends IMacroSettings {
+        /**
+         * How wide the Water should be.
+         */
+        width: number;
+    }
+
+    /**
+     * Settings for a Ceiling macro.
+     */
+    export interface IMacroCeilingSettings extends IMacroSettings {
+        /**
+         * How wide the ceiling should be.
+         */
+        width: number;
+    }
+
+    /**
+     * Settings for a Bridge macro.
+     */
+    export interface IMacroBridgeSettings extends IMacroSettings {
+        /**
+         * How wide the bridge should be (by default, 16).
+         */
+        width?: number;
+
+        /**
+         * Whether the first 8 units should be taken up by an infinitely
+         * high Stone column (by default, false).
+         */
+        begin?: boolean;
+
+        /**
+         * Whether the last 8 units should be taken up by an infinitely
+         * high Stone column (by default, false).
+         */
+        end?: boolean;
+    }
+
+    /**
+     *
+     */
+    export interface IMacroScaleSettings extends IMacroSettings {
+        /**
+         * How wide the left Platform should be (by default, 24).
+         */
+        widthLeft?: number;
+
+        /**
+         * How wide the right Platform should be (by default, 24).
+         */
+        widthRight?: number;
+
+        /**
+         * How much space there should be between Platforms (by
+         * default, 40).
+         */
+        between?: number;
+
+        /**
+         * How far down from y the left Platform should start (by
+         * default, 24).
+         */
+        dropLeft?: number;
+
+        /**
+         * How far down from y the right Platform should start (by
+         * default, 24).
+         */
+        dropRight?: number;
+    }
+
+    /**
+     * Settings for a PlatformGenerator macro.
+     */
+    export interface IMacroPlatformGeneratorSettings extends IMacroSettings {
+        /**
+         * What direction to travel, as -1 for up or 1 for down (by 
+         * default, 1).
+         */
+        direction?: number;
+
+        /**
+         * How wide the Platforms should be (by default, 16).
+         */
+        width?: number;
+    }
+
+    /**
+     * Settings for a WarpWorld macro.
+     */
+    export interface IMacroWarpWorldSettings extends IMacroSettings {
+        /**
+         * Names of maps the Pipes should warp to, in order.
+         */
+        warps: string[];
+
+        /**
+         * How far above the Piranhas to place the CustomText labels
+         * (by default, 8).
+         */
+        textHeight?: number;
+    }
+
+    /**
+     * Settings for a CheepsStart macro.
+     */
+    export interface IMacroCheepsStartSettings extends IMacroSettings {
+        /**
+         * How wide the detector should be (by default, 8).
+         */
+        width?: number;
+    }
+
+    /**
+     * Settings for a CheepsStop macro.
+     */
+    export interface IMacroCheepsStopSettings extends IMacroSettings {
+        /**
+         * How wide the detector should be (by default, 8).
+         */
+        width?: number;
+    }
+
+    /**
+     * Settings for a BulletBillsStart macro.
+     */
+    export interface IMacroBulletBillsStartSettings extends IMacroSettings {
+        /**
+         * How wide the detector should be (by default, 8).
+         */
+        width?: number;
+    }
+
+    /**
+     * Settings for a BulletBillsStop macro.
+     */
+    export interface IMacroBulletBillsStopSettings extends IMacroSettings {
+        /**
+         * How wide the detector should be (by default, 8).
+         */
+        width?: number;
+    }
+
+    /**
+     * Settings for a LakituStop macro.
+     */
+    export interface IMacroLakituStopSettings extends IMacroSettings {
+        /**
+         * How wide the detector should be (by default, 8).
+         */
+        width?: number;
+    }
+
+    /**
+     * Settings for a CastleSmall or CastleLarge macro.
+     */
+    export interface IMacroCastleSettings extends IMacroSettings {
+        /**
+         * What map or location to shift to after ending theatrics.
+         */
+        transport: any;
+
+        /**
+         * How many CastleWalls should be placed to the right of the castle
+         * (by default, 2).
+         */
+        walls?: number;
+    }
+
+    /**
+     * Settings for a StartInsideCastle macro.
+     */
+    export interface IMacroStartInsideCastleSettings extends IMacroSettings {
+        /**
+         * How wide the starting zone should be (by default, 40).
+         */
+        width?: number;
+    }
+
+    /**
+     * Settings for an EndOutsideCastle macro.
+     */
+    export interface IMacroEndOutsideCastleSettings extends IMacroSettings {
+        /**
+         * Where to transport to after ending theatrics.
+         */
+        transport: any;
+
+        /**
+         * Whether this should place a large castle instead of a small
+         * (by default, false).
+         */
+        large?: boolean;
+
+        /**
+         * How far from the flagpole to the castle (by default, 24 for large
+         * castles and 32 for small).
+         */
+        castleDistance?: number;
+
+        /**
+         * For large castles, how many CastleWall Things should be placed
+         * after (by default, 2).
+         */
+        walls?: number;
+    }
+
+    /**
+     *
+     */
+    export interface IMacroEndInsideCastleSettings extends IMacroSettings {
+        /**
+         * Where to transport to after ending theatrics.
+         */
+        transport: any;
+
+        /**
+         * Which NPC to use, as "Toach" or "Peach" (by default, "Toad").
+         */
+        npc?: string;
+
+        /**
+         * Whether Bowser should be in "hard" mode (by default, false).
+         */
+        hard?: boolean;
+
+        /**
+         * What Bowser's spawnType should be (by default, "Goomba").
+         */
+        spawnType?: string;
+
+        /**
+         * Whether Bowser is also throwing hammers (by default, false).
+         */
+        throwing?: boolean;
+
+        /**
+         * Whether a ScrollEnabler should be added above (by default, false).
+         */
+        topScrollEnabler?: boolean;
+    }
+
+    /**
+     * Settings for a SectionPass macro.
+     */
+    export interface IMacroSectionPassSettings extends IMacroSettings {
+        /**
+         * How wide the detector should be (by default, 8).
+         */
+        width?: number;
+
+        /**
+         * How high the detector should be (by default, 8).
+         */
+        height?: number;
+    }
+
+    /**
+     * Settings for a SectionFail macro.
+     */
+    export interface IMacroSectionFailSettings extends IMacroSettings {
+        /**
+         * How wide the detector should be (by default, 8).
+         */
+        width?: number;
+
+        /**
+         * How high the detector should be (by default, 8).
+         */
+        height?: number;
+    }
+
+    /**
+     * Settings for a SectionDecider macro.
+     */
+    export interface IMacroSectionDeciderSettings extends IMacroSettings {
+        /**
+         * Which section to spawn if passed (by default, 0).
+         */
+        pass?: number;
+
+        /**
+         * Which section to spawn if failed (by default, 0).
+         */
+        fail?: number;
+    }
+
+    /**
+     * Settings for a Section macro.
+     */
+    export interface IMacroSectionSettings extends IMacroSettings {
+        /**
+         * Which of the Area's sections to spawn (by default, 0).
+         */
+        section?: number;
+    }
+
+    /**
+     * Settings regarding maps, particularly for AreaSpawnr, MapScreenr,
+     * and MapsCreatr.
+     */
+    export interface IMapCustoms extends GameStartr.IMapCustoms {
+        /**
+         * Named patterns of Things and positions.
+         */
+        patterns: {
+            [i: string]: [string, number, number];
+        };
+    }
+
+    /**
+     * Stored settings to be stored separately and kept within FullScreenMario.
+     */
+    export interface IFullScreenMarioStoredSettings extends GameStartr.IGameStartrStoredSettings {
+        /**
+         * Settings regarding maps, particularly for an IAreaSpawnr, an
+         * IMapScreenr, and an IMapsCreatr.
+         */
+        maps: IMapCustoms;
+    }
+
+    /**
+     * A free HTML5 remake of Nintendo's original Super Mario Bros, expanded for the
+     * modern web. It includes the original 32 levels, a random map generator, a 
+     * level editor, and over a dozen custom mods.
+     */
     export interface IFullScreenMario extends GameStartr.IGameStartr {
         MapScreener: IMapScreenr;
-        settings: GameStartr.IGameStartrStoredSettings;
+        settings: IFullScreenMarioStoredSettings;
         unitsize: number;
         pointLevels: number[];
         customTextMappings: { [i: string]: string };
@@ -1776,7 +2280,7 @@ declare module FullScreenMario {
         killNormal(thing: IThing): void;
         killFlip(thing: ICharacter, extra?: number): void;
         killSpawn(thing: ICharacter, big?: boolean): IThing;
-        killReplace(thing: IThing, title: string, attributes: any, attributesCopied?: string[]): IThing;
+        killReplace(thing: IThing, title: string, attributes?: any, attributesCopied?: string[]): IThing;
         killGoomba(thing: IGoomba, big?: boolean): void;
         killKoopa(thing: IKoopa, big?: boolean): ICharacter;
         killLakitu(thing: ILakitu): void;
@@ -1820,9 +2324,8 @@ declare module FullScreenMario {
         cutsceneBowserVictoryCastleBridgeOpen(settings: any, FSM: IFullScreenMario): void;
         cutsceneBowserVictoryBowserFalls(settings: any, FSM: IFullScreenMario): void;
         cutsceneBowserVictoryDialog(FSM: IFullScreenMario, settings: any): void;
-        macroExample(reference: any, prethings: any[], area: MapsCreatr.IMapsCreatrArea, map: MapsCreatr.IMapsCreatrMap, scope: any): any;
         macroFillPreThings(
-            reference: any,
+            reference: IMacroFillPreThingsSettings,
             prethings: any[],
             area: MapsCreatr.IMapsCreatrArea,
             map: MapsCreatr.IMapsCreatrMap,
@@ -1919,15 +2422,30 @@ declare module FullScreenMario {
             area: MapsCreatr.IMapsCreatrArea,
             map: MapsCreatr.IMapsCreatrMap,
             scope: any): any;
-        macroCastleSmall(reference: any): any;
-        macroCastleLarge(reference: any): any;
+        macroCastleSmall(
+            reference: any,
+            prethings: any[],
+            area: MapsCreatr.IMapsCreatrArea,
+            map: MapsCreatr.IMapsCreatrMap,
+            scope: any): any;
+        macroCastleLarge(
+            reference: any,
+            prethings: any[],
+            area: MapsCreatr.IMapsCreatrArea,
+            map: MapsCreatr.IMapsCreatrMap,
+            scope: any): any;
         macroStartInsideCastle(
             reference: any,
             prethings: any[],
             area: MapsCreatr.IMapsCreatrArea,
             map: MapsCreatr.IMapsCreatrMap,
             scope: any): any;
-        macroEndOutsideCastle(reference: any): any;
+        macroEndOutsideCastle(
+            reference: any,
+            prethings: any[],
+            area: MapsCreatr.IMapsCreatrArea,
+            map: MapsCreatr.IMapsCreatrMap,
+            scope: any): any;
         macroEndInsideCastle(
             reference: any,
             prethings: any[],

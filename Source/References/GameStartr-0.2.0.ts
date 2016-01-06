@@ -155,7 +155,8 @@ declare module GameStartr {
         input: IInputWritrCustoms;
 
         /**
-         * Settings regarding maps, particularly for an IMapsCreatr and an IAreaSpawnr.
+         * Settings regarding maps, particularly for an IAreaSpawnr, an
+         * IMapScreenr, and an IMapsCreatr.
          */
         maps: IMapCustoms;
 
@@ -375,7 +376,8 @@ declare module GameStartr {
     }
 
     /**
-     * Settings regarding maps, particularly for AreaSpawnr, MapScreenr, and MapsCreatr.
+     * Settings regarding maps, particularly for AreaSpawnr, MapScreenr,
+     * and MapsCreatr.
      */
     export interface IMapCustoms extends IGameStartrSettingsObject {
         /**
