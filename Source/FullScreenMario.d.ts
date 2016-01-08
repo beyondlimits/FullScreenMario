@@ -2235,6 +2235,16 @@ declare module FullScreenMario {
         thingProcess(thing: IThing, title: string, settings: any, defaults: any): void;
 
         /**
+         * Generates a key for a Thing based off the current area and the Thing's
+         * basic attributes. This should be used for PixelRender.get calls, to
+         * cache the Thing's sprite.
+         * 
+         * @param thing
+         * @returns A key that to identify the Thing's sprite.
+         */
+        generateThingKey(thing: IThing): string;
+
+        /**
          * Adds a Thing via addPreThing based on the specifications in a PreThing.
          * This is done relative to MapScreener.left and MapScreener.floor.
          *

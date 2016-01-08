@@ -1545,14 +1545,14 @@ declare module GameStartr {
         increaseHeight(thing: IThing, dy: number, updateSize?: boolean): void;
 
         /**
-         * Generates a key for a Thing based off the current area and the Thing's
-         * basic attributes. This key should be used for PixelRender.get calls, to
-         * cache the Thing's sprite.
-         *
+         * Generates a key for a Thing based off the Thing's basic attributes. 
+         * This key should be used for PixelRender.get calls, to cache the Thing's
+         * sprite.
+         * 
          * @param thing
          * @returns A key that to identify the Thing's sprite.
          */
-        generateObjectKey(thing: IThing): string;
+        generateThingKey(thing: IThing): string;
 
         /**
          * Sets the class of a Thing, sets the new sprite for it, and marks it as
@@ -2085,7 +2085,7 @@ module GameStartr {
                         "MapScreener": GameStarter.MapScreener,
                         "createCanvas": GameStarter.createCanvas,
                         "unitsize": GameStarter.unitsize,
-                        "generateObjectKey": GameStarter.generateObjectKey
+                        "generateObjectKey": GameStarter.generateThingKey
                     },
                     GameStarter.settings.renderer));
         }
@@ -3108,17 +3108,15 @@ module GameStartr {
         */
 
         /**
-         * Generates a key for a Thing based off the current area and the Thing's
-         * basic attributes. This key should be used for PixelRender.get calls, to
-         * cache the Thing's sprite.
+         * Generates a key for a Thing based off the Thing's basic attributes. 
+         * This key should be used for PixelRender.get calls, to cache the Thing's
+         * sprite.
          * 
          * @param thing
          * @returns A key that to identify the Thing's sprite.
          */
-        generateObjectKey(thing: IThing): string {
-            return thing.GameStarter.AreaSpawner.getArea().setting
-                + " " + thing.groupType + " "
-                + thing.title + " " + thing.className;
+        generateThingKey(thing: IThing): string {
+            return thing.groupType + " " + thing.title + " " + thing.className;
         }
 
         /**
@@ -3334,7 +3332,7 @@ module GameStartr {
          * onDelete, that is called.
          * 
          * @param thing
-         * @param array   The grou pcontaining the thing.
+         * @param array   The group containing the thing.
          * @param location   The index of the Thing in the Array, for speed's
          *                   sake (by default, it is found using Array.indexOf).
          */

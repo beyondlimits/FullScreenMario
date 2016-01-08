@@ -190,7 +190,7 @@ var GameStartr;
                 "MapScreener": GameStarter.MapScreener,
                 "createCanvas": GameStarter.createCanvas,
                 "unitsize": GameStarter.unitsize,
-                "generateObjectKey": GameStarter.generateObjectKey
+                "generateObjectKey": GameStarter.generateThingKey
             }, GameStarter.settings.renderer));
         };
         /**
@@ -1044,17 +1044,15 @@ var GameStartr;
         /* Appearance utilities
         */
         /**
-         * Generates a key for a Thing based off the current area and the Thing's
-         * basic attributes. This key should be used for PixelRender.get calls, to
-         * cache the Thing's sprite.
+         * Generates a key for a Thing based off the Thing's basic attributes.
+         * This key should be used for PixelRender.get calls, to cache the Thing's
+         * sprite.
          *
          * @param thing
          * @returns A key that to identify the Thing's sprite.
          */
-        GameStartr.prototype.generateObjectKey = function (thing) {
-            return thing.GameStarter.AreaSpawner.getArea().setting
-                + " " + thing.groupType + " "
-                + thing.title + " " + thing.className;
+        GameStartr.prototype.generateThingKey = function (thing) {
+            return thing.groupType + " " + thing.title + " " + thing.className;
         };
         /**
          * Sets the class of a Thing, sets the new sprite for it, and marks it as
@@ -1251,7 +1249,7 @@ var GameStartr;
          * onDelete, that is called.
          *
          * @param thing
-         * @param array   The grou pcontaining the thing.
+         * @param array   The group containing the thing.
          * @param location   The index of the Thing in the Array, for speed's
          *                   sake (by default, it is found using Array.indexOf).
          */
