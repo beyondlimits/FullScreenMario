@@ -1711,15 +1711,6 @@ declare module GameStartr {
     }
 }
 
-declare module MapsCreatr {
-    /**
-     * An Area parsed from a JSON-friendly Map description.
-     */
-    export interface IMapsCreatrArea {
-        setting: string;
-    }
-}
-
 
 module GameStartr {
     "use strict";

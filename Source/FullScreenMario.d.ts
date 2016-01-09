@@ -118,6 +118,11 @@ declare module FullScreenMario {
         background: string;
 
         /**
+         * A description of the environment, such as "Overworld".
+         */
+        setting: string;
+
+        /**
          * A callback to initialize the Area background as a function of its setting.
          * 
          * @param area   The Area having its background set.

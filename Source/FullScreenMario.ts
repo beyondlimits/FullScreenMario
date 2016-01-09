@@ -361,7 +361,7 @@ module FullScreenMario {
          * @returns A key that to identify the Thing's sprite.
          */
         generateThingKey(thing: IThing): string {
-            return thing.GameStarter.AreaSpawner.getArea().setting
+            return (<IArea>thing.GameStarter.AreaSpawner.getArea()).setting
                 + " " + thing.groupType + " "
                 + thing.title + " " + thing.className;
         }
@@ -6502,7 +6502,7 @@ module FullScreenMario {
          * @returns The default theme for the current area.
          */
         getAudioThemeDefault(FSM: FullScreenMario): string {
-            return FSM.AreaSpawner.getArea().setting.split(" ")[0];
+            return (<IArea>FSM.AreaSpawner.getArea()).setting.split(" ")[0];
         }
 
 
